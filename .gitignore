@@ -1,0 +1,6 @@
+syntax: glob
+*.user
+*.suo
+bin
+obj
+msbuild.log
