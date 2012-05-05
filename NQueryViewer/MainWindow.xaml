@@ -55,6 +55,7 @@
                  AcceptsReturn="True"        
                  HorizontalScrollBarVisibility="Auto"
                  VerticalScrollBarVisibility="Auto"
+                 SelectionChanged="TextBoxOnSelectionChanged"
                  TextChanged="TextBoxTextChanged" />
     </Grid>
 </Window>

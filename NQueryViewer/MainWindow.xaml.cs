@@ -5,7 +5,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-using NQueryViewer.Syntax;
+using Microsoft.Fx.Wpf.Controls;
+
+using NQuery.Language;
 
 namespace NQueryViewer
 {
@@ -15,7 +17,7 @@ namespace NQueryViewer
         {
             InitializeComponent();
 
-            UpdateViewModel();
+            UpdateTree();
         }
 
         private static IEnumerable<NodeViewModel> ToViewModel(string source)
@@ -42,16 +44,14 @@ namespace NQueryViewer
 
         private static IEnumerable<NodeViewModel> ParseExpression(string source)
         {
-            var parser = new Parser(source);
-            var expression = parser.ParseExpression();
-            return new[] {ToViewModel(expression)};
+            var syntaxTree = SyntaxTree.ParseExpression(source);
+            return new[] { ToViewModel(syntaxTree.Root) };
         }
 
         private static IEnumerable<NodeViewModel> ParseQuery(string source)
         {
-            var parser = new Parser(source);
-            var query = parser.ParseQueryWithOptionalCte();
-            return new[] { ToViewModel(query) };
+            var syntaxTree = SyntaxTree.ParseQuery(source);
+            return new[] { ToViewModel(syntaxTree.Root) };
         }
 
         private static IEnumerable<NodeViewModel> ToViewModel(IEnumerable<SyntaxToken> root)
@@ -94,47 +94,64 @@ namespace NQueryViewer
             return new NodeViewModel(trivia, new List<NodeViewModel>());
         }
 
+        private enum NodeViewModelKind
+        {
+            Node,
+            Token,
+            Trivia
+        }
+
         private sealed class NodeViewModel
         {
             public NodeViewModel(SyntaxToken token, IList<NodeViewModel> children)
             {
                 Data = token;
-                NodeType = "Token";
+                NodeType = NodeViewModelKind.Token;
                 Kind = token.Kind;
                 ContextualKind = token.ContextualKind;
                 Span = token.Span;
                 FullSpan = token.FullSpan;
                 IsMissing = token.IsMissing;
-                Children = new ReadOnlyCollection<NodeViewModel>(children);
+                UpdateChildren(children);
             }
 
             public NodeViewModel(SyntaxTrivia data, IList<NodeViewModel> children)
             {
                 Data = data;
-                NodeType = "Trivia";
+                NodeType = NodeViewModelKind.Trivia;
                 Kind = data.Kind;
                 ContextualKind = SyntaxKind.BadToken;
                 Span = data.Span;
                 FullSpan = data.Span;
                 IsMissing = false;
-                Children = new ReadOnlyCollection<NodeViewModel>(children);
+                UpdateChildren(children);
             }
 
-            public NodeViewModel(SyntaxNode data, List<NodeViewModel> children)
+            public NodeViewModel(SyntaxNode data, IList<NodeViewModel> children)
             {
                 Data = data;
-                NodeType = "Node";
+                NodeType = NodeViewModelKind.Node;
                 Kind = data.Kind;
                 ContextualKind = SyntaxKind.BadToken;
                 Span = data.Span;
                 FullSpan = data.FullSpan;
                 IsMissing = false;
-                Children = new ReadOnlyCollection<NodeViewModel>(children);
+                UpdateChildren(children);
             }
+
+            private void UpdateChildren(IList<NodeViewModel> children)
+            {
+                Children = new ReadOnlyCollection<NodeViewModel>(children);
+
+                foreach (var nodeViewModel in children)
+                    nodeViewModel.Parent = this;
+            }
+
+            public NodeViewModel Parent { get; private set; }
 
             public object Data { get; private set; }
 
-            public string NodeType { get; private set; }
+            public NodeViewModelKind NodeType { get; private set; }
 
             public SyntaxKind Kind { get; private set; }
 
@@ -156,9 +173,37 @@ namespace NQueryViewer
             }
         }
 
-        private void UpdateViewModel()
+        private void UpdateTree()
         {
             _treeView.ItemsSource = ToViewModel(_textBox.Text);
+        }
+
+        private void UpdateTreeExpansion()
+        {
+            var position = _textBox.CaretIndex;
+            var roots = _treeView.ItemsSource.OfType<NodeViewModel>();
+            var node = FindViewModelNode(roots, position) ?? FindViewModelNode(roots, position - 1);
+            if (node != null)
+                _treeView.SelectNode(node, n => n.Parent, true);
+        }
+
+        private NodeViewModel FindViewModelNode(IEnumerable<NodeViewModel> roots, int position)
+        {
+            var nonTrivia = from r in roots
+                            where r.NodeType != NodeViewModelKind.Trivia
+                            select r;
+
+            foreach (var nodeViewModel in nonTrivia)
+            {
+                if (nodeViewModel.Span.Contains(position))
+                {
+                    return nodeViewModel.Children.Any()
+                               ? FindViewModelNode(nodeViewModel.Children, position)
+                               : nodeViewModel;
+                }
+            }
+
+            return null;
         }
 
         private void UpdateSelectedText()
@@ -167,14 +212,19 @@ namespace NQueryViewer
             if (viewModel == null)
                 return;
 
-            var span = viewModel.FullSpan;
-
+            var span = viewModel.Span;
             _textBox.Select(span.Start, span.Length);
+        }
+
+        private void TextBoxOnSelectionChanged(object sender, RoutedEventArgs e)
+        {
+            if (_textBox.IsKeyboardFocusWithin)
+                UpdateTreeExpansion();
         }
 
         private void TextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            UpdateViewModel();
+            UpdateTree();
         }
 
         private void TreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)

@@ -35,12 +35,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -53,77 +49,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Syntax\AliasSyntax.cs" />
-    <Compile Include="Syntax\AllAnySubselectSyntax.cs" />
-    <Compile Include="Syntax\ArgumentListSyntax.cs" />
-    <Compile Include="Syntax\ArgumentSyntax.cs" />
-    <Compile Include="Syntax\BetweenExpressionSyntax.cs" />
-    <Compile Include="Syntax\BinaryExpressionSyntax.cs" />
-    <Compile Include="Syntax\CaseExpressionSyntax.cs" />
-    <Compile Include="Syntax\CaseLabelSyntax.cs" />
-    <Compile Include="Syntax\CastExpressionSyntax.cs" />
-    <Compile Include="Syntax\CharReader.cs" />
-    <Compile Include="Syntax\CoalesceExpressionSyntax.cs" />
-    <Compile Include="Syntax\CommonTableExpressionColumnNameListSyntax.cs" />
-    <Compile Include="Syntax\CommonTableExpressionColumnNameSyntax.cs" />
-    <Compile Include="Syntax\CommonTableExpressionQuerySyntax.cs" />
-    <Compile Include="Syntax\CommonTableExpressionSyntax.cs" />
-    <Compile Include="Syntax\CountAllExpressionSyntax.cs" />
-    <Compile Include="Syntax\CrossJoinedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\DerivedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\ExceptQuerySyntax.cs" />
-    <Compile Include="Syntax\ExistsSubselectSyntax.cs" />
-    <Compile Include="Syntax\ExpressionSelectColumnSyntax.cs" />
-    <Compile Include="Syntax\FromClauseSyntax.cs" />
-    <Compile Include="Syntax\FunctionInvocationExpressionSyntax.cs" />
-    <Compile Include="Syntax\GroupByClauseSyntax.cs" />
-    <Compile Include="Syntax\GroupByColumnSyntax.cs" />
-    <Compile Include="Syntax\HavingClauseSyntax.cs" />
-    <Compile Include="Syntax\InExpressionSyntax.cs" />
-    <Compile Include="Syntax\InnerJoinedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\IntersectQuerySyntax.cs" />
-    <Compile Include="Syntax\IsNullExpressionSyntax.cs" />
-    <Compile Include="Syntax\JoinedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\Lexer.cs" />
-    <Compile Include="Syntax\ExpressionSyntax.cs" />
-    <Compile Include="Syntax\LikeExpressionSyntax.cs" />
-    <Compile Include="Syntax\LiteralExpressionSyntax.cs" />
-    <Compile Include="Syntax\MethodInvocationExpressionSyntax.cs" />
-    <Compile Include="Syntax\NamedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\NameExpressionSyntax.cs" />
-    <Compile Include="Syntax\NullIfExpressionSyntax.cs" />
-    <Compile Include="Syntax\OrderByColumnSyntax.cs" />
-    <Compile Include="Syntax\OrderedQuerySyntax.cs" />
-    <Compile Include="Syntax\OuterJoinedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\ParameterExpressionSyntax.cs" />
-    <Compile Include="Syntax\ParenthesizedExpressionSyntax.cs" />
-    <Compile Include="Syntax\ParenthesizedQuerySyntax.cs" />
-    <Compile Include="Syntax\ParenthesizedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\Parser.cs" />
-    <Compile Include="Syntax\PropertyAccessExpressionSyntax.cs" />
-    <Compile Include="Syntax\QuerySyntax.cs" />
-    <Compile Include="Syntax\SelectColumnSyntax.cs" />
-    <Compile Include="Syntax\SelectQuerySyntax.cs" />
-    <Compile Include="Syntax\SimilarToExpressionSyntax.cs" />
-    <Compile Include="Syntax\SingleRowSubselectSyntax.cs" />
-    <Compile Include="Syntax\SoundslikeExpressionSyntax.cs" />
-    <Compile Include="Syntax\SubselectExpressionSyntax.cs" />
-    <Compile Include="Syntax\SyntaxFacts.cs" />
-    <Compile Include="Syntax\SyntaxKind.cs" />
-    <Compile Include="Syntax\SyntaxNode.cs" />
-    <Compile Include="Syntax\SyntaxNodeOrToken.cs" />
-    <Compile Include="Syntax\SyntaxToken.cs" />
-    <Compile Include="Syntax\SyntaxTrivia.cs" />
-    <Compile Include="Syntax\TableReferenceSyntax.cs" />
-    <Compile Include="Syntax\TextBuffer.cs" />
-    <Compile Include="Syntax\TextLine.cs" />
-    <Compile Include="Syntax\TextSpan.cs" />
-    <Compile Include="Syntax\TopClauseSyntax.cs" />
-    <Compile Include="Syntax\TypeReferenceSyntax.cs" />
-    <Compile Include="Syntax\UnaryExpressionSyntax.cs" />
-    <Compile Include="Syntax\UnionQuerySyntax.cs" />
-    <Compile Include="Syntax\WhereClauseSyntax.cs" />
-    <Compile Include="Syntax\WildcardSelectColumnSyntax.cs" />
+    <Compile Include="TreeViewExtensions.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -163,6 +89,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
+      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
+      <Name>NQuery.Language</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Syntax\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

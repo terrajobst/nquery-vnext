@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NQuery.Language</RootNamespace>
+    <AssemblyName>NQuery.Language</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AliasSyntax.cs" />
+    <Compile Include="AllAnySubselectSyntax.cs" />
+    <Compile Include="ArgumentListSyntax.cs" />
+    <Compile Include="ArgumentSyntax.cs" />
+    <Compile Include="BetweenExpressionSyntax.cs" />
+    <Compile Include="BinaryExpressionSyntax.cs" />
+    <Compile Include="CaseExpressionSyntax.cs" />
+    <Compile Include="CaseLabelSyntax.cs" />
+    <Compile Include="CastExpressionSyntax.cs" />
+    <Compile Include="CharReader.cs" />
+    <Compile Include="CoalesceExpressionSyntax.cs" />
+    <Compile Include="CommonTableExpressionColumnNameListSyntax.cs" />
+    <Compile Include="CommonTableExpressionColumnNameSyntax.cs" />
+    <Compile Include="CommonTableExpressionQuerySyntax.cs" />
+    <Compile Include="CommonTableExpressionSyntax.cs" />
+    <Compile Include="CountAllExpressionSyntax.cs" />
+    <Compile Include="CrossJoinedTableReferenceSyntax.cs" />
+    <Compile Include="DerivedTableReferenceSyntax.cs" />
+    <Compile Include="ExceptQuerySyntax.cs" />
+    <Compile Include="ExistsSubselectSyntax.cs" />
+    <Compile Include="ExpressionSelectColumnSyntax.cs" />
+    <Compile Include="ExpressionSyntax.cs" />
+    <Compile Include="FromClauseSyntax.cs" />
+    <Compile Include="FunctionInvocationExpressionSyntax.cs" />
+    <Compile Include="GroupByClauseSyntax.cs" />
+    <Compile Include="GroupByColumnSyntax.cs" />
+    <Compile Include="HavingClauseSyntax.cs" />
+    <Compile Include="InExpressionSyntax.cs" />
+    <Compile Include="InnerJoinedTableReferenceSyntax.cs" />
+    <Compile Include="IntersectQuerySyntax.cs" />
+    <Compile Include="IsNullExpressionSyntax.cs" />
+    <Compile Include="JoinedTableReferenceSyntax.cs" />
+    <Compile Include="Lexer.cs" />
+    <Compile Include="LikeExpressionSyntax.cs" />
+    <Compile Include="LiteralExpressionSyntax.cs" />
+    <Compile Include="MethodInvocationExpressionSyntax.cs" />
+    <Compile Include="NamedTableReferenceSyntax.cs" />
+    <Compile Include="NameExpressionSyntax.cs" />
+    <Compile Include="NullIfExpressionSyntax.cs" />
+    <Compile Include="OrderByColumnSyntax.cs" />
+    <Compile Include="OrderedQuerySyntax.cs" />
+    <Compile Include="OuterJoinedTableReferenceSyntax.cs" />
+    <Compile Include="ParameterExpressionSyntax.cs" />
+    <Compile Include="ParenthesizedExpressionSyntax.cs" />
+    <Compile Include="ParenthesizedQuerySyntax.cs" />
+    <Compile Include="ParenthesizedTableReferenceSyntax.cs" />
+    <Compile Include="Parser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyAccessExpressionSyntax.cs" />
+    <Compile Include="QuerySyntax.cs" />
+    <Compile Include="SelectColumnSyntax.cs" />
+    <Compile Include="SelectQuerySyntax.cs" />
+    <Compile Include="SimilarToExpressionSyntax.cs" />
+    <Compile Include="SingleRowSubselectSyntax.cs" />
+    <Compile Include="SoundslikeExpressionSyntax.cs" />
+    <Compile Include="SubselectExpressionSyntax.cs" />
+    <Compile Include="SyntaxFacts.cs" />
+    <Compile Include="SyntaxKind.cs" />
+    <Compile Include="SyntaxNode.cs" />
+    <Compile Include="SyntaxNodeOrToken.cs" />
+    <Compile Include="SyntaxToken.cs" />
+    <Compile Include="SyntaxTree.cs" />
+    <Compile Include="SyntaxTrivia.cs" />
+    <Compile Include="TableReferenceSyntax.cs" />
+    <Compile Include="TextBuffer.cs" />
+    <Compile Include="TextLine.cs" />
+    <Compile Include="TextSpan.cs" />
+    <Compile Include="TopClauseSyntax.cs" />
+    <Compile Include="TypeReferenceSyntax.cs" />
+    <Compile Include="UnaryExpressionSyntax.cs" />
+    <Compile Include="UnionQuerySyntax.cs" />
+    <Compile Include="WhereClauseSyntax.cs" />
+    <Compile Include="WildcardSelectColumnSyntax.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
