@@ -792,7 +792,7 @@ namespace NQueryViewer.Syntax
             if (Current.Kind != SyntaxKind.WithKeyword)
                 return ParseQuery();
 
-            var withKeyword = MatchContextual(SyntaxKind.WithKeyword);
+            var withKeyword = Match(SyntaxKind.WithKeyword);
 
             var commonTableExpressions = new List<CommonTableExpressionSyntax>();
 
@@ -905,14 +905,14 @@ namespace NQueryViewer.Syntax
             {
                 if (Current.Kind == SyntaxKind.UnionKeyword)
                 {
-                    var unionKeyword = MatchContextual(SyntaxKind.UnionKeyword);
-                    var allKeyword = NextTokenIfContextual(SyntaxKind.AllKeyword);
+                    var unionKeyword = Match(SyntaxKind.UnionKeyword);
+                    var allKeyword = NextTokenIf(SyntaxKind.AllKeyword);
                     var rightQuery = ParseIntersectionalQuery();
                     leftQuery = new UnionQuerySyntax(leftQuery, unionKeyword, allKeyword, rightQuery);
                 }
                 else
                 {
-                    var exceptKeyword = MatchContextual(SyntaxKind.ExceptKeyword);
+                    var exceptKeyword = Match(SyntaxKind.ExceptKeyword);
                     var rightQuery = ParseIntersectionalQuery();
                     leftQuery = new ExceptQuerySyntax(leftQuery, exceptKeyword, rightQuery);
                 }
@@ -930,7 +930,7 @@ namespace NQueryViewer.Syntax
 
             while (Current.Kind == SyntaxKind.IntersectKeyword)
             {
-                var intersectKeyword = MatchContextual(SyntaxKind.IntersectKeyword);
+                var intersectKeyword = Match(SyntaxKind.IntersectKeyword);
                 var rightQuery = ParseSelectQuery();
 
                 if (rightQuery == null)
