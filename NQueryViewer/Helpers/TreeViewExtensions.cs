@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace Microsoft.Fx.Wpf.Controls
+namespace NQueryViewer.Helpers
 {
     public static class TreeViewExtensions
     {

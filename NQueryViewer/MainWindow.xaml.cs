@@ -1,21 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
-using Microsoft.Fx.Wpf.Controls;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
 
+using NQueryViewer.Helpers;
+
 namespace NQueryViewer
 {
-    public partial class MainWindow
+    [Export(typeof(IMainWindowProvider))]
+    internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSatisfiedNotification
     {
+        private IWpfTextViewHost _textViewHost;
+
+        [Import]
+        public TextViewFactory TextViewFactory { get; set; }
+
+        public Window Window
+        {
+            get { return this; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        public void OnImportsSatisfied()
+        {
+            _textViewHost = TextViewFactory.CreateTextViewHost();
+            _editorHost.Content = _textViewHost.HostControl;
+
+            _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
+            _textViewHost.TextView.TextBuffer.PostChanged += TextBufferOnPostChanged;
 
             UpdateTree();
         }
@@ -175,12 +198,13 @@ namespace NQueryViewer
 
         private void UpdateTree()
         {
-            _treeView.ItemsSource = ToViewModel(_textBox.Text);
+            var source = _textViewHost.TextView.TextSnapshot.GetText();
+            _treeView.ItemsSource = ToViewModel(source);
         }
 
         private void UpdateTreeExpansion()
         {
-            var position = _textBox.CaretIndex;
+            var position = _textViewHost.TextView.Caret.Position.BufferPosition.Position;
             var roots = _treeView.ItemsSource.OfType<NodeViewModel>();
             var node = FindViewModelNode(roots, position) ?? FindViewModelNode(roots, position - 1);
             if (node != null)
@@ -213,18 +237,23 @@ namespace NQueryViewer
                 return;
 
             var span = viewModel.Span;
-            _textBox.Select(span.Start, span.Length);
+
+            var snapshot = _textViewHost.TextView.TextBuffer.CurrentSnapshot;
+            var snapshotSpan = new SnapshotSpan(snapshot, span.Start, span.Length);
+            _textViewHost.TextView.Selection.Select(snapshotSpan, false);
         }
 
-        private void TextBoxOnSelectionChanged(object sender, RoutedEventArgs e)
+        private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs caretPositionChangedEventArgs)
         {
-            if (_textBox.IsKeyboardFocusWithin)
+            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
         }
 
-        private void TextBoxTextChanged(object sender, TextChangedEventArgs e)
+        private void TextBufferOnPostChanged(object sender, EventArgs eventArgs)
         {
             UpdateTree();
+            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
+                UpdateTreeExpansion();
         }
 
         private void TreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
