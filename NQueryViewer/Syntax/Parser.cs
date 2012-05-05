@@ -789,7 +789,7 @@ namespace NQueryViewer.Syntax
 
         public QuerySyntax ParseQueryWithOptionalCte()
         {
-            if (Current.ContextualKind != SyntaxKind.WithKeyword)
+            if (Current.Kind != SyntaxKind.WithKeyword)
                 return ParseQuery();
 
             var withKeyword = MatchContextual(SyntaxKind.WithKeyword);
@@ -856,7 +856,7 @@ namespace NQueryViewer.Syntax
 
             // ORDER BY
 
-            if (Current.ContextualKind != SyntaxKind.OrderKeyword)
+            if (Current.Kind != SyntaxKind.OrderKeyword)
                 return query;
 
             var orderKeyword = Match(SyntaxKind.OrderKeyword);
@@ -900,10 +900,10 @@ namespace NQueryViewer.Syntax
             if (leftQuery == null)
                 return null;
 
-            while (Current.ContextualKind == SyntaxKind.UnionKeyword ||
-                   Current.ContextualKind == SyntaxKind.ExceptKeyword)
+            while (Current.Kind == SyntaxKind.UnionKeyword ||
+                   Current.Kind == SyntaxKind.ExceptKeyword)
             {
-                if (Current.ContextualKind == SyntaxKind.UnionKeyword)
+                if (Current.Kind == SyntaxKind.UnionKeyword)
                 {
                     var unionKeyword = MatchContextual(SyntaxKind.UnionKeyword);
                     var allKeyword = NextTokenIfContextual(SyntaxKind.AllKeyword);
@@ -928,7 +928,7 @@ namespace NQueryViewer.Syntax
             if (leftQuery == null)
                 return null;
 
-            while (Current.ContextualKind == SyntaxKind.IntersectKeyword)
+            while (Current.Kind == SyntaxKind.IntersectKeyword)
             {
                 var intersectKeyword = MatchContextual(SyntaxKind.IntersectKeyword);
                 var rightQuery = ParseSelectQuery();
@@ -1004,8 +1004,6 @@ namespace NQueryViewer.Syntax
 
                 if (selectColumn.CommaToken == null)
                     break;
-
-                NextToken();
             }
 
             return columns;
@@ -1016,16 +1014,12 @@ namespace NQueryViewer.Syntax
             var fromKeyword = NextToken();
             var tableReferences = new List<TableReferenceSyntax>();
 
+            TableReferenceSyntax tableReference;
             do
             {
-                var tableReference = ParseTableReference();
+                tableReference = ParseTableReference();
                 tableReferences.Add(tableReference);
-
-                if (Current.Kind != SyntaxKind.CommaToken)
-                    break;
-
-                NextToken();
-            } while (Current.Kind != SyntaxKind.EndOfFileToken);
+            } while (tableReference.CommaToken != null);
         
             return new FromClauseSyntax(fromKeyword, tableReferences);
         }
@@ -1045,7 +1039,7 @@ namespace NQueryViewer.Syntax
                 left = ParseNamedTableReference();
             }
 
-            while (left.CommaToken != null && Current.Kind != SyntaxKind.EndOfFileToken)
+            while (left.CommaToken == null)
             {
                 switch (Current.Kind)
                 {

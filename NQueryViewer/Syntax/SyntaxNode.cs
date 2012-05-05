@@ -6,17 +6,9 @@ namespace NQueryViewer.Syntax
 {
     public abstract class SyntaxNode
     {
-        // TODO: Should be abstract
-        public virtual IEnumerable<SyntaxNodeOrToken> GetChildren()
-        {
-            return Enumerable.Empty<SyntaxNodeOrToken>();
-        }
+        public abstract IEnumerable<SyntaxNodeOrToken> GetChildren();
 
-        // TODO: Should be abstract
-        public virtual SyntaxKind Kind
-        {
-            get{ return SyntaxKind.BadToken;}
-        }
+        public abstract SyntaxKind Kind { get; }
 
         public TextSpan Span
         {

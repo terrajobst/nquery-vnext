@@ -59,6 +59,9 @@ namespace NQueryViewer.Syntax
                 case "OR":
                     return SyntaxKind.OrKeyword;
 
+                case "ON":
+                    return SyntaxKind.OnKeyword;
+
                 case "SIMILAR":
                     return SyntaxKind.SimilarKeyword;
 
@@ -77,18 +80,6 @@ namespace NQueryViewer.Syntax
                 case "WHEN":
                     return SyntaxKind.WhenKeyword;
 
-                default:
-                    return SyntaxKind.IdentifierToken;
-            }
-        }
-
-        public static SyntaxKind GetContextualKeywordKind(string text)
-        {
-            if (text == null)
-                throw new ArgumentNullException("text");
-
-            switch (text.ToUpper())
-            {
                 case "ALL":
                     return SyntaxKind.AllKeyword;
 
@@ -155,6 +146,33 @@ namespace NQueryViewer.Syntax
                 case "WHERE":
                     return SyntaxKind.WhereKeyword;
 
+                case"RIGHT":
+                    return SyntaxKind.RightKeyword;
+
+                case "OUTER":
+                    return SyntaxKind.OuterKeyword;
+                
+                case "FULL":
+                    return SyntaxKind.FullKeyword;
+                
+                case "WITH":
+                    return SyntaxKind.WithKeyword;
+                
+                case "TIES":
+                    return SyntaxKind.TiesKeyword;
+
+                default:
+                    return SyntaxKind.IdentifierToken;
+            }
+        }
+
+        public static SyntaxKind GetContextualKeywordKind(string text)
+        {
+            if (text == null)
+                throw new ArgumentNullException("text");
+
+            switch (text.ToUpper())
+            {
                 default:
                     return SyntaxKind.IdentifierToken;
             }

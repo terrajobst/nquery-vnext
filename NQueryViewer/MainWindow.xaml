@@ -49,7 +49,8 @@
                       VerticalAlignment="Stretch" />
         <TextBox x:Name="_textBox"
                  Grid.Column="2"
-                 SelectionBrush="Aqua"
+                 FontFamily="Consolas"
+                 SelectionBrush="Yellow"
                  IsInactiveSelectionHighlightEnabled="True"
                  AcceptsReturn="True"        
                  HorizontalScrollBarVisibility="Auto"

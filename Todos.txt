@@ -1,0 +1,6 @@
+- Make keywords contectual, especially LEFT and RIGHT
+- Add support for diagnostics
+- Make sure the root methods for expression and query match EOF
+- Make sure that remaining tokens are always added to a skipped token list trivia
+- Should SyntaxToken be a class?
+- Add SyntaxTree

@@ -179,8 +179,8 @@ namespace NQueryViewer
 
         private void TreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            UpdateSelectedText();
+            if (_treeView.IsKeyboardFocusWithin)
+                UpdateSelectedText();
         }
-
     }
 }
