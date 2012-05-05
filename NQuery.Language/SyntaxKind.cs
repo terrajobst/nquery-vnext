@@ -18,9 +18,9 @@ namespace NQuery.Language
 
         IdentifierToken,
 
-        NumberToken,
-        StringToken,
-        DateToken,
+        NumericLiteralToken,
+        StringLiteralToken,
+        DateLiterealToken,
         ParameterMarkerToken,
 
         BitwiseNotToken,

@@ -4,6 +4,106 @@ namespace NQuery.Language
 {
     public static class SyntaxFacts
     {
+        public static bool IsKeyword(this SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                // Keywords
+
+                case SyntaxKind.AndKeyword:
+                case SyntaxKind.OrKeyword:
+                case SyntaxKind.IsKeyword:
+                case SyntaxKind.NullKeyword:
+                case SyntaxKind.NotKeyword:
+                case SyntaxKind.LikeKeyword:
+                case SyntaxKind.SoundslikeKeyword:
+                case SyntaxKind.SimilarKeyword:
+                case SyntaxKind.BetweenKeyword:
+                case SyntaxKind.InKeyword:
+                case SyntaxKind.CastKeyword:
+                case SyntaxKind.AsKeyword:
+                case SyntaxKind.CoalesceKeyword:
+                case SyntaxKind.NullIfKeyword:
+                case SyntaxKind.CaseKeyword:
+                case SyntaxKind.WhenKeyword:
+                case SyntaxKind.ThenKeyword:
+                case SyntaxKind.ElseKeyword:
+                case SyntaxKind.EndKeyword:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                case SyntaxKind.ToKeyword:
+
+                // Contextual keywords
+
+                case SyntaxKind.SelectKeyword:
+                case SyntaxKind.TopKeyword:
+                case SyntaxKind.DistinctKeyword:
+                case SyntaxKind.FromKeyword:
+                case SyntaxKind.WhereKeyword:
+                case SyntaxKind.GroupKeyword:
+                case SyntaxKind.ByKeyword:
+                case SyntaxKind.HavingKeyword:
+                case SyntaxKind.OrderKeyword:
+                case SyntaxKind.AscKeyword:
+                case SyntaxKind.DescKeyword:
+                case SyntaxKind.UnionKeyword:
+                case SyntaxKind.AllKeyword:
+                case SyntaxKind.IntersectKeyword:
+                case SyntaxKind.ExceptKeyword:
+                case SyntaxKind.ExistsKeyword:
+                case SyntaxKind.AnyKeyword:
+                case SyntaxKind.SomeKeyword:
+                case SyntaxKind.JoinKeyword:
+                case SyntaxKind.InnerKeyword:
+                case SyntaxKind.CrossKeyword:
+                case SyntaxKind.LeftKeyword:
+                case SyntaxKind.RightKeyword:
+                case SyntaxKind.OuterKeyword:
+                case SyntaxKind.FullKeyword:
+                case SyntaxKind.OnKeyword:
+                case SyntaxKind.WithKeyword:
+                case SyntaxKind.TiesKeyword:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsPunctuation(this SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.BitwiseNotToken:
+                case SyntaxKind.BitwiseAndToken:
+                case SyntaxKind.BitwiseOrToken:
+                case SyntaxKind.BitwiseXorToken:
+                case SyntaxKind.LeftParenthesesToken:
+                case SyntaxKind.RightParenthesesToken:
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                case SyntaxKind.MultiplyToken:
+                case SyntaxKind.DivideToken:
+                case SyntaxKind.ModulusToken:
+                case SyntaxKind.PowerToken:
+                case SyntaxKind.CommaToken:
+                case SyntaxKind.DotToken:
+                case SyntaxKind.EqualsToken:
+                case SyntaxKind.UnequalsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualToken:
+                case SyntaxKind.NotLessToken:
+                case SyntaxKind.NotGreaterToken:
+                case SyntaxKind.RightShiftToken:
+                case SyntaxKind.LeftShiftToken:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
         public static SyntaxKind GetKeywordKind(string text)
         {
             if (text == null)

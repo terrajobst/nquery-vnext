@@ -85,8 +85,8 @@ namespace NQueryViewer
         private static NodeViewModel ToViewModel(SyntaxNodeOrToken nodeOrToken)
         {
             return nodeOrToken.IsNode
-                       ? ToViewModel(nodeOrToken.AsNode)
-                       : ToViewModel(nodeOrToken.AsToken);
+                       ? ToViewModel(nodeOrToken.AsNode())
+                       : ToViewModel(nodeOrToken.AsToken());
         }
 
         private static NodeViewModel ToViewModel(SyntaxNode node)
@@ -96,12 +96,12 @@ namespace NQueryViewer
             foreach (var child in node.GetChildren())
             {
                 if (child.IsToken)
-                    children.AddRange(child.AsToken.LeadingTrivia.Select(ToViewModel));
+                    children.AddRange(child.AsToken().LeadingTrivia.Select(ToViewModel));
 
                 children.Add(ToViewModel(child));
 
                 if (child.IsToken)
-                    children.AddRange(child.AsToken.TrailingTrivia.Select(ToViewModel));
+                    children.AddRange(child.AsToken().TrailingTrivia.Select(ToViewModel));
             }
 
             return new NodeViewModel(node, children);

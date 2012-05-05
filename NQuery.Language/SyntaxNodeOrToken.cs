@@ -29,24 +29,24 @@ namespace NQuery.Language
             get { return _syntaxNode != null; }
         }
 
-        public SyntaxToken AsToken
+        public SyntaxToken AsToken()
         {
-            get { return _syntaxToken; }
+            return _syntaxToken;
         }
 
-        public SyntaxNode AsNode
+        public SyntaxNode AsNode()
         {
-            get { return _syntaxNode; }
+            return _syntaxNode;
         }
 
         public TextSpan Span
         {
-            get { return IsNode ? AsNode.Span : AsToken.Span; }
+            get { return IsNode ? AsNode().Span : AsToken().Span; }
         }
 
         public TextSpan FullSpan
         {
-            get { return IsNode ? AsNode.FullSpan : AsToken.FullSpan; }
+            get { return IsNode ? AsNode().FullSpan : AsToken().FullSpan; }
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken syntaxToken)

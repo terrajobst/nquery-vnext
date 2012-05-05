@@ -23,17 +23,17 @@
                                     <DataTrigger Binding="{Binding NodeType}"
                                                  Value="Token">
                                         <Setter Property="Foreground"
-                                                Value="Green" />
+                                                Value="Blue" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding NodeType}"
                                                  Value="Node">
                                         <Setter Property="Foreground"
-                                                Value="Blue" />
+                                                Value="Maroon" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding NodeType}"
                                                  Value="Trivia">
                                         <Setter Property="Foreground"
-                                                Value="Maroon" />
+                                                Value="Green" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsMissing}"
                                                  Value="True">

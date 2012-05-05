@@ -42,7 +42,7 @@ namespace NQueryViewer.Helpers
         {
             // Create buffer
 
-            var contentType = ContentTypeRegistryService.GetContentType("Text");
+            var contentType = ContentTypeRegistryService.GetContentType("NQuery");
             var textBuffer = TextBufferFactoryService.CreateTextBuffer(contentType);
 
             var textViewRoleSet = TextEditorFactoryService.CreateTextViewRoleSet(TextEditorFactoryService.DefaultRoles.Concat(new[] { "Reviewable" }));

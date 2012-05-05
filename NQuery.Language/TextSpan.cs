@@ -38,5 +38,17 @@ namespace NQuery.Language
         {
             return Start <= position && position < End;
         }
+
+        public bool OverlapsWith(TextSpan span)
+        {
+            var maxStart = Math.Max(Start, span.Start);
+            var minEnd = Math.Min(End, span.End);
+            return (maxStart < minEnd);
+        }
+
+        public bool IntersectsWith(TextSpan span)
+        {
+            return span.Start <= End && span.End >= Start;
+        }
     }
 }

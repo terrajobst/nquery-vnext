@@ -290,13 +290,13 @@ namespace NQuery.Language
                 case SyntaxKind.FalseKeyword:
                     return ParseBooleanLiteral();
 
-                case SyntaxKind.DateToken:
+                case SyntaxKind.DateLiterealToken:
                     return ParseDateLiteral();
 
-                case SyntaxKind.NumberToken:
+                case SyntaxKind.NumericLiteralToken:
                     return ParseNumberLiteral();
 
-                case SyntaxKind.StringToken:
+                case SyntaxKind.StringLiteralToken:
                     return ParseStringLiteral();
 
                 case SyntaxKind.ExistsKeyword:
@@ -442,7 +442,7 @@ namespace NQuery.Language
             // TODO
 			//if (_token.Id == TokenId.String)
 			{
-		        var token = Match(SyntaxKind.StringToken);
+		        var token = Match(SyntaxKind.StringLiteralToken);
 			    var typeName = ParseStringValue(token.Text);
 
 			    return new TypeReferenceSyntax(token, typeName);
@@ -984,7 +984,7 @@ namespace NQuery.Language
         private TopClauseSyntax ParseTopClause()
         {
             var topKeyword = NextToken();
-            var value = Match(SyntaxKind.NumberToken);
+            var value = Match(SyntaxKind.NumericLiteralToken);
             var withKeyword = NextTokenIf(SyntaxKind.WithKeyword);
             var tiesKeyword = NextTokenIf(SyntaxKind.TiesKeyword);
             return new TopClauseSyntax(topKeyword, value, withKeyword, tiesKeyword);

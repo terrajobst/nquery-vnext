@@ -391,7 +391,7 @@ namespace NQuery.Language
 
         private void ReadString()
         {
-            _kind = SyntaxKind.StringToken;
+            _kind = SyntaxKind.StringLiteralToken;
 
             // Skip first single quote
             _charReader.NextChar();
@@ -423,7 +423,7 @@ namespace NQuery.Language
 
         private void ReadDate()
         {
-            _kind = SyntaxKind.DateToken;
+            _kind = SyntaxKind.DateLiterealToken;
 
             // Skip initial #
             _charReader.NextChar();
@@ -455,7 +455,7 @@ namespace NQuery.Language
 
         private void ReadNumber()
         {
-            _kind = SyntaxKind.NumberToken;
+            _kind = SyntaxKind.NumericLiteralToken;
 
             // Just read everything that looks like it could be a number
             // numbers are verified by the parser
