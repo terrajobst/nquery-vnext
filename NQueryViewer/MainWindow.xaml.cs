@@ -209,7 +209,9 @@ namespace NQueryViewer
             if (viewModel == null)
                 return;
 
-            var span = viewModel.Span;
+            var span = _fullSpanHighlightingCheckBox.IsChecked == true
+                           ? viewModel.FullSpan
+                           : viewModel.Span;
 
             var snapshot = _textViewHost.TextView.TextBuffer.CurrentSnapshot;
             var snapshotSpan = new SnapshotSpan(snapshot, span.Start, span.Length);
@@ -217,10 +219,10 @@ namespace NQueryViewer
             _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
         }
 
-        private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs caretPositionChangedEventArgs)
+        private void FullSpanHighlightingCheckBoxChecked(object sender, RoutedEventArgs e)
         {
-            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
-                UpdateTreeExpansion();
+            UpdateSelectedText();
+           
         }
 
         private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
@@ -232,6 +234,12 @@ namespace NQueryViewer
         {
             if (_treeView.IsKeyboardFocusWithin)
                 UpdateSelectedText();
+        }
+
+        private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs caretPositionChangedEventArgs)
+        {
+            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
+                UpdateTreeExpansion();
         }
     }
 }

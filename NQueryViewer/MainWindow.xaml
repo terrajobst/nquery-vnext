@@ -6,17 +6,29 @@
         Height="350"
         Width="525">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="3" />
-            <ColumnDefinition Width="3*" />
-        </Grid.ColumnDefinitions>
-        <TreeView x:Name="_treeView"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0"
+            Orientation="Horizontal">
+            <CheckBox x:Name="_fullSpanHighlightingCheckBox"
+                      Content="Highlight Full Span"
+                      Checked="FullSpanHighlightingCheckBoxChecked"
+                      Unchecked="FullSpanHighlightingCheckBoxChecked" />
+        </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <TreeView x:Name="_treeView"
                   Grid.Column="0"
                   SelectedItemChanged="TreeViewSelectedItemChanged">
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                    <TextBlock Text="{Binding}">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Style.Triggers>
@@ -43,14 +55,16 @@
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
-                    </TextBlock>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
-        <GridSplitter Grid.Column="1"
+                        </TextBlock>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+            <GridSplitter Grid.Column="1"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch" />
-        <ContentControl Grid.Column="2"
+            <ContentControl Grid.Column="2"
                         x:Name="_editorHost" />
+        </Grid>
+
     </Grid>
 </Window>
