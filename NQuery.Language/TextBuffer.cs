@@ -95,6 +95,11 @@ namespace NQuery.Language
             return r < _lines.Count ? _lines[r] : null;
         }
 
+        public string GetText(TextSpan textSpan)
+        {
+            return _text.Substring(textSpan.Start, textSpan.Length);
+        }
+
         public string Text
         {
             get { return _text; }

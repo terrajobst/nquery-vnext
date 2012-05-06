@@ -99,6 +99,8 @@
     <Compile Include="EditorIntegration\INQuerySyntaxTreeManagerService.cs" />
     <Compile Include="EditorIntegration\NQueryClassifier.cs" />
     <Compile Include="EditorIntegration\INQuerySyntaxTreeManager.cs" />
+    <Compile Include="EditorIntegration\NQueryOutliningTagger.cs" />
+    <Compile Include="EditorIntegration\NQueryOutliningTaggerProvider.cs" />
     <Compile Include="EditorIntegration\NQuerySyntaxTreeManager.cs" />
     <Compile Include="EditorIntegration\NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="EditorIntegration\NQueryClassifierProvider.cs" />
