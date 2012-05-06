@@ -95,7 +95,21 @@ namespace NQuery.Language
             return new SyntaxToken(kind, contextualKind, true, span, string.Empty, new List<SyntaxTrivia>(), new List<SyntaxTrivia>());
         }
 
-        public ExpressionSyntax ParseExpression()
+        public CompilationUnitSyntax ParseRootQuery()
+        {
+            var query = ParseQueryWithOptionalCte();
+            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            return new CompilationUnitSyntax(query, endOfFileToken);
+        }
+
+        public CompilationUnitSyntax ParseRootExpression()
+        {
+            var expression = ParseExpression();
+            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            return new CompilationUnitSyntax(expression, endOfFileToken);
+        }
+
+        private ExpressionSyntax ParseExpression()
         {
             return ParseSubExpression(null, 0);
         }
@@ -787,7 +801,7 @@ namespace NQuery.Language
             return argument;
         }
 
-        public QuerySyntax ParseQueryWithOptionalCte()
+        private QuerySyntax ParseQueryWithOptionalCte()
         {
             if (Current.Kind != SyntaxKind.WithKeyword)
                 return ParseQuery();

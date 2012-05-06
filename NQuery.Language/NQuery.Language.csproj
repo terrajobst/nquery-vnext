@@ -50,6 +50,7 @@
     <Compile Include="CommonTableExpressionColumnNameSyntax.cs" />
     <Compile Include="CommonTableExpressionQuerySyntax.cs" />
     <Compile Include="CommonTableExpressionSyntax.cs" />
+    <Compile Include="CompilationUnitSyntax.cs" />
     <Compile Include="CountAllExpressionSyntax.cs" />
     <Compile Include="CrossJoinedTableReferenceSyntax.cs" />
     <Compile Include="DerivedTableReferenceSyntax.cs" />

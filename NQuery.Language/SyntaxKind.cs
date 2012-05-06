@@ -4,20 +4,12 @@ namespace NQuery.Language
 {
     public enum SyntaxKind
     {
-        // Trivia
-        
-        EndOfLineTrivia,
-        MultiLineCommentTrivia,
-        SingleLineCommentTrivia,
-        WhitespaceTrivia,
-
         // Tokens
 
         EndOfFileToken,
         BadToken,
 
         IdentifierToken,
-
         NumericLiteralToken,
         StringLiteralToken,
         DateLiterealToken,
@@ -104,12 +96,23 @@ namespace NQuery.Language
         WithKeyword,
         TiesKeyword,
 
+        // Trivia
+
+        WhitespaceTrivia,
+        EndOfLineTrivia,
+        MultiLineCommentTrivia,
+        SingleLineCommentTrivia,
+
         // UnaryExpressions
 
         ComplementExpression,
         IdentityExpression,
         NegationExpression,
         LogicalNotExpression,
+
+        // Nodes
+
+        CompilationUnit,
 
         // Binary expressions
 
@@ -144,29 +147,27 @@ namespace NQuery.Language
         BetweenExpression,
         IsNullExpression,
         CastExpression,
+        TypeReference,
         CaseExpression,
+        CaseLabel,
         CoalesceExpression,
         NullIfExpression,
         InExpression,
         LiteralExpression,
-
         ParameterExpression,
         NameExpression,
         PropertyAccessExpression,
         CountAllExpression,
         FunctionInvocationExpression,
         MethodInvocationExpression,
-
-        // Structure
-
         Argument,
         ArgumentList,
-        TypeReference,
-        CaseLabel,
 
         SingleRowSubselect,
         ExistsSubselect,
         AllAnySubselect,
+
+        // Queries
 
         ParenthesizedTableReference,
         NamedTableReference,
@@ -179,13 +180,13 @@ namespace NQuery.Language
         UnionQuery,
         IntersectQuery,
         OrderedQuery,
-        SelectQuery,
+        OrderByColumn,
         ParenthesizedQuery,
         CommonTableExpressionQuery,
         CommonTableExpression,
         CommonTableExpressionColumnName,
         CommonTableExpressionColumnNameList,
-        OrderByColumn,
+        SelectQuery,
         TopClause,
         WildcardSelectColumn,
         ExpressionSelectColumn,
