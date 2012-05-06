@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text;
 namespace NQuery.Language.VSEditor
 {
     [Export(typeof(INQuerySyntaxTreeManagerService))]
-    internal class NQuerySyntaxTreeManagerService : INQuerySyntaxTreeManagerService
+    internal sealed class NQuerySyntaxTreeManagerService : INQuerySyntaxTreeManagerService
     {
         public INQuerySyntaxTreeManager GetCSharpSyntaxTreeManager(ITextBuffer textBuffer)
         {

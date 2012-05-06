@@ -10,7 +10,7 @@ namespace NQuery.Language.VSEditor
     [Export(typeof(ITaggerProvider))]
     [TagType(typeof(IOutliningRegionTag))]
     [ContentType("NQuery")]
-    internal class NQueryOutliningTaggerProvider : ITaggerProvider
+    internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
     {
         [Import]
         public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
