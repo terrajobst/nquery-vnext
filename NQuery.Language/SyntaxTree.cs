@@ -24,7 +24,7 @@ namespace NQuery.Language
         public static SyntaxTree ParseExpression(string source)
         {
             var parser = new Parser(source);
-            var expression = parser.ParseRootQuery();
+            var expression = parser.ParseRootExpression();
             var textBuffer = new TextBuffer(source);
             return new SyntaxTree(expression, textBuffer);
         }
