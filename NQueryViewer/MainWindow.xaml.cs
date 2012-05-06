@@ -214,6 +214,7 @@ namespace NQueryViewer
             var snapshot = _textViewHost.TextView.TextBuffer.CurrentSnapshot;
             var snapshotSpan = new SnapshotSpan(snapshot, span.Start, span.Length);
             _textViewHost.TextView.Selection.Select(snapshotSpan, false);
+            _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
         }
 
         private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs caretPositionChangedEventArgs)
