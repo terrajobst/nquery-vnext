@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     [Export(typeof(ITaggerProvider))]
     [TagType(typeof(IOutliningRegionTag))]

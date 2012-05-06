@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
-using NQuery.Language;
-
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     public interface INQuerySyntaxTreeManager
     {

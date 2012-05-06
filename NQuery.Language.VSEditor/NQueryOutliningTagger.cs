@@ -5,9 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Language;
-
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     internal sealed class NQueryOutliningTagger : ITagger<IOutliningRegionTag> 
     {

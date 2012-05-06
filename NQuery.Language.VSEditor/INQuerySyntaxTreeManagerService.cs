@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text;
 
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     public interface INQuerySyntaxTreeManagerService
     {

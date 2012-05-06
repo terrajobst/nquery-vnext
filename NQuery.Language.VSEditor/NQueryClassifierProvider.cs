@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     [Export(typeof(IClassifierProvider))]
     [ContentType("NQuery")]

@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text;
 
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     [Export(typeof(INQuerySyntaxTreeManagerService))]
     internal class NQuerySyntaxTreeManagerService : INQuerySyntaxTreeManagerService

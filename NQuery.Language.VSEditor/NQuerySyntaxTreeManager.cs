@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Text;
 
-using NQuery.Language;
-
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     internal sealed class NQuerySyntaxTreeManager : INQuerySyntaxTreeManager
     {

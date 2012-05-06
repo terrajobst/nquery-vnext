@@ -6,9 +6,7 @@ using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
-using NQuery.Language;
-
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     internal sealed class NQueryClassifier : IClassifier
     {

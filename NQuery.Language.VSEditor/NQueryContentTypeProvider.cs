@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQueryViewer.EditorIntegration
+namespace NQuery.Language.VSEditor
 {
     internal sealed class NQueryContentTypeProvider
     {

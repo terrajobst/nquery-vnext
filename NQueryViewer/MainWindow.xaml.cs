@@ -9,8 +9,8 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
+using NQuery.Language.VSEditor;
 
-using NQueryViewer.EditorIntegration;
 using NQueryViewer.Helpers;
 
 namespace NQueryViewer
