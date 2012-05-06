@@ -7,7 +7,7 @@ namespace NQuery.Language
     public sealed class SelectQuerySyntax : QuerySyntax
     {
         private readonly SyntaxToken _selectKeyword;
-        private readonly SyntaxToken? _distinctKeyword;
+        private readonly SyntaxToken? _distinctAllKeyword;
         private readonly TopClauseSyntax _topClause;
         private readonly ReadOnlyCollection<SelectColumnSyntax> _selectColumns;
         private readonly FromClauseSyntax _fromClause;
@@ -15,10 +15,10 @@ namespace NQuery.Language
         private readonly GroupByClauseSyntax _groupByClause;
         private readonly HavingClauseSyntax _havingClause;
 
-        public SelectQuerySyntax(SyntaxToken selectKeyword, SyntaxToken? distinctKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
+        public SelectQuerySyntax(SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
         {
             _selectKeyword = selectKeyword;
-            _distinctKeyword = distinctKeyword;
+            _distinctAllKeyword = distinctAllKeyword;
             _topClause = topClause;
             _selectColumns = new ReadOnlyCollection<SelectColumnSyntax>(selectColumns);
             _fromClause = fromClause;
@@ -35,8 +35,8 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _selectKeyword;
-            if (_distinctKeyword != null)
-                yield return _distinctKeyword.Value;
+            if (_distinctAllKeyword != null)
+                yield return _distinctAllKeyword.Value;
             if (_topClause != null)
                 yield return _topClause;
             foreach (var selectColumn in _selectColumns)
@@ -56,9 +56,9 @@ namespace NQuery.Language
             get { return _selectKeyword; }
         }
 
-        public SyntaxToken? DistinctKeyword
+        public SyntaxToken? DistinctAllKeyword
         {
-            get { return _distinctKeyword; }
+            get { return _distinctAllKeyword; }
         }
 
         public TopClauseSyntax TopClause

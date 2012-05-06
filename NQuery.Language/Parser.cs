@@ -954,7 +954,10 @@ namespace NQuery.Language
 
             var selectKeyword = Match(SyntaxKind.SelectKeyword);
 
-            var distinctKeyword = NextTokenIf(SyntaxKind.DistinctKeyword);
+            var distinctAllKeyword = Current.Kind == SyntaxKind.DistinctKeyword ||
+                                     Current.Kind == SyntaxKind.AllKeyword
+                                         ? (SyntaxToken?) NextToken()
+                                         : null;
 
             var topClause = Current.Kind == SyntaxKind.TopKeyword
                                 ? ParseTopClause()
@@ -978,7 +981,7 @@ namespace NQuery.Language
                                    ? ParseHavingClause()
                                    : null;
 
-            return new SelectQuerySyntax(selectKeyword, distinctKeyword, topClause, selectColumns, fromClause, whereClause, groupByClause, havingClause);
+            return new SelectQuerySyntax(selectKeyword, distinctAllKeyword, topClause, selectColumns, fromClause, whereClause, groupByClause, havingClause);
         }
 
         private TopClauseSyntax ParseTopClause()
