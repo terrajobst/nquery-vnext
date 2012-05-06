@@ -39,6 +39,11 @@ namespace NQuery.Language
             return _syntaxNode;
         }
 
+        public SyntaxKind Kind
+        {
+            get { return IsNode ? AsNode().Kind : AsToken().Kind; }
+        }
+
         public TextSpan Span
         {
             get { return IsNode ? AsNode().Span : AsToken().Span; }
@@ -47,6 +52,11 @@ namespace NQuery.Language
         public TextSpan FullSpan
         {
             get { return IsNode ? AsNode().FullSpan : AsToken().FullSpan; }
+        }
+
+        public bool IsMissing
+        {
+            get { return IsToken && AsToken().IsMissing; }
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken syntaxToken)
