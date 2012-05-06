@@ -10,7 +10,7 @@ namespace NQueryViewer.EditorIntegration
 {
     internal sealed class NQuerySyntaxTreeManager : INQuerySyntaxTreeManager
     {
-        private ITextBuffer _textBuffer;
+        private readonly ITextBuffer _textBuffer;
         private SyntaxTree _syntaxTree;
         private CancellationTokenSource _cancellationTokenSource;
 
