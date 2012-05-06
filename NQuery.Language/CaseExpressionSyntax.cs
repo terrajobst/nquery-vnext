@@ -31,7 +31,9 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _caseKeyword;
-            yield return _inputExpression;
+
+            if (_inputExpression != null)
+                yield return _inputExpression;
 
             foreach (var caseLabel in _caseLabels)
                 yield return caseLabel;
@@ -39,7 +41,9 @@ namespace NQuery.Language
             if (_elseKeyword != null)
                 yield return _elseKeyword.Value;
 
-            yield return _elseExpression;
+            if (_elseExpression != null)
+                yield return _elseExpression;
+
             yield return _endKeyword;
         }
 
