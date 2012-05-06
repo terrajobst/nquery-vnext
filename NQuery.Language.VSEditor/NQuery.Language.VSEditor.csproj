@@ -84,6 +84,8 @@
   <ItemGroup>
     <Compile Include="INQuerySyntaxTreeManager.cs" />
     <Compile Include="INQuerySyntaxTreeManagerService.cs" />
+    <Compile Include="NQueryBraceTagger.cs" />
+    <Compile Include="NQueryBraceTaggerProvider.cs" />
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
