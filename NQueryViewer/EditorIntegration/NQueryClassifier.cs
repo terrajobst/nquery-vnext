@@ -24,12 +24,33 @@ namespace NQueryViewer.EditorIntegration
             _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
+        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
         {
             var snapshot = _textBuffer.CurrentSnapshot;
             var snapshotSpan = new SnapshotSpan(snapshot, 0, snapshot.Length);
             OnClassificationChanged(new ClassificationChangedEventArgs(snapshotSpan));
         }
+
+        public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
+        {
+            var classificationSpans = new List<ClassificationSpan>();
+            var syntaxTree = _syntaxTreeManager.SyntaxTree;
+            if (syntaxTree != null)
+            {
+                var worker = new ClassificationWorker(_classificationService, span, classificationSpans);
+                worker.ClassifyNode(syntaxTree.Root);
+            }
+            return classificationSpans;
+        }
+
+        private void OnClassificationChanged(ClassificationChangedEventArgs e)
+        {
+            var handler = ClassificationChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
 
         private sealed class ClassificationWorker
         {
@@ -132,26 +153,5 @@ namespace NQueryViewer.EditorIntegration
                 return null;
             }
         }
-
-        public IList<ClassificationSpan> GetClassificationSpans(SnapshotSpan span)
-        {
-            var classificationSpans = new List<ClassificationSpan>();
-            var syntaxTree = _syntaxTreeManager.SyntaxTree;
-            if (syntaxTree != null)
-            {
-                var worker = new ClassificationWorker(_classificationService, span, classificationSpans);
-                worker.ClassifyNode(syntaxTree.Root);
-            }
-            return classificationSpans;
-        }
-
-        public void OnClassificationChanged(ClassificationChangedEventArgs e)
-        {
-            var handler = ClassificationChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        public event EventHandler<ClassificationChangedEventArgs> ClassificationChanged;
     }
 }
