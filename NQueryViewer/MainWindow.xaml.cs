@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
 
+using NQueryViewer.EditorIntegration;
 using NQueryViewer.Helpers;
 
 namespace NQueryViewer
@@ -18,9 +19,13 @@ namespace NQueryViewer
     internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSatisfiedNotification
     {
         private IWpfTextViewHost _textViewHost;
+        private INQuerySyntaxTreeManager _syntaxTreeManager;
 
         [Import]
         public TextViewFactory TextViewFactory { get; set; }
+
+        [Import]
+        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
 
         public Window Window
         {
@@ -38,48 +43,11 @@ namespace NQueryViewer
             _editorHost.Content = _textViewHost.HostControl;
 
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
-            _textViewHost.TextView.TextBuffer.PostChanged += TextBufferOnPostChanged;
+
+            _syntaxTreeManager = SyntaxTreeManagerService.GetCSharpSyntaxTreeManager(_textViewHost.TextView.TextBuffer);
+            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
 
             UpdateTree();
-        }
-
-        private static IEnumerable<NodeViewModel> ToViewModel(string source)
-        {
-            //return Lex(source);
-            //return ParseExpression(source);
-            return ParseQuery(source);
-        }
-
-        private static IEnumerable<NodeViewModel> Lex(string source)
-        {
-            var lexer = new Lexer(source);
-            var tokens = new List<SyntaxToken>();
-
-            SyntaxToken token;
-            do
-            {
-                token = lexer.Lex();
-                tokens.Add(token);
-            } while (token.Kind != SyntaxKind.EndOfFileToken);
-
-            return ToViewModel(tokens);
-        }
-
-        private static IEnumerable<NodeViewModel> ParseExpression(string source)
-        {
-            var syntaxTree = SyntaxTree.ParseExpression(source);
-            return new[] { ToViewModel(syntaxTree.Root) };
-        }
-
-        private static IEnumerable<NodeViewModel> ParseQuery(string source)
-        {
-            var syntaxTree = SyntaxTree.ParseQuery(source);
-            return new[] { ToViewModel(syntaxTree.Root) };
-        }
-
-        private static IEnumerable<NodeViewModel> ToViewModel(IEnumerable<SyntaxToken> root)
-        {
-            return root.Select(ToViewModel).ToList();
         }
 
         private static NodeViewModel ToViewModel(SyntaxNodeOrToken nodeOrToken)
@@ -198,8 +166,13 @@ namespace NQueryViewer
 
         private void UpdateTree()
         {
-            var source = _textViewHost.TextView.TextSnapshot.GetText();
-            _treeView.ItemsSource = ToViewModel(source);
+            if (_syntaxTreeManager.SyntaxTree == null)
+                return;
+
+            var root = _syntaxTreeManager.SyntaxTree.Root;
+            _treeView.ItemsSource = new[] { ToViewModel(root) };
+            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
+                UpdateTreeExpansion();
         }
 
         private void UpdateTreeExpansion()
@@ -249,11 +222,9 @@ namespace NQueryViewer
                 UpdateTreeExpansion();
         }
 
-        private void TextBufferOnPostChanged(object sender, EventArgs eventArgs)
+        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
         {
             UpdateTree();
-            if (_textViewHost.HostControl.IsKeyboardFocusWithin)
-                UpdateTreeExpansion();
         }
 
         private void TreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
