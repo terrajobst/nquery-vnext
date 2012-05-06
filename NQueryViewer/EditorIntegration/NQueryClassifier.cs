@@ -118,7 +118,7 @@ namespace NQueryViewer.EditorIntegration
                     return _classificationService.Keyword;
 
                 if (token.Kind.IsPunctuation())
-                    return _classificationService.Other;
+                    return _classificationService.Operator;
 
                 if (token.Kind == SyntaxKind.IdentifierToken)
                     return _classificationService.Identifier;
