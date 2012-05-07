@@ -32,7 +32,8 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _identifer;
-            yield return _commonTableExpressionColumnNameList;
+            if (_commonTableExpressionColumnNameList != null)
+                yield return _commonTableExpressionColumnNameList;
             yield return _asKeyword;
             yield return _leftParentheses;
             yield return _query;
