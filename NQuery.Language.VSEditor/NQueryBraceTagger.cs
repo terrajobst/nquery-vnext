@@ -82,7 +82,7 @@ namespace NQuery.Language.VSEditor
                 case SyntaxKind.CaseKeyword:
                 case SyntaxKind.EndKeyword:
                 case SyntaxKind.StringLiteralToken:
-                case SyntaxKind.DateLiterealToken:
+                case SyntaxKind.DateLiteralToken:
                     return true;
 
                 default:
@@ -188,7 +188,7 @@ namespace NQuery.Language.VSEditor
                     return FindMatchingBrace(position, -1, parent, SyntaxKind.CaseKeyword, out left);
 
                 case SyntaxKind.StringLiteralToken:
-                case SyntaxKind.DateLiterealToken:
+                case SyntaxKind.DateLiteralToken:
                     left = new TextSpan(token.Span.Start, 1);
                     right = new TextSpan(token.Span.End - 1, 1);
                     return true;

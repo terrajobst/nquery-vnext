@@ -304,7 +304,7 @@ namespace NQuery.Language
                 case SyntaxKind.FalseKeyword:
                     return ParseBooleanLiteral();
 
-                case SyntaxKind.DateLiterealToken:
+                case SyntaxKind.DateLiteralToken:
                     return ParseDateLiteral();
 
                 case SyntaxKind.NumericLiteralToken:

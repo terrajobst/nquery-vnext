@@ -12,7 +12,7 @@ namespace NQuery.Language
         IdentifierToken,
         NumericLiteralToken,
         StringLiteralToken,
-        DateLiterealToken,
+        DateLiteralToken,
         ParameterMarkerToken,
 
         BitwiseNotToken,

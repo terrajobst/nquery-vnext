@@ -422,7 +422,7 @@ namespace NQuery.Language
 
         private void ReadDate()
         {
-            _kind = SyntaxKind.DateLiterealToken;
+            _kind = SyntaxKind.DateLiteralToken;
 
             // Skip initial #
             _charReader.NextChar();
