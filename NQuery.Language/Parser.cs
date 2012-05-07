@@ -776,7 +776,7 @@ namespace NQuery.Language
 
             var arguments = new List<ArgumentSyntax>();
 
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            while (true)
             {
                 var argument = ParseArgument();
                 arguments.Add(argument);
@@ -810,7 +810,7 @@ namespace NQuery.Language
 
             var commonTableExpressions = new List<CommonTableExpressionSyntax>();
 
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            while (true)
             {
                 var commonTableExpression = ParseCommonTableExpression();
                 commonTableExpressions.Add(commonTableExpression);
@@ -845,7 +845,7 @@ namespace NQuery.Language
 
                 var columnNames = new List<SyntaxToken>();
 
-                while (Current.Kind != SyntaxKind.EndOfFileToken)
+                while (true)
                 {
                     var columnName = Match(SyntaxKind.IdentifierToken);
                     columnNames.Add(columnName);
@@ -878,7 +878,7 @@ namespace NQuery.Language
 
             var columns = new List<OrderByColumnSyntax>();
 
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            while (true)
             {
                 var expression = ParseExpression();
                 SyntaxToken? modifier;
@@ -1014,7 +1014,7 @@ namespace NQuery.Language
             //if (Current.Kind == SyntaxKind.EndOfFileToken)
             //    _errorReporter.SimpleExpressionExpected(_token.Range, _token.Text);
 
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            while (true)
             {
                 var selectColumn = ParseColumnSource();
                 columns.Add(selectColumn);
@@ -1195,7 +1195,7 @@ namespace NQuery.Language
 
             var columns = new List<GroupByColumnSyntax>();
 
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
+            while (true)
             {
                 var expression = ParseExpression();
                 var comma = NextTokenIf(SyntaxKind.CommaToken);
