@@ -443,7 +443,7 @@ namespace NQuery.Language
 
                     case '#':
                         _charReader.NextChar();
-                        break;
+                        return;
 
                     default:
                         _charReader.NextChar();
