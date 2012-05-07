@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 namespace NQuery.Language
 {
-    // TODO: Should be internal.
-    public sealed class Lexer
+    internal sealed class Lexer
     {
         private readonly string _source;
         private readonly CharReader _charReader;
