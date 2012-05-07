@@ -1,5 +1,4 @@
-- Make keywords contectual, especially LEFT and RIGHT
 - Add support for diagnostics
 - Make sure that remaining tokens are always added to a skipped token list trivia
-- Should SyntaxToken be a class?
-- Should SyntaxTrivia be a class?
+
+- Suppprt contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.
