@@ -430,7 +430,7 @@ namespace NQuery.Language
             // Just read everything that looks like it could be a date
             // date are verified by the parser
 
-            while (!false)
+            while (true)
             {
                 switch (_charReader.Current)
                 {
