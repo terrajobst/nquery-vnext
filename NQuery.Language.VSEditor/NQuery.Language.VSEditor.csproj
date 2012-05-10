@@ -91,6 +91,8 @@
     <Compile Include="NQueryContentTypeProvider.cs" />
     <Compile Include="NQueryOutliningTagger.cs" />
     <Compile Include="NQueryOutliningTaggerProvider.cs" />
+    <Compile Include="NQueryQuickInfoSource.cs" />
+    <Compile Include="NQueryQuickInfoSourceProvider.cs" />
     <Compile Include="NQuerySyntaxTreeManager.cs" />
     <Compile Include="NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
