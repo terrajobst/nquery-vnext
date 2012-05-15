@@ -6,6 +6,6 @@ namespace NQuery.Language.VSEditor
 {
     public interface INQuerySyntaxTreeManagerService
     {
-        INQuerySyntaxTreeManager GetCSharpSyntaxTreeManager(ITextBuffer textBuffer);
+        INQuerySyntaxTreeManager GetSyntaxTreeManager(ITextBuffer textBuffer);
     }
 }

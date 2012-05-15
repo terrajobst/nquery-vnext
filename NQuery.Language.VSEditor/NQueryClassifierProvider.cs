@@ -21,7 +21,7 @@ namespace NQuery.Language.VSEditor
 
         public IClassifier GetClassifier(ITextBuffer textBuffer)
         {
-            var syntaxTreeManager = InQuerySyntaxTreeManagerService.GetCSharpSyntaxTreeManager(textBuffer);
+            var syntaxTreeManager = InQuerySyntaxTreeManagerService.GetSyntaxTreeManager(textBuffer);
             return new NQueryClassifier(ClassificationService, textBuffer, syntaxTreeManager);
         }
     }

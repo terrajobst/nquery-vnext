@@ -9,17 +9,17 @@ using Microsoft.VisualStudio.Utilities;
 namespace NQuery.Language.VSEditor
 {
     [Export(typeof(IViewTaggerProvider))]
-    [TagType(typeof(ITextMarkerTag))]
+    [TagType(typeof(IErrorTag))]
     [ContentType("NQuery")]
-    internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
+    internal sealed class NQuerySemanticErrorTaggerProvider : IViewTaggerProvider
     {
         [Import]
-        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
+        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(buffer);
-            return new NQueryBraceTagger(textView, buffer, syntaxTreeManager) as ITagger<T>;
+            var semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(buffer);
+            return new NQuerySemanticErrorTagger(buffer, semanticModelManager) as ITagger<T>;
         }
     }
 }

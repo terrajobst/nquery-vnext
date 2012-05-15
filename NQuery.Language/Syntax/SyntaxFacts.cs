@@ -391,7 +391,7 @@ namespace NQuery.Language
                     return SyntaxKind.LikeExpression;
 
                 case SyntaxKind.SoundslikeKeyword:
-                    return SyntaxKind.SoundexExpression;
+                    return SyntaxKind.SoundslikeExpression;
 
                 case SyntaxKind.SimilarKeyword:
                     return SyntaxKind.SimilarToExpression;
@@ -474,7 +474,7 @@ namespace NQuery.Language
                 case SyntaxKind.LikeExpression:
                     return 3;
 
-                case SyntaxKind.SoundexExpression:
+                case SyntaxKind.SoundslikeExpression:
                     return 3;
 
                 case SyntaxKind.SimilarToExpression:

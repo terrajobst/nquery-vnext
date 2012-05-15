@@ -20,7 +20,7 @@ namespace NQuery.Language
 
         public override SyntaxKind Kind
         {
-            get { return SyntaxKind.LikeExpression; }
+            get { return SyntaxKind.SoundslikeExpression; }
         }
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()

@@ -3,22 +3,20 @@ using System.Collections.Generic;
 
 namespace NQuery.Language
 {
-    public sealed class OuterJoinedTableReferenceSyntax : JoinedTableReferenceSyntax
+    public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableReferenceSyntax
     {
         private readonly SyntaxToken _typeKeyword;
         private readonly SyntaxToken? _outerKeyword;
         private readonly SyntaxToken _joinKeyword;
         private readonly SyntaxToken _onKeyword;
-        private readonly ExpressionSyntax _condition;
 
         public OuterJoinedTableReferenceSyntax(TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
-            : base(left, right, commaToken)
+            : base(left, right, condition, commaToken)
         {
             _typeKeyword = typeKeyword;
             _outerKeyword = outerKeyword;
             _joinKeyword = joinKeyword;
             _onKeyword = onKeyword;
-            _condition = condition;
         }
 
         public override SyntaxKind Kind
@@ -35,9 +33,29 @@ namespace NQuery.Language
             yield return _joinKeyword;
             yield return Right;
             yield return _onKeyword;
-            yield return _condition;
+            yield return Condition;
             if (CommaToken != null)
                 yield return CommaToken.Value;
+        }
+
+        public SyntaxToken TypeKeyword
+        {
+            get { return _typeKeyword; }
+        }
+
+        public SyntaxToken? OuterKeyword
+        {
+            get { return _outerKeyword; }
+        }
+
+        public SyntaxToken JoinKeyword
+        {
+            get { return _joinKeyword; }
+        }
+
+        public SyntaxToken OnKeyword
+        {
+            get { return _onKeyword; }
         }
     }
 }

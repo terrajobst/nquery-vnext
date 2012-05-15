@@ -29,5 +29,15 @@ namespace NQuery.Language
             if (CommaToken != null)
                 yield return CommaToken.Value;
         }
+
+        public SyntaxToken CrossKeyword
+        {
+            get { return _crossKeyword; }
+        }
+
+        public SyntaxToken JoinKeyword
+        {
+            get { return _joinKeyword; }
+        }
     }
 }

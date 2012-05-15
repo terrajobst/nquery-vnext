@@ -17,7 +17,7 @@ namespace NQuery.Language.VSEditor
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            var syntaxTreeManager = SyntaxTreeManagerService.GetCSharpSyntaxTreeManager(buffer);
+            var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(buffer);
             return new NQueryOutliningTagger(buffer, syntaxTreeManager) as ITagger<T>;
         }
     }

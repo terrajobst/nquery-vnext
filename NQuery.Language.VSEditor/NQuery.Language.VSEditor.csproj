@@ -77,11 +77,15 @@
     <Reference Include="StandaloneUndo">
       <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\StandaloneUndo.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INQuerySemanticModelManager.cs" />
+    <Compile Include="INQuerySemanticModelManagerService.cs" />
+    <Compile Include="INQuerySemanticClassificationService.cs" />
     <Compile Include="INQuerySyntaxTreeManager.cs" />
     <Compile Include="INQuerySyntaxTreeManagerService.cs" />
     <Compile Include="NQueryBraceTagger.cs" />
@@ -89,10 +93,18 @@
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
+    <Compile Include="NQuerySemanticClassifier.cs" />
+    <Compile Include="NQuerySemanticClassifierProvider.cs" />
+    <Compile Include="NQuerySemanticErrorTagger.cs" />
     <Compile Include="NQueryOutliningTagger.cs" />
     <Compile Include="NQueryOutliningTaggerProvider.cs" />
     <Compile Include="NQueryQuickInfoSource.cs" />
     <Compile Include="NQueryQuickInfoSourceProvider.cs" />
+    <Compile Include="NQuerySemanticErrorTaggerProvider.cs" />
+    <Compile Include="NQuerySemanticModelManager.cs" />
+    <Compile Include="NQuerySemanticModelManagerService.cs" />
+    <Compile Include="NQuerySemanticClassificationMetadata.cs" />
+    <Compile Include="NQuerySemanticClassificationService.cs" />
     <Compile Include="NQuerySyntaxTreeManager.cs" />
     <Compile Include="NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
@@ -9,6 +10,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
+using NQuery.Language.Semantic;
 using NQuery.Language.VSEditor;
 
 using NQueryViewer.Helpers;
@@ -20,12 +22,16 @@ namespace NQueryViewer
     {
         private IWpfTextViewHost _textViewHost;
         private INQuerySyntaxTreeManager _syntaxTreeManager;
+        private INQuerySemanticModelManager _semanticModelManager;
 
         [Import]
         public TextViewFactory TextViewFactory { get; set; }
 
         [Import]
         public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
+
+        [Import]
+        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
 
         public Window Window
         {
@@ -44,10 +50,149 @@ namespace NQueryViewer
 
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
 
-            _syntaxTreeManager = SyntaxTreeManagerService.GetCSharpSyntaxTreeManager(_textViewHost.TextView.TextBuffer);
+            var textBuffer = _textViewHost.TextView.TextBuffer;
+
+            _syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(textBuffer);
             _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+            _semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textBuffer);
+
+            _semanticModelManager.Compilation = _semanticModelManager.Compilation.SetSchemaTables(GetSchemaTables());
 
             UpdateTree();
+        }
+
+        private IList<SchemaTableSymbol> GetSchemaTables()
+        {
+            return new[]
+            {
+                new SchemaTableSymbol("Categories", new[]
+                {
+                    new ColumnSymbol("CategoryID", typeof (int)),
+                    new ColumnSymbol("CategoryName", typeof (string)),
+                    new ColumnSymbol("Description", typeof (string)),
+                    new ColumnSymbol("Picture", typeof (byte[]))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("CustomerCustomerDemo", new[]
+                {
+                    new ColumnSymbol("CustomerID", typeof (string)),
+                    new ColumnSymbol("CustomerTypeID", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("CustomerDemographics", new[]
+                {
+                    new ColumnSymbol("CustomerTypeID", typeof (string)),
+                    new ColumnSymbol("CustomerDesc", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Customers", new[]
+                {
+                    new ColumnSymbol("CustomerID", typeof (string)),
+                    new ColumnSymbol("CompanyName", typeof (string)),
+                    new ColumnSymbol("ContactName", typeof (string)),
+                    new ColumnSymbol("ContactTitle", typeof (string)),
+                    new ColumnSymbol("Address", typeof (string)),
+                    new ColumnSymbol("City", typeof (string)),
+                    new ColumnSymbol("Region", typeof (string)),
+                    new ColumnSymbol("PostalCode", typeof (string)),
+                    new ColumnSymbol("Country", typeof (string)),
+                    new ColumnSymbol("Phone", typeof (string)),
+                    new ColumnSymbol("Fax", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Employees", new[]
+                {
+                    new ColumnSymbol("EmployeeID", typeof (int)),
+                    new ColumnSymbol("LastName", typeof (string)),
+                    new ColumnSymbol("FirstName", typeof (string)),
+                    new ColumnSymbol("Title", typeof (string)),
+                    new ColumnSymbol("TitleOfCourtesy", typeof (string)),
+                    new ColumnSymbol("BirthDate", typeof (DateTime)),
+                    new ColumnSymbol("HireDate", typeof (DateTime)),
+                    new ColumnSymbol("Address", typeof (string)),
+                    new ColumnSymbol("City", typeof (string)),
+                    new ColumnSymbol("Region", typeof (string)),
+                    new ColumnSymbol("PostalCode", typeof (string)),
+                    new ColumnSymbol("Country", typeof (string)),
+                    new ColumnSymbol("HomePhone", typeof (string)),
+                    new ColumnSymbol("Extension", typeof (string)),
+                    new ColumnSymbol("Photo", typeof (byte[])),
+                    new ColumnSymbol("Notes", typeof (string)),
+                    new ColumnSymbol("ReportsTo", typeof (int)),
+                    new ColumnSymbol("PhotoPath", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("EmployeeTerritories", new[]
+                {
+                    new ColumnSymbol("EmployeeID", typeof (int)),
+                    new ColumnSymbol("TerritoryID", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Order Details", new[]
+                {
+                    new ColumnSymbol("OrderID", typeof (int)),
+                    new ColumnSymbol("ProductID", typeof (int)),
+                    new ColumnSymbol("UnitPrice", typeof (Decimal)),
+                    new ColumnSymbol("Quantity", typeof (Int16)),
+                    new ColumnSymbol("Discount", typeof (Single))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Orders", new[]
+                {
+                    new ColumnSymbol("OrderID", typeof (int)),
+                    new ColumnSymbol("CustomerID", typeof (string)),
+                    new ColumnSymbol("EmployeeID", typeof (int)),
+                    new ColumnSymbol("OrderDate", typeof (DateTime)),
+                    new ColumnSymbol("RequiredDate", typeof (DateTime)),
+                    new ColumnSymbol("ShippedDate", typeof (DateTime)),
+                    new ColumnSymbol("ShipVia", typeof (int)),
+                    new ColumnSymbol("Freight", typeof (Decimal)),
+                    new ColumnSymbol("ShipName", typeof (string)),
+                    new ColumnSymbol("ShipAddress", typeof (string)),
+                    new ColumnSymbol("ShipCity", typeof (string)),
+                    new ColumnSymbol("ShipRegion", typeof (string)),
+                    new ColumnSymbol("ShipPostalCode", typeof (string)),
+                    new ColumnSymbol("ShipCountry", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Products", new[]
+                {
+                    new ColumnSymbol("ProductID", typeof (int)),
+                    new ColumnSymbol("ProductName", typeof (string)),
+                    new ColumnSymbol("SupplierID", typeof (int)),
+                    new ColumnSymbol("CategoryID", typeof (int)),
+                    new ColumnSymbol("QuantityPerUnit", typeof (string)),
+                    new ColumnSymbol("UnitPrice", typeof (Decimal)),
+                    new ColumnSymbol("UnitsInStock", typeof (Int16)),
+                    new ColumnSymbol("UnitsOnOrder", typeof (Int16)),
+                    new ColumnSymbol("ReorderLevel", typeof (Int16)),
+                    new ColumnSymbol("Discontinued", typeof (Boolean))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Region", new[]
+                {
+                    new ColumnSymbol("RegionID", typeof (int)),
+                    new ColumnSymbol("RegionDescription", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Shippers", new[]
+                {
+                    new ColumnSymbol("ShipperID", typeof (int)),
+                    new ColumnSymbol("CompanyName", typeof (string)),
+                    new ColumnSymbol("Phone", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Suppliers", new[]
+                {
+                    new ColumnSymbol("SupplierID", typeof (int)),
+                    new ColumnSymbol("CompanyName", typeof (string)),
+                    new ColumnSymbol("ContactName", typeof (string)),
+                    new ColumnSymbol("ContactTitle", typeof (string)),
+                    new ColumnSymbol("Address", typeof (string)),
+                    new ColumnSymbol("City", typeof (string)),
+                    new ColumnSymbol("Region", typeof (string)),
+                    new ColumnSymbol("PostalCode", typeof (string)),
+                    new ColumnSymbol("Country", typeof (string)),
+                    new ColumnSymbol("Phone", typeof (string)),
+                    new ColumnSymbol("Fax", typeof (string)),
+                    new ColumnSymbol("HomePage", typeof (string))
+                }, typeof (IEnumerable)),
+                new SchemaTableSymbol("Territories", new[]
+                {
+                    new ColumnSymbol("TerritoryID", typeof (string)),
+                    new ColumnSymbol("TerritoryDescription", typeof (string)),
+                    new ColumnSymbol("RegionID", typeof (int))
+                }, typeof (IEnumerable)),
+            };
         }
 
         private static NodeViewModel ToViewModel(SyntaxNodeOrToken nodeOrToken)

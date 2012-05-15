@@ -138,7 +138,7 @@ namespace NQuery.Language
         LogicalAndExpression,
         LogicalOrExpression,
         LikeExpression,
-        SoundexExpression,
+        SoundslikeExpression,
         SimilarToExpression,
 
         // Expressions

@@ -13,12 +13,12 @@ namespace NQuery.Language.VSEditor
     internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider
     {
         [Import]
-        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
+        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
-            var syntaxTreeManager = SyntaxTreeManagerService.GetCSharpSyntaxTreeManager(textBuffer);
-            return new NQueryQuickInfoSource(syntaxTreeManager);
+            var semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textBuffer);
+            return new NQueryQuickInfoSource(semanticModelManager);
         }
     }
 }

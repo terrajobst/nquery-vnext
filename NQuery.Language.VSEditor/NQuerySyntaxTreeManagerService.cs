@@ -8,7 +8,7 @@ namespace NQuery.Language.VSEditor
     [Export(typeof(INQuerySyntaxTreeManagerService))]
     internal sealed class NQuerySyntaxTreeManagerService : INQuerySyntaxTreeManagerService
     {
-        public INQuerySyntaxTreeManager GetCSharpSyntaxTreeManager(ITextBuffer textBuffer)
+        public INQuerySyntaxTreeManager GetSyntaxTreeManager(ITextBuffer textBuffer)
         {
             return textBuffer.Properties.GetOrCreateSingletonProperty(() => new NQuerySyntaxTreeManager(textBuffer));
         }
