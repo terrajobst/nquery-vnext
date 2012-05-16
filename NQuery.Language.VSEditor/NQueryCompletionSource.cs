@@ -159,11 +159,12 @@ namespace NQuery.Language.VSEditor
             var insertionText = name;
 
             var sb = new StringBuilder();
-            sb.AppendLine("Ambiguous Name:");
+            sb.Append("Ambiguous Name:");
             foreach (var symbol in symbols)
             {
+                sb.AppendLine();
                 sb.Append("  ");
-                sb.AppendLine(symbol.ToString());
+                sb.Append(symbol);
             }
 
             var description = sb.ToString();
