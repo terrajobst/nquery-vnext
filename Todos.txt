@@ -2,3 +2,12 @@
 - Make sure that remaining tokens are always added to a skipped token list trivia
 
 - Suppprt contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.
+
+
+Authoring Features
+------------------
+- Smart indent
+- Signature Help
+- Formatting
+- Extend selection
+- Comment/Uncomment
