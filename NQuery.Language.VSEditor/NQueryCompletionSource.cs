@@ -37,24 +37,20 @@ namespace NQuery.Language.VSEditor
                 return;
 
             var root = semanticModel.Compilation.SyntaxTree.Root;
-            var tokenAtPosition = GetTokenAtPosition(root, position) ??
-                                  GetTokenAtPosition(root, position - 1);
+            var tokenAtPosition = GetIdentifierOrKeywordAtPosition(root, position) ??
+                                  GetIdentifierOrKeywordAtPosition(root, position - 1);
             var span = tokenAtPosition == null
                            ? new TextSpan(position, 0)
                            : tokenAtPosition.Value.Span;
 
-            var symbolCompletions = GetSymbolCompletions(semanticModel, position);
-            var keywordCompletions = GetKeywordCompletions();
-            var completions = symbolCompletions.Concat(keywordCompletions).ToArray();
-            Array.Sort(completions, (x, y) => x.InsertionText.CompareTo(y.InsertionText));
-
+            var completions = GetCompletions(semanticModel, position);
             var trackingSpan = snapshot.CreateTrackingSpan(span.Start, span.Length, SpanTrackingMode.EdgeInclusive);
 
             var completionSet = new CompletionSet("Tokens", "Tokens", trackingSpan, completions, null);
             completionSets.Add(completionSet);
         }
 
-        private static SyntaxToken? GetTokenAtPosition(SyntaxNode root, int position)
+        private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
         {
             if (!root.Span.Contains(position))
                 return null;
@@ -64,11 +60,13 @@ namespace NQuery.Language.VSEditor
                 if (nodeOrToken.IsToken)
                 {
                     if (nodeOrToken.Span.Contains(position))
-                        return nodeOrToken.AsToken();
+                        return nodeOrToken.Kind.IsIdentifierOrKeyword()
+                                   ? nodeOrToken.AsToken()
+                                   : (SyntaxToken?) null;
                 }
                 else
                 {
-                    var result = GetTokenAtPosition(nodeOrToken.AsNode(), position);
+                    var result = GetIdentifierOrKeywordAtPosition(nodeOrToken.AsNode(), position);
                     if (result != null)
                         return result;
                 }
@@ -77,7 +75,61 @@ namespace NQuery.Language.VSEditor
             return null;
         }
 
-        private IEnumerable<Completion> GetSymbolCompletions(SemanticModel semanticModel, int position)
+        private IEnumerable<Completion> GetCompletions(SemanticModel semanticModel, int position)
+        {
+            var root = semanticModel.Compilation.SyntaxTree.Root;
+            var propertyAccessExpression = GetPropertyAccessExpression(root, position) ??
+                                           GetPropertyAccessExpression(root, position - 1);
+
+            if (propertyAccessExpression != null)
+                return GetMemberSymbolCompletions(semanticModel, propertyAccessExpression);
+
+            var symbolCompletions = GetGlobalSymbolCompletions(semanticModel, position);
+            var keywordCompletions = GetKeywordCompletions();
+            var completions = symbolCompletions.Concat(keywordCompletions).ToArray();
+            Array.Sort(completions, (x, y) => x.InsertionText.CompareTo(y.InsertionText));
+            return completions;
+        }
+
+        private IEnumerable<Completion> GetMemberSymbolCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
+        {
+            var symbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
+            if (symbol == null)
+                return Enumerable.Empty<Completion>();
+
+            return CreateSymbolCompletions(symbol.Table.Columns);
+        }
+
+        private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
+        {
+            if (!root.Span.Contains(position))
+                return null;
+
+            var nodes = from n in root.GetChildren()
+                        where n.IsNode && n.Span.Contains(position)
+                        select n.AsNode();
+
+            foreach (var node in nodes)
+            {
+                var r = node as PropertyAccessExpressionSyntax;
+                if (r != null)
+                {
+                    if (r.Target.Span.Contains(position))
+                        return GetPropertyAccessExpression(r.Target, position);
+
+                    if (r.Dot.Span.End <= position && position < r.Name.Span.End)
+                        return r;
+                }
+
+                r = GetPropertyAccessExpression(node, position);
+                if (r != null)
+                    return r;
+            }
+
+            return null;            
+        }
+
+        private IEnumerable<Completion> GetGlobalSymbolCompletions(SemanticModel semanticModel, int position)
         {
             var symbols = semanticModel.LookupSymbols(position);
             if (!symbols.Any())
@@ -85,15 +137,23 @@ namespace NQuery.Language.VSEditor
 
             return from s in symbols
                    group s by s.Name
-                   into g
-                   select GetCompletion(g.Key, g);
+                       into g
+                       select CreateSymbolCompletion(g.Key, g);
         }
 
-        private Completion GetCompletion(string name, IEnumerable<Symbol> symbols)
+        private IEnumerable<Completion> CreateSymbolCompletions(IEnumerable<Symbol> symbols)
+        {
+            return from s in symbols
+                   group s by s.Name
+                       into g
+                       select CreateSymbolCompletion(g.Key, g);
+        }
+
+        private Completion CreateSymbolCompletion(string name, IEnumerable<Symbol> symbols)
         {
             var multiple = symbols.Skip(1).Any();
             if (!multiple)
-                return GetCompletion(symbols.First());
+                return CreateSymbolCompletion(symbols.First());
 
             var displayText = name;
             var insertionText = name;
@@ -111,7 +171,7 @@ namespace NQuery.Language.VSEditor
             return new Completion(displayText, insertionText, description, image, null);
         }
 
-        private Completion GetCompletion(Symbol symbol)
+        private Completion CreateSymbolCompletion(Symbol symbol)
         {
             var displayText = symbol.Name;
             var insertionText = symbol.Name;

@@ -66,7 +66,6 @@ namespace NQuery.Language.VSEditor
                             _session.Commit();
                             args.Handled = true;
                         }
-                        //args.Handled = ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand.Enter);
                         break;
                 }
             }

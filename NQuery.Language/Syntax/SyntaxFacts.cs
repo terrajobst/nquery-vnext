@@ -226,6 +226,11 @@ namespace NQuery.Language
             }
         }
 
+        public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
+        {
+            return kind == SyntaxKind.IdentifierToken || kind.IsKeyword();
+        }
+
         public static bool IsKeyword(this SyntaxKind kind)
         {
             switch (kind)
