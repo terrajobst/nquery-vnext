@@ -52,22 +52,22 @@ namespace NQuery.Language.Semantic
 
         public IEnumerable<Symbol> LookupSymbols(int position)
         {
-            var node = FindClosestSymbolWithBindingContext(_bindingResult.Root, position);
+            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position);
             var bindingContext = node == null ? null : _bindingResult.GetBindingContext(node);
             return bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
         }
 
-        private SyntaxNode FindClosestSymbolWithBindingContext(SyntaxNode root, int position)
+        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position)
         {
             var nodes = from n in root.GetChildren()
-                        where n.IsNode && n.Span.Contains(position)
+                        where n.IsNode && n.FullSpan.Contains(position)
                         select n.AsNode();
 
             foreach (var node in nodes)
             {
-                var result = FindClosestSymbolWithBindingContext(node, position);
+                var result = FindClosestNodeWithBindingContext(node, position);
                 if (result != null)
-                    return null;
+                    return result;
 
                 if (_bindingResult.GetBindingContext(node) != null)
                     return node;

@@ -81,8 +81,11 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INQueryGlyphService.cs" />
     <Compile Include="INQuerySemanticModelManager.cs" />
     <Compile Include="INQuerySemanticModelManagerService.cs" />
     <Compile Include="INQuerySemanticClassificationService.cs" />
@@ -92,7 +95,13 @@
     <Compile Include="NQueryBraceTaggerProvider.cs" />
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
+    <Compile Include="NQueryCompletionSource.cs" />
+    <Compile Include="NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
+    <Compile Include="NQueryGlyph.cs" />
+    <Compile Include="NQueryGlyphService.cs" />
+    <Compile Include="NQueryKeyProcessor.cs" />
+    <Compile Include="NQueryKeyProcessorProvider.cs" />
     <Compile Include="NQuerySemanticClassifier.cs" />
     <Compile Include="NQuerySemanticClassifierProvider.cs" />
     <Compile Include="NQuerySemanticErrorTagger.cs" />
@@ -116,7 +125,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Resource Include="Images\Aggregate.png" />
+    <Resource Include="Images\Column.png" />
+    <Resource Include="Images\Keyword.png" />
+    <Resource Include="Images\Parameter.png" />
+    <Resource Include="Images\Relation.png" />
+    <Resource Include="Images\ScalarValueFunction.png" />
+    <Resource Include="Images\StoredProcedure.png" />
+    <Resource Include="Images\Table.png" />
+    <Resource Include="Images\TableRef.png" />
+    <Resource Include="Images\TableValueFunction.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\AmbiguousName.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
