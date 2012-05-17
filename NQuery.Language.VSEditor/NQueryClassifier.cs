@@ -127,7 +127,7 @@ namespace NQuery.Language.VSEditor
 
             private void ClassifyTrivia(SyntaxTrivia trivia)
             {
-                if (trivia.Kind == SyntaxKind.SingleLineCommentTrivia || trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
+                if (trivia.Kind.IsComment())
                     AddClassification(trivia, _classificationService.Comment);
             }
 

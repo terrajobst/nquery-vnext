@@ -52,25 +52,30 @@ namespace NQuery.Language.Semantic
 
         public IEnumerable<Symbol> LookupSymbols(int position)
         {
-            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position);
+            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position, 0);
             var bindingContext = node == null ? null : _bindingResult.GetBindingContext(node);
             return bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
         }
 
-        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position)
+        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position, int lastPosition)
         {
-            var nodes = from n in root.GetChildren()
-                        where n.IsNode && n.FullSpan.Contains(position)
-                        select n.AsNode();
-
-            foreach (var node in nodes)
+            foreach (var nodeOrToken in root.GetChildren())
             {
-                var result = FindClosestNodeWithBindingContext(node, position);
-                if (result != null)
-                    return result;
+                if (lastPosition <= position && position < nodeOrToken.Span.End)
+                {
+                    if (nodeOrToken.IsToken)
+                        return null;
 
-                if (_bindingResult.GetBindingContext(node) != null)
-                    return node;
+                    var node = nodeOrToken.AsNode();
+                    var result = FindClosestNodeWithBindingContext(node, position, lastPosition);
+                    if (result != null)
+                        return result;
+
+                    if (_bindingResult.GetBindingContext(node) != null)
+                        return node;
+                }
+
+                lastPosition = nodeOrToken.Span.End;
             }
 
             return null;

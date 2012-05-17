@@ -74,8 +74,7 @@ namespace NQuery.Language.VSEditor
                 .StartNew(() => compilation.GetSemanticModel(), cancellationToken)
                 .ContinueWith(t => sc.Post(s =>
                 {
-                    if (_compilation == compilation)
-                        SemanticModel = t.Result;
+                    SemanticModel = t.Result;
                 }, null), TaskContinuationOptions.NotOnCanceled);
         }
 

@@ -6,6 +6,19 @@ namespace NQuery.Language
 {
     public static class SyntaxFacts
     {
+        public static bool IsLiteral(this SyntaxKind kind)
+        {
+            return kind == SyntaxKind.DateLiteralToken ||
+                   kind == SyntaxKind.NumericLiteralToken ||
+                   kind == SyntaxKind.StringLiteralToken;
+        }
+
+        public static bool IsComment(this SyntaxKind kind)
+        {
+            return kind == SyntaxKind.SingleLineCommentTrivia ||
+                   kind == SyntaxKind.MultiLineCommentTrivia;
+        }
+
         public static IEnumerable<SyntaxKind> GetKeywordKinds()
         {
             return GetReservedKeywordKinds().Concat(GetContextualKeywordKinds());
@@ -222,7 +235,7 @@ namespace NQuery.Language
                 case SyntaxKind.TiesKeyword:
                     return "TIES";
                 default:
-                    return string.Empty;
+                    return String.Empty;
             }
         }
 

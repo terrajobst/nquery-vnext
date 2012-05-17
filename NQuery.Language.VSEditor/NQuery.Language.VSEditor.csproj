@@ -95,6 +95,7 @@
     <Compile Include="NQueryBraceTaggerProvider.cs" />
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
+    <Compile Include="NQueryCompletionSet.cs" />
     <Compile Include="NQueryCompletionSource.cs" />
     <Compile Include="NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
