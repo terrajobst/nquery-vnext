@@ -64,9 +64,11 @@ namespace NQuery.Language
 
         private SyntaxToken Match(SyntaxKind kind)
         {
-            return Current.Kind == kind
-                       ? NextToken()
-                       : CreateMissingToken(kind, SyntaxKind.BadToken);
+            if (Current.Kind == kind)
+                return NextToken();
+
+            // TODO: Report token expected
+            return CreateMissingToken(kind, SyntaxKind.BadToken);
         }
 
         private SyntaxToken MatchContextual(SyntaxKind kind)
