@@ -1,5 +1,7 @@
 - Add support for diagnostics
 - Tokens should record whether they are termimated
+- Keywords should actually record the text as written in input as they are case
+  sensitive.
 - Make sure that remaining tokens are always added to a skipped token list trivia
 
 - Suppprt contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.
