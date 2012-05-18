@@ -1,7 +1,5 @@
 - Add support for diagnostics
 - Tokens should record whether they are termimated
-- The lexer should record identifiers properly ("", [])
-- The lexer should verify literal tokens, not the parser
 - Make sure that remaining tokens are always added to a skipped token list trivia
 
 - Suppprt contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.

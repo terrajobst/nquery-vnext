@@ -10,16 +10,18 @@ namespace NQuery.Language
         private readonly SyntaxKind _contextualKind;
         private readonly bool _isMissing;
         private readonly string _text;
+        private readonly object _value;
         private readonly TextSpan _span;
         private readonly ReadOnlyCollection<SyntaxTrivia> _leadingTrivia;
         private readonly ReadOnlyCollection<SyntaxTrivia> _trailingTrivia;
 
-        public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
+        public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
         {
             _kind = kind;
             _contextualKind = contextualKind;
             _isMissing = isMissing;
             _text = text;
+            _value = value;
             _span = span;
             _leadingTrivia = new ReadOnlyCollection<SyntaxTrivia>(leadingTrivia);
             _trailingTrivia = new ReadOnlyCollection<SyntaxTrivia>(trailingTrivia);
@@ -42,7 +44,17 @@ namespace NQuery.Language
 
         public string Text
         {
-            get { return _text; }
+            get { return _text ?? SyntaxFacts.GetText(_kind); }
+        }
+
+        public object Value
+        {
+            get { return _value; }
+        }
+
+        public string ValueText
+        {
+            get { return _value as string ?? Text; }
         }
 
         public TextSpan Span

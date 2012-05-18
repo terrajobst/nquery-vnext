@@ -419,7 +419,7 @@ namespace NQuery.Language.Semantic
 
         private BoundExpression BindNameExpression(NameExpressionSyntax node)
         {
-            var name = node.Identifier.Text;
+            var name = node.Identifier.ValueText;
             var symbols = Context.LookupSymbols(name, false).ToArray();
 
             if (symbols.Length == 0)
@@ -450,7 +450,7 @@ namespace NQuery.Language.Semantic
             var targetAsName = node.Target as NameExpressionSyntax;
             if (targetAsName != null)
             {
-                var symbols = Context.LookupSymbols(targetAsName.Identifier.Text, false).ToArray();
+                var symbols = Context.LookupSymbols(targetAsName.Identifier.ValueText, false).ToArray();
                 if (symbols.Length == 1)
                 {
                     var table = symbols[0] as TableInstanceSymbol;
@@ -472,7 +472,7 @@ namespace NQuery.Language.Semantic
             }
 
             var boundExpression = BindExpression(node.Target);
-            var name = node.Name.Text;
+            var name = node.Name.ValueText;
 
             if (!boundExpression.Type.IsUnknown())
             {
@@ -485,7 +485,7 @@ namespace NQuery.Language.Semantic
 
         private BoundExpression BindColumnInstance(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
-            var columnName = node.Name.Text;
+            var columnName = node.Name.ValueText;
             var columns = tableInstance.Table.Columns.Where(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase)).ToArray();
             if (columns.Length == 0)
             {
@@ -577,16 +577,16 @@ namespace NQuery.Language.Semantic
 
         private BoundTableReference BindNamedTableReference(NamedTableReferenceSyntax node)
         {
-            var symbols = Context.LookupSymbols(node.TableName.Text, false).OfType<TableSymbol>().ToArray();
+            var symbols = Context.LookupSymbols(node.TableName.ValueText, false).OfType<TableSymbol>().ToArray();
 
             if (symbols.Length == 0)
             {
                 _diagnostics.Add(DiagnosticFactory.UndeclaredTable(node));
 
-                var badTableSymbol = new BadTableSymbol(node.TableName.Text);
+                var badTableSymbol = new BadTableSymbol(node.TableName.ValueText);
                 var badAlias = node.Alias == null
                                    ? badTableSymbol.Name
-                                   : node.Alias.Identifier.Text;
+                                   : node.Alias.Identifier.ValueText;
                 var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol);
                 return new BoundNamedTableReference(errorInstance);
             }
@@ -599,7 +599,7 @@ namespace NQuery.Language.Semantic
             var table = symbols[0];
             var alias = node.Alias == null
                             ? table.Name
-                            : node.Alias.Identifier.Text;
+                            : node.Alias.Identifier.ValueText;
 
             var tableInstance = new TableInstanceSymbol(alias, table);
             var boundNamedTableReference = new BoundNamedTableReference(tableInstance);
@@ -703,7 +703,7 @@ namespace NQuery.Language.Semantic
                            select new ColumnSymbol(c.Name, c.Expression.Type)).ToArray();
 
             var derivedTable = new DerivedTableSymbol(columns);
-            var derivedTableInstance = new TableInstanceSymbol(node.Name.Text, derivedTable);
+            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable);
             var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
             var parent = _bindingContextStack.Pop();
@@ -841,7 +841,7 @@ namespace NQuery.Language.Semantic
         {
             var expression = BindExpression(node.Expression);
             var name = node.Alias != null
-                           ? node.Alias.Identifier.Text
+                           ? node.Alias.Identifier.ValueText
                            : InferColumnName(expression);
             return new BoundSelectColumn(expression, name);
         }
@@ -856,7 +856,7 @@ namespace NQuery.Language.Semantic
         {
             var tableName = node.TableName == null
                                 ? null
-                                : node.TableName.Value.Text;
+                                : node.TableName.Value.ValueText;
 
             return tableName != null
                        ? BindWildcardSelectColumnForTable(tableName)

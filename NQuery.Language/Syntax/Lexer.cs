@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
 namespace NQuery.Language
 {
@@ -12,6 +14,7 @@ namespace NQuery.Language
         
         private SyntaxKind _kind;
         private SyntaxKind _contextualKind;
+        private object _value;
 
         public Lexer(string source)
         {
@@ -27,13 +30,16 @@ namespace NQuery.Language
 
             _kind = SyntaxKind.BadToken;
             _contextualKind = SyntaxKind.BadToken;
+            _value = null;
 
             var start = _charReader.Position;
             ReadToken();
             var end = _charReader.Position;
             var kind = _kind;
             var span = TextSpan.FromBounds(start, end);
-            var text = GetText(span);
+            var text = string.IsNullOrEmpty(SyntaxFacts.GetText(kind))
+                           ? GetText(span)
+                           : null;
 
             // TODO: Get errors
 
@@ -41,7 +47,7 @@ namespace NQuery.Language
             ReadTrivia(_trailingTrivia, isLeading: true);
             var trailingTrivia = _trailingTrivia.ToArray();
 
-            return new SyntaxToken(kind, _contextualKind, false, span, text, leadingTrivia, trailingTrivia);
+            return new SyntaxToken(kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia);
         }
 
         private void ReadTrivia(List<SyntaxTrivia> target, bool isLeading)
@@ -395,6 +401,8 @@ namespace NQuery.Language
             // Skip first single quote
             _charReader.NextChar();
 
+            var sb = new StringBuilder();
+
             while (true)
             {
                 switch (_charReader.Current)
@@ -402,22 +410,27 @@ namespace NQuery.Language
                     case '\0':
                         // TODO
                         // _errorReporter.UnterminatedString(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
-                        return;
+                        goto ExitLoop;
 
                     case '\'':
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
 
                         if (_charReader.Current != '\'')
-                            return;
+                            goto ExitLoop;
                         
                         _charReader.NextChar();
                         break;
 
                     default:
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
                 }
             }
+
+        ExitLoop:
+            _value = sb.ToString();
         }
 
         private void ReadDate()
@@ -427,8 +440,10 @@ namespace NQuery.Language
             // Skip initial #
             _charReader.NextChar();
 
-            // Just read everything that looks like it could be a date
-            // date are verified by the parser
+            var sb = new StringBuilder();
+
+            // Just read everything that looks like it could be a date -- we will
+            // verify it afterwards by proper DateTime parsing.
 
             while (true)
             {
@@ -439,56 +454,270 @@ namespace NQuery.Language
                     case '\n':
                         // TODO
                         //_errorReporter.UnterminatedDate(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
-                        return;
+                        goto ExitLoop;
 
                     case '#':
                         _charReader.NextChar();
-                        return;
+                        goto ExitLoop;
 
                     default:
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
                 }
             }
+
+        ExitLoop:
+            var text = sb.ToString();
+            DateTime result;
+            if (!DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            {
+                // TODO: Report error
+                //_errorReporter.InvalidDate(tokenRange, textWithoutDelimiters)
+            }
+
+            _value = result;
         }
 
         private void ReadNumber()
         {
             _kind = SyntaxKind.NumericLiteralToken;
 
-            // Just read everything that looks like it could be a number
-            // numbers are verified by the parser
+            // Just read everything that looks like it could be a number -- we will
+            // verify it afterwards by proper number parsing.
+
+            var sb = new StringBuilder();
+            var hasExponentialModifier = false;
+            var hasDotModifier = false;
 
             while (true)
             {
                 switch (_charReader.Current)
                 {
-                        // dot
+                    // dot
                     case '.':
+                        sb.Append(_charReader.Current);
+                        _charReader.NextChar();
+                        hasDotModifier = true;
                         break;
 
-                        // special handling for e, it could be the exponent indicator 
-                        // followed by an optional sign
+                    // special handling for e, it could be the exponent indicator 
+                    // followed by an optional sign
 
                     case 'E':
                     case 'e':
-                        if (_charReader.Peek() == '-' || _charReader.Peek() == '+')
+                        sb.Append(_charReader.Current);
+                        _charReader.NextChar();
+                        hasExponentialModifier = true;
+                        if (_charReader.Current == '-' || _charReader.Current == '+')
+                        {
+                            sb.Append(_charReader.Current);
                             _charReader.NextChar();
+                        }
                         break;
 
                     default:
                         if (!Char.IsLetterOrDigit(_charReader.Current))
-                            return;
+                            goto ExitLoop;
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
                 }
             }
+
+            ExitLoop:
+
+            var text = sb.ToString();
+            _value = hasDotModifier || hasExponentialModifier
+                         ? ReadDouble(text)
+                         : ReadInt32OrInt64(text);
+        }
+
+        private static double ReadDouble(string text)
+        {
+            try
+            {
+                return double.Parse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
+            }
+            catch (OverflowException)
+            {
+                // TODO:
+                //_errorReporter.NumberTooLarge(tokenRange, number);
+            }
+            catch (FormatException)
+            {
+                // TODO:
+                //_errorReporter.InvalidReal(tokenRange, number);
+            }
+            return 0.0;
+        }
+
+        private static object ReadInt32OrInt64(string text)
+        {
+            var int64 = ReadInt64(text);
+
+            // If the integer can be represented as Int32 we return
+            // an Int32 literal. Otherwise we return an Int64.
+
+            try
+            {
+                checked
+                {
+                    return (int)int64;
+                }
+            }
+            catch (OverflowException)
+            {
+                return int64;
+            } 
+        }
+
+        private static long ReadInt64(string text)
+        {
+            // Get indicator
+
+            var indicator = text[text.Length - 1];
+
+            // Remove trailing indicator (h, b, or o)
+
+            var textWithoutIndicator = text.Substring(0, text.Length - 1);
+
+            switch (indicator)
+            {
+                case 'H':
+                case 'h':
+                    try
+                    {
+                        return long.Parse(textWithoutIndicator, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
+                    }
+                    catch (OverflowException)
+                    {
+                        //TODO:
+                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                    }
+                    catch (FormatException)
+                    {
+                        //TODO:
+                        //_errorReporter.InvalidHex(tokenRange, textWithoutIndicator);
+                    }
+
+                    return 0;
+
+                case 'B':
+                case 'b':
+                    try
+                    {
+                        return ReadBinaryValue(textWithoutIndicator);
+                    }
+                    catch (OverflowException)
+                    {
+                        // TODO:
+                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                    }
+
+                    return 0;
+
+                case 'O':
+                case 'o':
+                    try
+                    {
+                        return ReadOctalValue(textWithoutIndicator);
+                    }
+                    catch (OverflowException)
+                    {
+                        // TODO:
+                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                    }
+
+                    return 0;
+
+                default:
+                    try
+                    {
+                        return Int64.Parse(text, CultureInfo.InvariantCulture);
+                    }
+                    catch (OverflowException)
+                    {
+                        // TODO:
+                        //_errorReporter.NumberTooLarge(tokenRange, text);
+                    }
+                    catch (FormatException)
+                    {
+                        // TODO:
+                        //_errorReporter.InvalidInteger(tokenRange, text);
+                    }
+
+                    return 0;
+            }
+        }
+
+        private static long ReadBinaryValue(string binary)
+        {
+            long val = 0;
+
+            for (int i = binary.Length - 1, j = 0; i >= 0; i--, j++)
+            {
+                if (binary[i] == '0')
+                {
+                    // Nothing to add
+                }
+                else if (binary[i] == '1')
+                {
+                    checked
+                    {
+                        // Don't use >> because this implicitly casts the operator to Int32. 
+                        // Also this operation will never detect an overflow.
+                        val += (long)Math.Pow(2, j);
+                    }
+                }
+                else
+                {
+                    // TODO
+                    //_errorReporter.InvalidBinary(tokenRange, binary);
+                    return 0;
+                }
+            }
+
+            return val;
+        }
+
+        private static long ReadOctalValue(string octal)
+        {
+            long val = 0;
+
+            for (int i = octal.Length - 1, j = 0; i >= 0; i--, j++)
+            {
+                int c;
+
+                try
+                {
+                    c = Int32.Parse(new string(octal[i], 1), CultureInfo.InvariantCulture);
+
+                    if (c > 7)
+                    {
+                        // TODO:
+                        //_errorReporter.InvalidOctal(tokenRange, octal);
+                        return 0;
+                    }
+                }
+                catch (FormatException)
+                {
+                    // TODO:
+                    //_errorReporter.InvalidOctal(tokenRange, octal);
+                    return 0;
+                }
+
+                checked
+                {
+                    val += (long)(c * Math.Pow(8, j));
+                }
+            }
+
+            return val;
         }
 
         private void ReadIdentifierOrKeyword()
         {
-            // TODO: We shouldn't extract the text multiple times.
-
             var start = _charReader.Position;
 
             // Skip first letter
@@ -509,6 +738,7 @@ namespace NQuery.Language
 
             _kind = SyntaxFacts.GetKeywordKind(text);
             _contextualKind = SyntaxFacts.GetContextualKeywordKind(text);
+            _value = text;
         }
 
         private void ReadQuotedIdentifier()
@@ -517,6 +747,8 @@ namespace NQuery.Language
             
             // Skip initial quote
             _charReader.NextChar();
+
+            var sb = new StringBuilder();
 
             while (true)
             {
@@ -527,22 +759,29 @@ namespace NQuery.Language
                     case '\n':
                         // TODO
                         // _errorReporter.UnterminatedQuotedIdentifier(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
-                        return;
+                        goto ExitLoop;
 
                     case '"':
+                        if (_charReader.Peek() != '"')
+                        {
+                            _charReader.NextChar();
+                            goto ExitLoop;
+                        }
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
-
-                        if (_charReader.Current != '"')
-                            return;
-
                         _charReader.NextChar();
                         break;
 
                     default:
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
                 }
             }
+
+        ExitLoop:
+            var text = sb.ToString();
+            _value = text;
         }
 
         private void ReadParenthesizedIdentifier()
@@ -551,6 +790,8 @@ namespace NQuery.Language
 
             // Skip initial [
             _charReader.NextChar();
+
+            var sb = new StringBuilder();
 
             while (true)
             {
@@ -561,22 +802,30 @@ namespace NQuery.Language
                     case '\n':
                         // TODO:
                         //_errorReporter.UnterminatedParenthesizedIdentifier(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
-                        return;
+                        goto ExitLoop;
 
                     case ']':
+                        if (_charReader.Peek() != ']')
+                        {
+                            _charReader.NextChar();
+                            goto ExitLoop;
+                        }
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
-
-                        if (_charReader.Current != ']')
-                            return;
-                        
                         _charReader.NextChar();
                         break;
 
+
                     default:
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
                 }
             }
+
+        ExitLoop:
+            var text = sb.ToString();
+            _value = text;
         }
 
         private string GetText(TextSpan span)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text;
 
 namespace NQuery.Language
@@ -79,6 +78,7 @@ namespace NQuery.Language
                                              Current.IsMissing,
                                              Current.Span,
                                              Current.Text,
+                                             Current.Value,
                                              Current.LeadingTrivia,
                                              Current.TrailingTrivia);
                 NextToken();
@@ -92,7 +92,7 @@ namespace NQuery.Language
         {
             var start = Current.FullSpan.Start;
             var span = new TextSpan(start, 0);
-            return new SyntaxToken(kind, contextualKind, true, span, string.Empty, new List<SyntaxTrivia>(), new List<SyntaxTrivia>());
+            return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new List<SyntaxTrivia>(), new List<SyntaxTrivia>());
         }
 
         public CompilationUnitSyntax ParseRootQuery()
@@ -305,13 +305,9 @@ namespace NQuery.Language
                     return ParseBooleanLiteral();
 
                 case SyntaxKind.DateLiteralToken:
-                    return ParseDateLiteral();
-
                 case SyntaxKind.NumericLiteralToken:
-                    return ParseNumberLiteral();
-
                 case SyntaxKind.StringLiteralToken:
-                    return ParseStringLiteral();
+                    return ParseLiteral();
 
                 case SyntaxKind.ExistsKeyword:
                 {
@@ -509,247 +505,13 @@ namespace NQuery.Language
         {
             var token = NextToken();
             var value = token.Kind == SyntaxKind.TrueKeyword;
-
             return new LiteralExpressionSyntax(token, value);
         }
 
-        private ExpressionSyntax ParseDateLiteral()
+        private ExpressionSyntax ParseLiteral()
         {
             var token = NextToken();
-            var text = token.Text;
-
-            DateTime value;
-
-            if (text.Length < 3 || text[0] != '#' || text[text.Length - 1] != '#')
-            {
-                // TODO
-                //_errorReporter.InvalidDate(tokenRange, text);
-                value = DateTime.MinValue;
-            }
-            else
-            {
-                var textWithoutDelimiters = text.Substring(1, text.Length - 2);
-                try
-                {
-                    value = DateTime.Parse(textWithoutDelimiters, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException)
-                {
-                    // TODO
-                    //_errorReporter.InvalidDate(tokenRange, textWithoutDelimiters);
-                    value = DateTime.MinValue;
-                }
-            }
-
-            return new LiteralExpressionSyntax(token, value);
-        }
-
-        private ExpressionSyntax ParseNumberLiteral()
-        {
-            var token = NextToken();
-
-            var text = token.Text;
-            var hasHexModifier = text.EndsWith("h", StringComparison.OrdinalIgnoreCase);
-            var hasExponentialModifier = text.IndexOfAny(new[] { '.', 'E', 'e' }) != -1;
-
-            if (hasExponentialModifier && !hasHexModifier)
-            {
-                var float64 = ParseDoubleValue(token);
-                return new LiteralExpressionSyntax(token, float64);
-            }
-
-            var int64 = ParseIntegerValue(token);
-
-            // If the integer can be represented as Int32 we return
-            // an Int32 literal. Otherwise we return an Int64.
-
-            try
-            {
-                checked
-                {
-                    var int32 = (int) int64;
-                    return new LiteralExpressionSyntax(token, int32);
-                }
-            }
-            catch (OverflowException)
-            {
-                return new LiteralExpressionSyntax(token, int64);
-            }
-        }
-
-        private static long ParseIntegerValue(SyntaxToken token)
-        {
-            var text = token.Text;
-
-            // Get indicator
-
-            var indicator = text[text.Length - 1];
-
-            // Remove trailing indicator (h, b, or o)
-
-            var textWithoutIndicator = text.Substring(0, text.Length - 1);
-
-            switch (indicator)
-            {
-                case 'H':
-                case 'h':
-                    try
-                    {
-                        return long.Parse(textWithoutIndicator, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                    }
-                    catch (OverflowException)
-                    {
-                        //TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
-                    }
-                    catch (FormatException)
-                    {
-                        //TODO:
-                        //_errorReporter.InvalidHex(tokenRange, textWithoutIndicator);
-                    }
-
-                    return 0;
-
-                case 'B':
-                case 'b':
-                    try
-                    {
-                        return ParseBinaryValue(textWithoutIndicator);
-                    }
-                    catch (OverflowException)
-                    {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
-                    }
-
-                    return 0;
-
-                case 'O':
-                case 'o':
-                    try
-                    {
-                        return ParseOctalValue(textWithoutIndicator);
-                    }
-                    catch (OverflowException)
-                    {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
-                    }
-
-                    return 0;
-
-                default:
-                    try
-                    {
-                        return Int64.Parse(text, CultureInfo.InvariantCulture);
-                    }
-                    catch (OverflowException)
-                    {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, text);
-                    }
-                    catch (FormatException)
-                    {
-                        // TODO:
-                        //_errorReporter.InvalidInteger(tokenRange, text);
-                    }
-
-                    return 0;
-            }
-        }
-
-        private static long ParseBinaryValue(string binary)
-        {
-            long val = 0;
-
-            for (int i = binary.Length - 1, j = 0; i >= 0; i--, j++)
-            {
-                if (binary[i] == '0')
-                {
-                    // Nothing to add
-                }
-                else if (binary[i] == '1')
-                {
-                    checked
-                    {
-                        // Don't use >> because this implicitly casts the operator to Int32. 
-                        // Also this operation will never detect an overflow.
-                        val += (long)Math.Pow(2, j);
-                    }
-                }
-                else
-                {
-                    // TODO
-                    //_errorReporter.InvalidBinary(tokenRange, binary);
-                    return 0;
-                }
-            }
-
-            return val;
-        }
-
-        private static long ParseOctalValue(string octal)
-        {
-            long val = 0;
-
-            for (int i = octal.Length - 1, j = 0; i >= 0; i--, j++)
-            {
-                int c;
-
-                try
-                {
-                    c = Int32.Parse(new string(octal[i], 1), CultureInfo.InvariantCulture);
-
-                    if (c > 7)
-                    {
-                        // TODO:
-                        //_errorReporter.InvalidOctal(tokenRange, octal);
-                        return 0;
-                    }
-                }
-                catch (FormatException)
-                {
-                    // TODO:
-                    //_errorReporter.InvalidOctal(tokenRange, octal);
-                    return 0;
-                }
-
-                checked
-                {
-                    val += (long)(c * Math.Pow(8, j));
-                }
-            }
-
-            return val;
-        }
-
-        private static double ParseDoubleValue(SyntaxToken token)
-        {
-            var text = token.Text;
-            var float64 = 0.0;
-            try
-            {
-                float64 = double.Parse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
-            }
-            catch (OverflowException)
-            {
-                // TODO:
-                //_errorReporter.NumberTooLarge(tokenRange, number);
-            }
-            catch (FormatException)
-            {
-                // TODO:
-                //_errorReporter.InvalidReal(tokenRange, number);
-            }
-            return float64;
-        }
-
-        private ExpressionSyntax ParseStringLiteral()
-        {
-            var token = NextToken();
-            var text = token.Text;
-            var value = ParseStringValue(text);
-            return new LiteralExpressionSyntax(token, value);
+            return new LiteralExpressionSyntax(token, token.Value);
         }
 
         private static string ParseStringValue(string text)
