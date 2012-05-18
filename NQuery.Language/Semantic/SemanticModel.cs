@@ -787,9 +787,7 @@ namespace NQuery.Language.Semantic
 
         private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
         {
-            var query = BindQuery(node.Query);
-
-            throw new NotImplementedException();
+            return BindQuery(node.Query);
         }
 
         private BoundQuery BindCommonTableExpressionQuery(CommonTableExpressionQuerySyntax node)
