@@ -218,7 +218,7 @@ namespace NQuery.Language.VSEditor
         {
             return token.Kind == SyntaxKind.SingleLineCommentTrivia &&
                    token.Span.Start <= position &&
-                   token.Span.End <= position;
+                   position <= token.Span.End;
         }
 
         private static bool InMultiLineComment(SyntaxTrivia token, int position)
@@ -231,7 +231,7 @@ namespace NQuery.Language.VSEditor
             // For the time being we consider all comments unterminated.
             return token.Kind == SyntaxKind.MultiLineCommentTrivia &&
                    token.Span.Start <= position &&
-                   token.Span.End <= position;
+                   position <= token.Span.End;
         }
 
         private bool InLiteral(SyntaxNode root, int position)
