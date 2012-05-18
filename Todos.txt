@@ -8,6 +8,7 @@
 
 IntelliSense
 ------------
+- Code completion should properly escape identifiers
 - We shouldn't show a completion window when typing aliases (CTE, table, column).
   It might be good enought to block completion when the previous token was the 
   "AS" keyword or an identifier. We should also block the completion when in the
