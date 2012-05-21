@@ -13,7 +13,6 @@ IntelliSense
   It might be good enought to block completion when the previous token was the 
   "AS" keyword or an identifier. We should also block the completion when in the
   (optional) column list of a CTE (e.g. "WITH cte AS (x, y, z)").
-- We shouldn't show a completion window when inside a comment or string literal
 - We should make sure the SyntaxTreeManager and SemanticModelManager queue a new
   request if the input has changed meanwhile. Also, they shouldn't advertise their
   result before they are valid. Furthermore, when they detect the input is invaliated
