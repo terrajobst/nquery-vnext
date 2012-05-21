@@ -68,6 +68,7 @@ namespace NQuery.Language
                 return NextToken();
 
             // TODO: Report token expected
+            // _errorReporter.TokenExpected(_token.Range, _token.Text, tokenID);
             return CreateMissingToken(kind, SyntaxKind.BadToken);
         }
 
@@ -87,6 +88,8 @@ namespace NQuery.Language
                 return result;
             }
 
+            // TODO: Report token expected
+            // _errorReporter.TokenExpected(_token.Range, _token.Text, tokenID);
             return CreateMissingToken(kind, kind);
         }
 
@@ -218,6 +221,7 @@ namespace NQuery.Language
                         case SyntaxKind.SomeKeyword:
                         case SyntaxKind.AnyKeyword:
                         {
+                            // TODO: I believe the following check should be done in the binder.
                             if (binaryExpression != SyntaxKind.EqualExpression &&
                                 binaryExpression != SyntaxKind.NotEqualExpression &&
                                 binaryExpression != SyntaxKind.NotLessExpression &&
