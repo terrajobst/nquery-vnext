@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
+using System.Linq;
+
 namespace NQuery.Language
 {
     internal sealed class Parser
@@ -103,15 +105,49 @@ namespace NQuery.Language
         public CompilationUnitSyntax ParseRootQuery()
         {
             var query = ParseQueryWithOptionalCte();
-            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            var endOfFileToken = ParseEndOfFileToken();
             return new CompilationUnitSyntax(query, endOfFileToken);
         }
 
         public CompilationUnitSyntax ParseRootExpression()
         {
             var expression = ParseExpression();
-            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            var endOfFileToken = ParseEndOfFileToken();
             return new CompilationUnitSyntax(expression, endOfFileToken);
+        }
+
+        private SyntaxToken ParseEndOfFileToken()
+        {
+            if (Current.Kind == SyntaxKind.EndOfFileToken)
+                return NextToken();
+
+            var tokens = new List<SyntaxToken>();
+
+            while (Current.Kind != SyntaxKind.EndOfFileToken)
+                tokens.Add(NextToken());
+
+            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+
+            var start = tokens.First().Span.Start;
+            var end = tokens.First().Span.End;
+            var span = TextSpan.FromBounds(start, end);
+            var skippedTokensNode = new SkippedTokensTriviaSyntax(tokens);
+            var skippedTokensTrivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, skippedTokensNode);
+
+            var leadingTrivia = new List<SyntaxTrivia>(endOfFileToken.LeadingTrivia.Count + 1);
+            leadingTrivia.Add(skippedTokensTrivia);
+            leadingTrivia.AddRange(endOfFileToken.LeadingTrivia);
+
+            var result = new SyntaxToken(endOfFileToken.Kind,
+                                         endOfFileToken.ContextualKind,
+                                         endOfFileToken.IsMissing,
+                                         endOfFileToken.Span,
+                                         endOfFileToken.Text,
+                                         endOfFileToken.Value,
+                                         leadingTrivia,
+                                         endOfFileToken.TrailingTrivia);
+
+            return result;
         }
 
         private ExpressionSyntax ParseExpression()

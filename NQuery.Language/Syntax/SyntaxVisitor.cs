@@ -12,6 +12,10 @@ namespace NQuery.Language
                     VisitCompilationUnit((CompilationUnitSyntax)node);
                     break;
 
+                case SyntaxKind.SkippedTokensTrivia:
+                    VisitSkippedTokensTrivia((SkippedTokensTriviaSyntax)node);
+                    break;
+
                 case SyntaxKind.ComplementExpression:
                 case SyntaxKind.IdentityExpression:
                 case SyntaxKind.NegationExpression:
@@ -402,6 +406,11 @@ namespace NQuery.Language
         }
 
         public virtual void VisitSingleRowSubselect(SingleRowSubselectSyntax node)
+        {
+            DefaultVisit(node);
+        }
+
+        public virtual void VisitSkippedTokensTrivia(SkippedTokensTriviaSyntax node)
         {
             DefaultVisit(node);
         }

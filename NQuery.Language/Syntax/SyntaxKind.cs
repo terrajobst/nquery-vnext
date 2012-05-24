@@ -102,6 +102,7 @@ namespace NQuery.Language
         EndOfLineTrivia,
         MultiLineCommentTrivia,
         SingleLineCommentTrivia,
+        SkippedTokensTrivia,
 
         // UnaryExpressions
 

@@ -195,7 +195,7 @@ namespace NQuery.Language
             var end = _charReader.Position;
             var span = TextSpan.FromBounds(start, end);
             var text = GetText(span);
-            var trivia = new SyntaxTrivia(kind, text, span);
+            var trivia = new SyntaxTrivia(kind, text, span, null);
             target.Add(trivia);
         }
 

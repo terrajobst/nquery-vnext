@@ -11,6 +11,9 @@ namespace NQuery.Language
                 case SyntaxKind.CompilationUnit:
                     return VisitCompilationUnit((CompilationUnitSyntax)node);
 
+                case SyntaxKind.SkippedTokensTrivia:
+                    return VisitSkippedTokensTrivia((SkippedTokensTriviaSyntax)node);
+
                 case SyntaxKind.ComplementExpression:
                 case SyntaxKind.IdentityExpression:
                 case SyntaxKind.NegationExpression:
@@ -349,6 +352,11 @@ namespace NQuery.Language
         }
 
         public virtual TResult VisitSingleRowSubselect(SingleRowSubselectSyntax node)
+        {
+            return DefaultVisit(node);
+        }
+
+        public virtual TResult VisitSkippedTokensTrivia(SkippedTokensTriviaSyntax node)
         {
             return DefaultVisit(node);
         }

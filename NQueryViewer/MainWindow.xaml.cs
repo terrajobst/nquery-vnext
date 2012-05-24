@@ -227,7 +227,15 @@ namespace NQueryViewer
 
         private static NodeViewModel ToViewModel(SyntaxTrivia trivia)
         {
-            return new NodeViewModel(trivia, new List<NodeViewModel>());
+            var children = new List<NodeViewModel>();
+            
+            if (trivia.Structure != null)
+            {
+                var structureViewModel = ToViewModel(trivia.Structure);
+                children.Add(structureViewModel);
+            }
+
+            return new NodeViewModel(trivia, children);
         }
 
         private enum NodeViewModelKind
@@ -335,7 +343,14 @@ namespace NQueryViewer
                             where r.NodeType != NodeViewModelKind.Trivia
                             select r;
 
-            foreach (var nodeViewModel in nonTrivia)
+            var skippedTokens = from r in roots
+                                where r.Kind == SyntaxKind.SkippedTokensTrivia
+                                from c in r.Children
+                                select c;
+
+            var children = nonTrivia.Concat(skippedTokens);
+
+            foreach (var nodeViewModel in children)
             {
                 if (nodeViewModel.Span.Contains(position))
                 {

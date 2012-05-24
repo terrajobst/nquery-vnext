@@ -103,7 +103,9 @@
     <Compile Include="Syntax\SelectQuerySyntax.cs" />
     <Compile Include="Syntax\SimilarToExpressionSyntax.cs" />
     <Compile Include="Syntax\SingleRowSubselectSyntax.cs" />
+    <Compile Include="Syntax\SkippedTokensTriviaSyntax.cs" />
     <Compile Include="Syntax\SoundslikeExpressionSyntax.cs" />
+    <Compile Include="Syntax\StructuredTriviaSyntax.cs" />
     <Compile Include="Syntax\SubselectExpressionSyntax.cs" />
     <Compile Include="Syntax\SyntaxFacts.cs" />
     <Compile Include="Syntax\SyntaxKind.cs" />

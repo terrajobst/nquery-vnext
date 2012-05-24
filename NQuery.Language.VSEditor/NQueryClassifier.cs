@@ -129,6 +129,8 @@ namespace NQuery.Language.VSEditor
             {
                 if (trivia.Kind.IsComment())
                     AddClassification(trivia, _classificationService.Comment);
+                else if (trivia.Structure != null)
+                    ClassifyNode(trivia.Structure);
             }
 
             private IClassificationType GetClassificationForToken(SyntaxToken token)

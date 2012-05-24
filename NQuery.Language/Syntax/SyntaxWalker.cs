@@ -35,6 +35,9 @@ namespace NQuery.Language
 
         public virtual void VisitTrivia(SyntaxTrivia trivia)
         {
+            var structure = trivia.Structure;
+            if (structure != null)
+                Dispatch(structure);
         }
     }
 }

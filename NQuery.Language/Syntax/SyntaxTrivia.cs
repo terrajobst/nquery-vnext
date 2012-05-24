@@ -7,12 +7,14 @@ namespace NQuery.Language
         private readonly SyntaxKind _kind;
         private readonly string _text;
         private readonly TextSpan _span;
+        private readonly StructuredTriviaSyntax _structure;
 
-        public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span)
+        public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure)
         {
             _kind = kind;
             _text = text;
             _span = span;
+            _structure = structure;
         }
 
         public SyntaxKind Kind
@@ -28,6 +30,11 @@ namespace NQuery.Language
         public TextSpan Span
         {
             get { return _span; }
+        }
+
+        public StructuredTriviaSyntax Structure
+        {
+            get { return _structure; }
         }
     }
 }

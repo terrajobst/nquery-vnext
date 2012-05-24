@@ -67,23 +67,38 @@ namespace NQuery.Language.VSEditor
 
         private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
         {
-            if (!root.Span.Contains(position))
+            if (!root.FullSpan.Contains(position))
                 return null;
 
             foreach (var nodeOrToken in root.GetChildren())
             {
-                if (nodeOrToken.IsToken)
-                {
-                    if (nodeOrToken.Span.Contains(position))
-                        return nodeOrToken.Kind.IsIdentifierOrKeyword()
-                                   ? nodeOrToken.AsToken()
-                                   : (SyntaxToken?)null;
-                }
-                else
+                if (nodeOrToken.IsNode)
                 {
                     var result = GetIdentifierOrKeywordAtPosition(nodeOrToken.AsNode(), position);
                     if (result != null)
                         return result;
+                }
+                else
+                {
+                    if (nodeOrToken.FullSpan.Contains(position))
+                    {
+                        var token = nodeOrToken.AsToken();
+                        if (token.Span.Contains(position))
+                        {
+                            return nodeOrToken.Kind.IsIdentifierOrKeyword()
+                                       ? nodeOrToken.AsToken()
+                                       : (SyntaxToken?) null;
+                        }
+
+                        var skippedToken = (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
+                                            where t.Kind == SyntaxKind.SkippedTokensTrivia
+                                            let sts = (SkippedTokensTriviaSyntax) t.Structure
+                                            from st in sts.Tokens
+                                            where st.Span.Contains(position) && st.Kind.IsIdentifierOrKeyword()
+                                            select (SyntaxToken?) st).SingleOrDefault();
+
+                        return skippedToken;
+                    }
                 }
             }
 
