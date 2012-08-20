@@ -7,14 +7,12 @@ namespace NQuery.Language
     {
         private readonly ExpressionSyntax _expression;
         private readonly AliasSyntax _alias;
-        private readonly SyntaxToken? _commaToken;
 
         public ExpressionSelectColumnSyntax(ExpressionSyntax expression, AliasSyntax alias, SyntaxToken? commaToken)
             : base(commaToken)
         {
             _expression = expression;
             _alias = alias;
-            _commaToken = commaToken;
         }
 
         public override SyntaxKind Kind
@@ -27,8 +25,8 @@ namespace NQuery.Language
             yield return _expression;
             if (_alias != null)
                 yield return _alias;
-            if (_commaToken != null)
-                yield return _commaToken.Value;
+            if (CommaToken != null)
+                yield return CommaToken.Value;
         }
 
         public ExpressionSyntax Expression
