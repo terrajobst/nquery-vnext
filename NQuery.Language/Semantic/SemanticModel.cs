@@ -799,7 +799,7 @@ namespace NQuery.Language.Semantic
         {
             var fromClause = BindFromClause(node.FromClause);
             var whereClause = BindWhereClause(node.WhereClause);
-            var selectColumns = BindSelectColumns(node.SelectColumns);
+            var selectColumns = BindSelectColumns(node.SelectClause.Columns);
 
             if (node.GroupByClause != null)
             {

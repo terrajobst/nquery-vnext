@@ -770,18 +770,7 @@ namespace NQuery.Language
                 return new ParenthesizedQuerySyntax(leftParentheses, query, rightParentheses);
             }
 
-            var selectKeyword = Match(SyntaxKind.SelectKeyword);
-
-            var distinctAllKeyword = Current.Kind == SyntaxKind.DistinctKeyword ||
-                                     Current.Kind == SyntaxKind.AllKeyword
-                                         ? (SyntaxToken?) NextToken()
-                                         : null;
-
-            var topClause = Current.Kind == SyntaxKind.TopKeyword
-                                ? ParseTopClause()
-                                : null;
-
-            var selectColumns = ParseSelectColumns();
+            var selectClause = ParseSelectClause();
 
             var fromClause = Current.Kind == SyntaxKind.FromKeyword
                                  ? ParseFromClause()
@@ -799,7 +788,25 @@ namespace NQuery.Language
                                    ? ParseHavingClause()
                                    : null;
 
-            return new SelectQuerySyntax(selectKeyword, distinctAllKeyword, topClause, selectColumns, fromClause, whereClause, groupByClause, havingClause);
+            return new SelectQuerySyntax(selectClause, fromClause, whereClause, groupByClause, havingClause);
+        }
+
+        private SelectClauseSyntax ParseSelectClause()
+        {
+            var selectKeyword = Match(SyntaxKind.SelectKeyword);
+
+            var distinctAllKeyword = Current.Kind == SyntaxKind.DistinctKeyword ||
+                                     Current.Kind == SyntaxKind.AllKeyword
+                                         ? (SyntaxToken?) NextToken()
+                                         : null;
+
+            var topClause = Current.Kind == SyntaxKind.TopKeyword
+                                ? ParseTopClause()
+                                : null;
+
+            var columns = ParseSelectColumns();
+
+            return new SelectClauseSyntax(selectKeyword, distinctAllKeyword, topClause, columns);
         }
 
         private TopClauseSyntax ParseTopClause()

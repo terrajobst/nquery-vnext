@@ -227,6 +227,10 @@ namespace NQuery.Language
                     VisitExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
                     break;
 
+                case SyntaxKind.SelectClause:
+                    VisitSelectClause((SelectClauseSyntax)node);
+                    break;
+
                 case SyntaxKind.FromClause:
                     VisitFromClause((FromClauseSyntax)node);
                     break;
@@ -416,6 +420,11 @@ namespace NQuery.Language
         }
 
         public virtual void VisitUnaryExpression(UnaryExpressionSyntax node)
+        {
+            DefaultVisit(node);
+        }
+
+        public virtual void VisitSelectClause(SelectClauseSyntax node)
         {
             DefaultVisit(node);
         }

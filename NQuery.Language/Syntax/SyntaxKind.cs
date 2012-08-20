@@ -191,6 +191,7 @@ namespace NQuery.Language
         TopClause,
         WildcardSelectColumn,
         ExpressionSelectColumn,
+        SelectClause,
         FromClause,
         WhereClause,
         GroupByClause,

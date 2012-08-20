@@ -99,6 +99,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Syntax\PropertyAccessExpressionSyntax.cs" />
     <Compile Include="Syntax\QuerySyntax.cs" />
+    <Compile Include="Syntax\SelectClauseSyntax.cs" />
     <Compile Include="Syntax\SelectColumnSyntax.cs" />
     <Compile Include="Syntax\SelectQuerySyntax.cs" />
     <Compile Include="Syntax\SimilarToExpressionSyntax.cs" />

@@ -1,26 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
     public sealed class SelectQuerySyntax : QuerySyntax
     {
-        private readonly SyntaxToken _selectKeyword;
-        private readonly SyntaxToken? _distinctAllKeyword;
-        private readonly TopClauseSyntax _topClause;
-        private readonly ReadOnlyCollection<SelectColumnSyntax> _selectColumns;
+        private readonly SelectClauseSyntax _selectClause;
         private readonly FromClauseSyntax _fromClause;
         private readonly WhereClauseSyntax _whereClause;
         private readonly GroupByClauseSyntax _groupByClause;
         private readonly HavingClauseSyntax _havingClause;
 
-        public SelectQuerySyntax(SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
+        public SelectQuerySyntax(SelectClauseSyntax selectClause, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
         {
-            _selectKeyword = selectKeyword;
-            _distinctAllKeyword = distinctAllKeyword;
-            _topClause = topClause;
-            _selectColumns = new ReadOnlyCollection<SelectColumnSyntax>(selectColumns);
+            _selectClause = selectClause;
             _fromClause = fromClause;
             _whereClause = whereClause;
             _groupByClause = groupByClause;
@@ -34,13 +27,7 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
-            yield return _selectKeyword;
-            if (_distinctAllKeyword != null)
-                yield return _distinctAllKeyword.Value;
-            if (_topClause != null)
-                yield return _topClause;
-            foreach (var selectColumn in _selectColumns)
-                yield return selectColumn;
+            yield return _selectClause;
             if (_fromClause != null)
                 yield return _fromClause;
             if (_whereClause != null)
@@ -51,24 +38,9 @@ namespace NQuery.Language
                 yield return _havingClause;
         }
 
-        public SyntaxToken SelectKeyword
+        public SelectClauseSyntax SelectClause
         {
-            get { return _selectKeyword; }
-        }
-
-        public SyntaxToken? DistinctAllKeyword
-        {
-            get { return _distinctAllKeyword; }
-        }
-
-        public TopClauseSyntax TopClause
-        {
-            get { return _topClause; }
-        }
-
-        public ReadOnlyCollection<SelectColumnSyntax> SelectColumns
-        {
-            get { return _selectColumns; }
+            get { return _selectClause; }
         }
 
         public FromClauseSyntax FromClause
