@@ -36,5 +36,35 @@ namespace NQuery.Language
             yield return _typeReference;
             yield return _rightParenthesesToken;
         }
+
+        public SyntaxToken CastKeyword
+        {
+            get { return _castKeyword; }
+        }
+
+        public SyntaxToken LeftParenthesesToken
+        {
+            get { return _leftParenthesesToken; }
+        }
+
+        public ExpressionSyntax Expression
+        {
+            get { return _expression; }
+        }
+
+        public SyntaxToken AsKeyword
+        {
+            get { return _asKeyword; }
+        }
+
+        public TypeReferenceSyntax TypeReference
+        {
+            get { return _typeReference; }
+        }
+
+        public SyntaxToken RightParenthesesToken
+        {
+            get { return _rightParenthesesToken; }
+        }
     }
 }

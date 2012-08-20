@@ -37,6 +37,11 @@ namespace NQuery.Language
             get { return _expression; }
         }
 
+        public SyntaxToken? NotKeyword
+        {
+            get { return _notKeyword; }
+        }
+
         public SyntaxToken InKeyword
         {
             get { return _inKeyword; }
