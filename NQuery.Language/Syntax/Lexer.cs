@@ -37,9 +37,7 @@ namespace NQuery.Language
             var end = _charReader.Position;
             var kind = _kind;
             var span = TextSpan.FromBounds(start, end);
-            var text = string.IsNullOrEmpty(SyntaxFacts.GetText(kind))
-                           ? GetText(span)
-                           : null;
+            var text = _value as string;
 
             // TODO: Get errors
 

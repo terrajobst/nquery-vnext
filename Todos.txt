@@ -1,7 +1,5 @@
 - Add support for diagnostics
 - Tokens should record whether they are termimated
-- Keywords should actually record the text as written in input as they are case
-  sensitive.
 - Support contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.
 
 IntelliSense
