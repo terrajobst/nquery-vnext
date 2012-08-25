@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
 
 namespace NQuery.Language.Semantic
 {
@@ -443,37 +442,23 @@ namespace NQuery.Language.Semantic
 
         private BoundExpression BindPropertyAccessExpression(PropertyAccessExpressionSyntax node)
         {
-            // For cases like Foo.Bar we first check whether 'Foo' can be resolved to a
-            // table instance, if that's the case we bind a column otherwise we bind a
-            // normal expression.
+            var boundExpression = BindExpression(node.Target);
 
-            var targetAsName = node.Target as NameExpressionSyntax;
-            if (targetAsName != null)
+            // For cases like Foo.Bar we check whether 'Foo' was resolved to a table instance.
+            // If that's the case we bind a column otherwise we bind a normal expression.
+
+            var boundName = boundExpression as BoundNameExpression;
+            if (boundName != null && boundName.Symbol.Kind == SymbolKind.TableInstance)
             {
-                var symbols = Context.LookupSymbols(targetAsName.Identifier.ValueText, false).ToArray();
-                if (symbols.Length == 1)
-                {
-                    var table = symbols[0] as TableInstanceSymbol;
-                    if (table != null)
-                    {
-                        // TODO: This is a hack. The problem is that by skipping the name node
-                        //       we end up never associating a bound node with the name expression node.
-                        //
-                        // I believe it would be best to introduce a Parent property and special case
-                        // the table access in the name expression.
-
-                        var boundNameNode = new BoundNameExpression(table, Enumerable.Empty<Symbol>());
-                        _boundNodeFromSynatxNode.Add(targetAsName, boundNameNode);
-                        _bindingContextFromBoundNode.Add(boundNameNode, Context);
-
-                        return BindColumnInstance(node, table);
-                    }
-                }
+                // In Foo.Bar, Foo was resolved to a table. Bind Bar as column.
+                var tableInstance = (TableInstanceSymbol) boundName.Symbol;
+                return BindColumnInstance(node, tableInstance);
             }
 
-            var boundExpression = BindExpression(node.Target);
-            var name = node.Name.ValueText;
+            // node.Target either wasn't a name expression or didn't resolve to a
+            // table instance. Resolve node.Name as a property.
 
+            var name = node.Name.ValueText;
             if (!boundExpression.Type.IsUnknown())
             {
                 // TODO: Bind property
