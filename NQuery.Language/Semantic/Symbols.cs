@@ -17,7 +17,7 @@ namespace NQuery.Language.Semantic
 
     public abstract class Symbol
     {
-        private string _name;
+        private readonly string _name;
 
         protected Symbol(string name)
         {

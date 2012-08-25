@@ -103,14 +103,10 @@ namespace NQuery.Language.VSEditor
                         where n.IsNode
                         select n.AsNode();
 
-            foreach (var node in nodes)
-            {
-                var result = FindParent(node, isLeft, position);
-                if (result != null)
-                    return result;
-            }
-
-            return null;
+            return (from n in nodes
+                    let p = FindParent(n, isLeft, position)
+                    where p != null
+                    select p).FirstOrDefault();               
         }
 
         private bool FindBrace(SyntaxNode parent, int position, bool isLeft, out SyntaxToken token)

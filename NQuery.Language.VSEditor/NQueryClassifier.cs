@@ -10,9 +10,9 @@ namespace NQuery.Language.VSEditor
 {
     internal sealed class NQueryClassifier : IClassifier
     {
-        private IStandardClassificationService _classificationService;
-        private ITextBuffer _textBuffer;
-        private INQuerySyntaxTreeManager _syntaxTreeManager;
+        private readonly IStandardClassificationService _classificationService;
+        private readonly ITextBuffer _textBuffer;
+        private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
 
         public NQueryClassifier(IStandardClassificationService classificationService, ITextBuffer textBuffer, INQuerySyntaxTreeManager syntaxTreeManager)
         {
@@ -52,10 +52,10 @@ namespace NQuery.Language.VSEditor
 
         private sealed class ClassificationWorker
         {
-            private IStandardClassificationService _classificationService;
-            private List<ClassificationSpan> _classificationSpans;
-            private SnapshotSpan _snapshotSpan;
-            private TextSpan _span;
+            private readonly IStandardClassificationService _classificationService;
+            private readonly List<ClassificationSpan> _classificationSpans;
+            private readonly SnapshotSpan _snapshotSpan;
+            private readonly TextSpan _span;
 
             public ClassificationWorker(IStandardClassificationService classificationService, SnapshotSpan snapshotSpan, List<ClassificationSpan> classificationSpans)
             {

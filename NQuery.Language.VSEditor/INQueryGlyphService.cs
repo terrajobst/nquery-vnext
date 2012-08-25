@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Media;
 
 namespace NQuery.Language.VSEditor

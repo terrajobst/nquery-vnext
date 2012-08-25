@@ -9,7 +9,7 @@ namespace NQuery.Language.VSEditor
     [Export(typeof(INQueryGlyphService))]
     internal sealed class NQueryGlyphService : INQueryGlyphService
     {
-        private Dictionary<string, BitmapImage> _images = new Dictionary<string, BitmapImage>();
+        private readonly Dictionary<string, BitmapImage> _images = new Dictionary<string, BitmapImage>();
 
         private static string FromName(string iconName)
         {
