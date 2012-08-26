@@ -1,7 +1,5 @@
 using System;
 
-using NQuery.Language.Semantic;
-
 namespace NQuery.Language.VSEditor
 {
     public interface INQuerySemanticModelManager

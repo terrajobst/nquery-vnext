@@ -6,8 +6,7 @@ using System.Windows.Media;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
-
-using NQuery.Language.Semantic;
+using NQuery.Language.Symbols;
 
 namespace NQuery.Language.VSEditor
 {
@@ -121,23 +120,73 @@ namespace NQuery.Language.VSEditor
                 return Enumerable.Empty<Completion>();
 
             var propertyAccessExpression = GetPropertyAccessExpression(root, position);
-            if (propertyAccessExpression != null)
-                return GetMemberSymbolCompletions(semanticModel, propertyAccessExpression);
 
+            var completions = propertyAccessExpression == null
+                                  ? GetGlobalCompletions(semanticModel, position)
+                                  : GetMemberCompletions(semanticModel, propertyAccessExpression);
+
+            var sortedCompletions = completions.OrderBy(c => c.InsertionText);
+
+            return sortedCompletions;
+        }
+
+        private IEnumerable<Completion> GetGlobalCompletions(SemanticModel semanticModel, int position)
+        {
             var symbolCompletions = GetGlobalSymbolCompletions(semanticModel, position);
             var keywordCompletions = GetKeywordCompletions();
-            var completions = symbolCompletions.Concat(keywordCompletions).ToArray();
-            Array.Sort(completions, (x, y) => x.InsertionText.CompareTo(y.InsertionText));
+            var completions = symbolCompletions.Concat(keywordCompletions);
             return completions;
         }
 
-        private IEnumerable<Completion> GetMemberSymbolCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
+        private IEnumerable<Completion> GetMemberCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
         {
-            var symbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
-            if (symbol == null)
-                return Enumerable.Empty<Completion>();
+            var tableInstanceSymbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
+            if (tableInstanceSymbol != null)
+                return CreateSymbolCompletions(tableInstanceSymbol.Table.Columns);
 
-            return CreateSymbolCompletions(symbol.Table.Columns);
+            var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);
+            if (targetType != null)
+                return GetTypeCompletions(semanticModel, targetType);
+
+            return Enumerable.Empty<Completion>();
+        }
+
+        private IEnumerable<Completion> GetTypeCompletions(SemanticModel semanticModel, Type targetType)
+        {
+            var propertyCompletions = GetPropertyCompletions(semanticModel, targetType);
+            var methodCompletions = GetMethodCompletions(semanticModel, targetType);
+            return propertyCompletions.Concat(methodCompletions);
+        }
+
+        private IEnumerable<Completion> GetPropertyCompletions(SemanticModel semanticModel, Type targetType)
+        {
+            var dataContext = semanticModel.Compilation.DataContext;
+            var propertyProvider = dataContext.PropertyProviders.LookupValue(targetType);
+            return propertyProvider == null
+                       ? Enumerable.Empty<Completion>()
+                       : GetPropertyCompletions(propertyProvider.GetProperties(targetType));
+        }
+
+        private IEnumerable<Completion> GetPropertyCompletions(IEnumerable<PropertySymbol> propertySymbols)
+        {
+            return from m in propertySymbols
+                   select CreateSymbolCompletion(m);
+        }
+
+        private IEnumerable<Completion> GetMethodCompletions(SemanticModel semanticModel, Type targetType)
+        {
+            var dataContext = semanticModel.Compilation.DataContext;
+            var methodProvider = dataContext.MethodProviders.LookupValue(targetType);
+            return methodProvider == null
+                       ? Enumerable.Empty<Completion>()
+                       : GetMethodCompletions(methodProvider.GetMethods(targetType));
+        }
+
+        private IEnumerable<Completion> GetMethodCompletions(IEnumerable<MethodSymbol> methodSymbols)
+        {
+            return from m in methodSymbols
+                   group m by m.Name into g
+                   select CreateSymbolCompletion(g.First());
         }
 
         private static AliasSyntax GetAlias(SyntaxNode root, int position)
@@ -364,6 +413,14 @@ namespace NQuery.Language.VSEditor
                     return NQueryGlyph.TableRef;
                 case SymbolKind.ColumnInstance:
                     return NQueryGlyph.Column;
+                case SymbolKind.Variable:
+                    return NQueryGlyph.Variable;
+                case SymbolKind.Function:
+                    return NQueryGlyph.Function;
+                case SymbolKind.Property:
+                    return NQueryGlyph.Property;
+                case SymbolKind.Method:
+                    return NQueryGlyph.Method;
                 default:
                     return null;
             }

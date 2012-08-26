@@ -175,7 +175,7 @@
     <value>Property name {0} is ambiguous between {1}.</value>
   </data>
   <data name="AmbiguousReference" xml:space="preserve">
-    <value>Identifier '{0}' is ambiguous between '{1}'.</value>
+    <value>Name '{0}' is ambiguous between '{1}'.</value>
   </data>
   <data name="AmbiguousTable" xml:space="preserve">
     <value>Table name {0} is ambiguous between {1}.</value>
@@ -205,7 +205,7 @@
     <value>Aggregation modifier '*' not allowed in function call '{0}'.</value>
   </data>
   <data name="BinaryOperatorFailed" xml:space="preserve">
-    <value>Binary operator '{0} {1} {2}' threw an exception: {6}{7}Operator method: '{3}'. Arguments: '{4}', '{5}'.</value>
+    <value>Binary operator '{0} {1} {2}' threw an exception: {6}{7}Operator method: '{3}'. ArgumentList: '{4}', '{5}'.</value>
   </data>
   <data name="BindingWithSameNameAlreadyInCollection" xml:space="preserve">
     <value>A binding with the same name '{0}' already exists in this collection.</value>
@@ -673,7 +673,7 @@
     <value>Found '{0}' but expected '{1}'.</value>
   </data>
   <data name="TokenIdentifier" xml:space="preserve">
-    <value>&lt;Identifier&gt;</value>
+    <value>&lt;Name&gt;</value>
   </data>
   <data name="TokenNumberLiteral" xml:space="preserve">
     <value>&lt;Number Literal&gt;</value>
@@ -700,7 +700,7 @@
     <value>Column '{1}' not declared in table '{0}'.</value>
   </data>
   <data name="UndeclaredEntity" xml:space="preserve">
-    <value>The identifier '{0}' does not refer to a column, table or property.</value>
+    <value>The identifier '{0}' does not refer to a column, table, or variable.</value>
   </data>
   <data name="UndeclaredFunction" xml:space="preserve">
     <value>Function '{0}({1})' is not declared.</value>
@@ -708,8 +708,8 @@
   <data name="UndeclaredMethod" xml:space="preserve">
     <value>Type '{0}' does not have a method '{1}({2})'.</value>
   </data>
-  <data name="UndeclaredParameter" xml:space="preserve">
-    <value>Parameter '{0}' is not declared.</value>
+  <data name="UndeclaredVariable" xml:space="preserve">
+    <value>Variable '{0}' is not declared.</value>
   </data>
   <data name="UndeclaredProperty" xml:space="preserve">
     <value>Type '{0}' does not have a property '{1}'.</value>
@@ -746,5 +746,8 @@
   </data>
   <data name="WhereClauseMustEvaluateToBool" xml:space="preserve">
     <value>WHERE clause must evaluate to BOOLEAN expression.</value>
+  </data>
+  <data name="TypeIsAlreadyRegistered">
+    <value>The type '{0}' is already registered.</value>
   </data>
 </root>

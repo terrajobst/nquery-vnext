@@ -246,7 +246,7 @@ namespace NQuery.Language
                     break;
 
                 case '@':
-                    _kind = SyntaxKind.ParameterMarkerToken;
+                    _kind = SyntaxKind.AtToken;
                     _charReader.NextChar();
                     break;
 

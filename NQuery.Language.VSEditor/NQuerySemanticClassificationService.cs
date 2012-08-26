@@ -16,7 +16,7 @@ namespace NQuery.Language.VSEditor
         private IClassificationType _function;
         private IClassificationType _aggregate;
         private IClassificationType _operator;
-        private IClassificationType _parameter;
+        private IClassificationType _variable;
 
         [Import]
         public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; }
@@ -71,9 +71,9 @@ namespace NQuery.Language.VSEditor
             get { return GetOrRetreiveClassification(ref _operator, NQuerySemanticClassificationMetadata.OperatorClassificationTypeName); }
         }
 
-        public IClassificationType Parameter
+        public IClassificationType Variable
         {
-            get { return GetOrRetreiveClassification(ref _parameter, NQuerySemanticClassificationMetadata.ParameterClassificationTypeName); }
+            get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.VariableClassificationTypeName); }
         }
     }
 }

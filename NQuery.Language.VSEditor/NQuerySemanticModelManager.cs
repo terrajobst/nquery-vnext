@@ -2,8 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using NQuery.Language.Semantic;
-
 namespace NQuery.Language.VSEditor
 {
     internal sealed class NQuerySemanticModelManager : INQuerySemanticModelManager
@@ -17,7 +15,7 @@ namespace NQuery.Language.VSEditor
         {
             _syntaxTreeManager = syntaxTreeManager;
             _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
-            _compilation = new Compilation(SyntaxTree.ParseQuery(string.Empty), new SchemaTableSymbol[0]);
+            _compilation = Compilation.Empty;
             QueueUpdateSemanticModelRequest();
         }
 
@@ -65,7 +63,7 @@ namespace NQuery.Language.VSEditor
             _cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = _cancellationTokenSource.Token;
 
-            _compilation = _compilation.SetSyntaxTree(syntaxTree);
+            _compilation = _compilation.WithSyntaxTree(syntaxTree);
 
             var compilation = _compilation;
 

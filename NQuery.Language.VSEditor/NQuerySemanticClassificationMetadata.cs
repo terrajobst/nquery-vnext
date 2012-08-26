@@ -36,8 +36,8 @@ namespace NQuery.Language.VSEditor
         public const string OperatorClassificationFormatName = "NQuery.Operator.Format";
         public const string OperatorClassificationTypeName = "NQuery.Operator";
 
-        public const string ParameterClassificationFormatName = "NQuery.Parameter.Format";
-        public const string ParameterClassificationTypeName = "NQuery.Parameter";
+        public const string VariableClassificationFormatName = "NQuery.Variable.Format";
+        public const string VariableClassificationTypeName = "NQuery.Variable";
 
         // Types ------------------
 
@@ -89,7 +89,7 @@ namespace NQuery.Language.VSEditor
         public ClassificationTypeDefinition OperatorType;
 
         [Export]
-        [Name(ParameterClassificationTypeName)]
+        [Name(VariableClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition ParameterType;
 
@@ -234,17 +234,17 @@ namespace NQuery.Language.VSEditor
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [Name(ParameterClassificationFormatName)]
-        [ClassificationType(ClassificationTypeNames = ParameterClassificationTypeName)]
+        [Name(VariableClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = VariableClassificationTypeName)]
         [UserVisible(true)]
         [Order(After = PredefinedClassificationTypeNames.Identifier)]
         [Order(After = PredefinedClassificationTypeNames.Keyword)]
-        public sealed class ParameterFormat : ClassificationFormatDefinition
+        public sealed class VariableFormat : ClassificationFormatDefinition
         {
-            public ParameterFormat()
+            public VariableFormat()
             {
-                DisplayName = "Parameter";
-                ForegroundColor = Color.FromRgb(0, 0, 0);
+                DisplayName = "Variable";
+                ForegroundColor = Color.FromRgb(0, 139, 139);
             }
         }
     }

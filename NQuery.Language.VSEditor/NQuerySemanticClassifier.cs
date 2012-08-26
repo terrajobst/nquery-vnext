@@ -6,8 +6,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using System.Linq;
-
-using NQuery.Language.Semantic;
+using NQuery.Language.Symbols;
 
 namespace NQuery.Language.VSEditor
 {
@@ -121,8 +120,17 @@ namespace NQuery.Language.VSEditor
                     case SyntaxKind.NameExpression:
                         ClassifyNameExpression((NameExpressionSyntax)node);
                         break;
+                    case SyntaxKind.VariableExpression:
+                        ClassifyVariableExpression((VariableExpressionSyntax)node);
+                        break;
+                    case SyntaxKind.FunctionInvocationExpression:
+                        ClassifyFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
+                        break;
                     case SyntaxKind.PropertyAccessExpression:
                         ClassifyPropertyAccess((PropertyAccessExpressionSyntax)node);
+                        break;
+                    case SyntaxKind.MethodInvocationExpression:
+                        ClassifyMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
                         break;
                     case SyntaxKind.NamedTableReference:
                         ClassifyNamedTableReference((NamedTableReferenceSyntax)node);
@@ -146,13 +154,31 @@ namespace NQuery.Language.VSEditor
 
             private void ClassifyNameExpression(NameExpressionSyntax node)
             {
-                ClassifyExpression(node, node.Identifier);
+                ClassifyExpression(node, node.Name);
+            }
+
+            private void ClassifyVariableExpression(VariableExpressionSyntax node)
+            {
+                ClassifyExpression(node, node);
+            }
+
+            private void ClassifyFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
+            {
+                ClassifyExpression(node, node.Name);
+                ClassifyNode(node.ArgumentList);
             }
 
             private void ClassifyPropertyAccess(PropertyAccessExpressionSyntax node)
             {
                 ClassifyNode(node.Target);
                 ClassifyExpression(node, node.Name);
+            }
+
+            private void ClassifyMethodInvocationExpression(MethodInvocationExpressionSyntax node)
+            {
+                ClassifyNode(node.Target);
+                ClassifyExpression(node, node.Name);
+                ClassifyNode(node.ArgumentList);
             }
 
             private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)
@@ -198,6 +224,14 @@ namespace NQuery.Language.VSEditor
                         return GetClassification(((TableInstanceSymbol)symbol).Table);
                     case SymbolKind.ColumnInstance:
                         return _classificationService.Column;
+                    case SymbolKind.Function:
+                        return _classificationService.Function;
+                    case SymbolKind.Variable:
+                        return _classificationService.Variable;
+                    case SymbolKind.Property:
+                        return _classificationService.Property;
+                    case SymbolKind.Method:
+                        return _classificationService.Method;
                     default:
                         return null;
                 }

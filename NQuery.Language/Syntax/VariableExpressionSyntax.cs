@@ -1,14 +1,13 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
 {
-    public sealed class ParameterExpressionSyntax : ExpressionSyntax
+    public sealed class VariableExpressionSyntax : ExpressionSyntax
     {
         private readonly SyntaxToken _atToken;
         private readonly SyntaxToken _name;
 
-        public ParameterExpressionSyntax(SyntaxToken atToken, SyntaxToken name)
+        public VariableExpressionSyntax(SyntaxToken atToken, SyntaxToken name)
         {
             _atToken = atToken;
             _name = name;
@@ -16,7 +15,7 @@ namespace NQuery.Language
 
         public override SyntaxKind Kind
         {
-            get { return SyntaxKind.ParameterExpression; }
+            get { return SyntaxKind.VariableExpression; }
         }
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()

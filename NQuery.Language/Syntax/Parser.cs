@@ -360,11 +360,11 @@ namespace NQuery.Language
                     return new ExistsSubselectSyntax(existsKeyword, leftParentheses, query, rightParentheses);
                 }
 
-                case SyntaxKind.ParameterMarkerToken:
+                case SyntaxKind.AtToken:
                 {
-                    var parameterMarker = NextToken();
+                    var atToken = NextToken();
                     var name = Match(SyntaxKind.IdentifierToken);
-                    return new ParameterExpressionSyntax(parameterMarker, name);
+                    return new VariableExpressionSyntax(atToken, name);
                 }
 
                 case SyntaxKind.CastKeyword:
@@ -508,7 +508,7 @@ namespace NQuery.Language
             //    bool wasVerbatim = false;
             //    while (_token.Id != TokenId.Eof)
             //    {
-            //        Identifier identifier = ParseIdentifier();
+            //        Name identifier = ParseIdentifier();
 
             //        if (!identifier.Verbatim && !identifier.Parenthesized)
             //        {
@@ -580,7 +580,7 @@ namespace NQuery.Language
 
             var arguments = new List<ArgumentSyntax>();
 
-            while (true)
+            while (Current.Kind != SyntaxKind.RightParenthesesToken)
             {
                 var argument = ParseArgument();
                 arguments.Add(argument);

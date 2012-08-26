@@ -4,7 +4,7 @@ namespace NQuery.Language.VSEditor
     {
         AmbiguousName,
         Keyword,
-        Parameter,
+        Variable,
         Relation,
         ScalarValueFunction,
         StoredProcedure,
@@ -14,5 +14,7 @@ namespace NQuery.Language.VSEditor
         Aggregate,
         Column,
         Function,
+        Method,
+        Property
     }
 }

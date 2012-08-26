@@ -5,11 +5,11 @@ namespace NQuery.Language
 {
     public sealed class NameExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _identifier;
+        private readonly SyntaxToken _name;
 
-        public NameExpressionSyntax(SyntaxToken identifier)
+        public NameExpressionSyntax(SyntaxToken name)
         {
-            _identifier = identifier;
+            _name = name;
         }
 
         public override SyntaxKind Kind
@@ -19,12 +19,12 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
-            yield return Identifier;
+            yield return Name;
         }
 
-        public SyntaxToken Identifier
+        public SyntaxToken Name
         {
-            get { return _identifier; }
+            get { return _name; }
         }
     }
 }

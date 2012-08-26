@@ -29,6 +29,8 @@ namespace NQuery.Language
             return new SyntaxTree(expression, textBuffer);
         }
 
+        public static SyntaxTree Empty = ParseQuery(string.Empty);
+
         public CompilationUnitSyntax Root
         {
             get { return _root; }

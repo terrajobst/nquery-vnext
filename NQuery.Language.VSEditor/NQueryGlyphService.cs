@@ -26,8 +26,8 @@ namespace NQuery.Language.VSEditor
                     return FromName("AmbiguousName");
                 case NQueryGlyph.Keyword:
                     return FromName("Keyword");
-                case NQueryGlyph.Parameter:
-                    return FromName("Parameter");
+                case NQueryGlyph.Variable:
+                    return FromName("Variable");
                 case NQueryGlyph.Relation:
                     return FromName("Relation");
                 case NQueryGlyph.ScalarValueFunction:
@@ -46,6 +46,10 @@ namespace NQuery.Language.VSEditor
                     return FromName("Column");
                 case NQueryGlyph.Function:
                     return FromName("Function");
+                case NQueryGlyph.Method:
+                    return FromName("Method");
+                case NQueryGlyph.Property:
+                    return FromName("Property");
                 default:
                     throw new ArgumentOutOfRangeException("glyph");
             }

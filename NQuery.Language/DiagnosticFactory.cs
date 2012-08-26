@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-
-using NQuery.Language.Semantic;
+using System.Linq;
+using NQuery.Language.Symbols;
 
 namespace NQuery.Language
 {
@@ -132,23 +133,28 @@ namespace NQuery.Language
             return new Diagnostic(tableName, DiagnosticId.UndeclaredTable, message);
         }
 
-        //public static Diagnostic UndeclaredParameter(SyntaxNodeOrToken nodeOrToken, Identifier identifier)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredParameter, identifier);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UndeclaredParameter, message);
-        //}
+        public static Diagnostic UndeclaredVariable(VariableExpressionSyntax node)
+        {
+            var variableName = node.Name;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredVariable, variableName.Text);
+            return new Diagnostic(variableName, DiagnosticId.UndeclaredVariable, message);
+        }
 
-        //public static Diagnostic UndeclaredFunction(SyntaxNodeOrToken nodeOrToken, Identifier identifier, Type[] parameterTypes)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, identifier, FormattingHelpers.FormatTypeList(parameterTypes));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UndeclaredFunction, message);
-        //}
+        public static Diagnostic UndeclaredFunction(FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
+        {
+            var name = node.Name.ValueText;
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, name, argumentTypeList);
+            return new Diagnostic(node, DiagnosticId.UndeclaredFunction, message);
+        }
 
-        //public static Diagnostic UndeclaredMethod(SyntaxNodeOrToken nodeOrToken, Type declaringType, Identifier identifier, Type[] parameterTypes)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, identifier, FormattingHelpers.FormatTypeList(parameterTypes));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UndeclaredMethod, message);
-        //}
+        public static Diagnostic UndeclaredMethod(MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
+        {
+            var name = node.Name.Text;
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, name, argumentTypeList);
+            return new Diagnostic(node, DiagnosticId.UndeclaredMethod, message);
+        }
 
         public static Diagnostic UndeclaredColumn(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
@@ -157,11 +163,11 @@ namespace NQuery.Language
             return new Diagnostic(node, DiagnosticId.UndeclaredColumn, message);
         }
 
-        //public static Diagnostic UndeclaredProperty(SyntaxNodeOrToken nodeOrToken, Type type, Identifier identifier)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, FormattingHelpers.FormatType(type), identifier);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UndeclaredProperty, message);
-        //}
+        public static Diagnostic UndeclaredProperty(PropertyAccessExpressionSyntax node, Type type)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, type.Name, node.Name.Text);
+            return new Diagnostic(node, DiagnosticId.UndeclaredProperty, message);
+        }
 
         //public static Diagnostic UndeclaredType(SyntaxNodeOrToken nodeOrToken, string typeName)
         //{
@@ -171,7 +177,7 @@ namespace NQuery.Language
 
         public static Diagnostic UndeclaredEntity(NameExpressionSyntax node)
         {
-            var name = node.Identifier.Text;
+            var name = node.Name.Text;
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredEntity, name);
             return new Diagnostic(node, DiagnosticId.UndeclaredEntity, message);
         }

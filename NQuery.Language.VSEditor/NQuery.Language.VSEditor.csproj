@@ -129,7 +129,7 @@
     <Resource Include="Images\Aggregate.png" />
     <Resource Include="Images\Column.png" />
     <Resource Include="Images\Keyword.png" />
-    <Resource Include="Images\Parameter.png" />
+    <Resource Include="Images\Variable.png" />
     <Resource Include="Images\Relation.png" />
     <Resource Include="Images\ScalarValueFunction.png" />
     <Resource Include="Images\StoredProcedure.png" />
@@ -139,6 +139,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AmbiguousName.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Method.png" />
+    <Resource Include="Images\Property.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

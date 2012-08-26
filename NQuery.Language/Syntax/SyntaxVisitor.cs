@@ -103,8 +103,8 @@ namespace NQuery.Language
                     VisitLiteralExpression((LiteralExpressionSyntax)node);
                     break;
 
-                case SyntaxKind.ParameterExpression:
-                    VisitParameterExpression((ParameterExpressionSyntax)node);
+                case SyntaxKind.VariableExpression:
+                    VisitParameterExpression((VariableExpressionSyntax)node);
                     break;
 
                 case SyntaxKind.NameExpression:
@@ -374,7 +374,7 @@ namespace NQuery.Language
             DefaultVisit(node);
         }
 
-        public virtual void VisitParameterExpression(ParameterExpressionSyntax node)
+        public virtual void VisitParameterExpression(VariableExpressionSyntax node)
         {
             DefaultVisit(node);
         }

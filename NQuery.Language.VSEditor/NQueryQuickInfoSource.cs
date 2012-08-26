@@ -3,8 +3,7 @@ using System.Linq;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
-
-using NQuery.Language.Semantic;
+using NQuery.Language.Symbols;
 
 namespace NQuery.Language.VSEditor
 {

@@ -13,6 +13,6 @@ namespace NQuery.Language.VSEditor
         IClassificationType Function { get; }
         IClassificationType Aggregate { get; }
         IClassificationType Operator { get; }
-        IClassificationType Parameter { get; }
+        IClassificationType Variable { get; }
     }
 }

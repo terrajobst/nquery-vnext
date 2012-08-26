@@ -13,7 +13,7 @@ namespace NQuery.Language
         NumericLiteralToken,
         StringLiteralToken,
         DateLiteralToken,
-        ParameterMarkerToken,
+        AtToken,
 
         BitwiseNotToken,
         BitwiseAndToken,
@@ -155,7 +155,7 @@ namespace NQuery.Language
         NullIfExpression,
         InExpression,
         LiteralExpression,
-        ParameterExpression,
+        VariableExpression,
         NameExpression,
         PropertyAccessExpression,
         CountAllExpression,

@@ -10,7 +10,8 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
-using NQuery.Language.Semantic;
+using NQuery.Language.Runtime;
+using NQuery.Language.Symbols;
 using NQuery.Language.VSEditor;
 
 using NQueryViewer.Helpers;
@@ -56,12 +57,22 @@ namespace NQueryViewer
             _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
             _semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textBuffer);
 
-            _semanticModelManager.Compilation = _semanticModelManager.Compilation.SetSchemaTables(GetSchemaTables());
+            _semanticModelManager.Compilation = _semanticModelManager.Compilation.WithDataContext(GetDataContext());
 
             UpdateTree();
         }
 
-        private IList<SchemaTableSymbol> GetSchemaTables()
+        private static DataContext GetDataContext()
+        {
+            var builder = new DataContextBuilder();
+            builder.Tables.AddRange(GetSchemaTables());
+            builder.Variables.Add(new VariableSymbol("Id", typeof(int)));
+            builder.PropertyProviders.DefaultValue = new ReflectionProvider();
+            builder.MethodProviders.DefaultValue = new ReflectionProvider();
+            return builder.GetResult();
+        }
+
+        private static IEnumerable<SchemaTableSymbol> GetSchemaTables()
         {
             return new[]
             {

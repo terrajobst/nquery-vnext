@@ -27,7 +27,7 @@ namespace NQuery.Language
         InvalidOperatorForAllAny,
 
         UndeclaredTable,
-        UndeclaredParameter,
+        UndeclaredVariable,
         UndeclaredFunction,
         UndeclaredMethod,
         UndeclaredColumn,

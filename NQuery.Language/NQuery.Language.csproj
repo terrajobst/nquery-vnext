@@ -35,15 +35,80 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\Binder.Queries.cs" />
+    <Compile Include="Binding\Binder.Expressions.cs" />
+    <Compile Include="Binding\Binder.Operators.cs" />
+    <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="BoundNodes\BoundFunctionInvocationExpression.cs" />
+    <Compile Include="BoundNodes\BoundMethodInvocationExpression.cs" />
+    <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
+    <Compile Include="Binding\ExpressionBindingContext.cs" />
+    <Compile Include="Binding\JoinConditionBindingContext.cs" />
+    <Compile Include="Binding\RootBindingConext.cs" />
+    <Compile Include="Binding\TableBindingContext.cs" />
+    <Compile Include="Binding\BindingResult.cs" />
+    <Compile Include="BoundNodes\BoundBinaryExpression.cs" />
+    <Compile Include="BoundNodes\BoundCaseExpression.cs" />
+    <Compile Include="BoundNodes\BoundCaseLabel.cs" />
+    <Compile Include="BoundNodes\BoundCombinedQuery.cs" />
+    <Compile Include="BoundNodes\BoundDerivedTableReference.cs" />
+    <Compile Include="BoundNodes\BoundExpression.cs" />
+    <Compile Include="BoundNodes\BoundJoinedTableReference.cs" />
+    <Compile Include="BoundNodes\BoundJoinType.cs" />
+    <Compile Include="BoundNodes\BoundLiteralExpression.cs" />
+    <Compile Include="BoundNodes\BoundNamedTableReference.cs" />
+    <Compile Include="BoundNodes\BoundNameExpression.cs" />
+    <Compile Include="BoundNodes\BoundNodeKind.cs" />
+    <Compile Include="BoundNodes\BoundQuery.cs" />
+    <Compile Include="BoundNodes\BoundQueryCombinator.cs" />
+    <Compile Include="BoundNodes\BoundSelectColumn.cs" />
+    <Compile Include="BoundNodes\BoundSelectQuery.cs" />
+    <Compile Include="BoundNodes\BoundTableReference.cs" />
+    <Compile Include="BoundNodes\BoundUnaryExpression.cs" />
+    <Compile Include="BoundNodes\BoundVariableExpression.cs" />
+    <Compile Include="Compilation.cs" />
+    <Compile Include="ITypeRegistry.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Semantic\BindingContexts.cs" />
-    <Compile Include="Semantic\BoundNodes.cs" />
-    <Compile Include="Semantic\SemanticModel.cs" />
-    <Compile Include="Semantic\Symbols.cs" />
+    <Compile Include="Binding\Binder.cs" />
+    <Compile Include="Binding\BindingContexts.cs" />
+    <Compile Include="BoundNodes\BoundNode.cs" />
+    <Compile Include="Binding\BoundBinaryOperatorKind.cs" />
+    <Compile Include="Binding\BoundUnaryOperatorKind.cs" />
+    <Compile Include="Runtime\NullProviders.cs" />
+    <Compile Include="ReadOnlyTypeRegistry.cs" />
+    <Compile Include="Runtime\ReflectionFieldSymbol.cs" />
+    <Compile Include="Runtime\ReflectionMethodSymbol.cs" />
+    <Compile Include="Runtime\ReflectionParameterSymbol.cs" />
+    <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
+    <Compile Include="Runtime\ReflectionProvider.cs" />
+    <Compile Include="TypeRegistry.cs" />
+    <Compile Include="SemanticModel.cs" />
+    <Compile Include="Binding\WellKnownTypes.cs" />
+    <Compile Include="Symbols\BadSymbol.cs" />
+    <Compile Include="Symbols\BadTableSymbol.cs" />
+    <Compile Include="Symbols\BadVariableSymbol.cs" />
+    <Compile Include="Symbols\ColumnInstanceSymbol.cs" />
+    <Compile Include="Symbols\ColumnSymbol.cs" />
+    <Compile Include="DataContext.cs" />
+    <Compile Include="DataContextBuilder.cs" />
+    <Compile Include="Symbols\DerivedTableSymbol.cs" />
+    <Compile Include="Symbols\FunctionSymbol.cs" />
+    <Compile Include="IMethodProvider.cs" />
+    <Compile Include="Symbols\InvocableSymbol.cs" />
+    <Compile Include="IPropertyProvider.cs" />
+    <Compile Include="Symbols\MethodSymbol.cs" />
+    <Compile Include="Symbols\ParameterSymbol.cs" />
+    <Compile Include="Symbols\PropertySymbol.cs" />
+    <Compile Include="Symbols\SchemaTableSymbol.cs" />
+    <Compile Include="Symbols\SymbolKind.cs" />
+    <Compile Include="Symbols\Symbol.cs" />
+    <Compile Include="Symbols\TableInstanceSymbol.cs" />
+    <Compile Include="Symbols\TableSymbol.cs" />
+    <Compile Include="Symbols\VariableSymbol.cs" />
     <Compile Include="Syntax\AliasSyntax.cs" />
     <Compile Include="Syntax\AllAnySubselectSyntax.cs" />
     <Compile Include="Syntax\ArgumentListSyntax.cs" />
@@ -91,7 +156,7 @@
     <Compile Include="Syntax\OrderByColumnSyntax.cs" />
     <Compile Include="Syntax\OrderedQuerySyntax.cs" />
     <Compile Include="Syntax\OuterJoinedTableReferenceSyntax.cs" />
-    <Compile Include="Syntax\ParameterExpressionSyntax.cs" />
+    <Compile Include="Syntax\VariableExpressionSyntax.cs" />
     <Compile Include="Syntax\ParenthesizedExpressionSyntax.cs" />
     <Compile Include="Syntax\ParenthesizedQuerySyntax.cs" />
     <Compile Include="Syntax\ParenthesizedTableReferenceSyntax.cs" />
@@ -133,7 +198,11 @@
     <EmbeddedResource Include="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Binding\Binder.Lookup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
