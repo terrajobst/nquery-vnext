@@ -74,7 +74,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Binding\Binder.cs" />
-    <Compile Include="Binding\BindingContexts.cs" />
+    <Compile Include="Binding\BindingContext.cs" />
     <Compile Include="BoundNodes\BoundNode.cs" />
     <Compile Include="Binding\BoundBinaryOperatorKind.cs" />
     <Compile Include="Binding\BoundUnaryOperatorKind.cs" />
