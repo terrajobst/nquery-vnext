@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
-    public sealed class SelectClauseSyntax : QuerySyntax
+    public sealed class SelectClauseSyntax : SyntaxNode
     {
         private readonly SyntaxToken _selectKeyword;
         private readonly SyntaxToken? _distinctAllKeyword;
