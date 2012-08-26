@@ -5,7 +5,7 @@ namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
-        private BoundUnaryOperatorKind GetBoundUnaryOperator(SyntaxKind kind)
+        private static BoundUnaryOperatorKind GetBoundUnaryOperator(SyntaxKind kind)
         {
             switch (kind)
             {
