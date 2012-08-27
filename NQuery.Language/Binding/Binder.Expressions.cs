@@ -402,6 +402,8 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
         {
+            // TODO: Resolve and bind to aggregates
+
             var name = node.Name.ValueText;
             var arguments = (from a in node.ArgumentList.Arguments
                              select BindExpression(a.Expression)).ToList();
