@@ -44,7 +44,7 @@ namespace NQuery.Language
         AmbiguousProperty,
         AmbiguousType,
         AmbiguousInvocation,
-        InvocationRequiresParentheses,
+        InvocationRequiresParenthesis,
         CannotApplyUnaryOperator,
         AmbiguousUnaryOperator,
         CannotApplyBinaryOperator,

@@ -6,20 +6,20 @@ namespace NQuery.Language
     public sealed class CastExpressionSyntax : ExpressionSyntax
     {
         private readonly SyntaxToken _castKeyword;
-        private readonly SyntaxToken _leftParenthesesToken;
+        private readonly SyntaxToken _leftParenthesisToken;
         private readonly ExpressionSyntax _expression;
         private readonly SyntaxToken _asKeyword;
         private readonly TypeReferenceSyntax _typeReference;
-        private readonly SyntaxToken _rightParenthesesToken;
+        private readonly SyntaxToken _rightParenthesisToken;
 
-        public CastExpressionSyntax(SyntaxToken castKeyword, SyntaxToken leftParenthesesToken, ExpressionSyntax expression, SyntaxToken asKeyword, TypeReferenceSyntax typeReference, SyntaxToken rightParenthesesToken)
+        public CastExpressionSyntax(SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, TypeReferenceSyntax typeReference, SyntaxToken rightParenthesisToken)
         {
             _castKeyword = castKeyword;
-            _leftParenthesesToken = leftParenthesesToken;
+            _leftParenthesisToken = leftParenthesisToken;
             _expression = expression;
             _asKeyword = asKeyword;
             _typeReference = typeReference;
-            _rightParenthesesToken = rightParenthesesToken;
+            _rightParenthesisToken = rightParenthesisToken;
         }
 
         public override SyntaxKind Kind
@@ -30,11 +30,11 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _castKeyword;
-            yield return _leftParenthesesToken;
+            yield return _leftParenthesisToken;
             yield return _expression;
             yield return _asKeyword;
             yield return _typeReference;
-            yield return _rightParenthesesToken;
+            yield return _rightParenthesisToken;
         }
 
         public SyntaxToken CastKeyword
@@ -42,9 +42,9 @@ namespace NQuery.Language
             get { return _castKeyword; }
         }
 
-        public SyntaxToken LeftParenthesesToken
+        public SyntaxToken LeftParenthesisToken
         {
-            get { return _leftParenthesesToken; }
+            get { return _leftParenthesisToken; }
         }
 
         public ExpressionSyntax Expression
@@ -62,9 +62,9 @@ namespace NQuery.Language
             get { return _typeReference; }
         }
 
-        public SyntaxToken RightParenthesesToken
+        public SyntaxToken RightParenthesisToken
         {
-            get { return _rightParenthesesToken; }
+            get { return _rightParenthesisToken; }
         }
     }
 }

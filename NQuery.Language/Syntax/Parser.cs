@@ -271,10 +271,10 @@ namespace NQuery.Language
                                 //_errorReporter.InvalidOperatorForAllAny(_token.Range, binaryOp);
                             }
 
-                            var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+                            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                             var query = ParseQuery();
-                            var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                            left = new AllAnySubselectSyntax(left, operatorToken, leftParentheses, query, rightParentheses);
+                            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                            left = new AllAnySubselectSyntax(left, operatorToken, leftParenthesis, query, rightParenthesis);
                             break;
                         }
                         default:
@@ -321,7 +321,7 @@ namespace NQuery.Language
 
                 var name = Match(SyntaxKind.IdentifierToken);
 
-                if (Current.Kind != SyntaxKind.LeftParenthesesToken)
+                if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                 {
                     target = new PropertyAccessExpressionSyntax(target, dot, name);
                 }
@@ -354,10 +354,10 @@ namespace NQuery.Language
                 case SyntaxKind.ExistsKeyword:
                 {
                     var existsKeyword = NextToken();
-                    var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+                    var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                     var query = ParseQuery();
-                    var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                    return new ExistsSubselectSyntax(existsKeyword, leftParentheses, query, rightParentheses);
+                    var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                    return new ExistsSubselectSyntax(existsKeyword, leftParenthesis, query, rightParenthesis);
                 }
 
                 case SyntaxKind.AtToken:
@@ -370,13 +370,13 @@ namespace NQuery.Language
                 case SyntaxKind.CastKeyword:
                 {
                     var castKeyword = NextToken();
-                    var leftParenthesesToken = Match(SyntaxKind.LeftParenthesesToken);
+                    var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
                     var expression = ParseExpression();
                     var asKeyword = Match(SyntaxKind.AsKeyword);
                     var typeReference = ParseTypeReference();
-                    var rightParenthesesToken = Match(SyntaxKind.RightParenthesesToken);
+                    var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
 
-                    return new CastExpressionSyntax(castKeyword, leftParenthesesToken, expression, asKeyword, typeReference, rightParenthesesToken);
+                    return new CastExpressionSyntax(castKeyword, leftParenthesisToken, expression, asKeyword, typeReference, rightParenthesisToken);
                 }
 
                 case SyntaxKind.CaseKeyword:
@@ -432,49 +432,49 @@ namespace NQuery.Language
                 case SyntaxKind.NullIfKeyword:
                 {
                     var nullIfKeyword = NextToken();
-                    var leftParenthesesToken = Match(SyntaxKind.LeftParenthesesToken);
+                    var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
                     var leftExpression = ParseExpression();
                     var commaToken = Match(SyntaxKind.CommaToken);
                     var rightExpression = ParseExpression();
-                    var rightParenthesesToken = Match(SyntaxKind.RightParenthesesToken);
-                    return new NullIfExpressionSyntax(nullIfKeyword, leftParenthesesToken, leftExpression, commaToken, rightExpression, rightParenthesesToken);
+                    var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
+                    return new NullIfExpressionSyntax(nullIfKeyword, leftParenthesisToken, leftExpression, commaToken, rightExpression, rightParenthesisToken);
                 }
 
                 case SyntaxKind.IdentifierToken:
                 {
                     var identifier = NextToken();
 
-                    if (Current.Kind != SyntaxKind.LeftParenthesesToken)
+                    if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                         return new NameExpressionSyntax(identifier);
 
                     if (Lookahead.Kind == SyntaxKind.MultiplyToken &&
                         string.Equals(identifier.Text, "COUNT", StringComparison.OrdinalIgnoreCase))
                     {
-                        var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+                        var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                         var asteriskToken = Match(SyntaxKind.MultiplyToken);
-                        var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                        return new CountAllExpressionSyntax(identifier, leftParentheses, asteriskToken, rightParentheses);
+                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                        return new CountAllExpressionSyntax(identifier, leftParenthesis, asteriskToken, rightParenthesis);
                     }
                     
                     var arguments = ParseArgumentList();
                     return new FunctionInvocationExpressionSyntax(identifier, arguments);
                 }
 
-                case SyntaxKind.LeftParenthesesToken:
+                case SyntaxKind.LeftParenthesisToken:
                 {
                     if (Lookahead.Kind == SyntaxKind.SelectKeyword)
                     {
-                        var leftParentheses = NextToken();
+                        var leftParenthesis = NextToken();
                         var query = ParseQuery();
-                        var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                        return new SingleRowSubselectSyntax(leftParentheses, query, rightParentheses);
+                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                        return new SingleRowSubselectSyntax(leftParenthesis, query, rightParenthesis);
                     }
                     else
                     {
-                        var leftParentheses = NextToken();
+                        var leftParenthesis = NextToken();
                         var expression = ParseExpression();
-                        var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                        return new ParenthesizedExpressionSyntax(leftParentheses, expression, rightParentheses);
+                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                        return new ParenthesizedExpressionSyntax(leftParenthesis, expression, rightParenthesis);
                     }
                 }
 
@@ -576,11 +576,11 @@ namespace NQuery.Language
 
         private ArgumentListSyntax ParseArgumentList()
         {
-            var leftParenthesis = Match(SyntaxKind.LeftParenthesesToken);
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
 
             var arguments = new List<ArgumentSyntax>();
 
-            while (Current.Kind != SyntaxKind.RightParenthesesToken)
+            while (Current.Kind != SyntaxKind.RightParenthesisToken)
             {
                 var argument = ParseArgument();
                 arguments.Add(argument);
@@ -589,7 +589,7 @@ namespace NQuery.Language
                     break;
             }
 
-            var rightParenthesis = Match(SyntaxKind.RightParenthesesToken);
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
 
             return new ArgumentListSyntax(leftParenthesis, arguments, rightParenthesis);
         }
@@ -632,20 +632,20 @@ namespace NQuery.Language
             var identifer = Match(SyntaxKind.IdentifierToken);
             var commonTableExpressionColumnNameList = ParseCommonTableExpressionColumnNameList();
             var asKeyword = Match(SyntaxKind.AsKeyword);
-            var leftParentheses = Match(SyntaxKind.RightParenthesesToken);
+            var leftParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var query = ParseQuery();
-            var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var commaToken = NextTokenIf(SyntaxKind.CommaToken);
 
-            return new CommonTableExpressionSyntax(identifer, commonTableExpressionColumnNameList, asKeyword, leftParentheses, query, rightParentheses, commaToken);
+            return new CommonTableExpressionSyntax(identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis, commaToken);
         }
 
         private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
         {
             CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList;
-            if (Current.Kind == SyntaxKind.LeftParenthesesToken)
+            if (Current.Kind == SyntaxKind.LeftParenthesisToken)
             {
-                var leftParentheses = NextToken();
+                var leftParenthesis = NextToken();
 
                 var columnNames = new List<SyntaxToken>();
 
@@ -660,8 +660,8 @@ namespace NQuery.Language
                     NextToken();
                 }
 
-                var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                commonTableExpressionColumnNameList = new CommonTableExpressionColumnNameListSyntax(leftParentheses, columnNames, rightParentheses);
+                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                commonTableExpressionColumnNameList = new CommonTableExpressionColumnNameListSyntax(leftParenthesis, columnNames, rightParenthesis);
             }
             else
                 commonTableExpressionColumnNameList = null;
@@ -762,12 +762,12 @@ namespace NQuery.Language
 
         private QuerySyntax ParseSelectQuery()
         {
-            if (Current.Kind == SyntaxKind.LeftParenthesesToken)
+            if (Current.Kind == SyntaxKind.LeftParenthesisToken)
             {
-                var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+                var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                 var query = ParseQuery();
-                var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
-                return new ParenthesizedQuerySyntax(leftParentheses, query, rightParentheses);
+                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                return new ParenthesizedQuerySyntax(leftParenthesis, query, rightParenthesis);
             }
 
             var selectClause = ParseSelectClause();
@@ -856,7 +856,7 @@ namespace NQuery.Language
         {
             TableReferenceSyntax left;
 
-            if (Current.Kind == SyntaxKind.LeftParenthesesToken)
+            if (Current.Kind == SyntaxKind.LeftParenthesisToken)
             {
                 left = Lookahead.Kind == SyntaxKind.SelectKeyword
                            ? ParseDerivedTableReference()
@@ -896,11 +896,11 @@ namespace NQuery.Language
 
         private TableReferenceSyntax ParseParenthesizedTableReference()
         {
-            var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var tableReference = ParseTableReference();
-            var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new ParenthesizedTableReferenceSyntax(leftParentheses, tableReference, rightParentheses, commaToken);
+            return new ParenthesizedTableReferenceSyntax(leftParenthesis, tableReference, rightParenthesis, commaToken);
         }
 
         private TableReferenceSyntax ParseNamedTableReference()
@@ -945,13 +945,13 @@ namespace NQuery.Language
 
         private DerivedTableReferenceSyntax ParseDerivedTableReference()
         {
-            var leftParentheses = Match(SyntaxKind.LeftParenthesesToken);
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var query = ParseQuery();
-            var rightParentheses = Match(SyntaxKind.RightParenthesesToken);
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var asKeyword = NextTokenIf(SyntaxKind.AsKeyword);
             var name = Match(SyntaxKind.IdentifierToken);
             var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new DerivedTableReferenceSyntax(leftParentheses, query, rightParentheses, asKeyword, name, commaToken);
+            return new DerivedTableReferenceSyntax(leftParenthesis, query, rightParenthesis, asKeyword, name, commaToken);
         }
 
         private WhereClauseSyntax ParseWhereClause()

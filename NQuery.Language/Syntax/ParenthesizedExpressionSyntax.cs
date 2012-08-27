@@ -5,15 +5,15 @@ namespace NQuery.Language
 {
     public sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _leftParentheses;
+        private readonly SyntaxToken _leftParenthesis;
         private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _rightParentheses;
+        private readonly SyntaxToken _rightParenthesis;
 
-        public ParenthesizedExpressionSyntax(SyntaxToken leftParentheses, ExpressionSyntax expression, SyntaxToken rightParentheses)
+        public ParenthesizedExpressionSyntax(SyntaxToken leftParenthesis, ExpressionSyntax expression, SyntaxToken rightParenthesis)
         {
-            _leftParentheses = leftParentheses;
+            _leftParenthesis = leftParenthesis;
             _expression = expression;
-            _rightParentheses = rightParentheses;
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -23,14 +23,14 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
-            yield return _leftParentheses;
+            yield return _leftParenthesis;
             yield return _expression;
-            yield return _rightParentheses;
+            yield return _rightParenthesis;
         }
 
-        public SyntaxToken LeftParentheses
+        public SyntaxToken LeftParenthesis
         {
-            get { return _leftParentheses; }
+            get { return _leftParenthesis; }
         }
 
         public ExpressionSyntax Expression
@@ -38,9 +38,9 @@ namespace NQuery.Language
             get { return _expression; }
         }
 
-        public SyntaxToken RightParentheses
+        public SyntaxToken RightParenthesis
         {
-            get { return _rightParentheses; }
+            get { return _rightParenthesis; }
         }
     }
 }

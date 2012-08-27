@@ -417,8 +417,8 @@
   <data name="InvalidUnaryOperator" xml:space="preserve">
     <value>operator: '{0}'.</value>
   </data>
-  <data name="InvocationRequiresParentheses" xml:space="preserve">
-    <value>Invocation of '{0}' requires parentheses.</value>
+  <data name="InvocationRequiresParenthesis" xml:space="preserve">
+    <value>Invocation of '{0}' requires parenthesis.</value>
   </data>
   <data name="IPropertyProviderGetPropertiesFailed" xml:space="preserve">
     <value>IPropertyProvider.GetProperties() threw an exception.</value>

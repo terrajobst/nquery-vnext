@@ -6,16 +6,16 @@ namespace NQuery.Language
     public sealed class CountAllExpressionSyntax : ExpressionSyntax
     {
         private readonly SyntaxToken _identifier;
-        private readonly SyntaxToken _leftParentheses;
+        private readonly SyntaxToken _leftParenthesis;
         private readonly SyntaxToken _asteriskToken;
-        private readonly SyntaxToken _rightParentheses;
+        private readonly SyntaxToken _rightParenthesis;
 
-        public CountAllExpressionSyntax(SyntaxToken identifier, SyntaxToken leftParentheses, SyntaxToken asteriskToken, SyntaxToken rightParentheses)
+        public CountAllExpressionSyntax(SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
         {
             _identifier = identifier;
-            _leftParentheses = leftParentheses;
+            _leftParenthesis = leftParenthesis;
             _asteriskToken = asteriskToken;
-            _rightParentheses = rightParentheses;
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -26,9 +26,9 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _identifier;
-            yield return _leftParentheses;
+            yield return _leftParenthesis;
             yield return _asteriskToken;
-            yield return _rightParentheses;
+            yield return _rightParenthesis;
         }
 
         public SyntaxToken Identifier
@@ -36,9 +36,9 @@ namespace NQuery.Language
             get { return _identifier; }
         }
 
-        public SyntaxToken LeftParentheses
+        public SyntaxToken LeftParenthesis
         {
-            get { return _leftParentheses; }
+            get { return _leftParenthesis; }
         }
 
         public SyntaxToken AsteriskToken
@@ -46,9 +46,9 @@ namespace NQuery.Language
             get { return _asteriskToken; }
         }
 
-        public SyntaxToken RightParentheses
+        public SyntaxToken RightParenthesis
         {
-            get { return _rightParentheses; }
+            get { return _rightParenthesis; }
         }
     }
 }

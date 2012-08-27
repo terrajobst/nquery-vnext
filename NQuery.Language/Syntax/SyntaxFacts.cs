@@ -94,9 +94,9 @@ namespace NQuery.Language
                     return "|";
                 case SyntaxKind.BitwiseXorToken:
                     return "^";
-                case SyntaxKind.LeftParenthesesToken:
+                case SyntaxKind.LeftParenthesisToken:
                     return "(";
-                case SyntaxKind.RightParenthesesToken:
+                case SyntaxKind.RightParenthesisToken:
                     return ")";
                 case SyntaxKind.PlusToken:
                     return "+";
@@ -318,8 +318,8 @@ namespace NQuery.Language
                 case SyntaxKind.BitwiseAndToken:
                 case SyntaxKind.BitwiseOrToken:
                 case SyntaxKind.BitwiseXorToken:
-                case SyntaxKind.LeftParenthesesToken:
-                case SyntaxKind.RightParenthesesToken:
+                case SyntaxKind.LeftParenthesisToken:
+                case SyntaxKind.RightParenthesisToken:
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
                 case SyntaxKind.MultiplyToken:

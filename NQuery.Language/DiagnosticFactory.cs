@@ -250,10 +250,10 @@ namespace NQuery.Language
         //    }
         //}
 
-        //public static Diagnostic InvocationRequiresParentheses(SyntaxNodeOrToken nodeOrToken, InvocableBinding[] invocableGroup)
+        //public static Diagnostic InvocationRequiresParenthesis(SyntaxNodeOrToken nodeOrToken, InvocableBinding[] invocableGroup)
         //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvocationRequiresParentheses, invocableGroup[0].GetFullName());
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvocationRequiresParentheses, message);
+        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvocationRequiresParenthesis, invocableGroup[0].GetFullName());
+        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvocationRequiresParenthesis, message);
         //}
 
         //public static Diagnostic CannotApplyOperator(UnaryOperator op, Type type)

@@ -961,11 +961,11 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invocation of &apos;{0}&apos; requires parentheses..
+        ///   Looks up a localized string similar to Invocation of &apos;{0}&apos; requires parenthesis..
         /// </summary>
-        internal static string InvocationRequiresParentheses {
+        internal static string InvocationRequiresParenthesis {
             get {
-                return ResourceManager.GetString("InvocationRequiresParentheses", resourceCulture);
+                return ResourceManager.GetString("InvocationRequiresParenthesis", resourceCulture);
             }
         }
         

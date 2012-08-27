@@ -8,19 +8,19 @@ namespace NQuery.Language
         private readonly SyntaxToken _identifer;
         private readonly CommonTableExpressionColumnNameListSyntax _commonTableExpressionColumnNameList;
         private readonly SyntaxToken _asKeyword;
-        private readonly SyntaxToken _leftParentheses;
+        private readonly SyntaxToken _leftParenthesis;
         private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParentheses;
+        private readonly SyntaxToken _rightParenthesis;
         private readonly SyntaxToken? _commaToken;
 
-        public CommonTableExpressionSyntax(SyntaxToken identifer, CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList, SyntaxToken asKeyword, SyntaxToken leftParentheses, QuerySyntax query, SyntaxToken rightParentheses, SyntaxToken? commaToken)
+        public CommonTableExpressionSyntax(SyntaxToken identifer, CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
         {
             _identifer = identifer;
             _commonTableExpressionColumnNameList = commonTableExpressionColumnNameList;
             _asKeyword = asKeyword;
-            _leftParentheses = leftParentheses;
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParentheses = rightParentheses;
+            _rightParenthesis = rightParenthesis;
             _commaToken = commaToken;
         }
 
@@ -35,9 +35,9 @@ namespace NQuery.Language
             if (_commonTableExpressionColumnNameList != null)
                 yield return _commonTableExpressionColumnNameList;
             yield return _asKeyword;
-            yield return _leftParentheses;
+            yield return _leftParenthesis;
             yield return _query;
-            yield return _rightParentheses;
+            yield return _rightParenthesis;
             if (_commaToken != null)
                 yield return _commaToken.Value;
         }
@@ -57,9 +57,9 @@ namespace NQuery.Language
             get { return _asKeyword; }
         }
 
-        public SyntaxToken LeftParentheses
+        public SyntaxToken LeftParenthesis
         {
-            get { return _leftParentheses; }
+            get { return _leftParenthesis; }
         }
 
         public QuerySyntax Query
@@ -67,9 +67,9 @@ namespace NQuery.Language
             get { return _query; }
         }
 
-        public SyntaxToken RightParentheses
+        public SyntaxToken RightParenthesis
         {
-            get { return _rightParentheses; }
+            get { return _rightParenthesis; }
         }
 
         public SyntaxToken? CommaToken

@@ -77,8 +77,8 @@ namespace NQuery.Language.VSEditor
         {
             switch (syntaxKind)
             {
-                case SyntaxKind.LeftParenthesesToken:
-                case SyntaxKind.RightParenthesesToken:
+                case SyntaxKind.LeftParenthesisToken:
+                case SyntaxKind.RightParenthesisToken:
                 case SyntaxKind.CaseKeyword:
                 case SyntaxKind.EndKeyword:
                 case SyntaxKind.StringLiteralToken:
@@ -162,21 +162,21 @@ namespace NQuery.Language.VSEditor
 
             switch (token.Kind)
             {
-                case SyntaxKind.LeftParenthesesToken:
+                case SyntaxKind.LeftParenthesisToken:
                     if (!isLeft)
                         return false;
                     left = token.Span;
-                    return FindMatchingBrace(position, 1, parent, SyntaxKind.RightParenthesesToken, out right);
+                    return FindMatchingBrace(position, 1, parent, SyntaxKind.RightParenthesisToken, out right);
                 case SyntaxKind.CaseKeyword:
                     if (!isLeft)
                         return false;
                     left = token.Span;
                     return FindMatchingBrace(position, 1, parent, SyntaxKind.EndKeyword, out right);
-                case SyntaxKind.RightParenthesesToken:
+                case SyntaxKind.RightParenthesisToken:
                     if (isLeft)
                         return false;
                     right = token.Span;
-                    return FindMatchingBrace(position, -1, parent, SyntaxKind.LeftParenthesesToken, out left);
+                    return FindMatchingBrace(position, -1, parent, SyntaxKind.LeftParenthesisToken, out left);
                 case SyntaxKind.EndKeyword:
                     if (isLeft)
                         return false;

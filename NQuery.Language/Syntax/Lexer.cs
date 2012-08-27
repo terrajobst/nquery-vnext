@@ -226,12 +226,12 @@ namespace NQuery.Language
                     break;
 
                 case '(':
-                    _kind = SyntaxKind.LeftParenthesesToken;
+                    _kind = SyntaxKind.LeftParenthesisToken;
                     _charReader.NextChar();
                     break;
 
                 case ')':
-                    _kind = SyntaxKind.RightParenthesesToken;
+                    _kind = SyntaxKind.RightParenthesisToken;
                     _charReader.NextChar();
                     break;
 

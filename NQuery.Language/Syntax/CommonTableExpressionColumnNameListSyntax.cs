@@ -5,15 +5,15 @@ namespace NQuery.Language
 {
     public sealed class CommonTableExpressionColumnNameListSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _leftParentheses;
+        private readonly SyntaxToken _leftParenthesis;
         private readonly IList<SyntaxToken> _columnNames;
-        private readonly SyntaxToken _rightParentheses;
+        private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionColumnNameListSyntax(SyntaxToken leftParentheses, IList<SyntaxToken> columnNames, SyntaxToken rightParentheses)
+        public CommonTableExpressionColumnNameListSyntax(SyntaxToken leftParenthesis, IList<SyntaxToken> columnNames, SyntaxToken rightParenthesis)
         {
-            _leftParentheses = leftParentheses;
+            _leftParenthesis = leftParenthesis;
             _columnNames = columnNames;
-            _rightParentheses = rightParentheses;
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -23,15 +23,15 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
-            yield return _leftParentheses;
+            yield return _leftParenthesis;
             foreach (var columnName in _columnNames)
                 yield return columnName;
-            yield return _rightParentheses;
+            yield return _rightParenthesis;
         }
 
-        public SyntaxToken LeftParentheses
+        public SyntaxToken LeftParenthesis
         {
-            get { return _leftParentheses; }
+            get { return _leftParenthesis; }
         }
 
         public IList<SyntaxToken> ColumnNames
@@ -39,9 +39,9 @@ namespace NQuery.Language
             get { return _columnNames; }
         }
 
-        public SyntaxToken RightParentheses
+        public SyntaxToken RightParenthesis
         {
-            get { return _rightParentheses; }
+            get { return _rightParenthesis; }
         }
     }
 }
