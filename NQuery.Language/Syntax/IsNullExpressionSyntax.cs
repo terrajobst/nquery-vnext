@@ -6,16 +6,16 @@ namespace NQuery.Language
     public sealed class IsNullExpressionSyntax : ExpressionSyntax
     {
         private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _isToken;
-        private readonly SyntaxToken? _notToken;
-        private readonly SyntaxToken _nullToken;
+        private readonly SyntaxToken _isKeyword;
+        private readonly SyntaxToken? _notKeyword;
+        private readonly SyntaxToken _nullKeyword;
 
-        public IsNullExpressionSyntax(ExpressionSyntax expression, SyntaxToken isToken, SyntaxToken? notToken, SyntaxToken nullToken)
+        public IsNullExpressionSyntax(ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken? notKeyword, SyntaxToken nullKeyword)
         {
             _expression = expression;
-            _isToken = isToken;
-            _notToken = notToken;
-            _nullToken = nullToken;
+            _isKeyword = isKeyword;
+            _notKeyword = notKeyword;
+            _nullKeyword = nullKeyword;
         }
 
         public override SyntaxKind Kind
@@ -26,10 +26,10 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _expression;
-            yield return _isToken;
-            if (_notToken != null)
-                yield return _notToken.Value;
-            yield return _nullToken;
+            yield return _isKeyword;
+            if (_notKeyword != null)
+                yield return _notKeyword.Value;
+            yield return _nullKeyword;
         }
 
         public ExpressionSyntax Expression
@@ -37,19 +37,19 @@ namespace NQuery.Language
             get { return _expression; }
         }
 
-        public SyntaxToken IsToken
+        public SyntaxToken IsKeyword
         {
-            get { return _isToken; }
+            get { return _isKeyword; }
         }
 
-        public SyntaxToken? NotToken
+        public SyntaxToken? NotKeyword
         {
-            get { return _notToken; }
+            get { return _notKeyword; }
         }
 
-        public SyntaxToken NullToken
+        public SyntaxToken NullKeyword
         {
-            get { return _nullToken; }
+            get { return _nullKeyword; }
         }
     }
 }

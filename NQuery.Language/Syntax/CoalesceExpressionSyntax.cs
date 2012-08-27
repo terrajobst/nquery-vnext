@@ -6,12 +6,12 @@ namespace NQuery.Language
     public sealed class CoalesceExpressionSyntax : ExpressionSyntax
     {
         private readonly SyntaxToken _coalesceKeyword;
-        private readonly ArgumentListSyntax _arguments;
+        private readonly ArgumentListSyntax _argumentList;
 
-        public CoalesceExpressionSyntax(SyntaxToken coalesceKeyword, ArgumentListSyntax arguments)
+        public CoalesceExpressionSyntax(SyntaxToken coalesceKeyword, ArgumentListSyntax argumentList)
         {
             _coalesceKeyword = coalesceKeyword;
-            _arguments = arguments;
+            _argumentList = argumentList;
         }
 
         public override SyntaxKind Kind
@@ -22,7 +22,7 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> GetChildren()
         {
             yield return _coalesceKeyword;
-            yield return _arguments;
+            yield return _argumentList;
         }
 
         public SyntaxToken CoalesceKeyword
@@ -30,9 +30,9 @@ namespace NQuery.Language
             get { return _coalesceKeyword; }
         }
 
-        public ArgumentListSyntax Arguments
+        public ArgumentListSyntax ArgumentList
         {
-            get { return _arguments; }
+            get { return _argumentList; }
         }
     }
 }
