@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using NQuery.Language;
 using NQuery.Language.Symbols;
 
 namespace NQuery.Language.Binding
 {
-    internal sealed class RootBindingConext : BindingContext
+    internal sealed class RootBindingContext : BindingContext
     {
         private readonly DataContext _dataContext;
 
-        public RootBindingConext(DataContext dataContext)
+        public RootBindingContext(DataContext dataContext)
         {
             _dataContext = dataContext;
         }

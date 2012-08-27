@@ -44,7 +44,7 @@
     <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
     <Compile Include="Binding\ExpressionBindingContext.cs" />
     <Compile Include="Binding\JoinConditionBindingContext.cs" />
-    <Compile Include="Binding\RootBindingConext.cs" />
+    <Compile Include="Binding\RootBindingContext.cs" />
     <Compile Include="Binding\TableBindingContext.cs" />
     <Compile Include="Binding\BindingResult.cs" />
     <Compile Include="BoundNodes\BoundBinaryExpression.cs" />

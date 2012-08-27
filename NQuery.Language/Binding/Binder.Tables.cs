@@ -161,7 +161,7 @@ namespace NQuery.Language.Binding
             // When resolving a CTE, the current context is set to this outermost binding context.
 
             var previousBindingContext = _bindingContextStack.Pop();
-            _bindingContextStack.Push(_rootBindingConext);
+            _bindingContextStack.Push(_rootBindingContext);
 
             var query = BindQuery(node.Query);
 

@@ -11,7 +11,7 @@ namespace NQuery.Language.Binding
     internal sealed partial class Binder
     {
         private readonly DataContext _dataContext;
-        private readonly RootBindingConext _rootBindingConext;
+        private readonly RootBindingContext _rootBindingContext;
         private readonly Stack<BindingContext> _bindingContextStack;
         private readonly Dictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode = new Dictionary<SyntaxNode, BoundNode>();
         private readonly Dictionary<BoundNode, BindingContext> _bindingContextFromBoundNode = new Dictionary<BoundNode, BindingContext>();
@@ -20,9 +20,9 @@ namespace NQuery.Language.Binding
         public Binder(DataContext dataContext)
         {
             _dataContext = dataContext;
-            _rootBindingConext = new RootBindingConext(dataContext);
+            _rootBindingContext = new RootBindingContext(dataContext);
             _bindingContextStack = new Stack<BindingContext>();
-            _bindingContextStack.Push(_rootBindingConext);
+            _bindingContextStack.Push(_rootBindingContext);
         }
 
         private BindingContext Context
