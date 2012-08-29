@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language", "NQuery.L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.VSEditor", "NQuery.Language.VSEditor\NQuery.Language.VSEditor.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.UnitTests", "NQuery.Language.UnitTests\NQuery.Language.UnitTests.csproj", "{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
