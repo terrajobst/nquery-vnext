@@ -37,7 +37,7 @@ namespace NQuery.Language
             var end = _charReader.Position;
             var kind = _kind;
             var span = TextSpan.FromBounds(start, end);
-            var text = _value as string;
+            var text = _source.Substring(span.Start, span.Length);
 
             // TODO: Get errors
 
