@@ -22,7 +22,7 @@ namespace NQuery.Language
             get { return SyntaxKind.GroupByClause; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _groupKeyword;
             yield return _byKeyword;

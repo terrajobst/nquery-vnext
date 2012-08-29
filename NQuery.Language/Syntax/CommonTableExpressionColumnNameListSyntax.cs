@@ -21,7 +21,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CommonTableExpressionColumnNameList; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftParenthesis;
             foreach (var columnName in _columnNames)

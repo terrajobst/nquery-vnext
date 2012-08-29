@@ -99,7 +99,7 @@ namespace NQuery.Language.VSEditor
             if (FindBrace(root, position, isLeft, out token))
                 return root;
 
-            var nodes = from n in root.GetChildren()
+            var nodes = from n in root.ChildNodesAndTokens()
                         where n.IsNode
                         select n.AsNode();
 
@@ -111,7 +111,7 @@ namespace NQuery.Language.VSEditor
 
         private bool FindBrace(SyntaxNode parent, int position, bool isLeft, out SyntaxToken token)
         {
-            var tokens = from t in parent.GetChildren()
+            var tokens = from t in parent.ChildNodesAndTokens()
                          where t.IsToken
                          select t.AsToken();
 
@@ -197,7 +197,7 @@ namespace NQuery.Language.VSEditor
 
         private bool FindMatchingBrace(int position, int direction, SyntaxNode parent, SyntaxKind syntaxKind, out TextSpan right)
         {
-            var tokens = from t in parent.GetChildren()
+            var tokens = from t in parent.ChildNodesAndTokens()
                          where t.Kind == syntaxKind && t.IsToken
                          select t.AsToken();
 

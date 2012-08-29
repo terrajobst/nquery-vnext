@@ -217,7 +217,7 @@ namespace NQueryViewer
         {
             var children = new List<NodeViewModel>();
 
-            foreach (var child in node.GetChildren())
+            foreach (var child in node.ChildNodesAndTokens())
             {
                 if (child.IsToken)
                     children.AddRange(child.AsToken().LeadingTrivia.Select(ToViewModel));

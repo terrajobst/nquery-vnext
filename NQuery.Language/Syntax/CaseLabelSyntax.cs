@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CaseLabel; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _whenKeyword;
             yield return _whenExpression;

@@ -20,7 +20,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CrossJoinedTableReference; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Left;
             yield return _crossKeyword;

@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CountAllExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _identifier;
             yield return _leftParenthesis;

@@ -21,7 +21,7 @@ namespace NQuery.Language
             get { return SyntaxKind.IntersectQuery; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftQuery;
             yield return _intersectKeyword;

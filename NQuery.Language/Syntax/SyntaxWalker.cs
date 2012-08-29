@@ -6,7 +6,7 @@ namespace NQuery.Language
     {
         public override void DefaultVisit(SyntaxNode node)
         {
-            foreach (var syntaxNodeOrToken in node.GetChildren())
+            foreach (var syntaxNodeOrToken in node.ChildNodesAndTokens())
             {
                 if (syntaxNodeOrToken.IsToken)
                     VisitToken(syntaxNodeOrToken.AsToken());

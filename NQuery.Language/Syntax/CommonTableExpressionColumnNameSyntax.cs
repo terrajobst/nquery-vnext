@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CommonTableExpressionColumnName; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _identifier;
             if (_commaToken != null)

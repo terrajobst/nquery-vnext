@@ -69,7 +69,7 @@ namespace NQuery.Language.VSEditor
             if (!root.FullSpan.Contains(position))
                 return null;
 
-            foreach (var nodeOrToken in root.GetChildren())
+            foreach (var nodeOrToken in root.ChildNodesAndTokens())
             {
                 if (nodeOrToken.IsNode)
                 {
@@ -195,7 +195,7 @@ namespace NQuery.Language.VSEditor
             if (!contains)
                 return null;
 
-            var nodes = from n in root.GetChildren()
+            var nodes = from n in root.ChildNodesAndTokens()
                         where n.IsNode
                         select n.AsNode();
 
@@ -222,7 +222,7 @@ namespace NQuery.Language.VSEditor
             if (!contains)
                 return null;
 
-            var nodes = from n in root.GetChildren()
+            var nodes = from n in root.ChildNodesAndTokens()
                         where n.IsNode
                         select n.AsNode();
 
@@ -252,7 +252,7 @@ namespace NQuery.Language.VSEditor
             if (!contains)
                 return false;
 
-            var relevantChildren = from n in root.GetChildren()
+            var relevantChildren = from n in root.ChildNodesAndTokens()
                                    where n.FullSpan.Start <= position && position <= n.FullSpan.End
                                    select n;
 
@@ -311,7 +311,7 @@ namespace NQuery.Language.VSEditor
             if (!contains)
                 return false;
 
-            var relevantChildren = from n in root.GetChildren()
+            var relevantChildren = from n in root.ChildNodesAndTokens()
                                    where n.FullSpan.Start <= position && position <= n.FullSpan.End
                                    select n;
 

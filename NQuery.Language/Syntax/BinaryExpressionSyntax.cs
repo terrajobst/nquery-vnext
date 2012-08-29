@@ -21,7 +21,7 @@ namespace NQuery.Language
             get { return SyntaxFacts.GetBinaryOperatorExpression(_operatorToken.Kind); }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _left;
             yield return _operatorToken;

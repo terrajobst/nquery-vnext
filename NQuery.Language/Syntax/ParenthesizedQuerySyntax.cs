@@ -21,7 +21,7 @@ namespace NQuery.Language
             get { return SyntaxKind.ParenthesizedQuery; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftParenthesis;
             yield return _query;

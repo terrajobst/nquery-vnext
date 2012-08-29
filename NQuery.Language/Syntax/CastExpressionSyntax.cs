@@ -27,7 +27,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CastExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _castKeyword;
             yield return _leftParenthesisToken;

@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxKind.WhereClause; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _whereKeyword;
             yield return _predicate;

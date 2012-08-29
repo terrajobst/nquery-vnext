@@ -22,7 +22,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CommonTableExpressionQuery; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _withKeyword;
 

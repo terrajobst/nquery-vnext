@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.MethodInvocationExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _target;
             yield return _dot;

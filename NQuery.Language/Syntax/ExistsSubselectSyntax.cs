@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.ExistsSubselect; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _existsKeyword;
             yield return _leftParenthesis;

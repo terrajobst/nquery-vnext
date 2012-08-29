@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.OrderedQuery; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _query;
             yield return _orderKeyword;

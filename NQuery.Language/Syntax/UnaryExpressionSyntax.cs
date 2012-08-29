@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxFacts.GetUnaryOperatorExpression(_operatorToken.Kind); }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _operatorToken;
             yield return _expression;

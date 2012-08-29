@@ -66,7 +66,7 @@ namespace NQuery.Language
 
         private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position, int lastPosition)
         {
-            foreach (var nodeOrToken in root.GetChildren())
+            foreach (var nodeOrToken in root.ChildNodesAndTokens())
             {
                 if (lastPosition <= position && position < nodeOrToken.Span.End)
                 {

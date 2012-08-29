@@ -21,7 +21,7 @@ namespace NQuery.Language
             get { return SyntaxKind.OrderByColumn; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _columnSelector;
             if (_modifier != null)

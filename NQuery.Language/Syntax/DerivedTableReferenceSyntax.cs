@@ -26,7 +26,7 @@ namespace NQuery.Language
             get { return SyntaxKind.DerivedTableReference; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftParenthesis;
             yield return _query;

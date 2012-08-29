@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxKind.Alias; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             if (_asKeyword != null)
                 yield return _asKeyword.Value;

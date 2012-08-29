@@ -92,7 +92,7 @@ namespace NQuery.Language.VSEditor
                     AddOutliningRegionTag(node.Span, new OutliningRegionTag(false, false, "SELECT", querySource));
                 }
 
-                var nodes = node.GetChildren()
+                var nodes = node.ChildNodesAndTokens()
                                 .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
                                 .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
 

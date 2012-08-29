@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.TopClause; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _topKeyword;
             yield return _value;

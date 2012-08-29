@@ -22,7 +22,7 @@ namespace NQuery.Language
             get { return SyntaxKind.ParenthesizedTableReference; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftParenthesis;
             yield return _tableReference;

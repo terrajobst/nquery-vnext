@@ -17,7 +17,7 @@ namespace NQuery.Language
             get { return SyntaxKind.NameExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Name;
         }

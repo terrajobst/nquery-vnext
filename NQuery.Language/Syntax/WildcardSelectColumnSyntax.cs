@@ -22,7 +22,7 @@ namespace NQuery.Language
             get { return SyntaxKind.WildcardSelectColumn; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             if (_tableName != null)
                 yield return _tableName.Value;

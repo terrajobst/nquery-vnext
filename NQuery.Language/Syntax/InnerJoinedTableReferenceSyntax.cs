@@ -22,7 +22,7 @@ namespace NQuery.Language
             get { return SyntaxKind.InnerJoinedTableReference; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Left;
             if (_innerKeyword != null)

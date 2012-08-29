@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,25 +8,25 @@ namespace NQuery.Language
         private TextSpan? _span;
         private TextSpan? _fullSpan;
 
-        public abstract IEnumerable<SyntaxNodeOrToken> GetChildren();
+        public abstract IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens(); 
 
         private TextSpan ComputeSpan()
         {
-            if (!GetChildren().Any())
+            if (!ChildNodesAndTokens().Any())
                 return new TextSpan(0, 0);
             
-            var start = GetChildren().First().Span.Start;
-            var end = GetChildren().Last().Span.End;
+            var start = ChildNodesAndTokens().First().Span.Start;
+            var end = ChildNodesAndTokens().Last().Span.End;
             return TextSpan.FromBounds(start, end);
         }
 
         private TextSpan ComputeFullSpan()
         {
-            if (!GetChildren().Any())
+            if (!ChildNodesAndTokens().Any())
                 return new TextSpan(0, 0);
             
-            var start = GetChildren().First().FullSpan.Start;
-            var end = GetChildren().Last().FullSpan.End;
+            var start = ChildNodesAndTokens().First().FullSpan.Start;
+            var end = ChildNodesAndTokens().Last().FullSpan.End;
             return TextSpan.FromBounds(start, end);
         }
 

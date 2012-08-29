@@ -25,7 +25,7 @@ namespace NQuery.Language
             get { return SyntaxKind.AllAnySubselect; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _left;
             yield return _keyword;

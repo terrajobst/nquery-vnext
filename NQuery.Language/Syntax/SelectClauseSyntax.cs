@@ -23,7 +23,7 @@ namespace NQuery.Language
             get { return SyntaxKind.SelectClause; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _selectKeyword;
             if (_distinctAllKeyword != null)

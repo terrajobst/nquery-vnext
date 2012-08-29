@@ -20,7 +20,7 @@ namespace NQuery.Language
             get { return SyntaxKind.FromClause; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _fromKeyword;
             foreach (var tableReference in TableReferences)

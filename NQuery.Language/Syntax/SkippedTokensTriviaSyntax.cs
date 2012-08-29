@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxKind.SkippedTokensTrivia; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             return _tokens.Select(token => (SyntaxNodeOrToken)token);
         }

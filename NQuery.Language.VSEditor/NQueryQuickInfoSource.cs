@@ -75,7 +75,7 @@ namespace NQuery.Language.VSEditor
             if (root == null || !root.Span.Contains(position))
                 return null;
 
-            var nodes = root.GetChildren()
+            var nodes = root.ChildNodesAndTokens()
                 .SkipWhile(n => !n.Span.Contains(position))
                 .TakeWhile(n => n.Span.Contains(position))
                 .Where(n => n.IsNode)

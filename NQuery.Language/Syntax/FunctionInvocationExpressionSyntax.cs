@@ -19,7 +19,7 @@ namespace NQuery.Language
             get { return SyntaxKind.FunctionInvocationExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _name;
             yield return _argumentList;

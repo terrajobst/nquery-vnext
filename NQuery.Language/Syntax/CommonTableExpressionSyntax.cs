@@ -29,7 +29,7 @@ namespace NQuery.Language
             get { return SyntaxKind.CommonTableExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _identifer;
             if (_commonTableExpressionColumnNameList != null)

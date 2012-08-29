@@ -103,7 +103,7 @@ namespace NQuery.Language.VSEditor
 
                 ClassifyNode(node);
 
-                var childNodes = node.GetChildren()
+                var childNodes = node.ChildNodesAndTokens()
                                      .Where(n => n.IsNode)
                                      .Select(n => n.AsNode())
                                      .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))

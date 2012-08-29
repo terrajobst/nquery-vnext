@@ -27,7 +27,7 @@ namespace NQuery.Language
             get { return SyntaxKind.NullIfExpression; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _nullIfKeyword;
             yield return _leftParenthesisToken;

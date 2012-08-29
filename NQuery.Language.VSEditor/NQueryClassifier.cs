@@ -91,7 +91,7 @@ namespace NQuery.Language.VSEditor
                 if (!node.FullSpan.OverlapsWith(_span))
                     return;
 
-                var nodes = node.GetChildren()
+                var nodes = node.ChildNodesAndTokens()
                                 .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
                                 .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
 

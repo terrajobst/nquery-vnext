@@ -20,7 +20,7 @@ namespace NQuery.Language
             get { return SyntaxKind.NamedTableReference; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _tableName;
             if (_alias != null)

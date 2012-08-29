@@ -20,7 +20,7 @@ namespace NQuery.Language
             get { return SyntaxKind.ExpressionSelectColumn; }
         }
 
-        public override IEnumerable<SyntaxNodeOrToken> GetChildren()
+        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _expression;
             if (_alias != null)
