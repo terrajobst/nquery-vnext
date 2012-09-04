@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace NQuery.Language
 {
@@ -35,6 +36,20 @@ namespace NQuery.Language
         public StructuredTriviaSyntax Structure
         {
             get { return _structure; }
+        }
+    
+        public void WriteTo(TextWriter writer)
+        {
+            writer.Write(_text);
+        }
+
+        public override string ToString()
+        {
+            using (var writer = new StringWriter())
+            {
+                WriteTo(writer);
+                return writer.ToString();
+            }
         }
     }
 }

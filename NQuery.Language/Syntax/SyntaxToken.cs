@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace NQuery.Language
 {
@@ -84,6 +85,26 @@ namespace NQuery.Language
         public ReadOnlyCollection<SyntaxTrivia> TrailingTrivia
         {
             get { return _trailingTrivia; }
+        }
+
+        public void WriteTo(TextWriter writer)
+        {
+            foreach (var syntaxTrivia in LeadingTrivia)
+                syntaxTrivia.WriteTo(writer);
+
+            writer.Write(_text);
+
+            foreach (var syntaxTrivia in TrailingTrivia)
+                syntaxTrivia.WriteTo(writer);
+        }
+
+        public override string ToString()
+        {
+            using (var writer = new StringWriter())
+            {
+                WriteTo(writer);
+                return writer.ToString();
+            }
         }
     }
 }

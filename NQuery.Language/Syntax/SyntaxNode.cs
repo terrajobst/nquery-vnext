@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace NQuery.Language
@@ -110,6 +111,26 @@ namespace NQuery.Language
                     _fullSpan = ComputeFullSpan();
 
                 return _fullSpan.Value;
+            }
+        }
+
+        public void WriteTo(TextWriter writer)
+        {
+            foreach (var syntaxNode in ChildNodesAndTokens())
+            {
+                if (syntaxNode.IsToken)   
+                    syntaxNode.AsToken().WriteTo(writer);
+                else
+                    syntaxNode.AsNode().WriteTo(writer);
+            }
+        }
+
+        public override string ToString()
+        {
+            using (var writer = new StringWriter())
+            {
+                WriteTo(writer);
+                return writer.ToString();
             }
         }
     }
