@@ -169,6 +169,7 @@ namespace NQuery.Language.Binding
             _bindingContextStack.Push(previousBindingContext);
 
             var columns = (from c in query.SelectColumns
+                           where !string.IsNullOrEmpty(c.Name)
                            select new ColumnSymbol(c.Name, c.Expression.Type)).ToArray();
 
             var derivedTable = new DerivedTableSymbol(columns);
