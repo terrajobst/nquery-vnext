@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NQuery.Language.BoundNodes;
 using NQuery.Language.Symbols;
@@ -465,17 +466,29 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindSingleRowSubselect(SingleRowSubselectSyntax node)
         {
-            throw new NotImplementedException();
+            var boundQuery = BindQuery(node.Query);
+      
+            // TODO: Ensure query has exactly one column
+
+            return new BoundSingleRowSubselect(boundQuery);
         }
 
         private BoundExpression BindExistsSubselect(ExistsSubselectSyntax node)
         {
-            throw new NotImplementedException();
+            var boundQuery = BindQuery(node.Query);
+
+            // NOTE: Number of columns doesn't matter here
+
+            return new BoundExistsSubselect(boundQuery);
         }
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
         {
-            throw new NotImplementedException();
+            var boundQuery = BindQuery(node.Query);
+
+            // TODO: Ensure query has exactly one column
+
+            return new BoundAllAnySubselect(boundQuery);
         }
     }
 }

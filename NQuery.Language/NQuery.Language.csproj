@@ -39,6 +39,8 @@
     <Compile Include="Binding\Binder.Expressions.cs" />
     <Compile Include="Binding\Binder.Operators.cs" />
     <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="BoundNodes\BoundAllAnySubselect.cs" />
+    <Compile Include="BoundNodes\BoundExistsSubselect.cs" />
     <Compile Include="BoundNodes\BoundFunctionInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundMethodInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="BoundNodes\BoundQueryCombinator.cs" />
     <Compile Include="BoundNodes\BoundSelectColumn.cs" />
     <Compile Include="BoundNodes\BoundSelectQuery.cs" />
+    <Compile Include="BoundNodes\BoundSingleRowSubselect.cs" />
     <Compile Include="BoundNodes\BoundTableReference.cs" />
     <Compile Include="BoundNodes\BoundUnaryExpression.cs" />
     <Compile Include="BoundNodes\BoundVariableExpression.cs" />
