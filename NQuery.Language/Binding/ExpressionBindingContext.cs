@@ -21,9 +21,8 @@ namespace NQuery.Language.Binding
                 var tableInstance = lookupSymbol as TableInstanceSymbol;
                 if (tableInstance != null)
                 {
-                    // TODO: I think a TableInstanceSymbol should have all the ColumnInstanceSymbols
-                    foreach (var columnSymbol in tableInstance.Table.Columns)
-                        yield return columnSymbol;
+                    foreach (var columnInstance in tableInstance.ColumnInstances)
+                        yield return columnInstance;
                 }
             }
         }

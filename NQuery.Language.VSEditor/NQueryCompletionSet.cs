@@ -142,7 +142,7 @@ namespace NQuery.Language.VSEditor
         {
             var tableInstanceSymbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
             if (tableInstanceSymbol != null)
-                return CreateSymbolCompletions(tableInstanceSymbol.Table.Columns);
+                return CreateSymbolCompletions(tableInstanceSymbol.ColumnInstances);
 
             var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);
             if (targetType != null)

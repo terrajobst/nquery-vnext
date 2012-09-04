@@ -173,9 +173,9 @@ namespace NQuery.Language.Binding
 
         private static IEnumerable<BoundSelectColumn> BindSelectColumnFromColumns(TableInstanceSymbol tableInstance)
         {
-            return from column in tableInstance.Table.Columns
-                   let expression = new BoundNameExpression(column, Enumerable.Empty<Symbol>())
-                   select new BoundSelectColumn(expression, column.Name);
+            return from columnInstance in tableInstance.ColumnInstances
+                   let expression = new BoundNameExpression(columnInstance, Enumerable.Empty<Symbol>())
+                   select new BoundSelectColumn(expression, columnInstance.Name);
         }
 
         private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForAllTables()

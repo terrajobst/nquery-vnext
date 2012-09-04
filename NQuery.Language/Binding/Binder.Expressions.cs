@@ -377,22 +377,21 @@ namespace NQuery.Language.Binding
         private BoundExpression BindColumnInstance(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
             var columnName = node.Name.ValueText;
-            var columns = tableInstance.Table.Columns.Where(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase)).ToArray();
-            if (columns.Length == 0)
+            var columnInstances = tableInstance.ColumnInstances.Where(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase)).ToArray();
+            if (columnInstances.Length == 0)
             {
                 _diagnostics.Add(DiagnosticFactory.UndeclaredColumn(node, tableInstance));
                 var errorSymbol = new BadSymbol(columnName);
-                return new BoundNameExpression(errorSymbol, tableInstance.Table.Columns);
+                return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
             }
             
-            if (columns.Length > 1)
+            if (columnInstances.Length > 1)
             {
                 // TODO: Return ambiguous match
             }
 
-            var column = columns.First();
-            var columnInstance = new ColumnInstanceSymbol(tableInstance, column);
-            return new BoundNameExpression(columnInstance, columns);
+            var columnInstance = columnInstances.First();
+            return new BoundNameExpression(columnInstance, columnInstances);
         }
 
         private BoundExpression BindCountAllExpression(CountAllExpressionSyntax node)
