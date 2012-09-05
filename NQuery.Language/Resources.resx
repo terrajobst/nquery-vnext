@@ -727,19 +727,19 @@
     <value>Unknown error {0}.</value>
   </data>
   <data name="UnterminatedComment" xml:space="preserve">
-    <value>Comment '{0}' is not properly terminated.</value>
+    <value>Comment is not properly terminated.</value>
   </data>
   <data name="UnterminatedDate" xml:space="preserve">
-    <value>Date '{0}' is not properly terminated.</value>
+    <value>Date is not properly terminated.</value>
   </data>
   <data name="UnterminatedParenthesizedIdentifier" xml:space="preserve">
-    <value>Parenthesized identifier '{0}' is not properly terminated.</value>
+    <value>Parenthesized identifier is not properly terminated.</value>
   </data>
   <data name="UnterminatedQuotedIdentifier" xml:space="preserve">
-    <value>Quoted identifier '{0}' is not properly terminated.</value>
+    <value>Quoted identifier is not properly terminated.</value>
   </data>
   <data name="UnterminatedString" xml:space="preserve">
-    <value>String '{0}' is not properly terminated.</value>
+    <value>String is not properly terminated.</value>
   </data>
   <data name="WhenMustEvaluateToBoolIfCaseInputIsOmitted" xml:space="preserve">
     <value>WHEN expression '{0}' must evaluate to '{1}' if CASE input expression is omitted.</value>

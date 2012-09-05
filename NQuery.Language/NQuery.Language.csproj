@@ -70,6 +70,7 @@
     <Compile Include="BoundNodes\BoundUnaryExpression.cs" />
     <Compile Include="BoundNodes\BoundVariableExpression.cs" />
     <Compile Include="Compilation.cs" />
+    <Compile Include="DiagnosticExtensions.cs" />
     <Compile Include="ITypeRegistry.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -16,13 +16,14 @@ namespace NQuery.Language
         private readonly object _value;
         private readonly ReadOnlyCollection<SyntaxTrivia> _leadingTrivia;
         private readonly ReadOnlyCollection<SyntaxTrivia> _trailingTrivia;
+        private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
 
-        public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
-            : this(null, kind, contextualKind, isMissing, span, text, value, leadingTrivia, trailingTrivia)
+        public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
+            : this(null, kind, contextualKind, isMissing, span, text, value, leadingTrivia, trailingTrivia, diagnostics)
         {
         }
 
-        private SyntaxToken(SyntaxNode parent, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
+        private SyntaxToken(SyntaxNode parent, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
         {
             _parent = parent;
             _kind = kind;
@@ -33,6 +34,7 @@ namespace NQuery.Language
             _value = value;
             _leadingTrivia = new ReadOnlyCollection<SyntaxTrivia>(leadingTrivia);
             _trailingTrivia = new ReadOnlyCollection<SyntaxTrivia>(trailingTrivia);
+            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
         }
 
         public SyntaxNode Parent
@@ -99,6 +101,11 @@ namespace NQuery.Language
             get { return _trailingTrivia; }
         }
 
+        public ReadOnlyCollection<Diagnostic> Diagnostics
+        {
+            get { return _diagnostics; }
+        }
+
         public void WriteTo(TextWriter writer)
         {
             foreach (var syntaxTrivia in LeadingTrivia)
@@ -112,7 +119,12 @@ namespace NQuery.Language
 
         public SyntaxToken WithParent(SyntaxNode parent)
         {
-            return new SyntaxToken(parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia);
+            return new SyntaxToken(parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
+        }
+
+        public SyntaxToken WithDiagnotics(IList<Diagnostic> diagnostics)
+        {
+            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
         }
 
         public override string ToString()

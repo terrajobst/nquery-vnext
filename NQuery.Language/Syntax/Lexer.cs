@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Linq;
 
 namespace NQuery.Language
 {
@@ -11,10 +12,12 @@ namespace NQuery.Language
         private readonly CharReader _charReader;
         private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
         private readonly List<SyntaxTrivia> _trailingTrivia = new List<SyntaxTrivia>();
+        private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
         
         private SyntaxKind _kind;
         private SyntaxKind _contextualKind;
         private object _value;
+        private int _start;
 
         public Lexer(string source)
         {
@@ -25,27 +28,40 @@ namespace NQuery.Language
         public SyntaxToken Lex()
         {
             _leadingTrivia.Clear();
+            _diagnostics.Clear();
+            _start = _charReader.Position;
             ReadTrivia(_leadingTrivia, isLeading: false);
             var leadingTrivia = _leadingTrivia.ToArray();
 
             _kind = SyntaxKind.BadToken;
             _contextualKind = SyntaxKind.BadToken;
             _value = null;
-
-            var start = _charReader.Position;
+            _diagnostics.Clear();
+            _start = _charReader.Position;
             ReadToken();
             var end = _charReader.Position;
             var kind = _kind;
-            var span = TextSpan.FromBounds(start, end);
+            var span = TextSpan.FromBounds(_start, end);
             var text = _source.Substring(span.Start, span.Length);
-
-            // TODO: Get errors
+            var diagnostics = _diagnostics.ToArray();
 
             _trailingTrivia.Clear();
+            _diagnostics.Clear();
+            _start = _charReader.Position;
             ReadTrivia(_trailingTrivia, isLeading: true);
             var trailingTrivia = _trailingTrivia.ToArray();
 
-            return new SyntaxToken(kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia);
+            return new SyntaxToken(kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
+        }
+
+        private TextSpan CurrentSpan
+        {
+            get { return TextSpan.FromBounds(_start, _charReader.Position); }
+        }
+
+        private TextSpan CurrentSpanStart
+        {
+            get { return new TextSpan(_start, 2); }
         }
 
         private void ReadTrivia(List<SyntaxTrivia> target, bool isLeading)
@@ -57,9 +73,8 @@ namespace NQuery.Language
                     case '\n':
                     case '\r':
                         {
-                            var start = _charReader.Position;
                             ReadEndOfLine();
-                            AddTrivia(target, start, SyntaxKind.EndOfLineTrivia);
+                            AddTrivia(target, SyntaxKind.EndOfLineTrivia);
                             if (isLeading)
                                 return;
                         }
@@ -67,9 +82,8 @@ namespace NQuery.Language
                     case '-':
                         if (_charReader.Peek() == '-')
                         {
-                            var start = _charReader.Position;
                             ReadSinglelineComment();
-                            AddTrivia(target, start, SyntaxKind.SingleLineCommentTrivia);
+                            AddTrivia(target, SyntaxKind.SingleLineCommentTrivia);
                         }
                         else
                         {
@@ -79,15 +93,13 @@ namespace NQuery.Language
                     case '/':
                         if (_charReader.Peek() == '/')
                         {
-                            var start = _charReader.Position;
                             ReadSinglelineComment();
-                            AddTrivia(target, start, SyntaxKind.SingleLineCommentTrivia);
+                            AddTrivia(target, SyntaxKind.SingleLineCommentTrivia);
                         }
                         else if (_charReader.Peek() == '*')
                         {
-                            var start = _charReader.Position;
                             ReadMultilineComment();
-                            AddTrivia(target, start, SyntaxKind.MultiLineCommentTrivia);
+                            AddTrivia(target, SyntaxKind.MultiLineCommentTrivia);
                         }
                         else
                         {
@@ -97,9 +109,8 @@ namespace NQuery.Language
                     default:
                         if (char.IsWhiteSpace(_charReader.Current))
                         {
-                            var start = _charReader.Position;
                             ReadWhitespace();
-                            AddTrivia(target, start, SyntaxKind.WhitespaceTrivia);
+                            AddTrivia(target, SyntaxKind.WhitespaceTrivia);
                         }
                         else
                         {
@@ -158,8 +169,7 @@ namespace NQuery.Language
                 switch (_charReader.Current)
                 {
                     case '\0':
-                        // TODO:
-                        //_errorReporter.UnterminatedComment(_tokenRange.StartLocation, _source.Substring(_tokenStart, _reader.Pos - _tokenStart));
+                        _diagnostics.ReportUnterminatedComment(CurrentSpanStart);
                         return;
 
                     case '*':
@@ -188,13 +198,18 @@ namespace NQuery.Language
             }
         }
 
-        private void AddTrivia(List<SyntaxTrivia> target, int start, SyntaxKind kind)
+        private void AddTrivia(List<SyntaxTrivia> target, SyntaxKind kind)
         {
+            var start = _start;
             var end = _charReader.Position;
             var span = TextSpan.FromBounds(start, end);
             var text = GetText(span);
-            var trivia = new SyntaxTrivia(kind, text, span, null);
+            var diagnostics = _diagnostics.ToArray();
+            var trivia = new SyntaxTrivia(kind, text, span, null, diagnostics);
             target.Add(trivia);
+
+            _diagnostics.Clear();
+            _start = _charReader.Position;
         }
 
         private void ReadToken()
@@ -312,8 +327,7 @@ namespace NQuery.Language
                     }
                     else
                     {
-                        // TODO: Report error
-                        //_errorReporter.IllegalInputCharacter(_charReader.Location, _charReader.Current);
+                        _diagnostics.ReportIllegalInputCharacter(CurrentSpan, _charReader.Current);
                     }
                     break;
 
@@ -383,8 +397,7 @@ namespace NQuery.Language
                     }
                     else
                     {
-                        // TODO: Report error
-                        //_errorReporter.IllegalInputCharacter(_charReader.Location, _charReader.Current);
+                        _diagnostics.ReportIllegalInputCharacter(CurrentSpan, _charReader.Current);
                         _charReader.NextChar();
                     }
 
@@ -406,8 +419,7 @@ namespace NQuery.Language
                 switch (_charReader.Current)
                 {
                     case '\0':
-                        // TODO
-                        // _errorReporter.UnterminatedString(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
+                        _diagnostics.ReportUnterminatedString(CurrentSpanStart);
                         goto ExitLoop;
 
                     case '\'':
@@ -450,8 +462,7 @@ namespace NQuery.Language
                     case '\0':
                     case '\r':
                     case '\n':
-                        // TODO
-                        //_errorReporter.UnterminatedDate(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
+                        _diagnostics.ReportUnterminatedDate(CurrentSpanStart);
                         goto ExitLoop;
 
                     case '#':
@@ -469,10 +480,7 @@ namespace NQuery.Language
             var text = sb.ToString();
             DateTime result;
             if (!DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
-            {
-                // TODO: Report error
-                //_errorReporter.InvalidDate(tokenRange, textWithoutDelimiters)
-            }
+                _diagnostics.ReportInvalidDate(CurrentSpan, text);
 
             _value = result;
         }
@@ -531,7 +539,7 @@ namespace NQuery.Language
                          : ReadInt32OrInt64(text);
         }
 
-        private static double ReadDouble(string text)
+        private double ReadDouble(string text)
         {
             try
             {
@@ -539,18 +547,16 @@ namespace NQuery.Language
             }
             catch (OverflowException)
             {
-                // TODO:
-                //_errorReporter.NumberTooLarge(tokenRange, number);
+                _diagnostics.ReportNumberTooLarge(CurrentSpan, text);
             }
             catch (FormatException)
             {
-                // TODO:
-                //_errorReporter.InvalidReal(tokenRange, number);
+                _diagnostics.ReportInvalidReal(CurrentSpan, text);
             }
             return 0.0;
         }
 
-        private static object ReadInt32OrInt64(string text)
+        private object ReadInt32OrInt64(string text)
         {
             var int64 = ReadInt64(text);
 
@@ -570,7 +576,7 @@ namespace NQuery.Language
             } 
         }
 
-        private static long ReadInt64(string text)
+        private long ReadInt64(string text)
         {
             // Get indicator
 
@@ -590,13 +596,11 @@ namespace NQuery.Language
                     }
                     catch (OverflowException)
                     {
-                        //TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                        _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
                     }
                     catch (FormatException)
                     {
-                        //TODO:
-                        //_errorReporter.InvalidHex(tokenRange, textWithoutIndicator);
+                        _diagnostics.ReportInvalidHex(CurrentSpan, textWithoutIndicator);
                     }
 
                     return 0;
@@ -609,8 +613,7 @@ namespace NQuery.Language
                     }
                     catch (OverflowException)
                     {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                        _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
                     }
 
                     return 0;
@@ -623,8 +626,7 @@ namespace NQuery.Language
                     }
                     catch (OverflowException)
                     {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, textWithoutIndicator);
+                        _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
                     }
 
                     return 0;
@@ -636,20 +638,18 @@ namespace NQuery.Language
                     }
                     catch (OverflowException)
                     {
-                        // TODO:
-                        //_errorReporter.NumberTooLarge(tokenRange, text);
+                        _diagnostics.ReportNumberTooLarge(CurrentSpan, text);
                     }
                     catch (FormatException)
                     {
-                        // TODO:
-                        //_errorReporter.InvalidInteger(tokenRange, text);
+                        _diagnostics.ReportInvalidInteger(CurrentSpan, text);
                     }
 
                     return 0;
             }
         }
 
-        private static long ReadBinaryValue(string binary)
+        private long ReadBinaryValue(string binary)
         {
             long val = 0;
 
@@ -670,8 +670,7 @@ namespace NQuery.Language
                 }
                 else
                 {
-                    // TODO
-                    //_errorReporter.InvalidBinary(tokenRange, binary);
+                    _diagnostics.ReportInvalidBinary(CurrentSpan, binary);
                     return 0;
                 }
             }
@@ -679,7 +678,7 @@ namespace NQuery.Language
             return val;
         }
 
-        private static long ReadOctalValue(string octal)
+        private long ReadOctalValue(string octal)
         {
             long val = 0;
 
@@ -693,15 +692,13 @@ namespace NQuery.Language
 
                     if (c > 7)
                     {
-                        // TODO:
-                        //_errorReporter.InvalidOctal(tokenRange, octal);
+                        _diagnostics.ReportInvalidOctal(CurrentSpan, octal);
                         return 0;
                     }
                 }
                 catch (FormatException)
                 {
-                    // TODO:
-                    //_errorReporter.InvalidOctal(tokenRange, octal);
+                    _diagnostics.ReportInvalidOctal(CurrentSpan, octal);
                     return 0;
                 }
 
@@ -755,8 +752,7 @@ namespace NQuery.Language
                     case '\0':
                     case '\r':
                     case '\n':
-                        // TODO
-                        // _errorReporter.UnterminatedQuotedIdentifier(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
+                        _diagnostics.ReportUnterminatedQuotedIdentifier(CurrentSpanStart);
                         goto ExitLoop;
 
                     case '"':
@@ -798,8 +794,7 @@ namespace NQuery.Language
                     case '\0':
                     case '\r':
                     case '\n':
-                        // TODO:
-                        //_errorReporter.UnterminatedParenthesizedIdentifier(_tokenRange.StartLocation, _source.Substring(_tokenStart + 1, _reader.Pos - _tokenStart));
+                        _diagnostics.ReportUnterminatedParenthesizedIdentifier(CurrentSpanStart);
                         goto ExitLoop;
 
                     case ']':

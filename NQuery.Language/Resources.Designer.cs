@@ -1897,7 +1897,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comment &apos;{0}&apos; is not properly terminated..
+        ///   Looks up a localized string similar to Comment is not properly terminated..
         /// </summary>
         internal static string UnterminatedComment {
             get {
@@ -1906,7 +1906,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Date &apos;{0}&apos; is not properly terminated..
+        ///   Looks up a localized string similar to Date is not properly terminated..
         /// </summary>
         internal static string UnterminatedDate {
             get {
@@ -1915,7 +1915,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parenthesized identifier &apos;{0}&apos; is not properly terminated..
+        ///   Looks up a localized string similar to Parenthesized identifier is not properly terminated..
         /// </summary>
         internal static string UnterminatedParenthesizedIdentifier {
             get {
@@ -1924,7 +1924,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Quoted identifier &apos;{0}&apos; is not properly terminated..
+        ///   Looks up a localized string similar to Quoted identifier is not properly terminated..
         /// </summary>
         internal static string UnterminatedQuotedIdentifier {
             get {
@@ -1933,7 +1933,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to String &apos;{0}&apos; is not properly terminated..
+        ///   Looks up a localized string similar to String is not properly terminated..
         /// </summary>
         internal static string UnterminatedString {
             get {

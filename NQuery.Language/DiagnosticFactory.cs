@@ -10,81 +10,83 @@ namespace NQuery.Language
     {
         #region Lexer CompilationErrors
 
-        //public static Diagnostic IllegalInputCharacter(SyntaxNodeOrToken nodeOrToken, char character)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.IllegalInputCharacter, character);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.IllegalInputCharacter, message);
-        //}
+        public static Diagnostic IllegalInputCharacter(TextSpan textSpan, char character)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.IllegalInputCharacter, character);
+            return new Diagnostic(textSpan, DiagnosticId.IllegalInputCharacter, message);
+        }
 
-        //public static Diagnostic UnterminatedComment(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UnterminatedComment, FormattingHelpers.GetFirstLine(tokenText));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UnterminatedComment, message);
-        //}
+        public static Diagnostic UnterminatedComment(TextSpan textSpan)
+        {
+            return new Diagnostic(textSpan, DiagnosticId.UnterminatedComment, Resources.UnterminatedComment);
+        }
 
-        //public static Diagnostic UnterminatedString(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UnterminatedString, FormattingHelpers.GetFirstLine(tokenText));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UnterminatedString, message);
-        //}
+        public static Diagnostic UnterminatedString(TextSpan textSpan)
+        {
+            return new Diagnostic(textSpan, DiagnosticId.UnterminatedString, Resources.UnterminatedString);
+        }
 
-        //public static Diagnostic UnterminatedQuotedIdentifier(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UnterminatedQuotedIdentifier, FormattingHelpers.GetFirstLine(tokenText));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UnterminatedQuotedIdentifier, message);
-        //}
+        public static Diagnostic UnterminatedQuotedIdentifier(TextSpan textSpan)
+        {
+            return new Diagnostic(textSpan, DiagnosticId.UnterminatedQuotedIdentifier, Resources.UnterminatedQuotedIdentifier);
+        }
 
-        //public static Diagnostic UnterminatedParenthesizedIdentifier(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UnterminatedParenthesizedIdentifier, FormattingHelpers.GetFirstLine(tokenText));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UnterminatedParenthesizedIdentifier, message);
-        //}
+        public static Diagnostic UnterminatedParenthesizedIdentifier(TextSpan textSpan)
+        {
+            return new Diagnostic(textSpan, DiagnosticId.UnterminatedParenthesizedIdentifier, Resources.UnterminatedParenthesizedIdentifier);
+        }
 
-        //public static Diagnostic UnterminatedDate(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UnterminatedDate, FormattingHelpers.GetFirstLine(tokenText));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UnterminatedDate, message);
-        //}
+        public static Diagnostic UnterminatedDate(TextSpan textSpan)
+        {
+            return new Diagnostic(textSpan, DiagnosticId.UnterminatedDate, Resources.UnterminatedDate);
+        }
+
+        public static Diagnostic InvalidDate(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDate, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidDate, message);
+        }
+
+        public static Diagnostic InvalidInteger(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidInteger, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidInteger, message);
+        }
+
+        public static Diagnostic InvalidReal(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDecimal, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidReal, message);
+        }
+
+        public static Diagnostic InvalidBinary(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidBinary, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidBinary, message);
+        }
+
+        public static Diagnostic InvalidOctal(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOctal, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidOctal, message);
+        }
+
+        public static Diagnostic InvalidHex(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidHex, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.InvalidHex, message);
+        }
+
+        public static Diagnostic NumberTooLarge(TextSpan textSpan, string tokenText)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.NumberTooLarge, tokenText);
+            return new Diagnostic(textSpan, DiagnosticId.NumberTooLarge, message);
+        }
 
         #endregion
 
         #region Parser Errors
 
-        //public static Diagnostic InvalidDate(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDate, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidDate, message);
-        //}
-
-        //public static Diagnostic InvalidInteger(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidInteger, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidInteger, message);
-        //}
-
-        //public static Diagnostic InvalidReal(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDecimal, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidReal, message);
-        //}
-
-        //public static Diagnostic InvalidBinary(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidBinary, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidBinary, message);
-        //}
-
-        //public static Diagnostic InvalidOctal(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOctal, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidOctal, message);
-        //}
-
-        //public static Diagnostic InvalidHex(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidHex, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidHex, message);
-        //}
 
         //public static Diagnostic InvalidTypeReference(SyntaxNodeOrToken nodeOrToken, string tokenText)
         //{
@@ -92,17 +94,13 @@ namespace NQuery.Language
         //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidTypeReference, message);
         //}
 
-        //public static Diagnostic NumberTooLarge(SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.NumberTooLarge, tokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.NumberTooLarge, message);
-        //}
-
-        //public static Diagnostic TokenExpected(SyntaxNodeOrToken nodeOrToken, string foundTokenText, TokenId expected)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, foundTokenText, TokenInfo.FromTokenId(expected).Text);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.TokenExpected, message);
-        //}
+        public static Diagnostic TokenExpected(SyntaxToken actual, SyntaxKind expected)
+        {
+            var actualText = actual.Kind.GetDisplayText();
+            var expectedText = expected.GetDisplayText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, actualText, expectedText);
+            return new Diagnostic(actual.Span, DiagnosticId.TokenExpected, message);
+        }
 
         //public static Diagnostic SimpleExpressionExpected(SyntaxNodeOrToken nodeOrToken, string tokenText)
         //{
@@ -130,14 +128,14 @@ namespace NQuery.Language
         {
             var tableName = namedTableReference.TableName;
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredTable, tableName.Text);
-            return new Diagnostic(tableName, DiagnosticId.UndeclaredTable, message);
+            return new Diagnostic(tableName.Span, DiagnosticId.UndeclaredTable, message);
         }
 
         public static Diagnostic UndeclaredVariable(VariableExpressionSyntax node)
         {
             var variableName = node.Name;
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredVariable, variableName.Text);
-            return new Diagnostic(variableName, DiagnosticId.UndeclaredVariable, message);
+            return new Diagnostic(variableName.Span, DiagnosticId.UndeclaredVariable, message);
         }
 
         public static Diagnostic UndeclaredFunction(FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
@@ -145,7 +143,7 @@ namespace NQuery.Language
             var name = node.Name.ValueText;
             var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, name, argumentTypeList);
-            return new Diagnostic(node, DiagnosticId.UndeclaredFunction, message);
+            return new Diagnostic(node.Span, DiagnosticId.UndeclaredFunction, message);
         }
 
         public static Diagnostic UndeclaredMethod(MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
@@ -153,20 +151,20 @@ namespace NQuery.Language
             var name = node.Name.Text;
             var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, name, argumentTypeList);
-            return new Diagnostic(node, DiagnosticId.UndeclaredMethod, message);
+            return new Diagnostic(node.Span, DiagnosticId.UndeclaredMethod, message);
         }
 
         public static Diagnostic UndeclaredColumn(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
             var name = node.Name.Text;
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredColumn, tableInstance.Name, name);
-            return new Diagnostic(node, DiagnosticId.UndeclaredColumn, message);
+            return new Diagnostic(node.Span, DiagnosticId.UndeclaredColumn, message);
         }
 
         public static Diagnostic UndeclaredProperty(PropertyAccessExpressionSyntax node, Type type)
         {
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, type.Name, node.Name.Text);
-            return new Diagnostic(node, DiagnosticId.UndeclaredProperty, message);
+            return new Diagnostic(node.Span, DiagnosticId.UndeclaredProperty, message);
         }
 
         //public static Diagnostic UndeclaredType(SyntaxNodeOrToken nodeOrToken, string typeName)
@@ -179,7 +177,7 @@ namespace NQuery.Language
         {
             var name = node.Name.Text;
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredEntity, name);
-            return new Diagnostic(node, DiagnosticId.UndeclaredEntity, message);
+            return new Diagnostic(node.Span, DiagnosticId.UndeclaredEntity, message);
         }
 
         //public static Diagnostic AmbiguousReference(SyntaxNodeOrToken nodeOrToken, Identifier identifier, Binding[] candidates)

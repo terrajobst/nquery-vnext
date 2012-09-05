@@ -82,7 +82,7 @@ namespace NQuery.Language
             yield return SyntaxKind.TiesKeyword;
         }
 
-        public static string GetText(SyntaxKind kind)
+        public static string GetText(this SyntaxKind kind)
         {
             switch (kind)
             {
@@ -239,6 +239,21 @@ namespace NQuery.Language
             }
         }
 
+        public static string GetDisplayText(this SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.EndOfFileToken:
+                    return "<end-of-file>";
+
+                case SyntaxKind.IdentifierToken:
+                    return "<identifier>";
+
+                default:
+                    return GetText(kind);
+            }
+        }
+
         public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
         {
             return kind == SyntaxKind.IdentifierToken || kind.IsKeyword();
@@ -248,7 +263,7 @@ namespace NQuery.Language
         {
             switch (kind)
             {
-                // Keywords
+                    // Keywords
 
                 case SyntaxKind.AndKeyword:
                 case SyntaxKind.OrKeyword:
@@ -273,7 +288,7 @@ namespace NQuery.Language
                 case SyntaxKind.FalseKeyword:
                 case SyntaxKind.ToKeyword:
 
-                // Contextual keywords
+                    // Contextual keywords
 
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.TopKeyword:
@@ -486,18 +501,18 @@ namespace NQuery.Language
                 case "WHERE":
                     return SyntaxKind.WhereKeyword;
 
-                case"RIGHT":
+                case "RIGHT":
                     return SyntaxKind.RightKeyword;
 
                 case "OUTER":
                     return SyntaxKind.OuterKeyword;
-                
+
                 case "FULL":
                     return SyntaxKind.FullKeyword;
-                
+
                 case "WITH":
                     return SyntaxKind.WithKeyword;
-                
+
                 case "TIES":
                     return SyntaxKind.TiesKeyword;
 

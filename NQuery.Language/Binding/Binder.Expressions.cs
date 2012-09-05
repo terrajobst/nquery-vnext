@@ -293,7 +293,7 @@ namespace NQuery.Language.Binding
 
             if (symbols.Length == 0)
             {
-                _diagnostics.Add(DiagnosticFactory.UndeclaredVariable(node));
+                _diagnostics.ReportUndeclaredVariable(node);
 
                 var badVariableSymbol = new BadVariableSymbol(node.Name.ValueText);
                 return new BoundVariableExpression(badVariableSymbol);
@@ -310,12 +310,20 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindNameExpression(NameExpressionSyntax node)
         {
+            if (node.Name.IsMissing)
+            {
+                // If this token was inserted by the parser, there is no point in
+                // trying to resolve this guy.
+                var errorSymbol = new BadSymbol(string.Empty);
+                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+            }
+
             var name = node.Name.ValueText;
             var symbols = LookupName(name).ToArray();
 
             if (symbols.Length == 0)
             {
-                _diagnostics.Add(DiagnosticFactory.UndeclaredEntity(node));
+                _diagnostics.ReportUndeclaredEntity(node);
                 var errorSymbol = new BadSymbol(name);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
@@ -361,7 +369,7 @@ namespace NQuery.Language.Binding
 
             if (propertySymbols.Length == 0)
             {
-                _diagnostics.Add(DiagnosticFactory.UndeclaredProperty(node, target.Type));
+                _diagnostics.ReportUndeclaredProperty(node, target.Type);
                 var errorSymbol = new BadSymbol(name);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
@@ -381,7 +389,7 @@ namespace NQuery.Language.Binding
             var columnInstances = tableInstance.ColumnInstances.Where(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase)).ToArray();
             if (columnInstances.Length == 0)
             {
-                _diagnostics.Add(DiagnosticFactory.UndeclaredColumn(node, tableInstance));
+                _diagnostics.ReportUndeclaredColumn(node, tableInstance);
                 var errorSymbol = new BadSymbol(columnName);
                 return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
             }
@@ -414,7 +422,7 @@ namespace NQuery.Language.Binding
             {
                 var argumentTypes = from a in arguments
                                     select a.Type;
-                _diagnostics.Add(DiagnosticFactory.UndeclaredFunction(node, argumentTypes));
+                _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
                 var errorSymbol = new BadSymbol(name);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
@@ -449,7 +457,7 @@ namespace NQuery.Language.Binding
             {
                 var argumentTypes = from a in arguments
                                     select a.Type;
-                _diagnostics.Add(DiagnosticFactory.UndeclaredMethod(node, target.Type, argumentTypes));
+                _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
                 var errorSymbol = new BadSymbol(name);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }

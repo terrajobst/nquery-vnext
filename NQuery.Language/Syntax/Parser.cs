@@ -87,7 +87,8 @@ namespace NQuery.Language
                                              Current.Text,
                                              Current.Value,
                                              Current.LeadingTrivia,
-                                             Current.TrailingTrivia);
+                                             Current.TrailingTrivia,
+                                             Current.Diagnostics);
                 NextToken();
                 return result;
             }
@@ -101,7 +102,8 @@ namespace NQuery.Language
         {
             var start = Current.FullSpan.Start;
             var span = new TextSpan(start, 0);
-            return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new List<SyntaxTrivia>(), new List<SyntaxTrivia>());
+            var diagnostics = new[] {DiagnosticFactory.TokenExpected(Current, kind)};
+            return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
         }
 
         public CompilationUnitSyntax ParseRootQuery()
@@ -130,11 +132,13 @@ namespace NQuery.Language
 
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
+            tokens[0] = tokens[0].WithDiagnotics(new[] {DiagnosticFactory.TokenExpected(tokens[0], SyntaxKind.EndOfLineTrivia)});
+
             var start = tokens.First().Span.Start;
-            var end = tokens.First().Span.End;
+            var end = tokens.Last().Span.End;
             var span = TextSpan.FromBounds(start, end);
             var skippedTokensNode = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            var skippedTokensTrivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, skippedTokensNode);
+            var skippedTokensTrivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, skippedTokensNode, new Diagnostic[0]);
 
             var leadingTrivia = new List<SyntaxTrivia>(endOfFileToken.LeadingTrivia.Count + 1);
             leadingTrivia.Add(skippedTokensTrivia);
@@ -147,7 +151,8 @@ namespace NQuery.Language
                                          endOfFileToken.Text,
                                          endOfFileToken.Value,
                                          leadingTrivia,
-                                         endOfFileToken.TrailingTrivia);
+                                         endOfFileToken.TrailingTrivia,
+                                         endOfFileToken.Diagnostics);
 
             return result;
         }

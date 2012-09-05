@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace NQuery.Language
@@ -26,6 +27,16 @@ namespace NQuery.Language
         public static SyntaxTree ParseExpression(string source)
         {
             return new SyntaxTree(source, p => p.ParseRootExpression());
+        }
+
+        public IEnumerable<Diagnostic> GetDiagnostics()
+        {
+            return from token in Root.DescendantTokens()
+                   let leadingDiagnostics = token.LeadingTrivia.SelectMany(t => t.Diagnostics)
+                   let tokenDiagnostics = token.Diagnostics
+                   let trailingDianostics = token.TrailingTrivia.SelectMany(t => t.Diagnostics)
+                   from d in leadingDiagnostics.Concat(tokenDiagnostics).Concat(trailingDianostics)
+                   select d;
         }
 
         internal SyntaxNode GetParent(SyntaxNode syntaxNode)

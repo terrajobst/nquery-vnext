@@ -50,7 +50,7 @@ namespace NQuery.Language.Binding
 
             if (symbols.Length == 0)
             {
-                _diagnostics.Add(DiagnosticFactory.UndeclaredTable(node));
+                _diagnostics.ReportUndeclaredTable(node);
 
                 var badTableSymbol = new BadTableSymbol(node.TableName.ValueText);
                 var badAlias = node.Alias == null

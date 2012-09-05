@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace NQuery.Language
@@ -9,13 +11,15 @@ namespace NQuery.Language
         private readonly string _text;
         private readonly TextSpan _span;
         private readonly StructuredTriviaSyntax _structure;
+        private ReadOnlyCollection<Diagnostic> _diagnostics;
 
-        public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure)
+        public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IList<Diagnostic> diagnostics)
         {
             _kind = kind;
             _text = text;
             _span = span;
             _structure = structure;
+            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
         }
 
         public SyntaxKind Kind
@@ -37,7 +41,12 @@ namespace NQuery.Language
         {
             get { return _structure; }
         }
-    
+
+        public ReadOnlyCollection<Diagnostic> Diagnostics
+        {
+            get { return _diagnostics; }
+        }
+
         public void WriteTo(TextWriter writer)
         {
             writer.Write(_text);

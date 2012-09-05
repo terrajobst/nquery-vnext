@@ -4,20 +4,20 @@ namespace NQuery.Language
 {
     public sealed class Diagnostic
     {
-        private readonly SyntaxNodeOrToken _nodeOrToken;
+        private readonly TextSpan _textSpan;
         private readonly DiagnosticId _diagnosticId;
         private readonly string _message;
 
-        public Diagnostic(SyntaxNodeOrToken nodeOrToken, DiagnosticId diagnosticId, string message)
+        public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
         {
-            _nodeOrToken = nodeOrToken;
+            _textSpan = textSpan;
             _diagnosticId = diagnosticId;
             _message = message;
         }
 
-        public SyntaxNodeOrToken NodeOrToken
+        public TextSpan Span
         {
-            get { return _nodeOrToken; }
+            get { return _textSpan; }
         }
 
         public DiagnosticId DiagnosticId

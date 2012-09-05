@@ -101,6 +101,7 @@
     <Compile Include="NQueryCompletionSource.cs" />
     <Compile Include="NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
+    <Compile Include="NQueryErrorTagger.cs" />
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphService.cs" />
     <Compile Include="NQueryKeyProcessor.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="NQuerySemanticModelManagerService.cs" />
     <Compile Include="NQuerySemanticClassificationMetadata.cs" />
     <Compile Include="NQuerySemanticClassificationService.cs" />
+    <Compile Include="NQuerySyntaxErrorTagger.cs" />
+    <Compile Include="NQuerySyntaxErrorTaggerProvider.cs" />
     <Compile Include="NQuerySyntaxTreeManager.cs" />
     <Compile Include="NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
