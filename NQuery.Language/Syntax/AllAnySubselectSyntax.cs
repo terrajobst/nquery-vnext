@@ -11,13 +11,14 @@ namespace NQuery.Language
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public AllAnySubselectSyntax(ExpressionSyntax left, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        public AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
             _left = left;
-            _keyword = keyword;
-            _leftParenthesis = leftParenthesis;
+            _keyword = keyword.WithParent(this);
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
-            _rightParenthesis = rightParenthesis;
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

@@ -12,13 +12,14 @@ namespace NQuery.Language
         private readonly SyntaxToken _andKeyword;
         private readonly ExpressionSyntax _upperBound;
 
-        public BetweenExpressionSyntax(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
+        public BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
+            : base(syntaxTree)
         {
             _left = left;
-            _notKeyword = notKeyword;
-            _betweenKeyword = betweenKeyword;
+            _notKeyword = notKeyword.WithParent(this);
+            _betweenKeyword = betweenKeyword.WithParent(this);
             _lowerBound = lowerBound;
-            _andKeyword = andKeyword;
+            _andKeyword = andKeyword.WithParent(this);
             _upperBound = upperBound;
         }
 

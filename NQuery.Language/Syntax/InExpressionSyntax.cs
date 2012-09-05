@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _inKeyword;
         private readonly ArgumentListSyntax _argumentList;
 
-        public InExpressionSyntax(ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
+        public InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
+            : base(syntaxTree)
         {
             _expression = expression;
-            _notKeyword = notKeyword;
-            _inKeyword = inKeyword;
+            _notKeyword = notKeyword.WithParent(this);
+            _inKeyword = inKeyword.WithParent(this);
             _argumentList = argumentList;
         }
 

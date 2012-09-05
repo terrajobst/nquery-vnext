@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _coalesceKeyword;
         private readonly ArgumentListSyntax _argumentList;
 
-        public CoalesceExpressionSyntax(SyntaxToken coalesceKeyword, ArgumentListSyntax argumentList)
+        public CoalesceExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken coalesceKeyword, ArgumentListSyntax argumentList)
+            : base(syntaxTree)
         {
-            _coalesceKeyword = coalesceKeyword;
+            _coalesceKeyword = coalesceKeyword.WithParent(this);
             _argumentList = argumentList;
         }
 

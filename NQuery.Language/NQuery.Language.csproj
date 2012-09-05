@@ -88,6 +88,7 @@
     <Compile Include="Runtime\ReflectionParameterSymbol.cs" />
     <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
     <Compile Include="Runtime\ReflectionProvider.cs" />
+    <Compile Include="Syntax\SyntaxExtensions.cs" />
     <Compile Include="TypeRegistry.cs" />
     <Compile Include="SemanticModel.cs" />
     <Compile Include="Binding\WellKnownTypes.cs" />

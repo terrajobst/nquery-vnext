@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly SyntaxToken? _allKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public UnionQuerySyntax(QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken? allKeyword, QuerySyntax rightQuery)
+        public UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken? allKeyword, QuerySyntax rightQuery)
+            : base(syntaxTree)
         {
             _leftQuery = leftQuery;
-            _unionKeyword = unionKeyword;
-            _allKeyword = allKeyword;
+            _unionKeyword = unionKeyword.WithParent(this);
+            _allKeyword = allKeyword.WithParent(this);
             _rightQuery = rightQuery;
         }
 

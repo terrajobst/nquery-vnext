@@ -9,11 +9,12 @@ namespace NQuery.Language
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public SingleRowSubselectSyntax(SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        public SingleRowSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis;
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
-            _rightParenthesis = rightParenthesis;
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

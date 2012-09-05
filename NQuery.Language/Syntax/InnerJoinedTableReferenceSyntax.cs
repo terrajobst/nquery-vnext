@@ -9,12 +9,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _joinKeyword;
         private readonly SyntaxToken _onKeyword;
 
-        public InnerJoinedTableReferenceSyntax(TableReferenceSyntax left, SyntaxToken? innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
-            : base(left, right, condition, commaToken)
+        public InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken? innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
+            : base(syntaxTree, left, right, condition, commaToken)
         {
-            _innerKeyword = innerKeyword;
-            _joinKeyword = joinKeyword;
-            _onKeyword = onKeyword;
+            _innerKeyword = innerKeyword.WithParent(this);
+            _joinKeyword = joinKeyword.WithParent(this);
+            _onKeyword = onKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind

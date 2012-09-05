@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _name;
         private readonly ArgumentListSyntax _argumentList;
 
-        public MethodInvocationExpressionSyntax(ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
+        public MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
+            : base(syntaxTree)
         {
             _target = target;
-            _dot = dot;
-            _name = name;
+            _dot = dot.WithParent(this);
+            _name = name.WithParent(this);
             _argumentList = argumentList;
         }
 

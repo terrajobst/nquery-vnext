@@ -9,11 +9,12 @@ namespace NQuery.Language
         private readonly SyntaxToken? _modifier;
         private readonly SyntaxToken? _comma;
 
-        public OrderByColumnSyntax(ExpressionSyntax columnSelector, SyntaxToken? modifier, SyntaxToken? comma)
+        public OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier, SyntaxToken? comma)
+            : base(syntaxTree)
         {
             _columnSelector = columnSelector;
-            _modifier = modifier;
-            _comma = comma;
+            _modifier = modifier.WithParent(this);
+            _comma = comma.WithParent(this);
         }
 
         public override SyntaxKind Kind

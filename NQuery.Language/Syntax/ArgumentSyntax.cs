@@ -8,10 +8,11 @@ namespace NQuery.Language
         private readonly ExpressionSyntax _expression;
         private readonly SyntaxToken? _comma;
 
-        public ArgumentSyntax(ExpressionSyntax expression, SyntaxToken? comma)
+        public ArgumentSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? comma)
+            : base(syntaxTree)
         {
             _expression = expression;
-            _comma = comma;
+            _comma = comma.WithParent(this);
         }
 
         public override SyntaxKind Kind

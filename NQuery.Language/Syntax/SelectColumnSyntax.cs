@@ -6,9 +6,10 @@ namespace NQuery.Language
     {
         private readonly SyntaxToken? _commaToken;
 
-        protected SelectColumnSyntax(SyntaxToken? commaToken)
+        protected SelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? commaToken)
+            : base(syntaxTree)
         {
-            _commaToken = commaToken;
+            _commaToken = commaToken.WithParent(this);
         }
 
         public SyntaxToken? CommaToken

@@ -9,9 +9,10 @@ namespace NQuery.Language
     {
         private readonly ReadOnlyCollection<SyntaxToken> _tokens;
 
-        public SkippedTokensTriviaSyntax(IList<SyntaxToken> tokens)
+        public SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
+            : base(syntaxTree)
         {
-            _tokens = new ReadOnlyCollection<SyntaxToken>(tokens);
+            _tokens = new ReadOnlyCollection<SyntaxToken>(tokens.WithParent(this));
         }
 
         public override SyntaxKind Kind

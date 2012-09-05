@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace NQuery.Language
 {
@@ -7,26 +9,50 @@ namespace NQuery.Language
         private readonly CompilationUnitSyntax _root;
         private readonly TextBuffer _textBuffer;
 
-        private SyntaxTree(CompilationUnitSyntax root, TextBuffer textBuffer)
+        private Dictionary<SyntaxNode, SyntaxNode> _parentNodes;
+
+        private SyntaxTree(string source, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
-            _root = root;
-            _textBuffer = textBuffer;
+            var parser = new Parser(source, this);
+            _root = parseMethod(parser);
+            _textBuffer = new TextBuffer(source);;
         }
 
         public static SyntaxTree ParseQuery(string source)
         {
-            var parser = new Parser(source);
-            var query = parser.ParseRootQuery();
-            var textBuffer = new TextBuffer(source);
-            return new SyntaxTree(query, textBuffer);
+            return new SyntaxTree(source, p => p.ParseRootQuery());
         }
 
         public static SyntaxTree ParseExpression(string source)
         {
-            var parser = new Parser(source);
-            var expression = parser.ParseRootExpression();
-            var textBuffer = new TextBuffer(source);
-            return new SyntaxTree(expression, textBuffer);
+            return new SyntaxTree(source, p => p.ParseRootExpression());
+        }
+
+        internal SyntaxNode GetParent(SyntaxNode syntaxNode)
+        {
+            if (_parentNodes == null)
+                Interlocked.CompareExchange(ref _parentNodes, GetParents(_root), null);
+
+            SyntaxNode parent;
+            _parentNodes.TryGetValue(syntaxNode, out parent);
+            return parent;
+        }
+
+        private static Dictionary<SyntaxNode,SyntaxNode> GetParents(SyntaxNode compilationUnit)
+        {
+            var result = new Dictionary<SyntaxNode, SyntaxNode>();
+            result.Add(compilationUnit, null);
+            GetParents(result, compilationUnit);
+            return result;
+        }
+
+        private static void GetParents(IDictionary<SyntaxNode, SyntaxNode> parents, SyntaxNode parent)
+        {
+            foreach (var childNode in parent.ChildNodes())
+            {
+                parents.Add(childNode, parent);
+                GetParents(parents, childNode);
+            }
         }
 
         public static SyntaxTree Empty = ParseQuery(string.Empty);

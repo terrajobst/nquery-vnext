@@ -9,10 +9,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _operatorToken;
         private readonly ExpressionSyntax _right;
 
-        public BinaryExpressionSyntax(ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
+        public BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
+            : base(syntaxTree)
         {
             _left = left;
-            _operatorToken = operatorToken;
+            _operatorToken = operatorToken.WithParent(this);
             _right = right;
         }
 

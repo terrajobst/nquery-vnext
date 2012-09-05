@@ -10,10 +10,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _byKeyword;
         private readonly ReadOnlyCollection<GroupByColumnSyntax> _columns;
 
-        public GroupByClauseSyntax(SyntaxToken groupKeyword, SyntaxToken byKeyword, IList<GroupByColumnSyntax> columns)
+        public GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, IList<GroupByColumnSyntax> columns)
+            : base(syntaxTree)
         {
-            _groupKeyword = groupKeyword;
-            _byKeyword = byKeyword;
+            _groupKeyword = groupKeyword.WithParent(this);
+            _byKeyword = byKeyword.WithParent(this);
             _columns = new ReadOnlyCollection<GroupByColumnSyntax>(columns);
         }
 

@@ -10,9 +10,10 @@ namespace NQuery.Language
         private readonly ReadOnlyCollection<CommonTableExpressionSyntax> _commonTableExpressions;
         private readonly QuerySyntax _query;
 
-        public CommonTableExpressionQuerySyntax(SyntaxToken withKeyword, IList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
+        public CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, IList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
+            : base(syntaxTree)
         {
-            _withKeyword = withKeyword;
+            _withKeyword = withKeyword.WithParent(this);
             _query = query;
             _commonTableExpressions = new ReadOnlyCollection<CommonTableExpressionSyntax>(commonTableExpressions);
         }

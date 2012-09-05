@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly IList<ArgumentSyntax> _arguments;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ArgumentListSyntax(SyntaxToken leftParenthesis, IList<ArgumentSyntax> arguments, SyntaxToken rightParenthesis)
+        public ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, IList<ArgumentSyntax> arguments, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis;
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _arguments = new ReadOnlyCollection<ArgumentSyntax>(arguments);
-            _rightParenthesis = rightParenthesis;
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

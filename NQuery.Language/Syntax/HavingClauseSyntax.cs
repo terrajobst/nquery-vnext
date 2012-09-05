@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _havingKeyword;
         private readonly ExpressionSyntax _predicate;
 
-        public HavingClauseSyntax(SyntaxToken havingKeyword, ExpressionSyntax predicate)
+        public HavingClauseSyntax(SyntaxTree syntaxTree, SyntaxToken havingKeyword, ExpressionSyntax predicate)
+            : base(syntaxTree)
         {
-            _havingKeyword = havingKeyword;
+            _havingKeyword = havingKeyword.WithParent(this);
             _predicate = predicate;
         }
 

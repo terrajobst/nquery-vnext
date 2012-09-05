@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _byKeyword;
         private readonly List<OrderByColumnSyntax> _columns;
 
-        public OrderedQuerySyntax(QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, List<OrderByColumnSyntax> columns)
+        public OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, List<OrderByColumnSyntax> columns)
+            : base(syntaxTree)
         {
             _query = query;
-            _orderKeyword = orderKeyword;
-            _byKeyword = byKeyword;
+            _orderKeyword = orderKeyword.WithParent(this);
+            _byKeyword = byKeyword.WithParent(this);
             _columns = columns;
         }
 

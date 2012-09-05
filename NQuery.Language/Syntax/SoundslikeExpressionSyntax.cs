@@ -10,11 +10,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _soundslikeKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SoundslikeExpressionSyntax(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken soundslikeKeyword, ExpressionSyntax right)
+        public SoundslikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken soundslikeKeyword, ExpressionSyntax right)
+            : base(syntaxTree)
         {
             _left = left;
-            _notKeyword = notKeyword;
-            _soundslikeKeyword = soundslikeKeyword;
+            _notKeyword = notKeyword.WithParent(this);
+            _soundslikeKeyword = soundslikeKeyword.WithParent(this);
             _right = right;
         }
 

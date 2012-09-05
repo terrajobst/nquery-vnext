@@ -8,10 +8,11 @@ namespace NQuery.Language
         private readonly SyntaxNode _root;
         private readonly SyntaxToken _endOfFileToken;
 
-        public CompilationUnitSyntax(SyntaxNode root, SyntaxToken endOfFileToken)
+        public CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode root, SyntaxToken endOfFileToken)
+            : base(syntaxTree)
         {
             _root = root;
-            _endOfFileToken = endOfFileToken;
+            _endOfFileToken = endOfFileToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

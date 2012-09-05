@@ -6,8 +6,14 @@ namespace NQuery.Language
 {
     public abstract class SyntaxNode
     {
+        private readonly SyntaxTree _syntaxTree;
         private TextSpan? _span;
         private TextSpan? _fullSpan;
+
+        protected SyntaxNode(SyntaxTree syntaxTree)
+        {
+            _syntaxTree = syntaxTree;
+        }
 
         private TextSpan ComputeSpan()
         {
@@ -27,6 +33,26 @@ namespace NQuery.Language
             var start = ChildNodesAndTokens().First().FullSpan.Start;
             var end = ChildNodesAndTokens().Last().FullSpan.End;
             return TextSpan.FromBounds(start, end);
+        }
+
+        public IEnumerable<SyntaxNode> Ancestors()
+        {
+            var node = this;
+            while (node.Parent != null)
+            {
+                yield return node.Parent;
+                node = node.Parent;
+            }
+        }
+
+        public IEnumerable<SyntaxNode> AncestorsAndSelf()
+        {
+            var node = this;
+            while (node != null)
+            {
+                yield return node;
+                node = node.Parent;
+            }
         }
 
         public abstract IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens();
@@ -88,6 +114,30 @@ namespace NQuery.Language
         public SyntaxToken LastToken()
         {
             return DescendantTokens().Last();
+        }
+
+        public SyntaxToken FindToken(int position)
+        {
+            if (!FullSpan.Contains(position))
+                return SyntaxTree.Root.EndOfFileToken;
+
+            var child = (from nodeOrToken in ChildNodesAndTokens()
+                         where nodeOrToken.FullSpan.Contains(position)
+                         select nodeOrToken).First();
+            
+            return child.IsToken
+                       ? child.AsToken()
+                       : child.AsNode().FindToken(position);
+        }
+
+        public SyntaxTree SyntaxTree
+        {
+            get { return _syntaxTree; }
+        }
+
+        public SyntaxNode Parent
+        {
+            get { return _syntaxTree.GetParent(this); }
         }
 
         public abstract SyntaxKind Kind { get; }

@@ -11,14 +11,14 @@ namespace NQuery.Language
         private readonly SyntaxToken? _asKeyword;
         private readonly SyntaxToken _name;
 
-        public DerivedTableReferenceSyntax(SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name, SyntaxToken? commaToken)
-            : base(commaToken)
+        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
-            _leftParenthesis = leftParenthesis;
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
-            _rightParenthesis = rightParenthesis;
-            _asKeyword = asKeyword;
-            _name = name;
+            _rightParenthesis = rightParenthesis.WithParent(this);
+            _asKeyword = asKeyword.WithParent(this);
+            _name = name.WithParent(this);
         }
 
         public override SyntaxKind Kind

@@ -11,12 +11,13 @@ namespace NQuery.Language
         private readonly SyntaxToken _toKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SimilarToExpressionSyntax(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
+        public SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
+            : base(syntaxTree)
         {
             _left = left;
-            _notKeyword = notKeyword;
-            _similarKeyword = similarKeyword;
-            _toKeyword = toKeyword;
+            _notKeyword = notKeyword.WithParent(this);
+            _similarKeyword = similarKeyword.WithParent(this);
+            _toKeyword = toKeyword.WithParent(this);
             _right = right;
         }
 

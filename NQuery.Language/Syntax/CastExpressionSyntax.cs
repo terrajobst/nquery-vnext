@@ -12,14 +12,15 @@ namespace NQuery.Language
         private readonly TypeReferenceSyntax _typeReference;
         private readonly SyntaxToken _rightParenthesisToken;
 
-        public CastExpressionSyntax(SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, TypeReferenceSyntax typeReference, SyntaxToken rightParenthesisToken)
+        public CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, TypeReferenceSyntax typeReference, SyntaxToken rightParenthesisToken)
+            : base(syntaxTree)
         {
-            _castKeyword = castKeyword;
-            _leftParenthesisToken = leftParenthesisToken;
+            _castKeyword = castKeyword.WithParent(this);
+            _leftParenthesisToken = leftParenthesisToken.WithParent(this);
             _expression = expression;
-            _asKeyword = asKeyword;
+            _asKeyword = asKeyword.WithParent(this);
             _typeReference = typeReference;
-            _rightParenthesisToken = rightParenthesisToken;
+            _rightParenthesisToken = rightParenthesisToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

@@ -9,11 +9,12 @@ namespace NQuery.Language
         private readonly IList<SyntaxToken> _columnNames;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionColumnNameListSyntax(SyntaxToken leftParenthesis, IList<SyntaxToken> columnNames, SyntaxToken rightParenthesis)
+        public CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, IList<SyntaxToken> columnNames, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis;
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _columnNames = columnNames;
-            _rightParenthesis = rightParenthesis;
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

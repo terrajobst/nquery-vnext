@@ -13,14 +13,15 @@ namespace NQuery.Language
         private readonly ExpressionSyntax _elseExpression;
         private readonly SyntaxToken _endKeyword;
 
-        public CaseExpressionSyntax(SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IList<CaseLabelSyntax> caseLabels, SyntaxToken? elseKeyword, ExpressionSyntax elseExpression, SyntaxToken endKeyword)
+        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IList<CaseLabelSyntax> caseLabels, SyntaxToken? elseKeyword, ExpressionSyntax elseExpression, SyntaxToken endKeyword)
+            : base(syntaxTree)
         {
-            _caseKeyword = caseKeyword;
+            _caseKeyword = caseKeyword.WithParent(this);
             _inputExpression = inputExpression;
             _caseLabels = new ReadOnlyCollection<CaseLabelSyntax>(caseLabels);
-            _elseKeyword = elseKeyword;
+            _elseKeyword = elseKeyword.WithParent(this);
             _elseExpression = elseExpression;
-            _endKeyword = endKeyword;
+            _endKeyword = endKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind

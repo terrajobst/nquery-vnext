@@ -8,11 +8,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _crossKeyword;
         private readonly SyntaxToken _joinKeyword;
 
-        public CrossJoinedTableReferenceSyntax(TableReferenceSyntax left, SyntaxToken crossKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken? commaToken)
-            : base(left, right, commaToken)
+        public CrossJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken crossKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken? commaToken)
+            : base(syntaxTree, left, right, commaToken)
         {
-            _crossKeyword = crossKeyword;
-            _joinKeyword = joinKeyword;
+            _crossKeyword = crossKeyword.WithParent(this);
+            _joinKeyword = joinKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind

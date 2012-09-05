@@ -8,8 +8,8 @@ namespace NQuery.Language
         private readonly ExpressionSyntax _expression;
         private readonly AliasSyntax _alias;
 
-        public ExpressionSelectColumnSyntax(ExpressionSyntax expression, AliasSyntax alias, SyntaxToken? commaToken)
-            : base(commaToken)
+        public ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
             _expression = expression;
             _alias = alias;

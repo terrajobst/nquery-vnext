@@ -8,10 +8,11 @@ namespace NQuery.Language
         private readonly SyntaxToken? _asKeyword;
         private readonly SyntaxToken _identifier;
 
-        public AliasSyntax(SyntaxToken? asKeyword, SyntaxToken identifier)
+        public AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifier)
+            : base(syntaxTree)
         {
-            _asKeyword = asKeyword;
-            _identifier = identifier;
+            _asKeyword = asKeyword.WithParent(this);
+            _identifier = identifier.WithParent(this);
         }
 
         public override SyntaxKind Kind

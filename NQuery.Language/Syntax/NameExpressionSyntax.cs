@@ -7,9 +7,10 @@ namespace NQuery.Language
     {
         private readonly SyntaxToken _name;
 
-        public NameExpressionSyntax(SyntaxToken name)
+        public NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name)
+            : base(syntaxTree)
         {
-            _name = name;
+            _name = name.WithParent(this);
         }
 
         public override SyntaxKind Kind

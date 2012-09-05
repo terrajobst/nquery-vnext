@@ -7,25 +7,37 @@ namespace NQuery.Language
 {
     public struct SyntaxToken
     {
+        private readonly SyntaxNode _parent;
         private readonly SyntaxKind _kind;
         private readonly SyntaxKind _contextualKind;
         private readonly bool _isMissing;
+        private readonly TextSpan _span;
         private readonly string _text;
         private readonly object _value;
-        private readonly TextSpan _span;
         private readonly ReadOnlyCollection<SyntaxTrivia> _leadingTrivia;
         private readonly ReadOnlyCollection<SyntaxTrivia> _trailingTrivia;
 
         public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
+            : this(null, kind, contextualKind, isMissing, span, text, value, leadingTrivia, trailingTrivia)
         {
+        }
+
+        private SyntaxToken(SyntaxNode parent, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia)
+        {
+            _parent = parent;
             _kind = kind;
             _contextualKind = contextualKind;
             _isMissing = isMissing;
+            _span = span;
             _text = text;
             _value = value;
-            _span = span;
             _leadingTrivia = new ReadOnlyCollection<SyntaxTrivia>(leadingTrivia);
             _trailingTrivia = new ReadOnlyCollection<SyntaxTrivia>(trailingTrivia);
+        }
+
+        public SyntaxNode Parent
+        {
+            get { return _parent; }
         }
 
         public SyntaxKind Kind
@@ -96,6 +108,11 @@ namespace NQuery.Language
 
             foreach (var syntaxTrivia in TrailingTrivia)
                 syntaxTrivia.WriteTo(writer);
+        }
+
+        public SyntaxToken WithParent(SyntaxNode parent)
+        {
+            return new SyntaxToken(parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia);
         }
 
         public override string ToString()

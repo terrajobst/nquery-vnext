@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _name;
         private readonly ArgumentListSyntax _argumentList;
 
-        public FunctionInvocationExpressionSyntax(SyntaxToken name, ArgumentListSyntax argumentList)
+        public FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
+            : base(syntaxTree)
         {
-            _name = name;
+            _name = name.WithParent(this);
             _argumentList = argumentList;
         }
 

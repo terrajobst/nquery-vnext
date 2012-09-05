@@ -10,13 +10,13 @@ namespace NQuery.Language
         private readonly SyntaxToken _joinKeyword;
         private readonly SyntaxToken _onKeyword;
 
-        public OuterJoinedTableReferenceSyntax(TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
-            : base(left, right, condition, commaToken)
+        public OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
+            : base(syntaxTree, left, right, condition, commaToken)
         {
-            _typeKeyword = typeKeyword;
-            _outerKeyword = outerKeyword;
-            _joinKeyword = joinKeyword;
-            _onKeyword = onKeyword;
+            _typeKeyword = typeKeyword.WithParent(this);
+            _outerKeyword = outerKeyword.WithParent(this);
+            _joinKeyword = joinKeyword.WithParent(this);
+            _onKeyword = onKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind

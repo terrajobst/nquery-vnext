@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _whereKeyword;
         private readonly ExpressionSyntax _predicate;
 
-        public WhereClauseSyntax(SyntaxToken whereKeyword, ExpressionSyntax predicate)
+        public WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
+            : base(syntaxTree)
         {
-            _whereKeyword = whereKeyword;
+            _whereKeyword = whereKeyword.WithParent(this); ;
             _predicate = predicate;
         }
 

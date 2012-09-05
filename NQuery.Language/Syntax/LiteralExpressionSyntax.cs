@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _token;
         private readonly object _value;
 
-        public LiteralExpressionSyntax(SyntaxToken token, object value)
+        public LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken token, object value)
+            : base(syntaxTree)
         {
-            _token = token;
+            _token = token.WithParent(this);
             _value = value;
         }
 

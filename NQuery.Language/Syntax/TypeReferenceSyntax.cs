@@ -8,9 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _token;
         private readonly string _typeName;
 
-        public TypeReferenceSyntax(SyntaxToken token, string typeName)
+        public TypeReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken token, string typeName)
+            : base(syntaxTree)
         {
-            _token = token;
+            _token = token.WithParent(this);
             _typeName = typeName;
         }
 

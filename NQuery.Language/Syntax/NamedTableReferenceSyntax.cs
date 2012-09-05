@@ -8,10 +8,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _tableName;
         private readonly AliasSyntax _alias;
 
-        public NamedTableReferenceSyntax(SyntaxToken tableName, AliasSyntax alias, SyntaxToken? commaToken)
-            : base(commaToken)
+        public NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
-            _tableName = tableName;
+            _tableName = tableName.WithParent(this);
             _alias = alias;
         }
 

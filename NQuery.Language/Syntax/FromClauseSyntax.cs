@@ -9,9 +9,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _fromKeyword;
         private readonly ReadOnlyCollection<TableReferenceSyntax> _tableReferences;
 
-        public FromClauseSyntax(SyntaxToken fromKeyword, IList<TableReferenceSyntax> tableReferences)
+        public FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, IList<TableReferenceSyntax> tableReferences)
+            : base(syntaxTree)
         {
-            _fromKeyword = fromKeyword;
+            _fromKeyword = fromKeyword.WithParent(this);
             _tableReferences = new ReadOnlyCollection<TableReferenceSyntax>(tableReferences);
         }
 

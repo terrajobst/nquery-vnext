@@ -7,8 +7,8 @@ namespace NQuery.Language
         private readonly TableReferenceSyntax _left;
         private readonly TableReferenceSyntax _right;
 
-        protected JoinedTableReferenceSyntax(TableReferenceSyntax left, TableReferenceSyntax right, SyntaxToken? commaToken)
-            : base(commaToken)
+        protected JoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
             _left = left;
             _right = right;

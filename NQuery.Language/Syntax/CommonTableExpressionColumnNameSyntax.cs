@@ -8,10 +8,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _identifier;
         private readonly SyntaxToken? _commaToken;
 
-        public CommonTableExpressionColumnNameSyntax(SyntaxToken identifier, SyntaxToken? commaToken)
+        public CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken? commaToken)
+            : base(syntaxTree)
         {
-            _identifier = identifier;
-            _commaToken = commaToken;
+            _identifier = identifier.WithParent(this);
+            _commaToken = commaToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

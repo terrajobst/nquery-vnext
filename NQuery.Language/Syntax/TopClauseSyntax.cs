@@ -10,12 +10,13 @@ namespace NQuery.Language
         private readonly SyntaxToken? _withKeyword;
         private readonly SyntaxToken? _tiesKeyword;
 
-        public TopClauseSyntax(SyntaxToken topKeyword, SyntaxToken value, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
+        public TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
+            : base(syntaxTree)
         {
-            _topKeyword = topKeyword;
-            _value = value;
-            _withKeyword = withKeyword;
-            _tiesKeyword = tiesKeyword;
+            _topKeyword = topKeyword.WithParent(this);
+            _value = value.WithParent(this);
+            _withKeyword = withKeyword.WithParent(this);
+            _tiesKeyword = tiesKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind

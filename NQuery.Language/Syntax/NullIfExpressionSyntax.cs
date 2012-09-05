@@ -12,14 +12,15 @@ namespace NQuery.Language
         private readonly ExpressionSyntax _rightExpression;
         private readonly SyntaxToken _rightParenthesisToken;
 
-        public NullIfExpressionSyntax(SyntaxToken nullIfKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax leftExpression, SyntaxToken commaToken, ExpressionSyntax rightExpression, SyntaxToken rightParenthesisToken)
+        public NullIfExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken nullIfKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax leftExpression, SyntaxToken commaToken, ExpressionSyntax rightExpression, SyntaxToken rightParenthesisToken)
+            : base(syntaxTree)
         {
-            _nullIfKeyword = nullIfKeyword;
-            _leftParenthesisToken = leftParenthesisToken;
+            _nullIfKeyword = nullIfKeyword.WithParent(this);
+            _leftParenthesisToken = leftParenthesisToken.WithParent(this);
             _leftExpression = leftExpression;
-            _commaToken = commaToken;
+            _commaToken = commaToken.WithParent(this);
             _rightExpression = rightExpression;
-            _rightParenthesisToken = rightParenthesisToken;
+            _rightParenthesisToken = rightParenthesisToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

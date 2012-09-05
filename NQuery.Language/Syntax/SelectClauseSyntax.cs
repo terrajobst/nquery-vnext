@@ -10,10 +10,11 @@ namespace NQuery.Language
         private readonly TopClauseSyntax _topClause;
         private readonly ReadOnlyCollection<SelectColumnSyntax> _columns;
 
-        public SelectClauseSyntax(SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns)
+        public SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns)
+            : base(syntaxTree)
         {
-            _selectKeyword = selectKeyword;
-            _distinctAllKeyword = distinctAllKeyword;
+            _selectKeyword = selectKeyword.WithParent(this);
+            _distinctAllKeyword = distinctAllKeyword.WithParent(this);
             _topClause = topClause;
             _columns = new ReadOnlyCollection<SelectColumnSyntax>(selectColumns);
         }

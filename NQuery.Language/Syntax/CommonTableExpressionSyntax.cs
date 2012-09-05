@@ -13,15 +13,16 @@ namespace NQuery.Language
         private readonly SyntaxToken _rightParenthesis;
         private readonly SyntaxToken? _commaToken;
 
-        public CommonTableExpressionSyntax(SyntaxToken identifer, CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
+        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifer, CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
+            : base(syntaxTree)
         {
-            _identifer = identifer;
+            _identifer = identifer.WithParent(this);
             _commonTableExpressionColumnNameList = commonTableExpressionColumnNameList;
-            _asKeyword = asKeyword;
-            _leftParenthesis = leftParenthesis;
+            _asKeyword = asKeyword.WithParent(this);
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
-            _rightParenthesis = rightParenthesis;
-            _commaToken = commaToken;
+            _rightParenthesis = rightParenthesis.WithParent(this);
+            _commaToken = commaToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

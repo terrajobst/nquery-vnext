@@ -9,10 +9,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _exceptKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public ExceptQuerySyntax(QuerySyntax leftQuery, SyntaxToken exceptKeyword, QuerySyntax rightQuery)
+        public ExceptQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken exceptKeyword, QuerySyntax rightQuery)
+            : base(syntaxTree)
         {
             _leftQuery = leftQuery;
-            _exceptKeyword = exceptKeyword;
+            _exceptKeyword = exceptKeyword.WithParent(this);
             _rightQuery = rightQuery;
         }
 

@@ -10,12 +10,13 @@ namespace NQuery.Language
         private readonly SyntaxToken _asteriskToken;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CountAllExpressionSyntax(SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
+        public CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
-            _identifier = identifier;
-            _leftParenthesis = leftParenthesis;
-            _asteriskToken = asteriskToken;
-            _rightParenthesis = rightParenthesis;
+            _identifier = identifier.WithParent(this);
+            _leftParenthesis = leftParenthesis.WithParent(this);
+            _asteriskToken = asteriskToken.WithParent(this);
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

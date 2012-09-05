@@ -9,12 +9,12 @@ namespace NQuery.Language
         private readonly SyntaxToken? _dotToken;
         private readonly SyntaxToken _asteriskToken;
 
-        public WildcardSelectColumnSyntax(SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken, SyntaxToken? commaToken)
-            : base(commaToken)
+        public WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
-            _tableName = tableName;
-            _dotToken = dotToken;
-            _asteriskToken = asteriskToken;
+            _tableName = tableName.WithParent(this);
+            _dotToken = dotToken.WithParent(this);
+            _asteriskToken = asteriskToken.WithParent(this);
         }
 
         public override SyntaxKind Kind

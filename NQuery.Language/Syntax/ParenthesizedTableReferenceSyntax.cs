@@ -9,12 +9,12 @@ namespace NQuery.Language
         private readonly TableReferenceSyntax _tableReference;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ParenthesizedTableReferenceSyntax(SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
-            : base(commaToken)
+        public ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
+            : base(syntaxTree, commaToken)
         {
-            _leftParenthesis = leftParenthesis;
+            _leftParenthesis = leftParenthesis.WithParent(this);
             _tableReference = tableReference;
-            _rightParenthesis = rightParenthesis;
+            _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
         public override SyntaxKind Kind

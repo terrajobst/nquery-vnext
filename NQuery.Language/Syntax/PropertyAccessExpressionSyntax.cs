@@ -9,11 +9,12 @@ namespace NQuery.Language
         private readonly SyntaxToken _dot;
         private readonly SyntaxToken _name;
 
-        public PropertyAccessExpressionSyntax(ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
+        public PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
+            : base(syntaxTree)
         {
             _target = target;
-            _dot = dot;
-            _name = name;
+            _dot = dot.WithParent(this);
+            _name = name.WithParent(this);
         }
 
         public override SyntaxKind Kind

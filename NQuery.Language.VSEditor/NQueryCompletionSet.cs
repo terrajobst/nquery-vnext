@@ -66,42 +66,10 @@ namespace NQuery.Language.VSEditor
 
         private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
         {
-            if (!root.FullSpan.Contains(position))
-                return null;
-
-            foreach (var nodeOrToken in root.ChildNodesAndTokens())
-            {
-                if (nodeOrToken.IsNode)
-                {
-                    var result = GetIdentifierOrKeywordAtPosition(nodeOrToken.AsNode(), position);
-                    if (result != null)
-                        return result;
-                }
-                else
-                {
-                    if (nodeOrToken.FullSpan.Contains(position))
-                    {
-                        var token = nodeOrToken.AsToken();
-                        if (token.Span.Contains(position))
-                        {
-                            return nodeOrToken.Kind.IsIdentifierOrKeyword()
-                                       ? nodeOrToken.AsToken()
-                                       : (SyntaxToken?) null;
-                        }
-
-                        var skippedToken = (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
-                                            where t.Kind == SyntaxKind.SkippedTokensTrivia
-                                            let sts = (SkippedTokensTriviaSyntax) t.Structure
-                                            from st in sts.Tokens
-                                            where st.Span.Contains(position) && st.Kind.IsIdentifierOrKeyword()
-                                            select (SyntaxToken?) st).SingleOrDefault();
-
-                        return skippedToken;
-                    }
-                }
-            }
-
-            return null;
+            var syntaxToken = root.FindToken(position);
+            return syntaxToken.Kind.IsIdentifierOrKeyword()
+                       ? syntaxToken
+                       : (SyntaxToken?) null;
         }
 
         private IEnumerable<Completion> GetCompletions(SemanticModel semanticModel, int position)
@@ -218,29 +186,13 @@ namespace NQuery.Language.VSEditor
 
         private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
         {
-            var contains = root.Span.Start <= position && position <= root.Span.End;
-            if (!contains)
-                return null;
+            var p = root.FindToken(position).Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
 
-            var nodes = from n in root.ChildNodesAndTokens()
-                        where n.IsNode
-                        select n.AsNode();
-
-            foreach (var node in nodes)
+            if (p != null)
             {
-                var r = node as PropertyAccessExpressionSyntax;
-                if (r != null)
-                {
-                    if (r.Target.Span.Contains(position))
-                        return GetPropertyAccessExpression(r.Target, position);
-
-                    if (r.Dot.Span.End <= position && position <= r.Name.Span.End)
-                        return r;
-                }
-
-                r = GetPropertyAccessExpression(node, position);
-                if (r != null)
-                    return r;
+                var afterDot = p.Dot.Span.End <= position && position <= p.Name.Span.End;
+                if (afterDot)
+                    return p;
             }
 
             return null;

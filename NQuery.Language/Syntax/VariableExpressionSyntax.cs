@@ -7,10 +7,11 @@ namespace NQuery.Language
         private readonly SyntaxToken _atToken;
         private readonly SyntaxToken _name;
 
-        public VariableExpressionSyntax(SyntaxToken atToken, SyntaxToken name)
+        public VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
+            : base(syntaxTree)
         {
-            _atToken = atToken;
-            _name = name;
+            _atToken = atToken.WithParent(this);
+            _name = name.WithParent(this);
         }
 
         public override SyntaxKind Kind

@@ -10,12 +10,13 @@ namespace NQuery.Language
         private readonly SyntaxToken? _notKeyword;
         private readonly SyntaxToken _nullKeyword;
 
-        public IsNullExpressionSyntax(ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken? notKeyword, SyntaxToken nullKeyword)
+        public IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken? notKeyword, SyntaxToken nullKeyword)
+            : base(syntaxTree)
         {
             _expression = expression;
-            _isKeyword = isKeyword;
-            _notKeyword = notKeyword;
-            _nullKeyword = nullKeyword;
+            _isKeyword = isKeyword.WithParent(this);
+            _notKeyword = notKeyword.WithParent(this);
+            _nullKeyword = nullKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind
