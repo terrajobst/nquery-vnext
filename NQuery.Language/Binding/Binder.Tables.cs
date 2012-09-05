@@ -7,6 +7,16 @@ namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
+        private Binder GetJoinConditionBinder(BoundTableReference left, BoundTableReference right)
+        {
+            var leftTables = left.GetDeclaredTableInstances();
+            var rightTables = right.GetDeclaredTableInstances();
+            var parentWithLeft = new AdditionalSymbolsBindingContext(_bindingContext, leftTables);
+            var parentWithLeftAndRight = new AdditionalSymbolsBindingContext(parentWithLeft, rightTables);
+            var parentWithLeftAndRightAndExpandedTableInstances = new ExpressionBindingContext(parentWithLeftAndRight);
+            return GetBinder(parentWithLeftAndRightAndExpandedTableInstances);
+        }
+
         private BoundTableReference BindTableReference(TableReferenceSyntax node)
         {
             return Bind(node, BindTableReferenceInternal);
@@ -71,44 +81,23 @@ namespace NQuery.Language.Binding
                             : node.Alias.Identifier.ValueText;
 
             var tableInstance = new TableInstanceSymbol(alias, table);
-            var boundNamedTableReference = new BoundNamedTableReference(tableInstance);
-
-            var parent = _bindingContextStack.Pop();
-            var bindingContext = new TableBindingContext(parent, boundNamedTableReference);
-            _bindingContextStack.Push(bindingContext);
-
-            return boundNamedTableReference;
+            return new BoundNamedTableReference(tableInstance);
         }
 
         private BoundTableReference BindCrossJoinedTableReference(CrossJoinedTableReferenceSyntax node)
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-
-            var parent = _bindingContextStack.Pop();
-            var bindingContext = new JoinConditionBindingContext(parent, left, right);
-            _bindingContextStack.Push(bindingContext);
-
             return new BoundJoinedTableReference(BoundJoinType.InnerJoin, left, right, null);
         }
 
         private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
         {
-            var parent = Context;
-
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-            _bindingContextStack.Pop();
 
-            var bindingContext = new JoinConditionBindingContext(parent, left, right);
-            _bindingContextStack.Push(bindingContext);
-
-            var expressionBindingContext = new ExpressionBindingContext(bindingContext);
-            _bindingContextStack.Push(expressionBindingContext);
-
-            var condition = BindExpression(node.Condition);
-
-            _bindingContextStack.Pop();
+            var binder = GetJoinConditionBinder(left, right);
+            var condition = binder.BindExpression(node.Condition);
 
             // TODO: Ensure condition evaluates to boolean
 
@@ -126,11 +115,8 @@ namespace NQuery.Language.Binding
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
 
-            var parent = _bindingContextStack.Pop();
-            var bindingContext = new JoinConditionBindingContext(parent, left, right);
-            _bindingContextStack.Push(bindingContext);
-
-            var condition = BindExpression(node.Condition);
+            var binder = GetJoinConditionBinder(left, right);
+            var condition = binder.BindExpression(node.Condition);
 
             // TODO: Ensure condition evaluates to boolean
 
@@ -139,34 +125,7 @@ namespace NQuery.Language.Binding
 
         private BoundTableReference BindDerivedTableReference(DerivedTableReferenceSyntax node)
         {
-            // TODO: We need to make sure the nested query doesn't get access to our variables.
-            //
-            // More precisely, the following query is expected to cause a resolution error
-            // for "t.RegionId" in the WHERE clause. However, right now it succeeds and binds
-            // agains the "outer row".
-            //
-            //    SELECT e.LastName + ', ' + e.FirstName Employee,
-            //		     r.RegionDescription Regions,
-            //		     t.TerritoryDescription Territories
-            //
-            //    FROM	 Employees e
-            //			    INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID
-            //			    INNER JOIN Territories t ON t.TerritoryID = et.TerritoryID
-            //			    CROSS JOIN (SELECT * FROM Region x WHERE x.RegionID = t.RegionID) AS r
-            //
-            // One way to achieve this is by introducing a new "outermost" binding context. This is
-            // either the SchemaBindingContext (in case of non-CTE tables) or the CteBindingContext
-            // which contains the CTEs and has the SchemaBindingContext as its parent.
-            //
-            // When resolving a CTE, the current context is set to this outermost binding context.
-
-            var previousBindingContext = _bindingContextStack.Pop();
-            _bindingContextStack.Push(_rootBindingContext);
-
             var query = BindQuery(node.Query);
-
-            _bindingContextStack.Pop();
-            _bindingContextStack.Push(previousBindingContext);
 
             var columns = (from c in query.SelectColumns
                            where !string.IsNullOrEmpty(c.Name)
@@ -175,10 +134,6 @@ namespace NQuery.Language.Binding
             var derivedTable = new DerivedTableSymbol(columns);
             var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable);
             var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
-
-            var parent = _bindingContextStack.Pop();
-            var bindingContext = new TableBindingContext(parent, boundTableReference);
-            _bindingContextStack.Push(bindingContext);
 
             return boundTableReference;
         }

@@ -89,15 +89,22 @@ namespace NQuery.Language.Binding
         private BoundQuery BindSelectQuery(SelectQuerySyntax node)
         {
             var fromClause = BindFromClause(node.FromClause);
-            var whereClause = BindWhereClause(node.WhereClause);
-            var selectColumns = BindSelectColumns(node.SelectClause.Columns);
+
+            var bindingContextWithTables = fromClause == null
+                                               ? _bindingContext
+                                               : new AdditionalSymbolsBindingContext(_bindingContext, fromClause.GetDeclaredTableInstances());
+
+            var binder = GetBinder(bindingContextWithTables);
+
+            var whereClause = binder.BindWhereClause(node.WhereClause);
+            var selectColumns = binder.BindSelectColumns(node.SelectClause.Columns);
 
             if (node.GroupByClause != null)
             {
                 // TODO: Bind GroupByClause            
             }
 
-            var havingClause = BindHavingClause(node.HavingClause);
+            var havingClause = binder.BindHavingClause(node.HavingClause);
 
             return new BoundSelectQuery(selectColumns, fromClause, whereClause, havingClause);
         }
@@ -192,30 +199,22 @@ namespace NQuery.Language.Binding
             if (node == null)
                 return null;
 
-            BindingContext lastBindingContext = null;
             BoundTableReference lastTableReference = null;
-
-            var outerBindingContext = _bindingContextStack.Pop();
 
             foreach (var tableReference in node.TableReferences)
             {
-                _bindingContextStack.Push(outerBindingContext);
                 var boundTableReference = BindTableReference(tableReference);
-                var tableReferenceBindingContext = _bindingContextStack.Pop();
 
-                if (lastBindingContext == null)
+                if (lastTableReference == null)
                 {
-                    lastBindingContext = tableReferenceBindingContext;
                     lastTableReference = boundTableReference;
                 }
                 else
                 {
-                    lastBindingContext = new JoinConditionBindingContext(outerBindingContext, lastTableReference, boundTableReference);
                     lastTableReference = new BoundJoinedTableReference(BoundJoinType.InnerJoin, lastTableReference, boundTableReference, null);
                 }
             }
 
-            _bindingContextStack.Push(lastBindingContext);
             return lastTableReference;
         }
 

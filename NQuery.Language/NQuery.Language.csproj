@@ -35,6 +35,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\AdditionalSymbolsBindingContext.cs" />
     <Compile Include="Binding\Binder.Queries.cs" />
     <Compile Include="Binding\Binder.Expressions.cs" />
     <Compile Include="Binding\Binder.Operators.cs" />
@@ -45,9 +46,7 @@
     <Compile Include="BoundNodes\BoundMethodInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
     <Compile Include="Binding\ExpressionBindingContext.cs" />
-    <Compile Include="Binding\JoinConditionBindingContext.cs" />
-    <Compile Include="Binding\RootBindingContext.cs" />
-    <Compile Include="Binding\TableBindingContext.cs" />
+    <Compile Include="Binding\DataContextBindingContext.cs" />
     <Compile Include="Binding\BindingResult.cs" />
     <Compile Include="BoundNodes\BoundBinaryExpression.cs" />
     <Compile Include="BoundNodes\BoundCaseExpression.cs" />

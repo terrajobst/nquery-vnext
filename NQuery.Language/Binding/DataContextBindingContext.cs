@@ -4,11 +4,11 @@ using NQuery.Language.Symbols;
 
 namespace NQuery.Language.Binding
 {
-    internal sealed class RootBindingContext : BindingContext
+    internal sealed class DataContextBindingContext : BindingContext
     {
         private readonly DataContext _dataContext;
 
-        public RootBindingContext(DataContext dataContext)
+        public DataContextBindingContext(DataContext dataContext)
         {
             _dataContext = dataContext;
         }

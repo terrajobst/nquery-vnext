@@ -9,27 +9,27 @@ namespace NQuery.Language.Binding
     {
         private IEnumerable<Symbol> LookupName(string name)
         {
-            return Context.LookupSymbols(name, false);
+            return _bindingContext.LookupSymbols(name, false);
         }
 
         private IEnumerable<VariableSymbol> LookupVariable(string name)
         {
-            return Context.LookupSymbols(name, false).OfType<VariableSymbol>();
+            return _bindingContext.LookupSymbols(name, false).OfType<VariableSymbol>();
         }
 
         private IEnumerable<TableSymbol> LookupTable(string name)
         {
-            return Context.LookupSymbols(name, false).OfType<TableSymbol>();
+            return _bindingContext.LookupSymbols(name, false).OfType<TableSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return Context.LookupSymbols().OfType<TableInstanceSymbol>();
+            return _bindingContext.LookupSymbols().OfType<TableInstanceSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstance(string name)
         {
-            return Context.LookupSymbols(name, false).OfType<TableInstanceSymbol>();
+            return _bindingContext.LookupSymbols(name, false).OfType<TableInstanceSymbol>();
         }
 
         private IEnumerable<PropertySymbol> LookupProperty(Type type, string name)

@@ -1,39 +1,43 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using NQuery.Language;
 using NQuery.Language.BoundNodes;
-using NQuery.Language.Symbols;
 
 namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
         private readonly DataContext _dataContext;
-        private readonly RootBindingContext _rootBindingContext;
-        private readonly Stack<BindingContext> _bindingContextStack;
-        private readonly Dictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode = new Dictionary<SyntaxNode, BoundNode>();
-        private readonly Dictionary<BoundNode, BindingContext> _bindingContextFromBoundNode = new Dictionary<BoundNode, BindingContext>();
-        private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
+        private readonly BindingContext _bindingContext;
+        private readonly Dictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
+        private readonly Dictionary<BoundNode, BindingContext> _bindingContextFromBoundNode;
+        private readonly List<Diagnostic> _diagnostics;
 
-        public Binder(DataContext dataContext)
+        private Binder(DataContext dataContext, BindingContext bindingContext, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, BindingContext> bindingContextFromBoundNode, List<Diagnostic> diagnostics)
         {
+            _bindingContext = bindingContext;
+            _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
+            _bindingContextFromBoundNode = bindingContextFromBoundNode;
+            _diagnostics = diagnostics;
             _dataContext = dataContext;
-            _rootBindingContext = new RootBindingContext(dataContext);
-            _bindingContextStack = new Stack<BindingContext>();
-            _bindingContextStack.Push(_rootBindingContext);
         }
 
-        private BindingContext Context
+        private Binder GetBinder(BindingContext bindingContext)
         {
-            get { return _bindingContextStack.Peek(); }
+            return bindingContext == _bindingContext
+                       ? this
+                       : new Binder(_dataContext, bindingContext, _boundNodeFromSynatxNode, _bindingContextFromBoundNode, _diagnostics);
         }
 
-        public BindingResult Bind(CompilationUnitSyntax compilationUnit)
+        public static BindingResult Bind(CompilationUnitSyntax compilationUnit, DataContext dataContext)
         {
-            var boundRoot = BindRoot(compilationUnit.Root);
-            return new BindingResult(compilationUnit.Root, boundRoot, _boundNodeFromSynatxNode, _bindingContextFromBoundNode, _diagnostics);
+            var bindingContext = new DataContextBindingContext(dataContext);
+            var boundNodeFromSynatxNode = new Dictionary<SyntaxNode, BoundNode>();
+            var bindingContextFromBoundNode = new Dictionary<BoundNode, BindingContext>();
+            var diagnostics = new List<Diagnostic>();
+            var binder = new Binder(dataContext, bindingContext, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
+
+            var boundRoot = binder.BindRoot(compilationUnit.Root);
+            return new BindingResult(compilationUnit.Root, boundRoot, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
         }
 
         private BoundNode BindRoot(SyntaxNode root)
@@ -53,13 +57,12 @@ namespace NQuery.Language.Binding
             where TInput : SyntaxNode
             where TResult : BoundNode
         {
-            var context = Context;
             var boundNode = bindMethod(node);
-            
+
             _boundNodeFromSynatxNode.Add(node, boundNode);
 
             if (!_bindingContextFromBoundNode.ContainsKey(boundNode))
-                _bindingContextFromBoundNode.Add(boundNode, context);
+                _bindingContextFromBoundNode.Add(boundNode, _bindingContext);
 
             return boundNode;
         }

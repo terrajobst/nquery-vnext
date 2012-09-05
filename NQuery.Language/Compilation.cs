@@ -15,8 +15,7 @@ namespace NQuery.Language
 
         public SemanticModel GetSemanticModel()
         {
-            var binder = new Binder(_dataContext);
-            var bindingResult = binder.Bind(_syntaxTree.Root);
+            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             return new SemanticModel(this, bindingResult);
         }
 
