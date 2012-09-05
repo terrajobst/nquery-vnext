@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Language
 {
-    public struct TextSpan
+    public struct TextSpan : IEquatable<TextSpan>
     {
         private readonly int _start;
         private readonly int _length;
@@ -39,6 +39,11 @@ namespace NQuery.Language
             return Start <= position && position < End;
         }
 
+        public bool Contains(TextSpan textSpan)
+        {
+            return Start <= textSpan.Start && textSpan.End <= End;
+        }
+
         public bool OverlapsWith(TextSpan span)
         {
             var maxStart = Math.Max(Start, span.Start);
@@ -49,6 +54,36 @@ namespace NQuery.Language
         public bool IntersectsWith(TextSpan span)
         {
             return span.Start <= End && span.End >= Start;
+        }
+
+        public bool Equals(TextSpan other)
+        {
+            return _start == other._start &&
+                   _length == other._length;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as TextSpan?;
+            return other != null && Equals(other.Value);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_start*397) ^ _length;
+            }
+        }
+
+        public static bool operator ==(TextSpan left, TextSpan right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TextSpan left, TextSpan right)
+        {
+            return !left.Equals(right);
         }
     }
 }

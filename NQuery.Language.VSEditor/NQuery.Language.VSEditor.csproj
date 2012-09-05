@@ -86,6 +86,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="INQueryGlyphService.cs" />
+    <Compile Include="INQuerySelectionProvider.cs" />
+    <Compile Include="INQuerySelectionProviderService.cs" />
     <Compile Include="INQuerySemanticModelManager.cs" />
     <Compile Include="INQuerySemanticModelManagerService.cs" />
     <Compile Include="INQuerySemanticClassificationService.cs" />
@@ -103,6 +105,8 @@
     <Compile Include="NQueryGlyphService.cs" />
     <Compile Include="NQueryKeyProcessor.cs" />
     <Compile Include="NQueryKeyProcessorProvider.cs" />
+    <Compile Include="NQuerySelectionProvider.cs" />
+    <Compile Include="NQuerySelectionProviderService.cs" />
     <Compile Include="NQuerySemanticClassifier.cs" />
     <Compile Include="NQuerySemanticClassifierProvider.cs" />
     <Compile Include="NQuerySemanticErrorTagger.cs" />

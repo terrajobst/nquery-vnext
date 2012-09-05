@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
-
+using System.Windows.Input;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
@@ -24,6 +24,7 @@ namespace NQueryViewer
         private IWpfTextViewHost _textViewHost;
         private INQuerySyntaxTreeManager _syntaxTreeManager;
         private INQuerySemanticModelManager _semanticModelManager;
+        private INQuerySelectionProvider _selectionProvider;
 
         [Import]
         public TextViewFactory TextViewFactory { get; set; }
@@ -33,6 +34,9 @@ namespace NQueryViewer
 
         [Import]
         public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
+
+        [Import]
+        public INQuerySelectionProviderService SelectionProviderService { get; set; }
 
         public Window Window
         {
@@ -59,7 +63,28 @@ namespace NQueryViewer
 
             _semanticModelManager.Compilation = _semanticModelManager.Compilation.WithDataContext(GetDataContext());
 
+            _selectionProvider = SelectionProviderService.GetSelectionProvider(_textViewHost.TextView);
+
             UpdateTree();
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            var modifiers = e.KeyboardDevice.Modifiers;
+            var key = e.Key;
+
+            if (modifiers == ModifierKeys.Control && key == Key.W)
+            {
+                _selectionProvider.ExtendSelection();
+                e.Handled = true;
+            }
+            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.W)
+            {
+                _selectionProvider.ShrinkSelection();
+                e.Handled = true;
+            }
+
+            base.OnPreviewKeyDown(e);
         }
 
         private static DataContext GetDataContext()
