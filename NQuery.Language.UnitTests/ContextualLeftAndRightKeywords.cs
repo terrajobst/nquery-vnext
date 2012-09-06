@@ -7,7 +7,7 @@ namespace NQuery.Language.UnitTests
     public class ContextualLeftAndRightKeywords
     {
         [TestMethod]
-        public void TreatedAsIdentifier_IfUsedAsName()
+        public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT LEFT, RIGHT");
             var tokens = syntaxTree.Root.DescendantTokens().ToArray();
@@ -27,7 +27,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsIdentifier_IfUsedAsFunctionName()
+        public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsFunctionName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT  LEFT(), RIGHT('test',2)");
             var tokens = syntaxTree.Root.DescendantTokens().ToArray();
@@ -47,7 +47,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsIdentifier_IfUsedAsPropertyName()
+        public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsPropertyName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT Foo.LEFT, Bar.RIGHT");
             var tokens = syntaxTree.Root.DescendantTokens().ToArray();
@@ -67,7 +67,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsIdentifier_IfUsedAsMethodName()
+        public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsMethodName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT Foo.LEFT(), Bar.RIGHT('test', 2)");
             var tokens = syntaxTree.Root.DescendantTokens().ToArray();
@@ -87,7 +87,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsIdentifier_IfUsedAsVariableName()
+        public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsVariableName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT @LEFT, @RIGHT");
             var tokens = syntaxTree.Root.DescendantTokens().ToArray();
@@ -107,7 +107,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsKeyword_IfSucceededByJoinKeyword()
+        public void ContextualLeftAndRightKeywords_TreatedAsKeyword_IfSucceededByJoinKeyword()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"
                 SELECT  *
@@ -132,7 +132,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void TreatedAsKeyword_IfSucceededByOuterKeyword()
+        public void ContextualLeftAndRightKeywords_TreatedAsKeyword_IfSucceededByOuterKeyword()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"
                 SELECT  *

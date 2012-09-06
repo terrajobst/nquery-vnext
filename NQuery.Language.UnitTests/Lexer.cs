@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
-    public class LexerTests
+    public class Lexer
     {
         private static SyntaxToken LexSingleToken(string text)
         {
@@ -14,7 +14,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void InvalidDateRountripsAsTextAndHasValue()
+        public void Lexer_CanLexInvalidDate()
         {
             const string invalidDate = "#13.13.1212#";
             var token = LexSingleToken(invalidDate);
@@ -24,7 +24,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void ValidDateRountripsAsTextAndHasValue()
+        public void Lexer_CanLexValidDate()
         {
             const string dateSource = "#03.14.1987#";
             var date = new DateTime(1987, 3, 14);
@@ -36,7 +36,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void UnterminatedValidDateRoundtripsAsTextAndHasValue()
+        public void Lexer_CanLexUnterminatedValidDate()
         {
             var date = new DateTime(1987, 3, 14);
             const string dateSource = "#03.14.1987";
@@ -48,7 +48,7 @@ namespace NQuery.Language.UnitTests
         }
 
         [TestMethod]
-        public void UnterminatedStringRoundtripsAsTextAndHasValue()
+        public void Lexer_CanLexUnterminatedString()
         {
             const string text = "the value";
             const string unterminatedString = "'" + text;
