@@ -245,48 +245,6 @@ namespace NQuery.Language
         //    return new Diagnostic(DiagnosticId.TooManyExpressionsInSelectListOfSubquery, Resources.TooManyExpressionsInSelectListOfSubquery);
         //}
 
-        //public static Diagnostic NoColumnAliasSpecified(SyntaxNodeOrToken nodeOrToken, int columnIndex, Identifier derivedTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.NoColumnAliasSpecified, columnIndex + 1, derivedTableName.ToSource());
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.NoColumnAliasSpecified, message);
-        //}
-
-        //public static Diagnostic CteHasMoreColumnsThanSpecified(Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasMoreColumnsThanSpecified, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteHasMoreColumnsThanSpecified, message);
-        //}
-
-        //public static Diagnostic CteHasFewerColumnsThanSpecified(Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasFewerColumnsThanSpecified, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteHasFewerColumnsThanSpecified, message);
-        //}
-
-        //public static Diagnostic CteHasDuplicateColumnName(Identifier columnName, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasDuplicateColumnName, columnName.Text, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteHasDuplicateColumnName, message);
-        //}
-
-        //public static Diagnostic CteHasDuplicateTableName(Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasDuplicateTableName, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteHasDuplicateTableName, message);
-        //}
-
-        //public static Diagnostic CteDoesNotHaveUnionAll(Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteDoesNotHaveUnionAll, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteDoesNotHaveUnionAll, message);
-        //}
-
-        //public static Diagnostic CteDoesNotHaveAnchorMember(Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteDoesNotHaveAnchorMember, cteTableName.Text);
-        //    return new Diagnostic(DiagnosticId.CteDoesNotHaveAnchorMember, message);
-        //}
-
         //public static Diagnostic CteContainsRecursiveReferenceInSubquery(Identifier cteTableName)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsRecursiveReferenceInSubquery, cteTableName.Text);

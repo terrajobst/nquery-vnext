@@ -9,6 +9,7 @@ namespace NQuery.Language.Symbols
         DerivedTable,
         TableInstance,
         ColumnInstance,
+        CommonTableExpression,
         Variable,
         Parameter,
         Function,

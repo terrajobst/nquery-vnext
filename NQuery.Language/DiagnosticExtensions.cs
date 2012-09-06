@@ -216,10 +216,10 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
-        public static void ReportAmbiguousName(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<Symbol> symbols)
+        public static void ReportAmbiguousName(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<Symbol> candidates)
         {
-            var symbol1 = symbols[0];
-            var symbol2 = symbols[1];
+            var symbol1 = candidates[0];
+            var symbol2 = candidates[1];
             var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousReference, name.ValueText, symbol1, symbol2);
             var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousReference, message);
             diagnostics.Add(diagnostic);
@@ -239,9 +239,11 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
-        public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<TableSymbol> candidates)
         {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTable, name.ValueText);
+            var symbol1 = candidates[0];
+            var symbol2 = candidates[1];
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTable, name.ValueText, symbol1, symbol2);
             var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousTable, message);
             diagnostics.Add(diagnostic);
         }
@@ -540,40 +542,54 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
-        //public static void ReportNoColumnAliasSpecified(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, int columnIndex, Identifier derivedTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.NoColumnAliasSpecified(nodeOrToken, columnIndex, derivedTableName));
-        //}
+        public static void ReportNoColumnAliasSpecified(this ICollection<Diagnostic> diagnostics, SyntaxToken tableName, int columnIndex)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.NoColumnAliasSpecified, columnIndex + 1, tableName.ValueText);
+            var diagnostic = new Diagnostic(tableName.Span, DiagnosticId.NoColumnAliasSpecified, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteHasMoreColumnsThanSpecified(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteHasMoreColumnsThanSpecified(cteTableName));
-        //}
+        public static void ReportCteHasMoreColumnsThanSpecified(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasMoreColumnsThanSpecified, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteHasMoreColumnsThanSpecified, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteHasFewerColumnsThanSpecified(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteHasFewerColumnsThanSpecified(cteTableName));
-        //}
+        public static void ReportCteHasFewerColumnsThanSpecified(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasFewerColumnsThanSpecified, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteHasFewerColumnsThanSpecified, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteHasDuplicateColumnName(this ICollection<Diagnostic> diagnostics, Identifier columnName, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteHasDuplicateColumnName(columnName, cteTableName));
-        //}
+        public static void ReportCteHasDuplicateColumnName(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName, string columnName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasDuplicateColumnName, columnName, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteHasDuplicateColumnName, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteHasDuplicateTableName(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteHasDuplicateTableName(cteTableName));
-        //}
+        public static void ReportCteHasDuplicateTableName(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasDuplicateTableName, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteHasDuplicateTableName, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteDoesNotHaveUnionAll(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteDoesNotHaveUnionAll(cteTableName));
-        //}
+        public static void ReportCteDoesNotHaveUnionAll(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteDoesNotHaveUnionAll, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteDoesNotHaveUnionAll, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCteDoesNotHaveAnchorMember(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CteDoesNotHaveAnchorMember(cteTableName));
-        //}
+        public static void ReportCteDoesNotHaveAnchorMember(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CteDoesNotHaveAnchorMember, cteTableName.ValueText);
+            var diagnostic = new Diagnostic(cteTableName.Span, DiagnosticId.CteDoesNotHaveAnchorMember, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportCteContainsRecursiveReferenceInSubquery(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
         //{

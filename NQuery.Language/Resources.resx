@@ -175,7 +175,7 @@
     <value>Name '{0}' is ambiguous between '{1}' and '{2}'.</value>
   </data>
   <data name="AmbiguousTable" xml:space="preserve">
-    <value>Table name {0} is ambiguous between {1}.</value>
+    <value>Table name {0} is ambiguous between '{1}' and '{2}'.</value>
   </data>
   <data name="AmbiguousTableRef" xml:space="preserve">
     <value>Table ref name {0} is ambiguous between {1}.</value>

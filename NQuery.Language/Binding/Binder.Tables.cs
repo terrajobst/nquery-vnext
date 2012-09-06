@@ -11,8 +11,8 @@ namespace NQuery.Language.Binding
         {
             var leftTables = left.GetDeclaredTableInstances();
             var rightTables = right.GetDeclaredTableInstances();
-            var parentWithLeft = new AdditionalSymbolsBindingContext(_bindingContext, leftTables);
-            var parentWithLeftAndRight = new AdditionalSymbolsBindingContext(parentWithLeft, rightTables);
+            var tables = leftTables.Concat(rightTables);
+            var parentWithLeftAndRight = new AdditionalSymbolsBindingContext(_bindingContext, tables);
             return GetBinder(parentWithLeftAndRight);
         }
 
@@ -70,7 +70,7 @@ namespace NQuery.Language.Binding
             }
 
             if (symbols.Length > 1)
-                _diagnostics.ReportAmbiguousTable(node.TableName);
+                _diagnostics.ReportAmbiguousTable(node.TableName, symbols);
 
             var table = symbols[0];
             var alias = node.Alias == null

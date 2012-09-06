@@ -10,6 +10,8 @@ namespace NQuery.Language.Binding
 
         public static readonly Type Unknown = typeof(UnknownType);
         public static readonly Type Null = typeof(NullType);
+
+        // TODO: Shouldn't we use System.Void?
         public static readonly Type Missing = typeof(MissingType);
 
         public static bool IsMissing(this Type type)

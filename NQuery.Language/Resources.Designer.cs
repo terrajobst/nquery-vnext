@@ -223,7 +223,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Table name {0} is ambiguous between {1}..
+        ///   Looks up a localized string similar to Table name {0} is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
         internal static string AmbiguousTable {
             get {

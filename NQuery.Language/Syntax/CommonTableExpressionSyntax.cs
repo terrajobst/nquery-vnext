@@ -4,17 +4,17 @@ namespace NQuery.Language
 {
     public sealed class CommonTableExpressionSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _identifer;
+        private readonly SyntaxToken _name;
         private readonly CommonTableExpressionColumnNameListSyntax _columnNameList;
         private readonly SyntaxToken _asKeyword;
         private readonly SyntaxToken _leftParenthesis;
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifer, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _identifer = identifer.WithParent(this);
+            _name = name.WithParent(this);
             _columnNameList = columnNameList;
             _asKeyword = asKeyword.WithParent(this);
             _leftParenthesis = leftParenthesis.WithParent(this);
@@ -29,7 +29,7 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _identifer;
+            yield return _name;
             if (_columnNameList != null)
                 yield return _columnNameList;
             yield return _asKeyword;
@@ -38,9 +38,9 @@ namespace NQuery.Language
             yield return _rightParenthesis;
         }
 
-        public SyntaxToken Identifer
+        public SyntaxToken Name
         {
-            get { return _identifer; }
+            get { return _name; }
         }
 
         public CommonTableExpressionColumnNameListSyntax ColumnNameList

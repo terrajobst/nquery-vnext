@@ -61,6 +61,8 @@
     <Compile Include="BoundNodes\BoundCoalesceExpression.cs" />
     <Compile Include="BoundNodes\BoundNullIfExpression.cs" />
     <Compile Include="BoundNodes\BoundAllAnySubselect.cs" />
+    <Compile Include="BoundNodes\BoundCommonTableExpression.cs" />
+    <Compile Include="BoundNodes\BoundCommonTableExpressionQuery.cs" />
     <Compile Include="BoundNodes\BoundExistsSubselect.cs" />
     <Compile Include="BoundNodes\BoundFunctionInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundIsNullExpression.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="Runtime\ReflectionProvider.cs" />
     <Compile Include="Symbols\AggregateSymbol.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />
+    <Compile Include="Symbols\CommonTableExpressionSymbol.cs" />
     <Compile Include="Syntax\SyntaxExtensions.cs" />
     <Compile Include="Syntax\TextLocation.cs" />
     <Compile Include="TypeRegistry.cs" />

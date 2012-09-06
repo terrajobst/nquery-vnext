@@ -482,7 +482,8 @@ namespace NQuery.Language.Binding
             if (tableInstance != null)
             {
                 var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
-                var refersToDerivedTableOrCte = tableInstance.Table.Kind == SymbolKind.DerivedTable; // TODO: Add CTE here.
+                var refersToDerivedTableOrCte = tableInstance.Table.Kind == SymbolKind.DerivedTable ||
+                                                tableInstance.Table.Kind == SymbolKind.CommonTableExpression;
                 if (!isColumnAccess && refersToDerivedTableOrCte)
                     _diagnostics.ReportInvalidRowReference(name);
             }

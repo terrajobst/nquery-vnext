@@ -350,8 +350,8 @@ namespace NQuery.Language.VSEditor
                 case SymbolKind.Column:
                     return NQueryGlyph.Column;
                 case SymbolKind.SchemaTable:
-                    return NQueryGlyph.Table;
                 case SymbolKind.DerivedTable:
+                case SymbolKind.CommonTableExpression:
                     return NQueryGlyph.Table;
                 case SymbolKind.TableInstance:
                     return NQueryGlyph.TableRef;

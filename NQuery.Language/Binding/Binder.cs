@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NQuery.Language.BoundNodes;
+using NQuery.Language.Symbols;
 
 namespace NQuery.Language.Binding
 {
@@ -26,6 +28,17 @@ namespace NQuery.Language.Binding
             return bindingContext == _bindingContext
                        ? this
                        : new Binder(_dataContext, bindingContext, _boundNodeFromSynatxNode, _bindingContextFromBoundNode, _diagnostics);
+        }
+
+        private Binder GetBinderWithAdditionalSymbols(IEnumerable<Symbol> symbols)
+        {
+            var bindingContext = new AdditionalSymbolsBindingContext(_bindingContext, symbols);
+            return GetBinder(bindingContext);
+        }
+
+        private Binder GetBinderWithAdditionalSymbols(params Symbol[] symbols)
+        {
+            return GetBinderWithAdditionalSymbols(symbols.AsEnumerable());
         }
 
         public static BindingResult Bind(CompilationUnitSyntax compilationUnit, DataContext dataContext)

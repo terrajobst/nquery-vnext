@@ -6,7 +6,7 @@ namespace NQuery.Language.VSEditor
     {
         IClassificationType SchemaTable { get; }
         IClassificationType DerivedTable { get; }
-        IClassificationType CteTable { get; }
+        IClassificationType CteTable { get; } // TODO: Should we rename this?
         IClassificationType Column { get; }
         IClassificationType Method { get; }
         IClassificationType Property { get; }
