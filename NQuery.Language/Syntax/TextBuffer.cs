@@ -95,6 +95,20 @@ namespace NQuery.Language
             return r < _lines.Count ? _lines[r] : null;
         }
 
+        public TextLocation GetTextLocation(int position)
+        {
+            var textLine = GetLineFromPosition(position);
+            var line = textLine.Index;
+            var column = position - textLine.TextSpan.Start;
+            return new TextLocation(line, column);
+        }
+
+        public int GetPosition(TextLocation location)
+        {
+            var textLine = _lines[location.Line];
+            return textLine.TextSpan.Start + location.Column;
+        }
+
         public string GetText(TextSpan textSpan)
         {
             return _text.Substring(textSpan.Start, textSpan.Length);
