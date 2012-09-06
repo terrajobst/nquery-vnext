@@ -67,12 +67,9 @@ namespace NQuery.Language
 
         private SyntaxToken Match(SyntaxKind kind)
         {
-            if (Current.Kind == kind)
-                return NextToken();
-
-            // TODO: Report token expected
-            // _errorReporter.TokenExpected(_token.Range, _token.Text, tokenID);
-            return CreateMissingToken(kind, SyntaxKind.BadToken);
+            return Current.Kind == kind
+                       ? NextToken()
+                       : CreateMissingToken(kind, SyntaxKind.BadToken);
         }
 
         private SyntaxToken CreateMissingToken(SyntaxKind kind, SyntaxKind contextualKind)
@@ -465,13 +462,10 @@ namespace NQuery.Language
                 }
 
                 default:
-                    {
-                        // TODO
-                        //_errorReporter.SimpleExpressionExpected(_token.Range, _token.Text);
-                        //return LiteralExpression.FromNull();
-                        var identifier = Match(SyntaxKind.IdentifierToken);
-                        return new NameExpressionSyntax(_syntaxTree, identifier);
-                    }
+                {
+                    var identifier = Match(SyntaxKind.IdentifierToken);
+                    return new NameExpressionSyntax(_syntaxTree, identifier);
+                }
             }
         }
 
