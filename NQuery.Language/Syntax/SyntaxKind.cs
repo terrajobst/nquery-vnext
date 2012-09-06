@@ -148,7 +148,6 @@ namespace NQuery.Language
         BetweenExpression,
         IsNullExpression,
         CastExpression,
-        TypeReference,
         CaseExpression,
         CaseLabel,
         CoalesceExpression,

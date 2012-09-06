@@ -9,17 +9,17 @@ namespace NQuery.Language
         private readonly SyntaxToken _leftParenthesisToken;
         private readonly ExpressionSyntax _expression;
         private readonly SyntaxToken _asKeyword;
-        private readonly TypeReferenceSyntax _typeReference;
+        private readonly SyntaxToken _typeName;
         private readonly SyntaxToken _rightParenthesisToken;
 
-        public CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, TypeReferenceSyntax typeReference, SyntaxToken rightParenthesisToken)
+        public CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken typeName, SyntaxToken rightParenthesisToken)
             : base(syntaxTree)
         {
             _castKeyword = castKeyword.WithParent(this);
             _leftParenthesisToken = leftParenthesisToken.WithParent(this);
             _expression = expression;
             _asKeyword = asKeyword.WithParent(this);
-            _typeReference = typeReference;
+            _typeName = typeName.WithParent(this);
             _rightParenthesisToken = rightParenthesisToken.WithParent(this);
         }
 
@@ -34,7 +34,7 @@ namespace NQuery.Language
             yield return _leftParenthesisToken;
             yield return _expression;
             yield return _asKeyword;
-            yield return _typeReference;
+            yield return _typeName;
             yield return _rightParenthesisToken;
         }
 
@@ -58,9 +58,9 @@ namespace NQuery.Language
             get { return _asKeyword; }
         }
 
-        public TypeReferenceSyntax TypeReference
+        public SyntaxToken TypeName
         {
-            get { return _typeReference; }
+            get { return _typeName; }
         }
 
         public SyntaxToken RightParenthesisToken

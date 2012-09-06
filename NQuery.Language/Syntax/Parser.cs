@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-
 using System.Linq;
 
 namespace NQuery.Language
@@ -354,10 +352,10 @@ namespace NQuery.Language
                     var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
                     var expression = ParseExpression();
                     var asKeyword = Match(SyntaxKind.AsKeyword);
-                    var typeReference = ParseTypeReference();
+                    var typeName = Match(SyntaxKind.IdentifierToken);
                     var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
 
-                    return new CastExpressionSyntax(_syntaxTree, castKeyword, leftParenthesisToken, expression, asKeyword, typeReference, rightParenthesisToken);
+                    return new CastExpressionSyntax(_syntaxTree, castKeyword, leftParenthesisToken, expression, asKeyword, typeName, rightParenthesisToken);
                 }
 
                 case SyntaxKind.CaseKeyword:
@@ -469,60 +467,6 @@ namespace NQuery.Language
             }
         }
 
-        private TypeReferenceSyntax ParseTypeReference()
-		{
-            // TODO
-			//if (_token.Id == TokenId.String)
-			{
-		        var token = Match(SyntaxKind.StringLiteralToken);
-			    var typeName = ParseStringValue(token.Text);
-
-                return new TypeReferenceSyntax(_syntaxTree, token, typeName);
-			}
-            // TODO
-            //else
-            //{
-            //    _rangeRecorder.Begin();
-
-            //    StringBuilder sb = new StringBuilder();
-            //    bool wasVerbatim = false;
-            //    while (_token.Id != TokenId.Eof)
-            //    {
-            //        Name identifier = ParseIdentifier();
-
-            //        if (!identifier.Verbatim && !identifier.Parenthesized)
-            //        {
-            //            sb.Append(identifier.Text);
-            //        }
-            //        else
-            //        {
-            //            wasVerbatim = true;
-
-            //            // Include quotes and brackets for better error reporting.
-            //            sb.Append(identifier.ToString());
-            //        }
-
-            //        if (_token.Id != TokenId.Dot)
-            //            break;
-
-            //        sb.Append(".");
-            //        NextToken();
-            //    }
-
-            //    string typeName = sb.ToString();
-            //    SourceRange typeNameSourceRange = _rangeRecorder.End();
-
-            //    if (wasVerbatim)
-            //        _errorReporter.InvalidTypeReference(typeNameSourceRange, typeName);
-
-            //    typeReference.TypeName = typeName;
-            //    typeReference.TypeNameSourceRange = typeNameSourceRange;
-            //    typeReference.CaseSensitve = false;
-            //}
-
-            //return typeReference;
-        }
-
         private ExpressionSyntax ParseBooleanLiteral()
         {
             var token = NextToken();
@@ -534,24 +478,6 @@ namespace NQuery.Language
         {
             var token = NextToken();
             return new LiteralExpressionSyntax(_syntaxTree, token, token.Value);
-        }
-
-        private static string ParseStringValue(string text)
-        {
-            var sb = new StringBuilder(text.Length);
-
-            // Text includes leading/trailing/masking quotes
-
-            for (var i = 1; i < text.Length - 1; i++)
-            {
-                if (text[i] == '\'' && text[i + 1] == '\'')
-                    i++;
-
-                sb.Append(text[i]);
-            }
-
-            var value = sb.ToString();
-            return value;
         }
 
         private ArgumentListSyntax ParseArgumentList()

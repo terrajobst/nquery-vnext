@@ -64,9 +64,6 @@ namespace NQuery.Language
                 case SyntaxKind.CastExpression:
                      return VisitCastExpression((CastExpressionSyntax)node);
 
-                case SyntaxKind.TypeReference:
-                     return VisitTypeReference((TypeReferenceSyntax)node);
-
                 case SyntaxKind.CaseExpression:
                      return VisitCaseExpression((CaseExpressionSyntax)node);
 
@@ -475,11 +472,6 @@ namespace NQuery.Language
         }
 
         public virtual TResult VisitTopClause(TopClauseSyntax node)
-        {
-            return DefaultVisit(node);
-        }
-
-        public virtual TResult VisitTypeReference(TypeReferenceSyntax node)
         {
             return DefaultVisit(node);
         }

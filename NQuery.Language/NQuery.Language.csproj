@@ -194,7 +194,6 @@
     <Compile Include="Syntax\TextLine.cs" />
     <Compile Include="Syntax\TextSpan.cs" />
     <Compile Include="Syntax\TopClauseSyntax.cs" />
-    <Compile Include="Syntax\TypeReferenceSyntax.cs" />
     <Compile Include="Syntax\UnaryExpressionSyntax.cs" />
     <Compile Include="Syntax\UnionQuerySyntax.cs" />
     <Compile Include="Syntax\WhereClauseSyntax.cs" />
