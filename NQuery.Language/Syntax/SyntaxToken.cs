@@ -127,6 +127,11 @@ namespace NQuery.Language
             return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
         }
 
+        public SyntaxToken WithKind(SyntaxKind kind)
+        {
+            return new SyntaxToken(_parent, kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
+        }
+
         public override string ToString()
         {
             using (var writer = new StringWriter())

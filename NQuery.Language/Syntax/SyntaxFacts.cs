@@ -480,9 +480,6 @@ namespace NQuery.Language
                 case "JOIN":
                     return SyntaxKind.JoinKeyword;
 
-                case "LEFT":
-                    return SyntaxKind.LeftKeyword;
-
                 case "ORDER":
                     return SyntaxKind.OrderKeyword;
 
@@ -500,9 +497,6 @@ namespace NQuery.Language
 
                 case "WHERE":
                     return SyntaxKind.WhereKeyword;
-
-                case "RIGHT":
-                    return SyntaxKind.RightKeyword;
 
                 case "OUTER":
                     return SyntaxKind.OuterKeyword;
@@ -528,6 +522,12 @@ namespace NQuery.Language
 
             switch (text.ToUpper())
             {
+                case "LEFT":
+                    return SyntaxKind.LeftKeyword;
+
+                case "RIGHT":
+                    return SyntaxKind.RightKeyword;
+
                 default:
                     return SyntaxKind.IdentifierToken;
             }

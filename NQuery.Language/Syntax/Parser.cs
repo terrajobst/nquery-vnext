@@ -52,16 +52,15 @@ namespace NQuery.Language
             return result;
         }
 
+        private SyntaxToken NextTokenAsKeyword()
+        {
+            var result = NextToken();
+            return result.WithKind(result.ContextualKind);
+        }
+
         private SyntaxToken? NextTokenIf(SyntaxKind kind)
         {
             return Current.Kind == kind
-                       ? (SyntaxToken?)NextToken()
-                       : null;
-        }
-
-        private SyntaxToken? NextTokenIfContextual(SyntaxKind kind)
-        {
-            return Current.ContextualKind == kind
                        ? (SyntaxToken?)NextToken()
                        : null;
         }
@@ -74,28 +73,6 @@ namespace NQuery.Language
             // TODO: Report token expected
             // _errorReporter.TokenExpected(_token.Range, _token.Text, tokenID);
             return CreateMissingToken(kind, SyntaxKind.BadToken);
-        }
-
-        private SyntaxToken MatchContextual(SyntaxKind kind)
-        {
-            if (Current.ContextualKind == kind)
-            {
-                var result = new SyntaxToken(Current.ContextualKind,
-                                             Current.ContextualKind,
-                                             Current.IsMissing,
-                                             Current.Span,
-                                             Current.Text,
-                                             Current.Value,
-                                             Current.LeadingTrivia,
-                                             Current.TrailingTrivia,
-                                             Current.Diagnostics);
-                NextToken();
-                return result;
-            }
-
-            // TODO: Report token expected
-            // _errorReporter.TokenExpected(_token.Range, _token.Text, tokenID);
-            return CreateMissingToken(kind, kind);
         }
 
         private SyntaxToken CreateMissingToken(SyntaxKind kind, SyntaxKind contextualKind)
@@ -448,8 +425,10 @@ namespace NQuery.Language
                 }
 
                 case SyntaxKind.IdentifierToken:
+                case SyntaxKind.LeftKeyword:
+                case SyntaxKind.RightKeyword:
                 {
-                    var identifier = NextToken();
+                    var identifier = NextToken().WithKind(SyntaxKind.IdentifierToken);
 
                     if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                         return new NameExpressionSyntax(_syntaxTree, identifier);
@@ -881,20 +860,22 @@ namespace NQuery.Language
                     case SyntaxKind.CrossKeyword:
                         left = ParseCrossJoinTableReference(left);
                         break;
-
-                    case SyntaxKind.JoinKeyword:
                     case SyntaxKind.InnerKeyword:
+                    case SyntaxKind.JoinKeyword:
                         left = ParseInnerJoinTableReference(left);
                         break;
-
-                    case SyntaxKind.LeftKeyword:
-                    case SyntaxKind.RightKeyword:
-                    case SyntaxKind.FullKeyword:
-                        left = ParseOuterJoinTableReference(left);
-                        break;
-
                     default:
-                        return left;
+                        if (Current.ContextualKind == SyntaxKind.LeftKeyword ||
+                            Current.ContextualKind == SyntaxKind.RightKeyword ||
+                            Current.Kind == SyntaxKind.FullKeyword)
+                        {
+                            left = ParseOuterJoinTableReference(left);
+                        }
+                        else
+                        {
+                            return left;
+                        }
+                        break;
                 }
             }
 
@@ -940,7 +921,7 @@ namespace NQuery.Language
 
         private TableReferenceSyntax ParseOuterJoinTableReference(TableReferenceSyntax left)
         {
-            var typeKeyword = NextToken();
+            var typeKeyword = NextTokenAsKeyword();
             var outerKeyword = NextTokenIf(SyntaxKind.OuterKeyword);
             var joinKeyword = Match(SyntaxKind.JoinKeyword);
             var right = ParseTableReference();
