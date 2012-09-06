@@ -538,7 +538,7 @@ namespace NQuery.Language
             var identifer = Match(SyntaxKind.IdentifierToken);
             var commonTableExpressionColumnNameList = ParseCommonTableExpressionColumnNameList();
             var asKeyword = Match(SyntaxKind.AsKeyword);
-            var leftParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var query = ParseQuery();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var commaToken = NextTokenIf(SyntaxKind.CommaToken);
