@@ -5,6 +5,28 @@
         Title="NQuery Viewer"
         Height="350"
         Width="525">
+    <Window.Resources>
+        <Style TargetType="DataGrid">
+            <Setter Property="GridLinesVisibility"
+                    Value="None" />
+            <Setter Property="BorderBrush"
+                    Value="{x:Static SystemColors.ControlLightBrush}" />
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <Trigger Property="IsKeyboardFocusWithin"
+                         Value="true">
+                    <Setter Property="BorderBrush"
+                            Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="FocusVisualStyle">
+                <Setter.Value>
+                    <Style />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -62,9 +84,30 @@
             <GridSplitter Grid.Column="1"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch" />
-            <ContentControl Grid.Column="2"
-                        x:Name="_editorHost" />
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="3" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <ContentControl Grid.Row="0"
+                                x:Name="_editorHost" />
+                <GridSplitter Grid.Row="1"
+                              HorizontalAlignment="Stretch"
+                              VerticalAlignment="Stretch" />
+                <DataGrid x:Name="_diagnosticDataGrid"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          ItemsSource="{Binding Diagnostics}"
+                          MouseDoubleClick="DiagnosticDataGridOnMouseDoubleClick"
+                          Grid.Row="2">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
+                        <DataGridTextColumn Header="Line" Binding="{Binding Line}" Width="Auto" />
+                        <DataGridTextColumn Header="Column" Binding="{Binding Column}" Width="Auto" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </Grid>
-
     </Grid>
 </Window>

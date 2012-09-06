@@ -16,6 +16,8 @@ using NQuery.Language.VSEditor;
 
 using NQueryViewer.Helpers;
 
+using TextBuffer = NQuery.Language.TextBuffer;
+
 namespace NQueryViewer
 {
     [Export(typeof(IMainWindowProvider))]
@@ -25,6 +27,7 @@ namespace NQueryViewer
         private INQuerySyntaxTreeManager _syntaxTreeManager;
         private INQuerySemanticModelManager _semanticModelManager;
         private INQuerySelectionProvider _selectionProvider;
+        private DiagnosticsViewModel _diagnosticsViewModel;
 
         [Import]
         public TextViewFactory TextViewFactory { get; set; }
@@ -65,6 +68,10 @@ namespace NQueryViewer
 
             _selectionProvider = SelectionProviderService.GetSelectionProvider(_textViewHost.TextView);
 
+            _diagnosticsViewModel = new DiagnosticsViewModel(_syntaxTreeManager, _semanticModelManager);
+
+            _diagnosticDataGrid.DataContext = _diagnosticsViewModel;
+
             UpdateTree();
         }
 
@@ -92,6 +99,8 @@ namespace NQueryViewer
             var builder = new DataContextBuilder();
             builder.Tables.AddRange(GetSchemaTables());
             builder.Variables.Add(new VariableSymbol("Id", typeof(int)));
+            builder.Functions.Add(new FunctionSymbol("LEFT", typeof(string), new[] { new ParameterSymbol("str", typeof(string)), new ParameterSymbol("numberOfChars", typeof(int))}));
+            builder.Functions.Add(new FunctionSymbol("RIGHT", typeof(string), new[] { new ParameterSymbol("str", typeof(string)), new ParameterSymbol("numberOfChars", typeof(int))}));
             builder.PropertyProviders.DefaultValue = new ReflectionProvider();
             builder.MethodProviders.DefaultValue = new ReflectionProvider();
             return builder.GetResult();
@@ -353,6 +362,79 @@ namespace NQueryViewer
             }
         }
 
+        private sealed class DiagnosticsViewModel
+        {
+            private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
+            private readonly INQuerySemanticModelManager _semanticModelManager;
+
+            public DiagnosticsViewModel(INQuerySyntaxTreeManager syntaxTreeManager, INQuerySemanticModelManager semanticModelManager)
+            {
+                _syntaxTreeManager = syntaxTreeManager;
+                _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+                _semanticModelManager = semanticModelManager;
+                _semanticModelManager.SemanticModelChanged += SemanticModelManagerOnSemanticModelChanged;
+                Diagnostics = new ObservableCollection<DiagnosticViewModel>();
+            }
+
+            private void SemanticModelManagerOnSemanticModelChanged(object sender, EventArgs e)
+            {
+                UpdateDiagnostics();
+            }
+
+            private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
+            {
+                UpdateDiagnostics();
+            }
+
+            private void UpdateDiagnostics()
+            {
+                IEnumerable<DiagnosticViewModel> diagnostics = GetDiagnostics();
+
+                Diagnostics.Clear();
+                foreach (var diagnostic in diagnostics)
+                    Diagnostics.Add(diagnostic);
+            }
+
+            private IEnumerable<DiagnosticViewModel> GetDiagnostics()
+            {
+                var syntaxTree = _syntaxTreeManager.SyntaxTree;
+                var textBuffer = syntaxTree.TextBuffer;
+                var semanticModel = _semanticModelManager.SemanticModel;
+
+                if (syntaxTree == null)
+                    return Enumerable.Empty<DiagnosticViewModel>();
+
+                var syntaxTreeDiagnostics = syntaxTree.GetDiagnostics();
+
+                var semanticModelDiagnostics = semanticModel != null && semanticModel.Compilation.SyntaxTree == syntaxTree
+                                                   ? semanticModel.GetDiagnostics()
+                                                   : Enumerable.Empty<Diagnostic>();
+
+                return from d in syntaxTreeDiagnostics.Concat(semanticModelDiagnostics)
+                       orderby d.Span.Start, d.Span.End
+                       select new DiagnosticViewModel(d, textBuffer);
+            }
+
+            public ObservableCollection<DiagnosticViewModel> Diagnostics { get; private set; }
+        }
+
+        private sealed class DiagnosticViewModel
+        {
+            public DiagnosticViewModel(Diagnostic diagnostic, TextBuffer textBuffer)
+            {
+                var textLocation = textBuffer.GetTextLocation(diagnostic.Span.Start);
+                Diagnostic = diagnostic;
+                Description = diagnostic.Message;
+                Column = textLocation.Column + 1;
+                Line = textLocation.Line + 1;
+            }
+
+            public Diagnostic Diagnostic { get; private set; }
+            public string Description { get; private set; }
+            public int Line { get; private set; }
+            public int Column { get; private set; }
+        }
+
         private void UpdateTree()
         {
             if (_syntaxTreeManager.SyntaxTree == null)
@@ -436,6 +518,19 @@ namespace NQueryViewer
         {
             if (_textViewHost.HostControl.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
+        }
+
+        private void DiagnosticDataGridOnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var diagnosticViewModel = _diagnosticDataGrid.SelectedItems.OfType<DiagnosticViewModel>().FirstOrDefault();
+            if (diagnosticViewModel == null)
+                return;
+
+            var span = diagnosticViewModel.Diagnostic.Span;
+            var textView = _textViewHost.TextView;
+            var snapshot = textView.TextBuffer.CurrentSnapshot;
+            var snapshotSpan = new SnapshotSpan(snapshot, span.Start, span.Length);
+            textView.Selection.Select(snapshotSpan, false);
         }
     }
 }
