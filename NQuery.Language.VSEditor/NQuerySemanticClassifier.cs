@@ -195,7 +195,7 @@ namespace NQuery.Language.VSEditor
                 {
                     var instanceClassification = GetClassification(tableInstanceSymbol);
                     if (instanceClassification != null)
-                        AddClassification(node.Alias, instanceClassification);
+                        AddClassification(node.Alias.Identifier, instanceClassification);
                 }
             }
 
