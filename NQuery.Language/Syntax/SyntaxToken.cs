@@ -106,6 +106,37 @@ namespace NQuery.Language
             get { return _diagnostics; }
         }
 
+        public SyntaxToken? GetPreviousToken()
+        {
+            if (Parent == null)
+                return null;
+
+            var root = Parent.SyntaxTree.Root;
+            var endOfPreviousToken = FullSpan.Start - 1;
+            return endOfPreviousToken < 0
+                       ? (SyntaxToken?)null
+                       : root.FindToken(endOfPreviousToken);
+        }
+
+        public SyntaxToken? GetNextToken()
+        {
+            if (Parent == null)
+                return null;
+
+            var root = Parent.SyntaxTree.Root;
+            var startOfNextToken = FullSpan.Length == 0
+                                       ? FullSpan.Start + 1
+                                       : FullSpan.End;
+
+            if (startOfNextToken == root.FullSpan.End)
+                return root.EndOfFileToken;
+
+            if (startOfNextToken > root.FullSpan.End)
+                return null;
+
+            return root.FindToken(startOfNextToken);
+        }
+
         public void WriteTo(TextWriter writer)
         {
             foreach (var syntaxTrivia in LeadingTrivia)
