@@ -118,6 +118,19 @@ namespace NQuery.Language
 
         public SyntaxToken FindToken(int position)
         {
+            // TODO: The following would be more correct, but doesn't work:
+            //
+            //if (FullSpan.End == position)
+            //{
+            //    var compilationUnit = this as CompilationUnitSyntax;
+            //    if (compilationUnit != null)
+            //        return compilationUnit.EndOfFileToken;
+            //}
+            //
+            //if (!FullSpan.Contains(position))
+            //    throw new ArgumentOutOfRangeException("position");
+            //
+            // So instead we do this:
             if (!FullSpan.Contains(position))
                 return SyntaxTree.Root.EndOfFileToken;
 
