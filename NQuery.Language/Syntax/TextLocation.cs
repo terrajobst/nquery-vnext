@@ -51,5 +51,10 @@ namespace NQuery.Language
         {
             return !left.Equals(right);
         }
+
+        public override string ToString()
+        {
+            return string.Format("Ln {0} Col {1}", Line, Column);
+        }
     }
 }
