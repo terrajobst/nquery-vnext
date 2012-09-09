@@ -118,7 +118,25 @@ namespace NQuery.Language
 
         public SyntaxToken FindToken(int position)
         {
-            // TODO: The following would be more correct, but doesn't work:
+            // TODO: We should consider a different contract for this method.
+            //
+            // Right now we use the following contract:
+            //
+            // (1) If the position matches the full span of any token, this token is returned.
+            // (2) If position is at the end, the EndOfFileToken is returned.
+            //
+            // Virtually all our callers want to match the last token in situations like this:
+            //
+            // SELECT Foo, Bar,|EndOfFile
+            //
+            // (the bar indicates the position). However, they get the EoF token.
+            //
+            // We may want to introduce FindTouchedToken(int position).
+
+            // TODO: The following would be more correct, but doesn't work because our current IntelliSense implementation blows up.
+            //
+            // The reason is that we currently don't gurantee to have the latest syntax tree when any of our editor extensions
+            // are invoked.
             //
             //if (FullSpan.End == position)
             //{
