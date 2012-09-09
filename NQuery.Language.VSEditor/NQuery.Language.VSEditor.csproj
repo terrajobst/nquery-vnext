@@ -85,6 +85,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BraceMatching\BraceMatchingService.cs" />
+    <Compile Include="BraceMatching\CaseBraceMatcher.cs" />
+    <Compile Include="BraceMatching\DateBraceMatcher.cs" />
+    <Compile Include="BraceMatching\IBraceMatcher.cs" />
+    <Compile Include="BraceMatching\IBraceMatchingService.cs" />
+    <Compile Include="BraceMatching\IdentifierBraceMatcher.cs" />
+    <Compile Include="BraceMatching\PairedTokenBraceMatcher.cs" />
+    <Compile Include="BraceMatching\ParenthesisBraceMatcher.cs" />
+    <Compile Include="BraceMatching\SingleTokenBraceMatcher.cs" />
+    <Compile Include="BraceMatching\StringQuoteBraceMatcher.cs" />
     <Compile Include="INQueryGlyphService.cs" />
     <Compile Include="INQuerySelectionProvider.cs" />
     <Compile Include="INQuerySelectionProviderService.cs" />
@@ -93,8 +103,8 @@
     <Compile Include="INQuerySemanticClassificationService.cs" />
     <Compile Include="INQuerySyntaxTreeManager.cs" />
     <Compile Include="INQuerySyntaxTreeManagerService.cs" />
-    <Compile Include="NQueryBraceTagger.cs" />
-    <Compile Include="NQueryBraceTaggerProvider.cs" />
+    <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
+    <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
     <Compile Include="NQueryCompletionSet.cs" />
