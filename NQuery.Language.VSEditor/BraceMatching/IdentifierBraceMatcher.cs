@@ -12,10 +12,7 @@ namespace NQuery.Language.VSEditor.BraceMatching
 
         public override bool TryFindBrace(SyntaxToken token, int position, out TextSpan left, out TextSpan right)
         {
-            var isQuoted = token.Text.StartsWith("\"");
-            var isBracketed = token.Text.StartsWith("[");
-            var hasBraces = isQuoted || isBracketed;
-
+            var hasBraces = token.IsQuotedIdentifier() || token.IsParenthesizedIdentifier();
             if (!hasBraces)
             {
                 left = default(TextSpan);

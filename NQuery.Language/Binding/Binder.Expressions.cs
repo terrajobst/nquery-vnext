@@ -202,7 +202,11 @@ namespace NQuery.Language.Binding
 
         private Type BindType(SyntaxToken typeName)
         {
-            switch (typeName.ValueText.ToUpper())
+            var normalizedTypeName = typeName.IsQuotedIdentifier()
+                                         ? typeName.ValueText
+                                         : typeName.ValueText.ToUpper();
+
+            switch (normalizedTypeName)
             {
                 case "BOOL":
                 case "BOOLEAN":
@@ -386,7 +390,7 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindVariableExpression(VariableExpressionSyntax node)
         {
-            var symbols = LookupVariable(node.Name.ValueText).ToArray();
+            var symbols = LookupVariable(node.Name).ToArray();
 
             if (symbols.Length == 0)
             {
@@ -415,13 +419,13 @@ namespace NQuery.Language.Binding
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
-            var name = node.Name.ValueText;
+            var name = node.Name;
             var symbols = LookupName(name).ToArray();
 
             if (symbols.Length == 0)
             {
                 _diagnostics.ReportUndeclaredEntity(node);
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
@@ -455,10 +459,10 @@ namespace NQuery.Language.Binding
             // node.Target either wasn't a name expression or didn't resolve to a
             // table instance. Resolve node.Name as a property.
 
-            var name = node.Name.ValueText;
+            var name = node.Name;
             if (target.Type.IsUnknown())
             {
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
             
@@ -467,7 +471,7 @@ namespace NQuery.Language.Binding
             if (propertySymbols.Length == 0)
             {
                 _diagnostics.ReportUndeclaredProperty(node, target.Type);
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
@@ -482,12 +486,12 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindColumnInstance(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
-            var columnName = node.Name.ValueText;
-            var columnInstances = tableInstance.ColumnInstances.Where(c => c.Name.Equals(columnName, StringComparison.OrdinalIgnoreCase)).ToArray();
+            var columnName = node.Name;
+            var columnInstances = tableInstance.ColumnInstances.Where(c => columnName.Matches(c.Name)).ToArray();
             if (columnInstances.Length == 0)
             {
                 _diagnostics.ReportUndeclaredColumn(node, tableInstance);
-                var errorSymbol = new BadSymbol(columnName);
+                var errorSymbol = new BadSymbol(columnName.ValueText);
                 return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
             }
             
@@ -509,7 +513,7 @@ namespace NQuery.Language.Binding
         {
             // TODO: Resolve and bind to aggregates
 
-            var name = node.Name.ValueText;
+            var name = node.Name;
             var arguments = (from a in node.ArgumentList.Arguments
                              select BindExpression(a.Expression)).ToList();
 
@@ -520,7 +524,7 @@ namespace NQuery.Language.Binding
                 var argumentTypes = from a in arguments
                                     select a.Type;
                 _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
@@ -538,10 +542,10 @@ namespace NQuery.Language.Binding
         {
             var target = BindExpression(node.Target);
 
-            var name = node.Name.ValueText;
+            var name = node.Name;
             if (target.Type.IsUnknown())
             {
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
@@ -555,7 +559,7 @@ namespace NQuery.Language.Binding
                 var argumentTypes = from a in arguments
                                     select a.Type;
                 _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
-                var errorSymbol = new BadSymbol(name);
+                var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 

@@ -150,16 +150,12 @@ namespace NQuery.Language.Binding
 
         private IEnumerable<BoundSelectColumn> BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
         {
-            var tableName = node.TableName == null
-                                ? null
-                                : node.TableName.Value.ValueText;
-
-            return tableName != null
-                       ? BindWildcardSelectColumnForTable(tableName)
+            return node.TableName != null
+                       ? BindWildcardSelectColumnForTable(node.TableName.Value)
                        : BindWildcardSelectColumnForAllTables();
         }
 
-        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTable(string tableName)
+        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTable(SyntaxToken tableName)
         {
             var symbols = LookupTableInstance(tableName).ToArray();
 

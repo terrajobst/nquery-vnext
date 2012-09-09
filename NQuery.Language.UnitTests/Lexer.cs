@@ -1,31 +1,16 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Linq;
 
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
     public class Lexer
     {
-        private static SyntaxToken LexSingleToken(string text)
-        {
-            var tree = SyntaxTree.ParseExpression(text);
-            var token = tree.Root.FirstToken();
-            return token;
-        }
-
-        private static SyntaxTrivia LexSingleTrivia(string text)
-        {
-            var tree = SyntaxTree.ParseExpression(text);
-            var trivia = tree.Root.LastToken().LeadingTrivia.First();
-            return trivia;
-        }
-
         [TestMethod]
         public void Lexer_DetectsUnterminatedBracketedIdentifer()
         {
             const string text = "[aaa";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -39,7 +24,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedBracketedIdentifer_IfEmpty()
         {
             const string text = "[";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -53,7 +38,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedBracketedIdentifer_IfClosingBracketIsEscaped()
         {
             const string text = "[aaa[[";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -67,7 +52,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedQuotedIdentifer()
         {
             const string text = "\"aaa";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -81,7 +66,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedQuotedIdentifer_IfEmpty()
         {
             const string text = "\"";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -95,7 +80,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedQuotedIdentifer_IfClosingQuoteIsEscaped()
         {
             const string text = "\"aaa\"\"";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
@@ -109,7 +94,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedString()
         {
             const string text = "'aaa";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
@@ -123,7 +108,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedString_IfEmpty()
         {
             const string text = "'";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
@@ -137,7 +122,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedString_IfClosingQuoteIsEscaped()
         {
             const string text = "'aaa''";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
@@ -151,7 +136,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedDateTime()
         {
             const string text = "#12-04-1900";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
@@ -165,7 +150,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedDateTime_IfEmpty()
         {
             const string text = "#";
-            var token = LexSingleToken(text);
+            var token = Helpers.LexSingleToken(text);
 
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
@@ -179,7 +164,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedMultilineComment()
         {
             const string text = "/* test";
-            var trivia = LexSingleTrivia(text);
+            var trivia = Helpers.LexSingleTrivia(text);
 
             Assert.AreEqual(text, trivia.Text);
             Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
@@ -193,7 +178,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_DetectsUnterminatedMultilineComment_IfEmpty()
         {
             const string text = "/*";
-            var trivia = LexSingleTrivia(text);
+            var trivia = Helpers.LexSingleTrivia(text);
 
             Assert.AreEqual(text, trivia.Text);
             Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
@@ -207,7 +192,7 @@ namespace NQuery.Language.UnitTests
         public void Lexer_CanLexInvalidDate()
         {
             const string invalidDate = "#13.13.1212#";
-            var token = LexSingleToken(invalidDate);
+            var token = Helpers.LexSingleToken(invalidDate);
 
             Assert.AreEqual(invalidDate, token.Text);
             Assert.AreEqual(true, token.IsTerminated());
@@ -220,7 +205,7 @@ namespace NQuery.Language.UnitTests
             const string dateSource = "#03.14.1987#";
             var date = new DateTime(1987, 3, 14);
 
-            var token = LexSingleToken(dateSource);
+            var token = Helpers.LexSingleToken(dateSource);
 
             Assert.AreEqual(dateSource, token.Text);
             Assert.AreEqual(true, token.IsTerminated());
@@ -233,7 +218,7 @@ namespace NQuery.Language.UnitTests
             var date = new DateTime(1987, 3, 14);
             const string dateSource = "#03.14.1987";
 
-            var token = LexSingleToken(dateSource);
+            var token = Helpers.LexSingleToken(dateSource);
 
             Assert.AreEqual(dateSource, token.Text);
             Assert.AreEqual(date, token.Value);
@@ -245,7 +230,7 @@ namespace NQuery.Language.UnitTests
             const string text = "the value";
             const string unterminatedString = "'" + text;
 
-            var token = LexSingleToken(unterminatedString);
+            var token = Helpers.LexSingleToken(unterminatedString);
 
             Assert.AreEqual(unterminatedString, token.Text);
             Assert.AreEqual(text, token.Value);

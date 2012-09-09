@@ -56,7 +56,7 @@ namespace NQuery.Language.Binding
 
         private BoundTableReference BindNamedTableReference(NamedTableReferenceSyntax node)
         {
-            var symbols = LookupTable(node.TableName.ValueText).ToArray();
+            var symbols = LookupTable(node.TableName).ToArray();
 
             if (symbols.Length == 0)
             {

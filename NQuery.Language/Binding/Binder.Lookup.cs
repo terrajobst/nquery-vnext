@@ -7,43 +7,50 @@ namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
-        private IEnumerable<Symbol> LookupName(string name)
+        private IEnumerable<Symbol> LookupSymbols()
         {
-            return _bindingContext.LookupSymbols(name, false);
+            return _bindingContext.LookupSymbols();
         }
 
-        private IEnumerable<VariableSymbol> LookupVariable(string name)
+        private IEnumerable<Symbol> LookupSymbols(SyntaxToken token)
         {
-            return _bindingContext.LookupSymbols(name, false).OfType<VariableSymbol>();
+            return LookupSymbols().Where(s => token.Matches(s.Name));
         }
 
-        private IEnumerable<TableSymbol> LookupTable(string name)
+        private IEnumerable<Symbol> LookupName(SyntaxToken name)
         {
-            return _bindingContext.LookupSymbols(name, false).OfType<TableSymbol>();
+            return LookupSymbols(name);
+        }
+
+        private IEnumerable<VariableSymbol> LookupVariable(SyntaxToken name)
+        {
+            return LookupSymbols(name).OfType<VariableSymbol>();
+        }
+
+        private IEnumerable<TableSymbol> LookupTable(SyntaxToken name)
+        {
+            return LookupSymbols(name).OfType<TableSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return _bindingContext.LookupSymbols().OfType<TableInstanceSymbol>();
+            return LookupSymbols().OfType<TableInstanceSymbol>();
         }
 
-        private IEnumerable<TableInstanceSymbol> LookupTableInstance(string name)
+        private IEnumerable<TableInstanceSymbol> LookupTableInstance(SyntaxToken name)
         {
-            return _bindingContext.LookupSymbols(name, false).OfType<TableInstanceSymbol>();
+            return LookupSymbols(name).OfType<TableInstanceSymbol>();
         }
 
-        private IEnumerable<PropertySymbol> LookupProperty(Type type, string name)
+        private IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
         {
             var propertyProvider = _dataContext.PropertyProviders.LookupValue(type);
-            if (propertyProvider == null)
-                return Enumerable.Empty<PropertySymbol>();
-
-            return from p in propertyProvider.GetProperties(type)
-                   where string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase)
-                   select p;
+            return propertyProvider == null
+                       ? Enumerable.Empty<PropertySymbol>()
+                       : propertyProvider.GetProperties(type).Where(p => name.Matches(p.Name));
         }
 
-        private IEnumerable<MethodSymbol> LookupMethod(Type type, string name, int parameterCount)
+        private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name, int parameterCount)
         {
             var methodProvider = _dataContext.MethodProviders.LookupValue(type);
             if (methodProvider == null)
@@ -53,19 +60,18 @@ namespace NQuery.Language.Binding
             return LookupInvocable(methods, name, parameterCount);
         }
 
-        private IEnumerable<FunctionSymbol> LookupFunction(string name, int parameterCount)
+        private IEnumerable<FunctionSymbol> LookupFunction(SyntaxToken name, int parameterCount)
         {
             return LookupInvocable(_dataContext.Functions, name, parameterCount);
         }
 
-        private static IEnumerable<T> LookupInvocable<T>(IEnumerable<T> invocables, string name, int parameterCount)
+        private static IEnumerable<T> LookupInvocable<T>(IEnumerable<T> invocables, SyntaxToken name, int parameterCount)
             where T : InvocableSymbol
         {
             return from m in invocables
                    where m.Parameters.Count == parameterCount &&
-                         string.Equals(m.Name, name, StringComparison.OrdinalIgnoreCase)
+                         name.Matches(m.Name)
                    select m;
         }
-
     }
 }

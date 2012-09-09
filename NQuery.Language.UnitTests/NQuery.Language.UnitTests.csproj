@@ -51,6 +51,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ContextualLeftAndRightKeywords.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Identifiers.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

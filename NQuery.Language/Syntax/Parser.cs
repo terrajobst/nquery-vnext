@@ -428,8 +428,7 @@ namespace NQuery.Language
                     if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                         return new NameExpressionSyntax(_syntaxTree, identifier);
 
-                    if (Lookahead.Kind == SyntaxKind.MultiplyToken &&
-                        string.Equals(identifier.Text, "COUNT", StringComparison.OrdinalIgnoreCase))
+                    if (Lookahead.Kind == SyntaxKind.MultiplyToken && identifier.Matches("COUNT"))
                     {
                         var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                         var asteriskToken = Match(SyntaxKind.MultiplyToken);

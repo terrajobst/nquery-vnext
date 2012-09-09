@@ -533,33 +533,53 @@ namespace NQuery.Language
             }
         }
 
+        public static bool IsQuotedIdentifier(this SyntaxToken token)
+        {
+            return token.Kind == SyntaxKind.IdentifierToken &&
+                   token.Text.Length > 0 &&
+                   token.Text[0] == '"';
+        }
+
+        public static bool IsParenthesizedIdentifier(this SyntaxToken token)
+        {
+            return token.Kind == SyntaxKind.IdentifierToken &&
+                   token.Text.Length > 0 &&
+                   token.Text[0] == '[';
+        }
+
+        public static bool Matches(this SyntaxToken token, string text)
+        {
+            var comparison = token.IsQuotedIdentifier()
+                                 ? StringComparison.Ordinal
+                                 : StringComparison.OrdinalIgnoreCase;
+            return string.Equals(token.ValueText, text, comparison);
+        }
+
         public static bool IsTerminated(this SyntaxToken token)
         {
-            return IsTerminated(token.Kind, token.Text);
+            switch (token.Kind)
+            {
+                case SyntaxKind.IdentifierToken:
+                    if (token.IsQuotedIdentifier())
+                        return EndsWithUnescapedChar(token.Text, '"');
+                    if (token.IsParenthesizedIdentifier())
+                        return EndsWithUnescapedChar(token.Text, ']');
+                    return true;
+                case SyntaxKind.StringLiteralToken:
+                    return EndsWithUnescapedChar(token.Text, '\'');
+                case SyntaxKind.DateLiteralToken:
+                    return token.Text.Length >= 2 && token.Text.EndsWith("#");
+                default:
+                    return true;
+            }
         }
 
         public static bool IsTerminated(this SyntaxTrivia trivia)
         {
-            return IsTerminated(trivia.Kind, trivia.Text);
-        }
-
-        private static bool IsTerminated(SyntaxKind syntaxKind, string text)
-        {
-            switch (syntaxKind)
+            switch (trivia.Kind)
             {
-                case SyntaxKind.IdentifierToken:
-                    if (text.StartsWith("\""))
-                        return EndsWithUnescapedChar(text, '"');
-                    if (text.StartsWith("["))
-                        return EndsWithUnescapedChar(text, ']');
-                    return true;
-                case SyntaxKind.StringLiteralToken:
-                    return EndsWithUnescapedChar(text, '\'');
-                case SyntaxKind.DateLiteralToken:
-                    return text.Length >= 2 && text.EndsWith("#");
                 case SyntaxKind.MultiLineCommentTrivia:
-                    return text.Length >= 4 && text.EndsWith("*/");
-
+                    return trivia.Text.Length >= 4 && trivia.Text.EndsWith("*/");
                 default:
                     return true;
             }
