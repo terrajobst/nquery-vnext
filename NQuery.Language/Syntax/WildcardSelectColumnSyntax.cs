@@ -9,8 +9,8 @@ namespace NQuery.Language
         private readonly SyntaxToken? _dotToken;
         private readonly SyntaxToken _asteriskToken;
 
-        public WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken, SyntaxToken? commaToken)
-            : base(syntaxTree, commaToken)
+        public WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken)
+            : base(syntaxTree)
         {
             _tableName = tableName.WithParent(this);
             _dotToken = dotToken.WithParent(this);
@@ -29,8 +29,6 @@ namespace NQuery.Language
             if (_dotToken != null)
                 yield return _dotToken.Value;
             yield return _asteriskToken;
-            if (CommaToken != null)
-                yield return CommaToken.Value;
         }
 
         public SyntaxToken? TableName

@@ -100,9 +100,6 @@ namespace NQuery.Language
                 case SyntaxKind.MethodInvocationExpression:
                      return VisitMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
 
-                case SyntaxKind.Argument:
-                     return VisitArgument((ArgumentSyntax)node);
-
                 case SyntaxKind.ArgumentList:
                      return VisitArgumentList((ArgumentListSyntax)node);
 
@@ -212,11 +209,6 @@ namespace NQuery.Language
         }
 
         public virtual TResult VisitArgumentList(ArgumentListSyntax node)
-        {
-            return DefaultVisit(node);
-        }
-
-        public virtual TResult VisitArgument(ArgumentSyntax node)
         {
             return DefaultVisit(node);
         }

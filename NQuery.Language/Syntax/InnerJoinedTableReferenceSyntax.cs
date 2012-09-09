@@ -9,8 +9,8 @@ namespace NQuery.Language
         private readonly SyntaxToken _joinKeyword;
         private readonly SyntaxToken _onKeyword;
 
-        public InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken? innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition, SyntaxToken? commaToken)
-            : base(syntaxTree, left, right, condition, commaToken)
+        public InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken? innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+            : base(syntaxTree, left, right, condition)
         {
             _innerKeyword = innerKeyword.WithParent(this);
             _joinKeyword = joinKeyword.WithParent(this);
@@ -31,8 +31,6 @@ namespace NQuery.Language
             yield return Right;
             yield return _onKeyword;
             yield return Condition;
-            if (CommaToken != null)
-                yield return CommaToken.Value;
         }
 
         public SyntaxToken? InnerKeyword

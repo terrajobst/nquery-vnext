@@ -11,8 +11,8 @@ namespace NQuery.Language
         private readonly SyntaxToken? _asKeyword;
         private readonly SyntaxToken _name;
 
-        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name, SyntaxToken? commaToken)
-            : base(syntaxTree, commaToken)
+        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name)
+            : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
@@ -34,8 +34,6 @@ namespace NQuery.Language
             if (_asKeyword != null)
                 yield return _asKeyword.Value;
             yield return _name;
-            if (CommaToken != null)
-                yield return CommaToken.Value;
         }
 
         public SyntaxToken LeftParenthesis

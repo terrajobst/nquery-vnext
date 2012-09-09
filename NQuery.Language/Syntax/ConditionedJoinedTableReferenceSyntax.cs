@@ -6,8 +6,8 @@ namespace NQuery.Language
     {
         private readonly ExpressionSyntax _condition;
 
-        protected ConditionedJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right, ExpressionSyntax condition, SyntaxToken? commaToken)
-            : base(syntaxTree, left, right, commaToken)
+        protected ConditionedJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right, ExpressionSyntax condition)
+            : base(syntaxTree, left, right)
         {
             _condition = condition;
         }

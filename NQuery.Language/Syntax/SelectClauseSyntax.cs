@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
@@ -8,15 +7,15 @@ namespace NQuery.Language
         private readonly SyntaxToken _selectKeyword;
         private readonly SyntaxToken? _distinctAllKeyword;
         private readonly TopClauseSyntax _topClause;
-        private readonly ReadOnlyCollection<SelectColumnSyntax> _columns;
+        private readonly SeparatedSyntaxList<SelectColumnSyntax> _columns;
 
-        public SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, IList<SelectColumnSyntax> selectColumns)
+        public SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax topClause, SeparatedSyntaxList<SelectColumnSyntax> selectColumns)
             : base(syntaxTree)
         {
             _selectKeyword = selectKeyword.WithParent(this);
             _distinctAllKeyword = distinctAllKeyword.WithParent(this);
             _topClause = topClause;
-            _columns = new ReadOnlyCollection<SelectColumnSyntax>(selectColumns);
+            _columns = selectColumns.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -31,8 +30,8 @@ namespace NQuery.Language
                 yield return _distinctAllKeyword.Value;
             if (_topClause != null)
                 yield return _topClause;
-            foreach (var selectColumn in _columns)
-                yield return selectColumn;
+            foreach (var nodeOrToken in _columns.GetWithSeparators())
+                yield return nodeOrToken;
         }
 
         public SyntaxToken SelectKeyword
@@ -50,7 +49,7 @@ namespace NQuery.Language
             get { return _topClause; }
         }
 
-        public ReadOnlyCollection<SelectColumnSyntax> Columns
+        public SeparatedSyntaxList<SelectColumnSyntax> Columns
         {
             get { return _columns; }
         }

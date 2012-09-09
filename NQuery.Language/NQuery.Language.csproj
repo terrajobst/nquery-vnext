@@ -93,6 +93,7 @@
     <Compile Include="Runtime\ReflectionParameterSymbol.cs" />
     <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
     <Compile Include="Runtime\ReflectionProvider.cs" />
+    <Compile Include="Syntax\SeparatedSyntaxList.cs" />
     <Compile Include="Syntax\SyntaxExtensions.cs" />
     <Compile Include="Syntax\TextLocation.cs" />
     <Compile Include="TypeRegistry.cs" />
@@ -122,7 +123,6 @@
     <Compile Include="Syntax\AliasSyntax.cs" />
     <Compile Include="Syntax\AllAnySubselectSyntax.cs" />
     <Compile Include="Syntax\ArgumentListSyntax.cs" />
-    <Compile Include="Syntax\ArgumentSyntax.cs" />
     <Compile Include="Syntax\BetweenExpressionSyntax.cs" />
     <Compile Include="Syntax\BinaryExpressionSyntax.cs" />
     <Compile Include="Syntax\CaseExpressionSyntax.cs" />

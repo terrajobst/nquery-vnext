@@ -123,10 +123,6 @@ namespace NQuery.Language
                     VisitMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
                     break;
 
-                case SyntaxKind.Argument:
-                    VisitArgument((ArgumentSyntax)node);
-                    break;
-
                 case SyntaxKind.ArgumentList:
                     VisitArgumentList((ArgumentListSyntax)node);
                     break;
@@ -266,11 +262,6 @@ namespace NQuery.Language
         }
 
         public virtual void VisitArgumentList(ArgumentListSyntax node)
-        {
-            DefaultVisit(node);
-        }
-
-        public virtual void VisitArgument(ArgumentSyntax node)
         {
             DefaultVisit(node);
         }

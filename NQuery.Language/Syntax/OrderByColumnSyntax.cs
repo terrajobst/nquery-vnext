@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -7,14 +6,12 @@ namespace NQuery.Language
     {
         private readonly ExpressionSyntax _columnSelector;
         private readonly SyntaxToken? _modifier;
-        private readonly SyntaxToken? _comma;
 
-        public OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier, SyntaxToken? comma)
+        public OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier)
             : base(syntaxTree)
         {
             _columnSelector = columnSelector;
             _modifier = modifier.WithParent(this);
-            _comma = comma.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -27,8 +24,6 @@ namespace NQuery.Language
             yield return _columnSelector;
             if (_modifier != null)
                 yield return _modifier.Value;
-            if (_comma != null)
-                yield return _comma.Value;
         }
 
         public ExpressionSyntax ColumnSelector
@@ -39,11 +34,6 @@ namespace NQuery.Language
         public SyntaxToken? Modifier
         {
             get { return _modifier; }
-        }
-
-        public SyntaxToken? Comma
-        {
-            get { return _comma; }
         }
     }
 }

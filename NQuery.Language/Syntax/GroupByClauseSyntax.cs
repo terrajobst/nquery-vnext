@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
@@ -8,14 +6,14 @@ namespace NQuery.Language
     {
         private readonly SyntaxToken _groupKeyword;
         private readonly SyntaxToken _byKeyword;
-        private readonly ReadOnlyCollection<GroupByColumnSyntax> _columns;
+        private readonly SeparatedSyntaxList<GroupByColumnSyntax> _columns;
 
-        public GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, IList<GroupByColumnSyntax> columns)
+        public GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<GroupByColumnSyntax> columns)
             : base(syntaxTree)
         {
             _groupKeyword = groupKeyword.WithParent(this);
             _byKeyword = byKeyword.WithParent(this);
-            _columns = new ReadOnlyCollection<GroupByColumnSyntax>(columns);
+            _columns = columns.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -27,8 +25,8 @@ namespace NQuery.Language
         {
             yield return _groupKeyword;
             yield return _byKeyword;
-            foreach (var columnSyntax in _columns)
-                yield return columnSyntax;
+            foreach (var nodeOrToken in _columns.GetWithSeparators())
+                yield return nodeOrToken;
         }
 
         public SyntaxToken GroupKeyword
@@ -41,7 +39,7 @@ namespace NQuery.Language
             get { return _byKeyword; }
         }
 
-        public ReadOnlyCollection<GroupByColumnSyntax> Columns
+        public SeparatedSyntaxList<GroupByColumnSyntax> Columns
         {
             get { return _columns; }
         }

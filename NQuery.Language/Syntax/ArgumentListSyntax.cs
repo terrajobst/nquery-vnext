@@ -1,20 +1,18 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
     public sealed class ArgumentListSyntax : SyntaxNode
     {
         private readonly SyntaxToken _leftParenthesis;
-        private readonly IList<ArgumentSyntax> _arguments;
+        private readonly SeparatedSyntaxList<ExpressionSyntax> _arguments;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, IList<ArgumentSyntax> arguments, SyntaxToken rightParenthesis)
+        public ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<ExpressionSyntax> arguments, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis.WithParent(this);
-            _arguments = new ReadOnlyCollection<ArgumentSyntax>(arguments);
+            _arguments = arguments.WithParent(this);
             _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
@@ -27,8 +25,8 @@ namespace NQuery.Language
         {
             yield return _leftParenthesis;
 
-            foreach (var argument in _arguments)
-                yield return argument;
+            foreach (var nodeOrToken in _arguments.GetWithSeparators())
+                yield return nodeOrToken;
 
             yield return _rightParenthesis;
         }
@@ -38,7 +36,7 @@ namespace NQuery.Language
             get { return _leftParenthesis; }
         }
 
-        public IList<ArgumentSyntax> Arguments
+        public SeparatedSyntaxList<ExpressionSyntax> Arguments
         {
             get { return _arguments; }
         }

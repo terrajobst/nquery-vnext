@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -8,8 +7,8 @@ namespace NQuery.Language
         private readonly ExpressionSyntax _expression;
         private readonly AliasSyntax _alias;
 
-        public ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias, SyntaxToken? commaToken)
-            : base(syntaxTree, commaToken)
+        public ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
+            : base(syntaxTree)
         {
             _expression = expression;
             _alias = alias;
@@ -25,8 +24,6 @@ namespace NQuery.Language
             yield return _expression;
             if (_alias != null)
                 yield return _alias;
-            if (CommaToken != null)
-                yield return CommaToken.Value;
         }
 
         public ExpressionSyntax Expression

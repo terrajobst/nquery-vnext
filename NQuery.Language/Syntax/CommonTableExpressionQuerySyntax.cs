@@ -1,21 +1,19 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
     public sealed class CommonTableExpressionQuerySyntax : QuerySyntax
     {
         private readonly SyntaxToken _withKeyword;
-        private readonly ReadOnlyCollection<CommonTableExpressionSyntax> _commonTableExpressions;
+        private readonly SeparatedSyntaxList<CommonTableExpressionSyntax> _commonTableExpressions;
         private readonly QuerySyntax _query;
 
-        public CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, IList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
+        public CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, SeparatedSyntaxList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
             : base(syntaxTree)
         {
             _withKeyword = withKeyword.WithParent(this);
             _query = query;
-            _commonTableExpressions = new ReadOnlyCollection<CommonTableExpressionSyntax>(commonTableExpressions);
+            _commonTableExpressions = commonTableExpressions.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -27,8 +25,8 @@ namespace NQuery.Language
         {
             yield return _withKeyword;
 
-            foreach (var commonTableExpression in _commonTableExpressions)
-                yield return commonTableExpression;
+            foreach (var nodeOrToken in _commonTableExpressions.GetWithSeparators())
+                yield return nodeOrToken;
 
             yield return _query;
         }
@@ -38,7 +36,7 @@ namespace NQuery.Language
             get { return _withKeyword; }
         }
 
-        public ReadOnlyCollection<CommonTableExpressionSyntax> CommonTableExpressions
+        public SeparatedSyntaxList<CommonTableExpressionSyntax> CommonTableExpressions
         {
             get { return _commonTableExpressions; }
         }

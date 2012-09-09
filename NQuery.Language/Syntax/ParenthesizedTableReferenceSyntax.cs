@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -9,8 +8,8 @@ namespace NQuery.Language
         private readonly TableReferenceSyntax _tableReference;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis, SyntaxToken? commaToken)
-            : base(syntaxTree, commaToken)
+        public ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis)
+            : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis.WithParent(this);
             _tableReference = tableReference;
@@ -27,8 +26,6 @@ namespace NQuery.Language
             yield return _leftParenthesis;
             yield return _tableReference;
             yield return _rightParenthesis;
-            if (CommaToken != null)
-                yield return CommaToken.Value;
         }
 
         public SyntaxToken LeftParenthesis

@@ -16,5 +16,16 @@ namespace NQuery.Language
         {
             return tokens.Select(t => t.WithParent(parent)).ToArray();
         }
+
+        public static SeparatedSyntaxList<TNode> WithParent<TNode>(this SeparatedSyntaxList<TNode> list, SyntaxNode parent)
+            where TNode : SyntaxNode
+        {
+            var fixedTokens = (from nodeOrToken in list.GetWithSeparators()
+                               let fixedNodeOrToken = nodeOrToken.IsNode
+                                                          ? nodeOrToken
+                                                          : nodeOrToken.AsToken().WithParent(parent)
+                               select fixedNodeOrToken).ToArray();
+            return new SeparatedSyntaxList<TNode>(fixedTokens);
+        }
     }
 }

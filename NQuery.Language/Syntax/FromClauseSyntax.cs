@@ -1,19 +1,17 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace NQuery.Language
 {
     public sealed class FromClauseSyntax : SyntaxNode
     {
         private readonly SyntaxToken _fromKeyword;
-        private readonly ReadOnlyCollection<TableReferenceSyntax> _tableReferences;
+        private readonly SeparatedSyntaxList<TableReferenceSyntax> _tableReferences;
 
-        public FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, IList<TableReferenceSyntax> tableReferences)
+        public FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, SeparatedSyntaxList<TableReferenceSyntax> tableReferences)
             : base(syntaxTree)
         {
             _fromKeyword = fromKeyword.WithParent(this);
-            _tableReferences = new ReadOnlyCollection<TableReferenceSyntax>(tableReferences);
+            _tableReferences = tableReferences.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -24,8 +22,8 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _fromKeyword;
-            foreach (var tableReference in TableReferences)
-                yield return tableReference;
+            foreach (var nodeOrToken in _tableReferences.GetWithSeparators())
+                yield return nodeOrToken;
         }
 
         public SyntaxToken FromKeyword
@@ -33,7 +31,7 @@ namespace NQuery.Language
             get { return _fromKeyword; }
         }
 
-        public ReadOnlyCollection<TableReferenceSyntax> TableReferences
+        public SeparatedSyntaxList<TableReferenceSyntax> TableReferences
         {
             get { return _tableReferences; }
         }

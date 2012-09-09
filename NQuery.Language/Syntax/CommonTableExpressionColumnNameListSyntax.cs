@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -6,14 +5,14 @@ namespace NQuery.Language
     public sealed class CommonTableExpressionColumnNameListSyntax : SyntaxNode
     {
         private readonly SyntaxToken _leftParenthesis;
-        private readonly IList<SyntaxToken> _columnNames;
+        private readonly SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> _columnNames;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, IList<SyntaxToken> columnNames, SyntaxToken rightParenthesis)
+        public CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis.WithParent(this);
-            _columnNames = columnNames;
+            _columnNames = columnNames.WithParent(this);
             _rightParenthesis = rightParenthesis.WithParent(this);
         }
 
@@ -25,8 +24,8 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _leftParenthesis;
-            foreach (var columnName in _columnNames)
-                yield return columnName;
+            foreach (var nodeOrToken in _columnNames.GetWithSeparators())
+                yield return nodeOrToken;
             yield return _rightParenthesis;
         }
 
@@ -35,7 +34,7 @@ namespace NQuery.Language
             get { return _leftParenthesis; }
         }
 
-        public IList<SyntaxToken> ColumnNames
+        public SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> ColumnNames
         {
             get { return _columnNames; }
         }

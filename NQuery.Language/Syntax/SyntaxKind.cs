@@ -160,7 +160,6 @@ namespace NQuery.Language
         CountAllExpression,
         FunctionInvocationExpression,
         MethodInvocationExpression,
-        Argument,
         ArgumentList,
 
         SingleRowSubselect,

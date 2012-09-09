@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -8,15 +7,15 @@ namespace NQuery.Language
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _orderKeyword;
         private readonly SyntaxToken _byKeyword;
-        private readonly List<OrderByColumnSyntax> _columns;
+        private readonly SeparatedSyntaxList<OrderByColumnSyntax> _columns;
 
-        public OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, List<OrderByColumnSyntax> columns)
+        public OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<OrderByColumnSyntax> columns)
             : base(syntaxTree)
         {
             _query = query;
             _orderKeyword = orderKeyword.WithParent(this);
             _byKeyword = byKeyword.WithParent(this);
-            _columns = columns;
+            _columns = columns.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -29,8 +28,8 @@ namespace NQuery.Language
             yield return _query;
             yield return _orderKeyword;
             yield return _byKeyword;
-            foreach (var column in _columns)
-                yield return column;
+            foreach (var nodeOrToken in _columns.GetWithSeparators())
+                yield return nodeOrToken;
         }
 
         public QuerySyntax Query
@@ -48,7 +47,7 @@ namespace NQuery.Language
             get { return _byKeyword; }
         }
 
-        public List<OrderByColumnSyntax> Columns
+        public SeparatedSyntaxList<OrderByColumnSyntax> Columns
         {
             get { return _columns; }
         }

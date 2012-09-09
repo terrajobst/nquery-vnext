@@ -324,7 +324,7 @@ namespace NQuery.Language.Binding
         {
             // TODO: We need to make sure that all argument types are identical or a conversion exists.
             var boundArguments = (from a in node.ArgumentList.Arguments
-                                  select BindExpression(a.Expression)).ToArray();
+                                  select BindExpression(a)).ToArray();
 
             // TODO: Could we simply rewrite this syntax here?
             //
@@ -368,7 +368,7 @@ namespace NQuery.Language.Binding
 
             var boundExpression = BindExpression(node.Expression);
             var boundArguments = (from a in node.ArgumentList.Arguments
-                                  select BindExpression(a.Expression)).ToArray();
+                                  select BindExpression(a)).ToArray();
 
             // TODO: We need to capture the operator being used -- it might not actully resolve to System.Boolean.
 
@@ -515,7 +515,7 @@ namespace NQuery.Language.Binding
 
             var name = node.Name;
             var arguments = (from a in node.ArgumentList.Arguments
-                             select BindExpression(a.Expression)).ToList();
+                             select BindExpression(a)).ToList();
 
             var functionSymbols = LookupFunction(name, arguments.Count).ToArray();
 
@@ -550,7 +550,7 @@ namespace NQuery.Language.Binding
             }
 
             var arguments = (from a in node.ArgumentList.Arguments
-                             select BindExpression(a.Expression)).ToList();
+                             select BindExpression(a)).ToList();
 
             var methodSymbols = LookupMethod(target.Type, name, arguments.Count).ToArray();
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 
 namespace NQuery.Language.UnitTests
@@ -16,6 +17,19 @@ namespace NQuery.Language.UnitTests
             var tree = SyntaxTree.ParseExpression(text);
             var trivia = tree.Root.LastToken().LeadingTrivia.First();
             return trivia;
+        }
+
+        public static ExpressionSyntax ParseExpression(string text)
+        {
+            var tree = SyntaxTree.ParseExpression(text);
+            return (ExpressionSyntax) tree.Root.Root;
+        }
+
+        public static SyntaxToken CreateToken(SyntaxKind kind, string text = null)
+        {
+            var actualText = text ?? kind.GetText();
+            var span = new TextSpan(0, actualText.Length);
+            return new SyntaxToken(kind, SyntaxKind.BadToken, false, span, actualText, null, new SyntaxTrivia[0], new SyntaxTrivia[0], new Diagnostic[0]);
         }
     }
 }

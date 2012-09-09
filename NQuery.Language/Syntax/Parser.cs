@@ -482,32 +482,31 @@ namespace NQuery.Language
         private ArgumentListSyntax ParseArgumentList()
         {
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-
-            var arguments = new List<ArgumentSyntax>();
-
-            while (Current.Kind != SyntaxKind.RightParenthesisToken)
-            {
-                var argument = ParseArgument();
-                arguments.Add(argument);
-
-                if (argument.Comma == null)
-                    break;
-            }
-
+            var expressionList = ParseArgumentExpressionList();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-
-            return new ArgumentListSyntax(_syntaxTree, leftParenthesis, arguments, rightParenthesis);
+            return new ArgumentListSyntax(_syntaxTree, leftParenthesis, expressionList, rightParenthesis);
         }
 
-        private ArgumentSyntax ParseArgument()
+        private SeparatedSyntaxList<ExpressionSyntax> ParseArgumentExpressionList()
         {
-            var expression = ParseExpression();
-            var comma = Current.Kind == SyntaxKind.CommaToken
-                            ? (SyntaxToken?) NextToken()
-                            : null;
+            if (Current.Kind == SyntaxKind.RightParenthesisToken)
+                return SeparatedSyntaxList<ExpressionSyntax>.Empty;
 
-            var argument = new ArgumentSyntax(_syntaxTree, expression, comma);
-            return argument;
+            var expressionsWithCommas = new List<SyntaxNodeOrToken>();
+
+            while (true)
+            {
+                var argument = ParseExpression();
+                expressionsWithCommas.Add(argument);
+
+                if (Current.Kind != SyntaxKind.CommaToken)
+                    break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                expressionsWithCommas.Add(comma);
+            }
+
+            return new SeparatedSyntaxList<ExpressionSyntax>(expressionsWithCommas);
         }
 
         private QuerySyntax ParseQueryWithOptionalCte()
@@ -516,20 +515,28 @@ namespace NQuery.Language
                 return ParseQuery();
 
             var withKeyword = Match(SyntaxKind.WithKeyword);
+            var commonTableExpressionList = ParseCommonTableExpressionList();
+            var query = ParseQuery();
+            return new CommonTableExpressionQuerySyntax(_syntaxTree, withKeyword, commonTableExpressionList, query);
+        }
 
-            var commonTableExpressions = new List<CommonTableExpressionSyntax>();
+        private SeparatedSyntaxList<CommonTableExpressionSyntax> ParseCommonTableExpressionList()
+        {
+            var commonTableExpressionsWithCommas = new List<SyntaxNodeOrToken>();
 
             while (true)
             {
                 var commonTableExpression = ParseCommonTableExpression();
-                commonTableExpressions.Add(commonTableExpression);
+                commonTableExpressionsWithCommas.Add(commonTableExpression);
 
-                if (commonTableExpression.CommaToken == null)
+                if (Current.Kind != SyntaxKind.CommaToken)
                     break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                commonTableExpressionsWithCommas.Add(comma);
             }
 
-            var query = ParseQuery();
-            return new CommonTableExpressionQuerySyntax(_syntaxTree, withKeyword, commonTableExpressions, query);
+            return new SeparatedSyntaxList<CommonTableExpressionSyntax>(commonTableExpressionsWithCommas);
         }
 
         private CommonTableExpressionSyntax ParseCommonTableExpression()
@@ -540,37 +547,38 @@ namespace NQuery.Language
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var query = ParseQuery();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-
-            return new CommonTableExpressionSyntax(_syntaxTree, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis, commaToken);
+            return new CommonTableExpressionSyntax(_syntaxTree, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
         }
 
         private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
         {
-            CommonTableExpressionColumnNameListSyntax commonTableExpressionColumnNameList;
-            if (Current.Kind == SyntaxKind.LeftParenthesisToken)
+            if (Current.Kind != SyntaxKind.LeftParenthesisToken)
+                return null;
+
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+            var columnNameList = ParseCommonTableExpressionColumnNames();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new CommonTableExpressionColumnNameListSyntax(_syntaxTree, leftParenthesis, columnNameList, rightParenthesis);
+        }
+
+        private SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> ParseCommonTableExpressionColumnNames()
+        {
+            var namesAndCommas = new List<SyntaxNodeOrToken>();
+
+            while (true)
             {
-                var leftParenthesis = NextToken();
+                var identifier = Match(SyntaxKind.IdentifierToken);
+                var columnName = new CommonTableExpressionColumnNameSyntax(_syntaxTree, identifier);
+                namesAndCommas.Add(columnName);
 
-                var columnNames = new List<SyntaxToken>();
+                if (Current.Kind != SyntaxKind.CommaToken)
+                    break;
 
-                while (true)
-                {
-                    var columnName = Match(SyntaxKind.IdentifierToken);
-                    columnNames.Add(columnName);
-
-                    if (Current.Kind != SyntaxKind.CommaToken)
-                        break;
-
-                    NextToken();
-                }
-
-                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                commonTableExpressionColumnNameList = new CommonTableExpressionColumnNameListSyntax(_syntaxTree, leftParenthesis, columnNames, rightParenthesis);
+                var comma = Match(SyntaxKind.CommaToken);
+                namesAndCommas.Add(comma);
             }
-            else
-                commonTableExpressionColumnNameList = null;
-            return commonTableExpressionColumnNameList;
+
+            return new SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax>(namesAndCommas);
         }
 
         private QuerySyntax ParseQuery()
@@ -584,36 +592,49 @@ namespace NQuery.Language
 
             var orderKeyword = Match(SyntaxKind.OrderKeyword);
             var byKeyword = Match(SyntaxKind.ByKeyword);
+            var columnList = ParseOrderByColumnList();
+            return new OrderedQuerySyntax(_syntaxTree, query, orderKeyword, byKeyword, columnList);
+        }
 
-            var columns = new List<OrderByColumnSyntax>();
+        private SeparatedSyntaxList<OrderByColumnSyntax> ParseOrderByColumnList()
+        {
+            var columnsWithCommas = new List<SyntaxNodeOrToken>();
 
             while (true)
             {
-                var expression = ParseExpression();
-                SyntaxToken? modifier;
+                var column = ParseOrderByColumn();
+                columnsWithCommas.Add(column);
 
-                if (Current.Kind == SyntaxKind.AscKeyword)
-                {
-                    modifier = NextToken();
-                }
-                else if (Current.Kind == SyntaxKind.DescKeyword)
-                {
-                    modifier = NextToken();
-                }
-                else
-                {
-                    modifier = null;
-                }
-
-                var comma = NextTokenIf(SyntaxKind.CommaToken);
-                var column = new OrderByColumnSyntax(_syntaxTree, expression, modifier, comma);
-                columns.Add(column);
-
-                if (comma == null)
+                if (Current.Kind != SyntaxKind.CommaToken)
                     break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                columnsWithCommas.Add(comma);
             }
 
-            return new OrderedQuerySyntax(_syntaxTree, query, orderKeyword, byKeyword, columns);
+            return new SeparatedSyntaxList<OrderByColumnSyntax>(columnsWithCommas);
+        }
+
+        private OrderByColumnSyntax ParseOrderByColumn()
+        {
+            var expression = ParseExpression();
+            SyntaxToken? modifier;
+
+            if (Current.Kind == SyntaxKind.AscKeyword)
+            {
+                modifier = NextToken();
+            }
+            else if (Current.Kind == SyntaxKind.DescKeyword)
+            {
+                modifier = NextToken();
+            }
+            else
+            {
+                modifier = null;
+            }
+
+            var column = new OrderByColumnSyntax(_syntaxTree, expression, modifier);
+            return column;
         }
 
         private QuerySyntax ParseUnifiedOrExceptionalQuery()
@@ -709,7 +730,7 @@ namespace NQuery.Language
                                 ? ParseTopClause()
                                 : null;
 
-            var columns = ParseSelectColumns();
+            var columns = ParseSelectColumnList();
 
             return new SelectClauseSyntax(_syntaxTree, selectKeyword, distinctAllKeyword, topClause, columns);
         }
@@ -723,38 +744,80 @@ namespace NQuery.Language
             return new TopClauseSyntax(_syntaxTree, topKeyword, value, withKeyword, tiesKeyword);
         }
 
-        private List<SelectColumnSyntax> ParseSelectColumns()
+        private SeparatedSyntaxList<SelectColumnSyntax> ParseSelectColumnList()
         {
-            var columns = new List<SelectColumnSyntax>();
+            var columnsWithCommas = new List<SyntaxNodeOrToken>();
 
             //if (Current.Kind == SyntaxKind.EndOfFileToken)
             //    _errorReporter.SimpleExpressionExpected(_token.Range, _token.Text);
 
             while (true)
             {
-                var selectColumn = ParseColumnSource();
-                columns.Add(selectColumn);
+                var selectColumn = ParseSelectColumn();
+                columnsWithCommas.Add(selectColumn);
 
-                if (selectColumn.CommaToken == null)
+                if (Current.Kind != SyntaxKind.CommaToken)
                     break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                columnsWithCommas.Add(comma);
             }
 
-            return columns;
+            return new SeparatedSyntaxList<SelectColumnSyntax>(columnsWithCommas);
+        }
+
+        private SelectColumnSyntax ParseSelectColumn()
+        {
+            var isWildcard = Peek(0).Kind == SyntaxKind.MultiplyToken;
+            var isQualifiedWildcard = Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                                      Peek(1).Kind == SyntaxKind.DotToken &&
+                                      Peek(2).Kind == SyntaxKind.MultiplyToken;
+
+            if (isWildcard)
+            {
+                var asteriskToken = Match(SyntaxKind.MultiplyToken);
+                return new WildcardSelectColumnSyntax(_syntaxTree, null, null, asteriskToken);
+            }
+
+            if (isQualifiedWildcard)
+            {
+                var tableName = Match(SyntaxKind.IdentifierToken);
+                var dotToken = Match(SyntaxKind.DotToken);
+                var asteriskToken = Match(SyntaxKind.MultiplyToken);
+                return new WildcardSelectColumnSyntax(_syntaxTree, tableName, dotToken, asteriskToken);
+            }
+            else
+            {
+                var expression = ParseExpression();
+                var alias = ParseOptionalAlias();
+                return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
+            }
         }
 
         private FromClauseSyntax ParseFromClause()
         {
             var fromKeyword = NextToken();
-            var tableReferences = new List<TableReferenceSyntax>();
+            var tableReferenceList = ParseTableReferenceList();
+            return new FromClauseSyntax(_syntaxTree, fromKeyword, tableReferenceList);
+        }
 
-            TableReferenceSyntax tableReference;
-            do
+        private SeparatedSyntaxList<TableReferenceSyntax> ParseTableReferenceList()
+        {
+            var tableReferencesWithCommas = new List<SyntaxNodeOrToken>();
+
+            while (true)
             {
-                tableReference = ParseTableReference();
-                tableReferences.Add(tableReference);
-            } while (tableReference.CommaToken != null);
+                var tableReference = ParseTableReference();
+                tableReferencesWithCommas.Add(tableReference);
 
-            return new FromClauseSyntax(_syntaxTree, fromKeyword, tableReferences);
+                if (Current.Kind != SyntaxKind.CommaToken)
+                    break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                tableReferencesWithCommas.Add(comma);
+            }
+
+            return new SeparatedSyntaxList<TableReferenceSyntax>(tableReferencesWithCommas);
         }
 
         private TableReferenceSyntax ParseTableReference()
@@ -772,7 +835,7 @@ namespace NQuery.Language
                 left = ParseNamedTableReference();
             }
 
-            while (left.CommaToken == null)
+            while (true)
             {
                 switch (Current.Kind)
                 {
@@ -797,8 +860,6 @@ namespace NQuery.Language
                         break;
                 }
             }
-
-            return left;
         }
 
         private TableReferenceSyntax ParseParenthesizedTableReference()
@@ -806,16 +867,14 @@ namespace NQuery.Language
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var tableReference = ParseTableReference();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new ParenthesizedTableReferenceSyntax(_syntaxTree, leftParenthesis, tableReference, rightParenthesis, commaToken);
+            return new ParenthesizedTableReferenceSyntax(_syntaxTree, leftParenthesis, tableReference, rightParenthesis);
         }
 
         private TableReferenceSyntax ParseNamedTableReference()
         {
             var tableName = Match(SyntaxKind.IdentifierToken);
             var alias = ParseOptionalAlias();
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new NamedTableReferenceSyntax(_syntaxTree, tableName, alias, commaToken);
+            return new NamedTableReferenceSyntax(_syntaxTree, tableName, alias);
         }
 
         private TableReferenceSyntax ParseCrossJoinTableReference(TableReferenceSyntax left)
@@ -823,8 +882,7 @@ namespace NQuery.Language
             var crossKeyword = Match(SyntaxKind.CrossKeyword);
             var joinKeyword = Match(SyntaxKind.JoinKeyword);
             var right = ParseTableReference();
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new CrossJoinedTableReferenceSyntax(_syntaxTree, left, crossKeyword, joinKeyword, right, commaToken);
+            return new CrossJoinedTableReferenceSyntax(_syntaxTree, left, crossKeyword, joinKeyword, right);
         }
 
         private TableReferenceSyntax ParseInnerJoinTableReference(TableReferenceSyntax left)
@@ -834,8 +892,7 @@ namespace NQuery.Language
             var right = ParseTableReference();
             var onKeyword = Match(SyntaxKind.OnKeyword);
             var condition = ParseExpression();
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new InnerJoinedTableReferenceSyntax(_syntaxTree, left, innerKeyword, joinKeyword, right, onKeyword, condition, commaToken);
+            return new InnerJoinedTableReferenceSyntax(_syntaxTree, left, innerKeyword, joinKeyword, right, onKeyword, condition);
         }
 
         private TableReferenceSyntax ParseOuterJoinTableReference(TableReferenceSyntax left)
@@ -846,8 +903,7 @@ namespace NQuery.Language
             var right = ParseTableReference();
             var onKeyword = Match(SyntaxKind.OnKeyword);
             var condition = ParseExpression();
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new OuterJoinedTableReferenceSyntax(_syntaxTree, left, typeKeyword, outerKeyword, joinKeyword, right, onKeyword, condition, commaToken);
+            return new OuterJoinedTableReferenceSyntax(_syntaxTree, left, typeKeyword, outerKeyword, joinKeyword, right, onKeyword, condition);
         }
 
         private DerivedTableReferenceSyntax ParseDerivedTableReference()
@@ -857,8 +913,7 @@ namespace NQuery.Language
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             var asKeyword = NextTokenIf(SyntaxKind.AsKeyword);
             var name = Match(SyntaxKind.IdentifierToken);
-            var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-            return new DerivedTableReferenceSyntax(_syntaxTree, leftParenthesis, query, rightParenthesis, asKeyword, name, commaToken);
+            return new DerivedTableReferenceSyntax(_syntaxTree, leftParenthesis, query, rightParenthesis, asKeyword, name);
         }
 
         private WhereClauseSyntax ParseWhereClause()
@@ -875,56 +930,32 @@ namespace NQuery.Language
             return new HavingClauseSyntax(_syntaxTree, havingKeyword, predicate);
         }
 
-        private SelectColumnSyntax ParseColumnSource()
-        {
-            var isWildcard = Peek(0).Kind == SyntaxKind.MultiplyToken;
-            var isQualifiedWildcard = Peek(0).Kind == SyntaxKind.IdentifierToken &&
-                                      Peek(1).Kind == SyntaxKind.DotToken &&
-                                      Peek(2).Kind == SyntaxKind.MultiplyToken;
-
-            if (isWildcard)
-            {
-                var asteriskToken = Match(SyntaxKind.MultiplyToken);
-                var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-                return new WildcardSelectColumnSyntax(_syntaxTree, null, null, asteriskToken, commaToken);
-            }
-            
-            if (isQualifiedWildcard)
-            {
-                var tableName = Match(SyntaxKind.IdentifierToken);
-                var dotToken = Match(SyntaxKind.DotToken);
-                var asteriskToken = Match(SyntaxKind.MultiplyToken);
-                var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-                return new WildcardSelectColumnSyntax(_syntaxTree, tableName, dotToken, asteriskToken, commaToken);
-            }
-            else
-            {
-                var expression = ParseExpression();
-                var alias = ParseOptionalAlias();
-                var commaToken = NextTokenIf(SyntaxKind.CommaToken);
-                return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias, commaToken);
-            }
-        }
-
         private GroupByClauseSyntax ParseGroupByClause()
         {
             var groupKeyword = Match(SyntaxKind.GroupKeyword);
             var byKeyword = Match(SyntaxKind.ByKeyword);
+            var columnList = ParseGroupByColumnList();
+            return new GroupByClauseSyntax(_syntaxTree, groupKeyword, byKeyword, columnList);
+        }
 
-            var columns = new List<GroupByColumnSyntax>();
+        private SeparatedSyntaxList<GroupByColumnSyntax> ParseGroupByColumnList()
+        {
+            var columnsWithCommas = new List<SyntaxNodeOrToken>();
 
             while (true)
             {
                 var expression = ParseExpression();
-                var comma = NextTokenIf(SyntaxKind.CommaToken);
-                var column = new GroupByColumnSyntax(_syntaxTree, expression, comma);
-                columns.Add(column);
+                var column = new GroupByColumnSyntax(_syntaxTree, expression);
+                columnsWithCommas.Add(column);
 
-                if (comma == null)
+                if (Current.Kind != SyntaxKind.CommaToken)
                     break;
+
+                var comma = Match(SyntaxKind.CommaToken);
+                columnsWithCommas.Add(comma);
             }
 
-            return new GroupByClauseSyntax(_syntaxTree, groupKeyword, byKeyword, columns);
+            return new SeparatedSyntaxList<GroupByColumnSyntax>(columnsWithCommas);
         }
 
         private AliasSyntax ParseOptionalAlias()
