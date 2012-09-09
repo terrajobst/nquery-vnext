@@ -76,14 +76,13 @@ namespace NQuery.Language.VSEditor
         {
             var root = semanticModel.Compilation.SyntaxTree.Root;
 
-            // We don't want to show a completion when typing an alias name
-            var alias = GetAlias(root, position);
-            if (alias != null)
+            // We don't want to show a completion when typing an alias name.
+            // The CTE column list as well the name of a derived table count
+            // as an alias context, too.
+            if (InAlias(root, position) || InCteColumnList(root, position) || InDerivedTableName(root, position))
                 return Enumerable.Empty<Completion>();
 
-            // TODO: Return empty set if we are in the column part of a CTE, such as
-            //       WITH x (|
-
+            // Comments and literals don't get completion information
             if (InComment(root, position) || InLiteral(root, position))
                 return Enumerable.Empty<Completion>();
 
@@ -157,33 +156,6 @@ namespace NQuery.Language.VSEditor
                    select CreateSymbolCompletion(g.First());
         }
 
-        private static AliasSyntax GetAlias(SyntaxNode root, int position)
-        {
-            var contains = root.Span.Start <= position && position <= root.Span.End;
-            if (!contains)
-                return null;
-
-            var nodes = from n in root.ChildNodesAndTokens()
-                        where n.IsNode
-                        select n.AsNode();
-
-            foreach (var node in nodes)
-            {
-                var r = node as AliasSyntax;
-                if (r != null)
-                {
-                    if (r.Identifier.Span.Start <= position && position <= r.Identifier.Span.End)
-                        return r;
-                }
-
-                r = GetAlias(node, position);
-                if (r != null)
-                    return r;
-            }
-
-            return null;
-        }
-
         private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
         {
             var p = root.FindToken(position).Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
@@ -198,7 +170,27 @@ namespace NQuery.Language.VSEditor
             return null;
         }
 
-        private bool InComment(SyntaxNode root, int position)
+        private static bool InAlias(SyntaxNode root, int position)
+        {
+            var syntaxToken = root.FindToken(position);
+            return syntaxToken.Parent is AliasSyntax;
+        }
+
+        private static bool InCteColumnList(SyntaxNode root, int position)
+        {
+            var syntaxToken = root.FindToken(position);
+            return syntaxToken.Parent is CommonTableExpressionColumnNameSyntax ||
+                   syntaxToken.Parent is CommonTableExpressionColumnNameListSyntax;
+        }
+
+        private static bool InDerivedTableName(SyntaxNode root, int position)
+        {
+            var syntaxToken = root.FindToken(position);
+            var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
+            return derivedTable != null && derivedTable.Name.FullSpan.Contains(position);
+        }
+
+        private static bool InComment(SyntaxNode root, int position)
         {
             var contains = root.FullSpan.Start <= position && position <= root.FullSpan.End;
             if (!contains)
@@ -250,7 +242,7 @@ namespace NQuery.Language.VSEditor
                    position <= token.Span.End;
         }
 
-        private bool InLiteral(SyntaxNode root, int position)
+        private static bool InLiteral(SyntaxNode root, int position)
         {
             // TODO: This is only true if the literal is terminated (string, date literal).
             //
@@ -341,7 +333,7 @@ namespace NQuery.Language.VSEditor
         {
             var imageSource = _glyphService.GetGlyph(NQueryGlyph.Keyword);
             return from k in SyntaxFacts.GetKeywordKinds()
-                   let text = SyntaxFacts.GetText(k)
+                   let text = k.GetText()
                    select new Completion(text, text, null, imageSource, null);
         }
 
