@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace NQuery.Language.UnitTests
 {
@@ -13,6 +14,195 @@ namespace NQuery.Language.UnitTests
             return token;
         }
 
+        private static SyntaxTrivia LexSingleTrivia(string text)
+        {
+            var tree = SyntaxTree.ParseExpression(text);
+            var trivia = tree.Root.LastToken().LeadingTrivia.First();
+            return trivia;
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedBracketedIdentifer()
+        {
+            const string text = "[aaa";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedBracketedIdentifer_IfEmpty()
+        {
+            const string text = "[";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedBracketedIdentifer_IfClosingBracketIsEscaped()
+        {
+            const string text = "[aaa[[";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedQuotedIdentifer()
+        {
+            const string text = "\"aaa";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedQuotedIdentifer_IfEmpty()
+        {
+            const string text = "\"";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedQuotedIdentifer_IfClosingQuoteIsEscaped()
+        {
+            const string text = "\"aaa\"\"";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedString()
+        {
+            const string text = "'aaa";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedString_IfEmpty()
+        {
+            const string text = "'";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedString_IfClosingQuoteIsEscaped()
+        {
+            const string text = "'aaa''";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedDateTime()
+        {
+            const string text = "#12-04-1900";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Date is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedDateTime_IfEmpty()
+        {
+            const string text = "#";
+            var token = LexSingleToken(text);
+
+            Assert.AreEqual(text, token.Text);
+            Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
+            Assert.AreEqual(false, token.IsTerminated());
+            Assert.AreEqual(2, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Date is not properly terminated.", token.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedMultilineComment()
+        {
+            const string text = "/* test";
+            var trivia = LexSingleTrivia(text);
+
+            Assert.AreEqual(text, trivia.Text);
+            Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
+            Assert.AreEqual(false, trivia.IsTerminated());
+            Assert.AreEqual(1, trivia.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsUnterminatedMultilineComment_IfEmpty()
+        {
+            const string text = "/*";
+            var trivia = LexSingleTrivia(text);
+
+            Assert.AreEqual(text, trivia.Text);
+            Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
+            Assert.AreEqual(false, trivia.IsTerminated());
+            Assert.AreEqual(1, trivia.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
+        }
+
         [TestMethod]
         public void Lexer_CanLexInvalidDate()
         {
@@ -20,6 +210,7 @@ namespace NQuery.Language.UnitTests
             var token = LexSingleToken(invalidDate);
 
             Assert.AreEqual(invalidDate, token.Text);
+            Assert.AreEqual(true, token.IsTerminated());
             Assert.IsInstanceOfType(token.Value, typeof(DateTime));
         }
 
@@ -32,6 +223,7 @@ namespace NQuery.Language.UnitTests
             var token = LexSingleToken(dateSource);
 
             Assert.AreEqual(dateSource, token.Text);
+            Assert.AreEqual(true, token.IsTerminated());
             Assert.AreEqual(date, token.Value);
         }
 

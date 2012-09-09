@@ -533,6 +533,50 @@ namespace NQuery.Language
             }
         }
 
+        public static bool IsTerminated(this SyntaxToken token)
+        {
+            return IsTerminated(token.Kind, token.Text);
+        }
+
+        public static bool IsTerminated(this SyntaxTrivia trivia)
+        {
+            return IsTerminated(trivia.Kind, trivia.Text);
+        }
+
+        private static bool IsTerminated(SyntaxKind syntaxKind, string text)
+        {
+            switch (syntaxKind)
+            {
+                case SyntaxKind.IdentifierToken:
+                    if (text.StartsWith("\""))
+                        return EndsWithUnescapedChar(text, '"');
+                    if (text.StartsWith("["))
+                        return EndsWithUnescapedChar(text, ']');
+                    return true;
+                case SyntaxKind.StringLiteralToken:
+                    return EndsWithUnescapedChar(text, '\'');
+                case SyntaxKind.DateLiteralToken:
+                    return text.Length >= 2 && text.EndsWith("#");
+                case SyntaxKind.MultiLineCommentTrivia:
+                    return text.Length >= 4 && text.EndsWith("*/");
+
+                default:
+                    return true;
+            }
+        }
+
+        private static bool EndsWithUnescapedChar(string text, char c)
+        {
+            var numberOfChars = 0;
+            var i = text.Length - 1;
+            while (i > 0 && text[i] == c)
+            {
+                numberOfChars++;
+                i--;
+            }
+            return numberOfChars % 2 != 0;
+        }
+
         internal static SyntaxKind GetUnaryOperatorExpression(SyntaxKind token)
         {
             switch (token)
