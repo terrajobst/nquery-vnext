@@ -137,10 +137,10 @@ namespace NQuery.Language
             diagnostics.Add(DiagnosticFactory.UndeclaredProperty(node, type));
         }
 
-        //public static void ReportUndeclaredType(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, string typeName)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.UndeclaredType(nodeOrToken, typeName));
-        //}
+        public static void ReportUndeclaredType(this ICollection<Diagnostic> diagnostics, SyntaxToken typeName)
+        {
+            diagnostics.Add(DiagnosticFactory.UndeclaredType(typeName));
+        }
 
         public static void ReportUndeclaredEntity(this ICollection<Diagnostic> diagnostics, NameExpressionSyntax node)
         {

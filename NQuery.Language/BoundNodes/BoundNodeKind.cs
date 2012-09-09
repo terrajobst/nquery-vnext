@@ -10,8 +10,13 @@ namespace NQuery.Language.BoundNodes
         FunctionInvocationExpression,
         PropertyAccessExpression,
         MethodInvocationExpression,
+        CoalesceExpression,
+        CastExpression,
+        IsNullExpression,
+        NullIfExpression,
         CaseLabel,
         CaseExpression,
+        InExpression,
         SingleRowSubselect,
         ExistsSubselect,
         AllAnySubselect,
@@ -21,5 +26,7 @@ namespace NQuery.Language.BoundNodes
         SelectColumn,
         SelectQuery,
         CombinedQuery,
+        CommonTableExpression,
+        CommonTableExpressionQuery
     }
 }

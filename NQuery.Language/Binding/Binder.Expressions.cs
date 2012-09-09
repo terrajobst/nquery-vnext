@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NQuery.Language.BoundNodes;
 using NQuery.Language.Symbols;
@@ -185,12 +184,68 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindIsNullExpression(IsNullExpressionSyntax node)
         {
-            throw new NotImplementedException();
+            var boundExpression = BindExpression(node.Expression);
+            return new BoundIsNullExpression(boundExpression);
         }
 
         private BoundExpression BindCastExpression(CastExpressionSyntax node)
         {
-            throw new NotImplementedException();
+            var boundExpression = BindExpression(node.Expression);
+            var boundType = BindType(node.TypeName);
+
+            // TODO: Check whether we can convert the expression into the destination type.
+            // TODO: We need to capture the operator method, if any.
+            // TODO: We should probably need to introduce two derived nodes: one for primitives, and one for operator methods.
+
+            return new BoundCastExpression(boundExpression, boundType);
+        }
+
+        private Type BindType(SyntaxToken typeName)
+        {
+            switch (typeName.ValueText.ToUpper())
+            {
+                case "BOOL":
+                case "BOOLEAN":
+                    return typeof (bool);
+                case "BYTE":
+                    return typeof (byte);
+                case "SBYTE":
+                    return typeof(sbyte);
+                case "CHAR":
+                    return typeof(char);
+                case "SHORT":
+                case "INT16":
+                    return typeof(short);
+                case "USHORT":
+                case "UINT16":
+                    return typeof(ushort);
+                case "INT":
+                case "INT32":
+                    return typeof(int);
+                case "UINT":
+                case "UINT32":
+                    return typeof(uint);
+                case "LONG":
+                case "INT64":
+                    return typeof(long);
+                case "ULONG":
+                case "UINT64":
+                    return typeof(ulong);
+                case "FLOAT":
+                case "SINGLE":
+                    return typeof(float);
+                case "DOUBLE":
+                    return typeof(double);
+                case "DECIMAL":
+                    return typeof(decimal);
+                case "STRING":
+                    return typeof(string);
+                case "OBJECT":
+                    return typeof(object);
+                default:
+                    _diagnostics.ReportUndeclaredType(typeName);
+                    return WellKnownTypes.Unknown;
+            }
         }
 
         private BoundExpression BindCaseExpression(CaseExpressionSyntax node)
@@ -263,23 +318,65 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindCoalesceExpression(CoalesceExpressionSyntax node)
         {
-            throw new NotImplementedException();
+            // TODO: We need to make sure that all argument types are identical or a conversion exists.
+            var boundArguments = (from a in node.ArgumentList.Arguments
+                                  select BindExpression(a.Expression)).ToArray();
+
+            // TODO: Could we simply rewrite this syntax here?
+            //
+            // COALESCE(e1, e2, .. eN)
+            //
+            // ====>
+            //
+            // CASE
+            //   WHEN e1 IS NOT NULL THEN e1
+            //   ELSE
+            //     CASE
+            //       WHEN e2 IS NOT NULL THEN e2
+            //       ELSE
+            //         eN
+            //     END
+            // END
+
+            return new BoundCoalesceExpression(boundArguments);
         }
 
         private BoundExpression BindNullIfExpression(NullIfExpressionSyntax node)
         {
-            throw new NotImplementedException();
+            // TODO: We need to make sure that and right and left can be compared with each other.
+            var boundLeft = BindExpression(node.LeftExpression);
+            var boundRight = BindExpression(node.RightExpression);
+
+            // TODO: Could we simply rewrite this syntax here?
+            //
+            // NULLIF(left, right)
+            //
+            // ===>
+            //
+            // CASE WHEN left != right THEN left END
+            
+            return new BoundNullIfExpression(boundLeft, boundRight);
         }
 
         private BoundExpression BindInExpression(InExpressionSyntax node)
         {
+            // TODO: We need to make sure that every argument can be compared with expression.
+
+            var boundExpression = BindExpression(node.Expression);
+            var boundArguments = (from a in node.ArgumentList.Arguments
+                                  select BindExpression(a.Expression)).ToArray();
+
+            // TODO: We need to capture the operator being used -- it might not actully resolve to System.Boolean.
+
+            // TODO: Could we simply rewrite this syntax here?
+            //
             // expression IN (e1, e2..eN)
             //
             // ===>
             //
             // expression = e1 OR expression = e2 .. OR expression = eN
 
-            throw new NotImplementedException();
+            return new BoundInExpression(boundExpression, boundArguments);
         }
 
         private BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)

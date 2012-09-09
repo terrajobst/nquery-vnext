@@ -167,11 +167,11 @@ namespace NQuery.Language
             return new Diagnostic(node.Span, DiagnosticId.UndeclaredProperty, message);
         }
 
-        //public static Diagnostic UndeclaredType(SyntaxNodeOrToken nodeOrToken, string typeName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredType, typeName);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.UndeclaredType, message);
-        //}
+        public static Diagnostic UndeclaredType(SyntaxToken typeName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredType, typeName.ValueText);
+            return new Diagnostic(typeName.Span, DiagnosticId.UndeclaredType, message);
+        }
 
         public static Diagnostic UndeclaredEntity(NameExpressionSyntax node)
         {

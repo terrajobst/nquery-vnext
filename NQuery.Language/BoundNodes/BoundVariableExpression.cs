@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using NQuery.Language.Symbols;
 
 namespace NQuery.Language.BoundNodes
@@ -22,11 +20,6 @@ namespace NQuery.Language.BoundNodes
         public override Symbol Symbol
         {
             get { return _variableSymbol; }
-        }
-
-        public override IEnumerable<Symbol> Candidates
-        {
-            get { return Enumerable.Empty<Symbol>(); }
         }
 
         public override Type Type
