@@ -1,11 +1,16 @@
-- Add support for diagnostics
-- Tokens should record whether they are termimated
-- Support contectual keywords (especially LEFT and RIGHT) or remove plumbing that does it.
-- Binder should support all expressions and queries
+- Add support for resolving all queries except CTEs
+
+- Report ambiguous matches
+- Simplify BadSymbols
+
+- Consider renaming BindingContext to Scope
+- Consider removing ExpressionBindingContext and changing lookup rules to expand table instances (nneds to be mirrored in intelli sense, too)
+
+- Improve parsing by avoiding ripple effetcs of missing delimiters
 
 IntelliSense
 ------------
-- Code completion should properly escape identifiers
+- Code completion should properly escape identifiers (note this should include detecting quoted vs. parenthesized)
 - We shouldn't show a completion window when typing aliases (CTE, table, column).
   It might be good enought to block completion when the previous token was the 
   "AS" keyword or an identifier. We should also block the completion when in the
@@ -23,5 +28,4 @@ Authoring Features
 - Smart indent
 - Signature Help
 - Formatting
-- Extend selection
 - Comment/Uncomment
