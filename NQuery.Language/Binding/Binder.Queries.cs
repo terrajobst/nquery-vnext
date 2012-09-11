@@ -91,6 +91,26 @@ namespace NQuery.Language.Binding
 
         private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)
         {
+            // TODO: We need to verify a few things here.
+            //
+            // SQL's semantics for ORDER BY are kina weird.
+            //
+            // (1) The binding context of the ORDER BY includes everything that the first, inner most
+            //     SELECT query has, plus all defined output columns.
+            //
+            // (2) Of course, if the first SELECT query is grouped or aggregated, the values used
+            //     in ORDER BY are subject to the usual constraints.
+            //
+            // (3) A literal integer expression in ORDER BY denotes the one-based output column.
+            //     Any other literal value is treated as an expression.
+            //
+            // (4) Modulo numeric output column references (3), a constant expression will
+            //     generate the error ('A constant expression was encountered in the ORDER BY list').
+            //     Note this covers literals as well binary/unary exressions consisting of only literals.
+            //
+            // (5) ORDER BY cannot appear in subselect expressions, derived tables or common table
+            //     expression, unless TOP is also specified.
+
             var query = BindQuery(node.Query);
 
             throw new NotImplementedException();
