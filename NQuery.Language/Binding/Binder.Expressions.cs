@@ -190,14 +190,17 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindCastExpression(CastExpressionSyntax node)
         {
-            var boundExpression = BindExpression(node.Expression);
-            var boundType = BindType(node.TypeName);
+            var expression = BindExpression(node.Expression);
+            var sourceType = expression.Type;
+            var targetType = BindType(node.TypeName);
+            var conversion = Conversion.Classify(sourceType, targetType);
 
-            // TODO: Check whether we can convert the expression into the destination type.
-            // TODO: We need to capture the operator method, if any.
-            // TODO: We should probably need to introduce two derived nodes: one for primitives, and one for operator methods.
+            if (!conversion.Exists)
+                _diagnostics.ReportCannotConvert(node, sourceType, targetType);
 
-            return new BoundCastExpression(boundExpression, boundType);
+            // TODO: ERROR: Check for ambiguity where we have more than one conversion method.
+
+            return new BoundCastExpression(expression, targetType, conversion);
         }
 
         private Type BindType(SyntaxToken typeName)

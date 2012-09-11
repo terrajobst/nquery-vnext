@@ -40,6 +40,8 @@
     <Compile Include="Binding\Binder.Expressions.cs" />
     <Compile Include="Binding\Binder.Operators.cs" />
     <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="Binding\KnownType.cs" />
+    <Compile Include="Conversion.cs" />
     <Compile Include="BoundNodes\BoundCastExpression.cs" />
     <Compile Include="BoundNodes\BoundInExpression.cs" />
     <Compile Include="BoundNodes\BoundCoalesceExpression.cs" />

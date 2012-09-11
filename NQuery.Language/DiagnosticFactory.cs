@@ -345,11 +345,11 @@ namespace NQuery.Language
         //    return new Diagnostic(DiagnosticId.CannotFoldConstants, message);
         //}
 
-        //public static Diagnostic CannotCast(ExpressionNode expression, Type targetType)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotCast, expression.GenerateSource(), FormattingHelpers.FormatType(expression.ExpressionType), FormattingHelpers.FormatType(targetType));
-        //    return new Diagnostic(DiagnosticId.CannotCast, message);
-        //}
+        public static Diagnostic CannotConvert(CastExpressionSyntax expression, Type sourceType, Type targetType)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceType.Name, targetType.Name);
+            return new Diagnostic(expression.TypeName.Span, DiagnosticId.CannotConvert, message);
+        }
 
         #endregion
 

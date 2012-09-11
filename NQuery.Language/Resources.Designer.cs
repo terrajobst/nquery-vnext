@@ -358,11 +358,11 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot cast &apos;{0}&apos; from &apos;{1}&apos; to &apos;{2}&apos;..
+        ///   Looks up a localized string similar to Cannot convert type &apos;{0}&apos; to &apos;{1}&apos;..
         /// </summary>
-        internal static string CannotCast {
+        internal static string CannotConvert {
             get {
-                return ResourceManager.GetString("CannotCast", resourceCulture);
+                return ResourceManager.GetString("CannotConvert", resourceCulture);
             }
         }
         

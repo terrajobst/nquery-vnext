@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,6 +31,13 @@ namespace NQuery.Language.UnitTests
             var actualText = text ?? kind.GetText();
             var span = new TextSpan(0, actualText.Length);
             return new SyntaxToken(kind, SyntaxKind.BadToken, false, span, actualText, null, new SyntaxTrivia[0], new SyntaxTrivia[0], new Diagnostic[0]);
+        }
+
+        public static Conversion ClassifyConversion(Type souceType, Type targetType)
+        {
+            var semanticModel = Compilation.Empty.GetSemanticModel();
+            var conversion = semanticModel.ClassifyConversion(souceType, targetType);
+            return conversion;
         }
     }
 }

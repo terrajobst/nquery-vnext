@@ -6,11 +6,13 @@ namespace NQuery.Language.BoundNodes
     {
         private readonly BoundExpression _expression;
         private readonly Type _type;
+        private readonly Conversion _conversion;
 
-        public BoundCastExpression(BoundExpression expression, Type type)
+        public BoundCastExpression(BoundExpression expression, Type type, Conversion conversion)
         {
             _expression = expression;
             _type = type;
+            _conversion = conversion;
         }
 
         public override BoundNodeKind Kind
@@ -26,6 +28,11 @@ namespace NQuery.Language.BoundNodes
         public BoundExpression Expression
         {
             get { return _expression; }
+        }
+
+        public Conversion Conversion
+        {
+            get { return _conversion; }
         }
     }
 }

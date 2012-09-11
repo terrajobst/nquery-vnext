@@ -55,7 +55,7 @@ namespace NQuery.Language
         WhenMustEvaluateToBoolIfCaseInputIsOmitted,
         CannotLoadTypeAssembly,
         CannotFoldConstants,
-        CannotCast,
+        CannotConvert,
 
         MustSpecifyTableToSelectFrom,
         AggregateCannotContainAggregate,

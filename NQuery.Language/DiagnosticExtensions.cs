@@ -252,10 +252,10 @@ namespace NQuery.Language
         //    diagnostics.Add(DiagnosticFactory.CannotFoldConstants(exception));
         //}
 
-        //public static void ReportCannotCast(this ICollection<Diagnostic> diagnostics, ExpressionNode expression, Type targetType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CannotCast(expression, targetType));
-        //}
+        public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
+        {
+            diagnostics.Add(DiagnosticFactory.CannotConvert(expression, sourceType, targetType));
+        }
 
         #endregion
 

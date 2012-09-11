@@ -216,8 +216,8 @@
   <data name="CannotApplyUnaryOp" xml:space="preserve">
     <value>Cannot apply unary operator '{0}' on type '{1}'.</value>
   </data>
-  <data name="CannotCast" xml:space="preserve">
-    <value>Cannot cast '{0}' from '{1}' to '{2}'.</value>
+  <data name="CannotConvert" xml:space="preserve">
+    <value>Cannot convert type '{0}' to '{1}'.</value>
   </data>
   <data name="CannotFoldConstants" xml:space="preserve">
     <value>Cannot evaluate constant expression: {0}</value>

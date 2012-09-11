@@ -23,6 +23,11 @@ namespace NQuery.Language
             get { return _compilation; }
         }
 
+        public Conversion ClassifyConversion(Type sourceType, Type targetType)
+        {
+            return Conversion.Classify(sourceType, targetType);
+        }
+
         public Symbol GetSymbol(ExpressionSyntax expression)
         {
             var boundExpression = GetBoundExpression(expression);
@@ -33,6 +38,12 @@ namespace NQuery.Language
         {
             var boundExpression = GetBoundExpression(expression);
             return boundExpression == null ? null : boundExpression.Type;
+        }
+
+        public Conversion GetConversion(CastExpressionSyntax expression)
+        {
+            var boundExpression = GetBoundExpression(expression) as BoundCastExpression;
+            return boundExpression == null ? null : boundExpression.Conversion;
         }
 
         private BoundExpression GetBoundExpression(ExpressionSyntax expression)
