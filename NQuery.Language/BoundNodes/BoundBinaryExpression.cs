@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using NQuery.Language.Binding;
 
 namespace NQuery.Language.BoundNodes
@@ -7,13 +6,13 @@ namespace NQuery.Language.BoundNodes
     internal sealed class BoundBinaryExpression : BoundExpression
     {
         private readonly BoundExpression _left;
-        private readonly MethodInfo _methodInfo;
+        private readonly OverloadResolutionResult<BinaryOperatorSignature> _result;
         private readonly BoundExpression _right;
 
-        public BoundBinaryExpression(BoundExpression left, MethodInfo methodInfo, BoundExpression right)
+        public BoundBinaryExpression(BoundExpression left, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
         {
             _left = left;
-            _methodInfo = methodInfo;
+            _result = result;
             _right = right;
         }
 
@@ -26,9 +25,9 @@ namespace NQuery.Language.BoundNodes
         {
             get
             {
-                return _methodInfo == null
+                return _result.Selected == null
                            ? WellKnownTypes.Unknown
-                           : _methodInfo.ReturnType;
+                           : _result.Selected.Signature.ReturnType;
             }
         }
 
@@ -37,9 +36,9 @@ namespace NQuery.Language.BoundNodes
             get { return _left; }
         }
 
-        public MethodInfo MethodInfo
+        public OverloadResolutionResult<BinaryOperatorSignature> Result
         {
-            get { return _methodInfo; }
+            get { return _result; }
         }
 
         public BoundExpression Right

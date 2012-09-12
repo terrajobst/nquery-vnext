@@ -13,6 +13,7 @@ namespace NQuery.Language.Binding
         Char,
         Single,
         Double,
+        Decimal,
         Boolean,
         String,
         Object

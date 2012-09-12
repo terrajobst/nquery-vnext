@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using NQuery.Language.Binding;
 
 namespace NQuery.Language.BoundNodes
@@ -7,12 +6,12 @@ namespace NQuery.Language.BoundNodes
     internal sealed class BoundUnaryExpression : BoundExpression
     {
         private readonly BoundExpression _expression;
-        private readonly MethodInfo _methodInfo;
+        private readonly OverloadResolutionResult<UnaryOperatorSignature> _result;
 
-        public BoundUnaryExpression(BoundExpression expression, MethodInfo methodInfo)
+        public BoundUnaryExpression(BoundExpression expression, OverloadResolutionResult<UnaryOperatorSignature> result)
         {
             _expression = expression;
-            _methodInfo = methodInfo;
+            _result = result;
         }
 
         public override BoundNodeKind Kind
@@ -24,9 +23,9 @@ namespace NQuery.Language.BoundNodes
         {
             get
             {
-                return _methodInfo == null
+                return _result.Selected == null
                            ? WellKnownTypes.Unknown
-                           : _methodInfo.ReturnType;
+                           : _result.Selected.Signature.ReturnType;
             }
         }
 
@@ -35,9 +34,9 @@ namespace NQuery.Language.BoundNodes
             get { return _expression; }
         }
 
-        public MethodInfo MethodInfo
+        public OverloadResolutionResult<UnaryOperatorSignature> Result
         {
-            get { return _methodInfo; }
+            get { return _result; }
         }
     }
 }

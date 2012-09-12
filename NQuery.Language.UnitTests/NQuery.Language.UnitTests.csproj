@@ -52,11 +52,14 @@
   <ItemGroup>
     <Compile Include="ContextualLeftAndRightKeywords.cs" />
     <Compile Include="ConversionTests.cs" />
+    <Compile Include="IntrinsicOperatorTests.UnaryTestCases.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="Identifiers.cs" />
+    <Compile Include="IntrinsicOperatorTests.BinaryTestCases.cs" />
     <Compile Include="Lexer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SeparatedSyntaxList.cs" />
+    <Compile Include="IntrinsicOperatorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">

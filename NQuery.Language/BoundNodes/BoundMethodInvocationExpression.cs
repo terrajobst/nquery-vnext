@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NQuery.Language.Binding;
 using NQuery.Language.Symbols;
 
 namespace NQuery.Language.BoundNodes
@@ -9,13 +10,13 @@ namespace NQuery.Language.BoundNodes
     {
         private readonly BoundExpression _target;
         private readonly ReadOnlyCollection<BoundExpression> _arguments;
-        private readonly MethodSymbol _methodSymbol;
+        private readonly OverloadResolutionResult<MethodSymbolSignature> _result;
 
-        public BoundMethodInvocationExpression(BoundExpression target, IList<BoundExpression> arguments, MethodSymbol methodSymbol)
+        public BoundMethodInvocationExpression(BoundExpression target, IList<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
             _target = target;
             _arguments = new ReadOnlyCollection<BoundExpression>(arguments);
-            _methodSymbol = methodSymbol;
+            _result = result;
         }
 
         public override BoundNodeKind Kind
@@ -25,12 +26,12 @@ namespace NQuery.Language.BoundNodes
 
         public override Symbol Symbol
         {
-            get { return _methodSymbol; }
+            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
         }
 
         public override Type Type
         {
-            get { return _methodSymbol.Type; }
+            get { return Symbol == null ? WellKnownTypes.Unknown : Symbol.Type; }
         }
 
         public BoundExpression Target
@@ -38,14 +39,14 @@ namespace NQuery.Language.BoundNodes
             get { return _target; }
         }
 
-        public MethodSymbol MethodSymbol
-        {
-            get { return _methodSymbol; }
-        }
-
         public ReadOnlyCollection<BoundExpression> Arguments
         {
             get { return _arguments; }
+        }
+
+        public OverloadResolutionResult<MethodSymbolSignature> Result
+        {
+            get { return _result; }
         }
     }
 }

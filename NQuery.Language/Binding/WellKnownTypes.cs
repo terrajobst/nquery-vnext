@@ -8,9 +8,9 @@ namespace NQuery.Language.Binding
         private static class NullType { }
         private static class MissingType { }
 
-        public static Type Unknown = typeof(UnknownType);
-        public static Type Null = typeof(NullType);
-        public static Type Missing = typeof(MissingType);
+        public static readonly Type Unknown = typeof(UnknownType);
+        public static readonly Type Null = typeof(NullType);
+        public static readonly Type Missing = typeof(MissingType);
 
         public static bool IsMissing(this Type type)
         {
@@ -42,6 +42,7 @@ namespace NQuery.Language.Binding
                 case KnownType.Char:
                 case KnownType.Single:
                 case KnownType.Double:
+                case KnownType.Decimal:
                     return true;
 
                 case KnownType.Boolean:
@@ -51,6 +52,36 @@ namespace NQuery.Language.Binding
 
                 default:
                     throw new ArgumentOutOfRangeException("value");
+            }
+        }
+
+        public static bool IsSignedNumericType(this KnownType value)
+        {
+            switch (value)
+            {
+                case KnownType.SByte:
+                case KnownType.Int16:
+                case KnownType.Int32:
+                case KnownType.Int64:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public static bool IsUnsignedNumericType(this KnownType value)
+        {
+            switch (value)
+            {
+                case KnownType.Byte:
+                case KnownType.UInt16:
+                case KnownType.UInt32:
+                case KnownType.UInt64:
+                    return true;
+
+                default:
+                    return false;
             }
         }
 
@@ -88,6 +119,9 @@ namespace NQuery.Language.Binding
 
             if (type == typeof(Double))
                 return KnownType.Double;
+
+            if (type == typeof(decimal))
+                return KnownType.Decimal;
 
             if (type == typeof(Boolean))
                 return KnownType.Boolean;

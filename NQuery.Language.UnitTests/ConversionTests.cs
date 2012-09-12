@@ -221,34 +221,34 @@ namespace NQuery.Language.UnitTests
         [TestMethod]
         public void Conversion_ClassifiesImplicitDecimalConversionsCorrectly()
         {
-            AssertHasImplicitConversionViaMethod(typeof(sbyte), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(byte), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(short), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(ushort), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(int), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(uint), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(long), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(ulong), typeof(decimal));
-            AssertHasImplicitConversionViaMethod(typeof(char), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(sbyte), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(byte), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(short), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(ushort), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(int), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(uint), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(long), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(ulong), typeof(decimal));
+            AssertHasImplicitIntrinsicConversion(typeof(char), typeof(decimal));
         }
 
         [TestMethod]
         public void Conversion_ClassifiesExplicitDecimalConversionsCorrectly()
         {
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(sbyte));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(byte));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(short));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(ushort));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(int));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(uint));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(long));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(ulong));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(char));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(float));
-            AssertHasExplicitConversionViaMethod(typeof(decimal), typeof(double));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(sbyte));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(byte));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(short));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(ushort));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(int));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(uint));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(long));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(ulong));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(char));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(float));
+            AssertHasExplicitIntrinsicConversion(typeof(decimal), typeof(double));
 
-            AssertHasExplicitConversionViaMethod(typeof(float), typeof(decimal));
-            AssertHasExplicitConversionViaMethod(typeof(double), typeof(decimal));
+            AssertHasExplicitIntrinsicConversion(typeof(float), typeof(decimal));
+            AssertHasExplicitIntrinsicConversion(typeof(double), typeof(decimal));
         }
 
         [TestMethod]

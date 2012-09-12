@@ -7,6 +7,16 @@ namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
+        private Type BindType(SyntaxToken typeName)
+        {
+            var type = LookupType(typeName);
+            if (type != null)
+                return type;
+
+            _diagnostics.ReportUndeclaredType(typeName);
+            return WellKnownTypes.Unknown;
+        }
+
         private BoundExpression BindExpression(ExpressionSyntax node)
         {
             return Bind(node, BindExpressionInternal);
@@ -91,7 +101,7 @@ namespace NQuery.Language.Binding
                     return BindPropertyAccessExpression((PropertyAccessExpressionSyntax) node);
 
                 case SyntaxKind.CountAllExpression:
-                    return BindCountAllExpression((CountAllExpressionSyntax) node);
+                    return BindCountAllExpression();
 
                 case SyntaxKind.FunctionInvocationExpression:
                     return BindFunctionInvocationExpression((FunctionInvocationExpressionSyntax) node);
@@ -115,43 +125,104 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax node)
         {
-            var expression = BindExpression(node.Expression);
-            var operatorKind = GetBoundUnaryOperator(node.Kind);
-            var operatorMethod = BindUnaryOperator(expression.Type, operatorKind);
-            return new BoundUnaryExpression(expression, operatorMethod);
+            var operatorKind = node.Kind.GetUnaryOperatorKind();
+            return BindUnaryExpression(node, operatorKind, node.Expression);
+        }
+
+        private BoundExpression BindUnaryExpression(SyntaxNode node, UnaryOperatorKind operatorKind, ExpressionSyntax expression)
+        {
+            var boundExpression = BindExpression(expression);
+            return BindUnaryExpression(node, operatorKind, boundExpression);
+        }
+
+        private BoundExpression BindUnaryExpression(SyntaxNode node, UnaryOperatorKind operatorKind, BoundExpression expression)
+        {
+            // TODO: We may want to avoid cascading errors when expression couldn't be resolved.
+
+            var result = LookupUnaryOperator(operatorKind, expression);
+            if (result.Best == null)
+            {
+                if (result.Selected == null)
+                {
+                    _diagnostics.ReportCannotApplyUnaryOperator(node.Span, operatorKind, expression.Type);
+                }
+                else
+                {
+                    _diagnostics.ReportAmbiguousUnaryOperator(node.Span, operatorKind, expression.Type);
+                }
+            }
+
+            // TODO: We may want to insert conversion nodes right here.
+            
+            return new BoundUnaryExpression(expression, result);
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax node)
         {
-            var left = BindExpression(node.Left);
-            var right = BindExpression(node.Right);
-            var operatorKind = GetBoundBinaryOperator(node.Kind);
-            var operatorMethod = BindBinaryOperator(left.Type, right.Type, operatorKind);
-            return new BoundBinaryExpression(left, operatorMethod, right);
+            var operatorKind = node.Kind.GetBinaryOperatorKind();
+            return BindBinaryExpression(node, operatorKind, node.Left, node.Right);
+        }
+
+        private BoundExpression BindBinaryExpression(SyntaxNode node, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        {
+            var boundLeft = BindExpression(left);
+            var boundRight = BindExpression(right);
+            return BindBinaryExpression(node, operatorKind, boundLeft, boundRight);
+        }
+
+        private BoundExpression BindBinaryExpression(SyntaxNode node, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
+        {
+            // TODO: We should consider supporting three-state-short-circuit evaluation.
+            //
+            // TODO: C# doesn't allow overloading && or ||. Instead, you need to overload & and | *and* you need to define operator true/operator false:
+            //
+            // The operation x && y is evaluated as T.false(x) ? x : T.&(x, y)
+            // The operation x || y is evaluated as T.true(x) ? x : T.|(x, y)
+
+            // TODO: We may want to avoid cascading errors when left or right couldn't be resolved.
+
+            var result = LookupBinaryOperator(operatorKind, left, right);
+            if (result.Best == null)
+            {
+                if (result.Selected == null)
+                {
+                    _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                }
+                else
+                {
+                    _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                }
+            }
+
+            // TODO: We may want to insert conversion nodes right here.
+
+            return new BoundBinaryExpression(left, result, right);
+        }
+
+        private BoundExpression BindConditionalExpression(SyntaxNode node, bool negated, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        {
+            var result = BindBinaryExpression(node, operatorKind, left, right);
+            return !negated
+                       ? result
+                       : BindUnaryExpression(node, UnaryOperatorKind.LogicalNot, result);
         }
 
         private BoundExpression BindLikeExpression(LikeExpressionSyntax node)
         {
-            var left = BindExpression(node.Left);
-            var right = BindExpression(node.Right);
-            var operatorMethod = BindBinaryOperator(left.Type, right.Type, BoundBinaryOperatorKind.Like);
-            return new BoundBinaryExpression(left, operatorMethod, right);
+            var negated = node.NotKeyword != null;
+            return BindConditionalExpression(node, negated, BinaryOperatorKind.Like, node.Left, node.Right);
         }
 
         private BoundExpression BindSoundslikeExpression(SoundslikeExpressionSyntax node)
         {
-            var left = BindExpression(node.Left);
-            var right = BindExpression(node.Right);
-            var operatorMethod = BindBinaryOperator(left.Type, right.Type, BoundBinaryOperatorKind.Soundex);
-            return new BoundBinaryExpression(left, operatorMethod, right);
+            var negated = node.NotKeyword != null;
+            return BindConditionalExpression(node, negated, BinaryOperatorKind.Soundslike, node.Left, node.Right);
         }
 
         private BoundExpression BindSimilarToExpression(SimilarToExpressionSyntax node)
         {
-            var left = BindExpression(node.Left);
-            var right = BindExpression(node.Right);
-            var operatorMethod = BindBinaryOperator(left.Type, right.Type, BoundBinaryOperatorKind.SimilarTo);
-            return new BoundBinaryExpression(left, operatorMethod, right);
+            var negated = node.NotKeyword != null;
+            return BindConditionalExpression(node, negated, BinaryOperatorKind.SimilarTo, node.Left, node.Right);
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax node)
@@ -171,14 +242,16 @@ namespace NQuery.Language.Binding
             var lowerBound = BindExpression(node.LowerBound);
             var upperBound = BindExpression(node.UpperBound);
 
-            var lowerCheckOperatorMethod = BindBinaryOperator(lowerBound.Type, left.Type, BoundBinaryOperatorKind.LessOrEqual);
-            var upperCheckOperatorMethod = BindBinaryOperator(left.Type, upperBound.Type, BoundBinaryOperatorKind.LessOrEqual);
-            var andOperatorMethod = BindBinaryOperator(typeof(bool), typeof(bool), BoundBinaryOperatorKind.LogicalAnd);
+            // TODO: Check errors
+            var lowerCheckOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LessOrEqual, lowerBound, left);
+            var upperCheckOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LessOrEqual, left, upperBound);
+            var andOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LogicalAnd, typeof(bool), typeof(bool));
 
             var lowerExpression = new BoundBinaryExpression(lowerBound, lowerCheckOperatorMethod, left);
             var upperExpression = new BoundBinaryExpression(left, upperCheckOperatorMethod, upperBound);
             var andExpression = new BoundBinaryExpression(lowerExpression, andOperatorMethod, upperExpression);
 
+            // TODO: Insert negation if node.NotKeyword != null
             return andExpression;
         }
 
@@ -193,66 +266,18 @@ namespace NQuery.Language.Binding
             var expression = BindExpression(node.Expression);
             var sourceType = expression.Type;
             var targetType = BindType(node.TypeName);
-            var conversion = Conversion.Classify(sourceType, targetType);
 
+            // TODO: Avoid cascading errors if source or target type couldn't be resolved.
+
+            var conversion = Conversion.Classify(sourceType, targetType);
             if (!conversion.Exists)
                 _diagnostics.ReportCannotConvert(node, sourceType, targetType);
+            else if (conversion.ConversionMethods.Count > 1)
+                _diagnostics.ReportAmbiguousConversion(node, sourceType, targetType);
 
-            // TODO: ERROR: Check for ambiguity where we have more than one conversion method.
+            // TODO: We may want to insert conversion nodes right here.
 
             return new BoundCastExpression(expression, targetType, conversion);
-        }
-
-        private Type BindType(SyntaxToken typeName)
-        {
-            var normalizedTypeName = typeName.IsQuotedIdentifier()
-                                         ? typeName.ValueText
-                                         : typeName.ValueText.ToUpper();
-
-            switch (normalizedTypeName)
-            {
-                case "BOOL":
-                case "BOOLEAN":
-                    return typeof (bool);
-                case "BYTE":
-                    return typeof (byte);
-                case "SBYTE":
-                    return typeof(sbyte);
-                case "CHAR":
-                    return typeof(char);
-                case "SHORT":
-                case "INT16":
-                    return typeof(short);
-                case "USHORT":
-                case "UINT16":
-                    return typeof(ushort);
-                case "INT":
-                case "INT32":
-                    return typeof(int);
-                case "UINT":
-                case "UINT32":
-                    return typeof(uint);
-                case "LONG":
-                case "INT64":
-                    return typeof(long);
-                case "ULONG":
-                case "UINT64":
-                    return typeof(ulong);
-                case "FLOAT":
-                case "SINGLE":
-                    return typeof(float);
-                case "DOUBLE":
-                    return typeof(double);
-                case "DECIMAL":
-                    return typeof(decimal);
-                case "STRING":
-                    return typeof(string);
-                case "OBJECT":
-                    return typeof(object);
-                default:
-                    _diagnostics.ReportUndeclaredType(typeName);
-                    return WellKnownTypes.Unknown;
-            }
         }
 
         private BoundExpression BindCaseExpression(CaseExpressionSyntax node)
@@ -311,7 +336,7 @@ namespace NQuery.Language.Binding
 
             var boundCaseLabels = (from caseLabel in node.CaseLabels
                                    let boundWhen = BindExpression(caseLabel.WhenExpression)
-                                   let operatorMethod = BindBinaryOperator(boundInput.Type, boundWhen.Type, BoundBinaryOperatorKind.Equal)
+                                   let operatorMethod = LookupBinaryOperator(BinaryOperatorKind.Equal, boundInput, boundWhen)
                                    let boundCondition = new BoundBinaryExpression(boundInput, operatorMethod, boundWhen)
                                    let boundThen = BindExpression(caseLabel.ThenExpression)
                                    select new BoundCaseLabel(boundCondition, boundThen)).ToList();
@@ -386,7 +411,7 @@ namespace NQuery.Language.Binding
             return new BoundInExpression(boundExpression, boundArguments);
         }
 
-        private BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
+        private static BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
         {
             return new BoundLiteralExpression(node.Value);
         }
@@ -404,9 +429,7 @@ namespace NQuery.Language.Binding
             }
 
             if (symbols.Length > 1)
-            {
-                // TODO: Report ambiguous match
-            }
+                _diagnostics.ReportAmbiguousVariable(node.Name);
 
             var variableSymbol = symbols[0];
             return new BoundVariableExpression(variableSymbol);
@@ -423,22 +446,22 @@ namespace NQuery.Language.Binding
             }
 
             var name = node.Name;
-            var symbols = LookupName(name).ToArray();
+            var symbols = LookupColumnTableOrVariable(name).ToArray();
 
             if (symbols.Length == 0)
             {
-                _diagnostics.ReportUndeclaredEntity(node);
+                // TODO: Include aggregate here.
+                var isInvocable = LookupSymbols(name).OfType<FunctionSymbol>().Any();
+                if (isInvocable)
+                    _diagnostics.ReportInvocationRequiresParenthesis(name);
+                else
+                    _diagnostics.ReportColumnTableOrVariableNotDeclared(name);
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
             if (symbols.Length > 1)
-            {
-                // TODO: Report ambiguous match                   
-            }
-
-            // TODO: Check that symbol resolves to a table instance, column, or variable
-            // TODO: If it's a function or aggregate report that parenthesis are required
+                _diagnostics.ReportAmbiguousName(name, symbols);
 
             var first = symbols[0];
             return new BoundNameExpression(first, symbols);
@@ -479,9 +502,7 @@ namespace NQuery.Language.Binding
             }
 
             if (propertySymbols.Length > 1)
-            {
-                // TODO: Report ambigious match
-            }
+                _diagnostics.ReportAmbiguousProperty(name);
 
             var propertySymbol = propertySymbols[0];
             return new BoundPropertyAccessExpression(target, propertySymbol);
@@ -497,19 +518,18 @@ namespace NQuery.Language.Binding
                 var errorSymbol = new BadSymbol(columnName.ValueText);
                 return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
             }
-            
+
             if (columnInstances.Length > 1)
-            {
-                // TODO: Return ambiguous match
-            }
+                _diagnostics.ReportAmbiguousColumnInstance(columnName, columnInstances);
 
             var columnInstance = columnInstances.First();
             return new BoundNameExpression(columnInstance, columnInstances);
         }
 
-        private BoundExpression BindCountAllExpression(CountAllExpressionSyntax node)
+        private static BoundExpression BindCountAllExpression()
         {
-            throw new NotImplementedException();
+            // TODO: We should it bind to the COUNT aggregate expression, passing a literal 1.
+            return new BoundLiteralExpression(0);
         }
 
         private BoundExpression BindFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
@@ -517,28 +537,28 @@ namespace NQuery.Language.Binding
             // TODO: Resolve and bind to aggregates
 
             var name = node.Name;
-            var arguments = (from a in node.ArgumentList.Arguments
-                             select BindExpression(a)).ToList();
+            var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToArray();
+            var argumentTypes = arguments.Select(a => a.Type).ToArray();
 
-            var functionSymbols = LookupFunction(name, arguments.Count).ToArray();
+            var result = LookupFunction(name, argumentTypes);
 
-            if (functionSymbols.Length == 0)
+            if (result.Best == null)
             {
-                var argumentTypes = from a in arguments
-                                    select a.Type;
-                _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                if (result.Selected == null)
+                {
+                    _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
+                    var errorSymbol = new BadSymbol(name.ValueText);
+                    return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                }
+                
+                var symbol1 = result.Selected.Signature.Symbol;
+                var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
+                _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
-            if (functionSymbols.Length > 1)
-            {
-                // TODO: Overload resolution
-                // TODO: Report ambigious match
-            }
+            // TODO: We need to convert all arguments
 
-            var functionSymbol = functionSymbols[0];
-            return new BoundFunctionInvocationExpression(arguments, functionSymbol);
+            return new BoundFunctionInvocationExpression(arguments, result);
         }
 
         private BoundExpression BindMethodInvocationExpression(MethodInvocationExpressionSyntax node)
@@ -552,28 +572,28 @@ namespace NQuery.Language.Binding
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
 
-            var arguments = (from a in node.ArgumentList.Arguments
-                             select BindExpression(a)).ToList();
+            var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToArray();
+            var argumentTypes = arguments.Select(a => a.Type).ToArray();
 
-            var methodSymbols = LookupMethod(target.Type, name, arguments.Count).ToArray();
+            var result = LookupMethod(target.Type, name, argumentTypes);
 
-            if (methodSymbols.Length == 0)
+            if (result.Best == null)
             {
-                var argumentTypes = from a in arguments
-                                    select a.Type;
-                _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                if (result.Selected == null)
+                {
+                    _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
+                    var errorSymbol = new BadSymbol(name.ValueText);
+                    return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                }
+                
+                var symbol1 = result.Selected.Signature.Symbol;
+                var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
+                _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
-            if (methodSymbols.Length > 1)
-            {
-                // TODO: Overload resolution
-                // TODO: Report ambigious match
-            }
+            // TODO: We need to convert all arguments
 
-            var methodSymbol = methodSymbols[0];
-            return new BoundMethodInvocationExpression(target, arguments, methodSymbol);
+            return new BoundMethodInvocationExpression(target, arguments, result);
         }
 
         private BoundExpression BindSingleRowSubselect(SingleRowSubselectSyntax node)
@@ -596,11 +616,36 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
         {
+            var left = BindExpression(node.Left);
             var boundQuery = BindQuery(node.Query);
 
-            // TODO: Ensure query has exactly one column
+            if (boundQuery.SelectColumns.Count == 0)
+            {
+                // TODO: Error
+            }
+            else
+            {
+                if (boundQuery.SelectColumns.Count > 1)
+                {
+                    // TODO: Error
+                }
 
-            return new BoundAllAnySubselect(boundQuery);
+                var right = boundQuery.SelectColumns[0].Expression;
+
+                var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
+                var operatorKind = expressionKind.GetBinaryOperatorKind();
+                var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
+                if (result.Best == null)
+                {
+                    if (result.Selected == null)
+                        _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    else
+                        _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                }
+            }
+
+            // TODO: We may need to add a conversion for it
+            return new BoundAllAnySubselect(left, boundQuery);
         }
     }
 }

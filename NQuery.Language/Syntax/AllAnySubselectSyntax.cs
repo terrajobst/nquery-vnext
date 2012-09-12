@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace NQuery.Language
@@ -6,15 +5,17 @@ namespace NQuery.Language
     public sealed class AllAnySubselectSyntax : SubselectExpressionSyntax
     {
         private readonly ExpressionSyntax _left;
+        private readonly SyntaxToken _operatorToken;
         private readonly SyntaxToken _keyword;
         private readonly SyntaxToken _leftParenthesis;
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        public AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _left = left;
+            _operatorToken = operatorToken.WithParent(this);
             _keyword = keyword.WithParent(this);
             _leftParenthesis = leftParenthesis.WithParent(this);
             _query = query;
@@ -23,12 +24,14 @@ namespace NQuery.Language
 
         public override SyntaxKind Kind
         {
+            // TODO: May be we should have different values for ALL, ANY, and SOME?
             get { return SyntaxKind.AllAnySubselect; }
         }
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return _left;
+            yield return _operatorToken;
             yield return _keyword;
             yield return _leftParenthesis;
             yield return _query;
@@ -38,6 +41,11 @@ namespace NQuery.Language
         public ExpressionSyntax Left
         {
             get { return _left; }
+        }
+
+        public SyntaxToken OperatorToken
+        {
+            get { return _operatorToken; }
         }
 
         public SyntaxToken Keyword

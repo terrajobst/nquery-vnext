@@ -1,6 +1,6 @@
 namespace NQuery.Language.Binding
 {
-    internal enum BoundUnaryOperatorKind
+    internal enum UnaryOperatorKind
     {
         Identity,
         Negation,

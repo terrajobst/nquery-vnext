@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
-
+using System.Globalization;
+using System.Linq;
+using NQuery.Language.Binding;
 using NQuery.Language.Symbols;
 
 namespace NQuery.Language
@@ -11,72 +13,102 @@ namespace NQuery.Language
 
         public static void ReportIllegalInputCharacter(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, char character)
         {
-            diagnostics.Add(DiagnosticFactory.IllegalInputCharacter(textSpan, character));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.IllegalInputCharacter, character);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.IllegalInputCharacter, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUnterminatedComment(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            diagnostics.Add(DiagnosticFactory.UnterminatedComment(textSpan));
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.UnterminatedComment, Resources.UnterminatedComment);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUnterminatedString(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            diagnostics.Add(DiagnosticFactory.UnterminatedString(textSpan));
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.UnterminatedString, Resources.UnterminatedString);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUnterminatedQuotedIdentifier(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            diagnostics.Add(DiagnosticFactory.UnterminatedQuotedIdentifier(textSpan));
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.UnterminatedQuotedIdentifier, Resources.UnterminatedQuotedIdentifier);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUnterminatedParenthesizedIdentifier(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            diagnostics.Add(DiagnosticFactory.UnterminatedParenthesizedIdentifier(textSpan));
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.UnterminatedParenthesizedIdentifier, Resources.UnterminatedParenthesizedIdentifier);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUnterminatedDate(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            diagnostics.Add(DiagnosticFactory.UnterminatedDate(textSpan));
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.UnterminatedDate, Resources.UnterminatedDate);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidDate(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidDate(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDate, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidDate, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidInteger(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidInteger(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidInteger, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidInteger, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidReal(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidReal(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDecimal, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidReal, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidBinary(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidBinary(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidBinary, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidBinary, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidOctal(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidOctal(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOctal, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidOctal, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportInvalidHex(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.InvalidHex(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidHex, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidHex, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportNumberTooLarge(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, string tokenText)
         {
-            diagnostics.Add(DiagnosticFactory.NumberTooLarge(textSpan, tokenText));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.NumberTooLarge, tokenText);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.NumberTooLarge, message);
+            diagnostics.Add(diagnostic);
         }
 
         #endregion
 
         #region Parser Errors
+
+        public static void ReportTokenExpected(this ICollection<Diagnostic> diagnostics, SyntaxToken actual, SyntaxKind expected)
+        {
+            var actualText = actual.Kind.GetDisplayText();
+            var expectedText = expected.GetDisplayText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, actualText, expectedText);
+            var diagnostic = new Diagnostic(actual.Span, DiagnosticId.TokenExpected, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportInvalidTypeReference(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, string tokenText)
         //{
@@ -98,10 +130,12 @@ namespace NQuery.Language
         //    diagnostics.Add(DiagnosticFactory.TableReferenceExpected(nodeOrToken, foundTokenText));
         //}
 
-        //public static void ReportInvalidOperatorForAllAny(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, BinaryOperator foundOp)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidOperatorForAllAny(nodeOrToken, foundOp));
-        //}
+        public static SyntaxToken WithInvalidOperatorForAllAnyDiagnostics(this SyntaxToken operatorToken)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOperatorForAllAny, operatorToken.Kind.GetText());
+            var diagnostic = new Diagnostic(operatorToken.Span, DiagnosticId.InvalidOperatorForAllAny, message);
+            return operatorToken.WithDiagnotics(new[] {diagnostic});
+        }
 
         #endregion
 
@@ -109,128 +143,190 @@ namespace NQuery.Language
 
         public static void ReportUndeclaredTable(this ICollection<Diagnostic> diagnostics, NamedTableReferenceSyntax namedTableReference)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredTable(namedTableReference));
+            var tableName = namedTableReference.TableName;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredTable, tableName.ValueText);
+            var diagnostic = new Diagnostic(tableName.Span, DiagnosticId.UndeclaredTable, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredVariable(this ICollection<Diagnostic> diagnostics, VariableExpressionSyntax node)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredVariable(node));
+            var variableName = node.Name;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredVariable, variableName.ValueText);
+            var diagnostic = new Diagnostic(variableName.Span, DiagnosticId.UndeclaredVariable, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredFunction(this ICollection<Diagnostic> diagnostics, FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredFunction(node, argumentTypes));
+            var name = node.Name.ValueText;
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, name, argumentTypeList);
+            var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredFunction, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredMethod(this ICollection<Diagnostic> diagnostics, MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredMethod(node, declaringType, argumentTypes));
+            var name = node.Name.ValueText;
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, name, argumentTypeList);
+            var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredMethod, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredColumn(this ICollection<Diagnostic> diagnostics, PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredColumn(node, tableInstance));
+            var name = node.Name.ValueText;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredColumn, tableInstance.Name, name);
+            var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredColumn, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredProperty(this ICollection<Diagnostic> diagnostics, PropertyAccessExpressionSyntax node, Type type)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredProperty(node, type));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, type.Name, node.Name.ValueText);
+            var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredProperty, message);
+            diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredType(this ICollection<Diagnostic> diagnostics, SyntaxToken typeName)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredType(typeName));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredType, typeName.ValueText);
+            var diagnostic = new Diagnostic(typeName.Span, DiagnosticId.UndeclaredType, message);
+            diagnostics.Add(diagnostic);
         }
 
-        public static void ReportUndeclaredEntity(this ICollection<Diagnostic> diagnostics, NameExpressionSyntax node)
+        public static void ReportColumnTableOrVariableNotDeclared(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
         {
-            diagnostics.Add(DiagnosticFactory.UndeclaredEntity(node));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.ColumnTableOrVariableNotDeclared, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.ColumnTableOrVariableNotDeclared, message);
+            diagnostics.Add(diagnostic);
         }
 
-        //public static void ReportAmbiguousReference(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, Binding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousReference(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousName(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<Symbol> symbols)
+        {
+            var symbol1 = symbols[0];
+            var symbol2 = symbols[1];
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousReference, name.ValueText, symbol1, symbol2);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousReference, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAmbiguousTableRef(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, TableRefBinding[] candidates)
         //{
         //    diagnostics.Add(DiagnosticFactory.AmbiguousTableRef(nodeOrToken, identifier, candidates));
         //}
 
-        //public static void ReportAmbiguousColumnRef(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, ColumnRefBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousColumnRef(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousColumnInstance(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<ColumnInstanceSymbol> candidates)
+        {
+            var symbol1 = candidates[0];
+            var symbol2 = candidates[1];
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousColumnRef, name.ValueText, symbol1, symbol2);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousColumnRef, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, TableBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousTable(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTable, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousTable, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousConstant(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, ConstantBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousConstant(nodeOrToken, identifier, candidates));
-        //}
-
-        //public static void ReportAmbiguousParameter(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, ParameterBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousParameter(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousVariable(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousVariable, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousVariable, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAmbiguousAggregate(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, AggregateBinding[] candidates)
         //{
         //    diagnostics.Add(DiagnosticFactory.AmbiguousAggregate(nodeOrToken, identifier, candidates));
         //}
 
-        //public static void ReportAmbiguousProperty(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, PropertyBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousProperty(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousProperty(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousProperty, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousProperty, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAmbiguousType(this ICollection<Diagnostic> diagnostics, string typeReference, Type[] candidates)
         //{
         //    diagnostics.Add(DiagnosticFactory.AmbiguousType(typeReference, candidates));
         //}
 
-        //public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, InvocableBinding function1, InvocableBinding function2, Type[] argumentTypes)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousInvocation(function1, function2, argumentTypes));
-        //}
+        public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, InvocableSymbol symbol1, InvocableSymbol symbol2, IList<Type> argumentTypes)
+        {
+            if (argumentTypes.Count == 0)
+            {
+                var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocationNoArgs, symbol1, symbol2);
+                var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousInvocation, message);
+                diagnostics.Add(diagnostic);
+            }
+            else
+            {
+                var argumentTypeString = string.Join(",", argumentTypes.Select(t => t.Name));
+                var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocation, symbol1, symbol2, argumentTypeString);
+                var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousInvocation, message);
+                diagnostics.Add(diagnostic);
+            }
+        }
 
-        //public static void ReportInvocationRequiresParenthesis(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, InvocableBinding[] invocableGroup)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvocationRequiresParenthesis(nodeOrToken, invocableGroup));
-        //}
+        public static void ReportInvocationRequiresParenthesis(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvocationRequiresParenthesis, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.InvocationRequiresParenthesis, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCannotApplyOperator(this ICollection<Diagnostic> diagnostics, UnaryOperator op, Type type)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CannotApplyOperator(op, type));
-        //}
+        public static void ReportCannotApplyUnaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, UnaryOperatorKind operatorKind, Type type)
+        {
+            var operatorText = operatorKind.GetOperatorText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyUnaryOperator, operatorText, type.Name);
+            var diagnostic = new Diagnostic(span, DiagnosticId.CannotApplyUnaryOperator, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousOperator(this ICollection<Diagnostic> diagnostics, UnaryOperator op, Type type, MethodInfo opMethod1, MethodInfo opMethod2)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousOperator(op, type, opMethod1, opMethod2));
-        //}
+        public static void ReportAmbiguousUnaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, UnaryOperatorKind operatorKind, Type type)
+        {
+            var operatorText = operatorKind.GetOperatorText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousUnaryOp, operatorText, type.Name);
+            var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousUnaryOperator, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportCannotApplyOperator(this ICollection<Diagnostic> diagnostics, BinaryOperator op, Type leftType, Type rightType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.CannotApplyOperator(op, leftType, rightType));
-        //}
+        public static void ReportCannotApplyBinaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, BinaryOperatorKind operatorKind, Type leftType, Type rightType)
+        {
+            var operatorText = operatorKind.GetOperatorText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyBinaryOp, operatorText, leftType.Name, rightType.Name);
+            var diagnostic = new Diagnostic(span, DiagnosticId.CannotApplyBinaryOperator, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousOperatorOverloading(this ICollection<Diagnostic> diagnostics, BinaryOperator op, Type leftType, Type rightType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousOperatorOverloading(op, leftType, rightType));
-        //}
+        public static void ReportAmbiguousBinaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, BinaryOperatorKind operatorKind, Type leftType, Type rightType)
+        {
+            var operatorText = operatorKind.GetOperatorText();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousBinaryOperator, operatorText, leftType.Name, rightType.Name);
+            var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousBinaryOperator, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousOperator(this ICollection<Diagnostic> diagnostics, BinaryOperator op, Type leftType, Type rightType, MethodInfo opMethod1, MethodInfo opMethod2)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousOperator(op, leftType, rightType, opMethod1, opMethod2));
-        //}
+        public static void ReportAmbiguousConversion(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousConversion, sourceType.Name, targetType.Name);
+            var diagnostic = new Diagnostic(expression.Span, DiagnosticId.AmbiguousConversion, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAmbiguousOperator(this ICollection<Diagnostic> diagnostics, CastingOperatorType castingOperatorType, MethodInfo targetFromSource, MethodInfo sourceToTarget)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousOperator(castingOperatorType, targetFromSource, sourceToTarget));
-        //}
+        public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceType.Name, targetType.Name);
+            var diagnostic = new Diagnostic(expression.TypeName.Span, DiagnosticId.CannotConvert, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAsteriskModifierNotAllowed(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, ExpressionNode functionInvocation)
         //{
@@ -251,11 +347,6 @@ namespace NQuery.Language
         //{
         //    diagnostics.Add(DiagnosticFactory.CannotFoldConstants(exception));
         //}
-
-        public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
-        {
-            diagnostics.Add(DiagnosticFactory.CannotConvert(expression, sourceType, targetType));
-        }
 
         #endregion
 

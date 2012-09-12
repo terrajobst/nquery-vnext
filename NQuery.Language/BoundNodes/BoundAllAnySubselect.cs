@@ -9,7 +9,7 @@ namespace NQuery.Language.BoundNodes
         private readonly BoundQuery _boundQuery;
         private readonly Type _type;
 
-        public BoundAllAnySubselect(BoundQuery boundQuery)
+        public BoundAllAnySubselect(BoundExpression left, BoundQuery boundQuery)
         {
             _boundQuery = boundQuery;
             var firstColumn = boundQuery.SelectColumns.FirstOrDefault();

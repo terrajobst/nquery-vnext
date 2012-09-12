@@ -151,20 +151,11 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Binary operator &apos;{0}&apos; invocation on types &apos;{1}&apos; and &apos;{2}&apos; is ambiguous between method &apos;{3}&apos; and &apos;{4}&apos;..
+        ///   Looks up a localized string similar to Binary operator &apos;{0}&apos; invocation on types &apos;{1}&apos; and &apos;{2}&apos; is ambiguous..
         /// </summary>
         internal static string AmbiguousBinaryOperator {
             get {
                 return ResourceManager.GetString("AmbiguousBinaryOperator", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} operator is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
-        /// </summary>
-        internal static string AmbiguousCastingOperator {
-            get {
-                return ResourceManager.GetString("AmbiguousCastingOperator", resourceCulture);
             }
         }
         
@@ -187,6 +178,15 @@ namespace NQuery.Language {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ambiguous conversions when converting from &apos;{0}&apos; to &apos;{1}&apos;.
+        /// </summary>
+        internal static string AmbiguousConversion {
+            get {
+                return ResourceManager.GetString("AmbiguousConversion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invocation with argument types &apos;{2}&apos; is ambiguous between &apos;{0}&apos; and &apos;{1}&apos;..
         /// </summary>
         internal static string AmbiguousInvocation {
@@ -205,25 +205,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The call to user defined operator &apos;{0}&apos; on types &apos;{1}&apos; and &apos;{2}&apos; is ambiguous..
-        /// </summary>
-        internal static string AmbiguousOperatorOverloading {
-            get {
-                return ResourceManager.GetString("AmbiguousOperatorOverloading", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Parameter name {0} is ambiguous between {1}..
-        /// </summary>
-        internal static string AmbiguousParameter {
-            get {
-                return ResourceManager.GetString("AmbiguousParameter", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Property name {0} is ambiguous between {1}..
+        ///   Looks up a localized string similar to Property &apos;{0}&apos; is ambiguous..
         /// </summary>
         internal static string AmbiguousProperty {
             get {
@@ -232,7 +214,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Name &apos;{0}&apos; is ambiguous between &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Name &apos;{0}&apos; is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
         internal static string AmbiguousReference {
             get {
@@ -268,11 +250,20 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unary operator &apos;{0}&apos; invocation on type &apos;{1}&apos; is ambiguous between method &apos;{2}&apos; and &apos;{3}&apos;..
+        ///   Looks up a localized string similar to Unary operator &apos;{0}&apos; invocation on type &apos;{1}&apos; is ambiguous..
         /// </summary>
         internal static string AmbiguousUnaryOp {
             get {
                 return ResourceManager.GetString("AmbiguousUnaryOp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable &apos;{0}&apos; is ambiguous..
+        /// </summary>
+        internal static string AmbiguousVariable {
+            get {
+                return ResourceManager.GetString("AmbiguousVariable", resourceCulture);
             }
         }
         
@@ -351,9 +342,9 @@ namespace NQuery.Language {
         /// <summary>
         ///   Looks up a localized string similar to Cannot apply unary operator &apos;{0}&apos; on type &apos;{1}&apos;..
         /// </summary>
-        internal static string CannotApplyUnaryOp {
+        internal static string CannotApplyUnaryOperator {
             get {
-                return ResourceManager.GetString("CannotApplyUnaryOp", resourceCulture);
+                return ResourceManager.GetString("CannotApplyUnaryOperator", resourceCulture);
             }
         }
         
@@ -435,6 +426,15 @@ namespace NQuery.Language {
         internal static string ColumnBindingGetValueFailed {
             get {
                 return ResourceManager.GetString("ColumnBindingGetValueFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The identifier &apos;{0}&apos; does not refer to a column, table, or variable..
+        /// </summary>
+        internal static string ColumnTableOrVariableNotDeclared {
+            get {
+                return ResourceManager.GetString("ColumnTableOrVariableNotDeclared", resourceCulture);
             }
         }
         
@@ -1812,15 +1812,6 @@ namespace NQuery.Language {
         internal static string UndeclaredColumn {
             get {
                 return ResourceManager.GetString("UndeclaredColumn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The identifier &apos;{0}&apos; does not refer to a column, table, or variable..
-        /// </summary>
-        internal static string UndeclaredEntity {
-            get {
-                return ResourceManager.GetString("UndeclaredEntity", resourceCulture);
             }
         }
         

@@ -32,5 +32,10 @@ namespace NQuery.Language.Symbols
             return from p in Parameters
                    select p.Type;
         }
+    
+        public override string ToString()
+        {
+            return string.Format("{0}({1}) AS {2}", Name, string.Join(", ", Parameters), Type.Name);
+        }
     }
 }

@@ -1,6 +1,6 @@
 namespace NQuery.Language.Binding
 {
-    internal enum BoundBinaryOperatorKind
+    internal enum BinaryOperatorKind
     {
         Power,
         Multiply,
@@ -19,10 +19,9 @@ namespace NQuery.Language.Binding
         BitOr,
         LeftShift,
         RightShift,
-        In,
         Like,
         SimilarTo,
-        Soundex,
+        Soundslike,
         LogicalAnd,
         LogicalOr
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NQuery.Language.Binding;
 
 namespace NQuery.Language
 {
@@ -552,7 +553,7 @@ namespace NQuery.Language
             var comparison = token.IsQuotedIdentifier()
                                  ? StringComparison.Ordinal
                                  : StringComparison.OrdinalIgnoreCase;
-            return string.Equals(token.ValueText, text, comparison);
+            return String.Equals(token.ValueText, text, comparison);
         }
 
         public static bool IsTerminated(this SyntaxToken token)
@@ -817,6 +818,184 @@ namespace NQuery.Language
                 default:
                     return 0;
             }
+        }
+
+        internal static UnaryOperatorKind GetUnaryOperatorKind(this SyntaxKind expressionKind)
+        {
+            switch (expressionKind)
+            {
+                case SyntaxKind.ComplementExpression:
+                    return UnaryOperatorKind.Complement;
+                case SyntaxKind.IdentityExpression:
+                    return UnaryOperatorKind.Identity;
+                case SyntaxKind.NegationExpression:
+                    return UnaryOperatorKind.Negation;
+                case SyntaxKind.LogicalNotExpression:
+                    return UnaryOperatorKind.LogicalNot;
+                default:
+                    throw new ArgumentOutOfRangeException("expressionKind");
+            }
+        }
+
+        internal static SyntaxKind GetSyntaxKind(this UnaryOperatorKind operatorKind)
+        {
+            switch (operatorKind)
+            {
+                case UnaryOperatorKind.Complement:
+                    return SyntaxKind.ComplementExpression;
+                case UnaryOperatorKind.Identity:
+                    return SyntaxKind.IdentityExpression;
+                case UnaryOperatorKind.Negation:
+                    return SyntaxKind.NegationExpression;
+                case UnaryOperatorKind.LogicalNot:
+                    return SyntaxKind.LogicalNotExpression;
+                default:
+                    throw new ArgumentOutOfRangeException("operatorKind");
+            }
+        }
+
+        internal static BinaryOperatorKind GetBinaryOperatorKind(this SyntaxKind expressionKind)
+        {
+            switch (expressionKind)
+            {
+                case SyntaxKind.BitAndExpression:
+                    return BinaryOperatorKind.BitAnd;
+                case SyntaxKind.BitOrExpression:
+                    return BinaryOperatorKind.BitOr;
+                case SyntaxKind.BitXorExpression:
+                    return BinaryOperatorKind.BitXor;
+                case SyntaxKind.AddExpression:
+                    return BinaryOperatorKind.Add;
+                case SyntaxKind.SubExpression:
+                    return BinaryOperatorKind.Sub;
+                case SyntaxKind.MultiplyExpression:
+                    return BinaryOperatorKind.Multiply;
+                case SyntaxKind.DivideExpression:
+                    return BinaryOperatorKind.Divide;
+                case SyntaxKind.ModulusExpression:
+                    return BinaryOperatorKind.Modulus;
+                case SyntaxKind.PowerExpression:
+                    return BinaryOperatorKind.Power;
+                case SyntaxKind.EqualExpression:
+                    return BinaryOperatorKind.Equal;
+                case SyntaxKind.NotEqualExpression:
+                    return BinaryOperatorKind.NotEqual;
+                case SyntaxKind.LessExpression:
+                    return BinaryOperatorKind.Less;
+                case SyntaxKind.NotGreaterExpression:
+                case SyntaxKind.LessOrEqualExpression:
+                    return BinaryOperatorKind.LessOrEqual;
+                case SyntaxKind.GreaterExpression:
+                    return BinaryOperatorKind.Greater;
+                case SyntaxKind.NotLessExpression:
+                case SyntaxKind.GreaterOrEqualExpression:
+                    return BinaryOperatorKind.GreaterOrEqual;
+                case SyntaxKind.LeftShiftExpression:
+                    return BinaryOperatorKind.LeftShift;
+                case SyntaxKind.RightShiftExpression:
+                    return BinaryOperatorKind.RightShift;
+                case SyntaxKind.LogicalAndExpression:
+                    return BinaryOperatorKind.LogicalAnd;
+                case SyntaxKind.LogicalOrExpression:
+                    return BinaryOperatorKind.LogicalOr;
+                case SyntaxKind.LikeExpression:
+                    return BinaryOperatorKind.Like;
+                case SyntaxKind.SoundslikeExpression:
+                    return BinaryOperatorKind.Soundslike;
+                case SyntaxKind.SimilarToExpression:
+                    return BinaryOperatorKind.SimilarTo;
+                default:
+                    throw new ArgumentOutOfRangeException("expressionKind");
+            }
+        }
+
+        internal static SyntaxKind GetSyntaxKind(this BinaryOperatorKind operatorKind)
+        {
+            switch (operatorKind)
+            {
+                case BinaryOperatorKind.BitAnd:
+                    return SyntaxKind.BitAndExpression;
+                case BinaryOperatorKind.BitOr:
+                    return SyntaxKind.BitOrExpression;
+                case BinaryOperatorKind.BitXor:
+                    return SyntaxKind.BitXorExpression;
+                case BinaryOperatorKind.Add:
+                    return SyntaxKind.AddExpression;
+                case BinaryOperatorKind.Sub:
+                    return SyntaxKind.SubExpression;
+                case BinaryOperatorKind.Multiply:
+                    return SyntaxKind.MultiplyExpression;
+                case BinaryOperatorKind.Divide:
+                    return SyntaxKind.DivideExpression;
+                case BinaryOperatorKind.Modulus:
+                    return SyntaxKind.ModulusExpression;
+                case BinaryOperatorKind.Power:
+                    return SyntaxKind.PowerExpression;
+                case BinaryOperatorKind.Equal:
+                    return SyntaxKind.EqualExpression;
+                case BinaryOperatorKind.NotEqual:
+                    return SyntaxKind.NotEqualExpression;
+                case BinaryOperatorKind.Less:
+                    return SyntaxKind.LessExpression;
+                case BinaryOperatorKind.LessOrEqual:
+                    return SyntaxKind.LessOrEqualExpression;
+                case BinaryOperatorKind.Greater:
+                    return SyntaxKind.GreaterExpression;
+                case BinaryOperatorKind.GreaterOrEqual:
+                    return SyntaxKind.GreaterOrEqualExpression;
+                case BinaryOperatorKind.LeftShift:
+                    return SyntaxKind.LeftShiftExpression;
+                case BinaryOperatorKind.RightShift:
+                    return SyntaxKind.RightShiftExpression;
+                case BinaryOperatorKind.LogicalAnd:
+                    return SyntaxKind.LogicalAndExpression;
+                case BinaryOperatorKind.LogicalOr:
+                    return SyntaxKind.LogicalOrExpression;
+                case BinaryOperatorKind.Like:
+                    return SyntaxKind.LikeExpression;
+                case BinaryOperatorKind.Soundslike:
+                    return SyntaxKind.SoundslikeExpression;
+                case BinaryOperatorKind.SimilarTo:
+                    return SyntaxKind.SimilarToExpression;
+                default:
+                    throw new ArgumentOutOfRangeException("operatorKind");
+            }
+        }
+
+        internal static string GetOperatorText(this UnaryOperatorKind operatorKind)
+        {
+            var syntaxKind = operatorKind.GetSyntaxKind();
+            var operatorText = syntaxKind.GetText();
+            return operatorText;
+        }
+
+        internal static string GetOperatorText(this BinaryOperatorKind operatorKind)
+        {
+            switch (operatorKind)
+            {
+                case BinaryOperatorKind.Like:
+                    return SyntaxKind.LikeKeyword.GetText();
+                case BinaryOperatorKind.Soundslike:
+                    return SyntaxKind.SoundslikeKeyword.GetText();
+                case BinaryOperatorKind.SimilarTo:
+                    return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
+                default:
+                    var syntaxKind = operatorKind.GetSyntaxKind();
+                    var operatorText = syntaxKind.GetText();
+                    return operatorText;
+            }
+        }
+
+        public static bool IsValidAllAnyOperator(this SyntaxKind binaryExpression)
+        {
+            return binaryExpression == SyntaxKind.EqualExpression ||
+                   binaryExpression == SyntaxKind.NotEqualExpression ||
+                   binaryExpression == SyntaxKind.NotLessExpression ||
+                   binaryExpression == SyntaxKind.NotGreaterExpression ||
+                   binaryExpression == SyntaxKind.LessExpression ||
+                   binaryExpression == SyntaxKind.LessOrEqualExpression ||
+                   binaryExpression == SyntaxKind.GreaterExpression ||
+                   binaryExpression == SyntaxKind.GreaterOrEqualExpression;
         }
     }
 }

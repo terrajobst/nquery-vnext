@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
+using NQuery.Language.Runtime;
 using NQuery.Language.Symbols;
 
 namespace NQuery.Language
@@ -9,7 +9,7 @@ namespace NQuery.Language
         public DataContextBuilder()
         {
             Tables = new List<TableSymbol>();
-            Functions = new List<FunctionSymbol>();
+            Functions = new List<FunctionSymbol>(BuiltInFunctions.GetFunctions());
             Variables = new List<VariableSymbol>();
             PropertyProviders = new TypeRegistry<IPropertyProvider>();
             MethodProviders = new TypeRegistry<IMethodProvider>();

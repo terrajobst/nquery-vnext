@@ -21,5 +21,10 @@ namespace NQuery.Language.Symbols
         {
             get { return _type; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} AS {1}", Name, Type.Name);
+        }
     }
 }

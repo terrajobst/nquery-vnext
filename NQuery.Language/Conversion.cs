@@ -18,18 +18,19 @@ namespace NQuery.Language
 
         private static readonly bool[,] ImplicitNumericConversions = new[,]
         {
-            /*               SByte     Byte     Short     UShort     Int     UInt     Long     ULong     Char     Float     Double */
-            /* SByte  */  {  N,        N,       Y,        N,         Y,      N,       Y,       N,        N,       Y,        Y      },
-            /* Byte   */  {  N,        N,       Y,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y      },
-            /* Short  */  {  N,        N,       N,        N,         Y,      N,       Y,       N,        N,       Y,        Y      },
-            /* UShort */  {  N,        N,       N,        N,         Y,      Y,       Y,       Y,        N,       Y,        Y      },
-            /* Int    */  {  N,        N,       N,        N,         N,      N,       Y,       N,        N,       Y,        Y      },
-            /* UInt   */  {  N,        N,       N,        N,         N,      N,       Y,       Y,        N,       Y,        Y      },
-            /* Long   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y      },
-            /* ULong  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y      },
-            /* Char   */  {  N,        N,       N,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y      },
-            /* Float  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        Y      },
-            /* Double */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N      }
+            /*                SByte     Byte     Short     UShort     Int     UInt     Long     ULong     Char     Float     Double      Decimal*/
+            /* SByte   */  {  N,        N,       Y,        N,         Y,      N,       Y,       N,        N,       Y,        Y,           Y},
+            /* Byte    */  {  N,        N,       Y,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
+            /* Short   */  {  N,        N,       N,        N,         Y,      N,       Y,       N,        N,       Y,        Y,           Y},
+            /* UShort  */  {  N,        N,       N,        N,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
+            /* Int     */  {  N,        N,       N,        N,         N,      N,       Y,       N,        N,       Y,        Y,           Y},
+            /* UInt    */  {  N,        N,       N,        N,         N,      N,       Y,       Y,        N,       Y,        Y,           Y},
+            /* Long    */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y,           Y},
+            /* ULong   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y,           Y},
+            /* Char    */  {  N,        N,       N,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
+            /* Float   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        Y,           N},
+            /* Double  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N,           N},
+            /* Decimal */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N,           N}
         };
 
         private readonly bool _exists;
@@ -203,6 +204,45 @@ namespace NQuery.Language
                 return false;
 
             return parameterInfos[0].ParameterType == sourceType;
+        }
+
+        internal static int Compare(Type xType, Conversion xConversion, Type yType, Conversion yConversion)
+        {
+            if (xConversion.IsIdentity && !yConversion.IsIdentity ||
+                xConversion.IsImplicit && yConversion.IsExplicit)
+                return -1;
+
+            if (!xConversion.IsIdentity && yConversion.IsIdentity ||
+                xConversion.IsExplicit && yConversion.IsImplicit)
+                return 1;
+
+            var xTypeToYType = Classify(xType, yType);
+            var yTypeToXType = Classify(yType, xType);
+
+            if (xTypeToYType.IsImplicit && yTypeToXType.IsExplicit)
+                return -1;
+
+            if (xTypeToYType.IsExplicit && yTypeToXType.IsImplicit)
+                return 1;
+
+            var xKnown = xType.GetKnownType();
+            var yKnown = yType.GetKnownType();
+
+            if (xKnown != null && yKnown != null)
+            {
+                var x = xKnown.Value;
+                var y = yKnown.Value;
+                if (x.IsNumericType() && y.IsNumericType())
+                {
+                    if (x.IsSignedNumericType() && y.IsUnsignedNumericType())
+                        return -1;
+
+                    if (x.IsUnsignedNumericType() && y.IsSignedNumericType())
+                        return 1;
+                }
+            }
+
+            return 0;
         }
     }
 }

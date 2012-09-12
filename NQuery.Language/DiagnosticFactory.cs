@@ -8,99 +8,13 @@ namespace NQuery.Language
 {
     internal static class DiagnosticFactory
     {
-        #region Lexer CompilationErrors
-
-        public static Diagnostic IllegalInputCharacter(TextSpan textSpan, char character)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.IllegalInputCharacter, character);
-            return new Diagnostic(textSpan, DiagnosticId.IllegalInputCharacter, message);
-        }
-
-        public static Diagnostic UnterminatedComment(TextSpan textSpan)
-        {
-            return new Diagnostic(textSpan, DiagnosticId.UnterminatedComment, Resources.UnterminatedComment);
-        }
-
-        public static Diagnostic UnterminatedString(TextSpan textSpan)
-        {
-            return new Diagnostic(textSpan, DiagnosticId.UnterminatedString, Resources.UnterminatedString);
-        }
-
-        public static Diagnostic UnterminatedQuotedIdentifier(TextSpan textSpan)
-        {
-            return new Diagnostic(textSpan, DiagnosticId.UnterminatedQuotedIdentifier, Resources.UnterminatedQuotedIdentifier);
-        }
-
-        public static Diagnostic UnterminatedParenthesizedIdentifier(TextSpan textSpan)
-        {
-            return new Diagnostic(textSpan, DiagnosticId.UnterminatedParenthesizedIdentifier, Resources.UnterminatedParenthesizedIdentifier);
-        }
-
-        public static Diagnostic UnterminatedDate(TextSpan textSpan)
-        {
-            return new Diagnostic(textSpan, DiagnosticId.UnterminatedDate, Resources.UnterminatedDate);
-        }
-
-        public static Diagnostic InvalidDate(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDate, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidDate, message);
-        }
-
-        public static Diagnostic InvalidInteger(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidInteger, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidInteger, message);
-        }
-
-        public static Diagnostic InvalidReal(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDecimal, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidReal, message);
-        }
-
-        public static Diagnostic InvalidBinary(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidBinary, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidBinary, message);
-        }
-
-        public static Diagnostic InvalidOctal(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOctal, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidOctal, message);
-        }
-
-        public static Diagnostic InvalidHex(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidHex, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.InvalidHex, message);
-        }
-
-        public static Diagnostic NumberTooLarge(TextSpan textSpan, string tokenText)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.NumberTooLarge, tokenText);
-            return new Diagnostic(textSpan, DiagnosticId.NumberTooLarge, message);
-        }
-
-        #endregion
-
         #region Parser Errors
-
 
         //public static Diagnostic InvalidTypeReference(SyntaxNodeOrToken nodeOrToken, string tokenText)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidTypeReference, tokenText);
         //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidTypeReference, message);
         //}
-
-        public static Diagnostic TokenExpected(SyntaxToken actual, SyntaxKind expected)
-        {
-            var actualText = actual.Kind.GetDisplayText();
-            var expectedText = expected.GetDisplayText();
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, actualText, expectedText);
-            return new Diagnostic(actual.Span, DiagnosticId.TokenExpected, message);
-        }
 
         //public static Diagnostic SimpleExpressionExpected(SyntaxNodeOrToken nodeOrToken, string tokenText)
         //{
@@ -114,106 +28,14 @@ namespace NQuery.Language
         //    return new Diagnostic(nodeOrToken, DiagnosticId.TableReferenceExpected, message);
         //}
 
-        //public static Diagnostic InvalidOperatorForAllAny(SyntaxNodeOrToken nodeOrToken, BinaryOperator foundOp)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidOperatorForAllAny, foundOp.TokenText);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidOperatorForAllAny, message);
-        //}
-
         #endregion
 
         #region Resolving/Evaluation Errors
-
-        public static Diagnostic UndeclaredTable(NamedTableReferenceSyntax namedTableReference)
-        {
-            var tableName = namedTableReference.TableName;
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredTable, tableName.Text);
-            return new Diagnostic(tableName.Span, DiagnosticId.UndeclaredTable, message);
-        }
-
-        public static Diagnostic UndeclaredVariable(VariableExpressionSyntax node)
-        {
-            var variableName = node.Name;
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredVariable, variableName.Text);
-            return new Diagnostic(variableName.Span, DiagnosticId.UndeclaredVariable, message);
-        }
-
-        public static Diagnostic UndeclaredFunction(FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
-        {
-            var name = node.Name.ValueText;
-            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, name, argumentTypeList);
-            return new Diagnostic(node.Span, DiagnosticId.UndeclaredFunction, message);
-        }
-
-        public static Diagnostic UndeclaredMethod(MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
-        {
-            var name = node.Name.Text;
-            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, name, argumentTypeList);
-            return new Diagnostic(node.Span, DiagnosticId.UndeclaredMethod, message);
-        }
-
-        public static Diagnostic UndeclaredColumn(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
-        {
-            var name = node.Name.Text;
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredColumn, tableInstance.Name, name);
-            return new Diagnostic(node.Span, DiagnosticId.UndeclaredColumn, message);
-        }
-
-        public static Diagnostic UndeclaredProperty(PropertyAccessExpressionSyntax node, Type type)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, type.Name, node.Name.Text);
-            return new Diagnostic(node.Span, DiagnosticId.UndeclaredProperty, message);
-        }
-
-        public static Diagnostic UndeclaredType(SyntaxToken typeName)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredType, typeName.ValueText);
-            return new Diagnostic(typeName.Span, DiagnosticId.UndeclaredType, message);
-        }
-
-        public static Diagnostic UndeclaredEntity(NameExpressionSyntax node)
-        {
-            var name = node.Name.Text;
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredEntity, name);
-            return new Diagnostic(node.Span, DiagnosticId.UndeclaredEntity, message);
-        }
-
-        //public static Diagnostic AmbiguousReference(SyntaxNodeOrToken nodeOrToken, Identifier identifier, Binding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousReference, identifier, FormattingHelpers.FormatBindingListWithCategory(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousReference, message);
-        //}
 
         //public static Diagnostic AmbiguousTableRef(SyntaxNodeOrToken nodeOrToken, Identifier identifier, TableRefBinding[] candidates)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTableRef, identifier, FormattingHelpers.FormatBindingList(candidates));
         //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousTableRef, message);
-        //}
-
-        //public static Diagnostic AmbiguousColumnRef(SyntaxNodeOrToken nodeOrToken, Identifier identifier, ColumnRefBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousColumnRef, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousColumnRef, message);
-        //}
-
-        //public static Diagnostic AmbiguousTable(SyntaxNodeOrToken nodeOrToken, Identifier identifier, TableBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTable, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousTable, message);
-        //}
-
-        //public static Diagnostic AmbiguousConstant(SyntaxNodeOrToken nodeOrToken, Identifier identifier, ConstantBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousConstant, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousConstant, message);
-        //}
-
-        //public static Diagnostic AmbiguousParameter(SyntaxNodeOrToken nodeOrToken, Identifier identifier, ParameterBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousParameter, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousParameter, message);
         //}
 
         //public static Diagnostic AmbiguousAggregate(SyntaxNodeOrToken nodeOrToken, Identifier identifier, AggregateBinding[] candidates)
@@ -222,103 +44,10 @@ namespace NQuery.Language
         //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousAggregate, message);
         //}
 
-        //public static Diagnostic AmbiguousProperty(SyntaxNodeOrToken nodeOrToken, Identifier identifier, PropertyBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousProperty, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousProperty, message);
-        //}
-
         //public static Diagnostic AmbiguousType(string typeReference, Type[] candidates)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousType, typeReference, FormattingHelpers.FormatFullyQualifiedTypeList(candidates));
         //    return new Diagnostic(DiagnosticId.AmbiguousType, message);
-        //}
-
-        //public static Diagnostic AmbiguousInvocation(InvocableBinding function1, InvocableBinding function2, Type[] argumentTypes)
-        //{
-        //    if (argumentTypes.Length == 0)
-        //    {
-        //        var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocationNoArgs, function1.GetFullName(), function2.GetFullName());
-        //        return new Diagnostic(DiagnosticId.AmbiguousInvocation, message);
-        //    }
-        //    else
-        //    {
-        //        var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocation, function1.GetFullName(), function2.GetFullName(), FormattingHelpers.FormatTypeList(argumentTypes));
-        //        return new Diagnostic(DiagnosticId.AmbiguousInvocation, message);
-        //    }
-        //}
-
-        //public static Diagnostic InvocationRequiresParenthesis(SyntaxNodeOrToken nodeOrToken, InvocableBinding[] invocableGroup)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvocationRequiresParenthesis, invocableGroup[0].GetFullName());
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvocationRequiresParenthesis, message);
-        //}
-
-        //public static Diagnostic CannotApplyOperator(UnaryOperator op, Type type)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyUnaryOp, op.TokenText, FormattingHelpers.FormatType(type));
-        //    return new Diagnostic(DiagnosticId.CannotApplyUnaryOperator, message);
-        //}
-
-        //public static Diagnostic AmbiguousOperator(UnaryOperator op, Type type, MethodInfo opMethod1, MethodInfo opMethod2)
-        //{
-        //    var message = String.Format(
-        //        CultureInfo.CurrentCulture,
-        //        Resources.AmbiguousUnaryOp,
-        //        op.TokenText,
-        //        FormattingHelpers.FormatType(type),
-        //        FormattingHelpers.FormatMethodInfo(opMethod1),
-        //        FormattingHelpers.FormatMethodInfo(opMethod2)
-        //        );
-
-        //    return new Diagnostic(DiagnosticId.AmbiguousUnaryOperator, message);
-        //}
-
-        //public static Diagnostic CannotApplyOperator(BinaryOperator op, Type leftType, Type rightType)
-        //{
-        //    var message = String.Format(
-        //        CultureInfo.CurrentCulture,
-        //        Resources.CannotApplyBinaryOp,
-        //        op.TokenText,
-        //        FormattingHelpers.FormatType(leftType),
-        //        FormattingHelpers.FormatType(rightType)
-        //        );
-
-        //    return new Diagnostic(DiagnosticId.CannotApplyBinaryOperator, message);
-        //}
-
-        //public static Diagnostic AmbiguousOperatorOverloading(BinaryOperator op, Type leftType, Type rightType)
-        //{
-        //    var message = String.Format(
-        //        CultureInfo.CurrentCulture,
-        //        Resources.AmbiguousOperatorOverloading,
-        //        op.TokenText,
-        //        FormattingHelpers.FormatType(leftType),
-        //        FormattingHelpers.FormatType(rightType)
-        //        );
-
-        //    return new Diagnostic(DiagnosticId.AmbiguousOperatorOverloading, message);
-        //}
-
-        //public static Diagnostic AmbiguousOperator(BinaryOperator op, Type leftType, Type rightType, MethodInfo opMethod1, MethodInfo opMethod2)
-        //{
-        //    var message = String.Format(
-        //        CultureInfo.CurrentCulture,
-        //        Resources.AmbiguousBinaryOperator,
-        //        op.TokenText,
-        //        FormattingHelpers.FormatType(leftType),
-        //        FormattingHelpers.FormatType(rightType),
-        //        FormattingHelpers.FormatMethodInfo(opMethod1),
-        //        FormattingHelpers.FormatMethodInfo(opMethod2)
-        //        );
-
-        //    return new Diagnostic(DiagnosticId.AmbiguousBinaryOperator, message);
-        //}
-
-        //public static Diagnostic AmbiguousOperator(CastingOperatorType castingOperatorType, MethodInfo targetFromSource, MethodInfo sourceToTarget)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousCastingOperator, castingOperatorType, FormattingHelpers.FormatMethodInfo(targetFromSource), FormattingHelpers.FormatMethodInfo(sourceToTarget));
-        //    return new Diagnostic(DiagnosticId.AmbiguousCastingOperator, message);
         //}
 
         //public static Diagnostic AsteriskModifierNotAllowed(SyntaxNodeOrToken nodeOrToken, ExpressionNode functionInvocation)
@@ -344,12 +73,6 @@ namespace NQuery.Language
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotFoldConstants, exception.Message);
         //    return new Diagnostic(DiagnosticId.CannotFoldConstants, message);
         //}
-
-        public static Diagnostic CannotConvert(CastExpressionSyntax expression, Type sourceType, Type targetType)
-        {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceType.Name, targetType.Name);
-            return new Diagnostic(expression.TypeName.Span, DiagnosticId.CannotConvert, message);
-        }
 
         #endregion
 

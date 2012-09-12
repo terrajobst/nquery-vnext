@@ -74,7 +74,8 @@ namespace NQuery.Language
         {
             var start = Current.FullSpan.Start;
             var span = new TextSpan(start, 0);
-            var diagnostics = new[] {DiagnosticFactory.TokenExpected(Current, kind)};
+            var diagnostics = new List<Diagnostic>(1);
+            diagnostics.ReportTokenExpected(Current, kind);
             return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
         }
 
@@ -104,7 +105,9 @@ namespace NQuery.Language
 
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
-            tokens[0] = tokens[0].WithDiagnotics(new[] {DiagnosticFactory.TokenExpected(tokens[0], SyntaxKind.EndOfLineTrivia)});
+            var diagnostics = new List<Diagnostic>(1);
+            diagnostics.ReportTokenExpected(tokens[0], SyntaxKind.EndOfLineTrivia);
+            tokens[0] = tokens[0].WithDiagnotics(diagnostics);
 
             var start = tokens.First().Span.Start;
             var end = tokens.Last().Span.End;
@@ -232,34 +235,28 @@ namespace NQuery.Language
                             left = new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
                             break;
                         }
-                        case SyntaxKind.AllKeyword:
-                        case SyntaxKind.SomeKeyword:
-                        case SyntaxKind.AnyKeyword:
-                        {
-                            // TODO: I believe the following check should be done in the binder.
-                            if (binaryExpression != SyntaxKind.EqualExpression &&
-                                binaryExpression != SyntaxKind.NotEqualExpression &&
-                                binaryExpression != SyntaxKind.NotLessExpression &&
-                                binaryExpression != SyntaxKind.NotGreaterExpression &&
-                                binaryExpression != SyntaxKind.LessExpression &&
-                                binaryExpression != SyntaxKind.LessOrEqualExpression &&
-                                binaryExpression != SyntaxKind.GreaterExpression &&
-                                binaryExpression != SyntaxKind.GreaterOrEqualExpression)
-                            {
-                                //TODO
-                                //_errorReporter.InvalidOperatorForAllAny(_token.Range, binaryOp);
-                            }
-
-                            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-                            var query = ParseQuery();
-                            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                            left = new AllAnySubselectSyntax(_syntaxTree, left, operatorToken, leftParenthesis, query, rightParenthesis);
-                            break;
-                        }
                         default:
                         {
-                            var expression = ParseSubExpression(null, operatorPrecedence);
-                            left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
+                            var isAllAny = Current.Kind == SyntaxKind.AllKeyword ||
+                                           Current.Kind == SyntaxKind.SomeKeyword ||
+                                           Current.Kind == SyntaxKind.AnyKeyword;
+
+                            if (isAllAny)
+                            {
+                                var allAnyOperatorToken = binaryExpression.IsValidAllAnyOperator()
+                                                              ? operatorToken
+                                                              : operatorToken.WithInvalidOperatorForAllAnyDiagnostics();
+                                var keyword = NextToken();
+                                var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+                                var query = ParseQuery();
+                                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                                left = new AllAnySubselectSyntax(_syntaxTree, left, allAnyOperatorToken, keyword, leftParenthesis, query, rightParenthesis);
+                            }
+                            else
+                            {
+                                var expression = ParseSubExpression(null, operatorPrecedence);
+                                left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
+                            }
                             break;
                         }
                     }
@@ -420,10 +417,8 @@ namespace NQuery.Language
                 }
 
                 case SyntaxKind.IdentifierToken:
-                case SyntaxKind.LeftKeyword:
-                case SyntaxKind.RightKeyword:
                 {
-                    var identifier = NextToken().WithKind(SyntaxKind.IdentifierToken);
+                    var identifier = NextToken();
 
                     if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                         return new NameExpressionSyntax(_syntaxTree, identifier);
@@ -786,12 +781,10 @@ namespace NQuery.Language
                 var asteriskToken = Match(SyntaxKind.MultiplyToken);
                 return new WildcardSelectColumnSyntax(_syntaxTree, tableName, dotToken, asteriskToken);
             }
-            else
-            {
-                var expression = ParseExpression();
-                var alias = ParseOptionalAlias();
-                return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
-            }
+            
+            var expression = ParseExpression();
+            var alias = ParseOptionalAlias();
+            return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
         }
 
         private FromClauseSyntax ParseFromClause()

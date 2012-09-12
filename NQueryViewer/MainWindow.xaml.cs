@@ -99,8 +99,6 @@ namespace NQueryViewer
             var builder = new DataContextBuilder();
             builder.Tables.AddRange(GetSchemaTables());
             builder.Variables.Add(new VariableSymbol("Id", typeof(int)));
-            builder.Functions.Add(new FunctionSymbol("LEFT", typeof(string), new[] { new ParameterSymbol("str", typeof(string)), new ParameterSymbol("numberOfChars", typeof(int))}));
-            builder.Functions.Add(new FunctionSymbol("RIGHT", typeof(string), new[] { new ParameterSymbol("str", typeof(string)), new ParameterSymbol("numberOfChars", typeof(int))}));
             builder.PropertyProviders.DefaultValue = new ReflectionProvider();
             builder.MethodProviders.DefaultValue = new ReflectionProvider();
             return builder.GetResult();

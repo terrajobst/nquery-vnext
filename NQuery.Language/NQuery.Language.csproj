@@ -36,11 +36,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Binding\AdditionalSymbolsBindingContext.cs" />
+    <Compile Include="Binding\BinaryOperator.cs" />
+    <Compile Include="Binding\BinaryOperatorSignature.cs" />
     <Compile Include="Binding\Binder.Queries.cs" />
     <Compile Include="Binding\Binder.Expressions.cs" />
-    <Compile Include="Binding\Binder.Operators.cs" />
     <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="Runtime\BuiltInFunctions.cs" />
+    <Compile Include="Runtime\BuiltinOperators.cs" />
+    <Compile Include="Binding\FunctionSymbolSignature.cs" />
     <Compile Include="Binding\KnownType.cs" />
+    <Compile Include="Binding\MethodSymbolSignature.cs" />
+    <Compile Include="Binding\OverloadResolution.cs" />
+    <Compile Include="Binding\OverloadResolutionCandidate.cs" />
+    <Compile Include="Binding\OverloadResolutionResult.cs" />
+    <Compile Include="Binding\Signature.cs" />
+    <Compile Include="Binding\Soundex.cs" />
+    <Compile Include="Binding\UnaryOperator.cs" />
+    <Compile Include="Binding\UnaryOperatorSignature.cs" />
     <Compile Include="Conversion.cs" />
     <Compile Include="BoundNodes\BoundCastExpression.cs" />
     <Compile Include="BoundNodes\BoundInExpression.cs" />
@@ -52,7 +64,6 @@
     <Compile Include="BoundNodes\BoundIsNullExpression.cs" />
     <Compile Include="BoundNodes\BoundMethodInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
-    <Compile Include="Binding\ExpressionBindingContext.cs" />
     <Compile Include="Binding\DataContextBindingContext.cs" />
     <Compile Include="Binding\BindingResult.cs" />
     <Compile Include="BoundNodes\BoundBinaryExpression.cs" />
@@ -86,8 +97,9 @@
     <Compile Include="Binding\Binder.cs" />
     <Compile Include="Binding\BindingContext.cs" />
     <Compile Include="BoundNodes\BoundNode.cs" />
-    <Compile Include="Binding\BoundBinaryOperatorKind.cs" />
-    <Compile Include="Binding\BoundUnaryOperatorKind.cs" />
+    <Compile Include="Binding\BinaryOperatorKind.cs" />
+    <Compile Include="Binding\UnaryOperatorKind.cs" />
+    <Compile Include="Runtime\FunctionSymbol.cs" />
     <Compile Include="Runtime\NullProviders.cs" />
     <Compile Include="ReadOnlyTypeRegistry.cs" />
     <Compile Include="Runtime\ReflectionFieldSymbol.cs" />

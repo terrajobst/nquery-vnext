@@ -148,10 +148,10 @@
     <value>Aggregate name {0} is ambiguous between {1}.</value>
   </data>
   <data name="AmbiguousBinaryOperator" xml:space="preserve">
-    <value>Binary operator '{0}' invocation on types '{1}' and '{2}' is ambiguous between method '{3}' and '{4}'.</value>
+    <value>Binary operator '{0}' invocation on types '{1}' and '{2}' is ambiguous.</value>
   </data>
-  <data name="AmbiguousCastingOperator" xml:space="preserve">
-    <value>{0} operator is ambiguous between '{1}' and '{2}'.</value>
+  <data name="AmbiguousConversion" xml:space="preserve">
+    <value>Ambiguous conversions when converting from '{0}' to '{1}'</value>
   </data>
   <data name="AmbiguousColumnRef" xml:space="preserve">
     <value>Column ref name {0} is ambiguous between {1}.</value>
@@ -165,17 +165,14 @@
   <data name="AmbiguousInvocationNoArgs" xml:space="preserve">
     <value>Invocation is ambiguous between '{0}' and '{1}'.</value>
   </data>
-  <data name="AmbiguousOperatorOverloading" xml:space="preserve">
-    <value>The call to user defined operator '{0}' on types '{1}' and '{2}' is ambiguous.</value>
-  </data>
-  <data name="AmbiguousParameter" xml:space="preserve">
-    <value>Parameter name {0} is ambiguous between {1}.</value>
+  <data name="AmbiguousVariable" xml:space="preserve">
+    <value>Variable '{0}' is ambiguous.</value>
   </data>
   <data name="AmbiguousProperty" xml:space="preserve">
-    <value>Property name {0} is ambiguous between {1}.</value>
+    <value>Property '{0}' is ambiguous.</value>
   </data>
   <data name="AmbiguousReference" xml:space="preserve">
-    <value>Name '{0}' is ambiguous between '{1}'.</value>
+    <value>Name '{0}' is ambiguous between '{1}' and '{2}'.</value>
   </data>
   <data name="AmbiguousTable" xml:space="preserve">
     <value>Table name {0} is ambiguous between {1}.</value>
@@ -187,7 +184,7 @@
     <value>Type reference '{0}' is ambiguous between 1}.</value>
   </data>
   <data name="AmbiguousUnaryOp" xml:space="preserve">
-    <value>Unary operator '{0}' invocation on type '{1}' is ambiguous between method '{2}' and '{3}'.</value>
+    <value>Unary operator '{0}' invocation on type '{1}' is ambiguous.</value>
   </data>
   <data name="ArgMustBeOfType" xml:space="preserve">
     <value>Argument must be of type '{0}'.</value>
@@ -213,7 +210,7 @@
   <data name="CannotApplyBinaryOp" xml:space="preserve">
     <value>Cannot apply binary operator '{0}' on types '{1}' and '{2}'.</value>
   </data>
-  <data name="CannotApplyUnaryOp" xml:space="preserve">
+  <data name="CannotApplyUnaryOperator" xml:space="preserve">
     <value>Cannot apply unary operator '{0}' on type '{1}'.</value>
   </data>
   <data name="CannotConvert" xml:space="preserve">
@@ -699,7 +696,7 @@
   <data name="UndeclaredColumn" xml:space="preserve">
     <value>Column '{1}' not declared in table '{0}'.</value>
   </data>
-  <data name="UndeclaredEntity" xml:space="preserve">
+  <data name="ColumnTableOrVariableNotDeclared" xml:space="preserve">
     <value>The identifier '{0}' does not refer to a column, table, or variable.</value>
   </data>
   <data name="UndeclaredFunction" xml:space="preserve">
