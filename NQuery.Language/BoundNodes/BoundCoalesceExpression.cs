@@ -22,7 +22,7 @@ namespace NQuery.Language.BoundNodes
 
         public override Type Type
         {
-            get { return _arguments.Select(a => a.Type).DefaultIfEmpty(WellKnownTypes.Unknown).First(); }
+            get { return _arguments.Select(a => a.Type).DefaultIfEmpty(KnownTypes.Unknown).First(); }
         }
 
         public ReadOnlyCollection<BoundExpression> Arguments

@@ -160,7 +160,7 @@ namespace NQuery.Language
         public static void ReportUndeclaredFunction(this ICollection<Diagnostic> diagnostics, FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
         {
             var name = node.Name.ValueText;
-            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
             var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredFunction, name, argumentTypeList);
             var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredFunction, message);
             diagnostics.Add(diagnostic);
@@ -169,23 +169,27 @@ namespace NQuery.Language
         public static void ReportUndeclaredMethod(this ICollection<Diagnostic> diagnostics, MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
         {
             var name = node.Name.ValueText;
-            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.Name));
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringType.Name, name, argumentTypeList);
+            var declaringTypeName = declaringType.ToDisplayName();
+            var argumentTypeNames = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredMethod, declaringTypeName, name, argumentTypeNames);
             var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredMethod, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredColumn(this ICollection<Diagnostic> diagnostics, PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
-            var name = node.Name.ValueText;
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredColumn, tableInstance.Name, name);
+            var tableName = tableInstance.Name;
+            var columnName = node.Name.ValueText;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredColumn, tableName, columnName);
             var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredColumn, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportUndeclaredProperty(this ICollection<Diagnostic> diagnostics, PropertyAccessExpressionSyntax node, Type type)
         {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, type.Name, node.Name.ValueText);
+            var typeName = type.ToDisplayName();
+            var propertyName = node.Name.ValueText;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredProperty, typeName, propertyName);
             var diagnostic = new Diagnostic(node.Span, DiagnosticId.UndeclaredProperty, message);
             diagnostics.Add(diagnostic);
         }
@@ -268,8 +272,8 @@ namespace NQuery.Language
             }
             else
             {
-                var argumentTypeString = string.Join(",", argumentTypes.Select(t => t.Name));
-                var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocation, symbol1, symbol2, argumentTypeString);
+                var argumentTypeNames = string.Join(",", argumentTypes.Select(t => t.ToDisplayName()));
+                var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocation, symbol1, symbol2, argumentTypeNames);
                 var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousInvocation, message);
                 diagnostics.Add(diagnostic);
             }
@@ -284,46 +288,56 @@ namespace NQuery.Language
 
         public static void ReportCannotApplyUnaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, UnaryOperatorKind operatorKind, Type type)
         {
-            var operatorText = operatorKind.GetOperatorText();
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyUnaryOperator, operatorText, type.Name);
+            var operatorName = operatorKind.ToDisplayName();
+            var argumentTypeName = type.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyUnaryOperator, operatorName, argumentTypeName);
             var diagnostic = new Diagnostic(span, DiagnosticId.CannotApplyUnaryOperator, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportAmbiguousUnaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, UnaryOperatorKind operatorKind, Type type)
         {
-            var operatorText = operatorKind.GetOperatorText();
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousUnaryOp, operatorText, type.Name);
+            var operatorName = operatorKind.ToDisplayName();
+            var argumentTypeName = type.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousUnaryOp, operatorName, argumentTypeName);
             var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousUnaryOperator, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportCannotApplyBinaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, BinaryOperatorKind operatorKind, Type leftType, Type rightType)
         {
-            var operatorText = operatorKind.GetOperatorText();
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyBinaryOp, operatorText, leftType.Name, rightType.Name);
+            var operatorName = operatorKind.ToDisplayName();
+            var leftTypeName = leftType.ToDisplayName();
+            var rightTypeName = rightType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotApplyBinaryOp, operatorName, leftTypeName, rightTypeName);
             var diagnostic = new Diagnostic(span, DiagnosticId.CannotApplyBinaryOperator, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportAmbiguousBinaryOperator(this ICollection<Diagnostic> diagnostics, TextSpan span, BinaryOperatorKind operatorKind, Type leftType, Type rightType)
         {
-            var operatorText = operatorKind.GetOperatorText();
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousBinaryOperator, operatorText, leftType.Name, rightType.Name);
+            var operatorName = operatorKind.ToDisplayName();
+            var leftTypeName = leftType.ToDisplayName();
+            var rightTypeName = rightType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousBinaryOperator, operatorName, leftTypeName, rightTypeName);
             var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousBinaryOperator, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportAmbiguousConversion(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
         {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousConversion, sourceType.Name, targetType.Name);
+            var sourceTypeName = sourceType.ToDisplayName();
+            var targetTypeName = targetType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousConversion, sourceTypeName, targetTypeName);
             var diagnostic = new Diagnostic(expression.Span, DiagnosticId.AmbiguousConversion, message);
             diagnostics.Add(diagnostic);
         }
 
         public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
         {
-            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceType.Name, targetType.Name);
+            var sourceTypeName = sourceType.ToDisplayName();
+            var targeTypeName = targetType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceTypeName, targeTypeName);
             var diagnostic = new Diagnostic(expression.TypeName.Span, DiagnosticId.CannotConvert, message);
             diagnostics.Add(diagnostic);
         }

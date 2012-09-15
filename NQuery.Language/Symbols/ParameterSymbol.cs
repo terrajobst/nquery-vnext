@@ -1,4 +1,5 @@
 using System;
+using NQuery.Language.Binding;
 
 namespace NQuery.Language.Symbols
 {
@@ -24,7 +25,7 @@ namespace NQuery.Language.Symbols
 
         public override string ToString()
         {
-            return string.Format("{0} AS {1}", Name, Type.Name);
+            return string.Format("{0} AS {1}", Name, Type.ToDisplayName());
         }
     }
 }

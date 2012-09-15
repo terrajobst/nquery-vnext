@@ -31,7 +31,7 @@ namespace NQuery.Language.BoundNodes
 
         public override Type Type
         {
-            get { return Symbol == null ? WellKnownTypes.Unknown : Symbol.Type; }
+            get { return Symbol == null ? KnownTypes.Unknown : Symbol.Type; }
         }
 
         public BoundExpression Target

@@ -423,10 +423,10 @@ namespace NQuery.Language
                     if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                         return new NameExpressionSyntax(_syntaxTree, identifier);
 
-                    if (Lookahead.Kind == SyntaxKind.MultiplyToken && identifier.Matches("COUNT"))
+                    if (Lookahead.Kind == SyntaxKind.AsteriskToken && identifier.Matches("COUNT"))
                     {
                         var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-                        var asteriskToken = Match(SyntaxKind.MultiplyToken);
+                        var asteriskToken = Match(SyntaxKind.AsteriskToken);
                         var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
                         return new CountAllExpressionSyntax(_syntaxTree, identifier, leftParenthesis, asteriskToken, rightParenthesis);
                     }
@@ -763,14 +763,14 @@ namespace NQuery.Language
 
         private SelectColumnSyntax ParseSelectColumn()
         {
-            var isWildcard = Peek(0).Kind == SyntaxKind.MultiplyToken;
+            var isWildcard = Peek(0).Kind == SyntaxKind.AsteriskToken;
             var isQualifiedWildcard = Peek(0).Kind == SyntaxKind.IdentifierToken &&
                                       Peek(1).Kind == SyntaxKind.DotToken &&
-                                      Peek(2).Kind == SyntaxKind.MultiplyToken;
+                                      Peek(2).Kind == SyntaxKind.AsteriskToken;
 
             if (isWildcard)
             {
-                var asteriskToken = Match(SyntaxKind.MultiplyToken);
+                var asteriskToken = Match(SyntaxKind.AsteriskToken);
                 return new WildcardSelectColumnSyntax(_syntaxTree, null, null, asteriskToken);
             }
 
@@ -778,7 +778,7 @@ namespace NQuery.Language
             {
                 var tableName = Match(SyntaxKind.IdentifierToken);
                 var dotToken = Match(SyntaxKind.DotToken);
-                var asteriskToken = Match(SyntaxKind.MultiplyToken);
+                var asteriskToken = Match(SyntaxKind.AsteriskToken);
                 return new WildcardSelectColumnSyntax(_syntaxTree, tableName, dotToken, asteriskToken);
             }
             

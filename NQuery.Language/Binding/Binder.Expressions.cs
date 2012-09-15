@@ -14,7 +14,7 @@ namespace NQuery.Language.Binding
                 return type;
 
             _diagnostics.ReportUndeclaredType(typeName);
-            return WellKnownTypes.Unknown;
+            return KnownTypes.Unknown;
         }
 
         private BoundExpression BindExpression(ExpressionSyntax node)
@@ -32,14 +32,14 @@ namespace NQuery.Language.Binding
                 case SyntaxKind.LogicalNotExpression:
                     return BindUnaryExpression((UnaryExpressionSyntax) node);
 
-                case SyntaxKind.BitAndExpression:
-                case SyntaxKind.BitOrExpression:
-                case SyntaxKind.BitXorExpression:
+                case SyntaxKind.BitwiseAndExpression:
+                case SyntaxKind.BitwiseOrExpression:
+                case SyntaxKind.ExclusiveOrExpression:
                 case SyntaxKind.AddExpression:
                 case SyntaxKind.SubExpression:
                 case SyntaxKind.MultiplyExpression:
                 case SyntaxKind.DivideExpression:
-                case SyntaxKind.ModulusExpression:
+                case SyntaxKind.ModuloExpression:
                 case SyntaxKind.PowerExpression:
                 case SyntaxKind.EqualExpression:
                 case SyntaxKind.NotEqualExpression:
@@ -125,7 +125,7 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax node)
         {
-            var operatorKind = node.Kind.GetUnaryOperatorKind();
+            var operatorKind = node.Kind.ToUnaryOperatorKind();
             return BindUnaryExpression(node, operatorKind, node.Expression);
         }
 
@@ -159,7 +159,7 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax node)
         {
-            var operatorKind = node.Kind.GetBinaryOperatorKind();
+            var operatorKind = node.Kind.ToBinaryOperatorKind();
             return BindBinaryExpression(node, operatorKind, node.Left, node.Right);
         }
 
@@ -633,7 +633,7 @@ namespace NQuery.Language.Binding
                 var right = boundQuery.SelectColumns[0].Expression;
 
                 var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
-                var operatorKind = expressionKind.GetBinaryOperatorKind();
+                var operatorKind = expressionKind.ToBinaryOperatorKind();
                 var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
                 if (result.Best == null)
                 {

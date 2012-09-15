@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Language.Binding
 {
-    internal static class WellKnownTypes
+    internal static class KnownTypes
     {
         private static class UnknownType { }
         private static class NullType { }
@@ -133,6 +133,60 @@ namespace NQuery.Language.Binding
                 return KnownType.Object;
 
             return null;
+        }
+
+        public static string ToDisplayName(this Type type)
+        {
+            if (type.IsUnknown())
+                return "<?>";
+
+            if (type.IsNull())
+                return "<null>";
+
+            if (type.IsMissing())
+                return "<missing>";
+
+            var knownType = type.GetKnownType();
+            return knownType == null ? type.Name : knownType.Value.ToDisplayName();
+        }
+
+        public static string ToDisplayName(this KnownType type)
+        {
+            switch (type)
+            {
+                case KnownType.SByte:
+                    return "SBYTE";
+                case KnownType.Byte:
+                    return "BYTE";
+                case KnownType.Int16:
+                    return "SHORT";
+                case KnownType.UInt16:
+                    return "USHORT";
+                case KnownType.Int32:
+                    return "INT";
+                case KnownType.UInt32:
+                    return "UINT";
+                case KnownType.Int64:
+                    return "LONG";
+                case KnownType.UInt64:
+                    return "ULONG";
+                case KnownType.Char:
+                    return "CHAR";
+                case KnownType.Single:
+                    return "FLOAT";
+                case KnownType.Double:
+                    return "DOUBLE";
+                case KnownType.Decimal:
+                    return "DECIMAL";
+                case KnownType.Boolean:
+                    return "BOOL";
+                case KnownType.String:
+                    return "STRING";
+                case KnownType.Object:
+                    return "OBJECT";
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
         }
     }
 }

@@ -226,17 +226,17 @@ namespace NQuery.Language
                     break;
 
                 case '&':
-                    _kind = SyntaxKind.BitwiseAndToken;
+                    _kind = SyntaxKind.AmpersandToken;
                     _charReader.NextChar();
                     break;
 
                 case '|':
-                    _kind = SyntaxKind.BitwiseOrToken;
+                    _kind = SyntaxKind.BarToken;
                     _charReader.NextChar();
                     break;
 
                 case '^':
-                    _kind = SyntaxKind.BitwiseXorToken;
+                    _kind = SyntaxKind.CaretToken;
                     _charReader.NextChar();
                     break;
 
@@ -279,22 +279,22 @@ namespace NQuery.Language
                     _charReader.NextChar();
                     if (_charReader.Current != '*')
                     {
-                        _kind = SyntaxKind.MultiplyToken;
+                        _kind = SyntaxKind.AsteriskToken;
                     }
                     else
                     {
-                        _kind = SyntaxKind.PowerToken;
+                        _kind = SyntaxKind.AsteriskAsteriskToken;
                         _charReader.NextChar();
                     }
                     break;
 
                 case '/':
-                    _kind = SyntaxKind.DivideToken;
+                    _kind = SyntaxKind.SlashToken;
                     _charReader.NextChar();
                     break;
 
                 case '%':
-                    _kind = SyntaxKind.ModulusToken;
+                    _kind = SyntaxKind.PercentToken;
                     _charReader.NextChar();
                     break;
 
@@ -312,17 +312,17 @@ namespace NQuery.Language
                     _charReader.NextChar();
                     if (_charReader.Current == '=')
                     {
-                        _kind = SyntaxKind.UnequalsToken;
+                        _kind = SyntaxKind.ExclamationEqualsToken;
                         _charReader.NextChar();
                     }
                     else if (_charReader.Current == '>')
                     {
-                        _kind = SyntaxKind.NotGreaterToken;
+                        _kind = SyntaxKind.ExclamationGreaterToken;
                         _charReader.NextChar();
                     }
                     else if (_charReader.Current == '<')
                     {
-                        _kind = SyntaxKind.NotLessToken;
+                        _kind = SyntaxKind.ExclamationLessToken;
                         _charReader.NextChar();
                     }
                     else
@@ -335,17 +335,17 @@ namespace NQuery.Language
                     _charReader.NextChar();
                     if (_charReader.Current == '<')
                     {
-                        _kind = SyntaxKind.LeftShiftToken;
+                        _kind = SyntaxKind.LessLessToken;
                         _charReader.NextChar();
                     }
                     else if (_charReader.Current == '>')
                     {
-                        _kind = SyntaxKind.UnequalsToken;
+                        _kind = SyntaxKind.LessGreaterToken;
                         _charReader.NextChar();
                     }
                     else if (_charReader.Current == '=')
                     {
-                        _kind = SyntaxKind.LessOrEqualToken;
+                        _kind = SyntaxKind.LessEqualToken;
                         _charReader.NextChar();
                     }
                     else
@@ -356,12 +356,12 @@ namespace NQuery.Language
                     _charReader.NextChar();
                     if (_charReader.Current == '>')
                     {
-                        _kind = SyntaxKind.RightShiftToken;
+                        _kind = SyntaxKind.GreaterGreaterToken;
                         _charReader.NextChar();
                     }
                     else if (_charReader.Current == '=')
                     {
-                        _kind = SyntaxKind.GreaterOrEqualToken;
+                        _kind = SyntaxKind.GreaterEqualToken;
                         _charReader.NextChar();
                     }
                     else

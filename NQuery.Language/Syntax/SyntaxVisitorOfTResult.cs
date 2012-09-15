@@ -20,14 +20,14 @@ namespace NQuery.Language
                 case SyntaxKind.LogicalNotExpression:
                      return VisitUnaryExpression((UnaryExpressionSyntax)node);
 
-                case SyntaxKind.BitAndExpression:
-                case SyntaxKind.BitOrExpression:
-                case SyntaxKind.BitXorExpression:
+                case SyntaxKind.BitwiseAndExpression:
+                case SyntaxKind.BitwiseOrExpression:
+                case SyntaxKind.ExclusiveOrExpression:
                 case SyntaxKind.AddExpression:
                 case SyntaxKind.SubExpression:
                 case SyntaxKind.MultiplyExpression:
                 case SyntaxKind.DivideExpression:
-                case SyntaxKind.ModulusExpression:
+                case SyntaxKind.ModuloExpression:
                 case SyntaxKind.PowerExpression:
                 case SyntaxKind.EqualExpression:
                 case SyntaxKind.NotEqualExpression:

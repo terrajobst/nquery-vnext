@@ -40,7 +40,7 @@ namespace NQuery.Language.Symbols
 
         public override string ToString()
         {
-            return string.Format("ROW {0} ({1})", Name, _table);
+            return string.Format("ROW {0} OF {1}", Name, _table);
         }
     }
 }

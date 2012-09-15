@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using NQuery.Language.Binding;
 
 namespace NQuery.Language.Symbols
 {
@@ -20,7 +21,9 @@ namespace NQuery.Language.Symbols
 
         public override string ToString()
         {
-            return string.Format("TABLE {0}: {1}", Name, Type);
+            return Type.IsMissing()
+                       ? string.Format("TABLE {0}", Name)
+                       : string.Format("TABLE {0}: {1}", Name, Type.ToDisplayName());
         }
     }
 }

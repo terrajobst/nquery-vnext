@@ -89,11 +89,11 @@ namespace NQuery.Language
             {
                 case SyntaxKind.BitwiseNotToken:
                     return "~";
-                case SyntaxKind.BitwiseAndToken:
+                case SyntaxKind.AmpersandToken:
                     return "&";
-                case SyntaxKind.BitwiseOrToken:
+                case SyntaxKind.BarToken:
                     return "|";
-                case SyntaxKind.BitwiseXorToken:
+                case SyntaxKind.CaretToken:
                     return "^";
                 case SyntaxKind.LeftParenthesisToken:
                     return "(";
@@ -103,13 +103,13 @@ namespace NQuery.Language
                     return "+";
                 case SyntaxKind.MinusToken:
                     return "-";
-                case SyntaxKind.MultiplyToken:
+                case SyntaxKind.AsteriskToken:
                     return "*";
-                case SyntaxKind.DivideToken:
+                case SyntaxKind.SlashToken:
                     return "/";
-                case SyntaxKind.ModulusToken:
+                case SyntaxKind.PercentToken:
                     return "%";
-                case SyntaxKind.PowerToken:
+                case SyntaxKind.AsteriskAsteriskToken:
                     return "**";
                 case SyntaxKind.CommaToken:
                     return ",";
@@ -117,23 +117,23 @@ namespace NQuery.Language
                     return ".";
                 case SyntaxKind.EqualsToken:
                     return "=";
-                case SyntaxKind.UnequalsToken:
+                case SyntaxKind.ExclamationEqualsToken:
                     return "<>";
                 case SyntaxKind.LessToken:
                     return "<";
-                case SyntaxKind.LessOrEqualToken:
+                case SyntaxKind.LessEqualToken:
                     return "<=";
                 case SyntaxKind.GreaterToken:
                     return ">";
-                case SyntaxKind.GreaterOrEqualToken:
+                case SyntaxKind.GreaterEqualToken:
                     return ">=";
-                case SyntaxKind.NotLessToken:
+                case SyntaxKind.ExclamationLessToken:
                     return "!<";
-                case SyntaxKind.NotGreaterToken:
+                case SyntaxKind.ExclamationGreaterToken:
                     return "!>";
-                case SyntaxKind.LeftShiftToken:
+                case SyntaxKind.LessLessToken:
                     return "<<";
-                case SyntaxKind.RightShiftToken:
+                case SyntaxKind.GreaterGreaterToken:
                     return ">>";
                 case SyntaxKind.AndKeyword:
                     return "AND";
@@ -331,29 +331,29 @@ namespace NQuery.Language
             switch (kind)
             {
                 case SyntaxKind.BitwiseNotToken:
-                case SyntaxKind.BitwiseAndToken:
-                case SyntaxKind.BitwiseOrToken:
-                case SyntaxKind.BitwiseXorToken:
+                case SyntaxKind.AmpersandToken:
+                case SyntaxKind.BarToken:
+                case SyntaxKind.CaretToken:
                 case SyntaxKind.LeftParenthesisToken:
                 case SyntaxKind.RightParenthesisToken:
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
-                case SyntaxKind.MultiplyToken:
-                case SyntaxKind.DivideToken:
-                case SyntaxKind.ModulusToken:
-                case SyntaxKind.PowerToken:
+                case SyntaxKind.AsteriskToken:
+                case SyntaxKind.SlashToken:
+                case SyntaxKind.PercentToken:
+                case SyntaxKind.AsteriskAsteriskToken:
                 case SyntaxKind.CommaToken:
                 case SyntaxKind.DotToken:
                 case SyntaxKind.EqualsToken:
-                case SyntaxKind.UnequalsToken:
+                case SyntaxKind.ExclamationEqualsToken:
                 case SyntaxKind.LessToken:
-                case SyntaxKind.LessOrEqualToken:
+                case SyntaxKind.LessEqualToken:
                 case SyntaxKind.GreaterToken:
-                case SyntaxKind.GreaterOrEqualToken:
-                case SyntaxKind.NotLessToken:
-                case SyntaxKind.NotGreaterToken:
-                case SyntaxKind.RightShiftToken:
-                case SyntaxKind.LeftShiftToken:
+                case SyntaxKind.GreaterEqualToken:
+                case SyntaxKind.ExclamationLessToken:
+                case SyntaxKind.ExclamationGreaterToken:
+                case SyntaxKind.GreaterGreaterToken:
+                case SyntaxKind.LessLessToken:
                     return true;
                 default:
                     return false;
@@ -644,14 +644,14 @@ namespace NQuery.Language
         {
             switch (token)
             {
-                case SyntaxKind.BitwiseAndToken:
-                    return SyntaxKind.BitAndExpression;
+                case SyntaxKind.AmpersandToken:
+                    return SyntaxKind.BitwiseAndExpression;
 
-                case SyntaxKind.BitwiseOrToken:
-                    return SyntaxKind.BitOrExpression;
+                case SyntaxKind.BarToken:
+                    return SyntaxKind.BitwiseOrExpression;
 
-                case SyntaxKind.BitwiseXorToken:
-                    return SyntaxKind.BitXorExpression;
+                case SyntaxKind.CaretToken:
+                    return SyntaxKind.ExclusiveOrExpression;
 
                 case SyntaxKind.PlusToken:
                     return SyntaxKind.AddExpression;
@@ -659,46 +659,47 @@ namespace NQuery.Language
                 case SyntaxKind.MinusToken:
                     return SyntaxKind.SubExpression;
 
-                case SyntaxKind.MultiplyToken:
+                case SyntaxKind.AsteriskToken:
                     return SyntaxKind.MultiplyExpression;
 
-                case SyntaxKind.DivideToken:
+                case SyntaxKind.SlashToken:
                     return SyntaxKind.DivideExpression;
 
-                case SyntaxKind.ModulusToken:
-                    return SyntaxKind.ModulusExpression;
+                case SyntaxKind.PercentToken:
+                    return SyntaxKind.ModuloExpression;
 
-                case SyntaxKind.PowerToken:
+                case SyntaxKind.AsteriskAsteriskToken:
                     return SyntaxKind.PowerExpression;
 
                 case SyntaxKind.EqualsToken:
                     return SyntaxKind.EqualExpression;
 
-                case SyntaxKind.UnequalsToken:
+                case SyntaxKind.LessGreaterToken:
+                case SyntaxKind.ExclamationEqualsToken:
                     return SyntaxKind.NotEqualExpression;
 
                 case SyntaxKind.LessToken:
                     return SyntaxKind.LessExpression;
 
-                case SyntaxKind.LessOrEqualToken:
+                case SyntaxKind.LessEqualToken:
                     return SyntaxKind.LessOrEqualExpression;
 
                 case SyntaxKind.GreaterToken:
                     return SyntaxKind.GreaterExpression;
 
-                case SyntaxKind.GreaterOrEqualToken:
+                case SyntaxKind.GreaterEqualToken:
                     return SyntaxKind.GreaterOrEqualExpression;
 
-                case SyntaxKind.NotLessToken:
+                case SyntaxKind.ExclamationLessToken:
                     return SyntaxKind.NotLessExpression;
 
-                case SyntaxKind.NotGreaterToken:
+                case SyntaxKind.ExclamationGreaterToken:
                     return SyntaxKind.NotGreaterExpression;
 
-                case SyntaxKind.LeftShiftToken:
+                case SyntaxKind.LessLessToken:
                     return SyntaxKind.LeftShiftExpression;
 
-                case SyntaxKind.RightShiftToken:
+                case SyntaxKind.GreaterGreaterToken:
                     return SyntaxKind.RightShiftExpression;
 
                 case SyntaxKind.AndKeyword:
@@ -728,13 +729,13 @@ namespace NQuery.Language
         {
             switch (binaryExpression)
             {
-                case SyntaxKind.BitAndExpression:
+                case SyntaxKind.BitwiseAndExpression:
                     return 5;
 
-                case SyntaxKind.BitOrExpression:
+                case SyntaxKind.BitwiseOrExpression:
                     return 5;
 
-                case SyntaxKind.BitXorExpression:
+                case SyntaxKind.ExclusiveOrExpression:
                     return 5;
 
                 case SyntaxKind.AddExpression:
@@ -749,7 +750,7 @@ namespace NQuery.Language
                 case SyntaxKind.DivideExpression:
                     return 8;
 
-                case SyntaxKind.ModulusExpression:
+                case SyntaxKind.ModuloExpression:
                     return 8;
 
                 case SyntaxKind.PowerExpression:
@@ -820,7 +821,7 @@ namespace NQuery.Language
             }
         }
 
-        internal static UnaryOperatorKind GetUnaryOperatorKind(this SyntaxKind expressionKind)
+        internal static UnaryOperatorKind ToUnaryOperatorKind(this SyntaxKind expressionKind)
         {
             switch (expressionKind)
             {
@@ -837,32 +838,15 @@ namespace NQuery.Language
             }
         }
 
-        internal static SyntaxKind GetSyntaxKind(this UnaryOperatorKind operatorKind)
-        {
-            switch (operatorKind)
-            {
-                case UnaryOperatorKind.Complement:
-                    return SyntaxKind.ComplementExpression;
-                case UnaryOperatorKind.Identity:
-                    return SyntaxKind.IdentityExpression;
-                case UnaryOperatorKind.Negation:
-                    return SyntaxKind.NegationExpression;
-                case UnaryOperatorKind.LogicalNot:
-                    return SyntaxKind.LogicalNotExpression;
-                default:
-                    throw new ArgumentOutOfRangeException("operatorKind");
-            }
-        }
-
-        internal static BinaryOperatorKind GetBinaryOperatorKind(this SyntaxKind expressionKind)
+        internal static BinaryOperatorKind ToBinaryOperatorKind(this SyntaxKind expressionKind)
         {
             switch (expressionKind)
             {
-                case SyntaxKind.BitAndExpression:
+                case SyntaxKind.BitwiseAndExpression:
                     return BinaryOperatorKind.BitAnd;
-                case SyntaxKind.BitOrExpression:
+                case SyntaxKind.BitwiseOrExpression:
                     return BinaryOperatorKind.BitOr;
-                case SyntaxKind.BitXorExpression:
+                case SyntaxKind.ExclusiveOrExpression:
                     return BinaryOperatorKind.BitXor;
                 case SyntaxKind.AddExpression:
                     return BinaryOperatorKind.Add;
@@ -872,7 +856,7 @@ namespace NQuery.Language
                     return BinaryOperatorKind.Multiply;
                 case SyntaxKind.DivideExpression:
                     return BinaryOperatorKind.Divide;
-                case SyntaxKind.ModulusExpression:
+                case SyntaxKind.ModuloExpression:
                     return BinaryOperatorKind.Modulus;
                 case SyntaxKind.PowerExpression:
                     return BinaryOperatorKind.Power;
@@ -909,80 +893,95 @@ namespace NQuery.Language
             }
         }
 
-        internal static SyntaxKind GetSyntaxKind(this BinaryOperatorKind operatorKind)
+        internal static string ToDisplayName(this UnaryOperatorKind operatorKind)
         {
             switch (operatorKind)
             {
-                case BinaryOperatorKind.BitAnd:
-                    return SyntaxKind.BitAndExpression;
-                case BinaryOperatorKind.BitOr:
-                    return SyntaxKind.BitOrExpression;
-                case BinaryOperatorKind.BitXor:
-                    return SyntaxKind.BitXorExpression;
-                case BinaryOperatorKind.Add:
-                    return SyntaxKind.AddExpression;
-                case BinaryOperatorKind.Sub:
-                    return SyntaxKind.SubExpression;
-                case BinaryOperatorKind.Multiply:
-                    return SyntaxKind.MultiplyExpression;
-                case BinaryOperatorKind.Divide:
-                    return SyntaxKind.DivideExpression;
-                case BinaryOperatorKind.Modulus:
-                    return SyntaxKind.ModulusExpression;
-                case BinaryOperatorKind.Power:
-                    return SyntaxKind.PowerExpression;
-                case BinaryOperatorKind.Equal:
-                    return SyntaxKind.EqualExpression;
-                case BinaryOperatorKind.NotEqual:
-                    return SyntaxKind.NotEqualExpression;
-                case BinaryOperatorKind.Less:
-                    return SyntaxKind.LessExpression;
-                case BinaryOperatorKind.LessOrEqual:
-                    return SyntaxKind.LessOrEqualExpression;
-                case BinaryOperatorKind.Greater:
-                    return SyntaxKind.GreaterExpression;
-                case BinaryOperatorKind.GreaterOrEqual:
-                    return SyntaxKind.GreaterOrEqualExpression;
-                case BinaryOperatorKind.LeftShift:
-                    return SyntaxKind.LeftShiftExpression;
-                case BinaryOperatorKind.RightShift:
-                    return SyntaxKind.RightShiftExpression;
-                case BinaryOperatorKind.LogicalAnd:
-                    return SyntaxKind.LogicalAndExpression;
-                case BinaryOperatorKind.LogicalOr:
-                    return SyntaxKind.LogicalOrExpression;
-                case BinaryOperatorKind.Like:
-                    return SyntaxKind.LikeExpression;
-                case BinaryOperatorKind.Soundslike:
-                    return SyntaxKind.SoundslikeExpression;
-                case BinaryOperatorKind.SimilarTo:
-                    return SyntaxKind.SimilarToExpression;
+                case UnaryOperatorKind.Identity:
+                    return SyntaxKind.PlusToken.GetText();
+                case UnaryOperatorKind.Negation:
+                    return SyntaxKind.MinusToken.GetText();
+                case UnaryOperatorKind.Complement:
+                    return SyntaxKind.BitwiseNotToken.GetText();
+                case UnaryOperatorKind.LogicalNot:
+                    return SyntaxKind.NotKeyword.GetText();
                 default:
                     throw new ArgumentOutOfRangeException("operatorKind");
             }
         }
 
-        internal static string GetOperatorText(this UnaryOperatorKind operatorKind)
-        {
-            var syntaxKind = operatorKind.GetSyntaxKind();
-            var operatorText = syntaxKind.GetText();
-            return operatorText;
-        }
-
-        internal static string GetOperatorText(this BinaryOperatorKind operatorKind)
+        internal static string ToDisplayName(this BinaryOperatorKind operatorKind)
         {
             switch (operatorKind)
             {
+                case BinaryOperatorKind.Power:
+                    return SyntaxKind.AsteriskAsteriskToken.GetText();
+                
+                case BinaryOperatorKind.Multiply:
+                    return SyntaxKind.AsteriskToken.GetText();
+                
+                case BinaryOperatorKind.Divide:
+                    return SyntaxKind.SlashToken.GetText();
+                
+                case BinaryOperatorKind.Modulus:
+                    return SyntaxKind.PercentToken.GetText();
+                
+                case BinaryOperatorKind.Add:
+                    return SyntaxKind.PlusToken.GetText();
+                
+                case BinaryOperatorKind.Sub:
+                    return SyntaxKind.MinusToken.GetText();
+                
+                case BinaryOperatorKind.Equal:
+                    return SyntaxKind.EqualsToken.GetText();
+                
+                case BinaryOperatorKind.NotEqual:
+                    return SyntaxKind.ExclamationEqualsToken.GetText();
+                
+                case BinaryOperatorKind.Less:
+                    return SyntaxKind.LessToken.GetText();
+                
+                case BinaryOperatorKind.LessOrEqual:
+                    return SyntaxKind.LessEqualToken.GetText();
+                
+                case BinaryOperatorKind.Greater:
+                    return SyntaxKind.GreaterToken.GetText();
+                
+                case BinaryOperatorKind.GreaterOrEqual:
+                    return SyntaxKind.GreaterEqualToken.GetText();
+                
+                case BinaryOperatorKind.BitXor:
+                    return SyntaxKind.CaretToken.GetText();
+                
+                case BinaryOperatorKind.BitAnd:
+                    return SyntaxKind.AmpersandToken.GetText();
+                
+                case BinaryOperatorKind.BitOr:
+                    return SyntaxKind.BarToken.GetText();
+                
+                case BinaryOperatorKind.LeftShift:
+                    return SyntaxKind.LessLessToken.GetText();
+                
+                case BinaryOperatorKind.RightShift:
+                    return SyntaxKind.GreaterGreaterToken.GetText();
+                
                 case BinaryOperatorKind.Like:
                     return SyntaxKind.LikeKeyword.GetText();
-                case BinaryOperatorKind.Soundslike:
-                    return SyntaxKind.SoundslikeKeyword.GetText();
+                
                 case BinaryOperatorKind.SimilarTo:
                     return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
+                
+                case BinaryOperatorKind.Soundslike:
+                    return SyntaxKind.SoundslikeKeyword.GetText();
+                
+                case BinaryOperatorKind.LogicalAnd:
+                    return SyntaxKind.AndKeyword.GetText();
+                
+                case BinaryOperatorKind.LogicalOr:
+                    return SyntaxKind.OrKeyword.GetText();
+                
                 default:
-                    var syntaxKind = operatorKind.GetSyntaxKind();
-                    var operatorText = syntaxKind.GetText();
-                    return operatorText;
+                    throw new ArgumentOutOfRangeException("operatorKind");
             }
         }
 

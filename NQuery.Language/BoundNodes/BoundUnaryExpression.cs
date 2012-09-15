@@ -24,7 +24,7 @@ namespace NQuery.Language.BoundNodes
             get
             {
                 return _result.Selected == null
-                           ? WellKnownTypes.Unknown
+                           ? KnownTypes.Unknown
                            : _result.Selected.Signature.ReturnType;
             }
         }

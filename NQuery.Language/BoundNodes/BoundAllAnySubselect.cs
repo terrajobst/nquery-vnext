@@ -14,7 +14,7 @@ namespace NQuery.Language.BoundNodes
             _boundQuery = boundQuery;
             var firstColumn = boundQuery.SelectColumns.FirstOrDefault();
             _type = firstColumn == null
-                        ? WellKnownTypes.Unknown
+                        ? KnownTypes.Unknown
                         : firstColumn.Expression.Type;
         }
 

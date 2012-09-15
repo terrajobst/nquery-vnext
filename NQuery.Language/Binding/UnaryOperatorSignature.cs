@@ -55,7 +55,7 @@ namespace NQuery.Language.Binding
 
         public override string ToString()
         {
-            return string.Format("{0}({1}) AS {2}", _kind, _argumentType.Name, _returnType.Name);
+            return string.Format("{0}({1}) AS {2}", _kind, _argumentType.ToDisplayName(), _returnType.ToDisplayName());
         }
     }
 }

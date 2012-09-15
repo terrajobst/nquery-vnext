@@ -1,4 +1,5 @@
 using System;
+using NQuery.Language.Binding;
 
 namespace NQuery.Language.BoundNodes
 {
@@ -21,7 +22,7 @@ namespace NQuery.Language.BoundNodes
             get
             {
                 return _value == null
-                           ? typeof(DBNull)
+                           ? KnownTypes.Null
                            : _value.GetType();
             }
         }

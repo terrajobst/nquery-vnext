@@ -112,7 +112,7 @@
     <Compile Include="Syntax\TextLocation.cs" />
     <Compile Include="TypeRegistry.cs" />
     <Compile Include="SemanticModel.cs" />
-    <Compile Include="Binding\WellKnownTypes.cs" />
+    <Compile Include="Binding\KnownTypes.cs" />
     <Compile Include="Symbols\BadSymbol.cs" />
     <Compile Include="Symbols\BadTableSymbol.cs" />
     <Compile Include="Symbols\BadVariableSymbol.cs" />

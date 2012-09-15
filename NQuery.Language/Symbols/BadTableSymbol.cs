@@ -17,7 +17,7 @@ namespace NQuery.Language.Symbols
 
         public override Type Type
         {
-            get { return WellKnownTypes.Unknown; }
+            get { return KnownTypes.Unknown; }
         }
     }
 }
