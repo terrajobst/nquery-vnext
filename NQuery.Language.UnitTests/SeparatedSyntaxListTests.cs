@@ -4,7 +4,7 @@ using System.Linq;
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
-    public class SeparatedSyntaxList
+    public class SeparatedSyntaxListTests
     {
         [TestMethod]
         public void SeparatedSyntaxList_CanBeConstructedFromAnEmptyList()

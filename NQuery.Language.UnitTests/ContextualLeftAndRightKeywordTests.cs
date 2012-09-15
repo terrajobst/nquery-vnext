@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
-    public class ContextualLeftAndRightKeywords
+    public class ContextualLeftAndRightKeywordTests
     {
         [TestMethod]
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsName()

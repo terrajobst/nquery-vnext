@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
-    public class Lexer
+    public class LexerTests
     {
         [TestMethod]
         public void Lexer_DetectsUnterminatedBracketedIdentifer()

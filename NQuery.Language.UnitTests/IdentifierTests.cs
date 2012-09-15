@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NQuery.Language.UnitTests
 {
     [TestClass]
-    public class Identifiers
+    public class IdentifierTests
     {
         [TestMethod]
         public void Identifiers_MatchingPlainIdentifiersIgnoresCase()
