@@ -5,7 +5,7 @@ namespace NQuery.Language
 {
     public sealed class CountAllExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _identifier;
+        private readonly SyntaxToken _name;
         private readonly SyntaxToken _leftParenthesis;
         private readonly SyntaxToken _asteriskToken;
         private readonly SyntaxToken _rightParenthesis;
@@ -13,7 +13,7 @@ namespace NQuery.Language
         public CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _identifier = identifier.WithParent(this);
+            _name = identifier.WithParent(this);
             _leftParenthesis = leftParenthesis.WithParent(this);
             _asteriskToken = asteriskToken.WithParent(this);
             _rightParenthesis = rightParenthesis.WithParent(this);
@@ -26,15 +26,15 @@ namespace NQuery.Language
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _identifier;
+            yield return _name;
             yield return _leftParenthesis;
             yield return _asteriskToken;
             yield return _rightParenthesis;
         }
 
-        public SyntaxToken Identifier
+        public SyntaxToken Name
         {
-            get { return _identifier; }
+            get { return _name; }
         }
 
         public SyntaxToken LeftParenthesis

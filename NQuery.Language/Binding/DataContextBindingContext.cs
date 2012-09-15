@@ -17,6 +17,7 @@ namespace NQuery.Language.Binding
         {
             return _dataContext.Tables.Cast<Symbol>()
                                       .Concat(_dataContext.Functions)
+                                      .Concat(_dataContext.Aggregates)
                                       .Concat(_dataContext.Variables);
         }
     }

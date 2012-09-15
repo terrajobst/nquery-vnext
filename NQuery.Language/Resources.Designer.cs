@@ -142,7 +142,7 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aggregate name {0} is ambiguous between {1}..
+        ///   Looks up a localized string similar to Aggregate name &apos;{0}&apos; is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
         internal static string AmbiguousAggregate {
             get {
@@ -1803,6 +1803,15 @@ namespace NQuery.Language {
         internal static string UnaryOperatorFailed {
             get {
                 return ResourceManager.GetString("UnaryOperatorFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aggregate &apos;{0}&apos; is not declared..
+        /// </summary>
+        internal static string UndeclaredAggregate {
+            get {
+                return ResourceManager.GetString("UndeclaredAggregate", resourceCulture);
             }
         }
         

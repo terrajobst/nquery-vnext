@@ -41,6 +41,8 @@
     <Compile Include="Binding\Binder.Queries.cs" />
     <Compile Include="Binding\Binder.Expressions.cs" />
     <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="BoundNodes\BoundAggregateExpression.cs" />
+    <Compile Include="Runtime\BuiltInAggregates.cs" />
     <Compile Include="Runtime\BuiltInFunctions.cs" />
     <Compile Include="Runtime\BuiltinOperators.cs" />
     <Compile Include="Binding\FunctionSymbolSignature.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Runtime\ReflectionParameterSymbol.cs" />
     <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
     <Compile Include="Runtime\ReflectionProvider.cs" />
+    <Compile Include="Symbols\AggregateSymbol.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />
     <Compile Include="Syntax\SyntaxExtensions.cs" />
     <Compile Include="Syntax\TextLocation.cs" />

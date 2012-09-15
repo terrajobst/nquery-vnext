@@ -166,6 +166,14 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
+        public static void ReportUndeclaredAggregate(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var nameText = name.ValueText;
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredAggregate, nameText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.UndeclaredAggregate, message);
+            diagnostics.Add(diagnostic);
+        }
+
         public static void ReportUndeclaredMethod(this ICollection<Diagnostic> diagnostics, MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
         {
             var name = node.Name.ValueText;
@@ -245,10 +253,14 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
-        //public static void ReportAmbiguousAggregate(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, AggregateBinding[] candidates)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AmbiguousAggregate(nodeOrToken, identifier, candidates));
-        //}
+        public static void ReportAmbiguousAggregate(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<AggregateSymbol> symbols)
+        {
+            var symbol1 = symbols[0];
+            var symbol2 = symbols[1];
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousAggregate, name, symbol1, symbol2);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.AmbiguousAggregate, message);
+            diagnostics.Add(diagnostic);
+        }
 
         public static void ReportAmbiguousProperty(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
         {

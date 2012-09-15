@@ -101,7 +101,7 @@ namespace NQuery.Language.Binding
                     return BindPropertyAccessExpression((PropertyAccessExpressionSyntax) node);
 
                 case SyntaxKind.CountAllExpression:
-                    return BindCountAllExpression();
+                    return BindCountAllExpression((CountAllExpressionSyntax)node);
 
                 case SyntaxKind.FunctionInvocationExpression:
                     return BindFunctionInvocationExpression((FunctionInvocationExpressionSyntax) node);
@@ -450,8 +450,8 @@ namespace NQuery.Language.Binding
 
             if (symbols.Length == 0)
             {
-                // TODO: Include aggregate here.
-                var isInvocable = LookupSymbols(name).OfType<FunctionSymbol>().Any();
+                var isInvocable = LookupSymbols(name).OfType<FunctionSymbol>().Any() ||
+                                  LookupSymbols(name).OfType<AggregateSymbol>().Any();
                 if (isInvocable)
                     _diagnostics.ReportInvocationRequiresParenthesis(name);
                 else
@@ -549,20 +549,56 @@ namespace NQuery.Language.Binding
             return new BoundNameExpression(columnInstance, columnInstances);
         }
 
-        private static BoundExpression BindCountAllExpression()
+        private BoundExpression BindCountAllExpression(CountAllExpressionSyntax node)
         {
-            // TODO: We should it bind to the COUNT aggregate expression, passing a literal 1.
-            return new BoundLiteralExpression(0);
+            var aggregates = LookupAggregate(node.Name).ToArray();
+            if (aggregates.Length == 0)
+            {
+                _diagnostics.ReportUndeclaredAggregate(node.Name);
+
+                var badSymbol = new BadSymbol(node.Name.ValueText);
+                return new BoundNameExpression(badSymbol, Enumerable.Empty<Symbol>());
+            }
+
+            if (aggregates.Length > 1)
+                _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+
+            var aggregate = aggregates[0];
+            var argument = new BoundLiteralExpression(1);
+            return new BoundAggregateExpression(argument, aggregate);
         }
 
         private BoundExpression BindFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
         {
-            // TODO: Resolve and bind to aggregates
+            if (node.ArgumentList.Arguments.Count == 1)
+            {
+                // Could be an aggregate or a function.
+
+                var aggregates = LookupAggregate(node.Name).ToArray();
+                var funcionCandidate = LookupFunction(node.Name, 1).FirstOrDefault();
+
+                if (aggregates.Length > 0)
+                {
+                    if (funcionCandidate != null)
+                    {
+                        var symbols = new Symbol[] {aggregates[0], funcionCandidate};
+                        _diagnostics.ReportAmbiguousName(node.Name, symbols);
+                    }
+                    else
+                    {
+                        if (aggregates.Length > 1)
+                            _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+
+                        var aggregate = aggregates[0];
+                        var argument = BindExpression(node.ArgumentList.Arguments[0]);
+                        return new BoundAggregateExpression(argument, aggregate);
+                    }
+                }
+            }
 
             var name = node.Name;
             var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToArray();
             var argumentTypes = arguments.Select(a => a.Type).ToArray();
-
             var result = LookupFunction(name, argumentTypes);
 
             if (result.Best == null)

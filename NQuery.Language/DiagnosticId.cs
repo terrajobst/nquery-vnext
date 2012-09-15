@@ -29,6 +29,7 @@ namespace NQuery.Language
         UndeclaredTable,
         UndeclaredVariable,
         UndeclaredFunction,
+        UndeclaredAggregate,
         UndeclaredMethod,
         UndeclaredColumn,
         UndeclaredProperty,

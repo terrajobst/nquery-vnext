@@ -38,12 +38,6 @@ namespace NQuery.Language
         //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousTableRef, message);
         //}
 
-        //public static Diagnostic AmbiguousAggregate(SyntaxNodeOrToken nodeOrToken, Identifier identifier, AggregateBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousAggregate, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousAggregate, message);
-        //}
-
         //public static Diagnostic AmbiguousType(string typeReference, Type[] candidates)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousType, typeReference, FormattingHelpers.FormatFullyQualifiedTypeList(candidates));

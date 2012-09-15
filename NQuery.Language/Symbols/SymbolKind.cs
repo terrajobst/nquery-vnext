@@ -12,6 +12,7 @@ namespace NQuery.Language.Symbols
         Variable,
         Parameter,
         Function,
+        Aggregate,
         Method,
         Property
     }

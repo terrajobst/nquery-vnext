@@ -361,6 +361,8 @@ namespace NQuery.Language.VSEditor
                     return NQueryGlyph.Variable;
                 case SymbolKind.Function:
                     return NQueryGlyph.Function;
+                case SymbolKind.Aggregate:
+                    return NQueryGlyph.Aggregate;
                 case SymbolKind.Property:
                     return NQueryGlyph.Property;
                 case SymbolKind.Method:

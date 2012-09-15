@@ -138,5 +138,17 @@ namespace NQuery.Language.Binding
                              select new FunctionSymbolSignature(f);
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
+
+        private IEnumerable<FunctionSymbol> LookupFunction(SyntaxToken name, int argumentTypes)
+        {
+            return from f in _dataContext.Functions
+                   where f.Parameters.Count == argumentTypes && name.Matches(f.Name)
+                   select f;
+        }
+
+        private IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
+        {
+            return LookupSymbols(name).OfType<AggregateSymbol>();
+        }
     }
 }

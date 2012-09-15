@@ -145,7 +145,7 @@
     <value>All columns in '{0}' must belong to the same table.</value>
   </data>
   <data name="AmbiguousAggregate" xml:space="preserve">
-    <value>Aggregate name {0} is ambiguous between {1}.</value>
+    <value>Aggregate name '{0}' is ambiguous between '{1}' and '{2}'.</value>
   </data>
   <data name="AmbiguousBinaryOperator" xml:space="preserve">
     <value>Binary operator '{0}' invocation on types '{1}' and '{2}' is ambiguous.</value>
@@ -744,7 +744,10 @@
   <data name="WhereClauseMustEvaluateToBool" xml:space="preserve">
     <value>WHERE clause must evaluate to BOOLEAN expression.</value>
   </data>
-  <data name="TypeIsAlreadyRegistered">
+  <data name="TypeIsAlreadyRegistered" xml:space="preserve">
     <value>The type '{0}' is already registered.</value>
+  </data>
+  <data name="UndeclaredAggregate" xml:space="preserve">
+    <value>Aggregate '{0}' is not declared.</value>
   </data>
 </root>
