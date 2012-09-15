@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ContextualLeftAndRightKeywordTests.cs" />
     <Compile Include="ConversionTests.cs" />
+    <Compile Include="DerivedTableTests.cs" />
     <Compile Include="IntrinsicOperatorTests.UnaryTestCases.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IdentifierTests.cs" />

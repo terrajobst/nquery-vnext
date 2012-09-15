@@ -521,10 +521,12 @@ namespace NQuery.Language
         //    diagnostics.Add(DiagnosticFactory.TooManyExpressionsInSelectListOfSubquery());
         //}
 
-        //public static void ReportInvalidRowReference(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, TableRefBinding derivedTableRef)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidRowReference(nodeOrToken, derivedTableRef));
-        //}
+        public static void ReportInvalidRowReference(this ICollection<Diagnostic> diagnostics, SyntaxToken tableName)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidRowReference, tableName.ValueText);
+            var diagnostic = new Diagnostic(tableName.Span, DiagnosticId.InvalidRowReference, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportNoColumnAliasSpecified(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, int columnIndex, Identifier derivedTableName)
         //{

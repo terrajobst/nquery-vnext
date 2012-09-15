@@ -463,8 +463,31 @@ namespace NQuery.Language.Binding
             if (symbols.Length > 1)
                 _diagnostics.ReportAmbiguousName(name, symbols);
 
-            var first = symbols[0];
-            return new BoundNameExpression(first, symbols);
+            var symbol = symbols[0];
+
+            // If symbol refers to a table, we need to make that it's either not a derived table/CTE
+            // or we are used in column access context (i.e. our parent is a a property access).
+            //
+            // For example, the following query is invalid
+            //
+            //    SELECT  D -- ERROR
+            //    FROM    (
+            //               SELECT  *
+            //               FROM    Employees e
+            //            ) AS D
+            //
+            // You cannot obtain a value for D itself.
+
+            var tableInstance = symbol as TableInstanceSymbol;
+            if (tableInstance != null)
+            {
+                var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
+                var refersToDerivedTableOrCte = tableInstance.Table.Kind == SymbolKind.DerivedTable; // TODO: Add CTE here.
+                if (!isColumnAccess && refersToDerivedTableOrCte)
+                    _diagnostics.ReportInvalidRowReference(name);
+            }
+
+            return new BoundNameExpression(symbol, symbols);
         }
 
         private BoundExpression BindPropertyAccessExpression(PropertyAccessExpressionSyntax node)

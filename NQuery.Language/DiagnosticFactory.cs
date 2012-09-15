@@ -251,12 +251,6 @@ namespace NQuery.Language
         //    return new Diagnostic(DiagnosticId.TooManyExpressionsInSelectListOfSubquery, Resources.TooManyExpressionsInSelectListOfSubquery);
         //}
 
-        //public static Diagnostic InvalidRowReference(SyntaxNodeOrToken nodeOrToken, TableRefBinding derivedTableRef)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidRowReference, derivedTableRef.Name);
-        //    return new Diagnostic(nodeOrToken, DiagnosticId.InvalidRowReference, message);
-        //}
-
         //public static Diagnostic NoColumnAliasSpecified(SyntaxNodeOrToken nodeOrToken, int columnIndex, Identifier derivedTableName)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.NoColumnAliasSpecified, columnIndex + 1, derivedTableName.ToSource());
