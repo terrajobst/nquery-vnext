@@ -29,7 +29,7 @@ namespace NQuery.Language
             return _dataContext == dataContext ? this : new Compilation(_syntaxTree, dataContext);
         }
 
-        public static Compilation Empty = new Compilation(SyntaxTree.Empty, DataContext.Empty);
+        public static readonly Compilation Empty = new Compilation(SyntaxTree.Empty, DataContext.Empty);
 
         public SyntaxTree SyntaxTree
         {

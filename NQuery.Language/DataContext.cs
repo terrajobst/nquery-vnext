@@ -15,11 +15,11 @@ namespace NQuery.Language
             MethodProviders = new ReadOnlyTypeRegistry<IMethodProvider>(methodProviders);
         }
 
-        public static DataContext Empty = new DataContext(new TableSymbol[0],
-                                                          new FunctionSymbol[0],
-                                                          new VariableSymbol[0],
-                                                          new TypeRegistry<IPropertyProvider>(), 
-                                                          new TypeRegistry<IMethodProvider>());
+        public static readonly DataContext Empty = new DataContext(new TableSymbol[0],
+                                                                   new FunctionSymbol[0],
+                                                                   new VariableSymbol[0],
+                                                                   new TypeRegistry<IPropertyProvider>(),
+                                                                   new TypeRegistry<IMethodProvider>());
 
         public ReadOnlyCollection<TableSymbol> Tables { get; private set; }
         public ReadOnlyCollection<FunctionSymbol> Functions { get; private set; }
