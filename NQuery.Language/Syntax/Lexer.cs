@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using System.Linq;
 
 namespace NQuery.Language
 {
@@ -309,25 +308,27 @@ namespace NQuery.Language
                     break;
 
                 case '!':
-                    _charReader.NextChar();
-                    if (_charReader.Current == '=')
+                    if (_charReader.Peek() == '=')
                     {
                         _kind = SyntaxKind.ExclamationEqualsToken;
                         _charReader.NextChar();
+                        _charReader.NextChar();
                     }
-                    else if (_charReader.Current == '>')
+                    else if (_charReader.Peek()== '>')
                     {
                         _kind = SyntaxKind.ExclamationGreaterToken;
                         _charReader.NextChar();
+                        _charReader.NextChar();
                     }
-                    else if (_charReader.Current == '<')
+                    else if (_charReader.Peek() == '<')
                     {
                         _kind = SyntaxKind.ExclamationLessToken;
+                        _charReader.NextChar();
                         _charReader.NextChar();
                     }
                     else
                     {
-                        _diagnostics.ReportIllegalInputCharacter(CurrentSpan, _charReader.Current);
+                        ReadInvalidCharacter();
                     }
                     break;
 
@@ -397,12 +398,18 @@ namespace NQuery.Language
                     }
                     else
                     {
-                        _diagnostics.ReportIllegalInputCharacter(CurrentSpan, _charReader.Current);
-                        _charReader.NextChar();
+                        ReadInvalidCharacter();
                     }
 
                     break;
             }
+        }
+
+        private void ReadInvalidCharacter()
+        {
+            var c = _charReader.Current;
+            _charReader.NextChar();
+            _diagnostics.ReportIllegalInputCharacter(CurrentSpan, c);
         }
 
         private void ReadString()
