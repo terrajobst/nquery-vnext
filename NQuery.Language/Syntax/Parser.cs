@@ -29,10 +29,29 @@ namespace NQuery.Language
         private void LexAllTokens(string source)
         {
             var lexer = new Lexer(source);
+            var badTokens = new List<SyntaxToken>();
+
             SyntaxToken token;
             do
             {
                 token = lexer.Lex();
+
+                // Skip any bad tokens.
+
+                badTokens.Clear();
+                while (token.Kind == SyntaxKind.BadToken)
+                {
+                    badTokens.Add(token);
+                    token = lexer.Lex();
+                }
+
+                if (badTokens.Count > 0)
+                {
+                    var trivia = new[] { CreateSkippedTokensTrivia(badTokens) }
+                                 .Concat(token.LeadingTrivia).ToArray();
+                    token = token.WithLeadingTrivia(trivia);
+                }
+
                 _tokens.Add(token);
             } while (token.Kind != SyntaxKind.EndOfFileToken);
         }
@@ -106,14 +125,10 @@ namespace NQuery.Language
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
             var diagnostics = new List<Diagnostic>(1);
-            diagnostics.ReportTokenExpected(tokens[0], SyntaxKind.EndOfLineTrivia);
+            diagnostics.ReportTokenExpected(tokens[0], SyntaxKind.EndOfFileToken);
             tokens[0] = tokens[0].WithDiagnotics(diagnostics);
 
-            var start = tokens.First().Span.Start;
-            var end = tokens.Last().Span.End;
-            var span = TextSpan.FromBounds(start, end);
-            var skippedTokensNode = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            var skippedTokensTrivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, skippedTokensNode, new Diagnostic[0]);
+            var skippedTokensTrivia = CreateSkippedTokensTrivia(tokens);
 
             var leadingTrivia = new List<SyntaxTrivia>(endOfFileToken.LeadingTrivia.Count + 1);
             leadingTrivia.Add(skippedTokensTrivia);
@@ -130,6 +145,16 @@ namespace NQuery.Language
                                          endOfFileToken.Diagnostics);
 
             return result;
+        }
+
+        private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
+        {
+            var start = tokens.First().Span.Start;
+            var end = tokens.Last().Span.End;
+            var span = TextSpan.FromBounds(start, end);
+            var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
+            var trivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
+            return trivia;
         }
 
         private ExpressionSyntax ParseExpression()

@@ -103,7 +103,7 @@ namespace NQuery.Language
 
         public static void ReportTokenExpected(this ICollection<Diagnostic> diagnostics, SyntaxToken actual, SyntaxKind expected)
         {
-            var actualText = actual.Kind.GetDisplayText();
+            var actualText = actual.GetDisplayText();
             var expectedText = expected.GetDisplayText();
             var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, actualText, expectedText);
             var diagnostic = new Diagnostic(actual.Span, DiagnosticId.TokenExpected, message);

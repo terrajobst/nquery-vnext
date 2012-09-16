@@ -163,6 +163,16 @@ namespace NQuery.Language
             return new SyntaxToken(_parent, kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
         }
 
+        public SyntaxToken WithLeadingTrivia(IList<SyntaxTrivia> trivia)
+        {
+            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, trivia, _trailingTrivia, _diagnostics);
+        }
+
+        public SyntaxToken WithTrailingTrivia(IList<SyntaxTrivia> trivia)
+        {
+            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, trivia, _diagnostics);
+        }
+
         public override string ToString()
         {
             using (var writer = new StringWriter())

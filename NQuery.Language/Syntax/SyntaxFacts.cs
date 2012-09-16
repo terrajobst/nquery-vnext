@@ -255,6 +255,12 @@ namespace NQuery.Language
             }
         }
 
+        public static string GetDisplayText(this SyntaxToken token)
+        {
+            var result = token.Text;
+            return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
+        }
+
         public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
         {
             return kind == SyntaxKind.IdentifierToken || kind.IsKeyword();

@@ -35,20 +35,15 @@ namespace NQuery.Language
             return TextSpan.FromBounds(start, end);
         }
 
-        public IEnumerable<SyntaxNode> Ancestors()
+        public IEnumerable<SyntaxNode> Ancestors(bool ascendOutOfTrivia = true)
         {
-            var node = this;
-            while (node.Parent != null)
-            {
-                yield return node.Parent;
-                node = node.Parent;
-            }
+            return AncestorsAndSelf(ascendOutOfTrivia).Skip(1);
         }
 
-        public IEnumerable<SyntaxNode> AncestorsAndSelf()
+        public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
         {
             var node = this;
-            while (node != null)
+            while (node != null && (ascendOutOfTrivia || !(node is StructuredTriviaSyntax)))
             {
                 yield return node;
                 node = node.Parent;
@@ -64,24 +59,24 @@ namespace NQuery.Language
                    select n.AsNode();
         }
 
-        public IEnumerable<SyntaxNode> DescendantNodes()
+        public IEnumerable<SyntaxNode> DescendantNodes(bool descendIntoTrivia = false)
         {
-            return DescendantNodesAndSelf().Skip(1);
+            return DescendantNodesAndSelf(descendIntoTrivia).Skip(1);
         }
 
-        public IEnumerable<SyntaxNode> DescendantNodesAndSelf()
+        public IEnumerable<SyntaxNode> DescendantNodesAndSelf(bool descendIntoTrivia = false)
         {
-            return from n in DescendantNodesAndTokensAndSelf()
+            return from n in DescendantNodesAndTokensAndSelf(descendIntoTrivia)
                    where n.IsNode
                    select n.AsNode();
         }
-        
-        public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokens()
+
+        public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokens(bool descendIntoTrivia = false)
         {
-            return DescendantNodesAndTokensAndSelf().Skip(1);
+            return DescendantNodesAndTokensAndSelf(descendIntoTrivia).Skip(1);
         }
-        
-        public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokensAndSelf()
+
+        public IEnumerable<SyntaxNodeOrToken> DescendantNodesAndTokensAndSelf(bool descendIntoTrivia = false)
         {
             var stack = new Stack<SyntaxNodeOrToken>();
             stack.Push(this);
@@ -95,25 +90,43 @@ namespace NQuery.Language
                     continue;
 
                 foreach (var child in current.AsNode().ChildNodesAndTokens().Reverse())
+                {
+                    if (child.IsToken && descendIntoTrivia)
+                    {
+                        var token = child.AsToken();
+                        var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        foreach (var structure in structures)
+                            stack.Push(structure);
+                    }
+
                     stack.Push(child);
+
+                    if (child.IsToken && descendIntoTrivia)
+                    {
+                        var token = child.AsToken();
+                        var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        foreach (var structure in structures)
+                            stack.Push(structure);
+                    }
+                }
             }
         }
 
-        public IEnumerable<SyntaxToken> DescendantTokens()
+        public IEnumerable<SyntaxToken> DescendantTokens(bool descendIntoTrivia = false)
         {
-            return from n in DescendantNodesAndTokens()
+            return from n in DescendantNodesAndTokens(descendIntoTrivia)
                    where n.IsToken
                    select n.AsToken();
         }
 
-        public SyntaxToken FirstToken()
+        public SyntaxToken FirstToken(bool descendIntoTrivia = false)
         {
-            return DescendantTokens().First();
+            return DescendantTokens(descendIntoTrivia).First();
         }
 
-        public SyntaxToken LastToken()
+        public SyntaxToken LastToken(bool descendIntoTrivia = false)
         {
-            return DescendantTokens().Last();
+            return DescendantTokens(descendIntoTrivia).Last();
         }
 
         public SyntaxToken FindToken(int position)
