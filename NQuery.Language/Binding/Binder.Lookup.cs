@@ -139,10 +139,10 @@ namespace NQuery.Language.Binding
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
 
-        private IEnumerable<FunctionSymbol> LookupFunction(SyntaxToken name, int argumentTypes)
+        private IEnumerable<FunctionSymbol> LookupFunctionWithSingleParameter(SyntaxToken name)
         {
             return from f in _dataContext.Functions
-                   where f.Parameters.Count == argumentTypes && name.Matches(f.Name)
+                   where f.Parameters.Count == 1 && name.Matches(f.Name)
                    select f;
         }
 

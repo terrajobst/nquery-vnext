@@ -137,7 +137,11 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindUnaryExpression(SyntaxNode node, UnaryOperatorKind operatorKind, BoundExpression expression)
         {
-            // TODO: We may want to avoid cascading errors when expression couldn't be resolved.
+            // To avoid cascading errors, we'll return a unary expression that isn't bound to
+            // an operator if the expression couldn't be resolved.
+
+            if (expression.Type.IsError())
+                return new BoundUnaryExpression(expression, OverloadResolutionResult<UnaryOperatorSignature>.None);
 
             var result = LookupUnaryOperator(operatorKind, expression);
             if (result.Best == null)
@@ -172,14 +176,18 @@ namespace NQuery.Language.Binding
 
         private BoundExpression BindBinaryExpression(SyntaxNode node, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
         {
+            // In order to avoid cascading errors, we'll return a binary expression without an operator
+            // if either side couldn't be resolved.
+
+            if (left.Type.IsError() || right.Type.IsError())
+                return new BoundBinaryExpression(left, OverloadResolutionResult<BinaryOperatorSignature>.None, right);
+
             // TODO: We should consider supporting three-state-short-circuit evaluation.
             //
             // TODO: C# doesn't allow overloading && or ||. Instead, you need to overload & and | *and* you need to define operator true/operator false:
             //
             // The operation x && y is evaluated as T.false(x) ? x : T.&(x, y)
             // The operation x || y is evaluated as T.true(x) ? x : T.|(x, y)
-
-            // TODO: We may want to avoid cascading errors when left or right couldn't be resolved.
 
             var result = LookupBinaryOperator(operatorKind, left, right);
             if (result.Best == null)
@@ -266,16 +274,21 @@ namespace NQuery.Language.Binding
             var expression = BindExpression(node.Expression);
             var sourceType = expression.Type;
             var targetType = BindType(node.TypeName);
-
-            // TODO: Avoid cascading errors if source or target type couldn't be resolved.
-
             var conversion = Conversion.Classify(sourceType, targetType);
-            if (!conversion.Exists)
-                _diagnostics.ReportCannotConvert(node, sourceType, targetType);
-            else if (conversion.ConversionMethods.Count > 1)
-                _diagnostics.ReportAmbiguousConversion(node, sourceType, targetType);
 
-            // TODO: We may want to insert conversion nodes right here.
+            // To avoid cascading errors, we'll only validate the result
+            // if we could resolve both, the expression as well as the
+            // target type.
+
+            if (!expression.Type.IsError() && !targetType.IsError())
+            {
+                if (!conversion.Exists)
+                    _diagnostics.ReportCannotConvert(node, sourceType, targetType);
+                else if (conversion.ConversionMethods.Count > 1)
+                    _diagnostics.ReportAmbiguousConversion(node, sourceType, targetType);
+
+                // TODO: We may want to insert conversion nodes right here.
+            }
 
             return new BoundCastExpression(expression, targetType, conversion);
         }
@@ -510,8 +523,9 @@ namespace NQuery.Language.Binding
             // table instance. Resolve node.Name as a property.
 
             var name = node.Name;
-            if (target.Type.IsUnknown())
+            if (target.Type.IsError())
             {
+                // To avoid cascading errors, we'll give up early.
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
             }
@@ -576,7 +590,7 @@ namespace NQuery.Language.Binding
                 // Could be an aggregate or a function.
 
                 var aggregates = LookupAggregate(node.Name).ToArray();
-                var funcionCandidate = LookupFunction(node.Name, 1).FirstOrDefault();
+                var funcionCandidate = LookupFunctionWithSingleParameter(node.Name).FirstOrDefault();
 
                 if (aggregates.Length > 0)
                 {
@@ -600,6 +614,14 @@ namespace NQuery.Language.Binding
             var name = node.Name;
             var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToArray();
             var argumentTypes = arguments.Select(a => a.Type).ToArray();
+
+            // To avoid cascading errors, we'll return a node that isn't bound to any function
+            // if we couldn't resolve any of our arguments.
+
+            var anyErrorsInArguments = argumentTypes.Any(a => a.IsError());
+            if (anyErrorsInArguments)
+                return new BoundFunctionInvocationExpression(arguments, OverloadResolutionResult<FunctionSymbolSignature>.None);
+
             var result = LookupFunction(name, argumentTypes);
 
             if (result.Best == null)
@@ -624,16 +646,16 @@ namespace NQuery.Language.Binding
         private BoundExpression BindMethodInvocationExpression(MethodInvocationExpressionSyntax node)
         {
             var target = BindExpression(node.Target);
-
             var name = node.Name;
-            if (target.Type.IsUnknown())
-            {
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
-            }
-
             var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToArray();
             var argumentTypes = arguments.Select(a => a.Type).ToArray();
+
+            // To avoid cascading errors, we'll return a node that insn't bound to
+            // any method if we couldn't resolve our target or any of our arguments.
+
+            var anyErrors = target.Type.IsError() || argumentTypes.Any(a => a.IsError());
+            if (anyErrors)
+                return new BoundMethodInvocationExpression(target, arguments, OverloadResolutionResult<MethodSymbolSignature>.None);
 
             var result = LookupMethod(target.Type, name, argumentTypes);
 
@@ -692,15 +714,23 @@ namespace NQuery.Language.Binding
 
                 var right = boundQuery.SelectColumns[0].Expression;
 
-                var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
-                var operatorKind = expressionKind.ToBinaryOperatorKind();
-                var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
-                if (result.Best == null)
+                // To avoid cascading errors, we'll only validate the operator
+                // if we could both sides.
+
+                var argumentErrors = left.Type.IsError() || right.Type.IsError();
+                if (!argumentErrors)
                 {
-                    if (result.Selected == null)
-                        _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
-                    else
-                        _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
+                    var operatorKind = expressionKind.ToBinaryOperatorKind();
+
+                    var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
+                    if (result.Best == null)
+                    {
+                        if (result.Selected == null)
+                            _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                        else
+                            _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    }
                 }
             }
 

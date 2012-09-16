@@ -51,18 +51,25 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AggregateTests.cs" />
+    <Compile Include="AllAnySubselectExressionTests.cs" />
+    <Compile Include="BinaryOperatorExpressionTests.cs" />
+    <Compile Include="CastExpressionTests.cs" />
     <Compile Include="CommonTableExpressions.cs" />
     <Compile Include="ContextualLeftAndRightKeywordTests.cs" />
     <Compile Include="ConversionTests.cs" />
     <Compile Include="DerivedTableTests.cs" />
+    <Compile Include="FunctionInvocationExressionTests.cs" />
     <Compile Include="IntrinsicOperatorTests.UnaryTestCases.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IdentifierTests.cs" />
     <Compile Include="IntrinsicOperatorTests.BinaryTestCases.cs" />
     <Compile Include="LexerTests.cs" />
+    <Compile Include="MethodInvocationExressionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyAccessExressionTests.cs" />
     <Compile Include="SeparatedSyntaxListTests.cs" />
     <Compile Include="IntrinsicOperatorTests.cs" />
+    <Compile Include="UnaryOperatorExpressionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">

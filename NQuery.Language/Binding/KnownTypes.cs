@@ -4,29 +4,32 @@ namespace NQuery.Language.Binding
 {
     internal static class KnownTypes
     {
+        private static class MissingType { }
         private static class UnknownType { }
         private static class NullType { }
-        private static class MissingType { }
 
+        public static readonly Type Missing = typeof(MissingType);
         public static readonly Type Unknown = typeof(UnknownType);
         public static readonly Type Null = typeof(NullType);
-
-        // TODO: Shouldn't we use System.Void?
-        public static readonly Type Missing = typeof(MissingType);
 
         public static bool IsMissing(this Type type)
         {
             return type == Missing;
         }
 
-        public static bool IsNull(this Type type)
-        {
-            return type == Null;
-        }
-
         public static bool IsUnknown(this Type type)
         {
             return type == Unknown;
+        }
+
+        public static bool IsError(this Type type)
+        {
+            return type.IsMissing() || type.IsUnknown();
+        }
+
+        public static bool IsNull(this Type type)
+        {
+            return type == Null;
         }
 
         public static bool IsNumericType(this KnownType value)
