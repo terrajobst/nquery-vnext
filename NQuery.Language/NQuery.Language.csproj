@@ -112,6 +112,7 @@
     <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
     <Compile Include="Runtime\ReflectionProvider.cs" />
     <Compile Include="Symbols\AggregateSymbol.cs" />
+    <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />
     <Compile Include="Symbols\CommonTableExpressionSymbol.cs" />
     <Compile Include="Syntax\SyntaxExtensions.cs" />

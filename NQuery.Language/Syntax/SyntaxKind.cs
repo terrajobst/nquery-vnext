@@ -151,6 +151,7 @@ namespace NQuery.Language
         CastExpression,
         CaseExpression,
         CaseLabel,
+        CaseElseLabel,
         CoalesceExpression,
         NullIfExpression,
         InExpression,
@@ -196,6 +197,6 @@ namespace NQuery.Language
         GroupByClause,
         GroupByColumn,
         HavingClause,
-        Alias
+        Alias,
     }
 }

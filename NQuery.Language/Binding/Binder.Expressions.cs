@@ -317,9 +317,9 @@ namespace NQuery.Language.Binding
                                    let boundThen = BindExpression(caseLabel.ThenExpression)
                                    select new BoundCaseLabel(boundCondition, boundThen)).ToList();
 
-            var boundElse = node.ElseExpression == null
+            var boundElse = node.ElseLabel == null
                                 ? null
-                                : BindExpression(node.ElseExpression);
+                                : BindExpression(node.ElseLabel.Expression);
 
             return new BoundCaseExpression(boundCaseLabels, boundElse);
         }
@@ -354,9 +354,9 @@ namespace NQuery.Language.Binding
                                    let boundThen = BindExpression(caseLabel.ThenExpression)
                                    select new BoundCaseLabel(boundCondition, boundThen)).ToList();
 
-            var boundElse = node.ElseExpression == null
+            var boundElse = node.ElseLabel == null
                                 ? null
-                                : BindExpression(node.ElseExpression);
+                                : BindExpression(node.ElseLabel.Expression);
 
             return new BoundCaseExpression(boundCaseLabels, boundElse);
         }

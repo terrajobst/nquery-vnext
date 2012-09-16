@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -9,18 +8,16 @@ namespace NQuery.Language
         private readonly SyntaxToken _caseKeyword;
         private readonly ExpressionSyntax _inputExpression;
         private readonly ReadOnlyCollection<CaseLabelSyntax> _caseLabels;
-        private readonly SyntaxToken? _elseKeyword;
-        private readonly ExpressionSyntax _elseExpression;
+        private readonly CaseElseLabelSyntax _elseLabel;
         private readonly SyntaxToken _endKeyword;
 
-        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IList<CaseLabelSyntax> caseLabels, SyntaxToken? elseKeyword, ExpressionSyntax elseExpression, SyntaxToken endKeyword)
+        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IList<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
             : base(syntaxTree)
         {
             _caseKeyword = caseKeyword.WithParent(this);
             _inputExpression = inputExpression;
             _caseLabels = new ReadOnlyCollection<CaseLabelSyntax>(caseLabels);
-            _elseKeyword = elseKeyword.WithParent(this);
-            _elseExpression = elseExpression;
+            _elseLabel = elseLabel;
             _endKeyword = endKeyword.WithParent(this);
         }
 
@@ -39,11 +36,8 @@ namespace NQuery.Language
             foreach (var caseLabel in _caseLabels)
                 yield return caseLabel;
 
-            if (_elseKeyword != null)
-                yield return _elseKeyword.Value;
-
-            if (_elseExpression != null)
-                yield return _elseExpression;
+            if (_elseLabel != null)
+                yield return _elseLabel;
 
             yield return _endKeyword;
         }
@@ -63,14 +57,9 @@ namespace NQuery.Language
             get { return _caseLabels; }
         }
 
-        public SyntaxToken? ElseKeyword
+        public CaseElseLabelSyntax ElseLabel
         {
-            get { return _elseKeyword; }
-        }
-
-        public ExpressionSyntax ElseExpression
-        {
-            get { return _elseExpression; }
+            get { return _elseLabel; }
         }
 
         public SyntaxToken EndKeyword

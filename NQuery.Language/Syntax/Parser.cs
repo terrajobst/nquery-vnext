@@ -428,44 +428,56 @@ namespace NQuery.Language
 
         private ExpressionSyntax ParseCaseExpression()
         {
-            var caseKeyword = NextToken();
+            var caseKeyword = Match(SyntaxKind.CaseKeyword);
+            var inputExpression = ParseOptionalCaseInputExpression();
+            var caseLabels = ParseCaseLabels();
+            var elseLabel = ParseOptionalCaseElseLabel();
+            var endKeyword = Match(SyntaxKind.EndKeyword);
+            return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseLabel, endKeyword);
+        }
 
+        private ExpressionSyntax ParseOptionalCaseInputExpression()
+        {
             var hasInput = Current.Kind != SyntaxKind.WhenKeyword &&
                            Current.Kind != SyntaxKind.ElseKeyword &&
                            Current.Kind != SyntaxKind.EndKeyword;
 
             var inputExpression = hasInput ? ParseExpression() : null;
+            return inputExpression;
+        }
+
+        private List<CaseLabelSyntax> ParseCaseLabels()
+        {
             var caseLabels = new List<CaseLabelSyntax>();
-
-            if (Current.Kind != SyntaxKind.WhenKeyword)
+            do
             {
-                Match(SyntaxKind.WhenKeyword);
-            }
-            else
-            {
-                while (Current.Kind == SyntaxKind.WhenKeyword)
-                {
-                    var whenKeyword = NextToken();
-                    var whenExpression = ParseExpression();
-                    var thenKeyword = Match(SyntaxKind.ThenKeyword);
-                    var thenExpression = ParseExpression();
-                    var caseLabel = new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
-                    caseLabels.Add(caseLabel);
-                }
-            }
+                var caseLabel = ParseCaseLabel();
+                caseLabels.Add(caseLabel);
+            } while (Current.Kind == SyntaxKind.WhenKeyword);
+            return caseLabels;
+        }
 
-            SyntaxToken? elseKeyword = null;
-            ExpressionSyntax elseExpression = null;
+        private CaseLabelSyntax ParseCaseLabel()
+        {
+            var whenKeyword = Match(SyntaxKind.WhenKeyword);
+            var whenExpression = ParseExpression();
+            var thenKeyword = Match(SyntaxKind.ThenKeyword);
+            var thenExpression = ParseExpression();
+            return new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
+        }
 
-            if (Current.Kind == SyntaxKind.ElseKeyword)
-            {
-                elseKeyword = NextToken();
-                elseExpression = ParseExpression();
-            }
+        private CaseElseLabelSyntax ParseOptionalCaseElseLabel()
+        {
+            return Current.Kind != SyntaxKind.ElseKeyword
+                       ? null
+                       : ParseCaseElseLabel();
+        }
 
-            var endKeyword = Match(SyntaxKind.EndKeyword);
-
-            return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseKeyword, elseExpression, endKeyword);
+        private CaseElseLabelSyntax ParseCaseElseLabel()
+        {
+            var elseKeyword = Match(SyntaxKind.ElseKeyword);
+            var elseExpression = ParseExpression();
+            return new CaseElseLabelSyntax(_syntaxTree, elseKeyword, elseExpression);
         }
 
         private ExpressionSyntax ParseCoalesceExpression()
