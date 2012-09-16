@@ -430,12 +430,12 @@ namespace NQuery.Language
                         goto ExitLoop;
 
                     case '\'':
-                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
 
                         if (_charReader.Current != '\'')
                             goto ExitLoop;
                         
+                        sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
 

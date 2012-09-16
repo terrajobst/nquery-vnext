@@ -236,6 +236,48 @@ namespace NQuery.Language.UnitTests
             Assert.AreEqual(text, token.Value);
         }
 
+        [TestMethod]
+        public void Lexer_CanLexString()
+        {
+            const string text = "the value";
+            const string quotedText = "'" + text + "'";
+
+            var token = Helpers.LexSingleToken(quotedText);
+
+            Assert.AreEqual(quotedText, token.Text);
+            Assert.AreEqual(text, token.Value);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexStringWithEscapedQuoteAtStart()
+        {
+            var input = "'''test'";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual("'test", token.Value);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexStringWithEscapedQuoteInTheMiddle()
+        {
+            var input = "'te''st'";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual("te'st", token.Value);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexStringWithEscapedQuoteAtEnd()
+        {
+            var input = "'test'''";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual("test'", token.Value);
+        }
+
         // Int32
         // Int64
         // double
