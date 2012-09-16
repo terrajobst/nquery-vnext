@@ -166,7 +166,7 @@ namespace NQuery.Language
         {
             if (left == null)
             {
-                // No left operand, so we parse one and take care about leading unary operators
+                // No left operand, so we parse one and take care of leading unary operators
 
                 var unaryExpression = SyntaxFacts.GetUnaryOperatorExpression(Current.Kind);
 
@@ -266,7 +266,12 @@ namespace NQuery.Language
                                            Current.Kind == SyntaxKind.SomeKeyword ||
                                            Current.Kind == SyntaxKind.AnyKeyword;
 
-                            if (isAllAny)
+                            if (!isAllAny)
+                            {
+                                var expression = ParseSubExpression(null, operatorPrecedence);
+                                left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
+                            }
+                            else
                             {
                                 var allAnyOperatorToken = binaryExpression.IsValidAllAnyOperator()
                                                               ? operatorToken
@@ -276,11 +281,6 @@ namespace NQuery.Language
                                 var query = ParseQuery();
                                 var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
                                 left = new AllAnySubselectSyntax(_syntaxTree, left, allAnyOperatorToken, keyword, leftParenthesis, query, rightParenthesis);
-                            }
-                            else
-                            {
-                                var expression = ParseSubExpression(null, operatorPrecedence);
-                                left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
                             }
                             break;
                         }
@@ -314,7 +314,7 @@ namespace NQuery.Language
 
         private ExpressionSyntax ParseMemberExpression()
         {
-            ExpressionSyntax target = ParsePrimaryExpression();
+            var target = ParsePrimaryExpression();
 
             while (Current.Kind == SyntaxKind.DotToken)
             {
@@ -341,7 +341,7 @@ namespace NQuery.Language
             switch (Current.Kind)
             {
                 case SyntaxKind.NullKeyword:
-                    return new LiteralExpressionSyntax(_syntaxTree, NextToken(), null);
+                    return ParseNullLiteral();
 
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
@@ -353,137 +353,37 @@ namespace NQuery.Language
                     return ParseLiteral();
 
                 case SyntaxKind.ExistsKeyword:
-                {
-                    var existsKeyword = NextToken();
-                    var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-                    var query = ParseQuery();
-                    var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                    return new ExistsSubselectSyntax(_syntaxTree, existsKeyword, leftParenthesis, query, rightParenthesis);
-                }
+                    return ParseExistsSubselect();
 
                 case SyntaxKind.AtToken:
-                {
-                    var atToken = NextToken();
-                    var name = Match(SyntaxKind.IdentifierToken);
-                    return new VariableExpressionSyntax(_syntaxTree, atToken, name);
-                }
+                    return ParseVariableExpression();
 
                 case SyntaxKind.CastKeyword:
-                {
-                    var castKeyword = NextToken();
-                    var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
-                    var expression = ParseExpression();
-                    var asKeyword = Match(SyntaxKind.AsKeyword);
-                    var typeName = Match(SyntaxKind.IdentifierToken);
-                    var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
-
-                    return new CastExpressionSyntax(_syntaxTree, castKeyword, leftParenthesisToken, expression, asKeyword, typeName, rightParenthesisToken);
-                }
+                    return ParseCastExpression();
 
                 case SyntaxKind.CaseKeyword:
-                {
-                    var caseKeyword = NextToken();
-
-                    var hasInput = Current.Kind != SyntaxKind.WhenKeyword &&
-                                   Current.Kind != SyntaxKind.ElseKeyword &&
-                                   Current.Kind != SyntaxKind.EndKeyword;
-
-                    var inputExpression = hasInput ? ParseExpression() : null;
-                    var caseLabels = new List<CaseLabelSyntax>();
-
-                    if (Current.Kind != SyntaxKind.WhenKeyword)
-                    {
-                        Match(SyntaxKind.WhenKeyword);
-                    }
-                    else
-                    {
-                        while (Current.Kind == SyntaxKind.WhenKeyword)
-                        {
-                            var whenKeyword = NextToken();
-                            var whenExpression = ParseExpression();
-                            var thenKeyword = Match(SyntaxKind.ThenKeyword);
-                            var thenExpression = ParseExpression();
-
-                            var caseLabel = new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
-                            caseLabels.Add(caseLabel);
-                        }
-                    }
-
-                    SyntaxToken? elseKeyword = null;
-                    ExpressionSyntax elseExpression = null;
-
-                    if (Current.Kind == SyntaxKind.ElseKeyword)
-                    {
-                        elseKeyword = NextToken();
-                        elseExpression = ParseExpression();
-                    }
-
-                    var endKeyword = Match(SyntaxKind.EndKeyword);
-
-                    return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseKeyword, elseExpression, endKeyword);
-                }
+                    return ParseCaseExpression();
 
                 case SyntaxKind.CoalesceKeyword:
-                {
-                    var coalesceKeyword = NextToken();
-                    var arguments = ParseArgumentList();
-                    return new CoalesceExpressionSyntax(_syntaxTree, coalesceKeyword, arguments);
-                }
+                    return ParseCoalesceExpression();
 
                 case SyntaxKind.NullIfKeyword:
-                {
-                    var nullIfKeyword = NextToken();
-                    var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
-                    var leftExpression = ParseExpression();
-                    var commaToken = Match(SyntaxKind.CommaToken);
-                    var rightExpression = ParseExpression();
-                    var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
-                    return new NullIfExpressionSyntax(_syntaxTree, nullIfKeyword, leftParenthesisToken, leftExpression, commaToken, rightExpression, rightParenthesisToken);
-                }
+                    return ParseNullIfExpression();
 
                 case SyntaxKind.IdentifierToken:
-                {
-                    var identifier = NextToken();
-
-                    if (Current.Kind != SyntaxKind.LeftParenthesisToken)
-                        return new NameExpressionSyntax(_syntaxTree, identifier);
-
-                    if (Lookahead.Kind == SyntaxKind.AsteriskToken && identifier.Matches("COUNT"))
-                    {
-                        var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-                        var asteriskToken = Match(SyntaxKind.AsteriskToken);
-                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                        return new CountAllExpressionSyntax(_syntaxTree, identifier, leftParenthesis, asteriskToken, rightParenthesis);
-                    }
-                    
-                    var arguments = ParseArgumentList();
-                    return new FunctionInvocationExpressionSyntax(_syntaxTree, identifier, arguments);
-                }
+                    return ParseNameOrFunctionInvocationExpression();
 
                 case SyntaxKind.LeftParenthesisToken:
-                {
-                    if (Lookahead.Kind == SyntaxKind.SelectKeyword)
-                    {
-                        var leftParenthesis = NextToken();
-                        var query = ParseQuery();
-                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                        return new SingleRowSubselectSyntax(_syntaxTree, leftParenthesis, query, rightParenthesis);
-                    }
-                    else
-                    {
-                        var leftParenthesis = NextToken();
-                        var expression = ParseExpression();
-                        var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                        return new ParenthesizedExpressionSyntax(_syntaxTree, leftParenthesis, expression, rightParenthesis);
-                    }
-                }
+                    return ParseSubqueryOrParenthesizedExpression();
 
                 default:
-                {
-                    var identifier = Match(SyntaxKind.IdentifierToken);
-                    return new NameExpressionSyntax(_syntaxTree, identifier);
-                }
+                    return ParseNameExpression();
             }
+        }
+
+        private ExpressionSyntax ParseNullLiteral()
+        {
+            return new LiteralExpressionSyntax(_syntaxTree, NextToken(), null);
         }
 
         private ExpressionSyntax ParseBooleanLiteral()
@@ -497,6 +397,147 @@ namespace NQuery.Language
         {
             var token = NextToken();
             return new LiteralExpressionSyntax(_syntaxTree, token, token.Value);
+        }
+
+        private ExpressionSyntax ParseExistsSubselect()
+        {
+            var existsKeyword = NextToken();
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+            var query = ParseQuery();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new ExistsSubselectSyntax(_syntaxTree, existsKeyword, leftParenthesis, query, rightParenthesis);
+        }
+
+        private ExpressionSyntax ParseVariableExpression()
+        {
+            var atToken = NextToken();
+            var name = Match(SyntaxKind.IdentifierToken);
+            return new VariableExpressionSyntax(_syntaxTree, atToken, name);
+        }
+
+        private ExpressionSyntax ParseCastExpression()
+        {
+            var castKeyword = NextToken();
+            var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
+            var expression = ParseExpression();
+            var asKeyword = Match(SyntaxKind.AsKeyword);
+            var typeName = Match(SyntaxKind.IdentifierToken);
+            var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
+            return new CastExpressionSyntax(_syntaxTree, castKeyword, leftParenthesisToken, expression, asKeyword, typeName, rightParenthesisToken);
+        }
+
+        private ExpressionSyntax ParseCaseExpression()
+        {
+            var caseKeyword = NextToken();
+
+            var hasInput = Current.Kind != SyntaxKind.WhenKeyword &&
+                           Current.Kind != SyntaxKind.ElseKeyword &&
+                           Current.Kind != SyntaxKind.EndKeyword;
+
+            var inputExpression = hasInput ? ParseExpression() : null;
+            var caseLabels = new List<CaseLabelSyntax>();
+
+            if (Current.Kind != SyntaxKind.WhenKeyword)
+            {
+                Match(SyntaxKind.WhenKeyword);
+            }
+            else
+            {
+                while (Current.Kind == SyntaxKind.WhenKeyword)
+                {
+                    var whenKeyword = NextToken();
+                    var whenExpression = ParseExpression();
+                    var thenKeyword = Match(SyntaxKind.ThenKeyword);
+                    var thenExpression = ParseExpression();
+                    var caseLabel = new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
+                    caseLabels.Add(caseLabel);
+                }
+            }
+
+            SyntaxToken? elseKeyword = null;
+            ExpressionSyntax elseExpression = null;
+
+            if (Current.Kind == SyntaxKind.ElseKeyword)
+            {
+                elseKeyword = NextToken();
+                elseExpression = ParseExpression();
+            }
+
+            var endKeyword = Match(SyntaxKind.EndKeyword);
+
+            return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseKeyword, elseExpression, endKeyword);
+        }
+
+        private ExpressionSyntax ParseCoalesceExpression()
+        {
+            var coalesceKeyword = NextToken();
+            var arguments = ParseArgumentList();
+            return new CoalesceExpressionSyntax(_syntaxTree, coalesceKeyword, arguments);
+        }
+
+        private ExpressionSyntax ParseNullIfExpression()
+        {
+            var nullIfKeyword = NextToken();
+            var leftParenthesisToken = Match(SyntaxKind.LeftParenthesisToken);
+            var leftExpression = ParseExpression();
+            var commaToken = Match(SyntaxKind.CommaToken);
+            var rightExpression = ParseExpression();
+            var rightParenthesisToken = Match(SyntaxKind.RightParenthesisToken);
+            return new NullIfExpressionSyntax(_syntaxTree, nullIfKeyword, leftParenthesisToken, leftExpression, commaToken, rightExpression, rightParenthesisToken);
+        }
+
+        private ExpressionSyntax ParseNameOrFunctionInvocationExpression()
+        {
+            var isFunctionInvocation = Current.Kind == SyntaxKind.IdentifierToken &&
+                                       Lookahead.Kind == SyntaxKind.LeftParenthesisToken;
+
+            return !isFunctionInvocation
+                       ? ParseNameExpression()
+                       : ParseFunctionInvocationExpression();
+        }
+
+        private ExpressionSyntax ParseNameExpression()
+        {
+            var name = Match(SyntaxKind.IdentifierToken);
+            return new NameExpressionSyntax(_syntaxTree, name);
+        }
+
+        private ExpressionSyntax ParseFunctionInvocationExpression()
+        {
+            var name = Match(SyntaxKind.IdentifierToken);
+            if (Lookahead.Kind == SyntaxKind.AsteriskToken && name.Matches("COUNT"))
+            {
+                var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+                var asteriskToken = Match(SyntaxKind.AsteriskToken);
+                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+                return new CountAllExpressionSyntax(_syntaxTree, name, leftParenthesis, asteriskToken, rightParenthesis);
+            }
+
+            var arguments = ParseArgumentList();
+            return new FunctionInvocationExpressionSyntax(_syntaxTree, name, arguments);
+        }
+
+        private ExpressionSyntax ParseSubqueryOrParenthesizedExpression()
+        {
+            return Lookahead.Kind == SyntaxKind.SelectKeyword
+                       ? ParseSingleRowSubselect()
+                       : ParseParenthesizedExpression();
+        }
+
+        private ExpressionSyntax ParseSingleRowSubselect()
+        {
+            var leftParenthesis = NextToken();
+            var query = ParseQuery();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new SingleRowSubselectSyntax(_syntaxTree, leftParenthesis, query, rightParenthesis);
+        }
+
+        private ExpressionSyntax ParseParenthesizedExpression()
+        {
+            var leftParenthesis = NextToken();
+            var expression = ParseExpression();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new ParenthesizedExpressionSyntax(_syntaxTree, leftParenthesis, expression, rightParenthesis);
         }
 
         private ArgumentListSyntax ParseArgumentList()
@@ -767,9 +808,6 @@ namespace NQuery.Language
         private SeparatedSyntaxList<SelectColumnSyntax> ParseSelectColumnList()
         {
             var columnsWithCommas = new List<SyntaxNodeOrToken>();
-
-            //if (Current.Kind == SyntaxKind.EndOfFileToken)
-            //    _errorReporter.SimpleExpressionExpected(_token.Range, _token.Text);
 
             while (true)
             {
