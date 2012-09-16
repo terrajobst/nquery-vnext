@@ -1,10 +1,15 @@
-- Add support for resolving all queries except CTEs
+For some reason skipped tokens at the end don't cause errors:
 
-- Report ambiguous matches
+	SELECT 'test'
+	;test
+
+- Apply conversions
+- Constant folding
+
+- Resolve GROUP BY and ORDER BY
+
 - Simplify BadSymbols
-
 - Consider renaming BindingContext to Scope
-- Consider removing ExpressionBindingContext and changing lookup rules to expand table instances (nneds to be mirrored in intelli sense, too)
 
 - Improve parsing by avoiding ripple effetcs of missing delimiters
 
