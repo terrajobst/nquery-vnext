@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NQuery.Language
 {
-    public sealed class SeparatedSyntaxList<TNode> : IEnumerable<TNode>
+    public sealed class SeparatedSyntaxList<TNode> : IList<TNode>
         where TNode: SyntaxNode
     {
         private readonly Entry[] _entries;
@@ -98,6 +98,55 @@ namespace NQuery.Language
         public TNode this[int index]
         {
             get { return _entries[index].Node; }
+        }
+
+        public bool Contains(TNode item)
+        {
+            return _entries.Any(e => e.Node == item);
+        }
+
+        void ICollection<TNode>.Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        void ICollection<TNode>.Add(TNode item)
+        {
+            throw new NotSupportedException();
+        }
+
+        int IList<TNode>.IndexOf(TNode item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void IList<TNode>.Insert(int index, TNode item)
+        {
+            throw new NotSupportedException();
+        }
+
+        void IList<TNode>.RemoveAt(int index)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<TNode>.Remove(TNode item)
+        {
+            throw new NotSupportedException();
+        }
+
+        bool ICollection<TNode>.IsReadOnly { get { return true; } }
+
+        void ICollection<TNode>.CopyTo(TNode[] array, int arrayIndex)
+        {
+            for (var i = 0; i < _entries.Length; i++)
+                array[arrayIndex + i] = _entries[i].Node;
+        }
+
+        TNode IList<TNode>.this[int index]
+        {
+            get { return this[index]; }
+            set { throw new NotSupportedException(); }
         }
 
         public int Count
