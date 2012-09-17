@@ -638,6 +638,8 @@ namespace NQuery.Language.Binding
 
             if (propertySymbols.Length == 0)
             {
+                // TODO: Check whether we can bind a method. If so, give a differen error message.
+
                 _diagnostics.ReportUndeclaredProperty(node, target.Type);
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());

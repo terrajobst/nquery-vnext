@@ -256,6 +256,15 @@ namespace NQuery.Language
                         }
                         case SyntaxKind.InKeyword:
                         {
+                            // TODO: We need to support x IN (SELECT v FROM Table)
+                            //
+                            // We should introduce a new SyntaxNode InSubselectExpression and
+                            // use lookahead to determine whether need to parse an expression
+                            // list or a query.
+                            //
+                            // Determining this is probably not easy. We might need to create
+                            // a new method ParseExpressionOrQuery() that uses a lookup and
+                            // re-writes parenthesized queries as needed.
                             var argumentList = ParseArgumentList();
                             left = new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
                             break;
