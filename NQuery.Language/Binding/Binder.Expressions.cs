@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using NQuery.Language.BoundNodes;
 using NQuery.Language.Symbols;
@@ -7,6 +8,16 @@ namespace NQuery.Language.Binding
 {
     internal sealed partial class Binder
     {
+        private void EnsureCaseLabelsEvaluateToBool(IList<CaseLabelSyntax> caseLabels, IList<BoundCaseLabel> boundCaseLabels)
+        {
+            for (var i = 0; i < caseLabels.Count; i++)
+            {
+                var type = boundCaseLabels[i].Condition.Type;
+                if (!type.IsError() && type != typeof(bool))
+                    _diagnostics.ReportWhenMustEvaluateToBool(caseLabels[i].WhenExpression.Span);
+            }
+        }
+
         private Type BindType(SyntaxToken typeName)
         {
             var type = LookupType(typeName);
@@ -15,6 +26,119 @@ namespace NQuery.Language.Binding
 
             _diagnostics.ReportUndeclaredType(typeName);
             return KnownTypes.Unknown;
+        }
+
+        private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
+        {
+            var selected = result.Selected;
+            if (selected == null)
+                return expression;
+
+            var targetType = selected.Signature.GetParameterType(argumentIndex);
+            var conversion = selected.ArgumentConversions[argumentIndex];
+            return conversion.IsIdentity
+                       ? expression
+                       : new BoundCastExpression(expression, targetType, conversion);
+        }
+
+        private IList<BoundExpression> BindToCommonType(IList<ExpressionSyntax> expressions)
+        {
+            var boundExpressions = expressions.Select(BindExpression).ToArray();
+
+            // To avoid cascading errors as let's first see whether we couldn't resolve
+            // any of the expressions. If that's the case, we'll simply return them as-is.
+
+            var hasAnyErrors = boundExpressions.Any(e => e.Type.IsError());
+            if (hasAnyErrors)
+                return boundExpressions;
+
+            // Now let's see whether all expression already have the same type.
+            // In that case we can simply return the input as-is.
+
+            var firstType = boundExpressions.Select(e => e.Type).First();
+            var allAreSameType = boundExpressions.All(e => e.Type == firstType);
+            if (allAreSameType)
+                return boundExpressions;
+
+            // Not all expressions have the same type. Let's try to find a common type.
+            //
+            // The common type C among a type set T1..TN is defined as follows:
+            //
+            // (1) C has to be in the set T1..TN. In other words we don't consider
+            //     types not already present.
+            //
+            // (2) All types T1..T2 have to have an identity conversion or an implicit
+            //     conversion to C.
+            //
+            // (3) C has to be the only type for which (1) and (2) hold.
+
+            Type commonType = null;
+
+            foreach (var target in boundExpressions)
+            {
+                if (target.Type.IsError() || target.Type == commonType)
+                    continue;
+
+                var allOthersCanConvertToTarget = true;
+
+                foreach (var source in boundExpressions)
+                {
+                    if (source.Type.IsError() || source.Type == target.Type)
+                        continue;
+
+                    var conversion = Conversion.Classify(source.Type, target.Type);
+                    if (!conversion.IsImplicit)
+                    {
+                        allOthersCanConvertToTarget = false;
+                        break;
+                    }
+                }
+
+                if (allOthersCanConvertToTarget)
+                {
+                    if (commonType == null)
+                    {
+                        commonType = target.Type;
+                    }
+                    else
+                    {
+                        // TODO: We may want to report an ambiguity error here.
+                        commonType = null;
+                        break;
+                    }
+                }
+            }
+
+            if (commonType == null)
+            {
+                // If we couldn't find a common type, we'll just use the first expression's
+                // type -- this will cause BindConversion below to to report errors.
+                commonType = boundExpressions.First().Type;
+            }
+
+            return boundExpressions.Select((e, i) => BindConversion(expressions[i].Span, e, commonType)).ToArray();
+        }
+
+        private BoundExpression BindConversion(TextSpan errorSpan, BoundExpression expression, Type targetType)
+        {
+            var sourceType = expression.Type;
+            var conversion = Conversion.Classify(sourceType, targetType);
+            if (conversion.IsIdentity)
+                return expression;
+
+            // To avoid cascading errors, we'll only validate the result
+            // if we could resolve both, the expression as well as the
+            // target type.
+
+            if (!sourceType.IsError() && !targetType.IsError())
+            {
+                if (!conversion.Exists)
+                    _diagnostics.ReportCannotConvert(errorSpan, sourceType, targetType);
+                else if (conversion.ConversionMethods.Count > 1)
+                    _diagnostics.ReportAmbiguousConversion(errorSpan, sourceType, targetType);
+            }
+
+            return new BoundCastExpression(expression, targetType, conversion);
         }
 
         private BoundExpression BindExpression(ExpressionSyntax node)
@@ -126,16 +250,16 @@ namespace NQuery.Language.Binding
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax node)
         {
             var operatorKind = node.Kind.ToUnaryOperatorKind();
-            return BindUnaryExpression(node, operatorKind, node.Expression);
+            return BindUnaryExpression(node.Span, operatorKind, node.Expression);
         }
 
-        private BoundExpression BindUnaryExpression(SyntaxNode node, UnaryOperatorKind operatorKind, ExpressionSyntax expression)
+        private BoundExpression BindUnaryExpression(TextSpan errorSpan, UnaryOperatorKind operatorKind, ExpressionSyntax expression)
         {
             var boundExpression = BindExpression(expression);
-            return BindUnaryExpression(node, operatorKind, boundExpression);
+            return BindUnaryExpression(errorSpan, operatorKind, boundExpression);
         }
 
-        private BoundExpression BindUnaryExpression(SyntaxNode node, UnaryOperatorKind operatorKind, BoundExpression expression)
+        private BoundExpression BindUnaryExpression(TextSpan errorSpan, UnaryOperatorKind operatorKind, BoundExpression expression)
         {
             // To avoid cascading errors, we'll return a unary expression that isn't bound to
             // an operator if the expression couldn't be resolved.
@@ -148,33 +272,42 @@ namespace NQuery.Language.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportCannotApplyUnaryOperator(node.Span, operatorKind, expression.Type);
+                    _diagnostics.ReportCannotApplyUnaryOperator(errorSpan, operatorKind, expression.Type);
                 }
                 else
                 {
-                    _diagnostics.ReportAmbiguousUnaryOperator(node.Span, operatorKind, expression.Type);
+                    _diagnostics.ReportAmbiguousUnaryOperator(errorSpan, operatorKind, expression.Type);
                 }
             }
 
-            // TODO: We may want to insert conversion nodes right here.
+            // Convert argument (if necessary)
             
-            return new BoundUnaryExpression(expression, result);
+            var convertedArgument = BindArgument(expression, result, 0);
+
+            return new BoundUnaryExpression(convertedArgument, result);
+        }
+
+        private BoundExpression BindOptionalNegation(TextSpan errorSpan, SyntaxToken? notKeyword, BoundExpression expression)
+        {
+            return notKeyword == null
+                       ? expression
+                       : BindUnaryExpression(errorSpan, UnaryOperatorKind.LogicalNot, expression);
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax node)
         {
             var operatorKind = node.Kind.ToBinaryOperatorKind();
-            return BindBinaryExpression(node, operatorKind, node.Left, node.Right);
+            return BindBinaryExpression(node.Span, operatorKind, node.Left, node.Right);
         }
 
-        private BoundExpression BindBinaryExpression(SyntaxNode node, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        private BoundExpression BindBinaryExpression(TextSpan errorSpan, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
         {
             var boundLeft = BindExpression(left);
             var boundRight = BindExpression(right);
-            return BindBinaryExpression(node, operatorKind, boundLeft, boundRight);
+            return BindBinaryExpression(errorSpan, operatorKind, boundLeft, boundRight);
         }
 
-        private BoundExpression BindBinaryExpression(SyntaxNode node, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
+        private BoundExpression BindBinaryExpression(TextSpan errorSpan, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
         {
             // In order to avoid cascading errors, we'll return a binary expression without an operator
             // if either side couldn't be resolved.
@@ -194,43 +327,41 @@ namespace NQuery.Language.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    _diagnostics.ReportCannotApplyBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
                 }
                 else
                 {
-                    _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    _diagnostics.ReportAmbiguousBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
                 }
             }
 
-            // TODO: We may want to insert conversion nodes right here.
+            // Convert arguments (if necessary)
 
-            return new BoundBinaryExpression(left, result, right);
+            var convertedLeft = BindArgument(left, result, 0);
+            var convertedRight = BindArgument(left, result, 1);
+
+            return new BoundBinaryExpression(convertedLeft, result, convertedRight);
         }
 
-        private BoundExpression BindConditionalExpression(SyntaxNode node, bool negated, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        private BoundExpression BindBinaryExpression(TextSpan errorSpan, SyntaxToken? notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
         {
-            var result = BindBinaryExpression(node, operatorKind, left, right);
-            return !negated
-                       ? result
-                       : BindUnaryExpression(node, UnaryOperatorKind.LogicalNot, result);
+            var expression = BindBinaryExpression(errorSpan, operatorKind, left, right);
+            return BindOptionalNegation(errorSpan, notKeyword, expression);
         }
 
         private BoundExpression BindLikeExpression(LikeExpressionSyntax node)
         {
-            var negated = node.NotKeyword != null;
-            return BindConditionalExpression(node, negated, BinaryOperatorKind.Like, node.Left, node.Right);
+            return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.Like, node.Left, node.Right);
         }
 
         private BoundExpression BindSoundslikeExpression(SoundslikeExpressionSyntax node)
         {
-            var negated = node.NotKeyword != null;
-            return BindConditionalExpression(node, negated, BinaryOperatorKind.Soundslike, node.Left, node.Right);
+            return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.Soundslike, node.Left, node.Right);
         }
 
         private BoundExpression BindSimilarToExpression(SimilarToExpressionSyntax node)
         {
-            var negated = node.NotKeyword != null;
-            return BindConditionalExpression(node, negated, BinaryOperatorKind.SimilarTo, node.Left, node.Right);
+            return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.SimilarTo, node.Left, node.Right);
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax node)
@@ -244,53 +375,31 @@ namespace NQuery.Language.Binding
             // 
             // ===>
             //
-            // lowerBound <= Left AND left <= upperBound
+            // left >= lowerBound AND left <= upperBound
 
             var left = BindExpression(node.Left);
             var lowerBound = BindExpression(node.LowerBound);
             var upperBound = BindExpression(node.UpperBound);
 
-            // TODO: Check errors
-            var lowerCheckOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LessOrEqual, lowerBound, left);
-            var upperCheckOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LessOrEqual, left, upperBound);
-            var andOperatorMethod = LookupBinaryOperator(BinaryOperatorKind.LogicalAnd, typeof(bool), typeof(bool));
+            var lowerCheck = BindBinaryExpression(node.Span, BinaryOperatorKind.GreaterOrEqual, left, lowerBound);
+            var upperCheck = BindBinaryExpression(node.Span, BinaryOperatorKind.LessOrEqual, left, upperBound);
+            var boundsCheck = BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalAnd, lowerCheck, upperCheck);
 
-            var lowerExpression = new BoundBinaryExpression(lowerBound, lowerCheckOperatorMethod, left);
-            var upperExpression = new BoundBinaryExpression(left, upperCheckOperatorMethod, upperBound);
-            var andExpression = new BoundBinaryExpression(lowerExpression, andOperatorMethod, upperExpression);
-
-            // TODO: Insert negation if node.NotKeyword != null
-            return andExpression;
+            return BindOptionalNegation(node.Span, node.NotKeyword, boundsCheck);
         }
 
         private BoundExpression BindIsNullExpression(IsNullExpressionSyntax node)
         {
-            var boundExpression = BindExpression(node.Expression);
-            return new BoundIsNullExpression(boundExpression);
+            var expression = BindExpression(node.Expression);
+            var isNull = new BoundIsNullExpression(expression);
+            return BindOptionalNegation(node.Span, node.NotKeyword, isNull);
         }
 
         private BoundExpression BindCastExpression(CastExpressionSyntax node)
         {
             var expression = BindExpression(node.Expression);
-            var sourceType = expression.Type;
             var targetType = BindType(node.TypeName);
-            var conversion = Conversion.Classify(sourceType, targetType);
-
-            // To avoid cascading errors, we'll only validate the result
-            // if we could resolve both, the expression as well as the
-            // target type.
-
-            if (!expression.Type.IsError() && !targetType.IsError())
-            {
-                if (!conversion.Exists)
-                    _diagnostics.ReportCannotConvert(node, sourceType, targetType);
-                else if (conversion.ConversionMethods.Count > 1)
-                    _diagnostics.ReportAmbiguousConversion(node, sourceType, targetType);
-
-                // TODO: We may want to insert conversion nodes right here.
-            }
-
-            return new BoundCastExpression(expression, targetType, conversion);
+            return BindConversion(node.Span, expression, targetType);
         }
 
         private BoundExpression BindCaseExpression(CaseExpressionSyntax node)
@@ -309,17 +418,11 @@ namespace NQuery.Language.Binding
             //   ELSE re
             // END CASE
 
-            // TODO: We need to ensure that there is a common type across r1..re.
-            // TODO: We need to ensure that e1..eN are all of type bool
+            var boundResults = BindCaseResultExpressions(node);
+            var boundCaseLabels = node.CaseLabels.Select((l, i) => new BoundCaseLabel(BindExpression(l.WhenExpression), boundResults[i])).ToArray();
+            var boundElse = node.ElseLabel == null ? null : boundResults.Last();
 
-            var boundCaseLabels = (from caseLabel in node.CaseLabels
-                                   let boundCondition = BindExpression(caseLabel.WhenExpression)
-                                   let boundThen = BindExpression(caseLabel.ThenExpression)
-                                   select new BoundCaseLabel(boundCondition, boundThen)).ToList();
-
-            var boundElse = node.ElseLabel == null
-                                ? null
-                                : BindExpression(node.ElseLabel.Expression);
+            EnsureCaseLabelsEvaluateToBool(node.CaseLabels, boundCaseLabels);
 
             return new BoundCaseExpression(boundCaseLabels, boundElse);
         }
@@ -342,86 +445,87 @@ namespace NQuery.Language.Binding
             //   ELSE re
             // END CASE
 
-            // TODO: We need to ensure that there is a common type across r1...rn and re.
-            // TODO: We need to ensure that all conditions x = eN have valid operators and evaluate to bool.
-
             var boundInput = BindExpression(node.InputExpression);
+            var boundResults = BindCaseResultExpressions(node);
 
-            var boundCaseLabels = (from caseLabel in node.CaseLabels
+            var boundCaseLabels = (from t in node.CaseLabels.Select((c, i) => Tuple.Create(c, i))
+                                   let caseLabel = t.Item1
+                                   let i = t.Item2
                                    let boundWhen = BindExpression(caseLabel.WhenExpression)
-                                   let operatorMethod = LookupBinaryOperator(BinaryOperatorKind.Equal, boundInput, boundWhen)
-                                   let boundCondition = new BoundBinaryExpression(boundInput, operatorMethod, boundWhen)
-                                   let boundThen = BindExpression(caseLabel.ThenExpression)
-                                   select new BoundCaseLabel(boundCondition, boundThen)).ToList();
+                                   let boundCondition = BindBinaryExpression(caseLabel.WhenExpression.Span, BinaryOperatorKind.Equal, boundInput, boundWhen)
+                                   let boundThen = boundResults[i]
+                                   select new BoundCaseLabel(boundCondition, boundThen)).ToArray();
 
             var boundElse = node.ElseLabel == null
                                 ? null
-                                : BindExpression(node.ElseLabel.Expression);
+                                : boundResults.Last();
+
+            EnsureCaseLabelsEvaluateToBool(node.CaseLabels, boundCaseLabels);
 
             return new BoundCaseExpression(boundCaseLabels, boundElse);
         }
 
+        private IList<BoundExpression> BindCaseResultExpressions(CaseExpressionSyntax node)
+        {
+            var elseExpression = node.ElseLabel == null
+                                     ? Enumerable.Empty<ExpressionSyntax>()
+                                     : new[] {node.ElseLabel.Expression};
+            var expressions = node.CaseLabels.Select(l => l.ThenExpression).Concat(elseExpression).ToArray();
+            return BindToCommonType(expressions);
+        }
+
         private BoundExpression BindCoalesceExpression(CoalesceExpressionSyntax node)
         {
-            // TODO: We need to make sure that all argument types are identical or a conversion exists.
-            var boundArguments = (from a in node.ArgumentList.Arguments
-                                  select BindExpression(a)).ToArray();
-
-            // TODO: Could we simply rewrite this syntax here?
-            //
             // COALESCE(e1, e2, .. eN)
             //
             // ====>
             //
             // CASE
             //   WHEN e1 IS NOT NULL THEN e1
+            //   ..
+            //   WHEN e2 IS NOT NULL THEN e2
             //   ELSE
-            //     CASE
-            //       WHEN e2 IS NOT NULL THEN e2
-            //       ELSE
-            //         eN
-            //     END
+            //     eN
             // END
 
-            return new BoundCoalesceExpression(boundArguments);
+            var boundArguments = BindToCommonType(node.ArgumentList.Arguments);
+            var caseLabelCount = node.ArgumentList.Arguments.Count - 1;
+            var caseLabels = boundArguments.Take(caseLabelCount).Select(a => new BoundCaseLabel(new BoundIsNullExpression(a), a)).ToArray();
+            var elseExpresion = boundArguments.Last();
+            return new BoundCaseExpression(caseLabels, elseExpresion);
         }
 
         private BoundExpression BindNullIfExpression(NullIfExpressionSyntax node)
         {
-            // TODO: We need to make sure that and right and left can be compared with each other.
-            var boundLeft = BindExpression(node.LeftExpression);
-            var boundRight = BindExpression(node.RightExpression);
-
-            // TODO: Could we simply rewrite this syntax here?
-            //
             // NULLIF(left, right)
             //
             // ===>
             //
             // CASE WHEN left != right THEN left END
-            
-            return new BoundNullIfExpression(boundLeft, boundRight);
+
+            var expressions = BindToCommonType(new[] {node.LeftExpression, node.RightExpression});
+            var boundLeft = expressions[0];
+            var boundRight = expressions[1];
+            var boundComparison = BindBinaryExpression(node.Span, BinaryOperatorKind.NotEqual, boundLeft, boundRight);
+            var boundCaseLabel = new BoundCaseLabel(boundComparison, boundLeft);
+            return new BoundCaseExpression(new[] { boundCaseLabel }, null);
         }
 
         private BoundExpression BindInExpression(InExpressionSyntax node)
         {
-            // TODO: We need to make sure that every argument can be compared with expression.
-
-            var boundExpression = BindExpression(node.Expression);
-            var boundArguments = (from a in node.ArgumentList.Arguments
-                                  select BindExpression(a)).ToArray();
-
-            // TODO: We need to capture the operator being used -- it might not actully resolve to System.Boolean.
-
-            // TODO: Could we simply rewrite this syntax here?
-            //
-            // expression IN (e1, e2..eN)
+            // e IN (e1, e2..eN)
             //
             // ===>
             //
-            // expression = e1 OR expression = e2 .. OR expression = eN
+            // e = e1 OR e = e2 .. OR e = eN
 
-            return new BoundInExpression(boundExpression, boundArguments);
+            var boundExpression = BindExpression(node.Expression);
+            var boundComparisons = from a in node.ArgumentList.Arguments
+                                   let boundArgument = BindExpression(a)
+                                   let boundComparision = BindBinaryExpression(a.Span, BinaryOperatorKind.Equal, boundExpression, boundArgument)
+                                   select boundComparision;
+
+            return boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c == null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
         }
 
         private static BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
@@ -638,9 +742,11 @@ namespace NQuery.Language.Binding
                 _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
-            // TODO: We need to convert all arguments
+            // Convert all arguments (if necessary)
 
-            return new BoundFunctionInvocationExpression(arguments, result);
+            var convertedArguments = arguments.Select((a, i) => BindArgument(a, result, i)).ToArray();
+
+            return new BoundFunctionInvocationExpression(convertedArguments, result);
         }
 
         private BoundExpression BindMethodInvocationExpression(MethodInvocationExpressionSyntax node)
@@ -673,9 +779,11 @@ namespace NQuery.Language.Binding
                 _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
-            // TODO: We need to convert all arguments
+            // Convert all arguments (if necessary)
 
-            return new BoundMethodInvocationExpression(target, arguments, result);
+            var convertedArguments = arguments.Select((a, i) => BindArgument(a, result, i)).ToArray();
+
+            return new BoundMethodInvocationExpression(target, convertedArguments, result);
         }
 
         private BoundExpression BindSingleRowSubselect(SingleRowSubselectSyntax node)
@@ -701,41 +809,42 @@ namespace NQuery.Language.Binding
             var left = BindExpression(node.Left);
             var boundQuery = BindQuery(node.Query);
 
-            if (boundQuery.SelectColumns.Count == 0)
+            if (boundQuery.SelectColumns.Count > 1)
             {
                 // TODO: Error
             }
-            else
+
+            var rightColumn = boundQuery.SelectColumns[0];
+            var right = rightColumn.Expression;
+
+            // To avoid cascading errors, we'll only validate the operator
+            // if we could resolve both sides.
+
+            if (left.Type.IsError() || right.Type.IsError())
+                return new BoundAllAnySubselect(left, boundQuery);
+            
+            var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
+            var operatorKind = expressionKind.ToBinaryOperatorKind();
+
+            var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
+            if (result.Best == null)
             {
-                if (boundQuery.SelectColumns.Count > 1)
-                {
-                    // TODO: Error
-                }
-
-                var right = boundQuery.SelectColumns[0].Expression;
-
-                // To avoid cascading errors, we'll only validate the operator
-                // if we could both sides.
-
-                var argumentErrors = left.Type.IsError() || right.Type.IsError();
-                if (!argumentErrors)
-                {
-                    var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
-                    var operatorKind = expressionKind.ToBinaryOperatorKind();
-
-                    var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
-                    if (result.Best == null)
-                    {
-                        if (result.Selected == null)
-                            _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
-                        else
-                            _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
-                    }
-                }
+                if (result.Selected == null)
+                    _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                else
+                    _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
             }
 
-            // TODO: We may need to add a conversion for it
-            return new BoundAllAnySubselect(left, boundQuery);
+            var convertedLeft = BindArgument(left, result, 0);
+            var convertedRight = BindArgument(right, result, 1);
+
+            if (convertedRight != right)
+            {
+                // TODO: We need a BoundNode that can convert the output of a query.
+                throw new NotImplementedException("Converting right side of ALL/ANY/SOME not implemented yet.");
+            }
+
+            return new BoundAllAnySubselect(convertedLeft, boundQuery);
         }
     }
 }

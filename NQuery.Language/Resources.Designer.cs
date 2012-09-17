@@ -1942,11 +1942,11 @@ namespace NQuery.Language {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WHEN expression &apos;{0}&apos; must evaluate to &apos;{1}&apos; if CASE input expression is omitted..
+        ///   Looks up a localized string similar to WHEN expression must evaluate to &apos;{0}&apos;..
         /// </summary>
-        internal static string WhenMustEvaluateToBoolIfCaseInputIsOmitted {
+        internal static string WhenMustEvaluateToBool {
             get {
-                return ResourceManager.GetString("WhenMustEvaluateToBoolIfCaseInputIsOmitted", resourceCulture);
+                return ResourceManager.GetString("WhenMustEvaluateToBool", resourceCulture);
             }
         }
         

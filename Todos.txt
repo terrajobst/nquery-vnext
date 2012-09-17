@@ -1,4 +1,3 @@
-- Apply conversions
 - Constant folding
 
 - Resolve GROUP BY and ORDER BY

@@ -57,9 +57,6 @@
     <Compile Include="Binding\UnaryOperatorSignature.cs" />
     <Compile Include="Conversion.cs" />
     <Compile Include="BoundNodes\BoundCastExpression.cs" />
-    <Compile Include="BoundNodes\BoundInExpression.cs" />
-    <Compile Include="BoundNodes\BoundCoalesceExpression.cs" />
-    <Compile Include="BoundNodes\BoundNullIfExpression.cs" />
     <Compile Include="BoundNodes\BoundAllAnySubselect.cs" />
     <Compile Include="BoundNodes\BoundCommonTableExpression.cs" />
     <Compile Include="BoundNodes\BoundCommonTableExpressionQuery.cs" />

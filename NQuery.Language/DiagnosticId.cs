@@ -51,7 +51,7 @@ namespace NQuery.Language
         AmbiguousBinaryOperator,
         AmbiguousConversion,
         AsteriskModifierNotAllowed,
-        WhenMustEvaluateToBoolIfCaseInputIsOmitted,
+        WhenMustEvaluateToBool,
         CannotLoadTypeAssembly,
         CannotFoldConstants,
         CannotConvert,

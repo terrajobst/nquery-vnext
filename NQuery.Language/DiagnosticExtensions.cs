@@ -338,21 +338,21 @@ namespace NQuery.Language
             diagnostics.Add(diagnostic);
         }
 
-        public static void ReportAmbiguousConversion(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
+        public static void ReportAmbiguousConversion(this ICollection<Diagnostic> diagnostics, TextSpan span, Type sourceType, Type targetType)
         {
             var sourceTypeName = sourceType.ToDisplayName();
             var targetTypeName = targetType.ToDisplayName();
             var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousConversion, sourceTypeName, targetTypeName);
-            var diagnostic = new Diagnostic(expression.Span, DiagnosticId.AmbiguousConversion, message);
+            var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousConversion, message);
             diagnostics.Add(diagnostic);
         }
 
-        public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, CastExpressionSyntax expression, Type sourceType, Type targetType)
+        public static void ReportCannotConvert(this ICollection<Diagnostic> diagnostics, TextSpan span, Type sourceType, Type targetType)
         {
             var sourceTypeName = sourceType.ToDisplayName();
             var targeTypeName = targetType.ToDisplayName();
             var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotConvert, sourceTypeName, targeTypeName);
-            var diagnostic = new Diagnostic(expression.TypeName.Span, DiagnosticId.CannotConvert, message);
+            var diagnostic = new Diagnostic(span, DiagnosticId.CannotConvert, message);
             diagnostics.Add(diagnostic);
         }
 
@@ -361,10 +361,13 @@ namespace NQuery.Language
         //    diagnostics.Add(DiagnosticFactory.AsteriskModifierNotAllowed(nodeOrToken, functionInvocation));
         //}
 
-        //public static void ReportWhenMustEvaluateToBoolIfCaseInputIsOmitted(this ICollection<Diagnostic> diagnostics, ExpressionNode whenExpression)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.WhenMustEvaluateToBoolIfCaseInputIsOmitted(whenExpression));
-        //}
+        public static void ReportWhenMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
+        {
+            var typeName = typeof (bool).ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.WhenMustEvaluateToBool, typeName);
+            var diagnostic = new Diagnostic(span, DiagnosticId.WhenMustEvaluateToBool, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportCannotLoadTypeAssembly(this ICollection<Diagnostic> diagnostics, string assemblyName, Exception exception)
         //{

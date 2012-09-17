@@ -738,8 +738,8 @@
   <data name="UnterminatedString" xml:space="preserve">
     <value>String is not properly terminated.</value>
   </data>
-  <data name="WhenMustEvaluateToBoolIfCaseInputIsOmitted" xml:space="preserve">
-    <value>WHEN expression '{0}' must evaluate to '{1}' if CASE input expression is omitted.</value>
+  <data name="WhenMustEvaluateToBool" xml:space="preserve">
+    <value>WHEN expression must evaluate to '{0}'.</value>
   </data>
   <data name="WhereClauseMustEvaluateToBool" xml:space="preserve">
     <value>WHERE clause must evaluate to BOOLEAN expression.</value>

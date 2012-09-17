@@ -50,12 +50,6 @@ namespace NQuery.Language
         //    return new Diagnostic(nodeOrToken, DiagnosticId.AsteriskModifierNotAllowed, message);
         //}
 
-        //public static Diagnostic WhenMustEvaluateToBoolIfCaseInputIsOmitted(ExpressionNode whenExpression)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.WhenMustEvaluateToBoolIfCaseInputIsOmitted, whenExpression.GenerateSource(), FormattingHelpers.FormatType(typeof(bool)));
-        //    return new Diagnostic(DiagnosticId.WhenMustEvaluateToBoolIfCaseInputIsOmitted, message);
-        //}
-
         //public static Diagnostic CannotLoadTypeAssembly(string assemblyName, Exception exception)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotLoadTypeAssembly, assemblyName, exception.Message);
