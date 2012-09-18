@@ -16,6 +16,7 @@ namespace NQuery.Language
             MethodProviders = new ReadOnlyTypeRegistry<IMethodProvider>(methodProviders);
         }
 
+        public static readonly DataContext Default = new DataContextBuilder().GetResult();
         public static readonly DataContext Empty = new DataContext(new TableSymbol[0],
                                                                    new FunctionSymbol[0],
                                                                    new AggregateSymbol[0],
