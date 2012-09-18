@@ -69,6 +69,7 @@
     <Compile Include="IntrinsicOperatorTests.BinaryTestCases.cs" />
     <Compile Include="LexerTests.cs" />
     <Compile Include="MethodInvocationExressionTests.cs" />
+    <Compile Include="NameExpressionTests.cs" />
     <Compile Include="NullIfExpressionTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

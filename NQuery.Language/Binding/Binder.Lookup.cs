@@ -119,14 +119,20 @@ namespace NQuery.Language.Binding
             return BinaryOperator.Resolve(operatorKind, left, right);
         }
 
-        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
+        private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
         {
             var methodProvider = _dataContext.MethodProviders.LookupValue(type);
             if (methodProvider == null)
-                return OverloadResolutionResult<MethodSymbolSignature>.None;
+                return Enumerable.Empty<MethodSymbol>();
 
-            var signatures = from m in methodProvider.GetMethods(type)
-                             where name.Matches(m.Name)
+            return from m in methodProvider.GetMethods(type)
+                   where name.Matches(m.Name)
+                   select m;
+        }
+
+        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
+        {
+            var signatures = from m in LookupMethod(type, name)
                              select new MethodSymbolSignature(m);
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
