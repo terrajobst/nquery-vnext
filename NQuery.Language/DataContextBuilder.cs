@@ -12,8 +12,9 @@ namespace NQuery.Language
             Functions = new List<FunctionSymbol>(BuiltInFunctions.GetFunctions());
             Aggregates = new List<AggregateSymbol>(BuiltInAggregates.GetAggregates());
             Variables = new List<VariableSymbol>();
-            PropertyProviders = new TypeRegistry<IPropertyProvider>();
-            MethodProviders = new TypeRegistry<IMethodProvider>();
+            var reflectionProvider = new ReflectionProvider();
+            PropertyProviders = new TypeRegistry<IPropertyProvider> { DefaultValue = reflectionProvider };
+            MethodProviders = new TypeRegistry<IMethodProvider> { DefaultValue = reflectionProvider };
         }
 
         public DataContextBuilder(DataContext dataContext)
