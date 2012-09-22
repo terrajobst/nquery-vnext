@@ -222,9 +222,9 @@ namespace NQuery.Language
 
                     var operatorPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(binaryExpression);
 
-                    // Precedence is lower, parse it later
+                    // Precedence is lower or equal, parse it later
 
-                    if (operatorPrecedence < precedence)
+                    if (operatorPrecedence <= precedence)
                         break;
 
                     // Precedence is higher
