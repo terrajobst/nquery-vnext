@@ -16,7 +16,7 @@ namespace NQuery.Language.BoundNodes
 
         public override BoundNodeKind Kind
         {
-            get { return BoundNodeKind.BoundAggregateExpression; }
+            get { return BoundNodeKind.AggregateExpression; }
         }
 
         public override Type Type

@@ -8,7 +8,7 @@ namespace NQuery.Language.BoundNodes
         LiteralExpression,
         VariableExpression,
         FunctionInvocationExpression,
-        BoundAggregateExpression,
+        AggregateExpression,
         PropertyAccessExpression,
         MethodInvocationExpression,
         CastExpression,
