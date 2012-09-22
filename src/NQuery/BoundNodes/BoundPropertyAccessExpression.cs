@@ -39,5 +39,17 @@ namespace NQuery.BoundNodes
         {
             get { return _propertySymbol; }
         }
+
+        public BoundExpression Update(BoundExpression target)
+        {
+            return _target == target
+                       ? this
+                       : new BoundPropertyAccessExpression(target, _propertySymbol);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}.{1}", _target, Symbol.Name);
+        }
     }
 }

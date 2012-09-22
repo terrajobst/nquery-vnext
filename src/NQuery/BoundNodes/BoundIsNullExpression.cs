@@ -25,5 +25,17 @@ namespace NQuery.BoundNodes
         {
             get { return _expression; }
         }
+
+        public BoundExpression Update(BoundExpression expression)
+        {
+            return _expression == expression
+                       ? this
+                       : new BoundIsNullExpression(expression);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0} IS NULL", _expression);
+        }
     }
 }

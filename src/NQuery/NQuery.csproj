@@ -43,6 +43,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algebra\AlgebraKind.cs" />
+    <Compile Include="Algebra\AlgebraNode.cs" />
+    <Compile Include="Algebra\Algebrizer.cs" />
+    <Compile Include="Algebra\Algebrizer.Queries.cs" />
+    <Compile Include="Algebra\AlgebraComputeNode.cs" />
+    <Compile Include="Algebra\AlgebraConcatNode.cs" />
+    <Compile Include="Algebra\AlgebraConstantNode.cs" />
+    <Compile Include="Algebra\Algebrizer.Expressions.cs" />
+    <Compile Include="Algebra\Algebrizer.Tables.cs" />
+    <Compile Include="Algebra\AlgebraFilterNode.cs" />
+    <Compile Include="Algebra\AlgebraJoinKind.cs" />
+    <Compile Include="Algebra\AlgebraJoinNode.cs" />
+    <Compile Include="Algebra\ShowPlanBuilder.cs" />
+    <Compile Include="Algebra\AlgebraTableNode.cs" />
+    <Compile Include="Algebra\AlgebraTopNode.cs" />
+    <Compile Include="Algebra\ValueSlot.cs" />
+    <Compile Include="ShowPlanNode.cs" />
     <Compile Include="Binding\BinaryOperator.cs" />
     <Compile Include="Binding\BinaryOperatorSignature.cs" />
     <Compile Include="Binding\Binder.Queries.cs" />
@@ -51,6 +68,7 @@
     <Compile Include="Binding\GlobalBinder.cs" />
     <Compile Include="Binding\LocalBinder.cs" />
     <Compile Include="BoundNodes\BoundAggregateExpression.cs" />
+    <Compile Include="BoundNodes\BoundValueSlotExpression.cs" />
     <Compile Include="BoundNodes\BoundWildcardSelectColumn.cs" />
     <Compile Include="Runtime\BuiltInAggregates.cs" />
     <Compile Include="Runtime\BuiltInFunctions.cs" />

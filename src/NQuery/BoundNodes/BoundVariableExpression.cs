@@ -27,5 +27,10 @@ namespace NQuery.BoundNodes
         {
             get { return _variableSymbol; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("@{0}", _variableSymbol.Name);
+        }
     }
 }

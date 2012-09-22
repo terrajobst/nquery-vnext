@@ -42,5 +42,14 @@ namespace NQuery.BoundNodes
         {
             get { return _symbol.Type; }
         }
+
+        public override string ToString()
+        {
+            var columnInstance = Symbol as ColumnInstanceSymbol;
+            if (columnInstance != null)
+                return string.Format("{0}.{1}", columnInstance.TableInstance.Name, columnInstance.Name);
+
+            return Symbol.Name;
+        }
     }
 }

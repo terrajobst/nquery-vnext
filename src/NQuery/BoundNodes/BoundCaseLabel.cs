@@ -27,5 +27,10 @@ namespace NQuery.BoundNodes
         {
             get { return _thenExpression; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("WHEN {0} THEN {1}", _condition, _thenExpression);
+        }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using NQuery.Binding;
 using NQuery.Symbols;
@@ -48,6 +49,18 @@ namespace NQuery.BoundNodes
         public OverloadResolutionResult<MethodSymbolSignature> Result
         {
             get { return _result; }
+        }
+
+        public BoundExpression Update(BoundExpression target, BoundExpression[] arguments)
+        {
+            return (_target == target && _arguments.SequenceEqual(arguments))
+                       ? this
+                       : new BoundMethodInvocationExpression(target, arguments, _result);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}.{1}({2})", _target, Symbol.Name, string.Join(", ", _arguments));
         }
     }
 }

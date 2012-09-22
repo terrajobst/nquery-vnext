@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using NQuery.Binding;
 using NQuery.Symbols;
@@ -46,6 +47,19 @@ namespace NQuery.BoundNodes
         public BoundExpression Right
         {
             get { return _right; }
+        }
+
+        public BoundExpression Update(BoundExpression left, BoundExpression right)
+        {
+            return (left == _left && right == _right)
+                       ? this
+                       : new BoundBinaryExpression(left, _result, right);
+        }
+
+        public override string ToString()
+        {
+            var kind = _result.Candidates.First().Signature.Kind;
+            return string.Format("({0} {1} {2})", _left, kind.ToDisplayName(), _right);
         }
     }
 }

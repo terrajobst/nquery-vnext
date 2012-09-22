@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 using NQuery.Binding;
 using NQuery.Symbols;
@@ -41,6 +42,18 @@ namespace NQuery.BoundNodes
         public OverloadResolutionResult<FunctionSymbolSignature> Result
         {
             get { return _result; }
+        }
+
+        public BoundExpression Update(BoundExpression[] newArguments)
+        {
+            return _arguments.SequenceEqual(newArguments)
+                       ? this
+                       : new BoundFunctionInvocationExpression(newArguments, _result);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{0}({1})", Symbol.Name, string.Join(",", _arguments));
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
@@ -137,9 +138,102 @@ namespace NQueryViewer
             UpdateTree();
         }
 
+        internal sealed class ShowPlanViewModel : INotifyPropertyChanged
+        {
+            private IList<ShowPlanItemViewModel> _root;
+
+            public ShowPlanViewModel(ShowPlanNode root)
+            {
+                Root = new[] {new ShowPlanNodeViewModel(root)};
+            }
+
+            public IList<ShowPlanItemViewModel> Root
+            {
+                get { return _root; }
+                set
+                {
+                    _root = value;
+                    OnPropertyChanged("Root");
+                }
+            }
+
+            private void OnPropertyChanged(string propertyName)
+            {
+                var handler = PropertyChanged;
+                if (handler != null)
+                    handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+        }
+
+        internal abstract class ShowPlanItemViewModel
+        {
+            public abstract string DisplayName { get; }
+            public abstract IEnumerable<ShowPlanItemViewModel> Children { get; }
+            public abstract string Kind { get; }
+        }
+
+        internal sealed class ShowPlanNodeViewModel : ShowPlanItemViewModel
+        {
+            private readonly ShowPlanNode _model;
+            private readonly IEnumerable<ShowPlanItemViewModel> _children;
+
+            public ShowPlanNodeViewModel(ShowPlanNode model)
+            {
+                var propertyChildren = model.Properties.Select(p => new ShowPlanPropertyViewModel(p));
+                var nodeChildren = model.Children.Select(c => new ShowPlanNodeViewModel(c));
+
+                _model = model;
+                _children = propertyChildren.Concat<ShowPlanItemViewModel>(nodeChildren).ToArray();
+
+            }
+
+            public override string DisplayName
+            {
+                get { return _model.OperatorName; }
+            }
+
+            public override IEnumerable<ShowPlanItemViewModel> Children
+            {
+                get { return _children; }
+            }
+
+            public override string Kind
+            {
+                get { return "Node"; }
+            }
+        }
+
+        internal sealed class ShowPlanPropertyViewModel : ShowPlanItemViewModel
+        {
+            private readonly KeyValuePair<string, string> _model;
+
+            public ShowPlanPropertyViewModel(KeyValuePair<string,string> model)
+            {
+                _model = model;
+            }
+
+            public override string DisplayName
+            {
+                get { return string.Format("{0} = {1}", _model.Key, _model.Value); }
+            }
+
+            public override IEnumerable<ShowPlanItemViewModel> Children
+            {
+                get { return Enumerable.Empty<ShowPlanItemViewModel>(); }
+            }
+
+            public override string Kind
+            {
+                get { return "Property"; }
+            }
+        }
+
         private void EditorViewOnSemanticModelChanged(object sender, EventArgs eventArgs)
         {
             UpdateDiagnostics();
+            UpdateShowPlan();
         }
 
         private void UpdateDiagnostics()
@@ -165,6 +259,25 @@ namespace NQueryViewer
                                      ? null
                                      : syntaxTree.TextBuffer;
                 DiagnosticGrid.UpdateGrid(diagnostics, textBuffer);
+            }
+        }
+
+        private void UpdateShowPlan()
+        {
+            if (CurrentEditorView == null)
+            {
+                _planTreeView.DataContext = null;
+            }
+            else
+            {
+                var semanticModel = CurrentEditorView.SemanticModel;
+                var syntaxTree = semanticModel.Compilation.SyntaxTree;
+                var hasDiagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).Any();
+                if (hasDiagnostics)
+                    return;
+
+                var showPlanNode = semanticModel.Compilation.GetShowPlan();
+                _planTreeView.DataContext = new ShowPlanViewModel(showPlanNode);
             }
         }
 

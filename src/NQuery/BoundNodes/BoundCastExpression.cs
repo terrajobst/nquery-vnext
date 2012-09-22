@@ -1,5 +1,7 @@
 using System;
 
+using NQuery.Symbols;
+
 namespace NQuery.BoundNodes
 {
     internal sealed class BoundCastExpression : BoundExpression
@@ -33,6 +35,18 @@ namespace NQuery.BoundNodes
         public Conversion Conversion
         {
             get { return _conversion; }
+        }
+
+        public BoundExpression Update(BoundExpression expression)
+        {
+            return _expression == expression
+                       ? this
+                       : new BoundCastExpression(expression, _type, _conversion);
+        }
+
+        public override string ToString()
+        {
+            return string.Format("CAST({0} AS {1})", _expression, _type.ToDisplayName());
         }
     }
 }

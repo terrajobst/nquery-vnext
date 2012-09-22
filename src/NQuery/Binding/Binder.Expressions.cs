@@ -339,7 +339,7 @@ namespace NQuery.Binding
             // Convert arguments (if necessary)
 
             var convertedLeft = BindArgument(left, result, 0);
-            var convertedRight = BindArgument(left, result, 1);
+            var convertedRight = BindArgument(right, result, 1);
 
             return new BoundBinaryExpression(convertedLeft, result, convertedRight);
         }

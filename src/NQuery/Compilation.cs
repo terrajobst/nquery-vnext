@@ -1,6 +1,8 @@
 using System;
 
+using NQuery.Algebra;
 using NQuery.Binding;
+using NQuery.BoundNodes;
 
 namespace NQuery
 {
@@ -19,6 +21,17 @@ namespace NQuery
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             return new SemanticModel(this, bindingResult);
+        }
+
+        public ShowPlanNode GetShowPlan()
+        {
+            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+            var boundRoot = bindingResult.BoundRoot as BoundQuery;
+            if (boundRoot == null)
+                return null;
+
+            var algebraNode = Algebrizer.Algebrize(boundRoot);
+            return ShowPlanBuilder.Build(algebraNode);
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
