@@ -821,10 +821,26 @@ namespace NQuery.Language
 
         private TopClauseSyntax ParseTopClause()
         {
-            var topKeyword = NextToken();
+            var topKeyword = Match(SyntaxKind.TopKeyword);
             var value = Match(SyntaxKind.NumericLiteralToken);
-            var withKeyword = NextTokenIf(SyntaxKind.WithKeyword);
-            var tiesKeyword = NextTokenIf(SyntaxKind.TiesKeyword);
+
+            // Let's make sure that the int literal we got is actually a valid int.
+            // Note: We check for IsMissing because we don't want to validate synthesized
+            //       tokens -- we already added the "token missing" diagnostics to those.
+            if (!value.IsMissing && !(value.Value is int))
+            {
+                var diagnostics = new List<Diagnostic>();
+                diagnostics.ReportInvalidInteger(value.Span, value.ValueText);
+                value = value.WithDiagnotics(diagnostics);
+            }
+
+            var expectedWithTies = Current.Kind == SyntaxKind.WithKeyword ||
+                                   Current.Kind == SyntaxKind.TiesKeyword;
+            if (!expectedWithTies)
+                return new TopClauseSyntax(_syntaxTree, topKeyword, value, null, null);
+
+            var withKeyword = Match(SyntaxKind.WithKeyword);
+            var tiesKeyword = Match(SyntaxKind.TiesKeyword);
             return new TopClauseSyntax(_syntaxTree, topKeyword, value, withKeyword, tiesKeyword);
         }
 

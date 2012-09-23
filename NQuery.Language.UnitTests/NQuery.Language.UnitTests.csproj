@@ -76,6 +76,7 @@
     <Compile Include="PropertyAccessExressionTests.cs" />
     <Compile Include="SeparatedSyntaxListTests.cs" />
     <Compile Include="IntrinsicOperatorTests.cs" />
+    <Compile Include="TopTests.cs" />
     <Compile Include="UnaryOperatorExpressionTests.cs" />
   </ItemGroup>
   <ItemGroup>
