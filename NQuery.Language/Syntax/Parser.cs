@@ -72,7 +72,9 @@ namespace NQuery.Language
         private SyntaxToken NextTokenAsKeyword()
         {
             var result = NextToken();
-            return result.WithKind(result.ContextualKind);
+            return result.Kind.IsKeyword()
+                       ? result
+                       : result.WithKind(result.ContextualKind);
         }
 
         private SyntaxToken? NextTokenIf(SyntaxKind kind)
