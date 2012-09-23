@@ -250,6 +250,15 @@ namespace NQuery.Language
                 case SyntaxKind.IdentifierToken:
                     return "<identifier>";
 
+                case SyntaxKind.NumericLiteralToken:
+                    return "<numeric-literal>";
+
+                case SyntaxKind.StringLiteralToken:
+                    return "<string-literal>";
+
+                case SyntaxKind.DateLiteralToken:
+                    return "<date-literal>";
+
                 default:
                     return GetText(kind);
             }
