@@ -31,5 +31,29 @@ namespace NQuery.Language.UnitTests
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
         }
+
+        [TestMethod]
+        public void Top_WithInvalidInt_IsParsedAndBoundCorrectly()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT TOP 1.5 NULL");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+            var smanticModel = compilation.GetSemanticModel();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(smanticModel.GetDiagnostics()).ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.InvalidInteger, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Top_WithInvalidLiteral_IsParsedAndBoundCorrectly()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT TOP 'text'");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+            var smanticModel = compilation.GetSemanticModel();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(smanticModel.GetDiagnostics()).ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
+        }
     }
 }

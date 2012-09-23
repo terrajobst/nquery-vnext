@@ -365,7 +365,15 @@ namespace NQuery.Language.Binding
 
             var havingClause = binder.BindHavingClause(node.HavingClause);
 
-            return new BoundSelectQuery(selectColumns, fromClause, whereClause, havingClause);
+            // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
+            //       literal. Thuse, we can simply ignore the case where topClause.Value.Value cannot be casted
+            //       to an int -- the parser added the diagnostics already. However, we cannot perform a hard
+            //       cast because we also bind input the parser reported errors for.
+            var topClause = node.SelectClause.TopClause;
+            var top = topClause == null ? null : topClause.Value.Value as int?;
+            var withTies = topClause != null && (topClause.TiesKeyword != null || topClause.WithKeyword != null);
+
+            return new BoundSelectQuery(selectColumns, top, withTies, fromClause, whereClause, havingClause);
         }
 
         private IList<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)

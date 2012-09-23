@@ -6,16 +6,25 @@ namespace NQuery.Language.BoundNodes
     internal sealed class BoundSelectQuery : BoundQuery
     {
         private readonly ReadOnlyCollection<BoundSelectColumn> _selectColumns;
+        private readonly int? _top;
+        private readonly bool _withTies;
         private readonly BoundTableReference _fromClause;
         private readonly BoundExpression _whereClause;
         private readonly BoundExpression _havingClause;
 
-        public BoundSelectQuery(IList<BoundSelectColumn> selectColumns, BoundTableReference fromClause, BoundExpression whereClause, BoundExpression havingClause)
+        public BoundSelectQuery(IList<BoundSelectColumn> selectColumns, int? top, bool withTies, BoundTableReference fromClause, BoundExpression whereClause, BoundExpression havingClause)
         {
             _selectColumns = new ReadOnlyCollection<BoundSelectColumn>(selectColumns);
+            _top = top;
+            _withTies = withTies;
             _fromClause = fromClause;
             _whereClause = whereClause;
             _havingClause = havingClause;
+        }
+
+        public override BoundNodeKind Kind
+        {
+            get { return BoundNodeKind.SelectQuery; }
         }
 
         public override ReadOnlyCollection<BoundSelectColumn> SelectColumns
@@ -23,9 +32,14 @@ namespace NQuery.Language.BoundNodes
             get { return _selectColumns; }
         }
 
-        public override BoundNodeKind Kind
+        public int? Top
         {
-            get { return BoundNodeKind.SelectQuery; }
+            get { return _top; }
+        }
+
+        public bool WithTies
+        {
+            get { return _withTies; }
         }
 
         public BoundTableReference FromClause
