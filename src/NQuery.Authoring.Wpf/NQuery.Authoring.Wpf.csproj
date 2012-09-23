@@ -58,6 +58,13 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ShowPlans\ShowPlanItemViewModel.cs" />
+    <Compile Include="ShowPlans\ShowPlanNodeViewModel.cs" />
+    <Compile Include="ShowPlans\ShowPlanPropertyViewModel.cs" />
+    <Compile Include="ShowPlans\ShowPlanView.xaml.cs">
+      <DependentUpon>ShowPlanView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ShowPlans\ShowPlanViewModel.cs" />
     <Compile Include="SyntaxVisualization\SyntaxNodeViewModel.cs" />
     <Compile Include="SyntaxVisualization\SyntaxNodeViewModelKind.cs" />
     <Compile Include="SyntaxVisualization\SyntaxTreeVisualizer.xaml.cs">
@@ -74,6 +81,10 @@
     <Page Include="Diagnostics\DiagnosticGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ShowPlans\ShowPlanView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="SyntaxVisualization\SyntaxTreeVisualizer.xaml">
       <SubType>Designer</SubType>

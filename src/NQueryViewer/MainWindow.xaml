@@ -64,41 +64,8 @@
                                             MouseDoubleClick="DiagnosticGridMouseDoubleClick" />
                     </TabItem>
                     <TabItem Header="Execution Plan">
-                        <TreeView x:Name="_planTreeView"
-                                  ItemsSource="{Binding Root}">
-                            <TreeView.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
-                                    <!--<Style.Triggers>
-                                        <DataTrigger Binding="{Binding Path=Type}" Value="menu">
-                                            <Setter Property="TreeViewItem.IsSelected" Value="True"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>-->
-                                </Style>
-                            </TreeView.ItemContainerStyle>
-                            <TreeView.ItemTemplate>
-                                <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                                    <TextBlock Text="{Binding DisplayName}">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Kind}"
-                                                                 Value="Property">
-                                                        <Setter Property="Foreground"
-                                                                Value="Green" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Kind}"
-                                                                 Value="Node">
-                                                        <Setter Property="Foreground"
-                                                                Value="Maroon" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </HierarchicalDataTemplate>
-                            </TreeView.ItemTemplate>
-                        </TreeView>
+                        <wpf:ShowPlanView x:Name="_showPlanView"
+                                           ShowPlan="{Binding Plan}" />
                     </TabItem>
                 </TabControl>
             </Grid>

@@ -1,0 +1,39 @@
+﻿<UserControl x:Class="NQuery.Authoring.Wpf.ShowPlanView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300"
+             d:DesignWidth="300">
+    <TreeView x:Name="_planTreeView"
+              ItemsSource="{Binding Root}">
+        <TreeView.ItemContainerStyle>
+            <Style>
+                <Setter Property="TreeViewItem.IsExpanded" Value="True"/>
+            </Style>
+        </TreeView.ItemContainerStyle>
+        <TreeView.ItemTemplate>
+            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                <TextBlock Text="{Binding DisplayName}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Kind}"
+                                             Value="Property">
+                                    <Setter Property="Foreground"
+                                            Value="Green" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Kind}"
+                                             Value="Node">
+                                    <Setter Property="Foreground"
+                                            Value="Maroon" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </HierarchicalDataTemplate>
+        </TreeView.ItemTemplate>
+    </TreeView>
+</UserControl>
