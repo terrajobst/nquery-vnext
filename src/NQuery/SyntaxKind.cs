@@ -155,6 +155,7 @@ namespace NQuery
         CoalesceExpression,
         NullIfExpression,
         InExpression,
+        InQueryExpression,
         LiteralExpression,
         VariableExpression,
         NameExpression,

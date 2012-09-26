@@ -222,6 +222,9 @@ namespace NQuery.Binding
                 case SyntaxKind.InExpression:
                     return BindInExpression((InExpressionSyntax) node);
 
+                case SyntaxKind.InQueryExpression:
+                    return BindInQueryExpression((InQueryExpressionSyntax)node);
+
                 case SyntaxKind.LiteralExpression:
                     return BindLiteralExpression((LiteralExpressionSyntax) node);
 
@@ -536,6 +539,17 @@ namespace NQuery.Binding
                                    select boundComparision;
 
             return boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c == null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
+        }
+
+        private BoundExpression BindInQueryExpression(InQueryExpressionSyntax node)
+        {
+            // left IN (SELECT right FROM ...)
+            //
+            // ==>
+            //
+            // left = ANY (SELECT right FROM ...)
+
+            return BindAllAnySubselect(node.Span, node.Expression, node.Query, BinaryOperatorKind.Equal);
         }
 
         private static BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
@@ -891,10 +905,17 @@ namespace NQuery.Binding
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
         {
+            var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
+            var operatorKind = expressionKind.ToBinaryOperatorKind();
+            return BindAllAnySubselect(node.Span, node.Left, node.Query, operatorKind);
+        }
+
+        private BoundExpression BindAllAnySubselect(TextSpan span, ExpressionSyntax leftNode, QuerySyntax queryNode, BinaryOperatorKind operatorKind)
+        {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
-            var left = BindExpression(node.Left);
-            var boundQuery = BindSubquery(node.Query);
+            var left = BindExpression(leftNode);
+            var boundQuery = BindSubquery(queryNode);
 
             if (boundQuery.OutputColumns.Count > 1)
             {
@@ -910,16 +931,13 @@ namespace NQuery.Binding
             if (left.Type.IsError() || right.Type.IsError())
                 return new BoundAllAnySubselect(left, boundQuery, OverloadResolutionResult<BinaryOperatorSignature>.None);
 
-            var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
-            var operatorKind = expressionKind.ToBinaryOperatorKind();
-
             var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
             if (result.Best == null)
             {
                 if (result.Selected == null)
-                    Diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportCannotApplyBinaryOperator(span, operatorKind, left.Type, right.Type);
                 else
-                    Diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportAmbiguousBinaryOperator(span, operatorKind, left.Type, right.Type);
             }
 
             var convertedLeft = BindArgument(left, result, 0);

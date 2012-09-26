@@ -146,6 +146,21 @@ namespace NQuery.Syntax
             return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
         }
 
+        private bool CurrentIsStartingQuery()
+        {
+            // Current token indicates the start of a query if we see
+            // a SELECT keywordword preceeded by any number of open
+            // parentheses.
+
+            var peek = 0;
+            while (Peek(peek).Kind == SyntaxKind.LeftParenthesisToken)
+            {
+                peek++;
+            }
+
+            return Peek(peek).Kind == SyntaxKind.SelectKeyword;
+        }
+
         public CompilationUnitSyntax ParseRootQuery()
         {
             var query = ParseQueryWithOptionalCte();
@@ -300,17 +315,17 @@ namespace NQuery.Syntax
 
         private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken operatorToken)
         {
-            // TODO: We need to support x IN (SELECT v FROM Table)
-            //
-            // We should introduce a new SyntaxNode InSubselectExpression and
-            // use lookahead to determine whether need to parse an expression
-            // list or a query.
-            //
-            // Determining this is probably not easy. We might need to create
-            // a new method ParseExpressionOrQuery() that uses a lookup and
-            // re-writes parenthesized queries as needed.
-            var argumentList = ParseArgumentList(1);
-            return new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
+            var isQuery = CurrentIsStartingQuery();
+            if (!isQuery)
+            {
+                var argumentList = ParseArgumentList(1);
+                return new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
+            }
+            
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+            var querySyntax = ParseQuery();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new InQueryExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, leftParenthesis, querySyntax, rightParenthesis);
         }
 
         private ExpressionSyntax ParseAllAnySubselect(ExpressionSyntax left, SyntaxKind binaryExpression, SyntaxToken operatorToken)

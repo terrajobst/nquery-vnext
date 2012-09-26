@@ -3,6 +3,8 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NQuery.Syntax;
+
 namespace NQuery.UnitTests
 {
     [TestClass]
@@ -30,6 +32,7 @@ namespace NQuery.UnitTests
 
             Assert.AreEqual(0, diagnostics.Length);
         }
+
         [TestMethod]
         public void In_DetectsTooFewArguments_WhenNoArgumentIsProvided()
         {
@@ -37,6 +40,32 @@ namespace NQuery.UnitTests
             var diagnostics = syntaxTree.GetDiagnostics().ToArray();
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void In_SupportsQuery()
+        {
+            var syntaxTree = SyntaxTree.ParseExpression("1 IN (SELECT Id FROM Table)");
+            var compilation = Compilation.Empty.WithIdNameTable().WithSyntaxTree(syntaxTree);
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var expression = syntaxTree.Root.DescendantNodes().OfType<InQueryExpressionSyntax>().Single();
+
+            Assert.AreEqual(0, diagnostics.Length);
+            Assert.AreEqual(typeof(bool), semanticModel.GetExpressionType(expression));
+        }
+
+        [TestMethod]
+        public void In_SupportsQuery_WhenParenthesized()
+        {
+            var syntaxTree = SyntaxTree.ParseExpression("1 IN ((SELECT Id FROM Table))");
+            var compilation = Compilation.Empty.WithIdNameTable().WithSyntaxTree(syntaxTree);
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var expression = syntaxTree.Root.DescendantNodes().OfType<InQueryExpressionSyntax>().Single();
+
+            Assert.AreEqual(0, diagnostics.Length);
+            Assert.AreEqual(typeof(bool), semanticModel.GetExpressionType(expression));
         }
     }
 

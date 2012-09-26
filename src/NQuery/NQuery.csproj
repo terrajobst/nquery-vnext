@@ -172,6 +172,7 @@
     <Compile Include="Symbols\SymbolMarkupToken.cs" />
     <Compile Include="Symbols\TableRelation.cs" />
     <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
+    <Compile Include="Syntax\InQueryExpressionSyntax.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />
     <Compile Include="Symbols\CommonTableExpressionSymbol.cs" />
     <Compile Include="SyntaxExtensions.cs" />
