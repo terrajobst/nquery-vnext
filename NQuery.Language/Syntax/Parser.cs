@@ -151,8 +151,8 @@ namespace NQuery.Language
 
         private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
         {
-            var start = tokens.First().Span.Start;
-            var end = tokens.Last().Span.End;
+            var start = tokens.First().FullSpan.Start;
+            var end = tokens.Last().FullSpan.End;
             var span = TextSpan.FromBounds(start, end);
             var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
             var trivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
