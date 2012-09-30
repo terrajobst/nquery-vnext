@@ -1,60 +1,40 @@
-using System;
 using System.Media;
 using System.Windows.Input;
 
 using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-
-using System.Linq;
+using NQuery.Language.VSEditor.Completion;
 
 namespace NQuery.Language.VSEditor
 {
     internal sealed class NQueryKeyProcessor : KeyProcessor
     {
         private readonly ITextView _textView;
-        private readonly ICompletionBroker _completionBroker;
         private readonly IIntellisenseSessionStackMapService _intellisenseSessionStackMapService;
+        private readonly ICompletionModelManager _completionModelManager;
 
-        private ICompletionSession _session;
-        private ITextSnapshot _lastSnapshot;
-
-        public NQueryKeyProcessor(ITextView textView, ICompletionBroker completionBroker, IIntellisenseSessionStackMapService intellisenseSessionStackMapService)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager)
         {
             _textView = textView;
-            _completionBroker = completionBroker;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
-
-            _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
-            _lastSnapshot = _textView.TextBuffer.CurrentSnapshot;
+            _completionModelManager = completionModelManager;
         }
 
-        private void TextBufferOnPostChanged(object sender, EventArgs eventArgs)
+        public override bool IsInterestedInHandledEvents
         {
-            var lastSnapshot = _lastSnapshot;
-            var snapshot = _textView.TextBuffer.CurrentSnapshot;
-            _lastSnapshot = snapshot;
+            get { return true; }
+        }
 
-            var changes = lastSnapshot.Version.Changes;
-            if (changes.Count == 1)
-            {
-                var change = changes[0];
-                if (change.OldLength == 0 && change.NewLength == 1)
-                {
-                    var c = change.NewText[0];
-
-                    if (_session == null && IsTriggerChar(c))
-                        ListMembers();
-                }
-            }
+        public override void TextInput(TextCompositionEventArgs args)
+        {
+            base.TextInput(args);
+            _completionModelManager.HandleTextInput(args.Text);
         }
 
         public override void PreviewTextInput(TextCompositionEventArgs args)
         {
-            if (_session != null && args.Text.Any(IsCommitChar))
-                _session.Commit();
-
             base.PreviewTextInput(args);
+            _completionModelManager.HandlePreviewTextInput(args.Text);
         }
 
         public override void PreviewKeyDown(KeyEventArgs args)
@@ -97,16 +77,12 @@ namespace NQuery.Language.VSEditor
                         args.Handled = ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand.PageDown);
                         break;
                     case Key.Tab:
-                        if (_session != null)
-                            _session.Commit();
+                        _completionModelManager.Commit();
                         // Don't eat the key
                         break;
                     case Key.Return:
-                        if (_session != null)
-                        {
-                            _session.Commit();
+                        if (_completionModelManager.Commit())
                             args.Handled = true;
-                        }
                         break;
                 }
             }
@@ -114,56 +90,19 @@ namespace NQuery.Language.VSEditor
             base.PreviewKeyDown(args);
         }
 
-        private static bool IsTriggerChar(char c)
-        {
-            return char.IsLetter(c) ||
-                   c == '_' ||
-                   c == '.';
-        }
-
-        private static bool IsCommitChar(char c)
-        {
-            return char.IsWhiteSpace(c) ||
-                   c == '\t' ||
-                   c == '.' ||
-                   c == ',' ||
-                   c == '(';
-        }
-
         private void ListMembers()
         {
-            if (_session != null)
-            {
-                _session.Dismiss();
-            }
-            else
-            {
-                _session = _completionBroker.TriggerCompletion(_textView);
-                _session.Dismissed += SessionOnDismissed;
-            }
+            _completionModelManager.TriggerCompletion(false);
         }
 
         private void CompleteWord()
         {
-            if (_session != null)
-            {
-                _session.Dismiss();
-            }
-            else
-            {
-                _session = _completionBroker.TriggerCompletion(_textView);
-                _session.Dismissed += SessionOnDismissed;
-            }
+            _completionModelManager.TriggerCompletion(true);
         }
 
         private void ParameterInfo()
         {
             SystemSounds.Hand.Play();
-        }
-
-        private void SessionOnDismissed(object sender, EventArgs e)
-        {
-            _session = null;
         }
 
         private bool ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand command)

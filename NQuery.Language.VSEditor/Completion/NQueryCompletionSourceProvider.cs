@@ -1,10 +1,9 @@
 using System.ComponentModel.Composition;
-
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Completion
 {
     [Export(typeof(ICompletionSourceProvider))]
     [Name("NQueryCompletionSourceProvider")]
@@ -12,16 +11,15 @@ namespace NQuery.Language.VSEditor
     internal sealed class NQueryCompletionSourceProvider : ICompletionSourceProvider
     {
         [Import]
-        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
+        public INQueryGlyphService GlyphService { get; set; }
 
         [Import]
-        public INQueryGlyphService GlyphService { get; set; }
+        public ICompletionModelManagerProvider CompletionModelManagerProvider  { get; set; }
 
         public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer)
         {
-            var semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textBuffer);
             var glyphService = GlyphService;
-            return new NQueryCompletionSource(semanticModelManager, glyphService);
+            return new NQueryCompletionSource(glyphService);
         }
     }
 }

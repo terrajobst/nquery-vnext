@@ -16,7 +16,7 @@ namespace NQuery.Language.VSEditor.BraceMatching
 
         public bool TryFindBrace(SyntaxTree syntaxTree, int position, out TextSpan left, out TextSpan right)
         {
-            var token = FindTokenButNotEndOfFile(syntaxTree.Root, position);
+            var token = syntaxTree.Root.FindTokenTouched(position);
             if (TryFindBrace(token, position, out left, out right))
                 return true;
 
@@ -48,19 +48,6 @@ namespace NQuery.Language.VSEditor.BraceMatching
                     return true;
             }
             return false;
-        }
-
-        private static SyntaxToken FindTokenButNotEndOfFile(SyntaxNode root, int position)
-        {
-            var token = root.FindToken(position);
-            if (token.Kind == SyntaxKind.EndOfFileToken)
-            {
-                var previous = token.GetPreviousToken();
-                if (previous != null)
-                    return previous.Value;
-            }
-
-            return token;
         }
     }
 }

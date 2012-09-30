@@ -1,17 +1,14 @@
 using System.Collections.Generic;
-
 using Microsoft.VisualStudio.Language.Intellisense;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Completion
 {
     internal sealed class NQueryCompletionSource : ICompletionSource
     {
-        private readonly INQuerySemanticModelManager _semanticModelManager;
         private readonly INQueryGlyphService _glyphService;
 
-        public NQueryCompletionSource(INQuerySemanticModelManager semanticModelManager, INQueryGlyphService glyphService)
+        public NQueryCompletionSource(INQueryGlyphService glyphService)
         {
-            _semanticModelManager = semanticModelManager;
             _glyphService = glyphService;
         }
 
@@ -21,7 +18,8 @@ namespace NQuery.Language.VSEditor
 
         public void AugmentCompletionSession(ICompletionSession session, IList<CompletionSet> completionSets)
         {
-            var completionSet = new NQueryCompletionSet(session, _semanticModelManager, _glyphService);
+            var completionModel = session.Properties.GetProperty<ICompletionModelManager>(typeof(ICompletionModelManager));
+            var completionSet = new NQueryCompletionSet(session, _glyphService, completionModel);
             completionSets.Add(completionSet);
         }
     }

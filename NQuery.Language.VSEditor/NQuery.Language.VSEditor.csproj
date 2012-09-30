@@ -78,6 +78,7 @@
       <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\StandaloneUndo.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -95,6 +96,13 @@
     <Compile Include="BraceMatching\ParenthesisBraceMatcher.cs" />
     <Compile Include="BraceMatching\SingleTokenBraceMatcher.cs" />
     <Compile Include="BraceMatching\StringQuoteBraceMatcher.cs" />
+    <Compile Include="Completion\CompletionItem.cs" />
+    <Compile Include="Completion\CompletionModelManager.cs" />
+    <Compile Include="Completion\CompletionModelManagerProvider.cs" />
+    <Compile Include="Completion\ICompletionProvider.cs" />
+    <Compile Include="Completion\ICompletionModel.cs" />
+    <Compile Include="Completion\ICompletionModelManager.cs" />
+    <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
     <Compile Include="INQueryGlyphService.cs" />
     <Compile Include="INQuerySelectionProvider.cs" />
     <Compile Include="INQuerySelectionProviderService.cs" />
@@ -107,9 +115,9 @@
     <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
     <Compile Include="NQueryClassifier.cs" />
     <Compile Include="NQueryClassifierProvider.cs" />
-    <Compile Include="NQueryCompletionSet.cs" />
-    <Compile Include="NQueryCompletionSource.cs" />
-    <Compile Include="NQueryCompletionSourceProvider.cs" />
+    <Compile Include="Completion\NQueryCompletionSet.cs" />
+    <Compile Include="Completion\NQueryCompletionSource.cs" />
+    <Compile Include="Completion\NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
     <Compile Include="NQueryErrorTagger.cs" />
     <Compile Include="NQueryGlyph.cs" />
@@ -135,6 +143,7 @@
     <Compile Include="NQuerySyntaxTreeManager.cs" />
     <Compile Include="NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Completion\SymbolCompletionProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">

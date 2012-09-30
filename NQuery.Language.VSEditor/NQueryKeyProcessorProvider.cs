@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
+using NQuery.Language.VSEditor.Completion;
 
 namespace NQuery.Language.VSEditor
 {
@@ -13,14 +14,18 @@ namespace NQuery.Language.VSEditor
     internal sealed class NQueryKeyProcessorProvider : IKeyProcessorProvider
     {
         [Import]
-        public ICompletionBroker CompletionBroker { get; set; }
+        public IIntellisenseSessionStackMapService IntellisenseSessionStackMapService { get; set; }
 
         [Import]
-        public IIntellisenseSessionStackMapService IntellisenseSessionStackMapService { get; set; }
+        public ICompletionModelManagerProvider CompletionModelManagerProvider { get; set; }
 
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
-            return wpfTextView.Properties.GetOrCreateSingletonProperty(() => new NQueryKeyProcessor(wpfTextView, CompletionBroker, IntellisenseSessionStackMapService));
+            return wpfTextView.Properties.GetOrCreateSingletonProperty(() =>
+            {
+                var completionModel = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModel);
+            });
         }
     }
 }

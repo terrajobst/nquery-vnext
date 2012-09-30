@@ -27,5 +27,14 @@ namespace NQuery.Language
                                select fixedNodeOrToken).ToArray();
             return new SeparatedSyntaxList<TNode>(fixedTokens);
         }
+
+        public static SyntaxToken FindTokenTouched(this SyntaxNode root, int position, bool descendIntoTrivia = false)
+        {
+            var token = root.FindToken(position, descendIntoTrivia);
+            if (token.Kind == SyntaxKind.EndOfFileToken && position > 0)
+                return root.FindToken(position - 1, descendIntoTrivia);
+
+            return token;
+        }
     }
 }

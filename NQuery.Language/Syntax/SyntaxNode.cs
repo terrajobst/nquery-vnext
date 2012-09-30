@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -129,49 +130,38 @@ namespace NQuery.Language
             return DescendantTokens(descendIntoTrivia).Last();
         }
 
-        public SyntaxToken FindToken(int position)
+        public SyntaxToken FindToken(int position, bool descendIntoTrivia = false)
         {
-            // TODO: We should consider a different contract for this method.
-            //
-            // Right now we use the following contract:
-            //
-            // (1) If the position matches the full span of any token, this token is returned.
-            // (2) If position is at the end, the EndOfFileToken is returned.
-            //
-            // Virtually all our callers want to match the last token in situations like this:
-            //
-            // SELECT Foo, Bar,|EndOfFile
-            //
-            // (the bar indicates the position). However, they get the EoF token.
-            //
-            // We may want to introduce FindTouchedToken(int position).
+            if (FullSpan.End == position)
+            {
+                var compilationUnit = this as CompilationUnitSyntax;
+                if (compilationUnit != null)
+                    return compilationUnit.EndOfFileToken;
+            }
 
-            // TODO: The following would be more correct, but doesn't work because our current IntelliSense implementation blows up.
-            //
-            // The reason is that we currently don't gurantee to have the latest syntax tree when any of our editor extensions
-            // are invoked.
-            //
-            //if (FullSpan.End == position)
-            //{
-            //    var compilationUnit = this as CompilationUnitSyntax;
-            //    if (compilationUnit != null)
-            //        return compilationUnit.EndOfFileToken;
-            //}
-            //
-            //if (!FullSpan.Contains(position))
-            //    throw new ArgumentOutOfRangeException("position");
-            //
-            // So instead we do this:
             if (!FullSpan.Contains(position))
-                return SyntaxTree.Root.EndOfFileToken;
+                throw new ArgumentOutOfRangeException("position");
 
             var child = (from nodeOrToken in ChildNodesAndTokens()
                          where nodeOrToken.FullSpan.Contains(position)
                          select nodeOrToken).First();
-            
-            return child.IsToken
-                       ? child.AsToken()
-                       : child.AsNode().FindToken(position);
+
+            if (child.IsNode)
+                return child.AsNode().FindToken(position);
+
+            var token = child.AsToken();
+
+            if (descendIntoTrivia)
+            {
+                var triviaStructure = (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
+                                       where t.Structure != null && t.Structure.FullSpan.Contains(position)
+                                       select t.Structure).FirstOrDefault();
+
+                if (triviaStructure != null)
+                    return triviaStructure.FindToken(position);
+            }
+
+            return token;
         }
 
         public SyntaxTree SyntaxTree
