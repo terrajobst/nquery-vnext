@@ -95,7 +95,15 @@ namespace NQuery.Language.Runtime
                 new FunctionSymbol<string, int, string>("RIGHT", "text", "numbeOfChar", Right),
                 new FunctionSymbol<int, string>("SPACE", "numberOfSpaces", Space),
                 new FunctionSymbol<string, int, string>("LPAD", "text", "totalWidth", LPad),
-                new FunctionSymbol<string, int, string>("RPAD", "text", "totalWidth", RPad)
+                new FunctionSymbol<string, int, string>("RPAD", "text", "totalWidth", RPad),
+                #endregion
+
+                #region Date
+                new FunctionSymbol<DateTime>("GETDATE", GetDate),
+                new FunctionSymbol<DateTime>("GETUTCDATE", GetUtcDate),
+                new FunctionSymbol<DateTime, int>("GETDAY", "dateTime", GetDay),
+                new FunctionSymbol<DateTime, int>("GETMONTH", "dateTime", GetMonth),
+                new FunctionSymbol<DateTime, int>("GETYEAR", "dateTime", GetYear),
                 #endregion
             };
         }
@@ -436,67 +444,30 @@ namespace NQuery.Language.Runtime
 
         #region Date
 
-        //[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        //private static DateTime GetDate()
-        //{
-        //    try
-        //    {
-        //        return DateTime.Now;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ExceptionBuilder.RuntimeError(ex);
-        //    }
-        //}
+        private static DateTime GetDate()
+        {
+            return DateTime.Now;
+        }
 
-        //[SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
-        //private static DateTime GetUtcDate()
-        //{
-        //    try
-        //    {
-        //        return DateTime.Now.ToUniversalTime();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ExceptionBuilder.RuntimeError(ex);
-        //    }
-        //}
+        private static DateTime GetUtcDate()
+        {
+            return DateTime.Now.ToUniversalTime();
+        }
 
-        //private static int GetDay(DateTime dateTime)
-        //{
-        //    try
-        //    {
-        //        return dateTime.Day;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ExceptionBuilder.RuntimeError(ex);
-        //    }
-        //}
+        private static int GetDay(DateTime dateTime)
+        {
+            return dateTime.Day;
+        }
 
-        //private static int GetMonth(DateTime dateTime)
-        //{
-        //    try
-        //    {
-        //        return dateTime.Month;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ExceptionBuilder.RuntimeError(ex);
-        //    }
-        //}
+        private static int GetMonth(DateTime dateTime)
+        {
+            return dateTime.Month;
+        }
 
-        //private static int GetYear(DateTime dateTime)
-        //{
-        //    try
-        //    {
-        //        return dateTime.Year;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ExceptionBuilder.RuntimeError(ex);
-        //    }
-        //}
+        private static int GetYear(DateTime dateTime)
+        {
+            return dateTime.Year;
+        }
 
         #endregion
     }

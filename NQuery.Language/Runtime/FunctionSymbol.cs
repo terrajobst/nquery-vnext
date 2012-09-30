@@ -3,7 +3,23 @@ using NQuery.Language.Symbols;
 
 namespace NQuery.Language.Runtime
 {
-    public sealed class FunctionSymbol<T,TResult> : FunctionSymbol
+    public sealed class FunctionSymbol<TResult> : FunctionSymbol
+    {
+        private readonly Func<TResult> _function;
+
+        public FunctionSymbol(string name, Func<TResult> function)
+            : base(name, typeof(TResult))
+        {
+            _function = function;
+        }
+
+        public Func<TResult> Function
+        {
+            get { return _function; }
+        }
+    }
+
+    public sealed class FunctionSymbol<T, TResult> : FunctionSymbol
     {
         private readonly Func<T, TResult> _function;
 
@@ -66,5 +82,4 @@ namespace NQuery.Language.Runtime
             get { return _function; }
         }
     }
-
 }
