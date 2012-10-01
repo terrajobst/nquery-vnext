@@ -96,7 +96,7 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
         {
-            var p = root.FindTokenTouched(position).Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
+            var p = root.FindTokenTouched(position, descendIntoTrivia: true).Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
 
             if (p != null)
             {
@@ -110,26 +110,27 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static bool InAlias(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position);
+            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia:true);
             return syntaxToken.Parent is AliasSyntax;
         }
 
         private static bool InCteName(SyntaxNode root, int position)
         {
-            var cte = root.FindTokenTouched(position).Parent as CommonTableExpressionSyntax;
+            var token = root.FindTokenTouched(position, descendIntoTrivia: true);
+            var cte = token.Parent as CommonTableExpressionSyntax;
             return cte != null && cte.Name.Span.Contains(position);
         }
 
         private static bool InCteColumnList(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position);
+            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia: true);
             return syntaxToken.Parent is CommonTableExpressionColumnNameSyntax ||
                    syntaxToken.Parent is CommonTableExpressionColumnNameListSyntax;
         }
 
         private static bool InDerivedTableName(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position);
+            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia: true);
             var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
             return derivedTable != null && derivedTable.Name.FullSpan.Contains(position);
         }

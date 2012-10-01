@@ -12,7 +12,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenTouched(position);
+            var token = syntaxTree.Root.FindTokenTouched(position, descendIntoTrivia: true);
             var methodInvocation = token.Parent
                                         .AncestorsAndSelf()
                                         .OfType<MethodInvocationExpressionSyntax>()

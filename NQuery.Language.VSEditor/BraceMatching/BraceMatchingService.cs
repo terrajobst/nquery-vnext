@@ -16,7 +16,7 @@ namespace NQuery.Language.VSEditor.BraceMatching
 
         public bool TryFindBrace(SyntaxTree syntaxTree, int position, out TextSpan left, out TextSpan right)
         {
-            var token = syntaxTree.Root.FindTokenTouched(position);
+            var token = syntaxTree.Root.FindTokenTouched(position, descendIntoTrivia: true);
             if (TryFindBrace(token, position, out left, out right))
                 return true;
 
