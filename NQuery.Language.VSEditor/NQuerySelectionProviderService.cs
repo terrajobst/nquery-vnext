@@ -12,10 +12,10 @@ namespace NQuery.Language.VSEditor
         public INQuerySelectionProvider GetSelectionProvider(ITextView textView)
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
-                                                                        {
-                                                                            var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(textView.TextBuffer);
-                                                                            return new NQuerySelectionProvider(textView, syntaxTreeManager);
-                                                                        });
+            {
+                var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(textView.TextBuffer);
+                return new NQuerySelectionProvider(textView, syntaxTreeManager);
+            });
         }
     }
 }
