@@ -22,14 +22,14 @@ namespace NQuery.Language.BoundNodes
             get { return BoundNodeKind.FunctionInvocationExpression; }
         }
 
-        public override Symbol Symbol
-        {
-            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
-        }
-
         public override Type Type
         {
             get { return Symbol == null ? KnownTypes.Unknown : Symbol.Type; }
+        }
+
+        public FunctionSymbol Symbol
+        {
+            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
         }
 
         public ReadOnlyCollection<BoundExpression> Arguments

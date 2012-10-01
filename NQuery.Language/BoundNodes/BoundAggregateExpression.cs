@@ -24,7 +24,7 @@ namespace NQuery.Language.BoundNodes
             get { return _argument.Type; }
         }
 
-        public override Symbol Symbol
+        public AggregateSymbol Symbol
         {
             get { return _aggregate; }
         }

@@ -1,18 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using NQuery.Language.Symbols;
+using System.Linq;
 
 namespace NQuery.Language.BoundNodes
 {
     internal sealed class BoundNameExpression : BoundExpression
     {
         private readonly Symbol _symbol;
-        private readonly IEnumerable<Symbol> _candidates;
+        private readonly ReadOnlyCollection<Symbol> _candidates;
+
+        public BoundNameExpression(Symbol symbol)
+            : this(symbol, new Symbol[0])
+        {
+        }
 
         public BoundNameExpression(Symbol symbol, IEnumerable<Symbol> candidates)
         {
             _symbol = symbol;
-            _candidates = candidates;
+            _candidates = new ReadOnlyCollection<Symbol>(candidates.ToArray());
         }
 
         public override BoundNodeKind Kind
@@ -20,12 +27,12 @@ namespace NQuery.Language.BoundNodes
             get { return BoundNodeKind.NameExpression; }
         }
 
-        public override Symbol Symbol
+        public Symbol Symbol
         {
             get { return _symbol; }
         }
 
-        public override IEnumerable<Symbol> Candidates
+        public ReadOnlyCollection<Symbol> Candidates
         {
             get { return _candidates; }
         }

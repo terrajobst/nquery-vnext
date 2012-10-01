@@ -19,14 +19,14 @@ namespace NQuery.Language.BoundNodes
             get { return BoundNodeKind.PropertyAccessExpression; }
         }
 
-        public override Symbol Symbol
-        {
-            get { return _propertySymbol; }
-        }
-
         public override Type Type
         {
             get { return _propertySymbol.Type; }
+        }
+
+        public PropertySymbol Symbol
+        {
+            get { return _propertySymbol; }
         }
 
         public BoundExpression Target

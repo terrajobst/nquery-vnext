@@ -458,7 +458,7 @@ namespace NQuery.Language.Binding
         private static IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTableInstance(TableInstanceSymbol tableInstance)
         {
             return from columnInstance in tableInstance.ColumnInstances
-                   let expression = new BoundNameExpression(columnInstance, Enumerable.Empty<Symbol>())
+                   let expression = new BoundNameExpression(columnInstance)
                    select new BoundSelectColumn(expression, columnInstance.Name);
         }
 

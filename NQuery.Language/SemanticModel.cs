@@ -31,7 +31,62 @@ namespace NQuery.Language
         public Symbol GetSymbol(ExpressionSyntax expression)
         {
             var boundExpression = GetBoundExpression(expression);
-            return boundExpression == null ? null : boundExpression.Symbol;
+            return boundExpression == null ? null : GetSymbol(boundExpression);
+        }
+
+        private static Symbol GetSymbol(BoundExpression expression)
+        {
+            switch (expression.Kind)
+            {
+                case BoundNodeKind.NameExpression:
+                    return GetSymbol((BoundNameExpression) expression);
+                case BoundNodeKind.VariableExpression:
+                    return GetSymbol((BoundVariableExpression) expression);
+                case BoundNodeKind.FunctionInvocationExpression:
+                    return GetSymbol((BoundFunctionInvocationExpression) expression);
+                case BoundNodeKind.AggregateExpression:
+                    return GetSymbol((BoundAggregateExpression) expression);
+                case BoundNodeKind.PropertyAccessExpression:
+                    return GetSymbol((BoundPropertyAccessExpression) expression);
+                case BoundNodeKind.MethodInvocationExpression:
+                    return GetSymbol(((BoundMethodInvocationExpression) expression));
+                default:
+                    return null;
+            }
+        }
+
+        private static Symbol GetSymbol(BoundNameExpression expression)
+        {
+            return expression.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundVariableExpression expression)
+        {
+            return expression.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundFunctionInvocationExpression expression)
+        {
+            return expression.Result == null || expression.Result.Best == null
+                             ? null
+                             : expression.Result.Best.Signature.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundAggregateExpression expression)
+        {
+            return expression.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundPropertyAccessExpression expression)
+        {
+            return expression.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundMethodInvocationExpression expression)
+        {
+            return expression.Result == null || expression.Result.Best == null
+                             ? null
+                             : expression.Result.Best.Signature.Symbol;
         }
 
         public Type GetExpressionType(ExpressionSyntax expression)

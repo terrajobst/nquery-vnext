@@ -24,14 +24,14 @@ namespace NQuery.Language.BoundNodes
             get { return BoundNodeKind.MethodInvocationExpression; }
         }
 
-        public override Symbol Symbol
-        {
-            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
-        }
-
         public override Type Type
         {
             get { return Symbol == null ? KnownTypes.Unknown : Symbol.Type; }
+        }
+
+        public MethodSymbol Symbol
+        {
+            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
         }
 
         public BoundExpression Target

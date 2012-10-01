@@ -559,7 +559,7 @@ namespace NQuery.Language.Binding
                 // If this token was inserted by the parser, there is no point in
                 // trying to resolve this guy.
                 var errorSymbol = new BadSymbol(string.Empty);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                return new BoundNameExpression(errorSymbol);
             }
 
             var name = node.Name;
@@ -574,7 +574,7 @@ namespace NQuery.Language.Binding
                 else
                     _diagnostics.ReportColumnTableOrVariableNotDeclared(name);
                 var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                return new BoundNameExpression(errorSymbol);
             }
 
             if (symbols.Length > 1)
@@ -631,7 +631,7 @@ namespace NQuery.Language.Binding
             {
                 // To avoid cascading errors, we'll give up early.
                 var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                return new BoundNameExpression(errorSymbol);
             }
             
             var propertySymbols = LookupProperty(target.Type, name).ToArray();
@@ -644,7 +644,7 @@ namespace NQuery.Language.Binding
                 else
                     _diagnostics.ReportUndeclaredProperty(node, target.Type);
                 var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                return new BoundNameExpression(errorSymbol);
             }
 
             if (propertySymbols.Length > 1)
@@ -680,7 +680,7 @@ namespace NQuery.Language.Binding
                 _diagnostics.ReportUndeclaredAggregate(node.Name);
 
                 var badSymbol = new BadSymbol(node.Name.ValueText);
-                return new BoundNameExpression(badSymbol, Enumerable.Empty<Symbol>());
+                return new BoundNameExpression(badSymbol);
             }
 
             if (aggregates.Length > 1)
@@ -738,7 +738,7 @@ namespace NQuery.Language.Binding
                 {
                     _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
                     var errorSymbol = new BadSymbol(name.ValueText);
-                    return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                    return new BoundNameExpression(errorSymbol);
                 }
                 
                 var symbol1 = result.Selected.Signature.Symbol;
@@ -775,7 +775,7 @@ namespace NQuery.Language.Binding
                 {
                     _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
                     var errorSymbol = new BadSymbol(name.ValueText);
-                    return new BoundNameExpression(errorSymbol, Enumerable.Empty<Symbol>());
+                    return new BoundNameExpression(errorSymbol);
                 }
                 
                 var symbol1 = result.Selected.Signature.Symbol;
