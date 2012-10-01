@@ -25,7 +25,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
 
             var selected = signatures.FirstOrDefault();
             var commaToken = nullIfExpression.CommaToken;
-            var isBeforeComma = !commaToken.IsMissing && position <= commaToken.Span.Start;
+            var isBeforeComma = commaToken.IsMissing || position <= commaToken.Span.Start;
             var parameterIndex = isBeforeComma ? 0 : 1;
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);

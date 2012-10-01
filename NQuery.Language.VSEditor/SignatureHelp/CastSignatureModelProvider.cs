@@ -25,7 +25,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
 
             var selected = signatures.FirstOrDefault();
             var asKeyword = castExpression.AsKeyword;
-            var isBeforeAsKeyword = !asKeyword.IsMissing && position <= asKeyword.Span.Start;
+            var isBeforeAsKeyword = asKeyword.IsMissing || position <= asKeyword.Span.Start;
             var parameterIndex = isBeforeAsKeyword ? 0 : 1;
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);

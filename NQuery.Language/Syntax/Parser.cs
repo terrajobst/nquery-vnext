@@ -276,7 +276,7 @@ namespace NQuery.Language
                             // Determining this is probably not easy. We might need to create
                             // a new method ParseExpressionOrQuery() that uses a lookup and
                             // re-writes parenthesized queries as needed.
-                            var argumentList = ParseArgumentList();
+                            var argumentList = ParseArgumentList(1);
                             left = new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
                             break;
                         }
@@ -503,7 +503,7 @@ namespace NQuery.Language
         private ExpressionSyntax ParseCoalesceExpression()
         {
             var coalesceKeyword = NextToken();
-            var arguments = ParseArgumentList();
+            var arguments = ParseArgumentList(2);
             return new CoalesceExpressionSyntax(_syntaxTree, coalesceKeyword, arguments);
         }
 
@@ -572,27 +572,28 @@ namespace NQuery.Language
             return new ParenthesizedExpressionSyntax(_syntaxTree, leftParenthesis, expression, rightParenthesis);
         }
 
-        private ArgumentListSyntax ParseArgumentList()
+        private ArgumentListSyntax ParseArgumentList(int minimumNumberOfArguments = 0)
         {
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-            var expressionList = ParseArgumentExpressionList();
+            var expressionList = ParseArgumentExpressionList(minimumNumberOfArguments);
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
             return new ArgumentListSyntax(_syntaxTree, leftParenthesis, expressionList, rightParenthesis);
         }
 
-        private SeparatedSyntaxList<ExpressionSyntax> ParseArgumentExpressionList()
+        private SeparatedSyntaxList<ExpressionSyntax> ParseArgumentExpressionList(int minimumNumberOfArguments)
         {
-            if (Current.Kind == SyntaxKind.RightParenthesisToken)
+            if (Current.Kind == SyntaxKind.RightParenthesisToken && minimumNumberOfArguments == 0)
                 return SeparatedSyntaxList<ExpressionSyntax>.Empty;
 
             var expressionsWithCommas = new List<SyntaxNodeOrToken>();
+            var minimumNumberOfItems = minimumNumberOfArguments * 2 - 1;
 
             while (true)
             {
                 var argument = ParseExpression();
                 expressionsWithCommas.Add(argument);
 
-                if (Current.Kind != SyntaxKind.CommaToken)
+                if (Current.Kind != SyntaxKind.CommaToken && minimumNumberOfItems <= expressionsWithCommas.Count)
                     break;
 
                 var comma = Match(SyntaxKind.CommaToken);
