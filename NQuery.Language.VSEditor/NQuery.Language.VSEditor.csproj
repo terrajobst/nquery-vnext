@@ -154,6 +154,7 @@
     <Compile Include="SignatureHelp\ISignatureHelpManagerProvider.cs" />
     <Compile Include="SignatureHelp\NullIfSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\ParameterItem.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpExtensions.cs" />
     <Compile Include="SignatureHelp\SignatureHelpManager.cs" />
     <Compile Include="SignatureHelp\SignatureHelpManagerProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignature.cs" />

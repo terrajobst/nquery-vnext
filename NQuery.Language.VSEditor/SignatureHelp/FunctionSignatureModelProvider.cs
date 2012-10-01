@@ -39,15 +39,9 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                 return null;
 
             var selected = signatures.FirstOrDefault();
-            var parameterIndex = GetParameterIndex(functionInvocation.ArgumentList, position);
+            var parameterIndex = functionInvocation.ArgumentList.GetParameterIndex(position);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
-        }
-
-        private static int GetParameterIndex(ArgumentListSyntax argumentList, int position)
-        {
-            var arguments = argumentList.Arguments;
-            return arguments.TakeWhile(a => !a.IsMissing && a.FullSpan.End < position).Count();
         }
 
         private static IEnumerable<SignatureItem> ToSignatureItems(IEnumerable<FunctionSymbol> functionSymbols)

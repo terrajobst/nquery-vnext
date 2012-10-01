@@ -24,15 +24,9 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var signatures = new[] { GetSignatureItem() };
 
             var selected = signatures.FirstOrDefault();
-            var parameterIndex = GetParameterIndex(coalesceExpression.ArgumentList, position);
+            var parameterIndex = coalesceExpression.ArgumentList.GetParameterIndex(position);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
-        }
-
-        private static int GetParameterIndex(ArgumentListSyntax argumentList, int position)
-        {
-            var arguments = argumentList.Arguments;
-            return arguments.TakeWhile(a => a.FullSpan.End < position).Count();
         }
 
         private static SignatureItem GetSignatureItem()

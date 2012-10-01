@@ -24,7 +24,9 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var signatures = new[] { GetSignatureItem() };
 
             var selected = signatures.FirstOrDefault();
-            var parameterIndex = position <= nullIfExpression.CommaToken.Span.Start ? 0 : 1;
+            var commaToken = nullIfExpression.CommaToken;
+            var isBeforeComma = !commaToken.IsMissing && position <= commaToken.Span.Start;
+            var parameterIndex = isBeforeComma ? 0 : 1;
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
         }

@@ -95,6 +95,13 @@ namespace NQuery.Language
             }            
         }
 
+        public IEnumerable<SyntaxToken> GetSeparators()
+        {
+            return from e in _entries
+                   where e.Separator != null
+                   select e.Separator.Value;
+        }
+
         public TNode this[int index]
         {
             get { return _entries[index].Node; }
