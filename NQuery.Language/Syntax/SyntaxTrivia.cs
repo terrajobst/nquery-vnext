@@ -11,7 +11,7 @@ namespace NQuery.Language
         private readonly string _text;
         private readonly TextSpan _span;
         private readonly StructuredTriviaSyntax _structure;
-        private ReadOnlyCollection<Diagnostic> _diagnostics;
+        private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
 
         public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IList<Diagnostic> diagnostics)
         {
