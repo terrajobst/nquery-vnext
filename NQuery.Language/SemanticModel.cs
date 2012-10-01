@@ -131,9 +131,22 @@ namespace NQuery.Language
 
         public IEnumerable<Symbol> LookupSymbols(int position)
         {
+            // TODO: I think we should'nt associate the binding context with a node but instead the whole binder.
+            // TODO: Once this is done, our Lookup* methods should simply call the Binder ones.
             var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position, 0);
             var bindingContext = node == null ? null : _bindingResult.GetBindingContext(node);
-            return bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
+            var symbols = bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
+            foreach (var symbol in symbols)
+            {
+                yield return symbol;
+
+                var tableInstance = symbol as TableInstanceSymbol;
+                if (tableInstance != null)
+                {
+                    foreach (var columnInstance in tableInstance.ColumnInstances)
+                        yield return columnInstance;
+                }
+            }
         }
 
         private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position, int lastPosition)
