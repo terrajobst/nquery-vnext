@@ -65,31 +65,13 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static IEnumerable<CompletionItem> GetPropertyCompletions(SemanticModel semanticModel, Type targetType)
         {
-            var dataContext = semanticModel.Compilation.DataContext;
-            var propertyProvider = dataContext.PropertyProviders.LookupValue(targetType);
-            return propertyProvider == null
-                       ? Enumerable.Empty<CompletionItem>()
-                       : GetPropertyCompletions(propertyProvider.GetProperties(targetType));
-        }
-
-        private static IEnumerable<CompletionItem> GetPropertyCompletions(IEnumerable<PropertySymbol> propertySymbols)
-        {
-            return from m in propertySymbols
+            return from m in semanticModel.LookupProperties(targetType)
                    select CreateSymbolCompletion(m);
         }
 
         private static IEnumerable<CompletionItem> GetMethodCompletions(SemanticModel semanticModel, Type targetType)
         {
-            var dataContext = semanticModel.Compilation.DataContext;
-            var methodProvider = dataContext.MethodProviders.LookupValue(targetType);
-            return methodProvider == null
-                       ? Enumerable.Empty<CompletionItem>()
-                       : GetMethodCompletions(methodProvider.GetMethods(targetType));
-        }
-
-        private static IEnumerable<CompletionItem> GetMethodCompletions(IEnumerable<MethodSymbol> methodSymbols)
-        {
-            return from m in methodSymbols
+            return from m in semanticModel.LookupMethods(targetType)
                    group m by m.Name into g
                    select CreateSymbolCompletion(g.First());
         }

@@ -21,19 +21,18 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             if (methodInvocation == null)
                 return null;
 
-            var name = methodInvocation.Name;
-            var span = methodInvocation.Span;
+            // TODO: We need to use the resolved symbol as the selected one.
 
-            // TODO: We shouldn't lookup the symbols this way.
-            // Instead, the semantic model should expose the overload resolution result.
-            var symbols = semanticModel.LookupSymbols(span.Start)
-                .OfType<MethodSymbol>()
-                .Where(f => name.Matches(f.Name))
-                .OrderBy(f => f.Parameters.Count);
+            var targetType = semanticModel.GetExpressionType(methodInvocation.Target);
+            var name = methodInvocation.Name;
+            var symbols = semanticModel.LookupMethods(targetType)
+                                       .Where(m => name.Matches(m.Name))
+                                       .OrderBy(f => f.Parameters.Count);
             var signatures = ToSignatureItems(symbols).ToArray();
             if (signatures.Length == 0)
                 return null;
 
+            var span = methodInvocation.Span;
             var selected = signatures.FirstOrDefault();
             var parameterIndex = methodInvocation.ArgumentList.GetParameterIndex(position);
 

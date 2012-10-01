@@ -24,20 +24,19 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             if (functionInvocation == null)
                 return null;
 
-            var name = functionInvocation.Name;
-            var span = functionInvocation.Span;
+            // TODO: We need to handle aggregate symbols as well
+            // TODO: We need to use the resolved symbol as the currently selected one.
 
-            // TODO: We shouldn't lookup the symbols this way.
-            // TODO: This should also handle aggregates.
-            // Instead, the semantic model should expose the overload resolution result.
-            var functionSymbols = semanticModel.LookupSymbols(span.Start)
-                                               .OfType<FunctionSymbol>()
-                                               .Where(f => name.Matches(f.Name))
-                                               .OrderBy(f => f.Parameters.Count);
-            var signatures = ToSignatureItems(functionSymbols).ToArray();
+            var name = functionInvocation.Name;
+            var symbols = semanticModel.LookupSymbols(name.Span.Start)
+                                       .OfType<FunctionSymbol>()
+                                       .Where(f => name.Matches(f.Name))
+                                       .OrderBy(f => f.Parameters.Count);
+            var signatures = ToSignatureItems(symbols).ToArray();
             if (signatures.Length == 0)
                 return null;
 
+            var span = functionInvocation.Span;
             var selected = signatures.FirstOrDefault();
             var parameterIndex = functionInvocation.ArgumentList.GetParameterIndex(position);
 

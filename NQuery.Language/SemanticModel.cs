@@ -104,5 +104,25 @@ namespace NQuery.Language
 
             return null;
         }
+
+        public IEnumerable<MethodSymbol> LookupMethods(Type type)
+        {
+            // TODO: Should we cache them to ensure object identity for method symbols?
+            var dataContext = _compilation.DataContext;
+            var methodProvider = dataContext.MethodProviders.LookupValue(type);
+            return methodProvider == null
+                       ? Enumerable.Empty<MethodSymbol>()
+                       : methodProvider.GetMethods(type);
+        }
+
+        public IEnumerable<PropertySymbol> LookupProperties(Type type)
+        {
+            // TODO: Should we cache them to ensure object identity for property symbols?
+            var dataContext = _compilation.DataContext;
+            var propertyProvider = dataContext.PropertyProviders.LookupValue(type);
+            return propertyProvider == null
+                       ? Enumerable.Empty<PropertySymbol>()
+                       : propertyProvider.GetProperties(type);
+        }
     }
 }
