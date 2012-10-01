@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using NQuery.Language.VSEditor.Completion;
+using NQuery.Language.VSEditor.SignatureHelp;
 
 namespace NQuery.Language.VSEditor
 {
@@ -12,12 +13,14 @@ namespace NQuery.Language.VSEditor
         private readonly ITextView _textView;
         private readonly IIntellisenseSessionStackMapService _intellisenseSessionStackMapService;
         private readonly ICompletionModelManager _completionModelManager;
+        private readonly ISignatureHelpManager _signatureHelpManager;
 
-        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager)
         {
             _textView = textView;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
             _completionModelManager = completionModelManager;
+            _signatureHelpManager = signatureHelpManager;
         }
 
         public override bool IsInterestedInHandledEvents
@@ -29,12 +32,14 @@ namespace NQuery.Language.VSEditor
         {
             base.TextInput(args);
             _completionModelManager.HandleTextInput(args.Text);
+            _signatureHelpManager.HandleTextInput(args.Text);
         }
 
         public override void PreviewTextInput(TextCompositionEventArgs args)
         {
             base.PreviewTextInput(args);
             _completionModelManager.HandlePreviewTextInput(args.Text);
+            _signatureHelpManager.HandlePreviewTextInput(args.Text);
         }
 
         public override void PreviewKeyDown(KeyEventArgs args)
@@ -102,7 +107,7 @@ namespace NQuery.Language.VSEditor
 
         private void ParameterInfo()
         {
-            SystemSounds.Hand.Play();
+            _signatureHelpManager.TriggerSignatureHelp();
         }
 
         private bool ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand command)

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 using NQuery.Language.VSEditor.Completion;
+using NQuery.Language.VSEditor.SignatureHelp;
 
 namespace NQuery.Language.VSEditor
 {
@@ -19,12 +20,16 @@ namespace NQuery.Language.VSEditor
         [Import]
         public ICompletionModelManagerProvider CompletionModelManagerProvider { get; set; }
 
+        [Import]
+        public ISignatureHelpManagerProvider SignatureHelpManagerProvider { get; set; }
+
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
             return wpfTextView.Properties.GetOrCreateSingletonProperty(() =>
             {
-                var completionModel = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
-                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModel);
+                var completionModelManager = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
+                var signatureHelpManager = SignatureHelpManagerProvider.GetSignatureHelpManager(wpfTextView);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager);
             });
         }
     }

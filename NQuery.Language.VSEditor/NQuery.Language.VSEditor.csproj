@@ -144,6 +144,23 @@
     <Compile Include="NQuerySyntaxTreeManagerService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Completion\SymbolCompletionProvider.cs" />
+    <Compile Include="SignatureHelp\CastSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\CoalesceSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\FunctionSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\ISignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\MethodSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\NQueryParameter.cs" />
+    <Compile Include="SignatureHelp\ISignatureHelpManager.cs" />
+    <Compile Include="SignatureHelp\ISignatureHelpManagerProvider.cs" />
+    <Compile Include="SignatureHelp\NullIfSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\ParameterItem.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpManager.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpManagerProvider.cs" />
+    <Compile Include="SignatureHelp\NQuerySignature.cs" />
+    <Compile Include="SignatureHelp\NQuerySignatureHelpSource.cs" />
+    <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpModel.cs" />
+    <Compile Include="SignatureHelp\SignatureItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
