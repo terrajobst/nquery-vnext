@@ -84,6 +84,13 @@ namespace NQuery.Language
                        : null;
         }
 
+        private SyntaxToken? GetPreviousToken()
+        {
+            return _tokenIndex == 0
+                       ? (SyntaxToken?) null
+                       : Peek(-1);
+        }
+
         private SyntaxToken Match(SyntaxKind kind)
         {
             return Current.Kind == kind
@@ -93,7 +100,9 @@ namespace NQuery.Language
 
         private SyntaxToken CreateMissingToken(SyntaxKind kind, SyntaxKind contextualKind)
         {
-            var start = Current.FullSpan.Start;
+            var previousToken = GetPreviousToken();
+            var previousTokenEnd = previousToken == null ? Current.FullSpan.Start : previousToken.Value.Span.End;
+            var start = previousTokenEnd;
             var span = new TextSpan(start, 0);
             var diagnostics = new List<Diagnostic>(1);
             diagnostics.ReportTokenExpected(Current, kind);
