@@ -100,7 +100,7 @@
     <Compile Include="Completion\CompletionModelManager.cs" />
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionProvider.cs" />
-    <Compile Include="Completion\ICompletionModel.cs" />
+    <Compile Include="Completion\CompletionModel.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
     <Compile Include="INQueryGlyphService.cs" />
