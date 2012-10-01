@@ -320,7 +320,7 @@ namespace NQueryViewer
                 ContextualKind = SyntaxKind.BadToken;
                 Span = data.Span;
                 FullSpan = data.FullSpan;
-                IsMissing = false;
+                IsMissing = data.IsMissing;
                 UpdateChildren(children);
             }
 

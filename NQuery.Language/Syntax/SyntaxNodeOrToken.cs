@@ -56,7 +56,7 @@ namespace NQuery.Language
 
         public bool IsMissing
         {
-            get { return IsToken && AsToken().IsMissing; }
+            get { return IsNode ? AsNode().IsMissing : AsToken().IsMissing; }
         }
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken syntaxToken)

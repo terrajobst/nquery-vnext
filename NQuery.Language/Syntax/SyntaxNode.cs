@@ -8,6 +8,7 @@ namespace NQuery.Language
     public abstract class SyntaxNode
     {
         private readonly SyntaxTree _syntaxTree;
+        private bool? _isMissing;
         private TextSpan? _span;
         private TextSpan? _fullSpan;
 
@@ -18,22 +19,27 @@ namespace NQuery.Language
 
         private TextSpan ComputeSpan()
         {
-            if (!ChildNodesAndTokens().Any())
+            if (ChildNodesAndTokens().All(n => n.IsMissing))
                 return new TextSpan(0, 0);
             
-            var start = ChildNodesAndTokens().First().Span.Start;
-            var end = ChildNodesAndTokens().Last().Span.End;
+            var start = ChildNodesAndTokens().First(n => !n.IsMissing).Span.Start;
+            var end = ChildNodesAndTokens().Last(n => !n.IsMissing).Span.End;
             return TextSpan.FromBounds(start, end);
         }
 
         private TextSpan ComputeFullSpan()
         {
-            if (!ChildNodesAndTokens().Any())
+            if (ChildNodesAndTokens().All(n => n.IsMissing))
                 return new TextSpan(0, 0);
-            
-            var start = ChildNodesAndTokens().First().FullSpan.Start;
-            var end = ChildNodesAndTokens().Last().FullSpan.End;
+
+            var start = ChildNodesAndTokens().First(n => !n.IsMissing).FullSpan.Start;
+            var end = ChildNodesAndTokens().Last(n => !n.IsMissing).FullSpan.End;
             return TextSpan.FromBounds(start, end);
+        }
+
+        private bool ComputeIsMissing()
+        {
+            return ChildNodesAndTokens().All(n => n.IsMissing);
         }
 
         public IEnumerable<SyntaxNode> Ancestors(bool ascendOutOfTrivia = true)
@@ -195,6 +201,17 @@ namespace NQuery.Language
                     _fullSpan = ComputeFullSpan();
 
                 return _fullSpan.Value;
+            }
+        }
+
+        public bool IsMissing
+        {
+            get
+            {
+                if (_isMissing == null)
+                    _isMissing = ComputeIsMissing();
+
+                return _isMissing.Value;
             }
         }
 
