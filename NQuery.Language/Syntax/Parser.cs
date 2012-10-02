@@ -109,6 +109,16 @@ namespace NQuery.Language
             return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
         }
 
+        private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
+        {
+            var start = tokens.First().FullSpan.Start;
+            var end = tokens.Last().FullSpan.End;
+            var span = TextSpan.FromBounds(start, end);
+            var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
+            var trivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
+            return trivia;
+        }
+
         public CompilationUnitSyntax ParseRootQuery()
         {
             var query = ParseQueryWithOptionalCte();
@@ -156,16 +166,6 @@ namespace NQuery.Language
                                          endOfFileToken.Diagnostics);
 
             return result;
-        }
-
-        private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
-        {
-            var start = tokens.First().FullSpan.Start;
-            var end = tokens.Last().FullSpan.End;
-            var span = TextSpan.FromBounds(start, end);
-            var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            var trivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
-            return trivia;
         }
 
         private ExpressionSyntax ParseExpression()
