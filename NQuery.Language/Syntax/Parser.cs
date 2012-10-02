@@ -180,48 +180,24 @@ namespace NQuery.Language
                 // No left operand, so we parse one and take care of leading unary operators
 
                 var unaryExpression = SyntaxFacts.GetUnaryOperatorExpression(Current.Kind);
-
-                if (unaryExpression == SyntaxKind.BadToken)
-                {
-                    left = ParseSimpleExpression();
-                }
-                else
-                {
-                    var operatorToken = NextToken();
-                    var operatorPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(unaryExpression);
-                    var expression = ParseSubExpression(null, operatorPrecedence);
-                    left = new UnaryExpressionSyntax(_syntaxTree, operatorToken, expression);
-                }
+                left = unaryExpression == SyntaxKind.BadToken
+                           ? ParseSimpleExpression()
+                           : ParseUnaryExpression(unaryExpression);
             }
 
             while (Current.Kind != SyntaxKind.EndOfFileToken)
             {
                 // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUNDSLIKE.
 
-                SyntaxToken? notKeyword = null;
-
-                if (Current.Kind == SyntaxKind.NotKeyword)
-                {
-                    if (Lookahead.Kind == SyntaxKind.BetweenKeyword ||
-                        Lookahead.Kind == SyntaxKind.InKeyword ||
-                        Lookahead.Kind == SyntaxKind.LikeKeyword ||
-                        Lookahead.Kind == SyntaxKind.SimilarKeyword ||
-                        Lookahead.Kind == SyntaxKind.SoundslikeKeyword)
-                    {
-                        notKeyword = NextToken();
-                    }
-                }
+                var notKeyword = Current.Kind == SyntaxKind.NotKeyword && CanHaveLeadingNot(Lookahead.Kind)
+                                     ? NextToken()
+                                     : (SyntaxToken?) null;
 
                 // Special handling for the only ternary operator BETWEEN
 
                 if (Current.Kind == SyntaxKind.BetweenKeyword)
                 {
-                    var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
-                    var betweenKeyword = NextToken();
-                    var lowerBound = ParseSubExpression(null, betweenPrecedence);
-                    var andKeyword = Match(SyntaxKind.AndKeyword);
-                    var upperBound = ParseSubExpression(null, betweenPrecedence);
-                    left = new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
+                    left = ParseBetweenExpression(left, notKeyword);
                 }
                 else
                 {
@@ -229,86 +205,126 @@ namespace NQuery.Language
 
                     var binaryExpression = SyntaxFacts.GetBinaryOperatorExpression(Current.Kind);
                     if (binaryExpression == SyntaxKind.BadToken)
-                        break;
+                        return left;
 
                     var operatorPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(binaryExpression);
 
                     // Precedence is lower or equal, parse it later
 
                     if (operatorPrecedence <= precedence)
-                        break;
+                        return left;
 
                     // Precedence is higher
 
-                    var operatorToken = NextToken();
-
-                    // Special handling for some operators
-
-                    switch (operatorToken.Kind)
-                    {
-                        case SyntaxKind.SimilarKeyword:
-                        {
-                            var toKeyword = Match(SyntaxKind.ToKeyword);
-                            var expression = ParseSubExpression(null, operatorPrecedence);
-                            left = new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
-                            break;
-                        }
-                        case SyntaxKind.SoundslikeKeyword:
-                        {
-                            var expression = ParseSubExpression(null, operatorPrecedence);
-                            left = new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
-                            break;
-                        }
-                        case SyntaxKind.LikeKeyword:
-                        {
-                            var expression = ParseSubExpression(null, operatorPrecedence);
-                            left = new LikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
-                            break;
-                        }
-                        case SyntaxKind.InKeyword:
-                        {
-                            // TODO: We need to support x IN (SELECT v FROM Table)
-                            //
-                            // We should introduce a new SyntaxNode InSubselectExpression and
-                            // use lookahead to determine whether need to parse an expression
-                            // list or a query.
-                            //
-                            // Determining this is probably not easy. We might need to create
-                            // a new method ParseExpressionOrQuery() that uses a lookup and
-                            // re-writes parenthesized queries as needed.
-                            var argumentList = ParseArgumentList(1);
-                            left = new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
-                            break;
-                        }
-                        default:
-                        {
-                            var isAllAny = Current.Kind == SyntaxKind.AllKeyword ||
-                                           Current.Kind == SyntaxKind.SomeKeyword ||
-                                           Current.Kind == SyntaxKind.AnyKeyword;
-
-                            if (!isAllAny)
-                            {
-                                var expression = ParseSubExpression(null, operatorPrecedence);
-                                left = new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
-                            }
-                            else
-                            {
-                                var allAnyOperatorToken = binaryExpression.IsValidAllAnyOperator()
-                                                              ? operatorToken
-                                                              : operatorToken.WithInvalidOperatorForAllAnyDiagnostics();
-                                var keyword = NextToken();
-                                var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
-                                var query = ParseQuery();
-                                var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-                                left = new AllAnySubselectSyntax(_syntaxTree, left, allAnyOperatorToken, keyword, leftParenthesis, query, rightParenthesis);
-                            }
-                            break;
-                        }
-                    }
+                    left = ParseBinaryExpression(left, notKeyword, binaryExpression, operatorPrecedence);
                 }
             }
 
             return left;
+        }
+
+        private static bool CanHaveLeadingNot(SyntaxKind syntaxKind)
+        {
+            return syntaxKind == SyntaxKind.BetweenKeyword ||
+                   syntaxKind == SyntaxKind.InKeyword ||
+                   syntaxKind == SyntaxKind.LikeKeyword ||
+                   syntaxKind == SyntaxKind.SimilarKeyword ||
+                   syntaxKind == SyntaxKind.SoundslikeKeyword;
+        }
+
+        private ExpressionSyntax ParseUnaryExpression(SyntaxKind unaryExpression)
+        {
+            var operatorToken = NextToken();
+            var operatorPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(unaryExpression);
+            var expression = ParseSubExpression(null, operatorPrecedence);
+            return new UnaryExpressionSyntax(_syntaxTree, operatorToken, expression);
+        }
+
+        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
+        {
+            var operatorToken = NextToken();
+
+            switch (operatorToken.Kind)
+            {
+                case SyntaxKind.SimilarKeyword:
+                    return ParseSimilarToExpression(left, notKeyword, operatorPrecedence, operatorToken);
+                case SyntaxKind.SoundslikeKeyword:
+                    return ParseSoundslikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
+                case SyntaxKind.LikeKeyword:
+                    return ParseLikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
+                case SyntaxKind.InKeyword:
+                    return ParseInExpression(left, notKeyword, operatorToken);
+                default:
+                    var isAllAny = Current.Kind == SyntaxKind.AllKeyword ||
+                                   Current.Kind == SyntaxKind.AnyKeyword ||
+                                   Current.Kind == SyntaxKind.SomeKeyword;
+
+                    return isAllAny
+                               ? ParseAllAnySubselect(left, binaryExpression, operatorToken)
+                               : ParseBinaryExpression(left, operatorPrecedence, operatorToken);
+            }
+        }
+
+        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, int operatorPrecedence, SyntaxToken operatorToken)
+        {
+            var expression = ParseSubExpression(null, operatorPrecedence);
+            return new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
+        }
+
+        private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken? notKeyword)
+        {
+            var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
+            var betweenKeyword = NextToken();
+            var lowerBound = ParseSubExpression(null, betweenPrecedence);
+            var andKeyword = Match(SyntaxKind.AndKeyword);
+            var upperBound = ParseSubExpression(null, betweenPrecedence);
+            return new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
+        }
+
+        private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        {
+            var toKeyword = Match(SyntaxKind.ToKeyword);
+            var expression = ParseSubExpression(null, operatorPrecedence);
+            return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
+        }
+
+        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        {
+            var expression = ParseSubExpression(null, operatorPrecedence);
+            return new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
+        }
+
+        private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        {
+            var expression = ParseSubExpression(null, operatorPrecedence);
+            return new LikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
+        }
+
+        private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken operatorToken)
+        {
+            // TODO: We need to support x IN (SELECT v FROM Table)
+            //
+            // We should introduce a new SyntaxNode InSubselectExpression and
+            // use lookahead to determine whether need to parse an expression
+            // list or a query.
+            //
+            // Determining this is probably not easy. We might need to create
+            // a new method ParseExpressionOrQuery() that uses a lookup and
+            // re-writes parenthesized queries as needed.
+            var argumentList = ParseArgumentList(1);
+            return new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
+        }
+
+        private ExpressionSyntax ParseAllAnySubselect(ExpressionSyntax left, SyntaxKind binaryExpression, SyntaxToken operatorToken)
+        {
+            var allAnyOperatorToken = binaryExpression.IsValidAllAnyOperator()
+                                          ? operatorToken
+                                          : operatorToken.WithInvalidOperatorForAllAnyDiagnostics();
+            var keyword = NextToken();
+            var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
+            var query = ParseQuery();
+            var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
+            return new AllAnySubselectSyntax(_syntaxTree, left, allAnyOperatorToken, keyword, leftParenthesis, query, rightParenthesis);
         }
 
         private ExpressionSyntax ParseSimpleExpression()
