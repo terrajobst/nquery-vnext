@@ -189,7 +189,7 @@ namespace NQuery.Language
             {
                 // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUNDSLIKE.
 
-                var notKeyword = Current.Kind == SyntaxKind.NotKeyword && CanHaveLeadingNot(Lookahead.Kind)
+                var notKeyword = Current.Kind == SyntaxKind.NotKeyword && Lookahead.Kind.CanHaveLeadingNot()
                                      ? NextToken()
                                      : (SyntaxToken?) null;
 
@@ -221,15 +221,6 @@ namespace NQuery.Language
             }
 
             return left;
-        }
-
-        private static bool CanHaveLeadingNot(SyntaxKind syntaxKind)
-        {
-            return syntaxKind == SyntaxKind.BetweenKeyword ||
-                   syntaxKind == SyntaxKind.InKeyword ||
-                   syntaxKind == SyntaxKind.LikeKeyword ||
-                   syntaxKind == SyntaxKind.SimilarKeyword ||
-                   syntaxKind == SyntaxKind.SoundslikeKeyword;
         }
 
         private ExpressionSyntax ParseUnaryExpression(SyntaxKind unaryExpression)

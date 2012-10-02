@@ -1011,5 +1011,14 @@ namespace NQuery.Language
                    binaryExpression == SyntaxKind.GreaterExpression ||
                    binaryExpression == SyntaxKind.GreaterOrEqualExpression;
         }
+
+        public static bool CanHaveLeadingNot(this SyntaxKind syntaxKind)
+        {
+            return syntaxKind == SyntaxKind.BetweenKeyword ||
+                   syntaxKind == SyntaxKind.InKeyword ||
+                   syntaxKind == SyntaxKind.LikeKeyword ||
+                   syntaxKind == SyntaxKind.SimilarKeyword ||
+                   syntaxKind == SyntaxKind.SoundslikeKeyword;
+        }
     }
 }
