@@ -134,7 +134,13 @@ namespace NQuery.Language
             if (startOfNextToken > root.FullSpan.End)
                 return null;
 
-            return root.FindToken(startOfNextToken);
+            var syntaxToken = root.FindToken(startOfNextToken);
+            while (syntaxToken.Kind != SyntaxKind.EndOfFileToken && syntaxToken.Span.Start < startOfNextToken)
+            {
+                startOfNextToken++;
+                syntaxToken = root.FindToken(startOfNextToken);
+            }
+            return syntaxToken;
         }
 
         public void WriteTo(TextWriter writer)

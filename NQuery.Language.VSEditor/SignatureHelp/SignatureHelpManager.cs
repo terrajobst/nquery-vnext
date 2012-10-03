@@ -13,6 +13,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         private readonly INQuerySemanticModelManager _semanticModelManager;
         private readonly ISignatureHelpBroker _signatureHelpBroker;
         private readonly IEnumerable<ISignatureModelProvider> _signatureModelProviders;
+        private readonly object _selectedItemIndexKey = new object();
 
         private ISignatureHelpSession _session;
         private SignatureHelpModel _model;
@@ -20,14 +21,42 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         public SignatureHelpManager(ITextView textView, INQuerySemanticModelManager semanticModelManager, ISignatureHelpBroker signatureHelpBroker, IEnumerable<ISignatureModelProvider> signatureModelProviders)
         {
             _textView = textView;
+            _textView.Caret.PositionChanged += CaretOnPositionChanged;
+            _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
             _semanticModelManager = semanticModelManager;
             _signatureHelpBroker = signatureHelpBroker;
             _signatureModelProviders = signatureModelProviders;
         }
 
+        private void SessionOnDismissed(object sender, EventArgs e)
+        {
+            _session.Dismissed -= SessionOnDismissed;
+            _session.SelectedSignatureChanged -= SessionOnDismissed;
+            _session = null;
+        }
+
+        private void SessionOnSelectedSignatureChanged(object sender, SelectedSignatureChangedEventArgs e)
+        {
+            var selectedItemIndex = _session.Signatures.IndexOf(e.NewSelectedSignature);
+
+            _session.Properties.RemoveProperty(_selectedItemIndexKey);
+            _session.Properties.AddProperty(_selectedItemIndexKey, selectedItemIndex);
+        }
+
+        private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
+        {
+            UpdateSession();
+        }
+
+        private void TextBufferOnPostChanged(object sender, EventArgs e)
+        {
+            UpdateSession();
+        }
+
         private static bool IsTriggerChar(char c)
         {
-            return c == '(';
+            return c == '(' ||
+                   c == ',';
         }
 
         private static bool IsCommitChar(char c)
@@ -66,18 +95,27 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                     _session = _signatureHelpBroker.CreateSignatureHelpSession(_textView, triggerPoint, true);
                     _session.Properties.AddProperty(typeof(ISignatureHelpManager), this);
                     _session.Dismissed += SessionOnDismissed;
+                    _session.SelectedSignatureChanged += SessionOnSelectedSignatureChanged;
                     _session.Start();
                 }
             }
         }
 
-        private void SessionOnDismissed(object sender, EventArgs e)
+        private int? GetSelectedItemIndex()
         {
-            _session = null;
+            if (_session == null)
+                return null;
+
+            int selectedIndex;
+            if (!_session.Properties.TryGetProperty(_selectedItemIndexKey, out selectedIndex))
+                return null;
+
+            return selectedIndex;
         }
 
         private void UpdateModel()
         {
+            var selectedIndex = GetSelectedItemIndex();
             var textView = _textView;
             var triggerPosition = textView.Caret.Position.BufferPosition.Position;
             var snapshot = _textView.TextBuffer.CurrentSnapshot;
@@ -98,12 +136,31 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                                                 .OrderByDescending(m => m.ApplicableSpan.Start)
                                                 .FirstOrDefault();
 
+            // If we previously recorded a selected item and the index is still valid,
+            // let's restore it.
+
+            if (model != null && selectedIndex != null && selectedIndex < model.Signatures.Count)
+            {
+                var selectedItem = model.Signatures[selectedIndex.Value];
+                model = model.WithSignature(selectedItem);
+            }
+
             // Let observers know that we've a new model.
 
             Model = model;
         }
 
-        internal void OnModelChanged(EventArgs e)
+        private void UpdateSession()
+        {
+            if (_session == null)
+                return;
+
+            UpdateModel();
+            _session.Recalculate();
+            _session.Match();
+        }
+
+        private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
             if (handler != null)

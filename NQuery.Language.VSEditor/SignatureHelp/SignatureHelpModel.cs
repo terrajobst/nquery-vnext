@@ -37,5 +37,10 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         {
             get { return _selectedParameter; }
         }
+
+        public SignatureHelpModel WithSignature(SignatureItem signatureItem)
+        {
+            return new SignatureHelpModel(_applicableSpan, _signatures, signatureItem, _selectedParameter);
+        }
     }
 }
