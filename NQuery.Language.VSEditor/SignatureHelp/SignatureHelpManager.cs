@@ -59,17 +59,10 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                    c == ',';
         }
 
-        private static bool IsCommitChar(char c)
-        {
-            return c == ')';
-        }
-
         public void HandleTextInput(string text)
         {
             if (_session == null && text.Any(IsTriggerChar))
                 TriggerSignatureHelp();
-            else if (_session != null && text.Any(IsCommitChar))
-                _session.Dismiss();
         }
 
         public void HandlePreviewTextInput(string text)
