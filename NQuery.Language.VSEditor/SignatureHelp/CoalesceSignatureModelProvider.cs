@@ -15,7 +15,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var coalesceExpression = token.Parent
                                           .AncestorsAndSelf()
                                           .OfType<CoalesceExpressionSyntax>()
-                                          .FirstOrDefault(c => c.ArgumentList.LeftParenthesis.Span.Start < position);
+                                          .FirstOrDefault(c => c.IsBetweenParentheses(position));
 
             if (coalesceExpression == null)
                 return null;

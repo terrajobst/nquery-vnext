@@ -16,7 +16,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var methodInvocation = token.Parent
                                         .AncestorsAndSelf()
                                         .OfType<MethodInvocationExpressionSyntax>()
-                                        .FirstOrDefault(m => m.ArgumentList.LeftParenthesis.Span.Start < position);
+                                        .FirstOrDefault(m => m.IsBetweenParentheses(position));
 
             if (methodInvocation == null)
                 return null;

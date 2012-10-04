@@ -15,7 +15,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var nullIfExpression = token.Parent
                                         .AncestorsAndSelf()
                                         .OfType<NullIfExpressionSyntax>()
-                                        .FirstOrDefault(n => n.LeftParenthesisToken.Span.Start < position);
+                                        .FirstOrDefault(n => n.IsBetweenParentheses(position));
 
             if (nullIfExpression == null)
                 return null;

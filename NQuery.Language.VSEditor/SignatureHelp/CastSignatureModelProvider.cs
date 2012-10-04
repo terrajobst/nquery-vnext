@@ -15,7 +15,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             var castExpression = token.Parent
                                       .AncestorsAndSelf()
                                       .OfType<CastExpressionSyntax>()
-                                      .FirstOrDefault(c => c.LeftParenthesisToken.Span.Start < position);
+                                      .FirstOrDefault(c => c.IsBetweenParentheses(position));
 
             if (castExpression == null)
                 return null;
