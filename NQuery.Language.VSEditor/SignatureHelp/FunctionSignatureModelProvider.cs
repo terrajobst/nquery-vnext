@@ -41,8 +41,8 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                 return null;
 
             var span = functionInvocation.Span;
-            var selected = signatures.FirstOrDefault();
             var parameterIndex = functionInvocation.ArgumentList.GetParameterIndex(position);
+            var selected = signatures.FirstOrDefault(s => s.Parameters.Count > parameterIndex);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
         }

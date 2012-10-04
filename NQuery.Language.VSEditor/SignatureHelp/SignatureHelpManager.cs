@@ -90,6 +90,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
                     _session.Dismissed += SessionOnDismissed;
                     _session.SelectedSignatureChanged += SessionOnSelectedSignatureChanged;
                     _session.Start();
+                    _session.Match();
                 }
             }
         }
@@ -135,7 +136,8 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             if (model != null && selectedIndex != null && selectedIndex < model.Signatures.Count)
             {
                 var selectedItem = model.Signatures[selectedIndex.Value];
-                model = model.WithSignature(selectedItem);
+                if (selectedItem.Parameters.Count > model.SelectedParameter)
+                    model = model.WithSignature(selectedItem);
             }
 
             // Let observers know that we've a new model.
