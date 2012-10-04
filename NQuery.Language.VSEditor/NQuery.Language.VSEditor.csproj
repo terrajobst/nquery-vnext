@@ -146,6 +146,7 @@
     <Compile Include="Completion\SymbolCompletionProvider.cs" />
     <Compile Include="SignatureHelp\CastSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\CoalesceSignatureModelProvider.cs" />
+    <Compile Include="SignatureHelp\CountAllSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\FunctionSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\ISignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\MethodSignatureModelProvider.cs" />

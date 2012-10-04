@@ -23,6 +23,16 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
         }
 
+        public static bool IsBetweenParentheses(this CountAllExpressionSyntax expression, int position)
+        {
+            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesis, expression.RightParenthesis, position);
+        }
+
+        public static bool IsBetweenParentheses(this NullIfExpressionSyntax expression, int position)
+        {
+            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
+        }
+
         public static bool IsBetweenParentheses(this CoalesceExpressionSyntax expression, int position)
         {
             return expression.ArgumentList.IsBetweenParentheses(position);
@@ -36,11 +46,6 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         public static bool IsBetweenParentheses(this FunctionInvocationExpressionSyntax expression, int position)
         {
             return expression.ArgumentList.IsBetweenParentheses(position);
-        }
-
-        public static bool IsBetweenParentheses(this NullIfExpressionSyntax expression, int position)
-        {
-            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
         }
 
         private static bool IsBetweenParentheses(TextSpan parentFullSpan, SyntaxToken leftParenthesis, SyntaxToken rightParenthesis, int position)
