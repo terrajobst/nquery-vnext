@@ -24,15 +24,21 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             if (functionInvocation == null)
                 return null;
 
-            // TODO: We need to handle aggregate symbols as well
             // TODO: We need to use the resolved symbol as the currently selected one.
 
             var name = functionInvocation.Name;
-            var symbols = semanticModel.LookupSymbols(name.Span.Start)
-                                       .OfType<FunctionSymbol>()
-                                       .Where(f => name.Matches(f.Name))
-                                       .OrderBy(f => f.Parameters.Count);
-            var signatures = ToSignatureItems(symbols).ToArray();
+            var functionSymbols = semanticModel.LookupSymbols(name.Span.Start)
+                                               .OfType<FunctionSymbol>()
+                                               .Where(f => name.Matches(f.Name));
+            var functionSignatures = ToSignatureItems(functionSymbols);
+
+            var aggregateSymbols = semanticModel.LookupSymbols(name.Span.Start)
+                                                .OfType<AggregateSymbol>()
+                                                .Where(f => name.Matches(f.Name));
+            var aggregateSignatures = ToSignatureItems(aggregateSymbols);
+
+            var signatures = functionSignatures.Concat(aggregateSignatures).OrderBy(s => s.Parameters.Count).ToArray();
+
             if (signatures.Length == 0)
                 return null;
 
@@ -43,9 +49,14 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
         }
 
-        private static IEnumerable<SignatureItem> ToSignatureItems(IEnumerable<FunctionSymbol> functionSymbols)
+        private static IEnumerable<SignatureItem> ToSignatureItems(IEnumerable<FunctionSymbol> symbols)
         {
-            return functionSymbols.Select(ToSignatureItem);
+            return symbols.Select(ToSignatureItem);
+        }
+
+        private static IEnumerable<SignatureItem> ToSignatureItems(IEnumerable<AggregateSymbol> symbols)
+        {
+            return symbols.Select(ToSignatureItem);
         }
 
         private static SignatureItem ToSignatureItem(FunctionSymbol symbol)
@@ -78,6 +89,28 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             sb.Append(")");
             sb.Append(" AS ");
             sb.Append(symbol.Type.Name.ToUpper());
+
+            var content = sb.ToString();
+
+            return new SignatureItem(content, "Docs for " + symbol.Name, parameters);
+        }
+
+        private static SignatureItem ToSignatureItem(AggregateSymbol symbol)
+        {
+            var parameters = new List<ParameterItem>();
+            var sb = new StringBuilder();
+
+            sb.Append("AGGREGATE ");
+            sb.Append(symbol.Name);
+            sb.Append("(");
+
+            var p1Start = sb.Length;
+            sb.Append("expression");
+            var p1End = sb.Length;
+
+            sb.Append(")");
+
+            parameters.Add(new ParameterItem("expression", null, TextSpan.FromBounds(p1Start, p1End)));
 
             var content = sb.ToString();
 
