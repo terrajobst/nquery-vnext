@@ -67,9 +67,7 @@ namespace NQuery.Language
 
         private static Symbol GetSymbol(BoundFunctionInvocationExpression expression)
         {
-            return expression.Result == null || expression.Result.Best == null
-                             ? null
-                             : expression.Result.Best.Signature.Symbol;
+            return expression.Symbol;
         }
 
         private static Symbol GetSymbol(BoundAggregateExpression expression)
@@ -84,9 +82,7 @@ namespace NQuery.Language
 
         private static Symbol GetSymbol(BoundMethodInvocationExpression expression)
         {
-            return expression.Result == null || expression.Result.Best == null
-                             ? null
-                             : expression.Result.Best.Signature.Symbol;
+            return expression.Symbol;
         }
 
         public Type GetExpressionType(ExpressionSyntax expression)
