@@ -102,6 +102,12 @@ namespace NQuery.Language
             return _bindingResult.GetBoundNode(expression) as BoundExpression;
         }
 
+        public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
+        {
+            var result = _bindingResult.GetBoundNode(tableReference) as BoundTableReference;
+            return result == null ? null : result.GetDeclaredTableInstances();
+        }
+
         public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
         {
             var result = _bindingResult.GetBoundNode(commonTableExpression) as BoundCommonTableExpression;

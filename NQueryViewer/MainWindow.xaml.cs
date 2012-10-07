@@ -91,13 +91,43 @@ namespace NQueryViewer
 
         private static DataContext GetDataContext()
         {
+            var tables = GetSchemaTables();
+
             var builder = new DataContextBuilder();
-            builder.Tables.AddRange(GetSchemaTables());
+            builder.Tables.AddRange(tables);
             builder.Variables.Add(new VariableSymbol("Id", typeof(int)));
+
+            var categoriesTable = tables.Single(t => t.Name == "Categories");
+            var customerCustomerDemoTable = tables.Single(t => t.Name == "CustomerCustomerDemo");
+            var customerDemographicsTable = tables.Single(t => t.Name == "CustomerDemographics");
+            var customersTable = tables.Single(t => t.Name == "Customers");
+            var employeesTable = tables.Single(t => t.Name == "Employees");
+            var employeeTerritoriesTable = tables.Single(t => t.Name == "EmployeeTerritories");
+            var orderDetailsTable = tables.Single(t => t.Name == "Order Details");
+            var ordersTable = tables.Single(t => t.Name == "Orders");
+            var productsTable = tables.Single(t => t.Name == "Products");
+            var regionTable = tables.Single(t => t.Name == "Region");
+            var shippersTable = tables.Single(t => t.Name == "Shippers");
+            var suppliersTable = tables.Single(t => t.Name == "Suppliers");
+            var territoriesTable = tables.Single(t => t.Name == "Territories");
+            builder.Relations.Add(new TableRelation(regionTable, new[] { regionTable.Columns.Single(c => c.Name == "RegionID") }, territoriesTable, new[] { territoriesTable.Columns.Single(c => c.Name == "RegionID") }));
+            builder.Relations.Add(new TableRelation(categoriesTable, new[] { categoriesTable.Columns.Single(c => c.Name == "CategoryID") }, productsTable, new[] { productsTable.Columns.Single(c => c.Name == "CategoryID") }));
+            builder.Relations.Add(new TableRelation(suppliersTable, new[] { suppliersTable.Columns.Single(c => c.Name == "SupplierID") }, productsTable, new[] { productsTable.Columns.Single(c => c.Name == "SupplierID") }));
+            builder.Relations.Add(new TableRelation(shippersTable, new[] { shippersTable.Columns.Single(c => c.Name == "ShipperID") }, ordersTable, new[] { ordersTable.Columns.Single(c => c.Name == "ShipVia") }));
+            builder.Relations.Add(new TableRelation(employeesTable, new[] { employeesTable.Columns.Single(c => c.Name == "EmployeeID") }, employeesTable, new[] { employeesTable.Columns.Single(c => c.Name == "ReportsTo") }));
+            builder.Relations.Add(new TableRelation(employeesTable, new[] { employeesTable.Columns.Single(c => c.Name == "EmployeeID") }, ordersTable, new[] { ordersTable.Columns.Single(c => c.Name == "EmployeeID") }));
+            builder.Relations.Add(new TableRelation(customersTable, new[] { customersTable.Columns.Single(c => c.Name == "CustomerID") }, ordersTable, new[] { ordersTable.Columns.Single(c => c.Name == "CustomerID") }));
+            builder.Relations.Add(new TableRelation(productsTable, new[] { productsTable.Columns.Single(c => c.Name == "ProductID") }, orderDetailsTable, new[] { orderDetailsTable.Columns.Single(c => c.Name == "ProductID") }));
+            builder.Relations.Add(new TableRelation(ordersTable, new[] { ordersTable.Columns.Single(c => c.Name == "OrderID") }, orderDetailsTable, new[] { orderDetailsTable.Columns.Single(c => c.Name == "OrderID") }));
+            builder.Relations.Add(new TableRelation(territoriesTable, new[] { territoriesTable.Columns.Single(c => c.Name == "TerritoryID") }, employeeTerritoriesTable, new[] { employeeTerritoriesTable.Columns.Single(c => c.Name == "TerritoryID") }));
+            builder.Relations.Add(new TableRelation(employeesTable, new[] { employeesTable.Columns.Single(c => c.Name == "EmployeeID") }, employeeTerritoriesTable, new[] { employeeTerritoriesTable.Columns.Single(c => c.Name == "EmployeeID") }));
+            builder.Relations.Add(new TableRelation(customersTable, new[] { customersTable.Columns.Single(c => c.Name == "CustomerID") }, customerCustomerDemoTable, new[] { customerCustomerDemoTable.Columns.Single(c => c.Name == "CustomerID") }));
+            builder.Relations.Add(new TableRelation(customerDemographicsTable, new[] { customerDemographicsTable.Columns.Single(c => c.Name == "CustomerTypeID") }, customerCustomerDemoTable, new[] { customerCustomerDemoTable.Columns.Single(c => c.Name == "CustomerTypeID") }));
+            
             return builder.GetResult();
         }
 
-        private static IEnumerable<SchemaTableSymbol> GetSchemaTables()
+        private static SchemaTableSymbol[] GetSchemaTables()
         {
             return new[]
             {

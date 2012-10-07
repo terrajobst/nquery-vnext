@@ -8,15 +8,13 @@ namespace NQuery.Language
         private readonly SyntaxToken _typeKeyword;
         private readonly SyntaxToken? _outerKeyword;
         private readonly SyntaxToken _joinKeyword;
-        private readonly SyntaxToken _onKeyword;
 
         public OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
-            : base(syntaxTree, left, right, condition)
+            : base(syntaxTree, left, right, onKeyword, condition)
         {
             _typeKeyword = typeKeyword.WithParent(this);
             _outerKeyword = outerKeyword.WithParent(this);
             _joinKeyword = joinKeyword.WithParent(this);
-            _onKeyword = onKeyword.WithParent(this);
         }
 
         public override SyntaxKind Kind
@@ -32,7 +30,7 @@ namespace NQuery.Language
                 yield return _outerKeyword.Value;
             yield return _joinKeyword;
             yield return Right;
-            yield return _onKeyword;
+            yield return OnKeyword;
             yield return Condition;
         }
 
@@ -49,11 +47,6 @@ namespace NQuery.Language
         public SyntaxToken JoinKeyword
         {
             get { return _joinKeyword; }
-        }
-
-        public SyntaxToken OnKeyword
-        {
-            get { return _onKeyword; }
         }
     }
 }
