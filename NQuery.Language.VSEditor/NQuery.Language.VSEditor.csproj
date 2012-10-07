@@ -106,6 +106,7 @@
     <Compile Include="Completion\CompletionModel.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
+    <Compile Include="Completion\JoinCompletionProvider.cs" />
     <Compile Include="Document\NQueryDocumentManager.cs" />
     <Compile Include="Document\INQueryDocument.cs" />
     <Compile Include="Document\INQueryDocumentManager.cs" />
@@ -188,11 +189,8 @@
     <Resource Include="Images\Keyword.png" />
     <Resource Include="Images\Variable.png" />
     <Resource Include="Images\Relation.png" />
-    <Resource Include="Images\ScalarValueFunction.png" />
-    <Resource Include="Images\StoredProcedure.png" />
     <Resource Include="Images\Table.png" />
-    <Resource Include="Images\TableRef.png" />
-    <Resource Include="Images\TableValueFunction.png" />
+    <Resource Include="Images\TableInstance.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AmbiguousName.png" />

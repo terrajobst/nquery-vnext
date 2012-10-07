@@ -30,16 +30,10 @@ namespace NQuery.Language.VSEditor
                     return FromName("Variable");
                 case NQueryGlyph.Relation:
                     return FromName("Relation");
-                case NQueryGlyph.ScalarValueFunction:
-                    return FromName("ScalarValueFunction");
-                case NQueryGlyph.StoredProcedure:
-                    return FromName("StoredProcedure");
                 case NQueryGlyph.Table:
                     return FromName("Table");
-                case NQueryGlyph.TableRef:
-                    return FromName("TableRef");
-                case NQueryGlyph.TableValueFunction:
-                    return FromName("TableValueFunction");
+                case NQueryGlyph.TableInstance:
+                    return FromName("TableInstance");
                 case NQueryGlyph.Aggregate:
                     return FromName("Aggregate");
                 case NQueryGlyph.Column:
