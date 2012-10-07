@@ -8,6 +8,9 @@ using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
+    // TODO: We should consider a design where this guys gets a list of IQuickInfoProviders
+    // (This would match the other IntelliSense managers)
+
     internal sealed class QuickInfoManager : IQuickInfoManager
     {
         private readonly ITextView _textView;
