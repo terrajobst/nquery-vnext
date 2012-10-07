@@ -36,9 +36,9 @@ namespace NQuery.Language.VSEditor
             get { return GetOrRetreiveClassification(ref _derivedTable, NQuerySemanticClassificationMetadata.DerivedTableClassificationTypeName); }
         }
 
-        public IClassificationType CteTable
+        public IClassificationType CommonTableExpression
         {
-            get { return GetOrRetreiveClassification(ref _cteTable, NQuerySemanticClassificationMetadata.CteTableClassificationTypeName); }
+            get { return GetOrRetreiveClassification(ref _cteTable, NQuerySemanticClassificationMetadata.CommonTableExpressionClassificationTypeName); }
         }
 
         public IClassificationType Column

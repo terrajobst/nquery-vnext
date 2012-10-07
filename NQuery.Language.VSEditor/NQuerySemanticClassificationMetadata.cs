@@ -15,8 +15,8 @@ namespace NQuery.Language.VSEditor
         public const string DerivedTableClassificationFormatName = "NQuery.DerivedTable.Format";
         public const string DerivedTableClassificationTypeName = "NQuery.DerivedTable";
 
-        public const string CteTableClassificationFormatName = "NQuery.CteTable.Format";
-        public const string CteTableClassificationTypeName = "NQuery.CteTable";
+        public const string CommonTableExpressionClassificationFormatName = "NQuery.CommonTableExpression.Format";
+        public const string CommonTableExpressionClassificationTypeName = "NQuery.CommonTableExpression";
 
         public const string ColumnClassificationFormatName = "NQuery.Column.Format";
         public const string ColumnClassificationTypeName = "NQuery.Column";
@@ -54,7 +54,7 @@ namespace NQuery.Language.VSEditor
         public ClassificationTypeDefinition DelegateType;
 
         [Export]
-        [Name(CteTableClassificationTypeName)]
+        [Name(CommonTableExpressionClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition EnumType;
 
@@ -128,16 +128,16 @@ namespace NQuery.Language.VSEditor
         }
 
         [Export(typeof(EditorFormatDefinition))]
-        [Name(CteTableClassificationFormatName)]
-        [ClassificationType(ClassificationTypeNames = CteTableClassificationTypeName)]
+        [Name(CommonTableExpressionClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = CommonTableExpressionClassificationTypeName)]
         [UserVisible(true)]
         [Order(After = PredefinedClassificationTypeNames.Identifier)]
         [Order(After = PredefinedClassificationTypeNames.Keyword)]
-        public sealed class CteTableFormat : ClassificationFormatDefinition
+        public sealed class CommonTableExpressionFormat : ClassificationFormatDefinition
         {
-            public CteTableFormat()
+            public CommonTableExpressionFormat()
             {
-                DisplayName = "CTE Table";
+                DisplayName = "Common Table Expression";
                 ForegroundColor = Color.FromRgb(0, 0, 139);
             }
         }

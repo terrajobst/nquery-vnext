@@ -63,7 +63,7 @@ namespace NQuery.Language.VSEditor
                 case SymbolKind.DerivedTable:
                     return _classificationService.DerivedTable;
                 case SymbolKind.CommonTableExpression:
-                    return _classificationService.CteTable;
+                    return _classificationService.CommonTableExpression;
                 case SymbolKind.TableInstance:
                     return GetClassification(((TableInstanceSymbol)symbol).Table);
                 case SymbolKind.ColumnInstance:
