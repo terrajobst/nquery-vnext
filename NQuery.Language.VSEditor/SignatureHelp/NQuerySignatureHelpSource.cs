@@ -68,6 +68,9 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             if (model == null)
                 return null;
 
+            if (model.Signature == null)
+                return null;
+
             return signaturesMap[model.Signature];
         }
     }
