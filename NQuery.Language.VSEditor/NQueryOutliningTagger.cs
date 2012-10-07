@@ -1,77 +1,65 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
+using NQuery.Language.VSEditor.Document;
+
 namespace NQuery.Language.VSEditor
 {
-    internal sealed class NQueryOutliningTagger : ITagger<IOutliningRegionTag> 
+    internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, RawOutliningRegionTag> 
     {
-        private readonly ITextBuffer _textBuffer;
-        private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
+        private readonly INQueryDocument _document;
 
-        public NQueryOutliningTagger(ITextBuffer textBuffer, INQuerySyntaxTreeManager syntaxTreeManager)
+        public NQueryOutliningTagger(INQueryDocument document)
         {
-            _textBuffer = textBuffer;
-            _syntaxTreeManager = syntaxTreeManager;
-            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+            _document = document;
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)
         {
-            var snapshot = _textBuffer.CurrentSnapshot;
-            var snapshotSpan = new SnapshotSpan(snapshot, 0, snapshot.Length);
-            OnTagsChanged(new SnapshotSpanEventArgs(snapshotSpan));
+            InvalidateTags();
         }
 
-        public IEnumerable<ITagSpan<IOutliningRegionTag>> GetTags(NormalizedSnapshotSpanCollection spans)
+        protected override async Task<Tuple<ITextSnapshot, IEnumerable<RawOutliningRegionTag>>> GetRawTagsAsync()
         {
-            var result = new List<ITagSpan<IOutliningRegionTag>>();
-            var syntaxTree = _syntaxTreeManager.SyntaxTree;
-            if (spans.Count > 0 && syntaxTree != null)
-            {
-                var first = spans.First();
-                var last = spans.Last();
-                var snapshotSpan = new SnapshotSpan(first.Start, last.End);
-                var visitor = new Visitor(syntaxTree, snapshotSpan, result);
-                visitor.Visit(syntaxTree.Root);
-            }
-
-            return result;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var result = new List<RawOutliningRegionTag>();
+            var visitor = new Visitor(syntaxTree, result);
+            visitor.Visit(syntaxTree.Root);
+            return Tuple.Create(snapshot, result.AsEnumerable());
         }
 
-        private void OnTagsChanged(SnapshotSpanEventArgs e)
+        protected override ITagSpan<IOutliningRegionTag> CreateTagSpan(ITextSnapshot snapshot, RawOutliningRegionTag rawTag)
         {
-            var handler = TagsChanged;
-            if (handler != null)
-                handler(this, e);
+            var textSpan = rawTag.TextSpan;
+            var span = new Span(textSpan.Start, textSpan.Length);
+            var snapshotSpan = new SnapshotSpan(snapshot, span);
+            var tag = new OutliningRegionTag(false, false, rawTag.Text, rawTag.Hint);
+            var tagSpan = new TagSpan<IOutliningRegionTag>(snapshotSpan, tag);
+            return tagSpan;
         }
-
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
 
         private sealed class Visitor
         {
             private readonly SyntaxTree _syntaxTree;
-            private readonly ITextSnapshot _snapshot;
-            private readonly TextSpan _span;
-            private readonly List<ITagSpan<IOutliningRegionTag>> _outliningRegionTags;
+            private readonly List<RawOutliningRegionTag> _outlineRegions;
 
-            public Visitor(SyntaxTree syntaxTree, SnapshotSpan snapshotSpan, List<ITagSpan<IOutliningRegionTag>> outliningRegionTags)
+            public Visitor(SyntaxTree syntaxTree, List<RawOutliningRegionTag> outlineRegions)
             {
                 _syntaxTree = syntaxTree;
-                _snapshot = snapshotSpan.Snapshot;
-                _outliningRegionTags = outliningRegionTags;
-                _span = new TextSpan(snapshotSpan.Start, snapshotSpan.Length);
+                _outlineRegions = outlineRegions;
             }
 
-            private void AddOutliningRegionTag(TextSpan textSpan, IOutliningRegionTag tag)
+            private void AddOutlineRegion(TextSpan textSpan, string text, string hint)
             {
-                var span = new Span(textSpan.Start, textSpan.Length);
-                var snapshotSpan = new SnapshotSpan(_snapshot, span);
-                var tagSpan = new TagSpan<IOutliningRegionTag>(snapshotSpan, tag);
-                _outliningRegionTags.Add(tagSpan);
+                var outliningData = new RawOutliningRegionTag(textSpan, text, hint);
+                _outlineRegions.Add(outliningData);
             }
 
             private bool IsMultipleLines(TextSpan textSpan)
@@ -83,20 +71,13 @@ namespace NQuery.Language.VSEditor
 
             public void Visit(SyntaxNode node)
             {
-                if (!node.FullSpan.OverlapsWith(_span))
-                    return;
-
                 if (node.Kind == SyntaxKind.SelectQuery && IsMultipleLines(node.Span))
                 {
                     var querySource = _syntaxTree.TextBuffer.GetText(node.Span);
-                    AddOutliningRegionTag(node.Span, new OutliningRegionTag(false, false, "SELECT", querySource));
+                    AddOutlineRegion(node.Span, "SELECT", querySource);
                 }
 
-                var nodes = node.ChildNodesAndTokens()
-                                .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
-                                .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
-
-                foreach (var syntaxNodeOrToken in nodes)
+                foreach (var syntaxNodeOrToken in node.ChildNodesAndTokens())
                     Visit(syntaxNodeOrToken);
             }
 
@@ -123,7 +104,7 @@ namespace NQuery.Language.VSEditor
                 if (trivia.Kind == SyntaxKind.SingleLineCommentTrivia || trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
                 {
                     if (IsMultipleLines(trivia.Span))
-                        AddOutliningRegionTag(trivia.Span, new OutliningRegionTag(false, false, "/**/", trivia.Text));
+                        AddOutlineRegion(trivia.Span, "/**/", trivia.Text);
                 }
             }
         }

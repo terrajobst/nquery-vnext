@@ -1,33 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
     internal sealed class NQuerySyntaxErrorTagger : NQueryErrorTagger
     {
-        private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
+        private readonly INQueryDocument _document;
 
-        public NQuerySyntaxErrorTagger(ITextBuffer textBuffer, INQuerySyntaxTreeManager syntaxTreeManager)
-            : base(textBuffer, PredefinedErrorTypeNames.SyntaxError)
+        public NQuerySyntaxErrorTagger(INQueryDocument document)
+            : base(PredefinedErrorTypeNames.SyntaxError)
         {
-            _syntaxTreeManager = syntaxTreeManager;
-            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+            _document = document;
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)
         {
             InvalidateTags();
         }
 
-        protected override IEnumerable<Diagnostic> GetDiagnostics()
+        protected override async Task<Tuple<ITextSnapshot, IEnumerable<Diagnostic>>> GetRawTagsAsync()
         {
-            var syntaxTree = _syntaxTreeManager.SyntaxTree;
-            return syntaxTree == null
-                       ? Enumerable.Empty<Diagnostic>()
-                       : syntaxTree.GetDiagnostics();
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            return Tuple.Create(snapshot, syntaxTree.GetDiagnostics());
         }
     }
 }

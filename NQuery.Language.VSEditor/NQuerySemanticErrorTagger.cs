@@ -1,33 +1,34 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
     internal sealed class NQuerySemanticErrorTagger : NQueryErrorTagger
     {
-        private readonly INQuerySemanticModelManager _semanticModelManager;
+        private readonly INQueryDocument _document;
 
-        public NQuerySemanticErrorTagger(ITextBuffer textBuffer, INQuerySemanticModelManager semanticModelManager)
-            : base(textBuffer, PredefinedErrorTypeNames.CompilerError)
+        public NQuerySemanticErrorTagger(INQueryDocument document)
+            : base(PredefinedErrorTypeNames.CompilerError)
         {
-            _semanticModelManager = semanticModelManager;
-            _semanticModelManager.SemanticModelChanged += SemanticModelManagerOnSemanticModelChanged;
+            _document = document;
+            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
         }
 
-        private void SemanticModelManagerOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
-        protected override IEnumerable<Diagnostic> GetDiagnostics()
+        protected override async Task<Tuple<ITextSnapshot, IEnumerable<Diagnostic>>> GetRawTagsAsync()
         {
-            var semanticModel = _semanticModelManager.SemanticModel;
-            return semanticModel == null
-                       ? Enumerable.Empty<Diagnostic>()
-                       : semanticModel.GetDiagnostics();
+            var semanticModel = await _document.GetSemanticModelAsync();
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            return Tuple.Create(snapshot, semanticModel.GetDiagnostics());
         }
     }
 }

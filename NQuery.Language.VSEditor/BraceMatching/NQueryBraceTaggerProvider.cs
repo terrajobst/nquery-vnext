@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.BraceMatching
 {
@@ -12,15 +13,15 @@ namespace NQuery.Language.VSEditor.BraceMatching
     internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
     {
         [Import]
-        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
+        public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
         public IBraceMatchingService BraceMatchingService { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(buffer);
-            return new NQueryBraceTagger(textView, buffer, syntaxTreeManager, BraceMatchingService) as ITagger<T>;
+            var document = DocumentManager.GetDocument(buffer);
+            return new NQueryBraceTagger(textView, buffer, document, BraceMatchingService) as ITagger<T>;
         }
     }
 }

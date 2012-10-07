@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.SignatureHelp
 {
@@ -9,7 +10,7 @@ namespace NQuery.Language.VSEditor.SignatureHelp
     internal sealed class SignatureHelpManagerProvider : ISignatureHelpManagerProvider
     {
         [Import]
-        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
+        public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
         public ISignatureHelpBroker SignatureHelpBroker { get; set; }
@@ -21,8 +22,8 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
-                var semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textView.TextBuffer);
-                return new SignatureHelpManager(textView, semanticModelManager, SignatureHelpBroker, SignatureModelProviders);
+                var document = DocumentManager.GetDocument(textView.TextBuffer);
+                return new SignatureHelpManager(textView, document, SignatureHelpBroker, SignatureModelProviders);
             });
         }
     }

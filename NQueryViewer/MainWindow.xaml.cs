@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
-using NQuery.Language.Runtime;
 using NQuery.Language.Symbols;
 using NQuery.Language.VSEditor;
-
+using NQuery.Language.VSEditor.Document;
 using NQueryViewer.Helpers;
 
 using TextBuffer = NQuery.Language.TextBuffer;
@@ -24,8 +25,7 @@ namespace NQueryViewer
     internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSatisfiedNotification
     {
         private IWpfTextViewHost _textViewHost;
-        private INQuerySyntaxTreeManager _syntaxTreeManager;
-        private INQuerySemanticModelManager _semanticModelManager;
+        private INQueryDocument _document;
         private INQuerySelectionProvider _selectionProvider;
         private DiagnosticsViewModel _diagnosticsViewModel;
 
@@ -33,10 +33,7 @@ namespace NQueryViewer
         public TextViewFactory TextViewFactory { get; set; }
 
         [Import]
-        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
-
-        [Import]
-        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
+        public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
         public INQuerySelectionProviderService SelectionProviderService { get; set; }
@@ -60,15 +57,13 @@ namespace NQueryViewer
 
             var textBuffer = _textViewHost.TextView.TextBuffer;
 
-            _syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(textBuffer);
-            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
-            _semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textBuffer);
-
-            _semanticModelManager.Compilation = _semanticModelManager.Compilation.WithDataContext(GetDataContext());
+            _document = DocumentManager.GetDocument(textBuffer);
+            _document.DataContext = GetDataContext();
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
 
             _selectionProvider = SelectionProviderService.GetSelectionProvider(_textViewHost.TextView);
 
-            _diagnosticsViewModel = new DiagnosticsViewModel(_syntaxTreeManager, _semanticModelManager);
+            _diagnosticsViewModel = new DiagnosticsViewModel(_document);
 
             _diagnosticDataGrid.DataContext = _diagnosticsViewModel;
 
@@ -360,55 +355,45 @@ namespace NQueryViewer
 
         private sealed class DiagnosticsViewModel
         {
-            private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
-            private readonly INQuerySemanticModelManager _semanticModelManager;
+            private readonly INQueryDocument _document;
 
-            public DiagnosticsViewModel(INQuerySyntaxTreeManager syntaxTreeManager, INQuerySemanticModelManager semanticModelManager)
+            public DiagnosticsViewModel(INQueryDocument document)
             {
-                _syntaxTreeManager = syntaxTreeManager;
-                _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
-                _semanticModelManager = semanticModelManager;
-                _semanticModelManager.SemanticModelChanged += SemanticModelManagerOnSemanticModelChanged;
+                _document = document;
+                _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+                _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
                 Diagnostics = new ObservableCollection<DiagnosticViewModel>();
             }
 
-            private void SemanticModelManagerOnSemanticModelChanged(object sender, EventArgs e)
+            private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
             {
                 UpdateDiagnostics();
             }
 
-            private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
+            private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
             {
                 UpdateDiagnostics();
             }
 
-            private void UpdateDiagnostics()
+            private async void UpdateDiagnostics()
             {
-                IEnumerable<DiagnosticViewModel> diagnostics = GetDiagnostics();
+                var diagnostics = await GetDiagnosticsAsync();
 
                 Diagnostics.Clear();
                 foreach (var diagnostic in diagnostics)
                     Diagnostics.Add(diagnostic);
             }
 
-            private IEnumerable<DiagnosticViewModel> GetDiagnostics()
+            private async Task<IReadOnlyCollection<DiagnosticViewModel>> GetDiagnosticsAsync()
             {
-                var syntaxTree = _syntaxTreeManager.SyntaxTree;
-                var textBuffer = syntaxTree.TextBuffer;
-                var semanticModel = _semanticModelManager.SemanticModel;
-
-                if (syntaxTree == null)
-                    return Enumerable.Empty<DiagnosticViewModel>();
-
+                var syntaxTree = await _document.GetSyntaxTreeAsync();
+                var semanticModel = await _document.GetSemanticModelAsync();
                 var syntaxTreeDiagnostics = syntaxTree.GetDiagnostics();
+                var semanticModelDiagnostics = semanticModel.GetDiagnostics();
 
-                var semanticModelDiagnostics = semanticModel != null && semanticModel.Compilation.SyntaxTree == syntaxTree
-                                                   ? semanticModel.GetDiagnostics()
-                                                   : Enumerable.Empty<Diagnostic>();
-
-                return from d in syntaxTreeDiagnostics.Concat(semanticModelDiagnostics)
+                return (from d in syntaxTreeDiagnostics.Concat(semanticModelDiagnostics)
                        orderby d.Span.Start, d.Span.End
-                       select new DiagnosticViewModel(d, textBuffer);
+                       select new DiagnosticViewModel(d, syntaxTree.TextBuffer)).ToList();
             }
 
             public ObservableCollection<DiagnosticViewModel> Diagnostics { get; private set; }
@@ -431,12 +416,10 @@ namespace NQueryViewer
             public int Column { get; private set; }
         }
 
-        private void UpdateTree()
+        private async void UpdateTree()
         {
-            if (_syntaxTreeManager.SyntaxTree == null)
-                return;
-
-            var root = _syntaxTreeManager.SyntaxTree.Root;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var root = syntaxTree.Root;
             _treeView.ItemsSource = new[] { ToViewModel(root) };
             if (_textViewHost.HostControl.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
@@ -499,7 +482,7 @@ namespace NQueryViewer
            
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)
         {
             UpdateTree();
         }

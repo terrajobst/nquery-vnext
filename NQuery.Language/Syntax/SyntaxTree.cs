@@ -16,7 +16,7 @@ namespace NQuery.Language
         {
             var parser = new Parser(source, this);
             _root = parseMethod(parser);
-            _textBuffer = new TextBuffer(source);;
+            _textBuffer = new TextBuffer(source);
         }
 
         public static SyntaxTree ParseQuery(string source)

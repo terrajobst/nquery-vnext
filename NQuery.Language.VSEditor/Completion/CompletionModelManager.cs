@@ -4,26 +4,27 @@ using System.Linq;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.Completion
 {
     internal sealed class CompletionModelManager : ICompletionModelManager
     {
+        private readonly ITextView _textView;
+        private readonly INQueryDocument _document;
         private readonly ICompletionBroker _completionBroker;
         private readonly IEnumerable<ICompletionProvider> _completionItemProviders;
-        private readonly ITextView _textView;
-        private readonly INQuerySemanticModelManager _semanticModelManager;
 
         private ICompletionSession _session;
         private CompletionModel _model;
 
-        public CompletionModelManager(ITextView textView, INQuerySemanticModelManager semanticModelManager, ICompletionBroker completionBroker, IEnumerable<ICompletionProvider> completionItemProviders)
+        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, IEnumerable<ICompletionProvider> completionItemProviders)
         {
             _completionBroker = completionBroker;
             _completionItemProviders = completionItemProviders;
             _textView = textView;
+            _document = document;
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
-            _semanticModelManager = semanticModelManager;
         }
 
         private static bool IsTriggerChar(char c)
@@ -57,7 +58,7 @@ namespace NQuery.Language.VSEditor.Completion
         public void HandlePreviewTextInput(string text)
         {
             if (_session != null && text.Any(IsCommitChar))
-                _session.Commit();
+                Commit();
         }
 
         private void TextBufferOnPostChanged(object sender, EventArgs e)
@@ -69,52 +70,26 @@ namespace NQuery.Language.VSEditor.Completion
         public void TriggerCompletion(bool autoComplete)
         {
             if (_session != null)
-            {
                 _session.Dismiss();
-            }
             else
-            {
                 UpdateModel();
-
-                if (_model.Items.Count > 0)
-                {
-                    var snapshot = _textView.TextBuffer.CurrentSnapshot;
-                    var triggerPosition = _model.ApplicableSpan.Start;
-                    var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
-
-                    _session = _completionBroker.CreateCompletionSession(_textView, triggerPoint, true);
-                    _session.Properties.AddProperty(typeof (ICompletionModelManager), this);
-                    _session.Dismissed += SessionOnDismissed;
-                    _session.Start();
-                }
-            }
         }
 
-        private void UpdateModel()
+        private async void UpdateModel()
         {
             var textView = _textView;
             var triggerPosition = textView.Caret.Position.BufferPosition;
-            var snapshot = _textView.TextBuffer.CurrentSnapshot;
-            var oldCompilation = _semanticModelManager.Compilation;
+            var semanticModel = await _document.GetSemanticModelAsync();
 
-            // TODO: The following should be done as a (cancellable) background operation.
-            // 
-            // It needs to be cancellable because before starting a new one, the old one
-            // needs to be cancelled in order to avoid stale results.
-
-            var source = snapshot.GetText();
-            var syntaxTree = SyntaxTree.ParseQuery(source);
-
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, triggerPosition);
             var applicableSpan = token == null ? new TextSpan(triggerPosition, 0) : token.Value.Span;
 
-            var compilation = oldCompilation.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
             var items = _completionItemProviders.SelectMany(p => p.GetItems(semanticModel, applicableSpan.Start)).ToArray();
 
             // Let observers know that we've a new model.
 
-            Model = new CompletionModel(applicableSpan, items);
+            Model = new CompletionModel(semanticModel, applicableSpan, items);
         }
 
         private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
@@ -130,7 +105,9 @@ namespace NQuery.Language.VSEditor.Completion
             if (_session == null)
                 return false;
 
+            _textView.TextBuffer.PostChanged -= TextBufferOnPostChanged;
             _session.Commit();
+            _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
             return true;
         }
 
@@ -153,6 +130,27 @@ namespace NQuery.Language.VSEditor.Completion
             {
                 _model = value;
                 OnModelChanged(EventArgs.Empty);
+
+                var hasData = _model != null && _model.Items.Count > 0;
+                var showSession = _session == null && hasData;
+                var hideSession = _session != null && !hasData;
+
+                if (hideSession)
+                {
+                    _session.Dismiss();
+                }
+                else if (showSession)
+                {
+                    var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
+                    var snapshot = _document.GetTextSnapshot(syntaxTree);
+                    var triggerPosition = _model.ApplicableSpan.Start;
+                    var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
+
+                    _session = _completionBroker.CreateCompletionSession(_textView, triggerPoint, true);
+                    _session.Properties.AddProperty(typeof(ICompletionModelManager), this);
+                    _session.Dismissed += SessionOnDismissed;
+                    _session.Start();
+                }
             }
         }
 

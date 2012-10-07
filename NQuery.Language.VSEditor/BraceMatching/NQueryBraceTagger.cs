@@ -1,27 +1,33 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.BraceMatching
 {
-    internal sealed class NQueryBraceTagger : ITagger<ITextMarkerTag>
+    internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSpan>
     {
         private readonly ITextView _textView;
-        private readonly ITextBuffer _textBuffer;
-        private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
+        private readonly INQueryDocument _document;
         private readonly IBraceMatchingService _braceMatchingService;
 
-        public NQueryBraceTagger(ITextView textView, ITextBuffer textBuffer, INQuerySyntaxTreeManager syntaxTreeManager, IBraceMatchingService braceMatchingService)
+        public NQueryBraceTagger(ITextView textView, ITextBuffer textBuffer, INQueryDocument document, IBraceMatchingService braceMatchingService)
+            : base()
         {
             _textView = textView;
-            _textBuffer = textBuffer;
+            _document = document;
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
-            _syntaxTreeManager = syntaxTreeManager;
             _braceMatchingService = braceMatchingService;
-            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+        }
+
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        {
+            InvalidateTags();
         }
 
         private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
@@ -29,58 +35,26 @@ namespace NQuery.Language.VSEditor.BraceMatching
             InvalidateTags();
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
-        {
-            InvalidateTags();
-        }
-
-        private void InvalidateTags()
-        {
-            var snapshot = _textBuffer.CurrentSnapshot;
-            var snapshotSpan = new SnapshotSpan(snapshot, 0, snapshot.Length);
-            OnTagsChanged(new SnapshotSpanEventArgs(snapshotSpan));
-        }
-
-        public IEnumerable<ITagSpan<ITextMarkerTag>> GetTags(NormalizedSnapshotSpanCollection spans)
+        protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
         {
             var position = _textView.Caret.Position.BufferPosition.Position;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = _document.GetTextSnapshot(syntaxTree);
             TextSpan left;
             TextSpan right;
-            if (!FindBraces(position, out left, out right))
-                return Enumerable.Empty<ITagSpan<ITextMarkerTag>>();
+            if (!_braceMatchingService.TryFindBrace(syntaxTree, position, out left, out right))
+                return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());
 
-            return new[]
-            {
-                CreateBraceTag(left),
-                CreateBraceTag(right)
-            };
+            var leftSpan = new SnapshotSpan(snapshot, left.Start, left.Length);
+            var rightSpan = new SnapshotSpan(snapshot, right.Start, right.Length);
+
+            return Tuple.Create(snapshot, new[] { leftSpan, rightSpan }.AsEnumerable());
         }
 
-        private bool FindBraces(int position, out TextSpan left, out TextSpan right)
+        protected override ITagSpan<ITextMarkerTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)
         {
-            left = default(TextSpan);
-            right = default(TextSpan);
-
-            var syntaxTree = _syntaxTreeManager.SyntaxTree;
-            return syntaxTree != null && _braceMatchingService.TryFindBrace(syntaxTree, position, out left, out right);
-        }
-
-        private ITagSpan<ITextMarkerTag> CreateBraceTag(TextSpan textSpan)
-        {
-            var snapshot = _textBuffer.CurrentSnapshot;
-            var snapshotSpan = new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
             var tag = new TextMarkerTag("bracehighlight");
-            var tagSpan = new TagSpan<ITextMarkerTag>(snapshotSpan, tag);
-            return tagSpan;
+            return new TagSpan<ITextMarkerTag>(rawTag, tag);
         }
-
-        private void OnTagsChanged(SnapshotSpanEventArgs e)
-        {
-            var handler = TagsChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
     }
 }

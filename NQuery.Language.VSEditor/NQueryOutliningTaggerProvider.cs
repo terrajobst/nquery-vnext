@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
@@ -12,12 +13,12 @@ namespace NQuery.Language.VSEditor
     internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
     {
         [Import]
-        public INQuerySyntaxTreeManagerService SyntaxTreeManagerService { get; set; }
+        public INQueryDocumentManager DocumentManager { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            var syntaxTreeManager = SyntaxTreeManagerService.GetSyntaxTreeManager(buffer);
-            return new NQueryOutliningTagger(buffer, syntaxTreeManager) as ITagger<T>;
+            var document = DocumentManager.GetDocument(buffer);
+            return new NQueryOutliningTagger(document) as ITagger<T>;
         }
     }
 }

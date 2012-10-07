@@ -2,47 +2,44 @@ using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {
         private readonly ITextView _textView;
-        private readonly INQuerySyntaxTreeManager _syntaxTreeManager;
+        private readonly INQueryDocument _document;
         private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
 
-        public NQuerySelectionProvider(ITextView textView, INQuerySyntaxTreeManager syntaxTreeManager)
+        public NQuerySelectionProvider(ITextView textView, INQueryDocument document)
         {
             _textView = textView;
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;
-            _syntaxTreeManager = syntaxTreeManager;
-            _syntaxTreeManager.SyntaxTreeChanged += SyntaxTreeManagerOnSyntaxTreeChanged;
+            _document = document;
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
         }
 
-        public bool ExtendSelection()
+        public async void ExtendSelection()
         {
-            if (_syntaxTreeManager.SyntaxTree == null)
-                return false;
-
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
             var currentSelection = GetCurrentSelection();
-            var extendedelection = ExtendSelection(_syntaxTreeManager.SyntaxTree, currentSelection);
+            var extendedelection = ExtendSelection(syntaxTree, currentSelection);
 
             if (currentSelection == extendedelection)
-                return false;
+                return;
 
             _selectionStack.Push(currentSelection);
             Select(extendedelection);
-            return true;
         }
 
-        public bool ShrinkSelection()
+        public void ShrinkSelection()
         {
             if (_selectionStack.Count == 0)
-                return false;
+                return;
 
             var selection = _selectionStack.Pop();
             Select(selection);
-            return true;
         }
 
         private TextSpan GetCurrentSelection()
@@ -91,7 +88,7 @@ namespace NQuery.Language.VSEditor
             ClearStack();
         }
 
-        private void SyntaxTreeManagerOnSyntaxTreeChanged(object sender, EventArgs e)
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
         {
             ClearStack();
         }

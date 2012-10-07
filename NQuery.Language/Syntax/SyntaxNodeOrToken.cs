@@ -39,6 +39,11 @@ namespace NQuery.Language
             return _syntaxNode;
         }
 
+        public SyntaxTree SyntaxTree
+        {
+            get { return IsNode ? AsNode().SyntaxTree: AsToken().Parent.SyntaxTree; }
+        }
+
         public SyntaxKind Kind
         {
             get { return IsNode ? AsNode().Kind : AsToken().Kind; }

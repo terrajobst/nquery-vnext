@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
+using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.Completion
 {
@@ -9,7 +10,7 @@ namespace NQuery.Language.VSEditor.Completion
     internal sealed class CompletionModelManagerProvider : ICompletionModelManagerProvider
     {
         [Import]
-        public INQuerySemanticModelManagerService SemanticModelManagerService { get; set; }
+        public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
         public ICompletionBroker CompletionBroker { get; set; }
@@ -21,8 +22,8 @@ namespace NQuery.Language.VSEditor.Completion
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
-                var semanticModelManager = SemanticModelManagerService.GetSemanticModelManager(textView.TextBuffer);
-                return new CompletionModelManager(textView, semanticModelManager, CompletionBroker, CompletionItemProviders);
+                var document = DocumentManager.GetDocument(textView.TextBuffer);
+                return new CompletionModelManager(textView, document, CompletionBroker, CompletionItemProviders);
             });
         }
     }

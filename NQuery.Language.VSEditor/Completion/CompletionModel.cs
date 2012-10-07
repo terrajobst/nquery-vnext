@@ -5,13 +5,30 @@ namespace NQuery.Language.VSEditor.Completion
 {
     public sealed class CompletionModel
     {
-        public CompletionModel(TextSpan applicableSpan, IList<CompletionItem> items)
+        private readonly SemanticModel _semanticModel;
+        private readonly TextSpan _applicableSpan;
+        private readonly ReadOnlyCollection<CompletionItem> _items;
+
+        public CompletionModel(SemanticModel semanticModel, TextSpan applicableSpan, IList<CompletionItem> items)
         {
-            ApplicableSpan = applicableSpan;
-            Items = new ReadOnlyCollection<CompletionItem>(items);
+            _semanticModel = semanticModel;
+            _applicableSpan = applicableSpan;
+            _items = new ReadOnlyCollection<CompletionItem>(items);
         }
 
-        public TextSpan ApplicableSpan { get; private set; }
-        public ReadOnlyCollection<CompletionItem> Items { get; private set; }
+        public SemanticModel SemanticModel
+        {
+            get { return _semanticModel; }
+        }
+
+        public TextSpan ApplicableSpan
+        {
+            get { return _applicableSpan; }
+        }
+
+        public ReadOnlyCollection<CompletionItem> Items
+        {
+            get { return _items; }
+        }
     }
 }
