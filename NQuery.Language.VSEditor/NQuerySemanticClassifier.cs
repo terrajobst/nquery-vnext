@@ -133,6 +133,9 @@ namespace NQuery.Language.VSEditor
                     case SyntaxKind.FunctionInvocationExpression:
                         ClassifyFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
                         break;
+                    case SyntaxKind.CountAllExpression:
+                        ClassifyCountAllExpression((CountAllExpressionSyntax)node);
+                        break;
                     case SyntaxKind.PropertyAccessExpression:
                         ClassifyPropertyAccess((PropertyAccessExpressionSyntax)node);
                         break;
@@ -147,7 +150,7 @@ namespace NQuery.Language.VSEditor
                         break;
                 }
             }
-
+            
             private void ClassifyExpression(ExpressionSyntax node, SyntaxNodeOrToken context)
             {
                 var symbol = _semanticModel.GetSymbol(node);
@@ -171,6 +174,11 @@ namespace NQuery.Language.VSEditor
             {
                 ClassifyExpression(node, node.Name);
                 ClassifyNode(node.ArgumentList);
+            }
+
+            private void ClassifyCountAllExpression(CountAllExpressionSyntax node)
+            {
+                ClassifyExpression(node, node.Name);
             }
 
             private void ClassifyPropertyAccess(PropertyAccessExpressionSyntax node)
