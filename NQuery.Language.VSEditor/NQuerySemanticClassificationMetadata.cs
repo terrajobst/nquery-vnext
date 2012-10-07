@@ -198,7 +198,7 @@ namespace NQuery.Language.VSEditor
             public AggregateFormat()
             {
                 DisplayName = "Aggregate Function";
-                ForegroundColor = Color.FromRgb(0, 0, 0);
+                ForegroundColor = Color.FromRgb(255, 0, 255);
                 IsBold = true;
             }
         }
