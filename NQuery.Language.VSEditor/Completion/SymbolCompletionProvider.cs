@@ -58,22 +58,10 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static IEnumerable<CompletionItem> GetTypeCompletions(SemanticModel semanticModel, Type targetType)
         {
-            var propertyCompletions = GetPropertyCompletions(semanticModel, targetType);
-            var methodCompletions = GetMethodCompletions(semanticModel, targetType);
-            return propertyCompletions.Concat(methodCompletions);
-        }
-
-        private static IEnumerable<CompletionItem> GetPropertyCompletions(SemanticModel semanticModel, Type targetType)
-        {
-            return from m in semanticModel.LookupProperties(targetType)
-                   select CreateSymbolCompletion(m);
-        }
-
-        private static IEnumerable<CompletionItem> GetMethodCompletions(SemanticModel semanticModel, Type targetType)
-        {
-            return from m in semanticModel.LookupMethods(targetType)
-                   group m by m.Name into g
-                   select CreateSymbolCompletion(g.First());
+            var properties = semanticModel.LookupProperties(targetType);
+            var methods = semanticModel.LookupMethods(targetType);
+            var members = properties.Concat<Symbol>(methods);
+            return CreateSymbolCompletions(members);
         }
 
         private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
@@ -177,7 +165,7 @@ namespace NQuery.Language.VSEditor.Completion
             return from s in symbols
                    group s by s.Name
                    into g
-                   select CreateSymbolCompletion(g.Key, g);
+                   select CreateSymbolCompletionGroup(g.Key, g);
         }
 
         private static IEnumerable<CompletionItem> CreateSymbolCompletions(IEnumerable<Symbol> symbols)
@@ -185,14 +173,18 @@ namespace NQuery.Language.VSEditor.Completion
             return from s in symbols
                    group s by s.Name
                    into g
-                   select CreateSymbolCompletion(g.Key, g);
+                   select CreateSymbolCompletionGroup(g.Key, g);
         }
 
-        private static CompletionItem CreateSymbolCompletion(string name, IEnumerable<Symbol> symbols)
+        private static CompletionItem CreateSymbolCompletionGroup(string name, IEnumerable<Symbol> symbols)
         {
             var multiple = symbols.Skip(1).Any();
             if (!multiple)
                 return CreateSymbolCompletion(symbols.First());
+
+            var hasNonInvocables = symbols.Any(s => !(s is InvocableSymbol));
+            if (!hasNonInvocables)
+                return CreateInvocableCompletionGroup(symbols);
 
             var displayText = name;
             var insertionText = name;
@@ -208,6 +200,18 @@ namespace NQuery.Language.VSEditor.Completion
 
             var description = sb.ToString();
             return new CompletionItem(displayText, insertionText, description, NQueryGlyph.AmbiguousName);
+        }
+
+        private static CompletionItem CreateInvocableCompletionGroup(IEnumerable<Symbol> symbols)
+        {
+            var first = CreateSymbolCompletion(symbols.First());
+            var numberOfOverloads = symbols.Count() - 1;
+
+            var displayText = first.DisplayText;
+            var insertionText = first.InsertionText;
+            var description = string.Format("{0} (+ {1} overload(s))", first.Description, numberOfOverloads);
+            var glyph = first.Glyph;
+            return new CompletionItem(displayText, insertionText, description, glyph);
         }
 
         private static CompletionItem CreateSymbolCompletion(Symbol symbol)
