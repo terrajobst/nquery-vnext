@@ -91,7 +91,7 @@ namespace NQuery.Language.VSEditor
         [Export]
         [Name(VariableClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-        public ClassificationTypeDefinition ParameterType;
+        public ClassificationTypeDefinition VariableType;
 
 #pragma warning restore 649
 
