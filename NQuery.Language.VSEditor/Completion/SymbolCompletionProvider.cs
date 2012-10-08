@@ -159,13 +159,27 @@ namespace NQuery.Language.VSEditor.Completion
         private static IEnumerable<CompletionItem> GetGlobalSymbolCompletions(SemanticModel semanticModel, int position)
         {
             var symbols = semanticModel.LookupSymbols(position);
-            if (!symbols.Any())
-                symbols = semanticModel.LookupSymbols(position - 1);
+            if (!symbols.Any() && position > 0)
+                symbols = semanticModel.LookupSymbols(--position);
 
-            return from s in symbols
-                   group s by s.Name
-                   into g
-                   select CreateSymbolCompletionGroup(g.Key, g);
+            // In the global context there two different cases:
+            //
+            // (1) We are in a table reference context
+            // (2) We are somewhere else
+            //
+            // In case (1) we can ONLY see table symbols and in (2)
+            // we can see all symbols EXCEPT table symbols.
+
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var isTableContext = syntaxTree.Root.FindTokenTouched(position).Parent is TableReferenceSyntax;
+
+            var filteredSymbols = from s in symbols
+                                  let isTable = s is TableSymbol
+                                  where isTable && isTableContext ||
+                                        !isTable && !isTableContext
+                                  select s;
+
+            return CreateSymbolCompletions(filteredSymbols);
         }
 
         private static IEnumerable<CompletionItem> CreateSymbolCompletions(IEnumerable<Symbol> symbols)
