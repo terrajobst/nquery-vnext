@@ -40,7 +40,8 @@ namespace NQuery.Language.VSEditor.Completion
                    c == '\t' ||
                    c == '.' ||
                    c == ',' ||
-                   c == '(';
+                   c == '(' ||
+                   c == ')';
         }
 
         public void HandleTextInput(string text)
