@@ -44,6 +44,8 @@ namespace NQuery.Language.VSEditor
                     return FromName("Method");
                 case NQueryGlyph.Property:
                     return FromName("Property");
+                case NQueryGlyph.Type:
+                    return FromName("Type");
                 default:
                     throw new ArgumentOutOfRangeException("glyph");
             }

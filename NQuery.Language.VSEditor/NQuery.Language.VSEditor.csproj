@@ -107,6 +107,7 @@
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
     <Compile Include="Completion\JoinCompletionProvider.cs" />
+    <Compile Include="Completion\TypeCompletionProvider.cs" />
     <Compile Include="Document\NQueryDocumentManager.cs" />
     <Compile Include="Document\INQueryDocument.cs" />
     <Compile Include="Document\INQueryDocumentManager.cs" />
@@ -198,6 +199,9 @@
   <ItemGroup>
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\Property.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Type.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

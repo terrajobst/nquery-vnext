@@ -1020,5 +1020,35 @@ namespace NQuery.Language
                    syntaxKind == SyntaxKind.SimilarKeyword ||
                    syntaxKind == SyntaxKind.SoundslikeKeyword;
         }
+
+        public static IEnumerable<string> GetTypeNames()
+        {
+            return new[]
+                       {
+                           "BOOL",
+                           "BOOLEAN",
+                           "BYTE",
+                           "SBYTE",
+                           "CHAR",
+                           "SHORT",
+                           "INT16",
+                           "USHORT",
+                           "UINT16",
+                           "INT",
+                           "INT32",
+                           "UINT",
+                           "UINT32",
+                           "LONG",
+                           "INT64",
+                           "ULONG",
+                           "UINT64",
+                           "FLOAT",
+                           "SINGLE",
+                           "DOUBLE",
+                           "DECIMAL",
+                           "STRING",
+                           "OBJECT",
+                       };
+        }
     }
 }

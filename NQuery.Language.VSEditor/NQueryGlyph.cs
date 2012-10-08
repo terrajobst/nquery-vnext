@@ -12,6 +12,7 @@ namespace NQuery.Language.VSEditor
         Column,
         Function,
         Method,
-        Property
+        Property,
+        Type
     }
 }
