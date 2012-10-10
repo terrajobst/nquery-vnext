@@ -275,12 +275,12 @@ namespace NQueryViewer
             foreach (var child in node.ChildNodesAndTokens())
             {
                 if (child.IsToken)
-                    children.AddRange(child.AsToken().LeadingTrivia.Select(ToViewModel));
+                    children.AddRange(child.AsToken().LeadingTrivia.Select(t => ToViewModel(t, true)));
 
                 children.Add(ToViewModel(child));
 
                 if (child.IsToken)
-                    children.AddRange(child.AsToken().TrailingTrivia.Select(ToViewModel));
+                    children.AddRange(child.AsToken().TrailingTrivia.Select(t => ToViewModel(t, false)));
             }
 
             return new NodeViewModel(node, children);
@@ -291,7 +291,7 @@ namespace NQueryViewer
             return new NodeViewModel(token, new List<NodeViewModel>());
         }
 
-        private static NodeViewModel ToViewModel(SyntaxTrivia trivia)
+        private static NodeViewModel ToViewModel(SyntaxTrivia trivia, bool isLeading)
         {
             var children = new List<NodeViewModel>();
             
@@ -301,7 +301,7 @@ namespace NQueryViewer
                 children.Add(structureViewModel);
             }
 
-            return new NodeViewModel(trivia, children);
+            return new NodeViewModel(trivia, isLeading, children);
         }
 
         private enum NodeViewModelKind
@@ -313,21 +313,23 @@ namespace NQueryViewer
 
         private sealed class NodeViewModel
         {
-            public NodeViewModel(SyntaxToken token, IList<NodeViewModel> children)
+            public NodeViewModel(SyntaxToken data, IList<NodeViewModel> children)
             {
-                Data = token;
+                Data = data;
+                Title = data.Kind.ToString();
                 NodeType = NodeViewModelKind.Token;
-                Kind = token.Kind;
-                ContextualKind = token.ContextualKind;
-                Span = token.Span;
-                FullSpan = token.FullSpan;
-                IsMissing = token.IsMissing;
+                Kind = data.Kind;
+                ContextualKind = data.ContextualKind;
+                Span = data.Span;
+                FullSpan = data.FullSpan;
+                IsMissing = data.IsMissing;
                 UpdateChildren(children);
             }
 
-            public NodeViewModel(SyntaxTrivia data, IList<NodeViewModel> children)
+            public NodeViewModel(SyntaxTrivia data, bool isLeading, IList<NodeViewModel> children)
             {
                 Data = data;
+                Title = string.Format("{0}:{1}", isLeading ? "L" : "T", data.Kind);
                 NodeType = NodeViewModelKind.Trivia;
                 Kind = data.Kind;
                 ContextualKind = SyntaxKind.BadToken;
@@ -340,6 +342,7 @@ namespace NQueryViewer
             public NodeViewModel(SyntaxNode data, IList<NodeViewModel> children)
             {
                 Data = data;
+                Title = data.Kind.ToString();
                 NodeType = NodeViewModelKind.Node;
                 Kind = data.Kind;
                 ContextualKind = SyntaxKind.BadToken;
@@ -360,6 +363,8 @@ namespace NQueryViewer
             public NodeViewModel Parent { get; private set; }
 
             public object Data { get; private set; }
+
+            public string Title { get; private set; }
 
             public NodeViewModelKind NodeType { get; private set; }
 

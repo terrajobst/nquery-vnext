@@ -52,34 +52,52 @@
                   SelectedItemChanged="TreeViewSelectedItemChanged">
                 <TreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <TextBlock Text="{Binding}">
-                        <TextBlock.Style>
-                            <Style TargetType="TextBlock">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding NodeType}"
-                                                 Value="Token">
-                                        <Setter Property="Foreground"
-                                                Value="Blue" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding NodeType}"
-                                                 Value="Node">
-                                        <Setter Property="Foreground"
-                                                Value="Maroon" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding NodeType}"
-                                                 Value="Trivia">
-                                        <Setter Property="Foreground"
-                                                Value="Green" />
-                                    </DataTrigger>
-                                    <DataTrigger Binding="{Binding IsMissing}"
-                                                 Value="True">
-                                        <Setter Property="FontStyle"
-                                                Value="Italic" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBlock.Style>
-                        </TextBlock>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=Title}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding NodeType}"
+                                                         Value="Token">
+                                                <Setter Property="Foreground"
+                                                        Value="Blue" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding NodeType}"
+                                                         Value="Node">
+                                                <Setter Property="Foreground"
+                                                        Value="Maroon" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding NodeType}"
+                                                         Value="Trivia">
+                                                <Setter Property="Foreground"
+                                                        Value="Green" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsMissing}"
+                                                         Value="True">
+                                                <Setter Property="FontStyle"
+                                                        Value="Italic" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                            <TextBlock Margin="8,0,0,0"
+                                       Foreground="LightGray">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=_fullSpanHighlightingCheckBox, Path=IsChecked}"
+                                                         Value="True">
+                                                <Setter Property="Text"
+                                                        Value="{Binding FullSpan}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                        <Setter Property="Text"
+                                                Value="{Binding Span}" />
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
                     </HierarchicalDataTemplate>
                 </TreeView.ItemTemplate>
             </TreeView>
