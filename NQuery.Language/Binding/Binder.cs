@@ -50,7 +50,7 @@ namespace NQuery.Language.Binding
             var binder = new Binder(dataContext, bindingContext, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
 
             var boundRoot = binder.BindRoot(compilationUnit.Root);
-            return new BindingResult(compilationUnit.Root, boundRoot, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
+            return new BindingResult(compilationUnit, boundRoot, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
         }
 
         private BoundNode BindRoot(SyntaxNode root)
