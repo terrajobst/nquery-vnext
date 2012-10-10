@@ -432,7 +432,7 @@ namespace NQuery.Language.Binding
         private IEnumerable<BoundSelectColumn> BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
         {
             return node.TableName != null
-                       ? BindWildcardSelectColumnForTable(node.TableName.Value)
+                       ? BindWildcardSelectColumnForTable(node.TableName)
                        : BindWildcardSelectColumnForAllTables();
         }
 

@@ -13,7 +13,7 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;
-            _exceptKeyword = exceptKeyword.WithParent(this);
+            _exceptKeyword = exceptKeyword;
             _rightQuery = rightQuery;
         }
 

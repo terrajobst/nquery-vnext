@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace NQuery.Language.UnitTests
@@ -9,14 +8,14 @@ namespace NQuery.Language.UnitTests
         public static SyntaxToken LexSingleToken(string text)
         {
             var tree = SyntaxTree.ParseExpression(text);
-            var token = tree.Root.FirstToken();
+            var token = tree.Root.FirstToken(true, true);
             return token;
         }
 
         public static SyntaxTrivia LexSingleTrivia(string text)
         {
             var tree = SyntaxTree.ParseExpression(text);
-            var trivia = tree.Root.LastToken().LeadingTrivia.First();
+            var trivia = tree.Root.LastToken(true, true).LeadingTrivia.First();
             return trivia;
         }
 
@@ -28,9 +27,7 @@ namespace NQuery.Language.UnitTests
 
         public static SyntaxToken CreateToken(SyntaxKind kind, string text = null)
         {
-            var actualText = text ?? kind.GetText();
-            var span = new TextSpan(0, actualText.Length);
-            return new SyntaxToken(kind, SyntaxKind.BadToken, false, span, actualText, null, new SyntaxTrivia[0], new SyntaxTrivia[0], new Diagnostic[0]);
+            return LexSingleToken(text ?? kind.GetText());
         }
 
         public static Conversion ClassifyConversion(Type souceType, Type targetType)

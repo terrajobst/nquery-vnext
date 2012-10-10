@@ -6,16 +6,16 @@ namespace NQuery.Language
     public sealed class InExpressionSyntax : ExpressionSyntax
     {
         private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken? _notKeyword;
+        private readonly SyntaxToken _notKeyword;
         private readonly SyntaxToken _inKeyword;
         private readonly ArgumentListSyntax _argumentList;
 
-        public InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
+        public InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
             _expression = expression;
-            _notKeyword = notKeyword.WithParent(this);
-            _inKeyword = inKeyword.WithParent(this);
+            _notKeyword = notKeyword;
+            _inKeyword = inKeyword;
             _argumentList = argumentList;
         }
 
@@ -28,7 +28,7 @@ namespace NQuery.Language
         {
             yield return _expression;
             if (_notKeyword != null)
-                yield return _notKeyword.Value;
+                yield return _notKeyword;
             yield return _inKeyword;
             yield return _argumentList;
         }
@@ -38,7 +38,7 @@ namespace NQuery.Language
             get { return _expression; }
         }
 
-        public SyntaxToken? NotKeyword
+        public SyntaxToken NotKeyword
         {
             get { return _notKeyword; }
         }

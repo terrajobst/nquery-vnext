@@ -10,7 +10,7 @@ namespace NQuery.Language
         private readonly CompilationUnitSyntax _root;
         private readonly TextBuffer _textBuffer;
 
-        private Dictionary<SyntaxNode, SyntaxNode> _parentNodes;
+        private Dictionary<object, object> _parentFromChild;
 
         private SyntaxTree(string source, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
@@ -39,30 +39,70 @@ namespace NQuery.Language
                    select d;
         }
 
-        internal SyntaxNode GetParent(SyntaxNode syntaxNode)
+        private T GetParent<T>(object child)
+             where T: class
         {
-            if (_parentNodes == null)
-                Interlocked.CompareExchange(ref _parentNodes, GetParents(_root), null);
+            if (_parentFromChild == null)
+                Interlocked.CompareExchange(ref _parentFromChild, GetParents(_root), null);
 
-            SyntaxNode parent;
-            _parentNodes.TryGetValue(syntaxNode, out parent);
-            return parent;
+            object parent;
+            _parentFromChild.TryGetValue(child, out parent);
+            return parent as T;
         }
 
-        private static Dictionary<SyntaxNode,SyntaxNode> GetParents(SyntaxNode compilationUnit)
+        internal SyntaxNode GetParentNode(SyntaxNode node)
         {
-            var result = new Dictionary<SyntaxNode, SyntaxNode>();
-            result.Add(compilationUnit, null);
+            return GetParent<SyntaxNode>(node);
+        }
+
+        internal SyntaxNode GetParentNode(SyntaxToken token)
+        {
+            return GetParent<SyntaxNode>(token);
+        }
+
+        internal SyntaxToken GetParentToken(SyntaxTrivia trivia)
+        {
+            return GetParent<SyntaxToken>(trivia);
+        }
+
+        internal SyntaxTrivia GetParentTrivia(StructuredTriviaSyntax structuredTrivia)
+        {
+            return GetParent<SyntaxTrivia>(structuredTrivia);
+        }
+
+        private static Dictionary<object,object> GetParents(SyntaxNode compilationUnit)
+        {
+            var result = new Dictionary<object, object>();
             GetParents(result, compilationUnit);
             return result;
         }
 
-        private static void GetParents(IDictionary<SyntaxNode, SyntaxNode> parents, SyntaxNode parent)
+        private static void GetParents(IDictionary<object, object> parents, SyntaxNode parent)
         {
-            foreach (var childNode in parent.ChildNodes())
+            foreach (var nodeOrToken in parent.ChildNodesAndTokens())
             {
-                parents.Add(childNode, parent);
-                GetParents(parents, childNode);
+                if (nodeOrToken.IsNode)
+                {
+                    var node = nodeOrToken.AsNode();
+                    parents.Add(node, parent);
+                    GetParents(parents, node);
+                }
+                else
+                {
+                    var token = nodeOrToken.AsToken();
+                    parents.Add(token, parent);
+
+                    foreach (var trivia in token.LeadingTrivia.Concat(token.TrailingTrivia))
+                    {
+                        parents.Add(trivia, token);
+                        var structure = trivia.Structure;
+                        if (structure != null)
+                        {
+                            parents.Add(structure, trivia);
+                            GetParents(parents, structure);
+                        }
+                    }
+                }
             }
         }
 

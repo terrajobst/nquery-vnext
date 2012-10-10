@@ -16,21 +16,21 @@ namespace NQuery.Language.VSEditor.BraceMatching
 
         public bool TryFindBrace(SyntaxTree syntaxTree, int position, out TextSpan left, out TextSpan right)
         {
-            var token = syntaxTree.Root.FindTokenTouched(position, descendIntoTrivia: true);
+            var token = syntaxTree.Root.FindTokenOnLeft(position);
             if (TryFindBrace(token, position, out left, out right))
                 return true;
 
             var previousToken = token.GetPreviousToken();
-            if (previousToken != null && previousToken.Value.Span.End == token.Span.Start)
+            if (previousToken != null && previousToken.Span.End == token.Span.Start)
             {
-                if (TryFindBrace(previousToken.Value, position, out left, out right))
+                if (TryFindBrace(previousToken, position, out left, out right))
                     return true;                
             }
 
             var nextToken = token.GetPreviousToken();
-            if (nextToken != null && nextToken.Value.Span.Start == token.Span.End)
+            if (nextToken != null && nextToken.Span.Start == token.Span.End)
             {
-                if (TryFindBrace(nextToken.Value, position, out left, out right))
+                if (TryFindBrace(nextToken, position, out left, out right))
                     return true;
             }
 

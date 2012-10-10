@@ -5,10 +5,10 @@ namespace NQuery.Language
         private readonly SyntaxToken _onKeyword;
         private readonly ExpressionSyntax _condition;
 
-        protected ConditionedJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+        protected ConditionedJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right, SyntaxToken onKeyword, int onKeywordLogicalIndex, ExpressionSyntax condition)
             : base(syntaxTree, left, right)
         {
-            _onKeyword = onKeyword.WithParent(this);
+            _onKeyword = onKeyword;
             _condition = condition;
         }
 

@@ -287,7 +287,7 @@ namespace NQuery.Language.Binding
             return new BoundUnaryExpression(convertedArgument, result);
         }
 
-        private BoundExpression BindOptionalNegation(TextSpan errorSpan, SyntaxToken? notKeyword, BoundExpression expression)
+        private BoundExpression BindOptionalNegation(TextSpan errorSpan, SyntaxToken notKeyword, BoundExpression expression)
         {
             return notKeyword == null
                        ? expression
@@ -343,7 +343,7 @@ namespace NQuery.Language.Binding
             return new BoundBinaryExpression(convertedLeft, result, convertedRight);
         }
 
-        private BoundExpression BindBinaryExpression(TextSpan errorSpan, SyntaxToken? notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        private BoundExpression BindBinaryExpression(TextSpan errorSpan, SyntaxToken notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
         {
             var expression = BindBinaryExpression(errorSpan, operatorKind, left, right);
             return BindOptionalNegation(errorSpan, notKeyword, expression);

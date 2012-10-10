@@ -84,7 +84,7 @@ namespace NQuery.Language.VSEditor.Completion
 
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, triggerPosition);
-            var applicableSpan = token == null ? new TextSpan(triggerPosition, 0) : token.Value.Span;
+            var applicableSpan = token == null ? new TextSpan(triggerPosition, 0) : token.Span;
 
             var items = _completionItemProviders.SelectMany(p => p.GetItems(semanticModel, applicableSpan.Start)).ToArray();
 
@@ -93,12 +93,12 @@ namespace NQuery.Language.VSEditor.Completion
             Model = new CompletionModel(semanticModel, applicableSpan, items);
         }
 
-        private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
+        private static SyntaxToken GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia: true);
-            return syntaxToken.Kind.IsIdentifierOrKeyword()
+            var syntaxToken = root.FindTokenOnLeft(position);
+            return syntaxToken.Kind.IsIdentifierOrKeyword() && syntaxToken.Span.ContainsOrTouches(position)
                        ? syntaxToken
-                       : (SyntaxToken?)null;
+                       : null;
         }
 
         public bool Commit()

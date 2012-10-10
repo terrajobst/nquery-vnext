@@ -1,38 +1,44 @@
-using System.Collections.Generic;
-using System.Linq;
-
 namespace NQuery.Language
 {
     public static class SyntaxExtensions
     {
-        public static SyntaxToken? WithParent(this SyntaxToken? token, SyntaxNode parent)
+        public static SyntaxToken FindTokenOnLeft(this SyntaxNode root, int position)
         {
-            return token == null
-                       ? (SyntaxToken?) null
-                       : token.Value.WithParent(parent);
+            var token = root.FindToken(position, descendIntoTrivia:true);
+            return token.GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(position);
         }
 
-        public static IList<SyntaxToken> WithParent(this IEnumerable<SyntaxToken> tokens, SyntaxNode parent)
+        public static SyntaxToken GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(this SyntaxToken token, int position)
         {
-            return tokens.Select(t => t.WithParent(parent)).ToArray();
+            var previous = token.GetPreviousToken(includeZeroLength: false, includeSkippedTokens: true);
+            if (previous != null)
+            {
+                if (token.Kind == SyntaxKind.EndOfFileToken || previous.Span.End == position)
+                    return previous;
+            }
+
+            return token;
         }
 
-        public static SeparatedSyntaxList<TNode> WithParent<TNode>(this SeparatedSyntaxList<TNode> list, SyntaxNode parent)
-            where TNode : SyntaxNode
+        public static SyntaxToken FindTokenContext(this SyntaxNode root, int position)
         {
-            var fixedTokens = (from nodeOrToken in list.GetWithSeparators()
-                               let fixedNodeOrToken = nodeOrToken.IsNode
-                                                          ? nodeOrToken
-                                                          : nodeOrToken.AsToken().WithParent(parent)
-                               select fixedNodeOrToken).ToArray();
-            return new SeparatedSyntaxList<TNode>(fixedTokens);
-        }
+            var token = root.FindTokenOnLeft(position);
 
-        public static SyntaxToken FindTokenTouched(this SyntaxNode root, int position, bool descendIntoTrivia = false)
-        {
-            var token = root.FindToken(position, descendIntoTrivia);
-            if (token.Kind == SyntaxKind.EndOfFileToken && position > 0)
-                return root.FindToken(position - 1, descendIntoTrivia);
+            // In case the previous or next token is a missing token, we'll use this
+            // one instead.
+
+            if (!token.Span.ContainsOrTouches(position))
+            {
+                // token <missing> | token
+                var previousToken = token.GetPreviousToken(includeZeroLength: true);
+                if (previousToken != null && previousToken.IsMissing && previousToken.Span.End <= position)
+                    return previousToken;
+
+                // token | <missing> token
+                var nextToken = token.GetNextToken(includeZeroLength: true);
+                if (nextToken != null && nextToken.IsMissing && position <= nextToken.Span.Start)
+                    return nextToken;
+            }
 
             return token;
         }

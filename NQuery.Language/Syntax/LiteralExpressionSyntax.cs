@@ -11,7 +11,7 @@ namespace NQuery.Language
         public LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken token, object value)
             : base(syntaxTree)
         {
-            _token = token.WithParent(this);
+            _token = token;
             _value = value;
         }
 

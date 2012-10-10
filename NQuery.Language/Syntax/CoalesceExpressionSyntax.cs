@@ -11,7 +11,7 @@ namespace NQuery.Language
         public CoalesceExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken coalesceKeyword, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _coalesceKeyword = coalesceKeyword.WithParent(this);
+            _coalesceKeyword = coalesceKeyword;
             _argumentList = argumentList;
         }
 

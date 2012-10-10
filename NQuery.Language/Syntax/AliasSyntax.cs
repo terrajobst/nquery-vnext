@@ -5,14 +5,14 @@ namespace NQuery.Language
 {
     public sealed class AliasSyntax : SyntaxNode
     {
-        private readonly SyntaxToken? _asKeyword;
+        private readonly SyntaxToken _asKeyword;
         private readonly SyntaxToken _identifier;
 
-        public AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifier)
+        public AliasSyntax(SyntaxTree syntaxTree, SyntaxToken asKeyword, SyntaxToken identifier)
             : base(syntaxTree)
         {
-            _asKeyword = asKeyword.WithParent(this);
-            _identifier = identifier.WithParent(this);
+            _asKeyword = asKeyword;
+            _identifier = identifier;
         }
 
         public override SyntaxKind Kind
@@ -23,11 +23,11 @@ namespace NQuery.Language
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             if (_asKeyword != null)
-                yield return _asKeyword.Value;
+                yield return _asKeyword;
             yield return _identifier;
         }
 
-        public SyntaxToken? AsKeyword
+        public SyntaxToken AsKeyword
         {
             get { return _asKeyword; }
         }

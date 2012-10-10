@@ -11,9 +11,9 @@ namespace NQuery.Language
         public ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _leftParenthesis = leftParenthesis;
             _tableReference = tableReference;
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

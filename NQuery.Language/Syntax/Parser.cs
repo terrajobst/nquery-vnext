@@ -28,7 +28,7 @@ namespace NQuery.Language
 
         private void LexAllTokens(string source)
         {
-            var lexer = new Lexer(source);
+            var lexer = new Lexer(_syntaxTree, source);
             var badTokens = new List<SyntaxToken>();
 
             SyntaxToken token;
@@ -77,18 +77,11 @@ namespace NQuery.Language
                        : result.WithKind(result.ContextualKind);
         }
 
-        private SyntaxToken? NextTokenIf(SyntaxKind kind)
+        private SyntaxToken NextTokenIf(SyntaxKind kind)
         {
             return Current.Kind == kind
-                       ? (SyntaxToken?)NextToken()
+                       ? NextToken()
                        : null;
-        }
-
-        private SyntaxToken? GetPreviousToken()
-        {
-            return _tokenIndex == 0
-                       ? (SyntaxToken?) null
-                       : Peek(-1);
         }
 
         private SyntaxToken Match(SyntaxKind kind)
@@ -100,13 +93,11 @@ namespace NQuery.Language
 
         private SyntaxToken CreateMissingToken(SyntaxKind kind, SyntaxKind contextualKind)
         {
-            var previousToken = GetPreviousToken();
-            var previousTokenEnd = previousToken == null ? Current.FullSpan.Start : previousToken.Value.Span.End;
-            var start = previousTokenEnd;
+            var start = Current.FullSpan.Start;
             var span = new TextSpan(start, 0);
             var diagnostics = new List<Diagnostic>(1);
             diagnostics.ReportTokenExpected(Current, kind);
-            return new SyntaxToken(kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
+            return new SyntaxToken(_syntaxTree, kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
         }
 
         private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
@@ -115,7 +106,7 @@ namespace NQuery.Language
             var end = tokens.Last().FullSpan.End;
             var span = TextSpan.FromBounds(start, end);
             var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            var trivia = new SyntaxTrivia(SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
+            var trivia = new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
             return trivia;
         }
 
@@ -155,7 +146,8 @@ namespace NQuery.Language
             leadingTrivia.Add(skippedTokensTrivia);
             leadingTrivia.AddRange(endOfFileToken.LeadingTrivia);
 
-            var result = new SyntaxToken(endOfFileToken.Kind,
+            var result = new SyntaxToken(_syntaxTree,
+                                         endOfFileToken.Kind,
                                          endOfFileToken.ContextualKind,
                                          endOfFileToken.IsMissing,
                                          endOfFileToken.Span,
@@ -191,7 +183,7 @@ namespace NQuery.Language
 
                 var notKeyword = Current.Kind == SyntaxKind.NotKeyword && Lookahead.Kind.CanHaveLeadingNot()
                                      ? NextToken()
-                                     : (SyntaxToken?) null;
+                                     : null;
 
                 // Special handling for the only ternary operator BETWEEN
 
@@ -231,7 +223,7 @@ namespace NQuery.Language
             return new UnaryExpressionSyntax(_syntaxTree, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
+        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
         {
             var operatorToken = NextToken();
 
@@ -262,7 +254,7 @@ namespace NQuery.Language
             return new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken? notKeyword)
+        private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken notKeyword)
         {
             var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
             var betweenKeyword = NextToken();
@@ -272,26 +264,26 @@ namespace NQuery.Language
             return new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
         }
 
-        private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
         {
             var toKeyword = Match(SyntaxKind.ToKeyword);
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
         }
 
-        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
         {
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
         {
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new LikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken operatorToken)
         {
             // TODO: We need to support x IN (SELECT v FROM Table)
             //
@@ -719,7 +711,7 @@ namespace NQuery.Language
         private OrderByColumnSyntax ParseOrderByColumn()
         {
             var expression = ParseExpression();
-            SyntaxToken? modifier;
+            SyntaxToken modifier;
 
             if (Current.Kind == SyntaxKind.AscKeyword)
             {
@@ -824,7 +816,7 @@ namespace NQuery.Language
 
             var distinctAllKeyword = Current.Kind == SyntaxKind.DistinctKeyword ||
                                      Current.Kind == SyntaxKind.AllKeyword
-                                         ? (SyntaxToken?) NextToken()
+                                         ? NextToken()
                                          : null;
 
             var topClause = Current.Kind == SyntaxKind.TopKeyword

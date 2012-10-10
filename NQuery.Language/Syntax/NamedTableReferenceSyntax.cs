@@ -11,7 +11,7 @@ namespace NQuery.Language
         public NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias)
             : base(syntaxTree)
         {
-            _tableName = tableName.WithParent(this);
+            _tableName = tableName;
             _alias = alias;
         }
 

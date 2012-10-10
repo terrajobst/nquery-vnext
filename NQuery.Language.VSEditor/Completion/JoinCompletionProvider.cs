@@ -12,7 +12,7 @@ namespace NQuery.Language.VSEditor.Completion
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenTouched(position);
+            var token = syntaxTree.Root.FindTokenContext(position);
             var conditionedJoin = token.Parent.AncestorsAndSelf()
                                               .OfType<ConditionedJoinedTableReferenceSyntax>()
                                               .FirstOrDefault(c => c.OnKeyword.Span.End <= position);

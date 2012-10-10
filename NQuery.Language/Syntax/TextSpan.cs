@@ -39,6 +39,11 @@ namespace NQuery.Language
             return Start <= position && position < End;
         }
 
+        public bool ContainsOrTouches(int position)
+        {
+            return Contains(position) || position == End;
+        }
+
         public bool Contains(TextSpan textSpan)
         {
             return Start <= textSpan.Start && textSpan.End <= End;

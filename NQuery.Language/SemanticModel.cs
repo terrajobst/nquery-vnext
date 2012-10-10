@@ -135,7 +135,7 @@ namespace NQuery.Language
         {
             // TODO: I think we should'nt associate the binding context with a node but instead the whole binder.
             // TODO: Once this is done, our Lookup* methods should simply call the Binder ones.
-            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position, 0);
+            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position);
             var bindingContext = node == null ? null : _bindingResult.GetBindingContext(node);
             var symbols = bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
             foreach (var symbol in symbols)
@@ -151,28 +151,13 @@ namespace NQuery.Language
             }
         }
 
-        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position, int lastPosition)
+        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position)
         {
-            foreach (var nodeOrToken in root.ChildNodesAndTokens())
-            {
-                if (lastPosition <= position && position < nodeOrToken.Span.End)
-                {
-                    if (nodeOrToken.IsToken)
-                        return null;
-
-                    var node = nodeOrToken.AsNode();
-                    var result = FindClosestNodeWithBindingContext(node, position, lastPosition);
-                    if (result != null)
-                        return result;
-
-                    if (_bindingResult.GetBindingContext(node) != null)
-                        return node;
-                }
-
-                lastPosition = nodeOrToken.Span.End;
-            }
-
-            return null;
+            var token = root.FindTokenContext(position);
+            return (from n in token.Parent.AncestorsAndSelf()
+                    let bc = _bindingResult.GetBindingContext(n)
+                    where bc != null
+                    select n).FirstOrDefault();
         }
 
         public IEnumerable<MethodSymbol> LookupMethods(Type type)

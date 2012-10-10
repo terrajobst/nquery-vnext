@@ -8,5 +8,10 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
         }
+
+        public SyntaxTrivia ParentTrivia
+        {
+            get { return SyntaxTree == null ? null : SyntaxTree.GetParentTrivia(this); }
+        }
     }
 }

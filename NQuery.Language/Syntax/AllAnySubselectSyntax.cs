@@ -15,11 +15,11 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _left = left;
-            _operatorToken = operatorToken.WithParent(this);
-            _keyword = keyword.WithParent(this);
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _operatorToken = operatorToken;
+            _keyword = keyword;
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

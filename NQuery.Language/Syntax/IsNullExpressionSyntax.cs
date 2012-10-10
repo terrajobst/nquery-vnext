@@ -7,16 +7,16 @@ namespace NQuery.Language
     {
         private readonly ExpressionSyntax _expression;
         private readonly SyntaxToken _isKeyword;
-        private readonly SyntaxToken? _notKeyword;
+        private readonly SyntaxToken _notKeyword;
         private readonly SyntaxToken _nullKeyword;
 
-        public IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken? notKeyword, SyntaxToken nullKeyword)
+        public IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken notKeyword, SyntaxToken nullKeyword)
             : base(syntaxTree)
         {
             _expression = expression;
-            _isKeyword = isKeyword.WithParent(this);
-            _notKeyword = notKeyword.WithParent(this);
-            _nullKeyword = nullKeyword.WithParent(this);
+            _isKeyword = isKeyword;
+            _notKeyword = notKeyword;
+            _nullKeyword = nullKeyword;
         }
 
         public override SyntaxKind Kind
@@ -29,7 +29,7 @@ namespace NQuery.Language
             yield return _expression;
             yield return _isKeyword;
             if (_notKeyword != null)
-                yield return _notKeyword.Value;
+                yield return _notKeyword;
             yield return _nullKeyword;
         }
 
@@ -43,7 +43,7 @@ namespace NQuery.Language
             get { return _isKeyword; }
         }
 
-        public SyntaxToken? NotKeyword
+        public SyntaxToken NotKeyword
         {
             get { return _notKeyword; }
         }

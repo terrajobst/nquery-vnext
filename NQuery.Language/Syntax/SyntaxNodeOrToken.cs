@@ -15,7 +15,7 @@ namespace NQuery.Language
 
         public SyntaxNodeOrToken(SyntaxNode syntaxNode)
         {
-            _syntaxToken = default(SyntaxToken);
+            _syntaxToken = null;
             _syntaxNode = syntaxNode;
         }
 

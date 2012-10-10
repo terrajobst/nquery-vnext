@@ -7,15 +7,15 @@ namespace NQuery.Language
     {
         private readonly QuerySyntax _leftQuery;
         private readonly SyntaxToken _unionKeyword;
-        private readonly SyntaxToken? _allKeyword;
+        private readonly SyntaxToken _allKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken? allKeyword, QuerySyntax rightQuery)
+        public UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken allKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;
-            _unionKeyword = unionKeyword.WithParent(this);
-            _allKeyword = allKeyword.WithParent(this);
+            _unionKeyword = unionKeyword;
+            _allKeyword = allKeyword;
             _rightQuery = rightQuery;
         }
 
@@ -29,7 +29,7 @@ namespace NQuery.Language
             yield return _leftQuery;
             yield return _unionKeyword;
             if (_allKeyword != null)
-                yield return _allKeyword.Value;
+                yield return _allKeyword;
             yield return _rightQuery;
         }
 
@@ -43,7 +43,7 @@ namespace NQuery.Language
             get { return _unionKeyword; }
         }
 
-        public SyntaxToken? AllKeyword
+        public SyntaxToken AllKeyword
         {
             get { return _allKeyword; }
         }

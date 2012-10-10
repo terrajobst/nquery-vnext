@@ -11,7 +11,7 @@ namespace NQuery.Language
         public HavingClauseSyntax(SyntaxTree syntaxTree, SyntaxToken havingKeyword, ExpressionSyntax predicate)
             : base(syntaxTree)
         {
-            _havingKeyword = havingKeyword.WithParent(this);
+            _havingKeyword = havingKeyword;
             _predicate = predicate;
         }
 

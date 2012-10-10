@@ -10,7 +10,7 @@ namespace NQuery.Language
         public CaseElseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken elseKeyword, ExpressionSyntax expression)
             : base(syntaxTree)
         {
-            _elseKeyword = elseKeyword.WithParent(this);
+            _elseKeyword = elseKeyword;
             _expression = expression;
         }
 

@@ -13,8 +13,8 @@ namespace NQuery.Language.UnitTests
             var query = (SelectQuerySyntax) syntaxTree.Root.Root;
             var diagnostics = syntaxTree.GetDiagnostics().ToArray();
 
-            Assert.IsFalse(query.SelectClause.TopClause.TiesKeyword.Value.IsMissing);
-            Assert.IsTrue(query.SelectClause.TopClause.WithKeyword.Value.IsMissing);
+            Assert.IsFalse(query.SelectClause.TopClause.TiesKeyword.IsMissing);
+            Assert.IsTrue(query.SelectClause.TopClause.WithKeyword.IsMissing);
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
         }
@@ -26,8 +26,8 @@ namespace NQuery.Language.UnitTests
             var query = (SelectQuerySyntax)syntaxTree.Root.Root;
             var diagnostics = syntaxTree.GetDiagnostics().ToArray();
 
-            Assert.IsTrue(query.SelectClause.TopClause.TiesKeyword.Value.IsMissing);
-            Assert.IsFalse(query.SelectClause.TopClause.WithKeyword.Value.IsMissing);
+            Assert.IsTrue(query.SelectClause.TopClause.TiesKeyword.IsMissing);
+            Assert.IsFalse(query.SelectClause.TopClause.WithKeyword.IsMissing);
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
         }

@@ -11,9 +11,9 @@ namespace NQuery.Language
         public GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<GroupByColumnSyntax> columns)
             : base(syntaxTree)
         {
-            _groupKeyword = groupKeyword.WithParent(this);
-            _byKeyword = byKeyword.WithParent(this);
-            _columns = columns.WithParent(this);
+            _groupKeyword = groupKeyword;
+            _byKeyword = byKeyword;
+            _columns = columns;
         }
 
         public override SyntaxKind Kind

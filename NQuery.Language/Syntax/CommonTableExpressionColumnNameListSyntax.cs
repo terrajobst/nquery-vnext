@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NQuery.Language
 {
@@ -11,9 +12,10 @@ namespace NQuery.Language
         public CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis.WithParent(this);
-            _columnNames = columnNames.WithParent(this);
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _leftParenthesis = leftParenthesis;
+            _columnNames = columnNames;
+            int logicalIndex = _columnNames.GetWithSeparators().Count(t => t.IsToken) + 1;
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

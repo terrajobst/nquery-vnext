@@ -12,9 +12,9 @@ namespace NQuery.Language
         public ParenthesizedQuerySyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

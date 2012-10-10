@@ -13,10 +13,10 @@ namespace NQuery.Language
         public ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _existsKeyword = existsKeyword.WithParent(this);
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _existsKeyword = existsKeyword;
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

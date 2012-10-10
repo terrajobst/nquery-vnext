@@ -6,20 +6,20 @@ namespace NQuery.Language
     public sealed class BetweenExpressionSyntax : ExpressionSyntax
     {
         private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken? _notKeyword;
+        private readonly SyntaxToken _notKeyword;
         private readonly SyntaxToken _betweenKeyword;
         private readonly ExpressionSyntax _lowerBound;
         private readonly SyntaxToken _andKeyword;
         private readonly ExpressionSyntax _upperBound;
 
-        public BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
+        public BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
             : base(syntaxTree)
         {
             _left = left;
-            _notKeyword = notKeyword.WithParent(this);
-            _betweenKeyword = betweenKeyword.WithParent(this);
+            _notKeyword = notKeyword;
+            _betweenKeyword = betweenKeyword;
             _lowerBound = lowerBound;
-            _andKeyword = andKeyword.WithParent(this);
+            _andKeyword = andKeyword;
             _upperBound = upperBound;
         }
 
@@ -32,7 +32,7 @@ namespace NQuery.Language
         {
             yield return _left;
             if (_notKeyword != null)
-                yield return _notKeyword.Value;
+                yield return _notKeyword;
             yield return _betweenKeyword;
             yield return _lowerBound;
             yield return _andKeyword;
@@ -44,7 +44,7 @@ namespace NQuery.Language
             get { return _left; }
         }
 
-        public SyntaxToken? NotKeyword
+        public SyntaxToken NotKeyword
         {
             get { return _notKeyword; }
         }

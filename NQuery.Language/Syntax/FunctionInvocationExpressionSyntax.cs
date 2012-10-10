@@ -11,7 +11,7 @@ namespace NQuery.Language
         public FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _name = name.WithParent(this);
+            _name = name;
             _argumentList = argumentList;
         }
 

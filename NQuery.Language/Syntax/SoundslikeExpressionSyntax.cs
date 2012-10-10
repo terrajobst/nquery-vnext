@@ -6,16 +6,16 @@ namespace NQuery.Language
     public sealed class SoundslikeExpressionSyntax : ExpressionSyntax
     {
         private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken? _notKeyword;
+        private readonly SyntaxToken _notKeyword;
         private readonly SyntaxToken _soundslikeKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SoundslikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken soundslikeKeyword, ExpressionSyntax right)
+        public SoundslikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundslikeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;
-            _notKeyword = notKeyword.WithParent(this);
-            _soundslikeKeyword = soundslikeKeyword.WithParent(this);
+            _notKeyword = notKeyword;
+            _soundslikeKeyword = soundslikeKeyword;
             _right = right;
         }
 
@@ -28,7 +28,7 @@ namespace NQuery.Language
         {
             yield return _left;
             if (_notKeyword != null)
-                yield return _notKeyword.Value;
+                yield return _notKeyword;
             yield return _soundslikeKeyword;
             yield return _right;
         }
@@ -38,7 +38,7 @@ namespace NQuery.Language
             get { return _left; }
         }
 
-        public SyntaxToken? NotKeyword
+        public SyntaxToken NotKeyword
         {
             get { return _notKeyword; }
         }

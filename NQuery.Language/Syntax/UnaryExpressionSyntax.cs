@@ -11,7 +11,7 @@ namespace NQuery.Language
         public UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax expression)
             : base(syntaxTree)
         {
-            _operatorToken = operatorToken.WithParent(this);
+            _operatorToken = operatorToken;
             _expression = expression;
         }
 

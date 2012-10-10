@@ -10,8 +10,8 @@ namespace NQuery.Language
         public CrossJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken crossKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right)
             : base(syntaxTree, left, right)
         {
-            _crossKeyword = crossKeyword.WithParent(this);
-            _joinKeyword = joinKeyword.WithParent(this);
+            _crossKeyword = crossKeyword;
+            _joinKeyword = joinKeyword;
         }
 
         public override SyntaxKind Kind

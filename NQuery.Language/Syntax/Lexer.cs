@@ -7,6 +7,7 @@ namespace NQuery.Language
 {
     internal sealed class Lexer
     {
+        private readonly SyntaxTree _syntaxTree;
         private readonly string _source;
         private readonly CharReader _charReader;
         private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
@@ -18,8 +19,9 @@ namespace NQuery.Language
         private object _value;
         private int _start;
 
-        public Lexer(string source)
+        public Lexer(SyntaxTree syntaxTree, string source)
         {
+            _syntaxTree = syntaxTree;
             _source = source;
             _charReader = new CharReader(source);
         }
@@ -50,7 +52,7 @@ namespace NQuery.Language
             ReadTrivia(_trailingTrivia, isLeading: true);
             var trailingTrivia = _trailingTrivia.ToArray();
 
-            return new SyntaxToken(kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
+            return new SyntaxToken(_syntaxTree, kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
         }
 
         private TextSpan CurrentSpan
@@ -204,7 +206,7 @@ namespace NQuery.Language
             var span = TextSpan.FromBounds(start, end);
             var text = GetText(span);
             var diagnostics = _diagnostics.ToArray();
-            var trivia = new SyntaxTrivia(kind, text, span, null, diagnostics);
+            var trivia = new SyntaxTrivia(_syntaxTree, kind, text, span, null, diagnostics);
             target.Add(trivia);
 
             _diagnostics.Clear();

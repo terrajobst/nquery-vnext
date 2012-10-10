@@ -12,7 +12,7 @@ namespace NQuery.Language
         public SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
             : base(syntaxTree)
         {
-            _tokens = new ReadOnlyCollection<SyntaxToken>(tokens.WithParent(this));
+            _tokens = new ReadOnlyCollection<SyntaxToken>(tokens.ToArray());
         }
 
         public override SyntaxKind Kind

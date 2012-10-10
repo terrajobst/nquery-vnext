@@ -13,7 +13,7 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;
-            _intersectKeyword = intersectKeyword.WithParent(this);
+            _intersectKeyword = intersectKeyword;
             _rightQuery = rightQuery;
         }
 

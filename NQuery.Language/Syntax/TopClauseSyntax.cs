@@ -7,16 +7,16 @@ namespace NQuery.Language
     {
         private readonly SyntaxToken _topKeyword;
         private readonly SyntaxToken _value;
-        private readonly SyntaxToken? _withKeyword;
-        private readonly SyntaxToken? _tiesKeyword;
+        private readonly SyntaxToken _withKeyword;
+        private readonly SyntaxToken _tiesKeyword;
 
-        public TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
+        public TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken withKeyword, SyntaxToken tiesKeyword)
             : base(syntaxTree)
         {
-            _topKeyword = topKeyword.WithParent(this);
-            _value = value.WithParent(this);
-            _withKeyword = withKeyword.WithParent(this);
-            _tiesKeyword = tiesKeyword.WithParent(this);
+            _topKeyword = topKeyword;
+            _value = value;
+            _withKeyword = withKeyword;
+            _tiesKeyword = tiesKeyword;
         }
 
         public override SyntaxKind Kind
@@ -29,9 +29,9 @@ namespace NQuery.Language
             yield return _topKeyword;
             yield return _value;
             if (_withKeyword != null)
-                yield return _withKeyword.Value;
+                yield return _withKeyword;
             if (_tiesKeyword != null)
-                yield return _tiesKeyword.Value;
+                yield return _tiesKeyword;
         }
 
         public SyntaxToken TopKeyword
@@ -44,12 +44,12 @@ namespace NQuery.Language
             get { return _value; }
         }
 
-        public SyntaxToken? WithKeyword
+        public SyntaxToken WithKeyword
         {
             get { return _withKeyword; }
         }
 
-        public SyntaxToken? TiesKeyword
+        public SyntaxToken TiesKeyword
         {
             get { return _tiesKeyword; }
         }

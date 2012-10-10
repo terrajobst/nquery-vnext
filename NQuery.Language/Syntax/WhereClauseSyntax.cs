@@ -11,7 +11,7 @@ namespace NQuery.Language
         public WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
             : base(syntaxTree)
         {
-            _whereKeyword = whereKeyword.WithParent(this); ;
+            _whereKeyword = whereKeyword;
             _predicate = predicate;
         }
 

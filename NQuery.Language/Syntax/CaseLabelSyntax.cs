@@ -13,9 +13,9 @@ namespace NQuery.Language
         public CaseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken whenKeyword, ExpressionSyntax whenExpression, SyntaxToken thenKeyword, ExpressionSyntax thenExpression)
             : base(syntaxTree)
         {
-            _whenKeyword = whenKeyword.WithParent(this);
+            _whenKeyword = whenKeyword;
             _whenExpression = whenExpression;
-            _thenKeyword = thenKeyword.WithParent(this);
+            _thenKeyword = thenKeyword;
             _thenExpression = thenExpression;
         }
 

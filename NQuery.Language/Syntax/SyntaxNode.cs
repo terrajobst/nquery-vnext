@@ -19,21 +19,15 @@ namespace NQuery.Language
 
         private TextSpan ComputeSpan()
         {
-            if (ChildNodesAndTokens().All(n => n.IsMissing))
-                return new TextSpan(0, 0);
-            
-            var start = ChildNodesAndTokens().First(n => !n.IsMissing).Span.Start;
-            var end = ChildNodesAndTokens().Last(n => !n.IsMissing).Span.End;
+            var start = ChildNodesAndTokens().First().Span.Start;
+            var end = ChildNodesAndTokens().Last().Span.End;
             return TextSpan.FromBounds(start, end);
         }
 
         private TextSpan ComputeFullSpan()
         {
-            if (ChildNodesAndTokens().All(n => n.IsMissing))
-                return new TextSpan(0, 0);
-
-            var start = ChildNodesAndTokens().First(n => !n.IsMissing).FullSpan.Start;
-            var end = ChildNodesAndTokens().Last(n => !n.IsMissing).FullSpan.End;
+            var start = ChildNodesAndTokens().First().FullSpan.Start;
+            var end = ChildNodesAndTokens().Last().FullSpan.End;
             return TextSpan.FromBounds(start, end);
         }
 
@@ -126,14 +120,14 @@ namespace NQuery.Language
                    select n.AsToken();
         }
 
-        public SyntaxToken FirstToken(bool descendIntoTrivia = false)
+        public SyntaxToken FirstToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
-            return DescendantTokens(descendIntoTrivia).First();
+            return SyntaxTreeNavigation.GetFirstToken(this, includeZeroLength, includeSkippedTokens);
         }
 
-        public SyntaxToken LastToken(bool descendIntoTrivia = false)
+        public SyntaxToken LastToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
-            return DescendantTokens(descendIntoTrivia).Last();
+            return SyntaxTreeNavigation.GetLastToken(this, includeZeroLength, includeSkippedTokens);
         }
 
         public SyntaxToken FindToken(int position, bool descendIntoTrivia = false)
@@ -177,7 +171,7 @@ namespace NQuery.Language
 
         public SyntaxNode Parent
         {
-            get { return _syntaxTree.GetParent(this); }
+            get { return _syntaxTree.GetParentNode(this); }
         }
 
         public abstract SyntaxKind Kind { get; }

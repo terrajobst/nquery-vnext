@@ -6,15 +6,15 @@ namespace NQuery.Language
     public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableReferenceSyntax
     {
         private readonly SyntaxToken _typeKeyword;
-        private readonly SyntaxToken? _outerKeyword;
+        private readonly SyntaxToken _outerKeyword;
         private readonly SyntaxToken _joinKeyword;
 
-        public OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
-            : base(syntaxTree, left, right, onKeyword, condition)
+        public OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+            : base(syntaxTree, left, right, onKeyword, 3, condition)
         {
-            _typeKeyword = typeKeyword.WithParent(this);
-            _outerKeyword = outerKeyword.WithParent(this);
-            _joinKeyword = joinKeyword.WithParent(this);
+            _typeKeyword = typeKeyword;
+            _outerKeyword = outerKeyword;
+            _joinKeyword = joinKeyword;
         }
 
         public override SyntaxKind Kind
@@ -27,7 +27,7 @@ namespace NQuery.Language
             yield return Left;
             yield return _typeKeyword;
             if (_outerKeyword != null)
-                yield return _outerKeyword.Value;
+                yield return _outerKeyword;
             yield return _joinKeyword;
             yield return Right;
             yield return OnKeyword;
@@ -39,7 +39,7 @@ namespace NQuery.Language
             get { return _typeKeyword; }
         }
 
-        public SyntaxToken? OuterKeyword
+        public SyntaxToken OuterKeyword
         {
             get { return _outerKeyword; }
         }

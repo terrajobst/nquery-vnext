@@ -10,8 +10,8 @@ namespace NQuery.Language
         public VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
             : base(syntaxTree)
         {
-            _atToken = atToken.WithParent(this);
-            _name = name.WithParent(this);
+            _atToken = atToken;
+            _name = name;
         }
 
         public override SyntaxKind Kind

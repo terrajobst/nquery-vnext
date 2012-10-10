@@ -8,17 +8,17 @@ namespace NQuery.Language
         private readonly SyntaxToken _leftParenthesis;
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
-        private readonly SyntaxToken? _asKeyword;
+        private readonly SyntaxToken _asKeyword;
         private readonly SyntaxToken _name;
 
-        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name)
+        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken asKeyword, SyntaxToken name)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParenthesis = rightParenthesis.WithParent(this);
-            _asKeyword = asKeyword.WithParent(this);
-            _name = name.WithParent(this);
+            _rightParenthesis = rightParenthesis;
+            _asKeyword = asKeyword;
+            _name = name;
         }
 
         public override SyntaxKind Kind
@@ -32,7 +32,7 @@ namespace NQuery.Language
             yield return _query;
             yield return _rightParenthesis;
             if (_asKeyword != null)
-                yield return _asKeyword.Value;
+                yield return _asKeyword;
             yield return _name;
         }
 
@@ -51,7 +51,7 @@ namespace NQuery.Language
             get { return _rightParenthesis; }
         }
 
-        public SyntaxToken? AsKeyword
+        public SyntaxToken AsKeyword
         {
             get { return _asKeyword; }
         }

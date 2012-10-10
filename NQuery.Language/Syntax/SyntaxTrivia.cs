@@ -5,21 +5,28 @@ using System.IO;
 
 namespace NQuery.Language
 {
-    public struct SyntaxTrivia
+    public sealed class SyntaxTrivia
     {
+        private readonly SyntaxTree _syntaxTree;
         private readonly SyntaxKind _kind;
         private readonly string _text;
         private readonly TextSpan _span;
         private readonly StructuredTriviaSyntax _structure;
         private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
 
-        public SyntaxTrivia(SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IList<Diagnostic> diagnostics)
+        internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IList<Diagnostic> diagnostics)
         {
+            _syntaxTree = syntaxTree;
             _kind = kind;
             _text = text;
             _span = span;
             _structure = structure;
             _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
+        }
+
+        public SyntaxToken Parent
+        {
+            get { return _syntaxTree == null ? null : _syntaxTree.GetParentToken(this); }
         }
 
         public SyntaxKind Kind

@@ -10,7 +10,7 @@ namespace NQuery.Language
         public CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier)
             : base(syntaxTree)
         {
-            _identifier = identifier.WithParent(this);
+            _identifier = identifier;
         }
 
         public override SyntaxKind Kind

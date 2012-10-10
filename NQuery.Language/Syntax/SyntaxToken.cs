@@ -5,9 +5,9 @@ using System.IO;
 
 namespace NQuery.Language
 {
-    public struct SyntaxToken
+    public sealed class SyntaxToken
     {
-        private readonly SyntaxNode _parent;
+        private readonly SyntaxTree _syntaxTree;
         private readonly SyntaxKind _kind;
         private readonly SyntaxKind _contextualKind;
         private readonly bool _isMissing;
@@ -18,14 +18,9 @@ namespace NQuery.Language
         private readonly ReadOnlyCollection<SyntaxTrivia> _trailingTrivia;
         private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
 
-        public SyntaxToken(SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
-            : this(null, kind, contextualKind, isMissing, span, text, value, leadingTrivia, trailingTrivia, diagnostics)
+        internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
         {
-        }
-
-        private SyntaxToken(SyntaxNode parent, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
-        {
-            _parent = parent;
+            _syntaxTree = syntaxTree;
             _kind = kind;
             _contextualKind = contextualKind;
             _isMissing = isMissing;
@@ -39,7 +34,7 @@ namespace NQuery.Language
 
         public SyntaxNode Parent
         {
-            get { return _parent; }
+            get { return _syntaxTree == null ? null : _syntaxTree.GetParentNode(this); }
         }
 
         public SyntaxKind Kind
@@ -106,41 +101,14 @@ namespace NQuery.Language
             get { return _diagnostics; }
         }
 
-        public SyntaxToken? GetPreviousToken()
+        public SyntaxToken GetPreviousToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
-            if (Parent == null)
-                return null;
-
-            var root = Parent.SyntaxTree.Root;
-            var endOfPreviousToken = FullSpan.Start - 1;
-            return endOfPreviousToken < 0
-                       ? (SyntaxToken?)null
-                       : root.FindToken(endOfPreviousToken);
+            return SyntaxTreeNavigation.GetPreviousToken(this, includeZeroLength, includeSkippedTokens);
         }
 
-        public SyntaxToken? GetNextToken()
+        public SyntaxToken GetNextToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
-            if (Parent == null)
-                return null;
-
-            var root = Parent.SyntaxTree.Root;
-            var startOfNextToken = FullSpan.Length == 0
-                                       ? FullSpan.Start + 1
-                                       : FullSpan.End;
-
-            if (startOfNextToken == root.FullSpan.End)
-                return root.EndOfFileToken;
-
-            if (startOfNextToken > root.FullSpan.End)
-                return null;
-
-            var syntaxToken = root.FindToken(startOfNextToken);
-            while (syntaxToken.Kind != SyntaxKind.EndOfFileToken && syntaxToken.Span.Start < startOfNextToken)
-            {
-                startOfNextToken++;
-                syntaxToken = root.FindToken(startOfNextToken);
-            }
-            return syntaxToken;
+            return SyntaxTreeNavigation.GetNextToken(this, includeZeroLength, includeSkippedTokens);
         }
 
         public void WriteTo(TextWriter writer)
@@ -154,29 +122,29 @@ namespace NQuery.Language
                 syntaxTrivia.WriteTo(writer);
         }
 
-        public SyntaxToken WithParent(SyntaxNode parent)
+        public SyntaxToken WithParentOld(SyntaxNode parent, int logicalIndex)
         {
-            return new SyntaxToken(parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
+            return this;
         }
 
         public SyntaxToken WithDiagnotics(IList<Diagnostic> diagnostics)
         {
-            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
+            return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
         }
 
         public SyntaxToken WithKind(SyntaxKind kind)
         {
-            return new SyntaxToken(_parent, kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
+            return new SyntaxToken(_syntaxTree, kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
         }
 
         public SyntaxToken WithLeadingTrivia(IList<SyntaxTrivia> trivia)
         {
-            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, trivia, _trailingTrivia, _diagnostics);
+            return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, trivia, _trailingTrivia, _diagnostics);
         }
 
         public SyntaxToken WithTrailingTrivia(IList<SyntaxTrivia> trivia)
         {
-            return new SyntaxToken(_parent, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, trivia, _diagnostics);
+            return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, trivia, _diagnostics);
         }
 
         public override string ToString()

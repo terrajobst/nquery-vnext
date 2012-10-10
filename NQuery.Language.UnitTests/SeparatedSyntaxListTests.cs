@@ -37,7 +37,7 @@ namespace NQuery.Language.UnitTests
 
             Assert.AreEqual(1, list.Count);
             Assert.AreEqual(expression, list.Single());
-            Assert.AreEqual(comma.Kind, list.GetSeparator(0).Value.Kind);
+            Assert.AreEqual(comma.Kind, list.GetSeparator(0).Kind);
         }
     }
 }

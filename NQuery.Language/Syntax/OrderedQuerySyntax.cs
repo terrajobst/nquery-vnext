@@ -13,9 +13,9 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _query = query;
-            _orderKeyword = orderKeyword.WithParent(this);
-            _byKeyword = byKeyword.WithParent(this);
-            _columns = columns.WithParent(this);
+            _orderKeyword = orderKeyword;
+            _byKeyword = byKeyword;
+            _columns = columns;
         }
 
         public override SyntaxKind Kind

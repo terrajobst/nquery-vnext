@@ -66,7 +66,13 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
         {
-            var p = root.FindTokenTouched(position, descendIntoTrivia: true).Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
+            var token = root.FindTokenOnLeft(position);
+            var previous = token.GetPreviousToken(false, true);
+            var dot = previous != null && previous.Kind == SyntaxKind.DotToken
+                          ? previous
+                          : token;
+
+            var p = dot.Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
 
             if (p != null)
             {
@@ -80,87 +86,52 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static bool InAlias(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia:true);
-            return syntaxToken.Parent is AliasSyntax;
+            var token = root.FindTokenOnLeft(position);
+            var node = token.Parent as AliasSyntax;
+            return node != null && node.Span.ContainsOrTouches(position);
         }
 
         private static bool InCteName(SyntaxNode root, int position)
         {
-            var token = root.FindTokenTouched(position, descendIntoTrivia: true);
+            var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte != null && cte.Name.Span.Contains(position);
+            return cte != null && cte.Name.Span.ContainsOrTouches(position);
         }
 
         private static bool InCteColumnList(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia: true);
-            return syntaxToken.Parent is CommonTableExpressionColumnNameSyntax ||
-                   syntaxToken.Parent is CommonTableExpressionColumnNameListSyntax;
+            var node = root.FindTokenOnLeft(position).Parent;
+            return node.Span.ContainsOrTouches(position) &&
+                   (node is CommonTableExpressionColumnNameSyntax ||
+                    node is CommonTableExpressionColumnNameListSyntax);
         }
 
         private static bool InDerivedTableName(SyntaxNode root, int position)
         {
-            var syntaxToken = root.FindTokenTouched(position, descendIntoTrivia: true);
+            var syntaxToken = root.FindTokenOnLeft(position);
             var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
-            return derivedTable != null && derivedTable.Name.FullSpan.Contains(position);
+            return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
         private static bool InComment(SyntaxNode root, int position)
         {
-            var contains = root.FullSpan.Start <= position && position <= root.FullSpan.End;
-            if (!contains)
-                return false;
-
-            var relevantChildren = from n in root.ChildNodesAndTokens()
-                                   where n.FullSpan.Start <= position && position <= n.FullSpan.End
-                                   select n;
-
-            foreach (var child in relevantChildren)
-            {
-                if (child.IsNode)
-                {
-                    if (InComment(child.AsNode(), position))
-                        return true;
-                }
-                else
-                {
-                    var token = child.AsToken();
-                    var inComment = (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
-                                     where InSingleLineComment(t, position) ||
-                                           InMultiLineComment(t, position)
-                                     select t).Any();
-                    if (inComment)
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        private static bool InSingleLineComment(SyntaxTrivia token, int position)
-        {
-            return token.Kind == SyntaxKind.SingleLineCommentTrivia &&
-                   token.Span.Start <= position &&
-                   position <= token.Span.End;
-        }
-
-        private static bool InMultiLineComment(SyntaxTrivia token, int position)
-        {
-            return token.Kind == SyntaxKind.MultiLineCommentTrivia &&
-                   token.Span.Start <= position &&
-                   position <= token.Span.End;
+            var token = root.FindTokenOnLeft(position);
+            return (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
+                    where t.Span.ContainsOrTouches(position)
+                    where t.Kind == SyntaxKind.SingleLineCommentTrivia ||
+                          t.Kind == SyntaxKind.MultiLineCommentTrivia
+                    select t).Any();
         }
 
         private static bool InLiteral(SyntaxNode root, int position)
         {
-            return root.FindTokenTouched(position, descendIntoTrivia: true).Kind.IsLiteral();
+            var token = root.FindTokenOnLeft(position);
+            return token.Span.ContainsOrTouches(position) && token.Kind.IsLiteral();
         }
 
         private static IEnumerable<CompletionItem> GetGlobalSymbolCompletions(SemanticModel semanticModel, int position)
         {
             var symbols = semanticModel.LookupSymbols(position);
-            if (!symbols.Any() && position > 0)
-                symbols = semanticModel.LookupSymbols(--position);
 
             // In the global context there two different cases:
             //
@@ -171,7 +142,8 @@ namespace NQuery.Language.VSEditor.Completion
             // we can see all symbols EXCEPT table symbols.
 
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var isTableContext = syntaxTree.Root.FindTokenTouched(position).Parent is TableReferenceSyntax;
+            var findTokenContext = syntaxTree.Root.FindTokenContext(position);
+            var isTableContext = findTokenContext.Parent is TableReferenceSyntax;
 
             var filteredSymbols = from s in symbols
                                   let isTable = s is TableSymbol

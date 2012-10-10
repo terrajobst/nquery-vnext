@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NQuery.Language
 {
@@ -11,9 +12,10 @@ namespace NQuery.Language
         public ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<ExpressionSyntax> arguments, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis.WithParent(this);
-            _arguments = arguments.WithParent(this);
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _leftParenthesis = leftParenthesis;
+            _arguments = arguments;
+            int logicalIndex = _arguments.GetWithSeparators().Count(t => t.IsToken) + 1;
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

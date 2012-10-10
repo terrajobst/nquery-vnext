@@ -10,8 +10,8 @@ namespace NQuery.Language
         public FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, SeparatedSyntaxList<TableReferenceSyntax> tableReferences)
             : base(syntaxTree)
         {
-            _fromKeyword = fromKeyword.WithParent(this);
-            _tableReferences = tableReferences.WithParent(this);
+            _fromKeyword = fromKeyword;
+            _tableReferences = tableReferences;
         }
 
         public override SyntaxKind Kind

@@ -80,7 +80,7 @@ namespace NQuery.Language
             return GetEnumerator();
         }
 
-        public SyntaxToken? GetSeparator(int index)
+        public SyntaxToken GetSeparator(int index)
         {
             return _entries[index].Separator;
         }
@@ -91,7 +91,7 @@ namespace NQuery.Language
             {
                 yield return entry.Node;
                 if (entry.Separator != null)
-                    yield return entry.Separator.Value;
+                    yield return entry.Separator;
             }            
         }
 
@@ -99,7 +99,7 @@ namespace NQuery.Language
         {
             return from e in _entries
                    where e.Separator != null
-                   select e.Separator.Value;
+                   select e.Separator;
         }
 
         public TNode this[int index]
@@ -164,9 +164,9 @@ namespace NQuery.Language
         private struct Entry
         {
             private readonly TNode _node;
-            private readonly SyntaxToken? _separator;
+            private readonly SyntaxToken _separator;
 
-            public Entry(TNode node, SyntaxToken? separator)
+            public Entry(TNode node, SyntaxToken separator)
             {
                 _node = node;
                 _separator = separator;
@@ -177,7 +177,7 @@ namespace NQuery.Language
                 get { return _node; }
             }
 
-            public SyntaxToken? Separator
+            public SyntaxToken Separator
             {
                 get { return _separator; }
             }

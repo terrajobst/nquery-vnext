@@ -14,12 +14,12 @@ namespace NQuery.Language
         public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _name = name.WithParent(this);
+            _name = name;
             _columnNameList = columnNameList;
-            _asKeyword = asKeyword.WithParent(this);
-            _leftParenthesis = leftParenthesis.WithParent(this);
+            _asKeyword = asKeyword;
+            _leftParenthesis = leftParenthesis;
             _query = query;
-            _rightParenthesis = rightParenthesis.WithParent(this);
+            _rightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind

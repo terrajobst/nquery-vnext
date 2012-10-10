@@ -11,9 +11,9 @@ namespace NQuery.Language
         public CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, SeparatedSyntaxList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
             : base(syntaxTree)
         {
-            _withKeyword = withKeyword.WithParent(this);
+            _withKeyword = withKeyword;
             _query = query;
-            _commonTableExpressions = commonTableExpressions.WithParent(this);
+            _commonTableExpressions = commonTableExpressions;
         }
 
         public override SyntaxKind Kind

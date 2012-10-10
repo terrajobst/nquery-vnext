@@ -10,7 +10,7 @@ namespace NQuery.Language.VSEditor.Completion
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenTouched(position);
+            var token = syntaxTree.Root.FindTokenOnLeft(position);
             var castExpression = token.Parent.AncestorsAndSelf()
                                              .OfType<CastExpressionSyntax>()
                                              .FirstOrDefault(c => c.AsKeyword.Span.End <= position);

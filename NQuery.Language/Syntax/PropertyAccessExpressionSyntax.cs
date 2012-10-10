@@ -13,8 +13,8 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _target = target;
-            _dot = dot.WithParent(this);
-            _name = name.WithParent(this);
+            _dot = dot;
+            _name = name;
         }
 
         public override SyntaxKind Kind

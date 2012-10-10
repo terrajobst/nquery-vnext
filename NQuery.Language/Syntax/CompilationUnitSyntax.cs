@@ -12,7 +12,7 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _root = root;
-            _endOfFileToken = endOfFileToken.WithParent(this);
+            _endOfFileToken = endOfFileToken;
         }
 
         public override SyntaxKind Kind

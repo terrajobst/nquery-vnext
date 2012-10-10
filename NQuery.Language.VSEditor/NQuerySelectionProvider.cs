@@ -67,7 +67,7 @@ namespace NQuery.Language.VSEditor
 
         private static TextSpan ExtendSelection(SyntaxTree syntaxTree, TextSpan selectedSpan)
         {
-            var token = syntaxTree.Root.FindTokenTouched(selectedSpan.Start, descendIntoTrivia:true);
+            var token = syntaxTree.Root.FindTokenOnLeft(selectedSpan.Start);
             if (!selectedSpan.Contains(token.Span))
                 return token.Span;
 

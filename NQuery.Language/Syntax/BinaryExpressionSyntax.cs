@@ -13,7 +13,7 @@ namespace NQuery.Language
             : base(syntaxTree)
         {
             _left = left;
-            _operatorToken = operatorToken.WithParent(this);
+            _operatorToken = operatorToken;
             _right = right;
         }
 
