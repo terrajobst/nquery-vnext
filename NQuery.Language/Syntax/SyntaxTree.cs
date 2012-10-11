@@ -14,9 +14,10 @@ namespace NQuery.Language
 
         private SyntaxTree(string source, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
-            var parser = new Parser(source, this);
+            var textBuffer = new TextBuffer(source);
+            var parser = new Parser(textBuffer, this);
             _root = parseMethod(parser);
-            _textBuffer = new TextBuffer(source);
+            _textBuffer = textBuffer;
         }
 
         public static SyntaxTree ParseQuery(string source)

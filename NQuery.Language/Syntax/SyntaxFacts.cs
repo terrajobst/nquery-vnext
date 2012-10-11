@@ -1050,5 +1050,67 @@ namespace NQuery.Language
                            "OBJECT",
                        };
         }
+
+        public static bool CanStartExpression(SyntaxKind kind)
+        {
+            var unaryOperator = GetUnaryOperatorExpression(kind);
+            if (unaryOperator != SyntaxKind.BadToken)
+                return true;
+
+            switch (kind)
+            {
+                case SyntaxKind.NullKeyword:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                case SyntaxKind.DateLiteralToken:
+                case SyntaxKind.NumericLiteralToken:
+                case SyntaxKind.StringLiteralToken:
+                case SyntaxKind.ExistsKeyword:
+                case SyntaxKind.AtToken:
+                case SyntaxKind.CastKeyword:
+                case SyntaxKind.CaseKeyword:
+                case SyntaxKind.CoalesceKeyword:
+                case SyntaxKind.NullIfKeyword:
+                case SyntaxKind.IdentifierToken:
+                case SyntaxKind.LeftParenthesisToken:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static bool CanFollowSelectColumn(SyntaxKind kind)
+        {
+            return CanStartExpression(kind) ||
+                   kind == SyntaxKind.CommaToken ||
+                   CanFollowSelectColumnList(kind);
+        }
+
+        public static bool CanFollowSelectColumnList(SyntaxKind kind)
+        {
+            return CanStartQueryClause(kind) ||
+                   kind == SyntaxKind.UnionKeyword ||
+                   kind == SyntaxKind.ExceptKeyword ||
+                   kind == SyntaxKind.RightParenthesisToken ||
+                   kind == SyntaxKind.EndOfFileToken;
+        }
+
+        private static bool CanStartQueryClause(SyntaxKind kind)
+        {
+            return kind == SyntaxKind.FromKeyword ||
+                   kind == SyntaxKind.WhereKeyword ||
+                   kind == SyntaxKind.GroupKeyword ||
+                   kind == SyntaxKind.HavingClause ||
+                   kind == SyntaxKind.OrderKeyword;
+        }
+
+        public static bool CanFollowArgument(SyntaxKind kind)
+        {
+            return CanStartExpression(kind) ||
+                   kind == SyntaxKind.CommaToken ||
+                   kind == SyntaxKind.RightParenthesisToken ||
+                   CanStartQueryClause(kind) ||
+                   kind == SyntaxKind.EndOfFileToken;
+        }
     }
 }

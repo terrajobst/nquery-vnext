@@ -101,12 +101,12 @@ namespace NQuery.Language
 
         #region Parser Errors
 
-        public static void ReportTokenExpected(this ICollection<Diagnostic> diagnostics, SyntaxToken actual, SyntaxKind expected)
+        public static void ReportTokenExpected(this ICollection<Diagnostic> diagnostics, TextSpan span, SyntaxToken actual, SyntaxKind expected)
         {
             var actualText = actual.GetDisplayText();
             var expectedText = expected.GetDisplayText();
             var message = String.Format(CultureInfo.CurrentCulture, Resources.TokenExpected, actualText, expectedText);
-            var diagnostic = new Diagnostic(actual.Span, DiagnosticId.TokenExpected, message);
+            var diagnostic = new Diagnostic(span, DiagnosticId.TokenExpected, message);
             diagnostics.Add(diagnostic);
         }
 

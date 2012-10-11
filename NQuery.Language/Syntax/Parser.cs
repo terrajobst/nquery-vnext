@@ -6,14 +6,16 @@ namespace NQuery.Language
 {
     internal sealed class Parser
     {
+        private readonly TextBuffer _textBuffer;
         private readonly SyntaxTree _syntaxTree;
         private readonly List<SyntaxToken> _tokens = new List<SyntaxToken>();
         private int _tokenIndex;
 
-        public Parser(string source, SyntaxTree syntaxTree)
+        public Parser(TextBuffer textBuffer, SyntaxTree syntaxTree)
         {
+            _textBuffer = textBuffer;
             _syntaxTree = syntaxTree;
-            LexAllTokens(source);
+            LexAllTokens(textBuffer);
         }
 
         private SyntaxToken Current
@@ -26,9 +28,9 @@ namespace NQuery.Language
             get { return Peek(1); }
         }
 
-        private void LexAllTokens(string source)
+        private void LexAllTokens(TextBuffer textBuffer)
         {
-            var lexer = new Lexer(_syntaxTree, source);
+            var lexer = new Lexer(_syntaxTree, textBuffer.Text);
             var badTokens = new List<SyntaxToken>();
 
             SyntaxToken token;
@@ -88,16 +90,51 @@ namespace NQuery.Language
         {
             return Current.Kind == kind
                        ? NextToken()
-                       : CreateMissingToken(kind, SyntaxKind.BadToken);
+                       : CreateMissingToken(kind);
         }
 
-        private SyntaxToken CreateMissingToken(SyntaxKind kind, SyntaxKind contextualKind)
+        private void SkipTokens(Func<SyntaxToken, bool> stopPredicate)
         {
-            var start = Current.FullSpan.Start;
-            var span = new TextSpan(start, 0);
+            if (stopPredicate(Current))
+                return;
+
+            var tokens = new List<SyntaxToken>();
+            do
+            {
+                tokens.Add(NextToken());
+            } while (!stopPredicate(Current));
+
+            var current = _tokens[_tokenIndex];
+            var skippedTokensTrivia = CreateSkippedTokensTrivia(tokens);
+
+            var leadingTrivia = new List<SyntaxTrivia>(current.LeadingTrivia.Count + 1);
+            leadingTrivia.Add(skippedTokensTrivia);
+            leadingTrivia.AddRange(current.LeadingTrivia);
+
+            _tokens[_tokenIndex] = current.WithLeadingTrivia(leadingTrivia);
+        }
+
+        private SyntaxToken CreateMissingToken(SyntaxKind kind)
+        {
+            var missingTokenSpan = new TextSpan(Current.FullSpan.Start, 0);
+            var diagnosticSpan = GetDiagnosticSpanForMissingToken();
             var diagnostics = new List<Diagnostic>(1);
-            diagnostics.ReportTokenExpected(Current, kind);
-            return new SyntaxToken(_syntaxTree, kind, contextualKind, true, span, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
+            diagnostics.ReportTokenExpected(diagnosticSpan, Current, kind);
+            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
+        }
+
+        private TextSpan GetDiagnosticSpanForMissingToken()
+        {
+            if (_tokenIndex > 0)
+            {
+                var previousToken = _tokens[_tokenIndex - 1];
+                var previousTokenLine = _textBuffer.GetLineFromPosition(previousToken.Span.End);
+                var currentTokenLine = _textBuffer.GetLineFromPosition(Current.Span.Start);
+                if (currentTokenLine != previousTokenLine)
+                    return new TextSpan(previousToken.Span.End, 2);
+            }
+
+            return Current.Span;
         }
 
         private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
@@ -106,8 +143,7 @@ namespace NQuery.Language
             var end = tokens.Last().FullSpan.End;
             var span = TextSpan.FromBounds(start, end);
             var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            var trivia = new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
-            return trivia;
+            return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
         }
 
         public CompilationUnitSyntax ParseRootQuery()
@@ -129,35 +165,14 @@ namespace NQuery.Language
             if (Current.Kind == SyntaxKind.EndOfFileToken)
                 return NextToken();
 
-            var tokens = new List<SyntaxToken>();
-
-            while (Current.Kind != SyntaxKind.EndOfFileToken)
-                tokens.Add(NextToken());
+            var firstUnexpecteToken = Current;
+            SkipTokens(t => t.Kind == SyntaxKind.EndOfFileToken);
 
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
             var diagnostics = new List<Diagnostic>(1);
-            diagnostics.ReportTokenExpected(tokens[0], SyntaxKind.EndOfFileToken);
-            tokens[0] = tokens[0].WithDiagnotics(diagnostics);
-
-            var skippedTokensTrivia = CreateSkippedTokensTrivia(tokens);
-
-            var leadingTrivia = new List<SyntaxTrivia>(endOfFileToken.LeadingTrivia.Count + 1);
-            leadingTrivia.Add(skippedTokensTrivia);
-            leadingTrivia.AddRange(endOfFileToken.LeadingTrivia);
-
-            var result = new SyntaxToken(_syntaxTree,
-                                         endOfFileToken.Kind,
-                                         endOfFileToken.ContextualKind,
-                                         endOfFileToken.IsMissing,
-                                         endOfFileToken.Span,
-                                         endOfFileToken.Text,
-                                         endOfFileToken.Value,
-                                         leadingTrivia,
-                                         endOfFileToken.TrailingTrivia,
-                                         endOfFileToken.Diagnostics);
-
-            return result;
+            diagnostics.ReportTokenExpected(firstUnexpecteToken.Span, firstUnexpecteToken, SyntaxKind.EndOfFileToken);
+            return endOfFileToken.WithDiagnotics(diagnostics);
         }
 
         private ExpressionSyntax ParseExpression()
@@ -589,10 +604,19 @@ namespace NQuery.Language
 
             while (true)
             {
+                var oldIndex = _tokenIndex;
+
                 var argument = ParseExpression();
                 expressionsWithCommas.Add(argument);
 
-                if (Current.Kind != SyntaxKind.CommaToken && minimumNumberOfItems <= expressionsWithCommas.Count)
+                if (_tokenIndex == oldIndex)
+                    SkipTokens(t => SyntaxFacts.CanFollowArgument(t.Kind));
+
+                var missingComma = Current.Kind != SyntaxKind.CommaToken;
+                var enoughParameters = minimumNumberOfItems <= expressionsWithCommas.Count;
+                var canStartExpression = SyntaxFacts.CanStartExpression(Current.Kind);
+
+                if (missingComma && enoughParameters && !canStartExpression)
                     break;
 
                 var comma = Match(SyntaxKind.CommaToken);
@@ -859,12 +883,17 @@ namespace NQuery.Language
 
             while (true)
             {
+                var oldIndex = _tokenIndex;
+
                 var selectColumn = ParseSelectColumn();
                 columnsWithCommas.Add(selectColumn);
 
-                if (Current.Kind != SyntaxKind.CommaToken)
-                    break;
+                if (_tokenIndex == oldIndex)
+                    SkipTokens(t => SyntaxFacts.CanFollowSelectColumn(t.Kind));
 
+                if (Current.Kind != SyntaxKind.CommaToken && !SyntaxFacts.CanStartExpression(Current.Kind))
+                    break;
+                
                 var comma = Match(SyntaxKind.CommaToken);
                 columnsWithCommas.Add(comma);
             }
@@ -894,8 +923,18 @@ namespace NQuery.Language
             }
             
             var expression = ParseExpression();
-            var alias = ParseOptionalAlias();
+            var alias = ParseOptionalColumnAlias();
             return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
+        }
+
+        private AliasSyntax ParseOptionalColumnAlias()
+        {
+            var isAlias = Peek(0).Kind == SyntaxKind.AsKeyword ||
+                          Peek(0).Kind == SyntaxKind.IdentifierToken && SyntaxFacts.CanFollowSelectColumn(Peek(1).Kind);
+
+            return isAlias
+                       ? ParseAlias()
+                       : null;
         }
 
         private FromClauseSyntax ParseFromClause()
@@ -1064,10 +1103,14 @@ namespace NQuery.Language
 
         private AliasSyntax ParseOptionalAlias()
         {
-            var asKeyword = NextTokenIf(SyntaxKind.AsKeyword);
-            if (asKeyword == null && Current.Kind != SyntaxKind.IdentifierToken)
-                return null;
+            return Current.Kind == SyntaxKind.AsKeyword || Current.Kind == SyntaxKind.IdentifierToken
+                       ? ParseAlias()
+                       : null;
+        }
 
+        private AliasSyntax ParseAlias()
+        {
+            var asKeyword = NextTokenIf(SyntaxKind.AsKeyword);
             var identifier = Match(SyntaxKind.IdentifierToken);
             return new AliasSyntax(_syntaxTree, asKeyword, identifier);
         }
