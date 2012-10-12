@@ -24,13 +24,13 @@ namespace NQuery.Language.VSEditor
         {
             var syntaxTree = await _document.GetSyntaxTreeAsync();
             var currentSelection = GetCurrentSelection();
-            var extendedelection = ExtendSelection(syntaxTree, currentSelection);
+            var extendedSelection = ExtendSelection(syntaxTree, currentSelection);
 
-            if (currentSelection == extendedelection)
+            if (currentSelection == extendedSelection)
                 return;
 
             _selectionStack.Push(currentSelection);
-            Select(extendedelection);
+            Select(extendedSelection);
         }
 
         public void ShrinkSelection()
@@ -57,6 +57,7 @@ namespace NQuery.Language.VSEditor
             var snapshotSpan = new SnapshotSpan(snapshot, textSpan.Start, textSpan.Length);
             _textView.Selection.SelectionChanged -= SelectionOnSelectionChanged;
             _textView.Selection.Select(snapshotSpan, false);
+            _textView.Caret.MoveTo(snapshotSpan.End);
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;
         }
 
@@ -67,7 +68,7 @@ namespace NQuery.Language.VSEditor
 
         private static TextSpan ExtendSelection(SyntaxTree syntaxTree, TextSpan selectedSpan)
         {
-            var token = syntaxTree.Root.FindTokenOnLeft(selectedSpan.Start);
+            var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
             if (!selectedSpan.Contains(token.Span))
                 return token.Span;
 

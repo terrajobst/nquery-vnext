@@ -8,6 +8,13 @@ namespace NQuery.Language
             return token.GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(position);
         }
 
+        public static SyntaxToken GetPreviousTokenIfEndOfFile(this SyntaxToken token)
+        {
+            return token.Kind != SyntaxKind.EndOfFileToken
+                       ? token
+                       : token.GetPreviousToken(includeZeroLength: false, includeSkippedTokens: true) ?? token;
+        }
+
         public static SyntaxToken GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(this SyntaxToken token, int position)
         {
             var previous = token.GetPreviousToken(includeZeroLength: false, includeSkippedTokens: true);
