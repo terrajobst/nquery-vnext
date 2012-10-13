@@ -21,7 +21,7 @@ namespace NQuery.Language.VSEditor.BraceMatching
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             var document = DocumentManager.GetDocument(buffer);
-            return new NQueryBraceTagger(textView, buffer, document, BraceMatchingService) as ITagger<T>;
+            return new NQueryBraceTagger(textView, document, BraceMatchingService) as ITagger<T>;
         }
     }
 }

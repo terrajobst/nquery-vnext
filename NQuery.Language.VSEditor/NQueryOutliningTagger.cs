@@ -18,6 +18,7 @@ namespace NQuery.Language.VSEditor
         {
             _document = document;
             _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            InvalidateTags();
         }
 
         private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)

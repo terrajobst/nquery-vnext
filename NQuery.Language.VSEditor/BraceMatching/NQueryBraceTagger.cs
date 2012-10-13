@@ -15,14 +15,14 @@ namespace NQuery.Language.VSEditor.BraceMatching
         private readonly INQueryDocument _document;
         private readonly IBraceMatchingService _braceMatchingService;
 
-        public NQueryBraceTagger(ITextView textView, ITextBuffer textBuffer, INQueryDocument document, IBraceMatchingService braceMatchingService)
-            : base()
+        public NQueryBraceTagger(ITextView textView, INQueryDocument document, IBraceMatchingService braceMatchingService)
         {
             _textView = textView;
             _document = document;
             _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             _braceMatchingService = braceMatchingService;
+            InvalidateTags();
         }
 
         private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)

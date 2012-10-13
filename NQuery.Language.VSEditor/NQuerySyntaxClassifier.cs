@@ -20,6 +20,7 @@ namespace NQuery.Language.VSEditor
             _classificationService = classificationService;
             _document = document;
             _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            InvalidateTags();
         }
 
         private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)

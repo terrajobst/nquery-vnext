@@ -16,6 +16,7 @@ namespace NQuery.Language.VSEditor
         {
             _document = document;
             _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            InvalidateTags();
         }
 
         private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
