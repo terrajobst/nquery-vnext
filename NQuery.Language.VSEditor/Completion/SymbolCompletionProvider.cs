@@ -25,14 +25,9 @@ namespace NQuery.Language.VSEditor.Completion
                 return Enumerable.Empty<CompletionItem>();
 
             var propertyAccessExpression = GetPropertyAccessExpression(root, position);
-
-            var completions = propertyAccessExpression == null
-                                  ? GetGlobalCompletions(semanticModel, position)
-                                  : GetMemberCompletions(semanticModel, propertyAccessExpression);
-
-            var sortedCompletions = completions.OrderBy(c => c.InsertionText);
-
-            return sortedCompletions;
+            return propertyAccessExpression == null
+                       ? GetGlobalCompletions(semanticModel, position)
+                       : GetMemberCompletions(semanticModel, propertyAccessExpression);
         }
 
         private static IEnumerable<CompletionItem> GetGlobalCompletions(SemanticModel semanticModel, int position)

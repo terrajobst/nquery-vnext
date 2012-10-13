@@ -86,11 +86,12 @@ namespace NQuery.Language.VSEditor.Completion
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, triggerPosition);
             var applicableSpan = token == null ? new TextSpan(triggerPosition, 0) : token.Span;
 
-            var items = _completionItemProviders.SelectMany(p => p.GetItems(semanticModel, applicableSpan.Start)).ToArray();
+            var items = _completionItemProviders.SelectMany(p => p.GetItems(semanticModel, triggerPosition));
+            var sortedItems = items.OrderBy(c => c.InsertionText).ToArray();
 
             // Let observers know that we've a new model.
 
-            Model = new CompletionModel(semanticModel, applicableSpan, items);
+            Model = new CompletionModel(semanticModel, applicableSpan, sortedItems);
         }
 
         private static SyntaxToken GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
