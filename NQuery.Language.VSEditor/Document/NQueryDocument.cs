@@ -25,6 +25,7 @@ namespace NQuery.Language.VSEditor.Document
             _syntaxTreeProducer = new ResultProducer<ITextSnapshot, SyntaxTree>(ParseSyntaxTree);
             _semanticModelProducer = new ResultProducer<Compilation, SemanticModel>(GetSemanticModel);
             _compilation = Compilation.Empty.WithDataContext(DataContext.Default);
+            UpdateSyntaxTree();
         }
 
         private void TextBufferOnPostChanged(object sender, EventArgs e)
