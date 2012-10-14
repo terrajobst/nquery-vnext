@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -55,201 +56,85 @@ namespace NQuery.Language.VSEditor.SignatureHelp
             return start <= position && position <= end;
         }
 
-        public static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<MethodSymbol> symbols)
+        private static bool IsCommaToken(SymbolMarkupNode node)
         {
-            return symbols.Select(ToSignatureItem);
+            return node.Kind == SymbolMarkupKind.Punctuation && node.Text == ",";
         }
 
-        public static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<FunctionSymbol> symbols)
+        private static bool IsAsKeyword(SymbolMarkupNode node)
         {
-            return symbols.Select(ToSignatureItem);
+            return node.Kind == SymbolMarkupKind.Keyword && SyntaxFacts.GetKeywordKind(node.Text) == SyntaxKind.AsKeyword;
         }
 
-        public static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<AggregateSymbol> symbols)
+        private static SignatureItem ToSignatureItem(this SymbolMarkup markup, Func<SymbolMarkupNode, bool> separatorPredicate)
         {
-            return symbols.Select(ToSignatureItem);
-        }
-
-        public static SignatureItem ToSignatureItem(this MethodSymbol symbol)
-        {
-            var parameters = new List<ParameterItem>();
             var sb = new StringBuilder();
+            var parameterStart = 0;
+            var nextNonWhitespaceStartsParameter = false;
+            var parameterSpans = new List<TextSpan>();
+            var parameterNames = new List<string>();
 
-            sb.Append(symbol.Name);
-            sb.Append("(");
-
-            var isFirst = true;
-            foreach (var parameter in symbol.Parameters)
+            foreach (var node in markup.Nodes)
             {
-                if (isFirst)
-                    isFirst = false;
-                else
-                    sb.Append(", ");
+                var isParameterName = node.Kind == SymbolMarkupKind.ParameterName;
+                var isWhitespace = node.Kind == SymbolMarkupKind.Whitespace;
+                var isLeftParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == "(";
+                var isRightParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == ")";
+                var isSeparator = separatorPredicate(node);
 
-                var start = sb.Length;
+                if (isParameterName)
+                {
+                    parameterNames.Add(node.Text);
+                }
 
-                sb.Append(parameter.Name);
-                sb.Append(" AS ");
-                sb.Append(parameter.Type.Name.ToUpper());
+                if (isLeftParenthesis)
+                {
+                    nextNonWhitespaceStartsParameter = true;
+                }
+                else if (isSeparator || isRightParenthesis)
+                {
+                    var end = sb.Length;
+                    var span = TextSpan.FromBounds(parameterStart, end);
+                    parameterSpans.Add(span);
+                    nextNonWhitespaceStartsParameter = true;
+                }
+                else if (!isWhitespace && nextNonWhitespaceStartsParameter)
+                {
+                    parameterStart = sb.Length;
+                    nextNonWhitespaceStartsParameter = false;
+                }
 
-                var end = sb.Length;
-                var span = TextSpan.FromBounds(start, end);
-                parameters.Add(new ParameterItem(parameter.Name, "Docs for " + parameter.Name, span));
+                sb.Append(node.Text);
             }
 
-            sb.Append(")");
-            sb.Append(" AS ");
-            sb.Append(symbol.Type.Name.ToUpper());
-
+            var parameters = parameterSpans.Zip(parameterNames, (s, n) => new ParameterItem(n, string.Empty, s)).ToArray();
             var content = sb.ToString();
-
-            return new SignatureItem(content, "Docs for " + symbol.Name, parameters);
+            return new SignatureItem(content, string.Empty, parameters);
         }
 
-        public static SignatureItem ToSignatureItem(this FunctionSymbol symbol)
+        public static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<Symbol> symbols)
         {
-            var parameters = new List<ParameterItem>();
-            var sb = new StringBuilder();
-
-            sb.Append(symbol.Name);
-            sb.Append("(");
-
-            var isFirst = true;
-            foreach (var parameter in symbol.Parameters)
-            {
-                if (isFirst)
-                    isFirst = false;
-                else
-                    sb.Append(", ");
-
-                var start = sb.Length;
-
-                sb.Append(parameter.Name);
-                sb.Append(" AS ");
-                sb.Append(parameter.Type.Name.ToUpper());
-
-                var end = sb.Length;
-                var span = TextSpan.FromBounds(start, end);
-                parameters.Add(new ParameterItem(parameter.Name, "Docs for " + parameter.Name, span));
-            }
-
-            sb.Append(")");
-            sb.Append(" AS ");
-            sb.Append(symbol.Type.Name.ToUpper());
-
-            var content = sb.ToString();
-
-            return new SignatureItem(content, "Docs for " + symbol.Name, parameters);
+            return symbols.Select(ToSignatureItem);
         }
 
-        public static SignatureItem ToSignatureItem(this AggregateSymbol symbol)
+        public static SignatureItem ToSignatureItem(this Symbol symbol)
         {
-            var parameters = new List<ParameterItem>();
-            var sb = new StringBuilder();
-
-            sb.Append("AGGREGATE ");
-            sb.Append(symbol.Name);
-            sb.Append("(");
-
-            var p1Start = sb.Length;
-            sb.Append("expression");
-            var p1End = sb.Length;
-
-            sb.Append(")");
-
-            parameters.Add(new ParameterItem("expression", null, TextSpan.FromBounds(p1Start, p1End)));
-
-            var content = sb.ToString();
-
-            return new SignatureItem(content, "Docs for " + symbol.Name, parameters);
+            return SymbolMarkup.ForSymbol(symbol).ToSignatureItem(IsCommaToken);
         }
 
         public static SignatureItem GetCastSignatureItem()
         {
-            var parameters = new List<ParameterItem>();
-            var sb = new StringBuilder();
-
-            sb.Append("CAST(");
-
-            var p1Start = sb.Length;
-            sb.Append("expression");
-            var p1End = sb.Length;
-
-            sb.Append(" AS ");
-
-            var p2Start = sb.Length;
-            sb.Append("dataType");
-            var p2End = sb.Length;
-
-            sb.Append(")");
-
-            parameters.Add(new ParameterItem("expression", "expression of any type", TextSpan.FromBounds(p1Start, p1End)));
-            parameters.Add(new ParameterItem("dataType", "the type the epression is converted to", TextSpan.FromBounds(p2Start, p2End)));
-
-            var content = sb.ToString();
-
-            return new SignatureItem(content, "Converts an expression of one data type to another", parameters);
+            return SymbolMarkup.ForCastSymbol().ToSignatureItem(IsAsKeyword);
         }
 
         public static SignatureItem GetCoalesceSignatureItem()
         {
-            var parameters = new List<ParameterItem>();
-            var sb = new StringBuilder();
-
-            sb.Append("COALESCE(");
-
-            var p1Start = sb.Length;
-            sb.Append("expression1");
-            var p1End = sb.Length;
-
-            sb.Append(", ");
-
-            var p2Start = sb.Length;
-            sb.Append("expression2");
-            var p2End = sb.Length;
-
-            sb.Append(" ");
-
-            var pNStart = sb.Length;
-            sb.Append("[, ...]");
-            var pNEnd = sb.Length;
-
-            sb.Append(")");
-
-            parameters.Add(new ParameterItem("expression1", "expression of any type", TextSpan.FromBounds(p1Start, p1End)));
-            parameters.Add(new ParameterItem("expression2", "expression of any type", TextSpan.FromBounds(p2Start, p2End)));
-            parameters.Add(new ParameterItem("expressionN", "expression of any type", TextSpan.FromBounds(pNStart, pNEnd)));
-
-            var content = sb.ToString();
-
-            return new SignatureItem(content, "Returns the first nonnull expression among its arguments.", parameters);
+            return SymbolMarkup.ForCoalesceSymbol().ToSignatureItem(IsCommaToken);
         }
 
         public static SignatureItem GetNullIfSignatureItem()
         {
-            var parameters = new List<ParameterItem>();
-            var sb = new StringBuilder();
-
-            sb.Append("NULLIF(");
-
-            var p1Start = sb.Length;
-            sb.Append("expression1");
-            var p1End = sb.Length;
-
-            sb.Append(", ");
-
-            var p2Start = sb.Length;
-            sb.Append("expression2");
-            var p2End = sb.Length;
-
-            sb.Append(")");
-
-            parameters.Add(new ParameterItem("expression1", "expression of any type", TextSpan.FromBounds(p1Start, p1End)));
-            parameters.Add(new ParameterItem("expression2", "expression of any type", TextSpan.FromBounds(p2Start, p2End)));
-
-            var content = sb.ToString();
-
-            return new SignatureItem(content, "Returns a null value if the two specified expressions are equal.", parameters);
+            return SymbolMarkup.ForNullIfSymbol().ToSignatureItem(IsCommaToken);
         }
     }
 }
