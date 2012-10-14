@@ -112,7 +112,7 @@ namespace NQuery.Language.VSEditor
                 case SymbolMarkupKind.VariableName:
                     return GetClassifiedText(markupNode.Text, _semanticClassificationService.Variable);
                 case SymbolMarkupKind.ParameterName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Variable); // TODO: Fix this
+                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Identifier); // TODO: Fix this
                 case SymbolMarkupKind.FunctionName:
                     return GetClassifiedText(markupNode.Text, _semanticClassificationService.Function);
                 case SymbolMarkupKind.AggregateName:
@@ -122,7 +122,7 @@ namespace NQuery.Language.VSEditor
                 case SymbolMarkupKind.PropertyName:
                     return GetClassifiedText(markupNode.Text, _semanticClassificationService.Property);
                 case SymbolMarkupKind.TypeName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.SchemaTable); // TODO: Fix this
+                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Identifier); // TODO: Fix this
                 default:
                     throw new ArgumentOutOfRangeException();
             }
