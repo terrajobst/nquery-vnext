@@ -107,6 +107,7 @@
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
     <Compile Include="Completion\JoinCompletionProvider.cs" />
+    <Compile Include="Completion\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\TypeCompletionProvider.cs" />
     <Compile Include="Document\NQueryDocumentManager.cs" />
     <Compile Include="Document\INQueryDocument.cs" />

@@ -15,13 +15,11 @@ namespace NQuery.Language.VSEditor.Completion
             var root = semanticModel.Compilation.SyntaxTree.Root;
 
             // We don't want to show a completion when typing an alias name.
-            // The CTE name and column list as well the name of a derived table count
-            // as an alias context, too.
-            if (InAlias(root, position) || InCteName(root,position) || InCteColumnList(root, position) || InDerivedTableName(root, position))
+            if (root.InUserGivenName(position))
                 return Enumerable.Empty<CompletionItem>();
 
             // Comments and literals don't get completion information
-            if (InComment(root, position) || InLiteral(root, position))
+            if (root.InComment(position) || root.InLiteral(position))
                 return Enumerable.Empty<CompletionItem>();
 
             var propertyAccessExpression = GetPropertyAccessExpression(root, position);
@@ -32,10 +30,27 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static IEnumerable<CompletionItem> GetGlobalCompletions(SemanticModel semanticModel, int position)
         {
-            var symbolCompletions = GetGlobalSymbolCompletions(semanticModel, position);
-            var keywordCompletions = GetKeywordCompletions();
-            var completions = symbolCompletions.Concat(keywordCompletions);
-            return completions;
+            var symbols = semanticModel.LookupSymbols(position);
+
+            // In the global context there two different cases:
+            //
+            // (1) We are in a table reference context
+            // (2) We are somewhere else
+            //
+            // In case (1) we can ONLY see table symbols and in (2)
+            // we can see all symbols EXCEPT table symbols.
+
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var findTokenContext = syntaxTree.Root.FindTokenContext(position);
+            var isTableContext = findTokenContext.Parent is TableReferenceSyntax;
+
+            var filteredSymbols = from s in symbols
+                                  let isTable = s is TableSymbol
+                                  where isTable && isTableContext ||
+                                        !isTable && !isTableContext
+                                  select s;
+
+            return CreateSymbolCompletions(filteredSymbols);
         }
 
         private static IEnumerable<CompletionItem> GetMemberCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
@@ -108,47 +123,6 @@ namespace NQuery.Language.VSEditor.Completion
             return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
-        private static bool InComment(SyntaxNode root, int position)
-        {
-            var token = root.FindTokenOnLeft(position);
-            return (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
-                    where t.Span.ContainsOrTouches(position)
-                    where t.Kind == SyntaxKind.SingleLineCommentTrivia ||
-                          t.Kind == SyntaxKind.MultiLineCommentTrivia
-                    select t).Any();
-        }
-
-        private static bool InLiteral(SyntaxNode root, int position)
-        {
-            var token = root.FindTokenOnLeft(position);
-            return token.Span.ContainsOrTouches(position) && token.Kind.IsLiteral();
-        }
-
-        private static IEnumerable<CompletionItem> GetGlobalSymbolCompletions(SemanticModel semanticModel, int position)
-        {
-            var symbols = semanticModel.LookupSymbols(position);
-
-            // In the global context there two different cases:
-            //
-            // (1) We are in a table reference context
-            // (2) We are somewhere else
-            //
-            // In case (1) we can ONLY see table symbols and in (2)
-            // we can see all symbols EXCEPT table symbols.
-
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var findTokenContext = syntaxTree.Root.FindTokenContext(position);
-            var isTableContext = findTokenContext.Parent is TableReferenceSyntax;
-
-            var filteredSymbols = from s in symbols
-                                  let isTable = s is TableSymbol
-                                  where isTable && isTableContext ||
-                                        !isTable && !isTableContext
-                                  select s;
-
-            return CreateSymbolCompletions(filteredSymbols);
-        }
-
         private static IEnumerable<CompletionItem> CreateSymbolCompletions(IEnumerable<Symbol> symbols)
         {
             return from s in symbols
@@ -202,13 +176,6 @@ namespace NQuery.Language.VSEditor.Completion
             var description = symbol.ToString();
             var glyph = GetGlyph(symbol);
             return new CompletionItem(displayText, insertionText, description, glyph);
-        }
-
-        private static IEnumerable<CompletionItem> GetKeywordCompletions()
-        {
-            return from k in SyntaxFacts.GetKeywordKinds()
-                   let text = k.GetText()
-                   select new CompletionItem(text, text, null, NQueryGlyph.Keyword);
         }
 
         private static NQueryGlyph GetGlyph(Symbol symbol)
