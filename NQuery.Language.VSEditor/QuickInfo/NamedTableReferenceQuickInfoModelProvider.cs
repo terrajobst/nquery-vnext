@@ -1,30 +1,27 @@
 using System.ComponentModel.Composition;
-using System.Linq;
 
 namespace NQuery.Language.VSEditor
 {
     [Export(typeof(IQuickInfoModelProvider))]
-    internal sealed class NamedTableReferenceQuickInfoModelProvider : IQuickInfoModelProvider
+    internal sealed class NamedTableReferenceQuickInfoModelProvider : QuickInfoModelProvider<NamedTableReferenceSyntax>
     {
-        public QuickInfoModel GetModel(SemanticModel semanticModel, int position)
+        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, NamedTableReferenceSyntax node)
         {
-            var token = semanticModel.Compilation.SyntaxTree.Root.FindToken(position);
-            if (token == null || !token.Span.Contains(position) || token.Parent == null)
-                return null;
-
-            var node = token.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().FirstOrDefault();
-            if (node == null)
-                return null;
-
             var symbol = semanticModel.GetDeclaredSymbol(node);
             if (symbol == null)
                 return null;
 
             if (node.TableName.Span.Contains(position))
-                return new QuickInfoModel(node.TableName, symbol.Table);
+            {
+                SyntaxNodeOrToken nodeOrToken = node.TableName;
+                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol.Table);
+            }
 
             if (node.Alias != null && node.Alias.Span.Contains(position))
-                return new QuickInfoModel(node.Alias, symbol);
+            {
+                SyntaxNodeOrToken nodeOrToken = node.Alias;
+                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol);
+            }
 
             return null;
         }

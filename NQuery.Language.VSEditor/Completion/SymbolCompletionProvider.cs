@@ -173,7 +173,7 @@ namespace NQuery.Language.VSEditor.Completion
         {
             var displayText = symbol.Name;
             var insertionText = symbol.Name;
-            var description = SymbolMarkup.FromSymbol(symbol).ToString();
+            var description = SymbolMarkup.ForSymbol(symbol).ToString();
             var glyph = symbol.GetGlyph();
             return new CompletionItem(displayText, insertionText, description, glyph);
         }

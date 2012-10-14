@@ -13,20 +13,11 @@ namespace NQuery.Language.VSEditor
                 return null;
 
             var node = token.Parent.AncestorsAndSelf().OfType<T>().FirstOrDefault();
-            if (node == null)
-                return null;
-
-            if (!IsMatch(semanticModel, position, node))
-                return null;
-
-            var symbol = GetSymbol(semanticModel, position, node);
-            if (symbol == null)
-                return null;
-
-            return new QuickInfoModel(token, symbol);
+            return node == null
+                       ? null
+                       : CreateModel(semanticModel, position, node);
         }
 
-        protected abstract bool IsMatch(SemanticModel semanticModel, int position, T node);
-        protected abstract Symbol GetSymbol(SemanticModel semanticModel, int position, T node);
+        protected abstract QuickInfoModel CreateModel(SemanticModel semanticModel, int position, T node);
     }
 }

@@ -5,12 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Media.TextFormatting;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
-using Microsoft.VisualStudio.Text.Formatting;
 using NQuery.Language.Symbols;
 
 using Span = Microsoft.VisualStudio.Text.Span;
@@ -47,11 +45,10 @@ namespace NQuery.Language.VSEditor
                 return;
 
             var model = quickInfoManager.Model;
-            var textSpan = model.NodeOrToken.Span;
-            var symbol = model.Symbol;
+            var textSpan = model.Span;
             var span = new Span(textSpan.Start, textSpan.Length);
             var currentSnapshot = session.TextView.TextBuffer.CurrentSnapshot;
-            var content = GetContent(symbol);
+            var content = GetContent(model);
             if (content == null)
                 return;
 
@@ -59,14 +56,13 @@ namespace NQuery.Language.VSEditor
             quickInfoContent.Add(content);
         }
 
-        private FrameworkElement GetContent(Symbol symbol)
+        private FrameworkElement GetContent(QuickInfoModel model)
         {
-            var markup = SymbolMarkup.FromSymbol(symbol);
-            if (markup.Nodes.Count == 0)
+            if (model.Markup.Nodes.Count == 0)
                 return null;
 
-            var glyph = GetGlyph(symbol);
-            var textBlock = GetTextBlock(markup);
+            var glyph = GetGlyph(model.Glyph);
+            var textBlock = GetTextBlock(model.Markup);
             var stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Horizontal;
             stackPanel.Children.Add(glyph);
@@ -74,13 +70,13 @@ namespace NQuery.Language.VSEditor
             return stackPanel;
         }
 
-        private Image GetGlyph(Symbol symbol)
+        private Image GetGlyph(NQueryGlyph glyph)
         {
             return new Image
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 5, 0),
-                Source = _glyphService.GetGlyph(symbol)
+                Source = _glyphService.GetGlyph(glyph)
             };
         }
 

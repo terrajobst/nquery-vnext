@@ -1,19 +1,19 @@
 using System.ComponentModel.Composition;
-using NQuery.Language.Symbols;
 
 namespace NQuery.Language.VSEditor
 {
     [Export(typeof(IQuickInfoModelProvider))]
     internal sealed class DerivedTableReferenceQuickInfoModelProvider : QuickInfoModelProvider<DerivedTableReferenceSyntax>
     {
-        protected override bool IsMatch(SemanticModel semanticModel, int position, DerivedTableReferenceSyntax node)
+        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, DerivedTableReferenceSyntax node)
         {
-            return node.Name.Span.Contains(position);
-        }
+            if (!node.Name.Span.Contains(position))
+                return null;
 
-        protected override Symbol GetSymbol(SemanticModel semanticModel, int position, DerivedTableReferenceSyntax node)
-        {
-            return semanticModel.GetDeclaredSymbol(node);
+            var symbol = semanticModel.GetDeclaredSymbol(node);
+            return symbol == null
+                       ? null
+                       : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
         }
     }
 }

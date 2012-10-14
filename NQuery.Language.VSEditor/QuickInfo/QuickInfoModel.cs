@@ -4,23 +4,44 @@ namespace NQuery.Language.VSEditor
 {
     public sealed class QuickInfoModel
     {
-        private readonly SyntaxNodeOrToken _nodeOrToken;
-        private readonly Symbol _symbol;
+        private readonly SemanticModel _semanticModel;
+        private readonly TextSpan _span;
+        private readonly NQueryGlyph _glyph;
+        private readonly SymbolMarkup _markup;
 
-        public QuickInfoModel(SyntaxNodeOrToken nodeOrToken, Symbol symbol)
+        public QuickInfoModel(SemanticModel semanticModel, TextSpan span, NQueryGlyph glyph, SymbolMarkup markup)
         {
-            _nodeOrToken = nodeOrToken;
-            _symbol = symbol;
+            _semanticModel = semanticModel;
+            _span = span;
+            _glyph = glyph;
+            _markup = markup;
         }
 
-        public SyntaxNodeOrToken NodeOrToken
+        public static QuickInfoModel ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
         {
-            get { return _nodeOrToken; }
+            var glyph = symbol.GetGlyph();
+            var symbolMarkup = SymbolMarkup.ForSymbol(symbol);
+            return new QuickInfoModel(semanticModel, span, glyph, symbolMarkup);
         }
 
-        public Symbol Symbol
+        public SemanticModel SemanticModel
         {
-            get { return _symbol; }
+            get { return _semanticModel; }
+        }
+
+        public TextSpan Span
+        {
+            get { return _span; }
+        }
+
+        public NQueryGlyph Glyph
+        {
+            get { return _glyph; }
+        }
+
+        public SymbolMarkup Markup
+        {
+            get { return _markup; }
         }
     }
 }

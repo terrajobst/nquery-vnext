@@ -135,7 +135,6 @@
     <Compile Include="NQueryKeyProcessorProvider.cs" />
     <Compile Include="QuickInfo\CountAllExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\DerivedTableReferenceQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\ExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\FunctionInvocationExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\IQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\MethodInvocationExpressionQuickInfoModelProvider.cs" />

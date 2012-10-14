@@ -22,7 +22,7 @@ namespace NQuery.Language.Symbols
 
         public sealed override string ToString()
         {
-            return SymbolMarkup.FromSymbol(this).ToString();
+            return SymbolMarkup.ForSymbol(this).ToString();
         }
     }
 }

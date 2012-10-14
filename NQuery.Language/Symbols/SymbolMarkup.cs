@@ -23,10 +23,31 @@ namespace NQuery.Language.Symbols
             return string.Concat(_nodes.Select(n => n.Text));
         }
 
-        public static SymbolMarkup FromSymbol(Symbol symbol)
+        public static SymbolMarkup ForSymbol(Symbol symbol)
         {
             var nodes = new List<SymbolMarkupNode>();
             nodes.AppendSymbol(symbol);
+            return new SymbolMarkup(nodes);
+        }
+
+        public static SymbolMarkup ForCastSymbol()
+        {
+            var nodes = new List<SymbolMarkupNode>();
+            nodes.AppendCastSymbol();
+            return new SymbolMarkup(nodes);
+        }
+
+        public static SymbolMarkup ForCoalesceSymbol()
+        {
+            var nodes = new List<SymbolMarkupNode>();
+            nodes.AppendCoalesceSymbol();
+            return new SymbolMarkup(nodes);
+        }
+
+        public static SymbolMarkup ForNullIfSymbol()
+        {
+            var nodes = new List<SymbolMarkupNode>();
+            nodes.AppendNullIfSymbol();
             return new SymbolMarkup(nodes);
         }
     }

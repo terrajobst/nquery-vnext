@@ -50,7 +50,7 @@ namespace NQuery.Language.VSEditor
                     _model = value;
                     OnModelChanged(EventArgs.Empty);
 
-                    var hasData = _model != null && _model.Symbol != null;
+                    var hasData = _model != null;
                     var showSession = _session == null && hasData;
                     var hideSession = _session != null && !hasData;
 
@@ -60,9 +60,9 @@ namespace NQuery.Language.VSEditor
                     }
                     else if (showSession)
                     {
-                        var syntaxTree = _model.NodeOrToken.SyntaxTree;
+                        var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
                         var snapshot = _document.GetTextSnapshot(syntaxTree);
-                        var triggerPosition = _model.NodeOrToken.Span.Start;
+                        var triggerPosition = _model.Span.Start;
                         var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 
                         _session = _quickInfoBroker.CreateQuickInfoSession(_textView, triggerPoint, true);

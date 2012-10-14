@@ -5,6 +5,91 @@ namespace NQuery.Language.Symbols
 {
     internal static class SymbolMarkupBuilder
     {
+        public static void AppendSymbol(this ICollection<SymbolMarkupNode> markup, Symbol symbol)
+        {
+            switch (symbol.Kind)
+            {
+                case SymbolKind.BadSymbol:
+                case SymbolKind.BadTable:
+                    break;
+                case SymbolKind.Column:
+                    markup.AppendColumnSymbolInfo((ColumnSymbol)symbol);
+                    break;
+                case SymbolKind.SchemaTable:
+                    markup.AppendSchemaTableSymbolInfo((SchemaTableSymbol)symbol);
+                    break;
+                case SymbolKind.DerivedTable:
+                    markup.AppendDerivedTableSymbolInfo((DerivedTableSymbol)symbol);
+                    break;
+                case SymbolKind.TableInstance:
+                    markup.AppendTableInstanceSymbolInfo((TableInstanceSymbol)symbol);
+                    break;
+                case SymbolKind.ColumnInstance:
+                    markup.AppendColumnInstanceSymbolInfo((ColumnInstanceSymbol)symbol);
+                    break;
+                case SymbolKind.CommonTableExpression:
+                    markup.AppendCommonTableExpressionSymbolInfo((CommonTableExpressionSymbol)symbol);
+                    break;
+                case SymbolKind.Variable:
+                    markup.AppendVariableSymbolInfo((VariableSymbol)symbol);
+                    break;
+                case SymbolKind.Parameter:
+                    markup.AppendParameterSymbolInfo((ParameterSymbol)symbol);
+                    break;
+                case SymbolKind.Function:
+                    markup.AppendFunctionSymbolInfo((FunctionSymbol)symbol);
+                    break;
+                case SymbolKind.Aggregate:
+                    markup.AppendAggregateSymbolInfo((AggregateSymbol)symbol);
+                    break;
+                case SymbolKind.Method:
+                    markup.AppendMethodSymbolInfo((MethodSymbol)symbol);
+                    break;
+                case SymbolKind.Property:
+                    markup.AppendPropertySymbolInfo((PropertySymbol)symbol);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        public static void AppendCastSymbol(this ICollection<SymbolMarkupNode> markup)
+        {
+            markup.AppendKeyword("CAST");
+            markup.AppendPunctuation("(");
+            markup.AppendParameterName("expression");
+            markup.AppendSpace();
+            markup.AppendKeyword("AS");
+            markup.AppendSpace();
+            markup.AppendParameterName("dataType");
+            markup.AppendPunctuation(")");
+        }
+
+        public static void AppendCoalesceSymbol(this ICollection<SymbolMarkupNode> markup)
+        {
+            markup.AppendKeyword("COALESCE");
+            markup.AppendPunctuation("(");
+            markup.AppendParameterName("expression1");
+            markup.AppendPunctuation(",");
+            markup.AppendSpace();
+            markup.AppendParameterName("expression2");
+            markup.AppendPunctuation(",");
+            markup.AppendSpace();
+            markup.AppendParameterName("[, ...]");
+            markup.AppendPunctuation(")");
+        }
+
+        public static void AppendNullIfSymbol(this ICollection<SymbolMarkupNode> markup)
+        {
+            markup.AppendKeyword("NULLIF");
+            markup.AppendPunctuation("(");
+            markup.AppendParameterName("expression1");
+            markup.AppendPunctuation(",");
+            markup.AppendSpace();
+            markup.AppendParameterName("expression2");
+            markup.AppendPunctuation(")");
+        }
+
         private static void Append(this ICollection<SymbolMarkupNode> markup, SymbolMarkupKind kind, string text)
         {
             markup.Add(new SymbolMarkupNode(kind, text));
@@ -85,54 +170,6 @@ namespace NQuery.Language.Symbols
             markup.AppendKeyword("AS");
             markup.AppendSpace();
             markup.AppendType(type);
-        }
-
-        public static void AppendSymbol(this ICollection<SymbolMarkupNode> markup, Symbol symbol)
-        {
-            switch (symbol.Kind)
-            {
-                case SymbolKind.BadSymbol:
-                case SymbolKind.BadTable:
-                    break;
-                case SymbolKind.Column:
-                    markup.AppendColumnSymbolInfo((ColumnSymbol)symbol);
-                    break;
-                case SymbolKind.SchemaTable:
-                    markup.AppendSchemaTableSymbolInfo((SchemaTableSymbol)symbol);
-                    break;
-                case SymbolKind.DerivedTable:
-                    markup.AppendDerivedTableSymbolInfo((DerivedTableSymbol)symbol);
-                    break;
-                case SymbolKind.TableInstance:
-                    markup.AppendTableInstanceSymbolInfo((TableInstanceSymbol)symbol);
-                    break;
-                case SymbolKind.ColumnInstance:
-                    markup.AppendColumnInstanceSymbolInfo((ColumnInstanceSymbol)symbol);
-                    break;
-                case SymbolKind.CommonTableExpression:
-                    markup.AppendCommonTableExpressionSymbolInfo((CommonTableExpressionSymbol)symbol);
-                    break;
-                case SymbolKind.Variable:
-                    markup.AppendVariableSymbolInfo((VariableSymbol)symbol);
-                    break;
-                case SymbolKind.Parameter:
-                    markup.AppendParameterSymbolInfo((ParameterSymbol)symbol);
-                    break;
-                case SymbolKind.Function:
-                    markup.AppendFunctionSymbolInfo((FunctionSymbol)symbol);
-                    break;
-                case SymbolKind.Aggregate:
-                    markup.AppendAggregateSymbolInfo((AggregateSymbol)symbol);
-                    break;
-                case SymbolKind.Method:
-                    markup.AppendMethodSymbolInfo((MethodSymbol)symbol);
-                    break;
-                case SymbolKind.Property:
-                    markup.AppendPropertySymbolInfo((PropertySymbol)symbol);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
 
         private static void AppendColumnSymbolInfo(this ICollection<SymbolMarkupNode> markup, ColumnSymbol symbol)

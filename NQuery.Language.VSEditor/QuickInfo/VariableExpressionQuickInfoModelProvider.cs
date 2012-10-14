@@ -3,11 +3,17 @@ using System.ComponentModel.Composition;
 namespace NQuery.Language.VSEditor
 {
     [Export(typeof(IQuickInfoModelProvider))]
-    internal sealed class VariableExpressionQuickInfoModelProvider : ExpressionQuickInfoModelProvider<VariableExpressionSyntax>
+    internal sealed class VariableExpressionQuickInfoModelProvider : QuickInfoModelProvider<VariableExpressionSyntax>
     {
-        protected override bool IsMatch(SemanticModel semanticModel, int position, VariableExpressionSyntax node)
+        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, VariableExpressionSyntax node)
         {
-            return node.Name.Span.Contains(position);
+            if (!node.Name.Span.Contains(position))
+                return null;
+
+            var symbol = semanticModel.GetSymbol(node);
+            return symbol == null
+                       ? null
+                       : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
         }
     }
 }
