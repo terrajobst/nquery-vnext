@@ -27,5 +27,10 @@ namespace NQuery.Language.VSEditor.SignatureHelp
         {
             get { return _span; }
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} '{1}'", _span, _name);
+        }
     }
 }
