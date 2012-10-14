@@ -147,7 +147,7 @@ namespace NQuery.Language
                          select nodeOrToken).First();
 
             if (child.IsNode)
-                return child.AsNode().FindToken(position);
+                return child.AsNode().FindToken(position, descendIntoTrivia);
 
             var token = child.AsToken();
 
@@ -158,7 +158,7 @@ namespace NQuery.Language
                                        select t.Structure).FirstOrDefault();
 
                 if (triviaStructure != null)
-                    return triviaStructure.FindToken(position);
+                    return triviaStructure.FindToken(position, true);
             }
 
             return token;
