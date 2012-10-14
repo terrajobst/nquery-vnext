@@ -15,7 +15,7 @@ namespace NQuery.Language.VSEditor.Completion
             var token = syntaxTree.Root.FindTokenContext(position);
             var conditionedJoin = token.Parent.AncestorsAndSelf()
                                               .OfType<ConditionedJoinedTableReferenceSyntax>()
-                                              .FirstOrDefault(c => c.OnKeyword.Span.End <= position);
+                                              .FirstOrDefault(c => !c.OnKeyword.IsMissing && c.OnKeyword.Span.End <= position);
 
             if (conditionedJoin == null)
                 return Enumerable.Empty<CompletionItem>();
