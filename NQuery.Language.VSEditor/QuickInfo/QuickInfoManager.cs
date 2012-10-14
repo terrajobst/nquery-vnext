@@ -107,44 +107,69 @@ namespace NQuery.Language.VSEditor
 
         private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, SyntaxNode syntaxNode)
         {
-            var propertyAccessSyntax = syntaxNode as PropertyAccessExpressionSyntax;
-            if (propertyAccessSyntax != null)
-                return GetSymbol(position, semanticModel, propertyAccessSyntax);
-
-            var expressionNode = syntaxNode as ExpressionSyntax;
-            if (expressionNode != null)
-                return GetSymbol(semanticModel, expressionNode);
-
-            var namedTableReference = syntaxNode as NamedTableReferenceSyntax;
-            if (namedTableReference != null)
-                return GetSymbol(position, semanticModel, namedTableReference);
-
-            var derivedTableReference = syntaxNode as DerivedTableReferenceSyntax;
-            if (derivedTableReference != null)
-                return GetSymbol(position, semanticModel, derivedTableReference);
-
-            return null;
+            switch (syntaxNode.Kind)
+            {
+                case SyntaxKind.NameExpression:
+                    return GetSymbol(position, semanticModel, (NameExpressionSyntax)syntaxNode);
+                case SyntaxKind.VariableExpression:
+                    return GetSymbol(position, semanticModel, (VariableExpressionSyntax)syntaxNode);
+                case SyntaxKind.FunctionInvocationExpression:
+                    return GetSymbol(position, semanticModel, (FunctionInvocationExpressionSyntax)syntaxNode);
+                case SyntaxKind.CountAllExpression:
+                    return GetSymbol(position, semanticModel, (CountAllExpressionSyntax)syntaxNode);
+                case SyntaxKind.MethodInvocationExpression:
+                    return GetSymbol(position, semanticModel, (MethodInvocationExpressionSyntax)syntaxNode);
+                case SyntaxKind.PropertyAccessExpression:
+                    return GetSymbol(position, semanticModel, (PropertyAccessExpressionSyntax)syntaxNode);
+                case SyntaxKind.NamedTableReference:
+                    return GetSymbol(position, semanticModel, (NamedTableReferenceSyntax)syntaxNode);
+                case SyntaxKind.DerivedTableReference:
+                    return GetSymbol(position, semanticModel, (DerivedTableReferenceSyntax)syntaxNode);
+                default:
+                    return null;
+            }
         }
 
-        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, PropertyAccessExpressionSyntax node)
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, SyntaxToken nameToken, ExpressionSyntax node)
         {
-            var symbol = semanticModel.GetSymbol(node);
-            if (symbol != null)
+            if (nameToken.Span.Contains(position))
             {
-                if (node.Name.Span.Contains(position))
-                    return new QuickInfoModel(node.Name, symbol);
+                var symbol = semanticModel.GetSymbol(node);
+                if (symbol != null)
+                    return new QuickInfoModel(nameToken, symbol);
             }
 
             return null;
         }
 
-        private static QuickInfoModel GetSymbol(SemanticModel semanticModel, ExpressionSyntax node)
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, NameExpressionSyntax node)
         {
-            var symbol = semanticModel.GetSymbol(node);
-            if (symbol != null)
-                return new QuickInfoModel(node, symbol);
+            return GetSymbol(position, semanticModel, node.Name, node);
+        }
 
-            return null;
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, VariableExpressionSyntax node)
+        {
+            return GetSymbol(position, semanticModel, node.Name, node);
+        }
+
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, FunctionInvocationExpressionSyntax node)
+        {
+            return GetSymbol(position, semanticModel, node.Name, node);
+        }
+
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, CountAllExpressionSyntax node)
+        {
+            return GetSymbol(position, semanticModel, node.Name, node);
+        }
+
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, MethodInvocationExpressionSyntax node)
+        {
+            return GetSymbol(position, semanticModel, node.Name, node);
+        }
+
+        private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, PropertyAccessExpressionSyntax node)
+        {
+            return GetSymbol(position, semanticModel, node.Name, node);
         }
 
         private static QuickInfoModel GetSymbol(int position, SemanticModel semanticModel, DerivedTableReferenceSyntax node)
