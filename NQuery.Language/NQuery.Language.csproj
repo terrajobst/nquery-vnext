@@ -109,6 +109,10 @@
     <Compile Include="Runtime\ReflectionPropertySymbol.cs" />
     <Compile Include="Runtime\ReflectionProvider.cs" />
     <Compile Include="Symbols\AggregateSymbol.cs" />
+    <Compile Include="Symbols\SymbolMarkup.cs" />
+    <Compile Include="Symbols\SymbolMarkupBuilder.cs" />
+    <Compile Include="Symbols\SymbolMarkupKind.cs" />
+    <Compile Include="Symbols\SymbolMarkupNode.cs" />
     <Compile Include="Symbols\TableRelation.cs" />
     <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />

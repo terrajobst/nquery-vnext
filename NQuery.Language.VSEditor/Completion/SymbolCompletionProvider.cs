@@ -173,38 +173,9 @@ namespace NQuery.Language.VSEditor.Completion
         {
             var displayText = symbol.Name;
             var insertionText = symbol.Name;
-            var description = symbol.ToString();
-            var glyph = GetGlyph(symbol);
+            var description = SymbolMarkup.FromSymbol(symbol).ToString();
+            var glyph = symbol.GetGlyph();
             return new CompletionItem(displayText, insertionText, description, glyph);
-        }
-
-        private static NQueryGlyph GetGlyph(Symbol symbol)
-        {
-            switch (symbol.Kind)
-            {
-                case SymbolKind.Column:
-                    return NQueryGlyph.Column;
-                case SymbolKind.SchemaTable:
-                case SymbolKind.DerivedTable:
-                case SymbolKind.CommonTableExpression:
-                    return NQueryGlyph.Table;
-                case SymbolKind.TableInstance:
-                    return NQueryGlyph.TableInstance;
-                case SymbolKind.ColumnInstance:
-                    return NQueryGlyph.Column;
-                case SymbolKind.Variable:
-                    return NQueryGlyph.Variable;
-                case SymbolKind.Function:
-                    return NQueryGlyph.Function;
-                case SymbolKind.Aggregate:
-                    return NQueryGlyph.Aggregate;
-                case SymbolKind.Property:
-                    return NQueryGlyph.Property;
-                case SymbolKind.Method:
-                    return NQueryGlyph.Method;
-                default:
-                    throw new NotImplementedException(string.Format("Unknown symbol kind: {0}", symbol.Kind));
-            }
         }
     }
 }

@@ -33,10 +33,5 @@ namespace NQuery.Language.Symbols
         {
             get { return _column.Type; }
         }
-
-        public override string ToString()
-        {
-            return string.Format("ROW COLUMN {0}.{1}: {2}", TableInstance.Table.Name, Column.Name, Column.Type);
-        }
     }
 }

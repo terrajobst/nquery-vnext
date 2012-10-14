@@ -19,10 +19,5 @@ namespace NQuery.Language.Symbols
         {
             get { return KnownTypes.Missing; }
         }
-
-        public override string ToString()
-        {
-            return string.Format("AGGREGATE {0}", Name);
-        }
     }
 }

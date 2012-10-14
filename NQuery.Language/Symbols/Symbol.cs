@@ -19,5 +19,10 @@ namespace NQuery.Language.Symbols
         }
 
         public abstract Type Type { get; }
+
+        public sealed override string ToString()
+        {
+            return SymbolMarkup.FromSymbol(this).ToString();
+        }
     }
 }

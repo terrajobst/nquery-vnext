@@ -37,10 +37,5 @@ namespace NQuery.Language.Symbols
         {
             get { return _table.Type; }
         }
-
-        public override string ToString()
-        {
-            return string.Format("ROW {0} OF {1}", Name, _table);
-        }
     }
 }

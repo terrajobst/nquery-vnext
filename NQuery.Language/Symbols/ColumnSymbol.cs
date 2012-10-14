@@ -21,10 +21,5 @@ namespace NQuery.Language.Symbols
         {
             get { return _type; }
         }
-
-        public override string ToString()
-        {
-            return string.Format("COLUMN {0}: {1}", Name, Type);
-        }
     }
 }

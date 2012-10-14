@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language.Binding;
 
 namespace NQuery.Language.Symbols
 {
@@ -17,13 +16,6 @@ namespace NQuery.Language.Symbols
         public ReadOnlyCollection<ColumnSymbol> Columns
         {
             get { return _columns; }
-        }
-
-        public override string ToString()
-        {
-            return Type.IsMissing()
-                       ? string.Format("TABLE {0}", Name)
-                       : string.Format("TABLE {0}: {1}", Name, Type.ToDisplayName());
         }
     }
 }

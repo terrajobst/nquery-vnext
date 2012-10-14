@@ -1,9 +1,10 @@
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
-using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor
 {
@@ -13,12 +14,25 @@ namespace NQuery.Language.VSEditor
     internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider
     {
         [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
+        public INQueryGlyphService GlyphService { get; set; }
+
+        [Import]
+        public IClassificationFormatMapService ClassificationFormatMapService { get; set; }
+
+        [Import]
+        public IEditorFormatMapService EditorFormatMapService { get; set; }
+
+        [Import]
+        public IStandardClassificationService StandardClassificationService { get; set; }
+
+        [Import]
+        public INQuerySemanticClassificationService SemanticClassificationService { get; set; }
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
-            var document = DocumentManager.GetDocument(textBuffer);
-            return new NQueryQuickInfoSource();
+            var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap("text");
+            var editorFormatMap = EditorFormatMapService.GetEditorFormatMap("text");
+            return new NQueryQuickInfoSource(GlyphService, classificationFormatMap, editorFormatMap, StandardClassificationService, SemanticClassificationService);
         }
     }
 }
