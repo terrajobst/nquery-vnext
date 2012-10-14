@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
@@ -14,12 +15,15 @@ namespace NQuery.Language.VSEditor
         [Import]
         public IQuickInfoBroker QuickInfoBroker { get; set; }
 
+        [ImportMany]
+        public IEnumerable<IQuickInfoModelProvider> Providers { get; set; }
+
         public IQuickInfoManager GetQuickInfoManager(ITextView textView)
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
                 var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new QuickInfoManager(textView, document, QuickInfoBroker);
+                return new QuickInfoManager(textView, document, QuickInfoBroker, Providers);
             });
         }
     }
