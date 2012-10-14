@@ -231,6 +231,7 @@ namespace NQuery.Language.VSEditor.Completion
 
             if (IsAfterTableReference(syntaxTree, position) ||
                 IsAfterInnerKeyword(syntaxTree, position) ||
+                IsAfterOuterKeyword(syntaxTree, position) ||
                 IsAfterLeftKeyword(syntaxTree, position) ||
                 IsAfterRightKeyword(syntaxTree, position) ||
                 IsAfterFullKeyword(syntaxTree, position))
@@ -623,6 +624,11 @@ namespace NQuery.Language.VSEditor.Completion
         private static bool IsAfterInnerKeyword(SyntaxTree syntaxTree, int position)
         {
             return IsAfterToken(syntaxTree, position, SyntaxKind.InnerKeyword);
+        }
+
+        private static bool IsAfterOuterKeyword(SyntaxTree syntaxTree, int position)
+        {
+            return IsAfterToken(syntaxTree, position, SyntaxKind.OuterKeyword);
         }
 
         private static bool IsAfterLeftKeyword(SyntaxTree syntaxTree, int position)
