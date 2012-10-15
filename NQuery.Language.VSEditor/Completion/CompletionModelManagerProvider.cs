@@ -15,15 +15,15 @@ namespace NQuery.Language.VSEditor.Completion
         [Import]
         public ICompletionBroker CompletionBroker { get; set; }
 
-        [ImportMany]
-        public IEnumerable<ICompletionProvider> CompletionItemProviders { get; set; }
+        [Import]
+        public ICompletionModelProvider CompletionModelProvider { get; set; }
 
         public ICompletionModelManager GetCompletionModel(ITextView textView)
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
                 var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new CompletionModelManager(textView, document, CompletionBroker, CompletionItemProviders);
+                return new CompletionModelManager(textView, document, CompletionBroker, CompletionModelProvider);
             });
         }
     }

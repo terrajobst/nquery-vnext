@@ -89,39 +89,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncTagger.cs" />
-    <Compile Include="BraceMatching\BraceMatchingService.cs" />
-    <Compile Include="BraceMatching\CaseBraceMatcher.cs" />
-    <Compile Include="BraceMatching\DateBraceMatcher.cs" />
-    <Compile Include="BraceMatching\IBraceMatcher.cs" />
-    <Compile Include="BraceMatching\IBraceMatchingService.cs" />
-    <Compile Include="BraceMatching\IdentifierBraceMatcher.cs" />
-    <Compile Include="BraceMatching\PairedTokenBraceMatcher.cs" />
-    <Compile Include="BraceMatching\ParenthesisBraceMatcher.cs" />
-    <Compile Include="BraceMatching\SingleTokenBraceMatcher.cs" />
-    <Compile Include="BraceMatching\StringQuoteBraceMatcher.cs" />
-    <Compile Include="Completion\CompletionItem.cs" />
+    <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
+    <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
     <Compile Include="Completion\CompletionModelManager.cs" />
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
-    <Compile Include="Completion\ICompletionProvider.cs" />
-    <Compile Include="Completion\CompletionModel.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
-    <Compile Include="Completion\JoinCompletionProvider.cs" />
-    <Compile Include="Completion\KeywordCompletionProvider.cs" />
-    <Compile Include="Completion\TypeCompletionProvider.cs" />
     <Compile Include="Document\NQueryDocumentManager.cs" />
     <Compile Include="Document\INQueryDocument.cs" />
     <Compile Include="Document\INQueryDocumentManager.cs" />
     <Compile Include="Document\NQueryDocument.cs" />
-    <Compile Include="Document\NQueryDocumentType.cs" />
-    <Compile Include="Document\ResultProducer.cs" />
-    <Compile Include="INQueryGlyphService.cs" />
     <Compile Include="INQuerySelectionProvider.cs" />
     <Compile Include="INQuerySelectionProviderService.cs" />
     <Compile Include="INQuerySemanticClassificationService.cs" />
-    <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
-    <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
-    <Compile Include="NQueryGlyphExtensions.cs" />
     <Compile Include="NQuerySyntaxClassifier.cs" />
     <Compile Include="NQuerySyntaxClassifierProvider.cs" />
     <Compile Include="Completion\NQueryCompletionSet.cs" />
@@ -129,17 +109,8 @@
     <Compile Include="Completion\NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
     <Compile Include="NQueryErrorTagger.cs" />
-    <Compile Include="NQueryGlyph.cs" />
-    <Compile Include="NQueryGlyphService.cs" />
     <Compile Include="NQueryKeyProcessor.cs" />
     <Compile Include="NQueryKeyProcessorProvider.cs" />
-    <Compile Include="QuickInfo\CountAllExpressionQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\DerivedTableReferenceQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\FunctionInvocationExpressionQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\IQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\MethodInvocationExpressionQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\NamedTableReferenceQuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\NameExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\NQueryQuickInfoTrigger.cs" />
     <Compile Include="NQuerySelectionProvider.cs" />
     <Compile Include="NQuerySelectionProviderService.cs" />
@@ -158,62 +129,31 @@
     <Compile Include="NQuerySyntaxErrorTagger.cs" />
     <Compile Include="NQuerySyntaxErrorTaggerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Completion\SymbolCompletionProvider.cs" />
     <Compile Include="QuickInfo\NQueryQuickInfoTriggerProvider.cs" />
-    <Compile Include="QuickInfo\PropertyAccessExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\QuickInfoManager.cs" />
     <Compile Include="QuickInfo\QuickInfoManagerProvider.cs" />
-    <Compile Include="QuickInfo\QuickInfoModel.cs" />
-    <Compile Include="QuickInfo\QuickInfoModelProvider.cs" />
-    <Compile Include="QuickInfo\VariableExpressionQuickInfoModelProvider.cs" />
     <Compile Include="RawClassificationTag.cs" />
     <Compile Include="RawOutliningRegionTag.cs" />
     <Compile Include="RawSyntaxTag.cs" />
     <Compile Include="RawSyntaxTagKind.cs" />
-    <Compile Include="SignatureHelp\CastSignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\CoalesceSignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\CountAllSignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\FunctionSignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\ISignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\MethodSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\NQueryParameter.cs" />
     <Compile Include="SignatureHelp\ISignatureHelpManager.cs" />
     <Compile Include="SignatureHelp\ISignatureHelpManagerProvider.cs" />
-    <Compile Include="SignatureHelp\NullIfSignatureModelProvider.cs" />
-    <Compile Include="SignatureHelp\ParameterItem.cs" />
-    <Compile Include="SignatureHelp\SignatureHelpExtensions.cs" />
     <Compile Include="SignatureHelp\SignatureHelpManager.cs" />
     <Compile Include="SignatureHelp\SignatureHelpManagerProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignature.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSource.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
-    <Compile Include="SignatureHelp\SignatureHelpModel.cs" />
-    <Compile Include="SignatureHelp\SignatureItem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Language.Services\NQuery.Language.Services.csproj">
+      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
+      <Name>NQuery.Language.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery.Language</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Aggregate.png" />
-    <Resource Include="Images\Column.png" />
-    <Resource Include="Images\Keyword.png" />
-    <Resource Include="Images\Variable.png" />
-    <Resource Include="Images\Relation.png" />
-    <Resource Include="Images\Table.png" />
-    <Resource Include="Images\TableInstance.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AmbiguousName.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Method.png" />
-    <Resource Include="Images\Property.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Type.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

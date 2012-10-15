@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
@@ -13,15 +12,15 @@ namespace NQuery.Language.VSEditor.Completion
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
         private readonly ICompletionBroker _completionBroker;
-        private readonly IEnumerable<ICompletionProvider> _completionItemProviders;
+        private readonly ICompletionModelProvider _completionModelProvider;
 
         private ICompletionSession _session;
         private CompletionModel _model;
 
-        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, IEnumerable<ICompletionProvider> completionItemProviders)
+        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, ICompletionModelProvider completionModelProvider)
         {
             _completionBroker = completionBroker;
-            _completionItemProviders = completionItemProviders;
+            _completionModelProvider = completionModelProvider;
             _textView = textView;
             _document = document;
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
@@ -81,25 +80,11 @@ namespace NQuery.Language.VSEditor.Completion
             var textView = _textView;
             var triggerPosition = textView.Caret.Position.BufferPosition;
             var semanticModel = await _document.GetSemanticModelAsync();
-
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, triggerPosition);
-            var applicableSpan = token == null ? new TextSpan(triggerPosition, 0) : token.Span;
-
-            var items = _completionItemProviders.SelectMany(p => p.GetItems(semanticModel, triggerPosition));
-            var sortedItems = items.OrderBy(c => c.InsertionText).ToArray();
+            var model = _completionModelProvider.GetModel(semanticModel, triggerPosition);
 
             // Let observers know that we've a new model.
 
-            Model = new CompletionModel(semanticModel, applicableSpan, sortedItems);
-        }
-
-        private static SyntaxToken GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
-        {
-            var syntaxToken = root.FindTokenOnLeft(position);
-            return syntaxToken.Kind.IsIdentifierOrKeyword() && syntaxToken.Span.ContainsOrTouches(position)
-                       ? syntaxToken
-                       : null;
+            Model = model;
         }
 
         public bool Commit()

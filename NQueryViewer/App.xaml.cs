@@ -5,6 +5,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Windows;
 
 namespace NQueryViewer

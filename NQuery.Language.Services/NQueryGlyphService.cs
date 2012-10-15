@@ -6,6 +6,8 @@ using System.Windows.Media.Imaging;
 
 namespace NQuery.Language.VSEditor
 {
+    // TODO: We way want to move this in a WPF specific assembly
+
     [Export(typeof(INQueryGlyphService))]
     internal sealed class NQueryGlyphService : INQueryGlyphService
     {
