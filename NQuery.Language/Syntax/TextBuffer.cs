@@ -39,7 +39,7 @@ namespace NQuery.Language
                 }
             }
 
-            if (lineStart < position || text.Length == 0)
+            if (lineStart <= position)
                 AddLine(textLines, text, lineStart, text.Length, 0);
 
             return textLines;
