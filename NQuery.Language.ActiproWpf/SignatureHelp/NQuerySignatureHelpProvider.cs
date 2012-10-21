@@ -5,7 +5,6 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using NQuery.Language.VSEditor.Completion;
 using NQuery.Language.VSEditor.SignatureHelp;
 
 using ActiproSignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.SignatureItem;

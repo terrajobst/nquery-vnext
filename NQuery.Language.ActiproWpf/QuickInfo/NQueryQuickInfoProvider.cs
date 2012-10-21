@@ -4,7 +4,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
-using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 using NQuery.Language.VSEditor;
@@ -15,7 +14,7 @@ namespace NQueryViewerActiproWpf
     internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase
     {
         [Import]
-        public INQueryGlyphService GlyphService { get; set; }
+        public ISymbolContentProvider SymbolContentProvider { get; set; }
 
         [ImportMany]
         public IEnumerable<IQuickInfoModelProvider> QuickInfoModelProviders { get; set; }
@@ -46,28 +45,13 @@ namespace NQueryViewerActiproWpf
             var textBuffer = model.SemanticModel.Compilation.SyntaxTree.TextBuffer;
             var textSnapshotRange = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.Span);
             var textRange = textSnapshotRange.TextRange;
-
-            var content = GetContent(view, model);
+            var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();
 
             var quickInfoSession = new QuickInfoSession();
             quickInfoSession.Context = context;
             quickInfoSession.Content = content;
             quickInfoSession.Open(view, textRange);
             return true;
-        }
-
-        private object GetContent(ITextView view, QuickInfoModel model)
-        {
-            var classificationTypes = view.SyntaxEditor.Document.Language.GetService<INQueryClassificationTypes>();
-            var markup = model.Markup;
-            if (classificationTypes == null)
-                return markup.ToString();
-
-            var registry = AmbientHighlightingStyleRegistry.Instance;
-            var glyph = model.Glyph;
-            var glyphService = GlyphService;
-            var contentProvider = HtmlContentProviderWithGlyph.Create(glyph, markup, glyphService, classificationTypes, registry);
-            return contentProvider.GetContent();
         }
 
         protected override IEnumerable<Type> ContextTypes

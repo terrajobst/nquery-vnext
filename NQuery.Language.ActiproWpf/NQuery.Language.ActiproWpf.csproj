@@ -50,9 +50,10 @@
   <ItemGroup>
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="GetSemanticModelTaskManager.cs" />
-    <Compile Include="HtmlContentProviderWithGlyph.cs" />
-    <Compile Include="HtmlMarkupEmitter.cs" />
-    <Compile Include="NQueryGlyphImageProvider.cs" />
+    <Compile Include="SymbolContent\HtmlContentProviderWithGlyph.cs" />
+    <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
+    <Compile Include="SymbolContent\ISymbolContentProvider.cs" />
+    <Compile Include="SymbolContent\GlyphImageProvider.cs" />
     <Compile Include="NQueryDocument.cs" />
     <Compile Include="NQuerySemanticData.cs" />
     <Compile Include="Outlining\CollapsedRegionQuickInfoProviderRegistrar.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Classification\NQuerySyntacticClassifierProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
+    <Compile Include="SymbolContent\SymbolContentProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Language.Services\NQuery.Language.Services.csproj">

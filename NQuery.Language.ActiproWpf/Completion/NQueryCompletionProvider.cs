@@ -1,15 +1,12 @@
 using System.ComponentModel.Composition;
+
 using ActiproSoftware.Text;
-using ActiproSoftware.Text.RegularExpressions;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Language.VSEditor;
 using NQuery.Language.VSEditor.Completion;
 
 using ActiproCompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
-using ActiproICompletionProvider = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.ICompletionProvider;
-
 using NQueryCompletionItem = NQuery.Language.VSEditor.Completion.CompletionItem;
 
 namespace NQueryViewerActiproWpf
@@ -21,7 +18,7 @@ namespace NQueryViewerActiproWpf
         public ICompletionModelProvider CompletionModelProvider { get; set; }
 
         [Import]
-        public INQueryGlyphService GlyphService { get; set; }
+        public ISymbolContentProvider SymbolContentProvider { get; set; }
 
         public override bool RequestSession(IEditorView view, bool canCommitWithoutPopup)
         {
@@ -63,7 +60,7 @@ namespace NQueryViewerActiproWpf
         {
             var imageSourceProvider = completionItem.Glyph == null
                                           ? null
-                                          : new NQueryGlyphImageProvider(GlyphService, completionItem.Glyph.Value);
+                                          : SymbolContentProvider.GetImageSourceProvider(completionItem.Glyph.Value);
 
             return new ActiproCompletionItem(completionItem.InsertionText, imageSourceProvider, null);
         }

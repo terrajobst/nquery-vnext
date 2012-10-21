@@ -4,12 +4,12 @@ using NQuery.Language.VSEditor;
 
 namespace NQueryViewerActiproWpf
 {
-    internal sealed class NQueryGlyphImageProvider : IImageSourceProvider
+    internal sealed class GlyphImageProvider : IImageSourceProvider
     {
         private readonly INQueryGlyphService _glyphService;
         private readonly NQueryGlyph _glyph;
 
-        public NQueryGlyphImageProvider(INQueryGlyphService glyphService, NQueryGlyph glyph)
+        public GlyphImageProvider(INQueryGlyphService glyphService, NQueryGlyph glyph)
         {
             _glyphService = glyphService;
             _glyph = glyph;
