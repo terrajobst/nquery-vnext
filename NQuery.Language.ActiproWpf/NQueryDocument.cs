@@ -56,6 +56,11 @@ namespace NQueryViewerActiproWpf
             }
         }
 
+        public Task<SemanticModel> GetSemanticModelAsync()
+        {
+            return _semanticModelProducer.GetResultAsync();
+        }
+
         protected override void OnParseDataChanged(ParseDataPropertyChangedEventArgs e)
         {
             base.OnParseDataChanged(e);

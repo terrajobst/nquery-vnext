@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using ActiproSoftware.Text;
 using NQuery.Language;
 
@@ -53,6 +55,14 @@ namespace NQueryViewerActiproWpf
             var parseData = snapshot.GetParseData();
             var semanticModel = snapshot.Document.GetSemanticModel();
             return GetSemanticData(parseData, semanticModel);
+        }
+
+        public static Task<SemanticModel> GetSemanticModelAsync(this ITextDocument document)
+        {
+            var queryDocument = document as NQueryDocument;
+            return queryDocument == null
+                       ? Task.FromResult<SemanticModel>(null)
+                       : new GetSemanticModelTaskManager(queryDocument).Task;
         }
 
         public static TextSnapshotOffset ToSnapshotOffset(this TextBuffer textBuffer, ITextSnapshot snapshot, int position)

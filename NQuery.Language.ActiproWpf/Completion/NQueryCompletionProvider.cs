@@ -1,5 +1,6 @@
 using System.ComponentModel.Composition;
 using ActiproSoftware.Text;
+using ActiproSoftware.Text.RegularExpressions;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
@@ -24,19 +25,26 @@ namespace NQueryViewerActiproWpf
 
         public override bool RequestSession(IEditorView view, bool canCommitWithoutPopup)
         {
-            var snapshot = view.CurrentSnapshot;
-            var semanticData = snapshot.GetSemanticData();
-            if (semanticData == null)
-                return false;
+            RequestSessionAsync(view, canCommitWithoutPopup);
+            return true;
+        }
 
-            var syntaxTree = semanticData.ParseData.SyntaxTree;
+        private async void RequestSessionAsync(IEditorView view, bool canCommitWithoutPopup)
+        {
+            var snapshot = view.CurrentSnapshot;
+            var semanticModel = await snapshot.Document.GetSemanticModelAsync();
+            if (semanticModel == null)
+                return;
+
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = CompletionModelProvider.GetModel(semanticData.SemanticModel, position);
+            var model = CompletionModelProvider.GetModel(semanticModel, position);
 
             var completionSession = new CompletionSession();
+            completionSession.CanFilterUnmatchedItems = true;
             completionSession.CanCommitWithoutPopup = canCommitWithoutPopup;
 
             foreach (var completionItem in model.Items)
@@ -46,10 +54,9 @@ namespace NQueryViewerActiproWpf
             }
 
             if (completionSession.Items.Count == 0)
-                return false;
+                return;
 
-            completionSession.Open(view);
-            return true;
+            completionSession.Open(view);            
         }
 
         private ActiproCompletionItem GetActiproCompletionItem(NQueryCompletionItem completionItem)
