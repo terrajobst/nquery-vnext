@@ -19,6 +19,9 @@ namespace NQuery.Language.VSEditor
 
         public static QuickInfoModel ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
         {
+            if (symbol.Kind == SymbolKind.BadSymbol || symbol.Kind == SymbolKind.BadTable)
+                return null;
+
             var glyph = symbol.GetGlyph();
             var symbolMarkup = SymbolMarkup.ForSymbol(symbol);
             return new QuickInfoModel(semanticModel, span, glyph, symbolMarkup);
