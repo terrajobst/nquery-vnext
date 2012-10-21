@@ -59,7 +59,6 @@
     <Compile Include="ComposableLanguageServiceRegistrar.cs" />
     <Compile Include="BraceMatching\DelimiterHighlightTaggerRegistrar.cs" />
     <Compile Include="ExportLanguageServiceAttribute.cs" />
-    <Compile Include="ILanguageServiceMetadata.cs" />
     <Compile Include="ILanguageServiceRegistrar.cs" />
     <Compile Include="Classification\INQueryClassificationTypes.cs" />
     <Compile Include="BraceMatching\NQueryBraceMatcher.cs" />

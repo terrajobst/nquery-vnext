@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using ActiproSoftware.Text.Implementation;
 
 namespace NQueryViewerActiproWpf
@@ -9,16 +10,19 @@ namespace NQueryViewerActiproWpf
     internal sealed class ComposableLanguageServiceRegistrar : ILanguageServiceRegistrar
     {
         [ImportMany]
-        public IEnumerable<Lazy<object, ILanguageServiceMetadata>> LanguageServices { get; set; }
+        public IEnumerable<Lazy<object, IDictionary<string,object>>> LanguageServices { get; set; }
 
         public void RegisterServices(SyntaxLanguage syntaxLanguage)
         {
-            foreach (var languageService in LanguageServices)
-            {
-                var serviceType = languageService.Metadata.ServiceType;
-                var service = languageService.Value;
-                syntaxLanguage.RegisterService(serviceType, service);
-            }
+            const string serviceTypeKey = "ServiceType";
+            var languageServices = from ls in LanguageServices
+                                   where ls.Metadata.ContainsKey(serviceTypeKey)
+                                   let serviceType = ls.Metadata[serviceTypeKey]
+                                   where serviceType != null
+                                   select new {Service = ls.Value, ServiceType = serviceType};
+
+            foreach (var languageService in languageServices)
+                syntaxLanguage.RegisterService(languageService.ServiceType, languageService.Service);
         }
     }
 }
