@@ -15,8 +15,9 @@ namespace NQueryViewerActiproWpf
         {
             foreach (var languageService in LanguageServices)
             {
-                var type = languageService.Metadata.ServiceType;
-                syntaxLanguage.RegisterService(type, languageService.Value);
+                var serviceType = languageService.Metadata.ServiceType;
+                var service = languageService.Value;
+                syntaxLanguage.RegisterService(serviceType, service);
             }
         }
     }
