@@ -36,12 +36,11 @@ namespace NQueryViewerActiproWpf
 
         private async void UpdateTags()
         {
-            var snapshot = Document.CurrentSnapshot;
-            var nqueryDocument = Document as NQueryDocument;
-            var semanticData = nqueryDocument.GetSemanticData();
+            var semanticData = await Document.GetSemanticDataAsync();
             if (semanticData == null)
                 return;
 
+            var snapshot = semanticData.ParseData.Snapshot;
             var tags = await ClassifyAsync(snapshot, semanticData.SemanticModel, _classificationTypes);
 
             using (CreateBatch())

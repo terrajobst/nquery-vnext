@@ -27,41 +27,42 @@ namespace NQueryViewerActiproWpf
             return parseData;
         }
 
-        private static SemanticModel GetSemanticModel(this ITextDocument document)
-        {
-            var nqueryDocument = document as NQueryDocument;
-            return nqueryDocument == null
-                       ? null
-                       : nqueryDocument.SemanticModel;
-        }
-
-        private static NQuerySemanticData GetSemanticData(NQueryParseData parseData, SemanticModel semanticModel)
-        {
-            return parseData == null || semanticModel == null || parseData.SyntaxTree != semanticModel.Compilation.SyntaxTree
-                       ? null
-                       : new NQuerySemanticData(parseData, semanticModel);
-        }
-
         public static NQuerySemanticData GetSemanticData(this ITextDocument document)
         {
-            var parseData = document.CurrentSnapshot.GetParseData();
-            var semanticModel = document.GetSemanticModel();
-            return GetSemanticData(parseData, semanticModel);
+            return document.CurrentSnapshot.GetSemanticData();
         }
 
         public static NQuerySemanticData GetSemanticData(this ITextSnapshot snapshot)
         {
+            var document = snapshot.Document as NQueryDocument;
+            if (document == null)
+                return null;
+
             var parseData = snapshot.GetParseData();
-            var semanticModel = snapshot.Document.GetSemanticModel();
-            return GetSemanticData(parseData, semanticModel);
+            if (parseData == null)
+                return null;
+
+            var semanticData = document.SemanticData;
+            if (semanticData == null || semanticData.ParseData != parseData)
+                return null;
+
+            return semanticData;
         }
 
-        public static Task<SemanticModel> GetSemanticModelAsync(this ITextDocument document)
+        public static Task<NQueryParseData> GetParseDataAsync(this ITextDocument document)
         {
             var queryDocument = document as NQueryDocument;
             return queryDocument == null
-                       ? Task.FromResult<SemanticModel>(null)
-                       : new GetSemanticModelTaskManager(queryDocument).Task;
+                       ? Task.FromResult<NQueryParseData>(null)
+                       : queryDocument.GetParseDataAsync();
+        }
+
+        public static Task<NQuerySemanticData> GetSemanticDataAsync(this ITextDocument document)
+        {
+            var queryDocument = document as NQueryDocument;
+            return queryDocument == null
+                       ? Task.FromResult<NQuerySemanticData>(null)
+                       : queryDocument.GetSemanticDataAsync();
         }
 
         public static TextSnapshotOffset ToSnapshotOffset(this TextBuffer textBuffer, ITextSnapshot snapshot, int position)

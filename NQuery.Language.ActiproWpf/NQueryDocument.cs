@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Parsing;
 using NQuery.Language;
@@ -11,16 +13,20 @@ namespace NQueryViewerActiproWpf
     public class NQueryDocument : EditorDocument
     {
         private readonly SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
-        private readonly ResultProducer<Compilation, SemanticModel> _semanticModelProducer;
+        private readonly ResultProducer<Tuple<ITextSnapshot, NQueryDocumentType>, NQueryParseData> _parseDataProducer;
+        private readonly ResultProducer<Tuple<NQueryParseData, DataContext>, NQuerySemanticData> _semanticDataProducer;
 
         private NQueryDocumentType _documentType;
-        private Compilation _compilation = Compilation.Empty;
-        private SemanticModel _semanticModel;
+        private DataContext _dataContext = DataContext.Default;
+
+        private NQuerySemanticData _semanticData;
 
         public NQueryDocument()
         {
-            _semanticModelProducer = new ResultProducer<Compilation, SemanticModel>(GetSemanticModel);
+            _parseDataProducer = new ResultProducer<Tuple<ITextSnapshot, NQueryDocumentType>, NQueryParseData>(ComputeParseData);
+            _semanticDataProducer = new ResultProducer<Tuple<NQueryParseData, DataContext>, NQuerySemanticData>(ComputeSemanticModel);
             Language = new NQueryLanguage();
+            UpdateParseData();
         }
 
         public NQueryDocumentType DocumentType
@@ -28,37 +34,61 @@ namespace NQueryViewerActiproWpf
             get { return _documentType; }
             set
             {
-                _documentType = value;
-                QueueParseRequest();
+                if (_documentType != value)
+                {
+                    _documentType = value;
+                    UpdateParseData();
+                }
             }
         }
 
         public DataContext DataContext
         {
-            get { return _compilation.DataContext; }
+            get { return _dataContext; }
             set
             {
-                _compilation = _compilation.WithDataContext(value);
-                UpdateSemanticModel();
+                if (_dataContext != value)
+                {
+                    _dataContext = value;
+                    UpdateSemanticModel();
+                }
             }
         }
 
-        public SemanticModel SemanticModel
+        public new NQueryParseData ParseData
         {
-            get { return _semanticModel; }
+            get { return base.ParseData as NQueryParseData; }
+            private set { base.ParseData = value; }
+        }
+
+        public NQuerySemanticData SemanticData
+        {
+            get { return _semanticData; }
             private set
             {
-                if (_semanticModel != value)
+                if (_semanticData != value)
                 {
-                    _semanticModel = value;
+                    _semanticData = value;
                     OnSemanticModelChanged(EventArgs.Empty);
                 }
             }
         }
 
-        public Task<SemanticModel> GetSemanticModelAsync()
+        public Task<NQueryParseData> GetParseDataAsync()
         {
-            return _semanticModelProducer.GetResultAsync();
+            return _parseDataProducer.GetResultAsync();
+        }
+
+        public Task<NQuerySemanticData> GetSemanticDataAsync()
+        {
+            return _semanticDataProducer.GetResultAsync();
+        }
+
+        protected override void OnTextChanged(TextSnapshotChangedEventArgs e)
+        {
+            base.OnTextChanged(e);
+
+            UpdateParseData();
         }
 
         protected override void OnParseDataChanged(ParseDataPropertyChangedEventArgs e)
@@ -67,29 +97,57 @@ namespace NQueryViewerActiproWpf
             _synchronizationContext.Post(s => UpdateSemanticModel(), null);
         }
 
+        private void UpdateParseData()
+        {
+            var input = Tuple.Create(CurrentSnapshot, _documentType);
+            _parseDataProducer.Update(input);
+            _parseDataProducer
+                .GetResultAsync()
+                .ContinueWith(t => ParseData = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private void UpdateSemanticModel()
+        {
+            var parseData = ParseData;
+            if (parseData == null)
+                return;
+
+            var input = Tuple.Create(parseData, _dataContext);
+            _semanticDataProducer.Update(input);
+            _semanticDataProducer
+                .GetResultAsync()
+                .ContinueWith(t => SemanticData = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        private static NQueryParseData ComputeParseData(Tuple<ITextSnapshot, NQueryDocumentType> input, CancellationToken cancellationToken)
+        {
+            Trace.WriteLine("Parsing");
+            var snapshot = input.Item1;
+            var text = snapshot.Text;
+            var documentType = input.Item2;
+            var syntaxTree = documentType == NQueryDocumentType.Query
+                                 ? SyntaxTree.ParseQuery(text)
+                                 : SyntaxTree.ParseExpression(text);
+            return new NQueryParseData(snapshot, syntaxTree);
+        }
+
+        private static NQuerySemanticData ComputeSemanticModel(Tuple<NQueryParseData, DataContext> input, CancellationToken cancellationToken)
+        {
+            Trace.WriteLine("Binding");
+            var parseData = input.Item1;
+            var dataContext = input.Item2;
+            var compilation = Compilation.Empty
+                .WithSyntaxTree(parseData.SyntaxTree)
+                .WithDataContext(dataContext);
+            var semanticModel = compilation.GetSemanticModel();
+            return new NQuerySemanticData(parseData, semanticModel);
+        }
+
         protected virtual void OnSemanticModelChanged(EventArgs e)
         {
             var handler = SemanticModelChanged;
             if (handler != null)
                 handler(this, e);
-        }
-
-        private void UpdateSemanticModel()
-        {
-            var parseData = ParseData as NQueryParseData;
-            if (parseData == null)
-                return;
-
-            _compilation = _compilation.WithSyntaxTree(parseData.SyntaxTree);
-            _semanticModelProducer.Update(_compilation);
-            _semanticModelProducer
-                .GetResultAsync()
-                .ContinueWith(t => SemanticModel = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        private static SemanticModel GetSemanticModel(Compilation compilation, CancellationToken cancellationToken)
-        {
-            return compilation.GetSemanticModel();
         }
 
         public event EventHandler<EventArgs> SemanticModelChanged;

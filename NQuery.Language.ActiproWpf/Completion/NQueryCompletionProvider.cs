@@ -29,10 +29,11 @@ namespace NQueryViewerActiproWpf
         private async void RequestSessionAsync(IEditorView view, bool canCommitWithoutPopup)
         {
             var snapshot = view.CurrentSnapshot;
-            var semanticModel = await snapshot.Document.GetSemanticModelAsync();
-            if (semanticModel == null)
+            var semanticData = await snapshot.Document.GetSemanticDataAsync();
+            if (semanticData == null)
                 return;
 
+            var semanticModel = semanticData.SemanticModel;
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;

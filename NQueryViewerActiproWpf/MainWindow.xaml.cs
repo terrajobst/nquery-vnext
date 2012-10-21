@@ -1,6 +1,4 @@
-﻿using ActiproSoftware.Text.Parsing;
-using ActiproSoftware.Text.Parsing.Implementation;
-using NQuery.SampleData;
+﻿using NQuery.SampleData;
 
 namespace NQueryViewerActiproWpf
 {
@@ -9,8 +7,6 @@ namespace NQueryViewerActiproWpf
         public MainWindow()
         {
             InitializeComponent();
-
-            AmbientParseRequestDispatcherProvider.Dispatcher = new ThreadedParseRequestDispatcher();
 
             var language = new NQueryLanguage();
             var classificationTypes = language.GetService<INQueryClassificationTypes>();
