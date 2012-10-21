@@ -4,6 +4,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
+using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 using NQuery.Language.VSEditor;
@@ -13,6 +14,9 @@ namespace NQueryViewerActiproWpf
     [ExportLanguageService(typeof(IQuickInfoProvider))]
     internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase
     {
+        [Import]
+        public INQueryGlyphService GlyphService { get; set; }
+
         [ImportMany]
         public IEnumerable<IQuickInfoModelProvider> QuickInfoModelProviders { get; set; }
 
@@ -43,11 +47,27 @@ namespace NQueryViewerActiproWpf
             var textSnapshotRange = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.Span);
             var textRange = textSnapshotRange.TextRange;
 
+            var content = GetContent(view, model);
+
             var quickInfoSession = new QuickInfoSession();
             quickInfoSession.Context = context;
-            quickInfoSession.Content = model.Markup.ToString();
+            quickInfoSession.Content = content;
             quickInfoSession.Open(view, textRange);
             return true;
+        }
+
+        private object GetContent(ITextView view, QuickInfoModel model)
+        {
+            var classificationTypes = view.SyntaxEditor.Document.Language.GetService<INQueryClassificationTypes>();
+            var markup = model.Markup;
+            if (classificationTypes == null)
+                return markup.ToString();
+
+            var registry = AmbientHighlightingStyleRegistry.Instance;
+            var glyph = model.Glyph;
+            var glyphService = GlyphService;
+            var contentProvider = HtmlContentProviderWithGlyph.Create(glyph, markup, glyphService, classificationTypes, registry);
+            return contentProvider.GetContent();
         }
 
         protected override IEnumerable<Type> ContextTypes

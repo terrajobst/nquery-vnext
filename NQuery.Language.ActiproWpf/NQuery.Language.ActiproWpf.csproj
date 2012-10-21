@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="GetSemanticModelTaskManager.cs" />
+    <Compile Include="HtmlContentProviderWithGlyph.cs" />
+    <Compile Include="HtmlMarkupEmitter.cs" />
     <Compile Include="NQueryGlyphImageProvider.cs" />
     <Compile Include="NQueryDocument.cs" />
     <Compile Include="NQuerySemanticData.cs" />
