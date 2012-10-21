@@ -1,5 +1,3 @@
-using System.ComponentModel.Composition;
-using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 namespace NQueryViewerActiproWpf
