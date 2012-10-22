@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5EE0AD34-3247-450D-A41C-5168E09CCDCD}"
-	ProjectSection(SolutionItems) = preProject
-		Todos.txt = Todos.txt
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language", "NQuery.Language\NQuery.Language.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.VSEditor", "NQuery.Language.VSEditor\NQuery.Language.VSEditor.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
@@ -21,6 +16,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.ActiproWpf", "NQuery.Language.ActiproWpf\NQuery.Language.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.SampleData", "NQuery.SampleData\NQuery.SampleData.csproj", "{CE411DA9-038B-47E8-8540-A539C146B0EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Editor", "Services Editor", "{9AD43A01-9766-40E2-8682-1F028B4A09F9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Common", "Services Common", "{538E2C6E-31A4-4AFE-B0FE-2A65473CBC3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Viewers", "Viewers", "{01914E91-C990-4D8C-9890-B6C69006F596}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,5 +66,15 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BF5539F1-3476-4ED7-89DA-D9446B46EEEB} = {841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}
+		{89DB7FD2-FF8C-411C-BD2B-460712D0D09E} = {841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}
+		{A3309669-818F-47A9-B0F8-734AF347FEBC} = {9AD43A01-9766-40E2-8682-1F028B4A09F9}
+		{A3B82430-E8ED-4177-B097-3A82748EDAEF} = {9AD43A01-9766-40E2-8682-1F028B4A09F9}
+		{5F76C1EB-9EEE-4046-9664-A4123984EEF3} = {538E2C6E-31A4-4AFE-B0FE-2A65473CBC3E}
+		{D71782DC-B326-440E-9166-E897E5BD0882} = {01914E91-C990-4D8C-9890-B6C69006F596}
+		{731E166C-3D27-47C6-9D0E-78845270C2B3} = {01914E91-C990-4D8C-9890-B6C69006F596}
+		{CE411DA9-038B-47E8-8540-A539C146B0EE} = {01914E91-C990-4D8C-9890-B6C69006F596}
 	EndGlobalSection
 EndGlobal
