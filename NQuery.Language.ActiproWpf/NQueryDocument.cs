@@ -50,7 +50,7 @@ namespace NQueryViewerActiproWpf
                 if (_dataContext != value)
                 {
                     _dataContext = value;
-                    UpdateSemanticModel();
+                    UpdateSemanticData();
                 }
             }
         }
@@ -76,12 +76,15 @@ namespace NQueryViewerActiproWpf
 
         public Task<NQueryParseData> GetParseDataAsync()
         {
+            UpdateParseData();
             return _parseDataProducer.GetResultAsync();
         }
 
-        public Task<NQuerySemanticData> GetSemanticDataAsync()
+        public async Task<NQuerySemanticData> GetSemanticDataAsync()
         {
-            return _semanticDataProducer.GetResultAsync();
+            var parseData = await GetParseDataAsync();
+            UpdateSemanticData(parseData);
+            return await _semanticDataProducer.GetResultAsync();
         }
 
         protected override void OnTextChanged(TextSnapshotChangedEventArgs e)
@@ -94,7 +97,11 @@ namespace NQueryViewerActiproWpf
         protected override void OnParseDataChanged(ParseDataPropertyChangedEventArgs e)
         {
             base.OnParseDataChanged(e);
-            _synchronizationContext.Post(s => UpdateSemanticModel(), null);
+            
+            if (_synchronizationContext.IsWaitNotificationRequired())
+                _synchronizationContext.Post(s => UpdateSemanticData(), null);
+            else
+                UpdateSemanticData();
         }
 
         private void UpdateParseData()
@@ -106,12 +113,17 @@ namespace NQueryViewerActiproWpf
                 .ContinueWith(t => ParseData = t.Result, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private void UpdateSemanticModel()
+        private void UpdateSemanticData()
         {
             var parseData = ParseData;
             if (parseData == null)
                 return;
 
+            UpdateSemanticData(parseData);
+        }
+
+        private void UpdateSemanticData(NQueryParseData parseData)
+        {
             var input = Tuple.Create(parseData, _dataContext);
             _semanticDataProducer.Update(input);
             _semanticDataProducer

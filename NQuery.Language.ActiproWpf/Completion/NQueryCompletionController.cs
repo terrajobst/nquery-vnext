@@ -1,25 +1,39 @@
 using System.Linq;
-using System.Windows.Input;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 namespace NQueryViewerActiproWpf
 {
-    [ExportLanguageService(typeof(IEditorViewTextInputEventSink))]
-    internal sealed class NQueryCompletionController : IEditorViewTextInputEventSink
+    [ExportLanguageService(typeof(IEditorDocumentTextChangeEventSink))]
+    internal sealed class NQueryCompletionController : IEditorDocumentTextChangeEventSink
     {
-        public void NotifyTextInput(IEditorView view, TextCompositionEventArgs e)
+        public void NotifyDocumentTextChanged(SyntaxEditor editor, EditorSnapshotChangedEventArgs e)
         {
-            if (e.Text.Any(IsTriggerChar))
-            {
-                view.IntelliPrompt.RequestCompletionSession();
-            }
-            else if (e.Text.Any(IsCommitChar))
-            {
-                var session = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
-                if (session != null)
-                    session.Commit();
-            }
+            var typedText = e.TypedText;
+            if (string.IsNullOrEmpty(typedText))
+                return;
+
+            if (typedText.Any(IsCommitChar))
+                Commit(editor.ActiveView);
+
+            if (typedText.Any(IsTriggerChar))
+                Start(editor.ActiveView);
+        }
+
+        public void NotifyDocumentTextChanging(SyntaxEditor editor, EditorSnapshotChangingEventArgs e)
+        {
+        }
+
+        private static void Start(IEditorView view)
+        {
+            view.IntelliPrompt.RequestCompletionSession();
+        }
+
+        private static void Commit(IEditorView view)
+        {
+            var session = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
+            if (session != null)
+                session.Commit();
         }
 
         private static bool IsTriggerChar(char c)

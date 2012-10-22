@@ -8,6 +8,7 @@ using NQuery.Language.VSEditor.Completion;
 
 using ActiproCompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
 using NQueryCompletionItem = NQuery.Language.VSEditor.Completion.CompletionItem;
+using System.Linq;
 
 namespace NQueryViewerActiproWpf
 {
@@ -28,11 +29,11 @@ namespace NQueryViewerActiproWpf
 
         private async void RequestSessionAsync(IEditorView view, bool canCommitWithoutPopup)
         {
-            var snapshot = view.CurrentSnapshot;
-            var semanticData = await snapshot.Document.GetSemanticDataAsync();
+            var semanticData = await view.CurrentSnapshot.Document.GetSemanticDataAsync();
             if (semanticData == null)
                 return;
 
+            var snapshot = semanticData.ParseData.Snapshot;
             var semanticModel = semanticData.SemanticModel;
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
@@ -41,9 +42,14 @@ namespace NQueryViewerActiproWpf
 
             var model = CompletionModelProvider.GetModel(semanticModel, position);
 
-            var completionSession = new CompletionSession();
-            completionSession.CanFilterUnmatchedItems = true;
-            completionSession.CanCommitWithoutPopup = canCommitWithoutPopup;
+            var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
+            var completionSession = existingSession ?? new CompletionSession
+                                                           {
+                                                               CanFilterUnmatchedItems = true,
+                                                               CanCommitWithoutPopup = canCommitWithoutPopup
+                                                           };
+
+            completionSession.Items.Clear();
 
             foreach (var completionItem in model.Items)
             {
@@ -52,9 +58,13 @@ namespace NQueryViewerActiproWpf
             }
 
             if (completionSession.Items.Count == 0)
+            {
+                completionSession.Cancel();
                 return;
+            }
 
-            completionSession.Open(view);            
+            if (existingSession == null)
+                completionSession.Open(view);            
         }
 
         private ActiproCompletionItem GetActiproCompletionItem(NQueryCompletionItem completionItem)
