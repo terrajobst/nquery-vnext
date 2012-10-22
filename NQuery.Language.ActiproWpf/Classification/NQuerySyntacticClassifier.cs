@@ -58,6 +58,8 @@ namespace NQueryViewerActiproWpf
             return result;
         }
 
+        // TODO: This should be a shared component in the services component
+
         private sealed class ClassificationWorker
         {
             private readonly ITextSnapshot _snapshot;

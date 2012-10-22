@@ -62,6 +62,8 @@ namespace NQueryViewerActiproWpf
             });
         }
 
+        // TODO: This should be a shared component in the services component
+        
         private sealed class ClassificationWorker
         {
             private readonly List<TagVersionRange<IClassificationTag>> _result;
