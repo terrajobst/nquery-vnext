@@ -159,14 +159,15 @@ namespace NQuery.Language.VSEditor.Completion
 
         private static CompletionItem CreateInvocableCompletionGroup(IEnumerable<Symbol> symbols)
         {
-            var first = CreateSymbolCompletion(symbols.First());
+            var symbol = symbols.First();
+            var first = CreateSymbolCompletion(symbol);
             var numberOfOverloads = symbols.Count() - 1;
 
             var displayText = first.DisplayText;
             var insertionText = first.InsertionText;
             var description = string.Format("{0} (+ {1} overload(s))", first.Description, numberOfOverloads);
             var glyph = first.Glyph;
-            return new CompletionItem(displayText, insertionText, description, glyph);
+            return new CompletionItem(displayText, insertionText, description, glyph, symbol);
         }
 
         private static CompletionItem CreateSymbolCompletion(Symbol symbol)
@@ -175,7 +176,7 @@ namespace NQuery.Language.VSEditor.Completion
             var insertionText = symbol.Name;
             var description = SymbolMarkup.ForSymbol(symbol).ToString();
             var glyph = symbol.GetGlyph();
-            return new CompletionItem(displayText, insertionText, description, glyph);
+            return new CompletionItem(displayText, insertionText, description, glyph, symbol);
         }
     }
 }

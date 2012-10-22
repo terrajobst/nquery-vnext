@@ -72,7 +72,11 @@ namespace NQueryViewerActiproWpf
                                           ? null
                                           : SymbolContentProvider.GetImageSourceProvider(completionItem.Glyph.Value);
 
-            return new ActiproCompletionItem(completionItem.InsertionText, imageSourceProvider, null);
+            var contentProvider = completionItem.Symbol == null
+                                      ? null
+                                      : SymbolContentProvider.GetContentProvider(completionItem.Symbol);
+
+            return new ActiproCompletionItem(completionItem.InsertionText, imageSourceProvider, contentProvider);
         }
     }
 }

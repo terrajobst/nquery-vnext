@@ -1,3 +1,5 @@
+using NQuery.Language.Symbols;
+
 namespace NQuery.Language.VSEditor.Completion
 {
     public sealed class CompletionItem
@@ -6,13 +8,20 @@ namespace NQuery.Language.VSEditor.Completion
         private readonly string _insertionText;
         private readonly string _description;
         private readonly NQueryGlyph? _glyph;
+        private readonly Symbol _symbol;
 
         public CompletionItem(string displayText, string insertionText, string description, NQueryGlyph? glyph)
+            : this(displayText, insertionText, description, glyph, null)
+        {
+        }
+
+        public CompletionItem(string displayText, string insertionText, string description, NQueryGlyph? glyph, Symbol symbol)
         {
             _displayText = displayText;
             _insertionText = insertionText;
             _description = description;
             _glyph = glyph;
+            _symbol = symbol;
         }
 
         public string DisplayText
@@ -33,6 +42,11 @@ namespace NQuery.Language.VSEditor.Completion
         public NQueryGlyph? Glyph
         {
             get { return _glyph; }
+        }
+
+        public Symbol Symbol
+        {
+            get { return _symbol; }
         }
     }
 }
