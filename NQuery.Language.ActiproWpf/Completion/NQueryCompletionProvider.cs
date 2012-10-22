@@ -1,5 +1,4 @@
 using System.ComponentModel.Composition;
-
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
@@ -43,7 +42,7 @@ namespace NQueryViewerActiproWpf
             var model = CompletionModelProvider.GetModel(semanticModel, position);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
-            var completionSession = existingSession ?? new CompletionSession
+            var completionSession = existingSession ?? new NQueryCompletionSession
                                                            {
                                                                CanFilterUnmatchedItems = true,
                                                                CanCommitWithoutPopup = canCommitWithoutPopup
