@@ -1,4 +1,8 @@
-﻿using NQuery.SampleData;
+﻿using System.Windows.Media;
+using ActiproSoftware.Text;
+using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
+using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
+using NQuery.SampleData;
 
 namespace NQueryViewerActiproWpf
 {
@@ -11,6 +15,8 @@ namespace NQueryViewerActiproWpf
             var language = new NQueryLanguage();
             var classificationTypes = language.GetService<INQueryClassificationTypes>();
             classificationTypes.RegisterAll();
+
+            AmbientHighlightingStyleRegistry.Instance.Register(ClassificationTypes.CompilerError, new HighlightingStyle(Brushes.Blue));
 
             _syntaxEditor.Document = new NQueryDocument { DataContext = NorthwindDataContext.Create() };
             _syntaxEditor.Text = @"/*

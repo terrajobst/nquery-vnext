@@ -51,6 +51,12 @@
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
+    <Compile Include="Squiggles\SquiggleTagQuickInfoProviderRegistrar.cs" />
+    <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifier.cs" />
+    <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifierProvider.cs" />
+    <Compile Include="Squiggles\NQuerySquiggleClassifier.cs" />
+    <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifier.cs" />
+    <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifierProvider.cs" />
     <Compile Include="SymbolContent\HtmlContentProviderWithGlyph.cs" />
     <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
     <Compile Include="SymbolContent\ISymbolContentProvider.cs" />
