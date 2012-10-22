@@ -17,8 +17,8 @@ namespace NQueryViewerActiproWpf
             const string serviceTypeKey = "ServiceType";
             var languageServices = from ls in LanguageServices
                                    where ls.Metadata.ContainsKey(serviceTypeKey)
-                                   let serviceType = ls.Metadata[serviceTypeKey]
-                                   where serviceType != null
+                                   let service = ls.Value
+                                   let serviceType = ls.Metadata[serviceTypeKey] ?? service.GetType()
                                    select new {Service = ls.Value, ServiceType = serviceType};
 
             foreach (var languageService in languageServices)

@@ -9,6 +9,11 @@ namespace NQueryViewerActiproWpf
     {
         private readonly Type _serviceType;
 
+        public ExportLanguageServiceAttribute()
+            : this(null)
+        {
+        }
+
         public ExportLanguageServiceAttribute(Type serviceType)
             : base(typeof(object))
         {
