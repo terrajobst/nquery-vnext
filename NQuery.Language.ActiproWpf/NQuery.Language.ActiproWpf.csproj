@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
+    <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
     <Compile Include="SymbolContent\HtmlContentProviderWithGlyph.cs" />
     <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
     <Compile Include="SymbolContent\ISymbolContentProvider.cs" />

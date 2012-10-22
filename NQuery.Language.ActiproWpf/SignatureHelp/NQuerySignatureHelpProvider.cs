@@ -19,12 +19,19 @@ namespace NQueryViewerActiproWpf.SignatureHelp
 
         public override bool RequestSession(IEditorView view)
         {
-            var snapshot = view.CurrentSnapshot;
-            var semanticData = snapshot.GetSemanticData();
-            if (semanticData == null)
-                return false;
+            RequestSessionAsync(view);
+            return true;
+        }
 
-            var syntaxTree = semanticData.ParseData.SyntaxTree;
+        private async void RequestSessionAsync(IEditorView view)
+        {
+            var semanticData = await view.CurrentSnapshot.Document.GetSemanticDataAsync();
+            if (semanticData == null)
+                return;
+
+            var parseData = semanticData.ParseData;
+            var snapshot = parseData.Snapshot;
+            var syntaxTree = parseData.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
@@ -34,9 +41,12 @@ namespace NQueryViewerActiproWpf.SignatureHelp
                 .FirstOrDefault(m => m != null);
 
             if (model == null || model.Signatures.Count == 0)
-                return false;
+                return;
 
-            var session = new ParameterInfoSession();
+            var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
+            var session = existingSession ?? new ParameterInfoSession();
+
+            session.Items.Clear();
 
             foreach (var signatureItem in model.Signatures)
             {
@@ -46,9 +56,9 @@ namespace NQueryViewerActiproWpf.SignatureHelp
             }
 
             var span = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.ApplicableSpan);
-            session.Open(view, span);
 
-            return true;
+            if (existingSession == null)
+                session.Open(view, span);
         }
     }
 }
