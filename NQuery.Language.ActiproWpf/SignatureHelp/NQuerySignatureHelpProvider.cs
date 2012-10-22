@@ -8,6 +8,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 using NQuery.Language.VSEditor.SignatureHelp;
 
 using ActiproSignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.SignatureItem;
+using NQuerySignatureItem = NQuery.Language.VSEditor.SignatureHelp.SignatureItem;
 
 namespace NQueryViewerActiproWpf.SignatureHelp
 {
@@ -40,25 +41,47 @@ namespace NQueryViewerActiproWpf.SignatureHelp
                 .Select(p => p.GetModel(semanticData.SemanticModel, position))
                 .FirstOrDefault(m => m != null);
 
-            if (model == null || model.Signatures.Count == 0)
-                return;
-
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
+
+            if (model == null || model.Signatures.Count == 0)
+            {
+                if (existingSession != null)
+                    existingSession.Close(true);
+                return;
+            }
+
             var session = existingSession ?? new ParameterInfoSession();
+
+            var previousSelectedItem = existingSession == null
+                                           ? -1
+                                           : existingSession.Items.IndexOf(existingSession.Selection);
 
             session.Items.Clear();
 
+            var parameterIndex = model.SelectedParameter;
+
             foreach (var signatureItem in model.Signatures)
             {
-                var signatureContentProvider = new NQuerySignatureContentProvider(signatureItem);
+                var signatureContentProvider = new NQuerySignatureContentProvider(signatureItem, parameterIndex);
                 var item = new ActiproSignatureItem(signatureContentProvider, signatureItem);
                 session.Items.Add(item);
             }
 
-            var span = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.ApplicableSpan);
+            var selectedSignature = previousSelectedItem >= 0 && previousSelectedItem < model.Signatures.Count
+                                        ? model.Signatures[previousSelectedItem]
+                                        : null;
+
+            var bestSignature = selectedSignature == null || parameterIndex >= selectedSignature.Parameters.Count
+                                    ? model.Signatures.FirstOrDefault(s => parameterIndex < s.Parameters.Count)
+                                    : selectedSignature;
+
+            session.Selection = session.Items.FirstOrDefault(i => i.Tag == bestSignature);
 
             if (existingSession == null)
+            {
+                var span = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.ApplicableSpan);
                 session.Open(view, span);
+            }
         }
     }
 }
