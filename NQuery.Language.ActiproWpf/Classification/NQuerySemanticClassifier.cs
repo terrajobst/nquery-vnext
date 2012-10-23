@@ -8,7 +8,7 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Language;
-using NQuery.Language.Symbols;
+using NQuery.Language.VSEditor;
 
 namespace NQueryViewerActiproWpf
 {
@@ -21,15 +21,15 @@ namespace NQueryViewerActiproWpf
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
-            var nqueryDocument = document as NQueryDocument;
-            if (nqueryDocument != null)
-            {
-                nqueryDocument.SemanticModelChanged += NqueryDocumentOnSemanticModelChanged;
-                UpdateTags();
-            }
+            var queryDocument = document as NQueryDocument;
+            if (queryDocument == null)
+                return;
+
+            queryDocument.SemanticModelChanged += DocumentOnSemanticModelChanged;
+            UpdateTags();
         }
 
-        private void NqueryDocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }
@@ -40,8 +40,16 @@ namespace NQueryViewerActiproWpf
             if (semanticData == null)
                 return;
 
-            var snapshot = semanticData.ParseData.Snapshot;
-            var tags = await ClassifyAsync(snapshot, semanticData.SemanticModel, _classificationTypes);
+            var parseData = semanticData.ParseData;
+            var snapshot = parseData.Snapshot;
+            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var classificationSpans = await ClassifyAsync(semanticData.SemanticModel);
+
+            var tags = from cs in classificationSpans
+                       let textRange = textBuffer.ToSnapshotRange(snapshot, cs.Span)
+                       let classificationType = GetClassification(cs.Classification)
+                       let tag = new ClassificationTag(classificationType)
+                       select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);
 
             using (CreateBatch())
             {
@@ -51,188 +59,40 @@ namespace NQueryViewerActiproWpf
             }
         }
 
-        private static Task<List<TagVersionRange<IClassificationTag>>> ClassifyAsync(ITextSnapshot snapshot, SemanticModel semanticModel, INQueryClassificationTypes classificationTypes)
+        private IClassificationType GetClassification(SemanticClassification classification)
         {
-            return Task.Factory.StartNew(() =>
+            switch (classification)
             {
-                var result = new List<TagVersionRange<IClassificationTag>>();
-                var worker = new ClassificationWorker(result, snapshot, semanticModel, classificationTypes);
-                worker.ClassifyNodeAndChildren(semanticModel.Compilation.SyntaxTree.Root);
-                return result;
-            });
+                case SemanticClassification.SchemaTable:
+                    return _classificationTypes.SchemaTable;
+                case SemanticClassification.Column:
+                    return _classificationTypes.Column;
+                case SemanticClassification.DerivedTable:
+                    return _classificationTypes.DerivedTable;
+                case SemanticClassification.CommonTableExpression:
+                    return _classificationTypes.CommonTableExpression;
+                case SemanticClassification.Function:
+                    return _classificationTypes.Function;
+                case SemanticClassification.Aggregate:
+                    return _classificationTypes.Aggregate;
+                case SemanticClassification.Variable:
+                    return _classificationTypes.Variable;
+                case SemanticClassification.Property:
+                    return _classificationTypes.Property;
+                case SemanticClassification.Method:
+                    return _classificationTypes.Method;
+                default:
+                    throw new ArgumentOutOfRangeException("classification");
+            }
         }
 
-        // TODO: This should be a shared component in the services component
-        
-        private sealed class ClassificationWorker
+        private static Task<IReadOnlyList<SemanticClassificationSpan>> ClassifyAsync(SemanticModel semanticModel)
         {
-            private readonly List<TagVersionRange<IClassificationTag>> _result;
-            private readonly ITextSnapshot _snapshot;
-            private readonly SemanticModel _semanticModel;
-            private readonly INQueryClassificationTypes _classificationTypes;
-
-            public ClassificationWorker(List<TagVersionRange<IClassificationTag>> result, ITextSnapshot snapshot, SemanticModel semanticModel, INQueryClassificationTypes classificationTypes)
+            return Task.Run(() =>
             {
-                _result = result;
-                _snapshot = snapshot;
-                _semanticModel = semanticModel;
-                _classificationTypes = classificationTypes;
-            }
-
-            private void AddClassification(TextSpan textSpan, Symbol symbol)
-            {
-                if (symbol.Kind == SymbolKind.BadSymbol || symbol.Kind == SymbolKind.BadTable)
-                    return;
-
-                var textBuffer = _semanticModel.Compilation.SyntaxTree.TextBuffer;
-                var range = textBuffer.ToSnapshotRange(_snapshot, textSpan);
-                var classificationType = GetClassification(symbol);
-                var classificationTag = new ClassificationTag(classificationType);
-                var tagVersionRange = new TagVersionRange<IClassificationTag>(range, TextRangeTrackingModes.Default, classificationTag);
-                _result.Add(tagVersionRange);
-            }
-
-            private IClassificationType GetClassification(Symbol symbol)
-            {
-                switch (symbol.Kind)
-                {
-                    case SymbolKind.SchemaTable:
-                        return _classificationTypes.SchemaTable;
-                    case SymbolKind.Column:
-                        return _classificationTypes.Column;
-                    case SymbolKind.DerivedTable:
-                        return _classificationTypes.DerivedTable;
-                    case SymbolKind.CommonTableExpression:
-                        return _classificationTypes.CommonTableExpression;
-                    case SymbolKind.TableInstance:
-                        return GetClassification(((TableInstanceSymbol)symbol).Table);
-                    case SymbolKind.ColumnInstance:
-                        return _classificationTypes.Column;
-                    case SymbolKind.Function:
-                        return _classificationTypes.Function;
-                    case SymbolKind.Aggregate:
-                        return _classificationTypes.Aggregate;
-                    case SymbolKind.Variable:
-                        return _classificationTypes.Variable;
-                    case SymbolKind.Property:
-                        return _classificationTypes.Property;
-                    case SymbolKind.Method:
-                        return _classificationTypes.Method;
-                    default:
-                        return null;
-                }
-            }
-
-            private void AddClassification(SyntaxNodeOrToken nodeOrToken, Symbol symbol)
-            {
-                if (nodeOrToken.Span.Length > 0)
-                    AddClassification(nodeOrToken.Span, symbol);
-            }
-
-            public void ClassifyNodeAndChildren(SyntaxNode node)
-            {
-                ClassifyNode(node);
-
-                var childNodes = node.ChildNodesAndTokens()
-                                     .Where(n => n.IsNode)
-                                     .Select(n => n.AsNode());
-
-                foreach (var childNode in childNodes)
-                    ClassifyNodeAndChildren(childNode);
-            }
-
-            private void ClassifyNode(SyntaxNode node)
-            {
-                switch (node.Kind)
-                {
-                    case SyntaxKind.NameExpression:
-                        ClassifyNameExpression((NameExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.VariableExpression:
-                        ClassifyVariableExpression((VariableExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.FunctionInvocationExpression:
-                        ClassifyFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.CountAllExpression:
-                        ClassifyCountAllExpression((CountAllExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.PropertyAccessExpression:
-                        ClassifyPropertyAccess((PropertyAccessExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.MethodInvocationExpression:
-                        ClassifyMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
-                        break;
-                    case SyntaxKind.NamedTableReference:
-                        ClassifyNamedTableReference((NamedTableReferenceSyntax)node);
-                        break;
-                    case SyntaxKind.DerivedTableReference:
-                        ClassifyDerivedTableReference((DerivedTableReferenceSyntax)node);
-                        break;
-                }
-            }
-
-            private void ClassifyExpression(ExpressionSyntax node, SyntaxNodeOrToken context)
-            {
-                var symbol = _semanticModel.GetSymbol(node);
-                if (symbol == null)
-                    return;
-
-                AddClassification(context, symbol);
-            }
-
-            private void ClassifyNameExpression(NameExpressionSyntax node)
-            {
-                ClassifyExpression(node, node.Name);
-            }
-
-            private void ClassifyVariableExpression(VariableExpressionSyntax node)
-            {
-                ClassifyExpression(node, node);
-            }
-
-            private void ClassifyFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
-            {
-                ClassifyExpression(node, node.Name);
-                ClassifyNode(node.ArgumentList);
-            }
-
-            private void ClassifyCountAllExpression(CountAllExpressionSyntax node)
-            {
-                ClassifyExpression(node, node.Name);
-            }
-
-            private void ClassifyPropertyAccess(PropertyAccessExpressionSyntax node)
-            {
-                ClassifyNode(node.Target);
-                ClassifyExpression(node, node.Name);
-            }
-
-            private void ClassifyMethodInvocationExpression(MethodInvocationExpressionSyntax node)
-            {
-                ClassifyNode(node.Target);
-                ClassifyExpression(node, node.Name);
-                ClassifyNode(node.ArgumentList);
-            }
-
-            private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)
-            {
-                var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-                if (tableInstanceSymbol == null)
-                    return;
-
-                AddClassification(node.TableName, tableInstanceSymbol.Table);
-
-                if (node.Alias != null)
-                    AddClassification(node.Alias.Identifier, tableInstanceSymbol);
-            }
-
-            private void ClassifyDerivedTableReference(DerivedTableReferenceSyntax node)
-            {
-                var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-                if (tableInstanceSymbol != null)
-                    AddClassification(node.Name, tableInstanceSymbol);
-            }
+                var root = semanticModel.Compilation.SyntaxTree.Root;
+                return root.ClassifySemantic(semanticModel);
+            });
         }
     }
 }

@@ -1,12 +1,13 @@
 namespace NQuery.Language.VSEditor
 {
-    public enum RawSyntaxTagKind
+    public enum SyntaxClassification
     {
+        Whitespace,
+        Comment,
         Keyword,
-        Operator,
+        Punctuation,
         Identifier,
         StringLiteral,
         NumberLiteral,
-        Comment
     }
 }

@@ -132,10 +132,7 @@
     <Compile Include="QuickInfo\NQueryQuickInfoTriggerProvider.cs" />
     <Compile Include="QuickInfo\QuickInfoManager.cs" />
     <Compile Include="QuickInfo\QuickInfoManagerProvider.cs" />
-    <Compile Include="Classification\RawClassificationTag.cs" />
     <Compile Include="Outlining\RawOutliningRegionTag.cs" />
-    <Compile Include="Classification\RawSyntaxTag.cs" />
-    <Compile Include="Classification\RawSyntaxTagKind.cs" />
     <Compile Include="SignatureHelp\NQueryParameter.cs" />
     <Compile Include="SignatureHelp\ISignatureHelpManager.cs" />
     <Compile Include="SignatureHelp\ISignatureHelpManagerProvider.cs" />

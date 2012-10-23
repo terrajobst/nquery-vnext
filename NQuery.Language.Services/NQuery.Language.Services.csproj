@@ -53,6 +53,13 @@
     <Compile Include="BraceMatching\ParenthesisBraceMatcher.cs" />
     <Compile Include="BraceMatching\SingleTokenBraceMatcher.cs" />
     <Compile Include="BraceMatching\StringQuoteBraceMatcher.cs" />
+    <Compile Include="Classifications\SemanticClassification.cs" />
+    <Compile Include="Classifications\SemanticClassificationSpan.cs" />
+    <Compile Include="Classifications\SemanticClassificationWorker.cs" />
+    <Compile Include="Classifications\SyntaxClassificationSpan.cs" />
+    <Compile Include="Classifications\ClassificationExtensions.cs" />
+    <Compile Include="Classifications\SyntaxClassification.cs" />
+    <Compile Include="Classifications\SyntaxClassificationWorker.cs" />
     <Compile Include="Completion\CompletionItem.cs" />
     <Compile Include="Completion\CompletionModel.cs" />
     <Compile Include="Completion\CompletionModelProvider.cs" />
