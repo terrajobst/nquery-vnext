@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Language.Services.Completion
 {
     public sealed class CompletionModel
     {

@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor.BraceMatching
+using System;
+
+namespace NQuery.Language.Services.BraceMatching
 {
     internal abstract class SingleTokenBraceMatcher : IBraceMatcher
     {

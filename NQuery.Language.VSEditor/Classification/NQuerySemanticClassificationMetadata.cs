@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 
@@ -5,7 +6,7 @@ using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Classification
 {
     internal sealed class NQuerySemanticClassificationMetadata
     {

@@ -1,6 +1,8 @@
+using System;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Language.Services.Completion
 {
     public sealed class CompletionItem
     {

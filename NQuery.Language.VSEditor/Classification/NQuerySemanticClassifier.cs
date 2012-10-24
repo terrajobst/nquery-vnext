@@ -7,9 +7,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
+using NQuery.Language.Services.Classifications;
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Classification
 {
     internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,SemanticClassificationSpan>
     {

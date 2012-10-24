@@ -1,6 +1,8 @@
+using System;
+
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Classification
 {
     public interface INQuerySemanticClassificationService
     {

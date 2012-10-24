@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
-namespace NQuery.Language.VSEditor.BraceMatching
+namespace NQuery.Language.Services.BraceMatching
 {
     [Export(typeof(IBraceMatchingService))]
     internal sealed class BraceMatchingService : IBraceMatchingService

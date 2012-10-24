@@ -1,8 +1,9 @@
+using System;
 using System.Threading.Tasks;
-using ActiproSoftware.Text;
-using NQuery.Language;
 
-namespace NQueryViewerActiproWpf
+using ActiproSoftware.Text;
+
+namespace NQuery.Language.ActiproWpf
 {
     public static class NQueryExtensions
     {

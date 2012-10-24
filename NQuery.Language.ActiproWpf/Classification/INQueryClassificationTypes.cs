@@ -1,6 +1,8 @@
+using System;
+
 using ActiproSoftware.Text;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Classification
 {
     public interface INQueryClassificationTypes
     {

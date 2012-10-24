@@ -1,6 +1,8 @@
 using System;
 
-namespace NQuery.Language.VSEditor
+using NQuery.Language.Services.QuickInfo;
+
+namespace NQuery.Language.VSEditor.QuickInfo
 {
     public interface IQuickInfoManager
     {

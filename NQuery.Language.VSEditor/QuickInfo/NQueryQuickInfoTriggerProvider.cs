@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
+
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.QuickInfo
 {
     [Export(typeof(IWpfTextViewCreationListener))]
     [Name("NQueryQuickInfoTriggerProvider")]

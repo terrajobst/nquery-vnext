@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
+
 using NQuery.Language.VSEditor.Completion;
 using NQuery.Language.VSEditor.SignatureHelp;
 

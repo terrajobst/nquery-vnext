@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel.Composition;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services.QuickInfo
 {
     [Export(typeof(IQuickInfoModelProvider))]
     internal sealed class CountAllExpressionQuickInfoModelProvider : QuickInfoModelProvider<CountAllExpressionSyntax>

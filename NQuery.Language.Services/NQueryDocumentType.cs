@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor.Document
+using System;
+
+namespace NQuery.Language.Services
 {
     public enum NQueryDocumentType
     {

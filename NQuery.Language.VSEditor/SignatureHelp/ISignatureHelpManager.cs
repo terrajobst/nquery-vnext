@@ -1,5 +1,7 @@
 using System;
 
+using NQuery.Language.Services.SignatureHelp;
+
 namespace NQuery.Language.VSEditor.SignatureHelp
 {
     public interface ISignatureHelpManager

@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor.BraceMatching
+using System;
+
+namespace NQuery.Language.Services.BraceMatching
 {
     public interface IBraceMatchingService
     {

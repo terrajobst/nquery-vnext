@@ -5,9 +5,7 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining.Implementation;
 
-using NQuery.Language;
-
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Outlining
 {
     internal sealed class NQueryOutliningSource : RangeOutliningSourceBase
     {

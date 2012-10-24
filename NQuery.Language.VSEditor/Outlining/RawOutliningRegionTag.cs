@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor
+using System;
+
+namespace NQuery.Language.VSEditor.Outlining
 {
     internal sealed class RawOutliningRegionTag
     {

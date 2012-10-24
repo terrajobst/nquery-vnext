@@ -1,5 +1,9 @@
+using System;
 using System.Collections.Generic;
+
 using Microsoft.VisualStudio.Language.Intellisense;
+
+using NQuery.Language.Services;
 
 namespace NQuery.Language.VSEditor.Completion
 {

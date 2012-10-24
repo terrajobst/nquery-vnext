@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     [MetadataAttribute]

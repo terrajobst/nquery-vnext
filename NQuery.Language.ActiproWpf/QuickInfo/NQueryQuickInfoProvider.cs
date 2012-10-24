@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using NQuery.Language.VSEditor;
 
-namespace NQueryViewerActiproWpf
+using NQuery.Language.ActiproWpf.SymbolContent;
+using NQuery.Language.Services.QuickInfo;
+
+namespace NQuery.Language.ActiproWpf.QuickInfo
 {
     [ExportLanguageService(typeof(IQuickInfoProvider))]
     internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase

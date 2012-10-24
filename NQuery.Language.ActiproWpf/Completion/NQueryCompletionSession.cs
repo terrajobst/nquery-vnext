@@ -1,8 +1,10 @@
+using System;
 using System.Windows.Input;
+
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Completion
 {
     internal sealed class NQueryCompletionSession : CompletionSession
     {

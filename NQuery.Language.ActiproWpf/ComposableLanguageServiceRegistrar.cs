@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+
 using ActiproSoftware.Text.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf
 {
     [Export(typeof(ILanguageServiceRegistrar))]
     internal sealed class ComposableLanguageServiceRegistrar : ILanguageServiceRegistrar

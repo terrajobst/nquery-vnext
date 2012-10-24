@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Classification
 {
     [Export(typeof(INQueryClassificationTypes))]
     [ExportLanguageService(typeof(INQueryClassificationTypes))]

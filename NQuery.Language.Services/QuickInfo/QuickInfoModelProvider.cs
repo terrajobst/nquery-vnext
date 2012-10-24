@@ -1,7 +1,7 @@
+using System;
 using System.Linq;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services.QuickInfo
 {
     internal abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider
         where T: SyntaxNode

@@ -1,16 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using NQuery.Language.VSEditor.SignatureHelp;
 
-using ActiproSignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.SignatureItem;
-using NQuerySignatureItem = NQuery.Language.VSEditor.SignatureHelp.SignatureItem;
+using NQuery.Language.Services.SignatureHelp;
 
-namespace NQueryViewerActiproWpf.SignatureHelp
+using SignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.SignatureItem;
+
+namespace NQuery.Language.ActiproWpf.SignatureHelp
 {
     [ExportLanguageService(typeof(IParameterInfoProvider))]
     internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase
@@ -63,7 +65,7 @@ namespace NQueryViewerActiproWpf.SignatureHelp
             foreach (var signatureItem in model.Signatures)
             {
                 var signatureContentProvider = new NQuerySignatureContentProvider(signatureItem, parameterIndex);
-                var item = new ActiproSignatureItem(signatureContentProvider, signatureItem);
+                var item = new SignatureItem(signatureContentProvider, signatureItem);
                 session.Items.Add(item);
             }
 

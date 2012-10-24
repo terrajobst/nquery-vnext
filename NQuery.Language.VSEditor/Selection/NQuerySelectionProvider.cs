@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Selection
 {
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {

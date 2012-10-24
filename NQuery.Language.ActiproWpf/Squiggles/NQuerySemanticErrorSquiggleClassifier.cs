@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
-using NQuery.Language;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClassifier
     {

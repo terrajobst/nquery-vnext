@@ -1,8 +1,11 @@
+using System;
 using System.Windows.Media;
-using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
-using NQuery.Language.VSEditor;
 
-namespace NQueryViewerActiproWpf
+using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
+
+using NQuery.Language.Services;
+
+namespace NQuery.Language.ActiproWpf.SymbolContent
 {
     internal sealed class GlyphImageProvider : IImageSourceProvider
     {

@@ -1,8 +1,9 @@
 using System;
 using System.Windows.Media;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services
 {
     public static class NQueryGlyphExtensions
     {

@@ -1,6 +1,8 @@
+using System;
+
 using ActiproSoftware.Text.Tagging.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Classification
 {
     [ExportLanguageService(typeof(CodeDocumentTaggerProvider<NQuerySemanticClassifier>))]
     internal sealed class NQuerySemanticClassifierProvider : CodeDocumentTaggerProvider<NQuerySemanticClassifier>

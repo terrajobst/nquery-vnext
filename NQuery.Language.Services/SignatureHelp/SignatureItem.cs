@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Language.Services.SignatureHelp
 {
     public sealed class SignatureItem
     {

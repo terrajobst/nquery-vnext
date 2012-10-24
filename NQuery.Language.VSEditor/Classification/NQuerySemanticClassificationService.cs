@@ -1,8 +1,9 @@
+using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Classification
 {
     [Export(typeof(INQuerySemanticClassificationService))]
     internal sealed class NQuerySemanticClassificationService : INQuerySemanticClassificationService

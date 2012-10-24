@@ -1,11 +1,13 @@
+using System;
 using System.ComponentModel.Composition;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Analysis;
 using ActiproSoftware.Text.Analysis.Implementation;
-using NQuery.Language;
-using NQuery.Language.VSEditor.BraceMatching;
 
-namespace NQueryViewerActiproWpf
+using NQuery.Language.Services.BraceMatching;
+
+namespace NQuery.Language.ActiproWpf.BraceMatching
 {
     [ExportLanguageService(typeof(IStructureMatcher))]
     internal sealed class NQueryBraceMatcher : IStructureMatcher

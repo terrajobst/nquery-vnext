@@ -1,7 +1,9 @@
+using System;
+
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Squiggles
 {
     internal abstract class NQueryErrorTagger : AsyncTagger<IErrorTag, Diagnostic>
     {

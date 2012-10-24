@@ -1,10 +1,14 @@
+using System;
 using System.ComponentModel.Composition;
+
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
-using NQuery.Language.Symbols;
-using NQuery.Language.VSEditor;
 
-namespace NQueryViewerActiproWpf
+using NQuery.Language.ActiproWpf.Classification;
+using NQuery.Language.Services;
+using NQuery.Language.Symbols;
+
+namespace NQuery.Language.ActiproWpf.SymbolContent
 {
     [Export(typeof(ISymbolContentProvider))]
     internal sealed class SymbolContentProvider : ISymbolContentProvider

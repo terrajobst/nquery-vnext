@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.Language.Intellisense;
+﻿using System;
+
+using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
 namespace NQuery.Language.VSEditor.SignatureHelp

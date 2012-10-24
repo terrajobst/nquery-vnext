@@ -2,10 +2,12 @@ using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using ActiproSoftware.Text.Implementation;
-using NQuery.Language.VSEditor.BraceMatching;
 
-namespace NQueryViewerActiproWpf
+using ActiproSoftware.Text.Implementation;
+
+using NQuery.Language.Services.BraceMatching;
+
+namespace NQuery.Language.ActiproWpf
 {
     public sealed class NQueryLanguage : SyntaxLanguage, IDisposable
     {

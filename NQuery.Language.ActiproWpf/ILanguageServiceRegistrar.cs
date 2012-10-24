@@ -1,6 +1,8 @@
+using System;
+
 using ActiproSoftware.Text.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf
 {
     internal interface ILanguageServiceRegistrar
     {

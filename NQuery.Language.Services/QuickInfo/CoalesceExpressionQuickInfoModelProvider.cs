@@ -1,7 +1,9 @@
+using System;
 using System.ComponentModel.Composition;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services.QuickInfo
 {
     [Export(typeof(IQuickInfoModelProvider))]
     internal sealed class CoalesceExpressionQuickInfoModelProvider : QuickInfoModelProvider<CoalesceExpressionSyntax>

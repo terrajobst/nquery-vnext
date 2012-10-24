@@ -1,6 +1,7 @@
+using System;
 using System.ComponentModel.Composition;
 
-namespace NQuery.Language.VSEditor.BraceMatching
+namespace NQuery.Language.Services.BraceMatching
 {
     [Export(typeof(IBraceMatcher))]
     internal sealed class StringQuoteBraceMatcher : SingleTokenBraceMatcher

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
+
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Squiggles
 {
     internal sealed class NQuerySyntaxErrorTagger : NQueryErrorTagger
     {

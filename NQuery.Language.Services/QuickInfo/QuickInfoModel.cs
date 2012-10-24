@@ -1,6 +1,8 @@
+using System;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services.QuickInfo
 {
     public sealed class QuickInfoModel
     {

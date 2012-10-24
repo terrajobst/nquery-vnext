@@ -1,13 +1,16 @@
 using System;
 using System.Text;
 using System.Windows.Media;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using NQuery.Language.Symbols;
-using NQuery.Language.VSEditor;
 
-namespace NQueryViewerActiproWpf
+using NQuery.Language.ActiproWpf.Classification;
+using NQuery.Language.Services;
+using NQuery.Language.Symbols;
+
+namespace NQuery.Language.ActiproWpf.SymbolContent
 {
     internal static class HtmlMarkupEmitter
     {

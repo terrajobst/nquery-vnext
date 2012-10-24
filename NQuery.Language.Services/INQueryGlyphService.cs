@@ -1,6 +1,7 @@
+using System;
 using System.Windows.Media;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services
 {
     public interface INQueryGlyphService
     {

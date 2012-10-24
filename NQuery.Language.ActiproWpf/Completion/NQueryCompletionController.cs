@@ -1,8 +1,10 @@
+using System;
 using System.Linq;
+
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Completion
 {
     [ExportLanguageService]
     internal sealed class NQueryCompletionController : IEditorDocumentTextChangeEventSink

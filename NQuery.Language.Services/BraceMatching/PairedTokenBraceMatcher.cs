@@ -1,6 +1,7 @@
+using System;
 using System.Linq;
 
-namespace NQuery.Language.VSEditor.BraceMatching
+namespace NQuery.Language.Services.BraceMatching
 {
     internal abstract class PairedTokenBraceMatcher : IBraceMatcher
     {

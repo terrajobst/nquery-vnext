@@ -1,5 +1,7 @@
 using System;
 
+using NQuery.Language.Services.Completion;
+
 namespace NQuery.Language.VSEditor.Completion
 {
     public interface ICompletionModelManager

@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor.SignatureHelp
+using System;
+
+namespace NQuery.Language.Services.SignatureHelp
 {
     public interface ISignatureModelProvider
     {

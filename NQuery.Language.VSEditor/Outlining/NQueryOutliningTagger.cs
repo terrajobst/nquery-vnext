@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Outlining
 {
     internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, RawOutliningRegionTag> 
     {

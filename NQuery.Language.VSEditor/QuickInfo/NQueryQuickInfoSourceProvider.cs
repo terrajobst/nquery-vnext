@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Language.Intellisense;
@@ -6,7 +7,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor
+using NQuery.Language.Services;
+using NQuery.Language.VSEditor.Classification;
+
+namespace NQuery.Language.VSEditor.QuickInfo
 {
     [Export(typeof (IQuickInfoSourceProvider))]
     [Name("NQueryQuickInfoSourceProvider")]

@@ -1,7 +1,10 @@
-using System.Collections.Generic;
+using System;
 using System.ComponentModel.Composition;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
+
+using NQuery.Language.Services.Completion;
 using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.Completion

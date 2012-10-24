@@ -1,10 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
+
+using NQuery.Language.Services.QuickInfo;
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.QuickInfo
 {
     [Export(typeof(IQuickInfoManagerProvider))]
     internal sealed class QuickInfoManagerProvider : IQuickInfoManagerProvider

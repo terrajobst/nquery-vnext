@@ -1,15 +1,17 @@
+using System;
 using System.ComponentModel.Composition;
+using System.Linq;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Language.VSEditor.Completion;
+using NQuery.Language.ActiproWpf.SymbolContent;
+using NQuery.Language.Services.Completion;
 
-using ActiproCompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
-using NQueryCompletionItem = NQuery.Language.VSEditor.Completion.CompletionItem;
-using System.Linq;
+using CompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Completion
 {
     [ExportLanguageService(typeof (ICompletionProvider))]
     internal sealed class NQueryCompletionProvider : CompletionProviderBase
@@ -66,7 +68,7 @@ namespace NQueryViewerActiproWpf
                 completionSession.Open(view);            
         }
 
-        private ActiproCompletionItem GetActiproCompletionItem(NQueryCompletionItem completionItem)
+        private CompletionItem GetActiproCompletionItem(Services.Completion.CompletionItem completionItem)
         {
             var imageSourceProvider = completionItem.Glyph == null
                                           ? null
@@ -76,7 +78,7 @@ namespace NQueryViewerActiproWpf
                                       ? null
                                       : SymbolContentProvider.GetContentProvider(completionItem.Symbol);
 
-            return new ActiproCompletionItem(completionItem.InsertionText, imageSourceProvider, contentProvider);
+            return new CompletionItem(completionItem.InsertionText, imageSourceProvider, contentProvider);
         }
     }
 }

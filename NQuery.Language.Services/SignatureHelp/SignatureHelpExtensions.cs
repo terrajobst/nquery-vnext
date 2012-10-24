@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Language.Services.SignatureHelp
 {
     internal static class SignatureHelpExtensions
     {

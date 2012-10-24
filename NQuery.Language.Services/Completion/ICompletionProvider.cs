@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Language.Services.Completion
 {
     public interface ICompletionProvider
     {

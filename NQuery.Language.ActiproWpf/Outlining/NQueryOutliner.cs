@@ -1,7 +1,9 @@
+using System;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Outlining
 {
     [ExportLanguageService(typeof(IOutliner))]
     internal sealed class NQueryOutliner : IOutliner

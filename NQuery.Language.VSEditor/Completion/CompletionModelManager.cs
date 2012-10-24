@@ -1,8 +1,11 @@
 using System;
 using System.Linq;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+
+using NQuery.Language.Services.Completion;
 using NQuery.Language.VSEditor.Document;
 
 namespace NQuery.Language.VSEditor.Completion

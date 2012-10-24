@@ -1,9 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Language.Services.SignatureHelp
 {
     // TODO: Could we introduce a common base class between FunctionSignatureModelProvider and MethodSignatureModelProvider?
 

@@ -5,15 +5,20 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
+
+using NQuery.Language.Services;
+using NQuery.Language.Services.QuickInfo;
 using NQuery.Language.Symbols;
+using NQuery.Language.VSEditor.Classification;
 
 using Span = Microsoft.VisualStudio.Text.Span;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.QuickInfo
 {
     internal sealed class NQueryQuickInfoSource : IQuickInfoSource
     {

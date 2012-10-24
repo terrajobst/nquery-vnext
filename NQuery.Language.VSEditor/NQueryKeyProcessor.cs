@@ -1,8 +1,9 @@
-using System.Media;
+using System;
 using System.Windows.Input;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
+
 using NQuery.Language.VSEditor.Completion;
 using NQuery.Language.VSEditor.SignatureHelp;
 

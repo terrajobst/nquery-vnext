@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor.Completion
+using System;
+
+namespace NQuery.Language.Services.Completion
 {
     public interface ICompletionModelProvider
     {

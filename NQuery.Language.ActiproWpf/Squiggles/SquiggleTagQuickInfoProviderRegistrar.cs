@@ -1,8 +1,10 @@
+using System;
 using System.ComponentModel.Composition;
+
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Squiggles
 {
     // TODO: We may want to replace this provider with our own -- it doens't seem to work very well.
     [Export(typeof(ILanguageServiceRegistrar))]

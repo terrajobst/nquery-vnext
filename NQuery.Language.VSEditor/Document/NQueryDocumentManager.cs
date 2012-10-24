@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.Composition;
+﻿using System;
+using System.ComponentModel.Composition;
+
 using Microsoft.VisualStudio.Text;
 
 namespace NQuery.Language.VSEditor.Document

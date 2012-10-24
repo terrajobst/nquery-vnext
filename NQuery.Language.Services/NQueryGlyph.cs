@@ -1,4 +1,6 @@
-namespace NQuery.Language.VSEditor
+using System;
+
+namespace NQuery.Language.Services
 {
     public enum NQueryGlyph
     {

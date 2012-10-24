@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Parsing;
-using NQuery.Language;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySyntaxErrorSquiggleClassifier : NQuerySquiggleClassifier
     {

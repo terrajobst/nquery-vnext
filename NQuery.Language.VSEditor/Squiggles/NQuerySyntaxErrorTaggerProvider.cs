@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text;
@@ -7,7 +8,7 @@ using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Language.VSEditor.Document;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.VSEditor.Squiggles
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]

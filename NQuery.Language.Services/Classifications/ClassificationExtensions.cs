@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Language.Services.Classifications
 {
     public static class ClassificationExtensions
     {

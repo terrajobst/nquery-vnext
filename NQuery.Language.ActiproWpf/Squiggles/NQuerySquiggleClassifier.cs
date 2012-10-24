@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using NQuery.Language;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf.Squiggles
 {
     internal abstract class NQuerySquiggleClassifier : CollectionTagger<ISquiggleTag>
     {

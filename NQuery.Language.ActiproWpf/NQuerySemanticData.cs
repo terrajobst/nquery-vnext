@@ -1,6 +1,6 @@
-using NQuery.Language;
+using System;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf
 {
     public sealed class NQuerySemanticData
     {

@@ -2,13 +2,14 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Parsing;
-using NQuery.Language;
-using NQuery.Language.VSEditor.Document;
 
-namespace NQueryViewerActiproWpf
+using NQuery.Language.Services;
+
+namespace NQuery.Language.ActiproWpf
 {
     public class NQueryDocument : EditorDocument
     {

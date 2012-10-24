@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
+
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
+
+using NQuery.Language.Services;
+using NQuery.Language.Services.Completion;
 
 namespace NQuery.Language.VSEditor.Completion
 {

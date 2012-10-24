@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
+
 using NQuery.Language.Symbols;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Language.Services.Completion
 {
     [Export(typeof (ICompletionProvider))]
     internal sealed class JoinCompletionProvider : ICompletionProvider

@@ -1,8 +1,9 @@
+using System;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Parsing;
-using NQuery.Language;
 
-namespace NQueryViewerActiproWpf
+namespace NQuery.Language.ActiproWpf
 {
     public sealed class NQueryParseData : IParseData
     {

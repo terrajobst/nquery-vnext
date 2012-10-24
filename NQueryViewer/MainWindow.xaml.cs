@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
@@ -12,10 +11,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
-using NQuery.Language.Symbols;
-using NQuery.Language.VSEditor;
 using NQuery.Language.VSEditor.Document;
+using NQuery.Language.VSEditor.Selection;
 using NQuery.SampleData;
+
 using NQueryViewer.Helpers;
 
 using TextBuffer = NQuery.Language.TextBuffer;

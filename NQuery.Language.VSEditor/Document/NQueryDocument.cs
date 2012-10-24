@@ -3,7 +3,10 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.VisualStudio.Text;
+
+using NQuery.Language.Services;
 
 namespace NQuery.Language.VSEditor.Document
 {
