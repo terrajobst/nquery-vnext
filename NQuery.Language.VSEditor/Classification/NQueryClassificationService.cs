@@ -1,13 +1,15 @@
 using System;
 using System.ComponentModel.Composition;
 
+using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace NQuery.Language.VSEditor.Classification
 {
-    [Export(typeof(INQuerySemanticClassificationService))]
-    internal sealed class NQuerySemanticClassificationService : INQuerySemanticClassificationService
+    [Export(typeof(INQueryClassificationService))]
+    internal sealed class NQueryClassificationService : INQueryClassificationService
     {
+        private IClassificationType _punctuation;
         private IClassificationType _schemaTable;
         private IClassificationType _derivedTable;
         private IClassificationType _cteTable;
@@ -16,15 +18,52 @@ namespace NQuery.Language.VSEditor.Classification
         private IClassificationType _property;
         private IClassificationType _function;
         private IClassificationType _aggregate;
-        private IClassificationType _operator;
         private IClassificationType _variable;
 
         [Import]
         public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; }
 
+        [Import]
+        public IStandardClassificationService StandardClassificationService { get; set; }
+
         private IClassificationType GetOrRetreiveClassification(ref IClassificationType target, string name)
         {
             return target ?? (target = ClassificationTypeRegistryService.GetClassificationType(name));
+        }
+
+        public IClassificationType WhiteSpace
+        {
+            get { return StandardClassificationService.WhiteSpace; }
+        }
+
+        public IClassificationType Comment
+        {
+            get { return StandardClassificationService.Comment; }
+        }
+
+        public IClassificationType Identifier
+        {
+            get { return StandardClassificationService.Identifier; }
+        }
+
+        public IClassificationType Keyword
+        {
+            get { return StandardClassificationService.Keyword; }
+        }
+
+        public IClassificationType Punctuation
+        {
+            get { return GetOrRetreiveClassification(ref _punctuation, NQuerySemanticClassificationMetadata.PunctuationClassificationTypeName); }
+        }
+
+        public IClassificationType NumberLiteral
+        {
+            get { return StandardClassificationService.NumberLiteral; }
+        }
+
+        public IClassificationType StringLiteral
+        {
+            get { return StandardClassificationService.StringLiteral; }
         }
 
         public IClassificationType SchemaTable
@@ -65,11 +104,6 @@ namespace NQuery.Language.VSEditor.Classification
         public IClassificationType Aggregate
         {
             get { return GetOrRetreiveClassification(ref _aggregate, NQuerySemanticClassificationMetadata.AggregateClassificationTypeName); }
-        }
-
-        public IClassificationType Operator
-        {
-            get { return GetOrRetreiveClassification(ref _operator, NQuerySemanticClassificationMetadata.OperatorClassificationTypeName); }
         }
 
         public IClassificationType Variable

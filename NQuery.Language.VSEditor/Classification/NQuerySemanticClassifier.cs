@@ -14,10 +14,10 @@ namespace NQuery.Language.VSEditor.Classification
 {
     internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,SemanticClassificationSpan>
     {
-        private readonly INQuerySemanticClassificationService _classificationService;
+        private readonly INQueryClassificationService _classificationService;
         private readonly INQueryDocument _document;
 
-        public NQuerySemanticClassifier(INQuerySemanticClassificationService classificationService, INQueryDocument document)
+        public NQuerySemanticClassifier(INQueryClassificationService classificationService, INQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;

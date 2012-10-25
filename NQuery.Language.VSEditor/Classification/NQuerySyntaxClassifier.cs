@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
@@ -15,10 +14,10 @@ namespace NQuery.Language.VSEditor.Classification
 {
     internal sealed class NQuerySyntaxClassifier : AsyncTagger<IClassificationTag, SyntaxClassificationSpan>
     {
-        private readonly IStandardClassificationService _classificationService;
+        private readonly INQueryClassificationService _classificationService;
         private readonly INQueryDocument _document;
 
-        public NQuerySyntaxClassifier(IStandardClassificationService classificationService, INQueryDocument document)
+        public NQuerySyntaxClassifier(INQueryClassificationService classificationService, INQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;
@@ -59,7 +58,7 @@ namespace NQuery.Language.VSEditor.Classification
                 case SyntaxClassification.Keyword:
                     return _classificationService.Keyword;
                  case SyntaxClassification.Punctuation:
-                    return _classificationService.Operator;
+                    return _classificationService.Punctuation;
                 case SyntaxClassification.Identifier:
                     return _classificationService.Identifier;
                 case SyntaxClassification.StringLiteral:

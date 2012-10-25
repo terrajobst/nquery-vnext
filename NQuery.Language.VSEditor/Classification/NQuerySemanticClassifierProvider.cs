@@ -15,14 +15,14 @@ namespace NQuery.Language.VSEditor.Classification
     internal sealed class NQuerySemanticClassifierProvider : ITaggerProvider
     {
         [Import]
-        public INQuerySemanticClassificationService SemanticClassificationService { get; set; }
+        public INQueryClassificationService ClassificationService { get; set; }
 
         [Import]
         public INQueryDocumentManager DocumentManager { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            var semanticClassificationService = SemanticClassificationService;
+            var semanticClassificationService = ClassificationService;
             var document = DocumentManager.GetDocument(buffer);
             return new NQuerySemanticClassifier(semanticClassificationService, document) as ITagger<T>;
         }

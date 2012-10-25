@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
@@ -27,16 +26,13 @@ namespace NQuery.Language.VSEditor.QuickInfo
         public IEditorFormatMapService EditorFormatMapService { get; set; }
 
         [Import]
-        public IStandardClassificationService StandardClassificationService { get; set; }
-
-        [Import]
-        public INQuerySemanticClassificationService SemanticClassificationService { get; set; }
+        public INQueryClassificationService ClassificationService { get; set; }
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
             var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap("text");
             var editorFormatMap = EditorFormatMapService.GetEditorFormatMap("text");
-            return new NQueryQuickInfoSource(GlyphService, classificationFormatMap, editorFormatMap, StandardClassificationService, SemanticClassificationService);
+            return new NQueryQuickInfoSource(GlyphService, classificationFormatMap, editorFormatMap, ClassificationService);
         }
     }
 }

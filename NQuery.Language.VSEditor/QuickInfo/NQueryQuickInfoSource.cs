@@ -7,7 +7,6 @@ using System.Windows.Documents;
 using System.Windows.Media;
 
 using Microsoft.VisualStudio.Language.Intellisense;
-using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
@@ -25,16 +24,14 @@ namespace NQuery.Language.VSEditor.QuickInfo
         private readonly INQueryGlyphService _glyphService;
         private readonly IClassificationFormatMap _classificationFormatMap;
         private readonly IEditorFormatMap _editorFormatMap;
-        private readonly IStandardClassificationService _standardClassificationService;
-        private readonly INQuerySemanticClassificationService _semanticClassificationService;
+        private readonly INQueryClassificationService _classificationService;
 
-        public NQueryQuickInfoSource(INQueryGlyphService glyphService, IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, IStandardClassificationService standardClassificationService, INQuerySemanticClassificationService semanticClassificationService)
+        public NQueryQuickInfoSource(INQueryGlyphService glyphService, IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
         {
             _glyphService = glyphService;
             _classificationFormatMap = classificationFormatMap;
             _editorFormatMap = editorFormatMap;
-            _standardClassificationService = standardClassificationService;
-            _semanticClassificationService = semanticClassificationService;
+            _classificationService = classificationService;
         }
 
         public void Dispose()
@@ -101,33 +98,33 @@ namespace NQuery.Language.VSEditor.QuickInfo
             switch (markupNode.Kind)
             {
                 case SymbolMarkupKind.Keyword:
-                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Keyword);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Keyword);
                 case SymbolMarkupKind.Punctuation:
-                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Operator);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Punctuation);
                 case SymbolMarkupKind.Whitespace:
-                    return GetClassifiedText(markupNode.Text, _standardClassificationService.WhiteSpace);
+                    return GetClassifiedText(markupNode.Text, _classificationService.WhiteSpace);
                 case SymbolMarkupKind.TableName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.SchemaTable);
+                    return GetClassifiedText(markupNode.Text, _classificationService.SchemaTable);
                 case SymbolMarkupKind.DerivedTableName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.DerivedTable);
+                    return GetClassifiedText(markupNode.Text, _classificationService.DerivedTable);
                 case SymbolMarkupKind.CommonTableExpressionName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.CommonTableExpression);
+                    return GetClassifiedText(markupNode.Text, _classificationService.CommonTableExpression);
                 case SymbolMarkupKind.ColumnName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Column);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Column);
                 case SymbolMarkupKind.VariableName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Variable);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Variable);
                 case SymbolMarkupKind.ParameterName:
-                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Identifier); // TODO: Fix this
+                    return GetClassifiedText(markupNode.Text, _classificationService.Identifier); // TODO: Fix this
                 case SymbolMarkupKind.FunctionName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Function);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Function);
                 case SymbolMarkupKind.AggregateName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Aggregate);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Aggregate);
                 case SymbolMarkupKind.MethodName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Method);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Method);
                 case SymbolMarkupKind.PropertyName:
-                    return GetClassifiedText(markupNode.Text, _semanticClassificationService.Property);
+                    return GetClassifiedText(markupNode.Text, _classificationService.Property);
                 case SymbolMarkupKind.TypeName:
-                    return GetClassifiedText(markupNode.Text, _standardClassificationService.Identifier); // TODO: Fix this
+                    return GetClassifiedText(markupNode.Text, _classificationService.Identifier); // TODO: Fix this
                 default:
                     throw new ArgumentOutOfRangeException();
             }

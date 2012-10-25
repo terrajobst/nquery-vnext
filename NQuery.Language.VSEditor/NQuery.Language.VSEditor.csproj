@@ -101,7 +101,7 @@
     <Compile Include="Document\NQueryDocument.cs" />
     <Compile Include="Selection\INQuerySelectionProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProviderService.cs" />
-    <Compile Include="Classification\INQuerySemanticClassificationService.cs" />
+    <Compile Include="Classification\INQueryClassificationService.cs" />
     <Compile Include="Classification\NQuerySyntaxClassifier.cs" />
     <Compile Include="Classification\NQuerySyntaxClassifierProvider.cs" />
     <Compile Include="Completion\NQueryCompletionSet.cs" />
@@ -125,7 +125,7 @@
     <Compile Include="QuickInfo\NQueryQuickInfoSourceProvider.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorTaggerProvider.cs" />
     <Compile Include="Classification\NQuerySemanticClassificationMetadata.cs" />
-    <Compile Include="Classification\NQuerySemanticClassificationService.cs" />
+    <Compile Include="Classification\NQueryClassificationService.cs" />
     <Compile Include="Squiggles\NQuerySyntaxErrorTagger.cs" />
     <Compile Include="Squiggles\NQuerySyntaxErrorTaggerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

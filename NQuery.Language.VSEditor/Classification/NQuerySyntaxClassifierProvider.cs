@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel.Composition;
 
-using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
@@ -17,7 +16,7 @@ namespace NQuery.Language.VSEditor.Classification
     internal sealed class NQuerySyntaxClassifierProvider : ITaggerProvider
     {
         [Import]
-        public IStandardClassificationService ClassificationService { get; set; }
+        public INQueryClassificationService ClassificationService { get; set; }
 
         [Import]
         public INQueryDocumentManager DocumentManager { get; set; }

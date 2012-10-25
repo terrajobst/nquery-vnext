@@ -10,6 +10,9 @@ namespace NQuery.Language.VSEditor.Classification
 {
     internal sealed class NQuerySemanticClassificationMetadata
     {
+        public const string PunctuationClassificationFormatName = "NQuery.Punctuation.Format";
+        public const string PunctuationClassificationTypeName = "NQuery.Punctuation";
+
         public const string SchemaTableClassificationFormatName = "NQuery.SchemaTable.Format";
         public const string SchemaTableClassificationTypeName = "NQuery.SchemaTable";
 
@@ -34,15 +37,17 @@ namespace NQuery.Language.VSEditor.Classification
         public const string AggregateClassificationFormatName = "NQuery.Aggregate.Format";
         public const string AggregateClassificationTypeName = "NQuery.Aggregate";
 
-        public const string OperatorClassificationFormatName = "NQuery.Operator.Format";
-        public const string OperatorClassificationTypeName = "NQuery.Operator";
-
         public const string VariableClassificationFormatName = "NQuery.Variable.Format";
         public const string VariableClassificationTypeName = "NQuery.Variable";
 
         // Types ------------------
 
 #pragma warning disable 649
+
+        [Export]
+        [Name(PunctuationClassificationTypeName)]
+        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+        public ClassificationTypeDefinition PunctuationType;
 
         [Export]
         [Name(SchemaTableClassificationTypeName)]
@@ -85,11 +90,6 @@ namespace NQuery.Language.VSEditor.Classification
         public ClassificationTypeDefinition NamespaceType;
 
         [Export]
-        [Name(OperatorClassificationTypeName)]
-        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-        public ClassificationTypeDefinition OperatorType;
-
-        [Export]
         [Name(VariableClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition VariableType;
@@ -97,6 +97,19 @@ namespace NQuery.Language.VSEditor.Classification
 #pragma warning restore 649
 
         // Formats ----------------
+
+        [Export(typeof(EditorFormatDefinition))]
+        [Name(PunctuationClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = PunctuationClassificationTypeName)]
+        [UserVisible(true)]
+        public sealed class PunctuationFormat : ClassificationFormatDefinition
+        {
+            public PunctuationFormat()
+            {
+                DisplayName = "Punctuation";
+                ForegroundColor = Color.FromRgb(0, 139, 139);
+            }
+        }
 
         [Export(typeof(EditorFormatDefinition))]
         [Name(SchemaTableClassificationFormatName)]
@@ -215,21 +228,6 @@ namespace NQuery.Language.VSEditor.Classification
             public PropertyFormat()
             {
                 DisplayName = "Property";
-                ForegroundColor = Color.FromRgb(0, 139, 139);
-            }
-        }
-
-        [Export(typeof(EditorFormatDefinition))]
-        [Name(OperatorClassificationFormatName)]
-        [ClassificationType(ClassificationTypeNames = OperatorClassificationTypeName)]
-        [UserVisible(true)]
-        [Order(After = PredefinedClassificationTypeNames.Identifier)]
-        [Order(After = PredefinedClassificationTypeNames.Keyword)]
-        public sealed class OperatorFormat : ClassificationFormatDefinition
-        {
-            public OperatorFormat()
-            {
-                DisplayName = "Operator";
                 ForegroundColor = Color.FromRgb(0, 139, 139);
             }
         }
