@@ -74,6 +74,9 @@
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphExtensions.cs" />
     <Compile Include="NQueryGlyphService.cs" />
+    <Compile Include="Outlining\OutliningRegionSpan.cs" />
+    <Compile Include="Outlining\OutliningExtensions.cs" />
+    <Compile Include="Outlining\OutliningWorker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\CastExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\CoalesceExpressionQuickInfoModelProvider.cs" />
