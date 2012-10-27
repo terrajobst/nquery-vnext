@@ -2,33 +2,12 @@
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wpf="clr-namespace:NQuery.Language.Wpf;assembly=NQuery.Language.Wpf"
         Title="NQuery Viewer"
         Height="350"
         Width="525"
         TextOptions.TextFormattingMode="Display"
         UseLayoutRounding="True">
-    <Window.Resources>
-        <Style TargetType="DataGrid">
-            <Setter Property="GridLinesVisibility"
-                    Value="None" />
-            <Setter Property="BorderBrush"
-                    Value="{x:Static SystemColors.ControlLightBrush}" />
-        </Style>
-        <Style TargetType="DataGridCell">
-            <Style.Triggers>
-                <Trigger Property="IsKeyboardFocusWithin"
-                         Value="true">
-                    <Setter Property="BorderBrush"
-                            Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                </Trigger>
-            </Style.Triggers>
-            <Setter Property="FocusVisualStyle">
-                <Setter.Value>
-                    <Style />
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -36,7 +15,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0"
             Orientation="Horizontal">
-            <CheckBox x:Name="_fullSpanHighlightingCheckBox"
+            <CheckBox x:Name="FullSpanHighlightingCheckBox"
                       Content="Highlight Full Span"
                       Checked="FullSpanHighlightingCheckBoxChecked"
                       Unchecked="FullSpanHighlightingCheckBoxChecked" />
@@ -47,60 +26,9 @@
                 <ColumnDefinition Width="3" />
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
-            <TreeView x:Name="_treeView"
-                  Grid.Column="0"
-                  SelectedItemChanged="TreeViewSelectedItemChanged">
-                <TreeView.ItemTemplate>
-                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Title}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding NodeType}"
-                                                         Value="Token">
-                                                <Setter Property="Foreground"
-                                                        Value="Blue" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding NodeType}"
-                                                         Value="Node">
-                                                <Setter Property="Foreground"
-                                                        Value="Maroon" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding NodeType}"
-                                                         Value="Trivia">
-                                                <Setter Property="Foreground"
-                                                        Value="Green" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsMissing}"
-                                                         Value="True">
-                                                <Setter Property="FontStyle"
-                                                        Value="Italic" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                            <TextBlock Margin="8,0,0,0"
-                                       Foreground="LightGray">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding ElementName=_fullSpanHighlightingCheckBox, Path=IsChecked}"
-                                                         Value="True">
-                                                <Setter Property="Text"
-                                                        Value="{Binding FullSpan}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                        <Setter Property="Text"
-                                                Value="{Binding Span}" />
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-                        </StackPanel>
-                    </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+            <wpf:SyntaxTreeVisualizer x:Name="SyntaxTreeVisualizer"
+                                      Grid.Column="0"
+                                      SelectedNodeChanged="SyntaxTreeVisualizerSelectedNodeChanged"/>
             <GridSplitter Grid.Column="1"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch" />
@@ -111,22 +39,13 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <ContentControl Grid.Row="0"
-                                x:Name="_editorHost" />
+                                x:Name="EditorHost" />
                 <GridSplitter Grid.Row="1"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" />
-                <DataGrid x:Name="_diagnosticDataGrid"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          ItemsSource="{Binding Diagnostics}"
-                          MouseDoubleClick="DiagnosticDataGridOnMouseDoubleClick"
-                          Grid.Row="2">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Description" Binding="{Binding Description}" Width="*" />
-                        <DataGridTextColumn Header="Line" Binding="{Binding Line}" Width="Auto" />
-                        <DataGridTextColumn Header="Column" Binding="{Binding Column}" Width="Auto" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <wpf:DiagnosticGrid x:Name="DiagnosticGrid"
+                                    Grid.Row="2"
+                                    MouseDoubleClick="DiagnosticGridMouseDoubleClick"/>
             </Grid>
         </Grid>
     </Grid>

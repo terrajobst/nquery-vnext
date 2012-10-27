@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 
-using NQuery.Language.Services;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.VSEditor.Completion
 {

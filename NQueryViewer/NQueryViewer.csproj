@@ -98,7 +98,6 @@
     </ApplicationDefinition>
     <Compile Include="IMainWindowProvider.cs" />
     <Compile Include="Helpers\TextViewFactory.cs" />
-    <Compile Include="Helpers\TreeViewExtensions.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -144,6 +143,10 @@
     <ProjectReference Include="..\NQuery.Language.VSEditor\NQuery.Language.VSEditor.csproj">
       <Project>{a3b82430-e8ed-4177-b097-3a82748edaef}</Project>
       <Name>NQuery.Language.VSEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NQuery.Language.Wpf\NQuery.Language.Wpf.csproj">
+      <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
+      <Name>NQuery.Language.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>

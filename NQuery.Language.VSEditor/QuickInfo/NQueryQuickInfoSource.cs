@@ -14,6 +14,7 @@ using NQuery.Language.Services;
 using NQuery.Language.Services.QuickInfo;
 using NQuery.Language.Symbols;
 using NQuery.Language.VSEditor.Classification;
+using NQuery.Language.Wpf;
 
 using Span = Microsoft.VisualStudio.Text.Span;
 

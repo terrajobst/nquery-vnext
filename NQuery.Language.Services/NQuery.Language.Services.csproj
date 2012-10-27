@@ -30,17 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BraceMatching\BraceMatchingService.cs" />
@@ -69,11 +61,9 @@
     <Compile Include="Completion\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\SymbolCompletionProvider.cs" />
     <Compile Include="Completion\TypeCompletionProvider.cs" />
-    <Compile Include="INQueryGlyphService.cs" />
     <Compile Include="NQueryDocumentType.cs" />
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphExtensions.cs" />
-    <Compile Include="NQueryGlyphService.cs" />
     <Compile Include="Outlining\OutliningRegionSpan.cs" />
     <Compile Include="Outlining\OutliningExtensions.cs" />
     <Compile Include="Outlining\OutliningWorker.cs" />
@@ -110,42 +100,6 @@
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery.Language</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Aggregate.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\AmbiguousName.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Column.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Function.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Keyword.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Method.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Property.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Relation.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Table.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\TableInstance.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Type.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\Variable.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

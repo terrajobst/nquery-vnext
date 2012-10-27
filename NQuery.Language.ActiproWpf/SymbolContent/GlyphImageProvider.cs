@@ -4,6 +4,7 @@ using System.Windows.Media;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
 using NQuery.Language.Services;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.ActiproWpf.SymbolContent
 {

@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text;
 
 using NQuery.Language.Services;
 using NQuery.Language.Services.Completion;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.VSEditor.Completion
 {

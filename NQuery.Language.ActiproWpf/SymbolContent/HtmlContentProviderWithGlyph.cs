@@ -9,6 +9,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 using NQuery.Language.ActiproWpf.Classification;
 using NQuery.Language.Services;
 using NQuery.Language.Symbols;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.ActiproWpf.SymbolContent
 {

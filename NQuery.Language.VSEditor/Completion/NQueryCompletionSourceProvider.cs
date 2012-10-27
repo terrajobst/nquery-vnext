@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.Services;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.VSEditor.Completion
 {

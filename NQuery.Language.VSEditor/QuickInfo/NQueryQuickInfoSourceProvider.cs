@@ -6,8 +6,8 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.Services;
 using NQuery.Language.VSEditor.Classification;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.VSEditor.QuickInfo
 {

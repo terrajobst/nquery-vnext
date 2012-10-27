@@ -4,23 +4,24 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace NQueryViewer.Helpers
+namespace NQuery.Language.Wpf
 {
-    public static class TreeViewExtensions
+    internal static class TreeViewExtensions
     {
         private sealed class Expander
         {
+            private readonly object[] _items;
+            private readonly bool _expandLastItem;
+
             private ItemContainerGenerator _parentGenerator;
-            private object[] _items;
-            private bool _expandLastItem;
             private int _next;
             private TreeViewItem _lastItem;
 
             public Expander(TreeView treeView, IEnumerable<object> items, bool expandLastItem)
             {
-                _parentGenerator = treeView.ItemContainerGenerator;
                 _items = items.ToArray();
                 _expandLastItem = expandLastItem;
+                _parentGenerator = treeView.ItemContainerGenerator;
             }
 
             public void ExpandNext()

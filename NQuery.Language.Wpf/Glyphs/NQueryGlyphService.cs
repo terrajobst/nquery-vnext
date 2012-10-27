@@ -4,10 +4,10 @@ using System.ComponentModel.Composition;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace NQuery.Language.Services
-{
-    // TODO: We way want to move this in a WPF specific assembly
+using NQuery.Language.Services;
 
+namespace NQuery.Language.Wpf
+{
     [Export(typeof(INQueryGlyphService))]
     internal sealed class NQueryGlyphService : INQueryGlyphService
     {

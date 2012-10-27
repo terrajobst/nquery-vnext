@@ -1,5 +1,4 @@
 using System;
-using System.Windows.Media;
 
 using NQuery.Language.Symbols;
 
@@ -7,12 +6,6 @@ namespace NQuery.Language.Services
 {
     public static class NQueryGlyphExtensions
     {
-        public static ImageSource GetGlyph(this INQueryGlyphService glyphService, Symbol symbol)
-        {
-            var glyph = symbol.GetGlyph();
-            return glyphService.GetGlyph(glyph);
-        }
-
         public static NQueryGlyph GetGlyph(this Symbol symbol)
         {
             switch (symbol.Kind)
@@ -41,6 +34,5 @@ namespace NQuery.Language.Services
                     throw new NotImplementedException(string.Format("Unknown symbol kind: {0}", symbol.Kind));
             }
         }
-
     }
 }

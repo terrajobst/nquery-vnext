@@ -93,6 +93,10 @@
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
       <Name>NQuery.Language.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NQuery.Language.Wpf\NQuery.Language.Wpf.csproj">
+      <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
+      <Name>NQuery.Language.Wpf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery.Language</Name>
