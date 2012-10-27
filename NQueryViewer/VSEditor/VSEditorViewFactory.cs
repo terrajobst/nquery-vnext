@@ -8,10 +8,13 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQueryViewer.Helpers
+using NQuery.Language.VSEditor.Document;
+using NQuery.Language.VSEditor.Selection;
+
+namespace NQueryViewer.VSEditor
 {
-    [Export]
-    internal sealed class TextViewFactory : IPartImportsSatisfiedNotification
+    [Export(typeof(IVSEditorViewFactory))]
+    internal sealed class VSEditorViewFactory : IVSEditorViewFactory, IPartImportsSatisfiedNotification
     {
         [Import]
         public IClassificationFormatMapService ClassificationFormatMapService { get; set; }
@@ -28,6 +31,12 @@ namespace NQueryViewer.Helpers
         [Import]
         public IEditorFormatMapService EditorFormatMapService { get; set; }
 
+        [Import]
+        public INQueryDocumentManager DocumentManager { get; set; }
+
+        [Import]
+        public INQuerySelectionProviderService SelectionProviderService { get; set; }
+
         public void OnImportsSatisfied()
         {
             // Set default editor settings
@@ -38,7 +47,16 @@ namespace NQueryViewer.Helpers
                 .SetTypeface(new Typeface("Consolas"));
         }
 
-        public IWpfTextViewHost CreateTextViewHost()
+        public IVSEditorView CreateEditorView()
+        {
+            var textViewHost = CreateTextViewHost();
+            var textView = textViewHost.TextView;
+            var document = DocumentManager.GetDocument(textView.TextBuffer);
+            var selectionProvider = SelectionProviderService.GetSelectionProvider(textView);
+            return new VSEditorView(textViewHost, document, selectionProvider);
+        }
+
+        private IWpfTextViewHost CreateTextViewHost()
         {
             // Create buffer
 

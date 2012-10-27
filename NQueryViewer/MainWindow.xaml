@@ -38,8 +38,9 @@
                     <RowDefinition Height="3" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <ContentControl Grid.Row="0"
-                                x:Name="EditorHost" />
+                <TabControl x:Name="TabControl"
+                            Grid.Row="0"
+                            SelectionChanged="TabControlOnSelectionChanged"/>
                 <GridSplitter Grid.Row="1"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" />

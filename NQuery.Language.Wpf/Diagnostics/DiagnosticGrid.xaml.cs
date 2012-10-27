@@ -12,7 +12,9 @@ namespace NQuery.Language.Wpf
 
         public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, TextBuffer textBuffer)
         {
-            DataContext = new DiagnosticsViewModel(diagnostics, textBuffer);
+            DataContext = diagnostics == null || textBuffer == null
+                              ? null
+                              : new DiagnosticsViewModel(diagnostics, textBuffer);
         }
 
         public Diagnostic SelectedDiagnostic

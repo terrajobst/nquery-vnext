@@ -78,8 +78,9 @@ namespace NQuery.Language.Wpf
 
         private void UpdateViewModel()
         {
-            var viewModel = SyntaxTree == null ? null : SyntaxTreeViewModel.Create(SyntaxTree);
-            DataContext = viewModel;
+            DataContext = SyntaxTree == null
+                              ? null
+                              : SyntaxTreeViewModel.Create(SyntaxTree);
         }
 
         public void SelectNode(int position)
