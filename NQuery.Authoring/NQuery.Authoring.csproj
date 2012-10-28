@@ -96,7 +96,7 @@
     <Compile Include="SignatureHelp\SignatureItem.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
+    <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery.Language</Name>
     </ProjectReference>

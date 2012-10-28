@@ -81,11 +81,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NQuery.Language.Services\NQuery.Language.Services.csproj">
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
       <Project>{5f76c1eb-9eee-4046-9664-a4123984eef3}</Project>
       <Name>NQuery.Language.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NQuery.Language\NQuery.Language.csproj">
+    <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery.Language</Name>
     </ProjectReference>

@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language", "NQuery.Language\NQuery.Language.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.VSEditor", "NQuery.Language.VSEditor\NQuery.Language.VSEditor.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.VSEditorWpf", "NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.UnitTests", "NQuery.Language.UnitTests\NQuery.Language.UnitTests.csproj", "{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.UnitTests", "NQuery.UnitTests\NQuery.UnitTests.csproj", "{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.Services", "NQuery.Language.Services\NQuery.Language.Services.csproj", "{5F76C1EB-9EEE-4046-9664-A4123984EEF3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring", "NQuery.Authoring\NQuery.Authoring.csproj", "{5F76C1EB-9EEE-4046-9664-A4123984EEF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.ActiproWpf", "NQuery.Language.ActiproWpf\NQuery.Language.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.ActiproWpf", "NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.SampleData", "NQuery.SampleData\NQuery.SampleData.csproj", "{CE411DA9-038B-47E8-8540-A539C146B0EE}"
 EndProject
@@ -23,7 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Common", "Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Viewers", "Viewers", "{01914E91-C990-4D8C-9890-B6C69006F596}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language.Wpf", "NQuery.Language.Wpf\NQuery.Language.Wpf.csproj", "{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.Wpf", "NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj", "{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
