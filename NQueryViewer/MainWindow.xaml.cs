@@ -10,21 +10,13 @@ using System.Windows.Threading;
 using NQuery;
 using NQuery.SampleData;
 
-using NQueryViewer.ActiproEditor;
 using NQueryViewer.Editor;
-using NQueryViewer.VSEditor;
 
 namespace NQueryViewer
 {
     [Export(typeof(IMainWindowProvider))]
     internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSatisfiedNotification
     {
-        [Import]
-        public IVSEditorViewFactory VSEditorViewFactory { get; set; }
-
-        [Import]
-        public IActiproEditorViewFactory ActiproEditorViewFactory { get; set; }
-
         [ImportMany]
         public IEnumerable<IEditorViewFactory> EditorViewFactories { get; set; }
 
