@@ -57,7 +57,7 @@ namespace NQueryViewer
             if (editorView == null)
                 return;
 
-            editorView.DataContext = NorthwindDataContext.Create();
+            editorView.DataContext = DataContextFactory.CreateNorthwind();
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
             editorView.SyntaxTreeChanged += EditorViewOnSyntaxTreeChanged;
             editorView.SemanticModelChanged += EditorViewOnSemanticModelChanged;
