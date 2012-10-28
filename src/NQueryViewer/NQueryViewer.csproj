@@ -191,9 +191,9 @@
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NQuery.SampleData\NQuery.SampleData.csproj">
+    <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
       <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
-      <Name>NQuery.SampleData</Name>
+      <Name>NQuery.Data.Samples</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

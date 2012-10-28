@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring", "NQuery.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.ActiproWpf", "NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.SampleData", "NQuery.SampleData\NQuery.SampleData.csproj", "{CE411DA9-038B-47E8-8540-A539C146B0EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Data.Samples", "NQuery.Data.Samples\NQuery.Data.Samples.csproj", "{CE411DA9-038B-47E8-8540-A539C146B0EE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}"
 EndProject

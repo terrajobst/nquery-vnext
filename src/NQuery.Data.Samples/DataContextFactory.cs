@@ -2,9 +2,7 @@ using System;
 using System.Data;
 using System.IO;
 
-using NQuery.Data;
-
-namespace NQuery.SampleData
+namespace NQuery.Data.Samples
 {
     public static class DataContextFactory
     {

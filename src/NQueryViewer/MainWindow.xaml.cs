@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 using NQuery;
-using NQuery.SampleData;
+using NQuery.Data.Samples;
 
 using NQueryViewer.Editor;
 

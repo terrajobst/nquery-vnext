@@ -7,8 +7,8 @@
     <ProjectGuid>{CE411DA9-038B-47E8-8540-A539C146B0EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.SampleData</RootNamespace>
-    <AssemblyName>NQuery.SampleData</AssemblyName>
+    <RootNamespace>NQuery.Data.Samples</RootNamespace>
+    <AssemblyName>NQuery.Data.Samples</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
