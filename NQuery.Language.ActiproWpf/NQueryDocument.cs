@@ -158,11 +158,11 @@ namespace NQuery.Language.ActiproWpf
 
         protected virtual void OnSemanticModelChanged(EventArgs e)
         {
-            var handler = SemanticModelChanged;
+            var handler = SemanticDataChanged;
             if (handler != null)
                 handler(this, e);
         }
 
-        public event EventHandler<EventArgs> SemanticModelChanged;
+        public event EventHandler<EventArgs> SemanticDataChanged;
     }
 }

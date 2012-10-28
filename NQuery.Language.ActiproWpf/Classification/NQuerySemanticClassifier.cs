@@ -24,11 +24,11 @@ namespace NQuery.Language.ActiproWpf.Classification
             if (queryDocument == null)
                 return;
 
-            queryDocument.SemanticModelChanged += DocumentOnSemanticModelChanged;
+            queryDocument.SemanticDataChanged += DocumentOnSemanticDataChanged;
             UpdateTags();
         }
 
-        private void DocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }

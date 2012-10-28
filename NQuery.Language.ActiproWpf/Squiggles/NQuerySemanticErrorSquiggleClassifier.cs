@@ -14,12 +14,12 @@ namespace NQuery.Language.ActiproWpf.Squiggles
             var nqueryDocument = document as NQueryDocument;
             if (nqueryDocument != null)
             {
-                nqueryDocument.SemanticModelChanged += NqueryDocumentOnSemanticModelChanged;
+                nqueryDocument.SemanticDataChanged += NqueryDocumentOnSemanticDataChanged;
                 UpdateTags();
             }
         }
 
-        private void NqueryDocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void NqueryDocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }
