@@ -10,7 +10,7 @@ powershell -NoProfile -ExecutionPolicy unrestricted -Command "$ProgressPreferenc
 :: Restore NuGet packages
 
 :RESTORE
-.\nuget.exe restore
+.\nuget.exe restore src\NQuery.sln
 
 :: Note: We've disabled node reuse because it causes file locking issues.
 ::       The issue is that we extend the build with our own targets which

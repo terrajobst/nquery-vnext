@@ -5,7 +5,6 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime;
 using System.Windows;
 
 namespace NQueryViewer
@@ -67,18 +66,6 @@ namespace NQueryViewer
             try
             {
                 return AssemblyName.GetAssemblyName(path);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static Assembly TryGetAssembly(string path)
-        {
-            try
-            {
-                return Assembly.LoadFile(path);
             }
             catch
             {
