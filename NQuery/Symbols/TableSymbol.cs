@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.Symbols
+namespace NQuery.Symbols
 {
     public abstract class TableSymbol : Symbol
     {

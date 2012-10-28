@@ -1,6 +1,8 @@
-using NQuery.Language.Symbols;
+using System;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Symbols;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundCommonTableExpression : BoundNode
     {

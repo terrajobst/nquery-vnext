@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Authoring.VSEditorWpf
 {
     internal abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
         where TTag: ITag

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     /// <summary>
     /// This class is used to store references to types. The only thing that is special about this class

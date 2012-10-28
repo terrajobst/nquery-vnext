@@ -1,4 +1,6 @@
-﻿namespace NQuery.Language.BoundNodes
+﻿using System;
+
+namespace NQuery.BoundNodes
 {
     internal abstract class BoundNode
     {

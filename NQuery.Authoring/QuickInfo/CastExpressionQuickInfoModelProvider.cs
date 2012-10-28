@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.Composition;
 
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
-namespace NQuery.Language.Services.QuickInfo
+namespace NQuery.Authoring.QuickInfo
 {
     [Export(typeof(IQuickInfoModelProvider))]
     internal sealed class CastExpressionQuickInfoModelProvider : QuickInfoModelProvider<CastExpressionSyntax>

@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.VSEditor.Selection
+namespace NQuery.Authoring.VSEditorWpf.Selection
 {
     public interface INQuerySelectionProvider
     {

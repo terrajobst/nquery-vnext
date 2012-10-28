@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.Services.Outlining
+namespace NQuery.Authoring.Outlining
 {
     public static class OutliningExtensions
     {

@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Classification
+namespace NQuery.Authoring.ActiproWpf.Classification
 {
     [Export(typeof(INQueryClassificationTypes))]
     [ExportLanguageService(typeof(INQueryClassificationTypes))]

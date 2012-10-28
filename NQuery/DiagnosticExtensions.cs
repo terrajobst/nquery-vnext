@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using NQuery.Language.Binding;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language
+using NQuery.Binding;
+using NQuery.Symbols;
+
+namespace NQuery
 {
     internal static class DiagnosticExtensions
     {

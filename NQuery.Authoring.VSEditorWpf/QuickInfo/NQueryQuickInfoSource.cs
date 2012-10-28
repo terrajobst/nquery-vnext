@@ -10,15 +10,14 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 
-using NQuery.Language.Services;
-using NQuery.Language.Services.QuickInfo;
-using NQuery.Language.Symbols;
-using NQuery.Language.VSEditor.Classification;
-using NQuery.Language.Wpf;
+using NQuery.Authoring.QuickInfo;
+using NQuery.Authoring.VSEditorWpf.Classification;
+using NQuery.Authoring.Wpf;
+using NQuery.Symbols;
 
 using Span = Microsoft.VisualStudio.Text.Span;
 
-namespace NQuery.Language.VSEditor.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     internal sealed class NQueryQuickInfoSource : IQuickInfoSource
     {

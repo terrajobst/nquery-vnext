@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Services.QuickInfo
+namespace NQuery.Authoring.QuickInfo
 {
     public interface IQuickInfoModelProvider
     {

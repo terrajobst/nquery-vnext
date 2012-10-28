@@ -1,4 +1,6 @@
-namespace NQuery.Language.Binding
+using System;
+
+namespace NQuery.Binding
 {
     internal enum KnownType
     {

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language
+using NQuery.Binding;
+
+namespace NQuery
 {
     public sealed class Conversion
     {

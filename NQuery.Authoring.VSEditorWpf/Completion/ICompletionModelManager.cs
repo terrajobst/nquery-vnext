@@ -1,8 +1,8 @@
 using System;
 
-using NQuery.Language.Services.Completion;
+using NQuery.Authoring.Completion;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     public interface ICompletionModelManager
     {

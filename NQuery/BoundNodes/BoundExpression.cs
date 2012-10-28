@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.BoundNodes
+namespace NQuery.BoundNodes
 {
     internal abstract class BoundExpression : BoundNode
     {

@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Runtime
+using NQuery.Symbols;
+
+namespace NQuery.Runtime
 {
     internal static class BuiltInAggregates
     {

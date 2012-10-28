@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Runtime
+using NQuery.Symbols;
+
+namespace NQuery.Runtime
 {
     public static class NullProviders
     {

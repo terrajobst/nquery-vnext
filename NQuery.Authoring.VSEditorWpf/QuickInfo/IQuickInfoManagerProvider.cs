@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Language.VSEditor.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     public interface IQuickInfoManagerProvider
     {

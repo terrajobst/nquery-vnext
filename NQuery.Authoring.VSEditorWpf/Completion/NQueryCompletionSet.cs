@@ -6,11 +6,10 @@ using System.Windows.Media;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
-using NQuery.Language.Services;
-using NQuery.Language.Services.Completion;
-using NQuery.Language.Wpf;
+using NQuery.Authoring.Completion;
+using NQuery.Authoring.Wpf;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     internal sealed class NQueryCompletionSet : CompletionSet
     {

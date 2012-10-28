@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language.Services.Classifications
+namespace NQuery.Authoring.Classifications
 {
     internal sealed class SyntaxClassificationWorker
     {

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NQuery.Language.BoundNodes;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Binding
+using NQuery.BoundNodes;
+using NQuery.Symbols;
+
+namespace NQuery.Binding
 {
     internal sealed partial class Binder
     {

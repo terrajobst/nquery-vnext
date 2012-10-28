@@ -8,10 +8,10 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Language.ActiproWpf.SymbolContent;
-using NQuery.Language.Services.QuickInfo;
+using NQuery.Authoring.ActiproWpf.SymbolContent;
+using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Language.ActiproWpf.QuickInfo
+namespace NQuery.Authoring.ActiproWpf.QuickInfo
 {
     [ExportLanguageService(typeof(IQuickInfoProvider))]
     internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase

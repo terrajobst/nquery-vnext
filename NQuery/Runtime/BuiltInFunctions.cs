@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using NQuery.Language.Binding;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Runtime
+using NQuery.Binding;
+using NQuery.Symbols;
+
+namespace NQuery.Runtime
 {
     internal static class BuiltInFunctions
     {

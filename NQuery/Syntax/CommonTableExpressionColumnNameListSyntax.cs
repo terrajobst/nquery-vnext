@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public sealed class CommonTableExpressionColumnNameListSyntax : SyntaxNode
     {

@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language
+using NQuery.Symbols;
+
+namespace NQuery
 {
     public interface IPropertyProvider
     {

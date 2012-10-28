@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Binding
+namespace NQuery.Binding
 {
     internal static class KnownTypes
     {

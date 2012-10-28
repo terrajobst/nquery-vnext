@@ -4,9 +4,9 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining.Implementation;
 
-using NQuery.Language.Services.Outlining;
+using NQuery.Authoring.Outlining;
 
-namespace NQuery.Language.ActiproWpf.Outlining
+namespace NQuery.Authoring.ActiproWpf.Outlining
 {
     internal sealed class NQueryOutliningSource : RangeOutliningSourceBase
     {

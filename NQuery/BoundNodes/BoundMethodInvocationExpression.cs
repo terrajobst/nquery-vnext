@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language.Binding;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Binding;
+using NQuery.Symbols;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundMethodInvocationExpression : BoundExpression
     {

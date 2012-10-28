@@ -6,9 +6,9 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Squiggles
+namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]

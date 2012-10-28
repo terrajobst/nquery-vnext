@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 
-using NQuery.Language.Wpf;
+using NQuery.Authoring.Wpf;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     internal sealed class NQueryCompletionSource : ICompletionSource
     {

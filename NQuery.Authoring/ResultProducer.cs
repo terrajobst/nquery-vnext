@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NQuery.Language.Services
+namespace NQuery.Authoring
 {
     public sealed class ResultProducer<TInput, TResult>
         where TInput : class

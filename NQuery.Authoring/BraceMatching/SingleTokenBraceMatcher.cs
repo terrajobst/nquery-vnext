@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Services.BraceMatching
+namespace NQuery.Authoring.BraceMatching
 {
     internal abstract class SingleTokenBraceMatcher : IBraceMatcher
     {

@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language.Binding;
-using NQuery.Language.BoundNodes;
 
-namespace NQuery.Language.Symbols
+using NQuery.Binding;
+using NQuery.BoundNodes;
+
+namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {

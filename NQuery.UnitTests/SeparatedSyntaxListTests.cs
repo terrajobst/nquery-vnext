@@ -1,7 +1,9 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Linq;
 
-namespace NQuery.Language.UnitTests
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace NQuery.UnitTests
 {
     [TestClass]
     public class SeparatedSyntaxListTests

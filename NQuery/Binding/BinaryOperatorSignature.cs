@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace NQuery.Language.Binding
+namespace NQuery.Binding
 {
     internal sealed class BinaryOperatorSignature : Signature
     {

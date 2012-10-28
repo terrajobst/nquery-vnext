@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Services.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp
 {
     public interface ISignatureModelProvider
     {

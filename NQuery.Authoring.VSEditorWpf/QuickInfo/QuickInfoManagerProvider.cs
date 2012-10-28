@@ -5,10 +5,10 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.Services.QuickInfo;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.QuickInfo;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     [Export(typeof(IQuickInfoManagerProvider))]
     internal sealed class QuickInfoManagerProvider : IQuickInfoManagerProvider

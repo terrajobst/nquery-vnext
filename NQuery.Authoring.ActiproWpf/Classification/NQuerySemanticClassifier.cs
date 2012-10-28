@@ -7,9 +7,9 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
-using NQuery.Language.Services.Classifications;
+using NQuery.Authoring.Classifications;
 
-namespace NQuery.Language.ActiproWpf.Classification
+namespace NQuery.Authoring.ActiproWpf.Classification
 {
     internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificationTag>
     {

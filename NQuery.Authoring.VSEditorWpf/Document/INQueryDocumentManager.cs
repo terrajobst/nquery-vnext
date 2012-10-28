@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text;
 
-namespace NQuery.Language.VSEditor.Document
+namespace NQuery.Authoring.VSEditorWpf.Document
 {
     public interface INQueryDocumentManager
     {

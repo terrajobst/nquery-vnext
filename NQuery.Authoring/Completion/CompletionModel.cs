@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.Services.Completion
+namespace NQuery.Authoring.Completion
 {
     public sealed class CompletionModel
     {

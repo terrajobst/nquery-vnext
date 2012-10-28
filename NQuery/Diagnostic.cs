@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public sealed class Diagnostic
     {

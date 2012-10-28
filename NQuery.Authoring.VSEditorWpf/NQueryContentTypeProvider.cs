@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Authoring.VSEditorWpf
 {
     internal sealed class NQueryContentTypeProvider
     {

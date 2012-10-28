@@ -2,7 +2,7 @@ using System;
 
 using ActiproSoftware.Text;
 
-namespace NQuery.Language.ActiproWpf.Classification
+namespace NQuery.Authoring.ActiproWpf.Classification
 {
     public interface INQueryClassificationTypes
     {

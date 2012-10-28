@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     internal sealed class DiagnosticsViewModel
     {

@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     public interface ISignatureHelpManagerProvider
     {

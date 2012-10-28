@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public abstract class JoinedTableReferenceSyntax : TableReferenceSyntax
     {

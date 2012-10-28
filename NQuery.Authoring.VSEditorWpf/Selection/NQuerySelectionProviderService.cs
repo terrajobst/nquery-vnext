@@ -3,9 +3,9 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Selection
+namespace NQuery.Authoring.VSEditorWpf.Selection
 {
     [Export(typeof(INQuerySelectionProviderService))]
     internal sealed class NQuerySelectionProviderService : INQuerySelectionProviderService

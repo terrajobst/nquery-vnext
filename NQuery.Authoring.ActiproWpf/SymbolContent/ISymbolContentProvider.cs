@@ -2,10 +2,9 @@ using System;
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
-using NQuery.Language.Services;
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
-namespace NQuery.Language.ActiproWpf.SymbolContent
+namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     public interface ISymbolContentProvider
     {

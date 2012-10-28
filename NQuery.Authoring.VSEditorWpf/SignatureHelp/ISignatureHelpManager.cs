@@ -1,8 +1,8 @@
 using System;
 
-using NQuery.Language.Services.SignatureHelp;
+using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     public interface ISignatureHelpManager
     {

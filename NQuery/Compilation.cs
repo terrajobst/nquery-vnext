@@ -1,6 +1,8 @@
-using NQuery.Language.Binding;
+using System;
 
-namespace NQuery.Language
+using NQuery.Binding;
+
+namespace NQuery
 {
     public sealed class Compilation
     {

@@ -5,9 +5,9 @@ using System.Linq;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
-using NQuery.Language.Services.SignatureHelp;
+using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     internal class NQuerySignature : ISignature
     {

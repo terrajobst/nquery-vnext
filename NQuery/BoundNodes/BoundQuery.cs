@@ -1,6 +1,7 @@
+using System;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.BoundNodes
+namespace NQuery.BoundNodes
 {
     internal abstract class BoundQuery : BoundNode
     {

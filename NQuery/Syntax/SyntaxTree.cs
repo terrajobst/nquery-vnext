@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public sealed class SyntaxTree
     {

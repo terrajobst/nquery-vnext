@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Squiggles
+namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     internal sealed class NQuerySemanticErrorTagger : NQueryErrorTagger
     {

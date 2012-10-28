@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
-using NQuery.Language.Symbols;
+﻿using System;
+using System.Collections.Generic;
 
-namespace NQuery.Language.Binding
+using NQuery.Symbols;
+
+namespace NQuery.Binding
 {
     internal abstract class BindingContext
     {

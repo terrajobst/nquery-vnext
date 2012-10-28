@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language.Symbols;
 using System.Linq;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Symbols;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundNameExpression : BoundExpression
     {

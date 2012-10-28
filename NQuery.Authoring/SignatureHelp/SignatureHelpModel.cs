@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.Services.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp
 {
     public sealed class SignatureHelpModel
     {

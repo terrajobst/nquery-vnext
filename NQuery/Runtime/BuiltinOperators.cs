@@ -3,9 +3,10 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language.Runtime
+using NQuery.Binding;
+
+namespace NQuery.Runtime
 {
     internal static class BuiltInOperators
     {

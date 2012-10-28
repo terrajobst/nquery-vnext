@@ -3,7 +3,7 @@ using System;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace NQuery.Language.VSEditor.Squiggles
+namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     internal abstract class NQueryErrorTagger : AsyncTagger<IErrorTag, Diagnostic>
     {

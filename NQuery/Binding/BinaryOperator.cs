@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using NQuery.Language.Runtime;
 
-namespace NQuery.Language.Binding
+using NQuery.Runtime;
+
+namespace NQuery.Binding
 {
     internal static class BinaryOperator
     {

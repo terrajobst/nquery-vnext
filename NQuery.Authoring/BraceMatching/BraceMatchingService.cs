@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
-namespace NQuery.Language.Services.BraceMatching
+namespace NQuery.Authoring.BraceMatching
 {
     [Export(typeof(IBraceMatchingService))]
     internal sealed class BraceMatchingService : IBraceMatchingService

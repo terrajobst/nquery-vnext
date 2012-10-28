@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Runtime
+using NQuery.Symbols;
+
+namespace NQuery.Runtime
 {
     public class ReflectionMethodSymbol : MethodSymbol
     {

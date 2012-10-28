@@ -1,9 +1,7 @@
 using System;
 using System.Windows.Media;
 
-using NQuery.Language.Services;
-
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     public interface INQueryGlyphService
     {

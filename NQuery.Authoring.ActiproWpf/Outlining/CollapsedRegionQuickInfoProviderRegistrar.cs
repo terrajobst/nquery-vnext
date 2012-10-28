@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Outlining
+namespace NQuery.Authoring.ActiproWpf.Outlining
 {
     [Export(typeof(ILanguageServiceRegistrar))]
     internal sealed class CollapsedRegionQuickInfoProviderRegistrar : ILanguageServiceRegistrar

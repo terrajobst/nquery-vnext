@@ -6,10 +6,10 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.Services.BraceMatching;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.BraceMatching
+namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(ITextMarkerTag))]

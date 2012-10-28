@@ -8,11 +8,11 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Language.Services.SignatureHelp;
+using NQuery.Authoring.SignatureHelp;
 
 using SignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.SignatureItem;
 
-namespace NQuery.Language.ActiproWpf.SignatureHelp
+namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
     [ExportLanguageService(typeof(IParameterInfoProvider))]
     internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase

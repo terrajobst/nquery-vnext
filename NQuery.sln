@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Language", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.VSEditorWpf", "NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
 EndProject
@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.SampleData", "NQuery
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Editor", "Services Editor", "{9AD43A01-9766-40E2-8682-1F028B4A09F9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Editors", "Services Editors", "{9AD43A01-9766-40E2-8682-1F028B4A09F9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Common", "Services Common", "{538E2C6E-31A4-4AFE-B0FE-2A65473CBC3E}"
 EndProject

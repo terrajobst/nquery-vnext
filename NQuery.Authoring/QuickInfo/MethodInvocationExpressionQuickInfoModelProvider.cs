@@ -1,7 +1,7 @@
 using System;
 using System.ComponentModel.Composition;
 
-namespace NQuery.Language.Services.QuickInfo
+namespace NQuery.Authoring.QuickInfo
 {
     [Export(typeof(IQuickInfoModelProvider))]
     internal sealed class MethodInvocationExpressionQuickInfoModelProvider : QuickInfoModelProvider<MethodInvocationExpressionSyntax>

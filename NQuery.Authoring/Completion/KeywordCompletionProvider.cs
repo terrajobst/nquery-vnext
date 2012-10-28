@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 
-namespace NQuery.Language.Services.Completion
+namespace NQuery.Authoring.Completion
 {
     [Export(typeof(ICompletionProvider))]
     internal sealed class KeywordCompletionProvider : ICompletionProvider

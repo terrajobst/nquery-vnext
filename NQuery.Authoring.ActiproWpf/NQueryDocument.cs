@@ -7,9 +7,7 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Parsing;
 
-using NQuery.Language.Services;
-
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     public class NQueryDocument : EditorDocument
     {

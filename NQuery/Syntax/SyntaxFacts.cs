@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language
+using NQuery.Binding;
+
+namespace NQuery
 {
     public static class SyntaxFacts
     {

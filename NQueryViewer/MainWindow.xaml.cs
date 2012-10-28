@@ -7,14 +7,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-using NQuery.Language;
+using NQuery;
 using NQuery.SampleData;
 
 using NQueryViewer.ActiproEditor;
 using NQueryViewer.Editor;
 using NQueryViewer.VSEditor;
-
-using TextBuffer = NQuery.Language.TextBuffer;
 
 namespace NQueryViewer
 {

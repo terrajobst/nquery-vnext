@@ -5,7 +5,7 @@ using System.Linq;
 
 using ActiproSoftware.Text.Implementation;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     [Export(typeof(ILanguageServiceRegistrar))]
     internal sealed class ComposableLanguageServiceRegistrar : ILanguageServiceRegistrar

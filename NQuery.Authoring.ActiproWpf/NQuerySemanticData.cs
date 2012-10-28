@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     public sealed class NQuerySemanticData
     {

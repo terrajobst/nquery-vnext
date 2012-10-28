@@ -173,23 +173,23 @@
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj">
       <Project>{A3309669-818F-47A9-B0F8-734AF347FEBC}</Project>
-      <Name>NQuery.Language.ActiproWpf</Name>
+      <Name>NQuery.Authoring.ActiproWpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
-      <Name>NQuery.Language.Services</Name>
+      <Name>NQuery.Authoring</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj">
       <Project>{a3b82430-e8ed-4177-b097-3a82748edaef}</Project>
-      <Name>NQuery.Language.VSEditor</Name>
+      <Name>NQuery.Authoring.VSEditorWpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj">
       <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
-      <Name>NQuery.Language.Wpf</Name>
+      <Name>NQuery.Authoring.Wpf</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery.Language</Name>
+      <Name>NQuery</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.SampleData\NQuery.SampleData.csproj">
       <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>

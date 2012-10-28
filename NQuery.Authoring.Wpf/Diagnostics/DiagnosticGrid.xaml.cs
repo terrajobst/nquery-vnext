@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     public sealed partial class DiagnosticGrid
     {

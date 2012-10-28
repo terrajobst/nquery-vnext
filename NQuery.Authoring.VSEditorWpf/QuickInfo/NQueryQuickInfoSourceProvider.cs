@@ -6,10 +6,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.VSEditor.Classification;
-using NQuery.Language.Wpf;
+using NQuery.Authoring.VSEditorWpf.Classification;
+using NQuery.Authoring.Wpf;
 
-namespace NQuery.Language.VSEditor.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     [Export(typeof (IQuickInfoSourceProvider))]
     [Name("NQueryQuickInfoSourceProvider")]

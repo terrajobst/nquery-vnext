@@ -1,9 +1,12 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NQuery.Language.Runtime;
-using NQuery.Language.Symbols;
+﻿using System;
 using System.Linq;
 
-namespace NQuery.Language.UnitTests
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using NQuery.Runtime;
+using NQuery.Symbols;
+
+namespace NQuery.UnitTests
 {
     [TestClass]
     public class AggregateTests

@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace NQuery.Language.VSEditor.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     public interface INQueryClassificationService
     {

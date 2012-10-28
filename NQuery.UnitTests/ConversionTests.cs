@@ -1,7 +1,8 @@
 ﻿using System;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NQuery.Language.UnitTests
+namespace NQuery.UnitTests
 {
     [TestClass]
     public class ConversionTests

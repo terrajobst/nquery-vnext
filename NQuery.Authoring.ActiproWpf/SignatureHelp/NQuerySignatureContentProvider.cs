@@ -4,9 +4,9 @@ using System.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using SignatureItem = NQuery.Language.Services.SignatureHelp.SignatureItem;
+using SignatureItem = NQuery.Authoring.SignatureHelp.SignatureItem;
 
-namespace NQuery.Language.ActiproWpf.SignatureHelp
+namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
     // TODO: I think we should use the SymbolMarkup here to ensure the signature has a pretty look & feel.
     internal sealed class NQuerySignatureContentProvider : IContentProvider

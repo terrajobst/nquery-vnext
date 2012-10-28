@@ -1,6 +1,7 @@
+using System;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public static class SyntaxExtensions
     {

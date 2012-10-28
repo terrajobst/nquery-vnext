@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NQuery.Language.UnitTests
+namespace NQuery.UnitTests
 {
     [TestClass]
     public sealed partial class IntrinsicOperatorTests

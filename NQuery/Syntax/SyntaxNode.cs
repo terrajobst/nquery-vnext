@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public abstract class SyntaxNode
     {

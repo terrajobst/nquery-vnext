@@ -4,12 +4,11 @@ using System.ComponentModel.Composition;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
-using NQuery.Language.ActiproWpf.Classification;
-using NQuery.Language.Services;
-using NQuery.Language.Symbols;
-using NQuery.Language.Wpf;
+using NQuery.Authoring.ActiproWpf.Classification;
+using NQuery.Authoring.Wpf;
+using NQuery.Symbols;
 
-namespace NQuery.Language.ActiproWpf.SymbolContent
+namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     [Export(typeof(ISymbolContentProvider))]
     internal sealed class SymbolContentProvider : ISymbolContentProvider

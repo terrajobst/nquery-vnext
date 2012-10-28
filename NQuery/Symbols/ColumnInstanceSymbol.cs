@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Symbols
+namespace NQuery.Symbols
 {
     public sealed class ColumnInstanceSymbol : Symbol
     {

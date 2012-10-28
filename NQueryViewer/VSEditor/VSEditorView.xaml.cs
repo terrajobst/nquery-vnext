@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Linq;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language;
-using NQuery.Language.VSEditor.Document;
-using NQuery.Language.VSEditor.Selection;
-
-using System.Linq;
+using NQuery;
+using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.VSEditorWpf.Selection;
 
 namespace NQueryViewer.VSEditor
 {

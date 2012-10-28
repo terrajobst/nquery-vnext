@@ -5,9 +5,9 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Text.Analysis;
 using ActiproSoftware.Text.Analysis.Implementation;
 
-using NQuery.Language.Services.BraceMatching;
+using NQuery.Authoring.BraceMatching;
 
-namespace NQuery.Language.ActiproWpf.BraceMatching
+namespace NQuery.Authoring.ActiproWpf.BraceMatching
 {
     [ExportLanguageService(typeof(IStructureMatcher))]
     internal sealed class NQueryBraceMatcher : IStructureMatcher

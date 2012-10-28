@@ -5,10 +5,10 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.Services.Completion;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.Completion;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     internal sealed class CompletionModelManager : ICompletionModelManager
     {

@@ -3,7 +3,7 @@
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     internal class NQueryParameter : IParameter
     {

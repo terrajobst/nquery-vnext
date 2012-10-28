@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Text;
 
-using NQuery.Language.Services;
-
-namespace NQuery.Language.VSEditor.Document
+namespace NQuery.Authoring.VSEditorWpf.Document
 {
     internal sealed class NQueryDocument : INQueryDocument
     {

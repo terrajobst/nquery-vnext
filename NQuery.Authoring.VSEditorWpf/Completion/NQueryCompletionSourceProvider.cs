@@ -5,9 +5,9 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.Wpf;
+using NQuery.Authoring.Wpf;
 
-namespace NQuery.Language.VSEditor.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     [Export(typeof(ICompletionSourceProvider))]
     [Name("NQueryCompletionSourceProvider")]

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     internal static class TreeViewExtensions
     {

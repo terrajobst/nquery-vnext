@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public struct TextSpan : IEquatable<TextSpan>
     {

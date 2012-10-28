@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Squiggles
+namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     // TODO: We may want to replace this provider with our own -- it doens't seem to work very well.
     [Export(typeof(ILanguageServiceRegistrar))]

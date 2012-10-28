@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 
-namespace NQuery.Language.Services.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp
 {
     [Export(typeof(ISignatureModelProvider))]
     internal sealed class MethodSignatureModelProvider : ISignatureModelProvider

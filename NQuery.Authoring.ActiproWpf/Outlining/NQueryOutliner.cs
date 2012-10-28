@@ -3,7 +3,7 @@ using System;
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 
-namespace NQuery.Language.ActiproWpf.Outlining
+namespace NQuery.Authoring.ActiproWpf.Outlining
 {
     [ExportLanguageService(typeof(IOutliner))]
     internal sealed class NQueryOutliner : IOutliner

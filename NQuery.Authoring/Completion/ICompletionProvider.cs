@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.Services.Completion
+namespace NQuery.Authoring.Completion
 {
     public interface ICompletionProvider
     {

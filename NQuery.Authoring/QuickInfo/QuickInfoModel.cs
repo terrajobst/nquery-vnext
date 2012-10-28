@@ -1,8 +1,8 @@
 using System;
 
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
-namespace NQuery.Language.Services.QuickInfo
+namespace NQuery.Authoring.QuickInfo
 {
     public sealed class QuickInfoModel
     {

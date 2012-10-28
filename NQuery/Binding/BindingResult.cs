@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language;
-using NQuery.Language.BoundNodes;
 
-namespace NQuery.Language.Binding
+using NQuery.BoundNodes;
+
+namespace NQuery.Binding
 {
     internal sealed class BindingResult
     {

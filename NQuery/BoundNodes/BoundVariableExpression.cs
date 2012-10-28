@@ -1,7 +1,8 @@
 using System;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Symbols;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundVariableExpression :  BoundExpression
     {

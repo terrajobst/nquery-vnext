@@ -7,8 +7,8 @@
     <ProjectGuid>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</ProjectGuid>
     <OutputType>library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Language.Wpf</RootNamespace>
-    <AssemblyName>NQuery.Language.Wpf</AssemblyName>
+    <RootNamespace>NQuery.Authoring.Wpf</RootNamespace>
+    <AssemblyName>NQuery.Authoring.Wpf</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -83,11 +83,11 @@
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
       <Project>{5f76c1eb-9eee-4046-9664-a4123984eef3}</Project>
-      <Name>NQuery.Language.Services</Name>
+      <Name>NQuery.Authoring</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery.Language</Name>
+      <Name>NQuery</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

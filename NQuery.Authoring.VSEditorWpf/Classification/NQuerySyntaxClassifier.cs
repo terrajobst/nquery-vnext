@@ -7,10 +7,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Language.Services.Classifications;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.Classifications;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     internal sealed class NQuerySyntaxClassifier : AsyncTagger<IClassificationTag, SyntaxClassificationSpan>
     {

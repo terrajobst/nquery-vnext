@@ -3,7 +3,7 @@ using System;
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Parsing;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     public sealed class NQueryParseData : IParseData
     {

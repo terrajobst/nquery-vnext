@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Binding;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundAllAnySubselect : BoundExpression
     {

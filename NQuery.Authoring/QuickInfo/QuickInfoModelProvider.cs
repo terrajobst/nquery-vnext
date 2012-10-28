@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace NQuery.Language.Services.QuickInfo
+namespace NQuery.Authoring.QuickInfo
 {
     internal abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider
         where T: SyntaxNode

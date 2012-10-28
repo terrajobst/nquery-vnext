@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Symbols;
+
+namespace NQuery.BoundNodes
 {
     internal abstract class BoundTableReference : BoundNode
     {

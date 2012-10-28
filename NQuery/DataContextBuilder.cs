@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
-using NQuery.Language.Runtime;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language
+using NQuery.Runtime;
+using NQuery.Symbols;
+
+namespace NQuery
 {
     public sealed class DataContextBuilder
     {

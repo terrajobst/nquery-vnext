@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     internal sealed class NQuerySemanticClassificationMetadata
     {

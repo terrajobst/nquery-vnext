@@ -6,12 +6,12 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Language.ActiproWpf.SymbolContent;
-using NQuery.Language.Services.Completion;
+using NQuery.Authoring.ActiproWpf.SymbolContent;
+using NQuery.Authoring.Completion;
 
 using CompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
 
-namespace NQuery.Language.ActiproWpf.Completion
+namespace NQuery.Authoring.ActiproWpf.Completion
 {
     [ExportLanguageService(typeof (ICompletionProvider))]
     internal sealed class NQueryCompletionProvider : CompletionProviderBase
@@ -68,7 +68,7 @@ namespace NQuery.Language.ActiproWpf.Completion
                 completionSession.Open(view);            
         }
 
-        private CompletionItem GetActiproCompletionItem(Services.Completion.CompletionItem completionItem)
+        private CompletionItem GetActiproCompletionItem(Authoring.Completion.CompletionItem completionItem)
         {
             var imageSourceProvider = completionItem.Glyph == null
                                           ? null

@@ -1,8 +1,8 @@
 using System;
 
-using NQuery.Language.Services.QuickInfo;
+using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Language.VSEditor.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     public interface IQuickInfoManager
     {

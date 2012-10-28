@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language
+using NQuery.Symbols;
+
+namespace NQuery
 {
     public sealed class DataContext
     {

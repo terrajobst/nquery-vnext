@@ -3,7 +3,7 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text;
 
-namespace NQuery.Language.VSEditor.Document
+namespace NQuery.Authoring.VSEditorWpf.Document
 {
     [Export(typeof(INQueryDocumentManager))]
     internal sealed class NQueryDocumentManager : INQueryDocumentManager

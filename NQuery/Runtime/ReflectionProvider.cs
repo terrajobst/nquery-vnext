@@ -4,9 +4,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Runtime
+using NQuery.Symbols;
+
+namespace NQuery.Runtime
 {
     public class ReflectionProvider : IPropertyProvider, IMethodProvider
     {

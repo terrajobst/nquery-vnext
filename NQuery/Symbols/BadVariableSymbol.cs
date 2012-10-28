@@ -1,6 +1,8 @@
-using NQuery.Language.Binding;
+using System;
 
-namespace NQuery.Language.Symbols
+using NQuery.Binding;
+
+namespace NQuery.Symbols
 {
     public sealed class BadVariableSymbol : VariableSymbol
     {

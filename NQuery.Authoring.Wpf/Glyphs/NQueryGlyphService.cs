@@ -4,9 +4,7 @@ using System.ComponentModel.Composition;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using NQuery.Language.Services;
-
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     [Export(typeof(INQueryGlyphService))]
     internal sealed class NQueryGlyphService : INQueryGlyphService

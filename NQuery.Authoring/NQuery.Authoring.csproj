@@ -7,8 +7,8 @@
     <ProjectGuid>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Language.Services</RootNamespace>
-    <AssemblyName>NQuery.Language.Services</AssemblyName>
+    <RootNamespace>NQuery.Authoring</RootNamespace>
+    <AssemblyName>NQuery.Authoring</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -98,7 +98,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery.Language</Name>
+      <Name>NQuery</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

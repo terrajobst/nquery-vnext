@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
-namespace NQuery.Language.ActiproWpf.Squiggles
+namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClassifier
     {

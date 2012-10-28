@@ -2,7 +2,7 @@ using System;
 
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Language.VSEditor.Selection
+namespace NQuery.Authoring.VSEditorWpf.Selection
 {
     public interface INQuerySelectionProviderService
     {

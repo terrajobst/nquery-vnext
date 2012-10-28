@@ -5,9 +5,9 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     [Export(typeof (ITaggerProvider))]
     [TagType(typeof(IClassificationTag))]

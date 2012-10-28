@@ -8,9 +8,8 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
 
-using NQuery.Language;
-using NQuery.Language.ActiproWpf;
-using NQuery.Language.ActiproWpf.Classification;
+using NQuery.Authoring.ActiproWpf;
+using NQuery.Authoring.ActiproWpf.Classification;
 
 namespace NQueryViewer.ActiproEditor
 {

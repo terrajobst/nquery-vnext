@@ -1,7 +1,8 @@
 using System;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language.BoundNodes
+using NQuery.Binding;
+
+namespace NQuery.BoundNodes
 {
     internal sealed class BoundUnaryExpression : BoundExpression
     {

@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Language.Binding
+namespace NQuery.Binding
 {
     internal sealed class OverloadResolutionResult<T>
         where T: Signature

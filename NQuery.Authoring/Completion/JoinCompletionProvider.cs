@@ -4,9 +4,9 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
-namespace NQuery.Language.Services.Completion
+namespace NQuery.Authoring.Completion
 {
     [Export(typeof (ICompletionProvider))]
     internal sealed class JoinCompletionProvider : ICompletionProvider

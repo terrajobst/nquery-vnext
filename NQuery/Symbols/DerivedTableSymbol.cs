@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language.Symbols
+using NQuery.Binding;
+
+namespace NQuery.Symbols
 {
     public sealed class DerivedTableSymbol : TableSymbol
     {

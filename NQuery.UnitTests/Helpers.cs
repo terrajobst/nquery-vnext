@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace NQuery.Language.UnitTests
+namespace NQuery.UnitTests
 {
     internal static class Helpers
     {

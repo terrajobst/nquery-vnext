@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.Services.Classifications
+namespace NQuery.Authoring.Classifications
 {
     public static class ClassificationExtensions
     {

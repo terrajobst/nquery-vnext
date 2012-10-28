@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Utilities;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     [Export(typeof(ISignatureHelpSourceProvider))]
     [ContentType("NQuery")]

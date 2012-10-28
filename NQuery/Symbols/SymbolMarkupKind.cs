@@ -1,4 +1,6 @@
-namespace NQuery.Language.Symbols
+using System;
+
+namespace NQuery.Symbols
 {
     public enum SymbolMarkupKind
     {

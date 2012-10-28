@@ -8,8 +8,8 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.VSEditor.Document;
-using NQuery.Language.VSEditor.Selection;
+using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.VSEditorWpf.Selection;
 
 using NQueryViewer.Editor;
 

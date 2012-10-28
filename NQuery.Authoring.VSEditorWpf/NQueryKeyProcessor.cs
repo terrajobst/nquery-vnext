@@ -4,10 +4,10 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.VSEditor.Completion;
-using NQuery.Language.VSEditor.SignatureHelp;
+using NQuery.Authoring.VSEditorWpf.Completion;
+using NQuery.Authoring.VSEditorWpf.SignatureHelp;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Authoring.VSEditorWpf
 {
     internal sealed class NQueryKeyProcessor : KeyProcessor
     {

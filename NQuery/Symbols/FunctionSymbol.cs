@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NQuery.Language.Symbols
+namespace NQuery.Symbols
 {
     public abstract class FunctionSymbol : InvocableSymbol
     {

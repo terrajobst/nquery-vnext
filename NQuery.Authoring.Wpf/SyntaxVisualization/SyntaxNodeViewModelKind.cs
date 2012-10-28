@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NQuery.Language.Wpf
+namespace NQuery.Authoring.Wpf
 {
     internal enum SyntaxNodeViewModelKind
     {

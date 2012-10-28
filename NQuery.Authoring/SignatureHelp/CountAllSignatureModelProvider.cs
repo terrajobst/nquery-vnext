@@ -2,9 +2,9 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
-namespace NQuery.Language.Services.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp
 {
     [Export(typeof (ISignatureModelProvider))]
     internal sealed class CountAllSignatureModelProvider : ISignatureModelProvider

@@ -1,4 +1,6 @@
-namespace NQuery.Language
+using System;
+
+namespace NQuery
 {
     public abstract class SelectColumnSyntax : SyntaxNode
     {

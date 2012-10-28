@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Symbols
+namespace NQuery.Symbols
 {
     public class ParameterSymbol : Symbol
     {

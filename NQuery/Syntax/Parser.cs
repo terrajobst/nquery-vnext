@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     internal sealed class Parser
     {

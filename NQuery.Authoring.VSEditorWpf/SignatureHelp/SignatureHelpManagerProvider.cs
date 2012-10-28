@@ -5,10 +5,10 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.Services.SignatureHelp;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.SignatureHelp;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     [Export(typeof(ISignatureHelpManagerProvider))]
     internal sealed class SignatureHelpManagerProvider : ISignatureHelpManagerProvider

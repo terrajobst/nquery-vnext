@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Selection
+namespace NQuery.Authoring.VSEditorWpf.Selection
 {
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {

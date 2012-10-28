@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public sealed class ReadOnlyTypeRegistry<T> : ITypeRegistry<T>, IEnumerable<KeyValuePair<Type,T>>
         where T : class

@@ -1,7 +1,8 @@
 using System;
-using NQuery.Language.Symbols;
 
-namespace NQuery.Language.Binding
+using NQuery.Symbols;
+
+namespace NQuery.Binding
 {
     internal sealed class FunctionSymbolSignature : Signature
     {

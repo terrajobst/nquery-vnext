@@ -2,8 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 
-using NQuery.Language;
-using NQuery.Language.Services;
+using NQuery;
+using NQuery.Authoring;
 
 namespace NQueryViewer.Editor
 {

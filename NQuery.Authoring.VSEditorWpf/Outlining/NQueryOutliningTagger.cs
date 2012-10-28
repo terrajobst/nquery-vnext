@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Language.Services.Outlining;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.Outlining;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.Outlining
+namespace NQuery.Authoring.VSEditorWpf.Outlining
 {
     internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, OutliningRegionSpan> 
     {

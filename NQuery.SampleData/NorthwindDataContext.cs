@@ -2,8 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 
-using NQuery.Language;
-using NQuery.Language.Symbols;
+using NQuery.Symbols;
 
 namespace NQuery.SampleData
 {

@@ -1,4 +1,6 @@
-﻿namespace NQuery.Language.Services.Outlining
+﻿using System;
+
+namespace NQuery.Authoring.Outlining
 {
     public struct OutliningRegionSpan
     {

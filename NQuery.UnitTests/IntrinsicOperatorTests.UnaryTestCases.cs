@@ -1,4 +1,6 @@
-﻿namespace NQuery.Language.UnitTests
+﻿using System;
+
+namespace NQuery.UnitTests
 {
     partial class IntrinsicOperatorTests
     {

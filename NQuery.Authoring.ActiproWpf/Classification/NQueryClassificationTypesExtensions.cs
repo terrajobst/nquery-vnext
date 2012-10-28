@@ -4,7 +4,7 @@ using System.Windows.Media;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Classification
+namespace NQuery.Authoring.ActiproWpf.Classification
 {
     public static class NQueryClassificationTypesExtensions
     {

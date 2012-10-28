@@ -5,10 +5,10 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Language.VSEditor.Completion;
-using NQuery.Language.VSEditor.SignatureHelp;
+using NQuery.Authoring.VSEditorWpf.Completion;
+using NQuery.Authoring.VSEditorWpf.SignatureHelp;
 
-namespace NQuery.Language.VSEditor
+namespace NQuery.Authoring.VSEditorWpf
 {
     [Export(typeof(IKeyProcessorProvider))]
     [Name("NQueryKeyProcessorProvider")]

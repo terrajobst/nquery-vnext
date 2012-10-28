@@ -2,7 +2,7 @@ using System;
 
 using ActiproSoftware.Text.Implementation;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     internal interface ILanguageServiceRegistrar
     {

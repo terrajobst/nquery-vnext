@@ -6,8 +6,8 @@
     <ProjectGuid>{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Language.UnitTests</RootNamespace>
-    <AssemblyName>NQuery.Language.UnitTests</AssemblyName>
+    <RootNamespace>NQuery.UnitTests</RootNamespace>
+    <AssemblyName>NQuery.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -83,7 +83,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery.Language</Name>
+      <Name>NQuery</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

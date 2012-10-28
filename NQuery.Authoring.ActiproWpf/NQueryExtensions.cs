@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     public static class NQueryExtensions
     {

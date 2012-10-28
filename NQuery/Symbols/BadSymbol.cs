@@ -1,7 +1,8 @@
 using System;
-using NQuery.Language.Binding;
 
-namespace NQuery.Language.Symbols
+using NQuery.Binding;
+
+namespace NQuery.Symbols
 {
     public sealed class BadSymbol : Symbol
     {

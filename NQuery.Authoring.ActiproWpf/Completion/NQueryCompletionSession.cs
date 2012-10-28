@@ -4,7 +4,7 @@ using System.Windows.Input;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Completion
+namespace NQuery.Authoring.ActiproWpf.Completion
 {
     internal sealed class NQueryCompletionSession : CompletionSession
     {

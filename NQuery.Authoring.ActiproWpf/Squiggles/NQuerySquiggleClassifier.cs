@@ -8,7 +8,7 @@ using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQuery.Language.ActiproWpf.Squiggles
+namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal abstract class NQuerySquiggleClassifier : CollectionTagger<ISquiggleTag>
     {

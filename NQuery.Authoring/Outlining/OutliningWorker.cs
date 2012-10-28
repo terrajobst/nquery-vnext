@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language.Services.Outlining
+namespace NQuery.Authoring.Outlining
 {
     internal sealed class OutliningWorker
     {

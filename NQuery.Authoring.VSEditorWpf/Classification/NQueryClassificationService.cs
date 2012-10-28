@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.StandardClassification;
 using Microsoft.VisualStudio.Text.Classification;
 
-namespace NQuery.Language.VSEditor.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     [Export(typeof(INQueryClassificationService))]
     internal sealed class NQueryClassificationService : INQueryClassificationService

@@ -7,8 +7,8 @@
     <ProjectGuid>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Language</RootNamespace>
-    <AssemblyName>NQuery.Language</AssemblyName>
+    <RootNamespace>NQuery</RootNamespace>
+    <AssemblyName>NQuery</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

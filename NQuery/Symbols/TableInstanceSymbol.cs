@@ -2,7 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace NQuery.Language.Symbols
+namespace NQuery.Symbols
 {
     public sealed class TableInstanceSymbol : Symbol
     {

@@ -7,10 +7,10 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Language.Services.BraceMatching;
-using NQuery.Language.VSEditor.Document;
+using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Language.VSEditor.BraceMatching
+namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 {
     internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSpan>
     {

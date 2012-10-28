@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Language.Services.Completion
+namespace NQuery.Authoring.Completion
 {
     public interface ICompletionModelProvider
     {

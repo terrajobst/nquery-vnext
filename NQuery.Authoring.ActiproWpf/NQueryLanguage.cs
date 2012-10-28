@@ -5,10 +5,10 @@ using System.ComponentModel.Composition.Primitives;
 
 using ActiproSoftware.Text.Implementation;
 
-using NQuery.Language.Services.BraceMatching;
-using NQuery.Language.Wpf;
+using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.Wpf;
 
-namespace NQuery.Language.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf
 {
     public sealed class NQueryLanguage : SyntaxLanguage, IDisposable
     {

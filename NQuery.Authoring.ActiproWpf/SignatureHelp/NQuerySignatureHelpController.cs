@@ -4,7 +4,7 @@ using System.Linq;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-namespace NQuery.Language.ActiproWpf.SignatureHelp
+namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
     [ExportLanguageService]
     internal sealed class NQuerySignatureHelpController : IEditorDocumentTextChangeEventSink, IEditorViewSelectionChangeEventSink

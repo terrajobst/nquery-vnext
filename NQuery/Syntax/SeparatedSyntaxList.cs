@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Language
+namespace NQuery
 {
     public sealed class SeparatedSyntaxList<TNode> : IList<TNode>
         where TNode: SyntaxNode
