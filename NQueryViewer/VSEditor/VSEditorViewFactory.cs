@@ -11,8 +11,11 @@ using Microsoft.VisualStudio.Utilities;
 using NQuery.Language.VSEditor.Document;
 using NQuery.Language.VSEditor.Selection;
 
+using NQueryViewer.Editor;
+
 namespace NQueryViewer.VSEditor
 {
+    [Export(typeof(IEditorViewFactory))]
     [Export(typeof(IVSEditorViewFactory))]
     internal sealed class VSEditorViewFactory : IVSEditorViewFactory, IPartImportsSatisfiedNotification
     {
@@ -56,6 +59,11 @@ namespace NQueryViewer.VSEditor
             return new VSEditorView(textViewHost, document, selectionProvider);
         }
 
+        IEditorView IEditorViewFactory.CreateEditorView()
+        {
+            return CreateEditorView();
+        }
+
         private IWpfTextViewHost CreateTextViewHost()
         {
             // Create buffer
@@ -81,6 +89,11 @@ namespace NQueryViewer.VSEditor
             editorFormatMap.SetProperties(indicatorMargin, resourceDictionary);
 
             return textViewHost;
+        }
+
+        public string DisplayName
+        {
+            get { return "Visual Studio Editor"; }
         }
     }
 }

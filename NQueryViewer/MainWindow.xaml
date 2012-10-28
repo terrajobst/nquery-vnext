@@ -7,19 +7,31 @@
         Height="350"
         Width="525"
         TextOptions.TextFormattingMode="Display"
-        UseLayoutRounding="True">
+        UseLayoutRounding="True"
+        Background="LightGray">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0"
-            Orientation="Horizontal">
-            <CheckBox x:Name="FullSpanHighlightingCheckBox"
-                      Content="Highlight Full Span"
-                      Checked="FullSpanHighlightingCheckBoxChecked"
-                      Unchecked="FullSpanHighlightingCheckBoxChecked" />
-        </StackPanel>
+        <Grid Grid.Row="0"
+              Background="LemonChiffon">
+            <StackPanel 
+                        Margin="2"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <CheckBox x:Name="FullSpanHighlightingCheckBox"
+                          Content="Highlight Full Span"
+                          Margin="5"
+                          Checked="FullSpanHighlightingCheckBoxChecked"
+                          Unchecked="FullSpanHighlightingCheckBoxChecked" />
+                <Label Content="_Editor: "
+                       Target="{Binding ElementName=EditorFactoryComboBox}" />
+                <ComboBox x:Name="EditorFactoryComboBox"
+                          DisplayMemberPath="DisplayName"
+                          MinWidth="200" />
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />

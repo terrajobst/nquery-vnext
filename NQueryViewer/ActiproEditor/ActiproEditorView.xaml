@@ -1,4 +1,4 @@
-﻿<editor:EditorView x:Class="NQueryViewer.VSEditor.VSEditorView"
+﻿<editor:EditorView x:Class="NQueryViewer.ActiproEditor.ActiproEditorView"
                    x:ClassModifier="internal"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"

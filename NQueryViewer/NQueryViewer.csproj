@@ -34,6 +34,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ActiproSoftware.Shared.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+      <HintPath>..\packages\ActiproSoftware.Shared.Wpf.12.2.570\lib\net40\ActiproSoftware.Shared.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiproSoftware.SyntaxEditor.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+      <HintPath>..\packages\ActiproSoftware.SyntaxEditor.Wpf.12.2.570\lib\net40\ActiproSoftware.SyntaxEditor.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="ActiproSoftware.Text.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+      <HintPath>..\packages\ActiproSoftware.Text.Wpf.12.2.570\lib\net40\ActiproSoftware.Text.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.CoreUtility.dll</HintPath>
@@ -96,6 +105,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActiproEditor\ActiproEditorView.xaml.cs">
+      <DependentUpon>ActiproEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ActiproEditor\ActiproEditorViewFactory.cs" />
+    <Compile Include="ActiproEditor\IActiproEditorView.cs" />
+    <Compile Include="ActiproEditor\IActiproEditorViewFactory.cs" />
+    <Compile Include="Editor\IEditorViewFactory.cs" />
     <Compile Include="IMainWindowProvider.cs" />
     <Compile Include="Editor\EditorView.cs" />
     <Compile Include="Editor\IEditorView.cs" />
@@ -105,6 +121,10 @@
       <DependentUpon>VSEditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="VSEditor\VSEditorViewFactory.cs" />
+    <Page Include="ActiproEditor\ActiproEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -151,6 +171,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Language.ActiproWpf\NQuery.Language.ActiproWpf.csproj">
+      <Project>{A3309669-818F-47A9-B0F8-734AF347FEBC}</Project>
+      <Name>NQuery.Language.ActiproWpf</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Language.Services\NQuery.Language.Services.csproj">
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
       <Name>NQuery.Language.Services</Name>

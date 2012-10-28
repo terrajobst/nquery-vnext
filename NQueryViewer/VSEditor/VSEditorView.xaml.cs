@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -8,7 +6,6 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Language;
-using NQuery.Language.Services;
 using NQuery.Language.VSEditor.Document;
 using NQuery.Language.VSEditor.Selection;
 
@@ -16,7 +13,7 @@ using System.Linq;
 
 namespace NQueryViewer.VSEditor
 {
-    public sealed partial class VSEditorView : IVSEditorView
+    internal sealed partial class VSEditorView : IVSEditorView
     {
         private readonly IWpfTextViewHost _textViewHost;
         private readonly INQueryDocument _document;

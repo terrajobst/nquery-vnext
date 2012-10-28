@@ -1,9 +1,11 @@
 using System;
 
+using NQueryViewer.Editor;
+
 namespace NQueryViewer.VSEditor
 {
-    public interface IVSEditorViewFactory
+    public interface IVSEditorViewFactory : IEditorViewFactory
     {
-        IVSEditorView CreateEditorView();
+        new IVSEditorView CreateEditorView();
     }
 }

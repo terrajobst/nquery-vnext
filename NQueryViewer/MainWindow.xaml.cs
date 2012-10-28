@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
@@ -6,8 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using NQuery.Language;
 using NQuery.SampleData;
 
+using NQueryViewer.ActiproEditor;
 using NQueryViewer.Editor;
 using NQueryViewer.VSEditor;
 
@@ -20,6 +23,12 @@ namespace NQueryViewer
     {
         [Import]
         public IVSEditorViewFactory VSEditorViewFactory { get; set; }
+
+        [Import]
+        public IActiproEditorViewFactory ActiproEditorViewFactory { get; set; }
+
+        [ImportMany]
+        public IEnumerable<IEditorViewFactory> EditorViewFactories { get; set; }
 
         public MainWindow()
         {
@@ -38,23 +47,37 @@ namespace NQueryViewer
 
         public void OnImportsSatisfied()
         {
+            foreach (var editorViewFactory in EditorViewFactories.OrderBy(e => e.DisplayName))
+                EditorFactoryComboBox.Items.Add(editorViewFactory);
+
+            if (EditorFactoryComboBox.Items.Count > 0)
+                EditorFactoryComboBox.SelectedIndex = 0;
+
             NewEditor();
             UpdateTree();
         }
 
         private void NewEditor()
         {
-            var editorView = VSEditorViewFactory.CreateEditorView();
+            var editorViewFactory = EditorFactoryComboBox.SelectedItem as IEditorViewFactory;
+            if (editorViewFactory == null)
+                return;
+
+            var editorView = editorViewFactory.CreateEditorView();
+            if (editorView == null)
+                return;
+
             editorView.DataContext = NorthwindDataContext.Create();
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
             editorView.SyntaxTreeChanged += EditorViewOnSyntaxTreeChanged;
             editorView.SemanticModelChanged += EditorViewOnSemanticModelChanged;
-            
-            var name = string.Format("Query {0} [{1}]", TabControl.Items.Count, editorView.GetType().Name);
+
+            var id = TabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
             var tabItem = new TabItem
             {
-                Header = name,
-                Content = editorView.Element
+                Header = string.Format("Query {0} [{1}]", id, editorViewFactory.DisplayName),
+                Content = editorView.Element,
+                Tag = id,
             };
             TabControl.Items.Add(tabItem);
             TabControl.SelectedItem = tabItem;
@@ -138,11 +161,20 @@ namespace NQueryViewer
             else
             {
                 var semanticModel = CurrentEditorView.SemanticModel;
-                var syntaxTree = semanticModel.Compilation.SyntaxTree;
-                var syntaxTreeDiagnostics = syntaxTree.GetDiagnostics();
-                var semanticModelDiagnostics = semanticModel.GetDiagnostics();
+                var syntaxTree = semanticModel == null
+                                     ? CurrentEditorView.SyntaxTree
+                                     : semanticModel.Compilation.SyntaxTree;
+                var syntaxTreeDiagnostics = syntaxTree == null
+                                                ? Enumerable.Empty<Diagnostic>()
+                                                : syntaxTree.GetDiagnostics();
+                var semanticModelDiagnostics = semanticModel == null
+                                                   ? Enumerable.Empty<Diagnostic>()
+                                                   : semanticModel.GetDiagnostics();
                 var diagnostics = syntaxTreeDiagnostics.Concat(semanticModelDiagnostics);
-                DiagnosticGrid.UpdateGrid(diagnostics, syntaxTree.TextBuffer);
+                var textBuffer = syntaxTree == null
+                                     ? null
+                                     : syntaxTree.TextBuffer;
+                DiagnosticGrid.UpdateGrid(diagnostics, textBuffer);
             }
         }
 
