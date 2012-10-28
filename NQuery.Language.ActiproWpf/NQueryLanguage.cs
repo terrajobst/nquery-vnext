@@ -6,6 +6,7 @@ using System.ComponentModel.Composition.Primitives;
 using ActiproSoftware.Text.Implementation;
 
 using NQuery.Language.Services.BraceMatching;
+using NQuery.Language.Wpf;
 
 namespace NQuery.Language.ActiproWpf
 {
@@ -32,8 +33,9 @@ namespace NQuery.Language.ActiproWpf
         private static ComposablePartCatalog GetDefaultCatalog()
         {
             var servicesAssembly = new AssemblyCatalog(typeof (IBraceMatchingService).Assembly);
+            var wpfAssembly = new AssemblyCatalog(typeof(INQueryGlyphService).Assembly);
             var thisAssembly = new AssemblyCatalog(typeof (NQueryLanguage).Assembly);
-            return new AggregateCatalog(servicesAssembly, thisAssembly);
+            return new AggregateCatalog(servicesAssembly, wpfAssembly, thisAssembly);
         }
 
         public void Dispose()
