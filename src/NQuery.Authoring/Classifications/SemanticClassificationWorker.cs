@@ -21,11 +21,14 @@ namespace NQuery.Authoring.Classifications
 
         private void AddClassification(TextSpan textSpan, Symbol symbol)
         {
-            if (textSpan.Length == 0 || symbol.Kind == SymbolKind.BadSymbol || symbol.Kind == SymbolKind.BadTable)
+            if (textSpan.Length == 0)
                 return;
 
             var classification = GetClassification(symbol);
-            _result.Add(new SemanticClassificationSpan(textSpan, classification));
+            if (classification == null)
+                return;
+
+            _result.Add(new SemanticClassificationSpan(textSpan, classification.Value));
         }
 
         private void AddClassification(SyntaxNodeOrToken nodeOrToken, Symbol symbol)
@@ -33,10 +36,13 @@ namespace NQuery.Authoring.Classifications
             AddClassification(nodeOrToken.Span, symbol);
         }
 
-        private static SemanticClassification GetClassification(Symbol symbol)
+        private static SemanticClassification? GetClassification(Symbol symbol)
         {
             switch (symbol.Kind)
             {
+                case SymbolKind.BadSymbol:
+                case SymbolKind.BadTable:
+                    return null;
                 case SymbolKind.SchemaTable:
                     return SemanticClassification.SchemaTable;
                 case SymbolKind.Column:
