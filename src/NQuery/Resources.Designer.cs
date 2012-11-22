@@ -934,7 +934,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Row reference &apos;{0}&apos; is not valid since the table it is referring to is either a derived table or a common table expression (CTE)..
+        ///   Looks up a localized string similar to Row reference &apos;{0}&apos; is not valid since the table it is referring to is either a derived table, a common table expression (CTE) or doesn&apos;t have a row type..
         /// </summary>
         internal static string InvalidRowReference {
             get {

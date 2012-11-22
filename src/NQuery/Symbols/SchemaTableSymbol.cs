@@ -7,6 +7,11 @@ namespace NQuery.Symbols
     {
         private readonly Type _rowType;
 
+        public SchemaTableSymbol(string name, IList<ColumnSymbol> columns)
+            : this(name, columns, TypeFacts.Missing)
+        {
+        }
+
         public SchemaTableSymbol(string name, IList<ColumnSymbol> columns, Type rowType)
             : base(name, columns)
         {

@@ -15,7 +15,7 @@ namespace NQuery.Data
                                    .Cast<DataColumn>()
                                    .Select(c => new ColumnSymbol(c.ColumnName, c.DataType))
                                    .ToArray();
-            var table = new SchemaTableSymbol(dataTable.TableName, columns, typeof(void));
+            var table = new SchemaTableSymbol(dataTable.TableName, columns);
             tables.Add(table);
         }
 

@@ -186,8 +186,11 @@ namespace NQuery.Symbols
             markup.AppendKeyword("TABLE");
             markup.AppendSpace();
             markup.AppendTableName(symbol.Name);
-            markup.AppendSpace();
-            markup.AppendAsType(symbol.Type);
+            if (!symbol.Type.IsMissing())
+            {
+                markup.AppendSpace();
+                markup.AppendAsType(symbol.Type);
+            }
         }
 
         private static void AppendDerivedTableSymbolInfo(this ICollection<SymbolMarkupToken> markup, DerivedTableSymbol symbol)

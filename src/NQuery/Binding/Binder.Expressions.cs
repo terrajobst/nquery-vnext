@@ -583,7 +583,7 @@ namespace NQuery.Binding
 
             var symbol = symbols[0];
 
-            // If symbol refers to a table, we need to make that it's either not a derived table/CTE
+            // If symbol refers to a table, we need to make sure that it's either not a derived table/CTE
             // or we are used in column access context (i.e. our parent is a a property access).
             //
             // For example, the following query is invalid
@@ -600,9 +600,8 @@ namespace NQuery.Binding
             if (tableInstance != null)
             {
                 var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
-                var refersToDerivedTableOrCte = tableInstance.Table.Kind == SymbolKind.DerivedTable ||
-                                                tableInstance.Table.Kind == SymbolKind.CommonTableExpression;
-                if (!isColumnAccess && refersToDerivedTableOrCte)
+                var hasNoType = tableInstance.Table.Type.IsMissing();
+                if (!isColumnAccess && hasNoType)
                     _diagnostics.ReportInvalidRowReference(name);
             }
 
