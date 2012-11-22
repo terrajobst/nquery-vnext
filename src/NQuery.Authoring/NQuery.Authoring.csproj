@@ -83,6 +83,7 @@
     <Compile Include="QuickInfo\QuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\VariableExpressionQuickInfoModelProvider.cs" />
     <Compile Include="ResultProducer.cs" />
+    <Compile Include="Selection\SelectionExtensions.cs" />
     <Compile Include="SignatureHelp\CastSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\CoalesceSignatureModelProvider.cs" />
     <Compile Include="SignatureHelp\CountAllSignatureModelProvider.cs" />

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.Selection;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection
@@ -26,7 +27,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
         {
             var syntaxTree = await _document.GetSyntaxTreeAsync();
             var currentSelection = GetCurrentSelection();
-            var extendedSelection = ExtendSelection(syntaxTree, currentSelection);
+            var extendedSelection = syntaxTree.ExtendSelection(currentSelection);
 
             if (currentSelection == extendedSelection)
                 return;
@@ -66,24 +67,6 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
         private void ClearStack()
         {
             _selectionStack.Clear();
-        }
-
-        private static TextSpan ExtendSelection(SyntaxTree syntaxTree, TextSpan selectedSpan)
-        {
-            var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
-            if (!selectedSpan.Contains(token.Span))
-                return token.Span;
-
-            var node = token.Parent;
-            while (node != null)
-            {
-                if (selectedSpan.Contains(node.Span))
-                    node = node.Parent;
-                else
-                    return node.Span;
-            }
-
-            return syntaxTree.Root.Span;
         }
 
         private void SelectionOnSelectionChanged(object sender, EventArgs e)

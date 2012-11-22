@@ -11,6 +11,8 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
 using NQuery.Authoring.ActiproWpf;
 using NQuery.Authoring.ActiproWpf.Classification;
 
+using NQuery.Authoring.ActiproWpf.Selection;
+
 namespace NQueryViewer.ActiproEditor
 {
     internal sealed partial class ActiproEditorView : IActiproEditorView
@@ -36,6 +38,7 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.BorderThickness = new Thickness(0);
             _syntaxEditor.Document = _document;
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
+            _syntaxEditor.RegisterSelectionCommands();
 
             EditorHost.Content = _syntaxEditor;
             DocumentType = _document.DocumentType;

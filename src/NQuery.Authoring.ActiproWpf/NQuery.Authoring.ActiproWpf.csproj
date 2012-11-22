@@ -50,6 +50,10 @@
   <ItemGroup>
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
+    <Compile Include="Selection\ExtendSelectionAction.cs" />
+    <Compile Include="Selection\SelectionAction.cs" />
+    <Compile Include="Selection\SelectionExtensions.cs" />
+    <Compile Include="Selection\ShrinkSelectionAction.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
     <Compile Include="Squiggles\SquiggleTagQuickInfoProviderRegistrar.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifier.cs" />
