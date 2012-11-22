@@ -9,7 +9,7 @@ namespace NQuery.Symbols
         private readonly Type _type;
 
         public BadSymbol(string name)
-            : this(name, KnownTypes.Unknown)
+            : this(name, TypeFacts.Unknown)
         {
         }
 

@@ -7,7 +7,7 @@ namespace NQuery.Symbols
     public sealed class BadVariableSymbol : VariableSymbol
     {
         public BadVariableSymbol(string name)
-            : base(name, KnownTypes.Unknown)
+            : base(name, TypeFacts.Unknown)
         {
         }
     }

@@ -1,8 +1,8 @@
 using System;
 
-namespace NQuery.Binding
+namespace NQuery.Symbols
 {
-    internal static class KnownTypes
+    public static class TypeFacts
     {
         private static class MissingType { }
         private static class UnknownType { }
@@ -32,7 +32,7 @@ namespace NQuery.Binding
             return type == Null;
         }
 
-        public static bool IsNumericType(this KnownType value)
+        internal static bool IsNumericType(this KnownType value)
         {
             switch (value)
             {
@@ -60,7 +60,7 @@ namespace NQuery.Binding
             }
         }
 
-        public static bool IsSignedNumericType(this KnownType value)
+        internal static bool IsSignedNumericType(this KnownType value)
         {
             switch (value)
             {
@@ -75,7 +75,7 @@ namespace NQuery.Binding
             }
         }
 
-        public static bool IsUnsignedNumericType(this KnownType value)
+        internal static bool IsUnsignedNumericType(this KnownType value)
         {
             switch (value)
             {
@@ -90,7 +90,7 @@ namespace NQuery.Binding
             }
         }
 
-        public static KnownType? GetKnownType(this Type type)
+        internal static KnownType? GetKnownType(this Type type)
         {
             if (type == typeof(Byte))
                 return KnownType.Byte;
@@ -155,7 +155,7 @@ namespace NQuery.Binding
             return knownType == null ? type.Name : knownType.Value.ToDisplayName();
         }
 
-        public static string ToDisplayName(this KnownType type)
+        private static string ToDisplayName(this KnownType type)
         {
             switch (type)
             {

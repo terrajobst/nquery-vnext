@@ -46,7 +46,7 @@
     <Compile Include="Runtime\BuiltInFunctions.cs" />
     <Compile Include="Runtime\BuiltinOperators.cs" />
     <Compile Include="Binding\FunctionSymbolSignature.cs" />
-    <Compile Include="Binding\KnownType.cs" />
+    <Compile Include="Symbols\KnownType.cs" />
     <Compile Include="Binding\MethodSymbolSignature.cs" />
     <Compile Include="Binding\OverloadResolution.cs" />
     <Compile Include="Binding\OverloadResolutionCandidate.cs" />
@@ -122,7 +122,7 @@
     <Compile Include="Syntax\TextLocation.cs" />
     <Compile Include="TypeRegistry.cs" />
     <Compile Include="SemanticModel.cs" />
-    <Compile Include="Binding\KnownTypes.cs" />
+    <Compile Include="Symbols\TypeFacts.cs" />
     <Compile Include="Symbols\BadSymbol.cs" />
     <Compile Include="Symbols\BadTableSymbol.cs" />
     <Compile Include="Symbols\BadVariableSymbol.cs" />

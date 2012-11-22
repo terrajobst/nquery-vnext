@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Binding
+namespace NQuery.Symbols
 {
     internal enum KnownType
     {

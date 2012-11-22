@@ -1,6 +1,7 @@
 using System;
 
 using NQuery.Binding;
+using NQuery.Symbols;
 
 namespace NQuery.BoundNodes
 {
@@ -27,7 +28,7 @@ namespace NQuery.BoundNodes
             get
             {
                 return _result.Selected == null
-                           ? KnownTypes.Unknown
+                           ? TypeFacts.Unknown
                            : _result.Selected.Signature.ReturnType;
             }
         }

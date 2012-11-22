@@ -25,7 +25,7 @@ namespace NQuery.BoundNodes
 
         public override Type Type
         {
-            get { return Symbol == null ? KnownTypes.Unknown : Symbol.Type; }
+            get { return Symbol == null ? TypeFacts.Unknown : Symbol.Type; }
         }
 
         public FunctionSymbol Symbol

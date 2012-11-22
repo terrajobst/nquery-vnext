@@ -1,6 +1,7 @@
 using System;
 
 using NQuery.Binding;
+using NQuery.Symbols;
 
 namespace NQuery.BoundNodes
 {
@@ -23,7 +24,7 @@ namespace NQuery.BoundNodes
             get
             {
                 return _value == null
-                           ? KnownTypes.Null
+                           ? TypeFacts.Null
                            : _value.GetType();
             }
         }

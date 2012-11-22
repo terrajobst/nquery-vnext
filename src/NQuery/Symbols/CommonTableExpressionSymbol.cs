@@ -31,7 +31,7 @@ namespace NQuery.Symbols
 
         public override Type Type
         {
-            get { return KnownTypes.Missing; }
+            get { return TypeFacts.Missing; }
         }
 
         internal BoundQuery Query

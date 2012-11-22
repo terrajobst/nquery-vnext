@@ -26,7 +26,7 @@ namespace NQuery.Binding
                 return type;
 
             _diagnostics.ReportUndeclaredType(typeName);
-            return KnownTypes.Unknown;
+            return TypeFacts.Unknown;
         }
 
         private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
