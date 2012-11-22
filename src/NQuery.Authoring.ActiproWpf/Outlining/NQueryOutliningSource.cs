@@ -19,11 +19,10 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
             foreach (var regionSpan in result)
             {
                 var range = textBuffer.ToSnapshotRange(snapshot, regionSpan.Span);
-                var text = textBuffer.GetText(regionSpan.Span);
 
                 IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition("NQueryNode")
                 {
-                    DefaultCollapsedContent = text,
+                    DefaultCollapsedContent = regionSpan.Text,
                     IsImplementation = false
                 };
 
