@@ -57,17 +57,17 @@ namespace NQuery.Authoring.SignatureHelp
             return start <= position && position <= end;
         }
 
-        private static bool IsCommaToken(SymbolMarkupNode node)
+        private static bool IsCommaToken(SymbolMarkupToken token)
         {
-            return node.Kind == SymbolMarkupKind.Punctuation && node.Text == ",";
+            return token.Kind == SymbolMarkupKind.Punctuation && token.Text == ",";
         }
 
-        private static bool IsAsKeyword(SymbolMarkupNode node)
+        private static bool IsAsKeyword(SymbolMarkupToken token)
         {
-            return node.Kind == SymbolMarkupKind.Keyword && SyntaxFacts.GetKeywordKind(node.Text) == SyntaxKind.AsKeyword;
+            return token.Kind == SymbolMarkupKind.Keyword && SyntaxFacts.GetKeywordKind(token.Text) == SyntaxKind.AsKeyword;
         }
 
-        private static SignatureItem ToSignatureItem(this SymbolMarkup markup, Func<SymbolMarkupNode, bool> separatorPredicate)
+        private static SignatureItem ToSignatureItem(this SymbolMarkup markup, Func<SymbolMarkupToken, bool> separatorPredicate)
         {
             var sb = new StringBuilder();
             var parameterStart = 0;
@@ -75,7 +75,7 @@ namespace NQuery.Authoring.SignatureHelp
             var parameterSpans = new List<TextSpan>();
             var parameterNames = new List<string>();
 
-            foreach (var node in markup.Nodes)
+            foreach (var node in markup.Tokens)
             {
                 var isParameterName = node.Kind == SymbolMarkupKind.ParameterName;
                 var isWhitespace = node.Kind == SymbolMarkupKind.Whitespace;

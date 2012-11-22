@@ -2,12 +2,12 @@ using System;
 
 namespace NQuery.Symbols
 {
-    public sealed class SymbolMarkupNode
+    public sealed class SymbolMarkupToken
     {
         private readonly SymbolMarkupKind _kind;
         private readonly string _text;
 
-        public SymbolMarkupNode(SymbolMarkupKind kind, string text)
+        public SymbolMarkupToken(SymbolMarkupKind kind, string text)
         {
             _kind = kind;
             _text = text;

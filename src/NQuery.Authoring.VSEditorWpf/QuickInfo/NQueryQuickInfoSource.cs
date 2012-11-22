@@ -60,7 +60,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 
         private FrameworkElement GetContent(QuickInfoModel model)
         {
-            if (model.Markup.Nodes.Count == 0)
+            if (model.Markup.Tokens.Count == 0)
                 return null;
 
             var glyph = GetGlyph(model.Glyph);
@@ -89,42 +89,42 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                 VerticalAlignment = VerticalAlignment.Center,
                 FontFamily = new FontFamily("Consolas")
             };
-            textBlock.Inlines.AddRange(markup.Nodes.Select(GetInline));
+            textBlock.Inlines.AddRange(markup.Tokens.Select(GetInline));
             return textBlock;
         }
 
-        private Inline GetInline(SymbolMarkupNode markupNode)
+        private Inline GetInline(SymbolMarkupToken markupToken)
         {
-            switch (markupNode.Kind)
+            switch (markupToken.Kind)
             {
                 case SymbolMarkupKind.Keyword:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Keyword);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Keyword);
                 case SymbolMarkupKind.Punctuation:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Punctuation);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Punctuation);
                 case SymbolMarkupKind.Whitespace:
-                    return GetClassifiedText(markupNode.Text, _classificationService.WhiteSpace);
+                    return GetClassifiedText(markupToken.Text, _classificationService.WhiteSpace);
                 case SymbolMarkupKind.TableName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.SchemaTable);
+                    return GetClassifiedText(markupToken.Text, _classificationService.SchemaTable);
                 case SymbolMarkupKind.DerivedTableName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.DerivedTable);
+                    return GetClassifiedText(markupToken.Text, _classificationService.DerivedTable);
                 case SymbolMarkupKind.CommonTableExpressionName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.CommonTableExpression);
+                    return GetClassifiedText(markupToken.Text, _classificationService.CommonTableExpression);
                 case SymbolMarkupKind.ColumnName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Column);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Column);
                 case SymbolMarkupKind.VariableName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Variable);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Variable);
                 case SymbolMarkupKind.ParameterName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Identifier); // TODO: Fix this
+                    return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
                 case SymbolMarkupKind.FunctionName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Function);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Function);
                 case SymbolMarkupKind.AggregateName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Aggregate);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Aggregate);
                 case SymbolMarkupKind.MethodName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Method);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Method);
                 case SymbolMarkupKind.PropertyName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Property);
+                    return GetClassifiedText(markupToken.Text, _classificationService.Property);
                 case SymbolMarkupKind.TypeName:
-                    return GetClassifiedText(markupNode.Text, _classificationService.Identifier); // TODO: Fix this
+                    return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
                 default:
                     throw new ArgumentOutOfRangeException();
             }

@@ -112,7 +112,7 @@
     <Compile Include="Symbols\SymbolMarkup.cs" />
     <Compile Include="Symbols\SymbolMarkupBuilder.cs" />
     <Compile Include="Symbols\SymbolMarkupKind.cs" />
-    <Compile Include="Symbols\SymbolMarkupNode.cs" />
+    <Compile Include="Symbols\SymbolMarkupToken.cs" />
     <Compile Include="Symbols\TableRelation.cs" />
     <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />

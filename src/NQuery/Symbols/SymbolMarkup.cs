@@ -7,47 +7,47 @@ namespace NQuery.Symbols
 {
     public sealed class SymbolMarkup
     {
-        private readonly ReadOnlyCollection<SymbolMarkupNode> _nodes;
+        private readonly ReadOnlyCollection<SymbolMarkupToken> _tokens;
 
-        public SymbolMarkup(IList<SymbolMarkupNode> nodes)
+        public SymbolMarkup(IList<SymbolMarkupToken> tokens)
         {
-            _nodes = new ReadOnlyCollection<SymbolMarkupNode>(nodes);
+            _tokens = new ReadOnlyCollection<SymbolMarkupToken>(tokens);
         }
 
-        public ReadOnlyCollection<SymbolMarkupNode> Nodes
+        public ReadOnlyCollection<SymbolMarkupToken> Tokens
         {
-            get { return _nodes; }
+            get { return _tokens; }
         }
 
         public override string ToString()
         {
-            return string.Concat(_nodes.Select(n => n.Text));
+            return string.Concat(_tokens.Select(n => n.Text));
         }
 
         public static SymbolMarkup ForSymbol(Symbol symbol)
         {
-            var nodes = new List<SymbolMarkupNode>();
+            var nodes = new List<SymbolMarkupToken>();
             nodes.AppendSymbol(symbol);
             return new SymbolMarkup(nodes);
         }
 
         public static SymbolMarkup ForCastSymbol()
         {
-            var nodes = new List<SymbolMarkupNode>();
+            var nodes = new List<SymbolMarkupToken>();
             nodes.AppendCastSymbol();
             return new SymbolMarkup(nodes);
         }
 
         public static SymbolMarkup ForCoalesceSymbol()
         {
-            var nodes = new List<SymbolMarkupNode>();
+            var nodes = new List<SymbolMarkupToken>();
             nodes.AppendCoalesceSymbol();
             return new SymbolMarkup(nodes);
         }
 
         public static SymbolMarkup ForNullIfSymbol()
         {
-            var nodes = new List<SymbolMarkupNode>();
+            var nodes = new List<SymbolMarkupToken>();
             nodes.AppendNullIfSymbol();
             return new SymbolMarkup(nodes);
         }

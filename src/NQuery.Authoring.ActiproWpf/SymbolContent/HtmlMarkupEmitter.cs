@@ -30,14 +30,14 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         private static void AppendMarkup(this StringBuilder sb, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
         {
-            foreach (var node in symbolMarkup.Nodes)
+            foreach (var node in symbolMarkup.Tokens)
                 sb.AppendNode(node, classificationTypes, highlightingStyleRegistry);
         }
 
-        private static void AppendNode(this StringBuilder sb, SymbolMarkupNode node, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+        private static void AppendNode(this StringBuilder sb, SymbolMarkupToken token, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
         {
-            var classificationType = GetClassificationType(node.Kind, classificationTypes);
-            sb.AppendText(node.Text, classificationType, highlightingStyleRegistry);
+            var classificationType = GetClassificationType(token.Kind, classificationTypes);
+            sb.AppendText(token.Text, classificationType, highlightingStyleRegistry);
         }
 
         private static IClassificationType GetClassificationType(SymbolMarkupKind kind, INQueryClassificationTypes classificationTypes)
