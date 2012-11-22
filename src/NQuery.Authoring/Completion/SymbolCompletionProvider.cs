@@ -143,7 +143,7 @@ namespace NQuery.Authoring.Completion
                 return CreateInvocableCompletionGroup(symbols);
 
             var displayText = name;
-            var insertionText = name;
+            var insertionText = SyntaxFacts.GetValidIdentifier(name);
 
             var sb = new StringBuilder();
             sb.Append("Ambiguous Name:");
@@ -174,7 +174,7 @@ namespace NQuery.Authoring.Completion
         private static CompletionItem CreateSymbolCompletion(Symbol symbol)
         {
             var displayText = symbol.Name;
-            var insertionText = symbol.Name;
+            var insertionText = SyntaxFacts.GetValidIdentifier(symbol.Name);
             var description = SymbolMarkup.ForSymbol(symbol).ToString();
             var glyph = symbol.GetGlyph();
             return new CompletionItem(displayText, insertionText, description, glyph, symbol);

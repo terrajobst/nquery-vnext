@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Completion
             var applicableSpan = token == null ? new TextSpan(position, 0) : token.Span;
 
             var items = CompletionProviders.SelectMany(p => p.GetItems(semanticModel, position));
-            var sortedItems = items.OrderBy(c => c.InsertionText).ToArray();
+            var sortedItems = items.OrderBy(c => c.DisplayText).ToArray();
 
             return new CompletionModel(semanticModel, applicableSpan, sortedItems);
         }

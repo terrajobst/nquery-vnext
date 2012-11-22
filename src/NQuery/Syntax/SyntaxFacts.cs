@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using NQuery.Binding;
 
@@ -268,7 +269,7 @@ namespace NQuery
         public static string GetDisplayText(this SyntaxToken token)
         {
             var result = token.Text;
-            return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
+            return !String.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
         }
 
         public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
@@ -374,6 +375,64 @@ namespace NQuery
                 default:
                     return false;
             }
+        }
+
+        public static string GetValidIdentifier(string name)
+        {
+            return IsValidIdentifier(name)
+                       ? name
+                       : GetParenthesizedIdentifier(name);
+        }
+
+        public static bool IsValidIdentifier(string name)
+        {
+            if (name.Length == 0)
+                return false;
+
+            var firstChar = name.First();
+            if (!Char.IsLetter(firstChar) && firstChar != '_')
+                return false;
+
+            if (!name.Skip(1).All(c => Char.IsLetterOrDigit(c) || c == '_' || c == '$'))
+                return false;
+
+            return GetKeywordKind(name) == SyntaxKind.IdentifierToken;
+        }
+
+        public static string GetParenthesizedIdentifier(string name)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append('[');
+
+            foreach (var c in name)
+            {
+                if (c == ']')
+                    sb.Append(']');
+                sb.Append(c);
+            }
+
+            sb.Append(']');
+
+            return sb.ToString();
+        }
+
+        public static string GetQuotedIdentifier(string name)
+        {
+            var sb = new StringBuilder();
+
+            sb.Append('"');
+
+            foreach (var c in name)
+            {
+                if (c == '"')
+                    sb.Append('"');
+                sb.Append(c);
+            }
+
+            sb.Append('"');
+
+            return sb.ToString();
         }
 
         public static SyntaxKind GetKeywordKind(string text)

@@ -4,12 +4,14 @@ using System.Linq;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
+using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.Completion;
 
 using CompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
+using ICompletionProvider = NQuery.Authoring.Completion.ICompletionProvider;
 
 namespace NQuery.Authoring.ActiproWpf.Completion
 {
@@ -46,6 +48,9 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
             var completionSession = existingSession ?? new NQueryCompletionSession
                                                            {
+                                                               MatchOptions = CompletionMatchOptions.TargetsDisplayText |
+                                                                              CompletionMatchOptions.IsCaseInsensitive |
+                                                                              CompletionMatchOptions.UseAcronyms,
                                                                CanFilterUnmatchedItems = true,
                                                                CanCommitWithoutPopup = canCommitWithoutPopup
                                                            };
@@ -78,7 +83,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
                                       ? null
                                       : SymbolContentProvider.GetContentProvider(completionItem.Symbol);
 
-            return new CompletionItem(completionItem.InsertionText, imageSourceProvider, contentProvider);
+            return new CompletionItem(completionItem.DisplayText, imageSourceProvider, contentProvider, completionItem.InsertionText, null);
         }
     }
 }

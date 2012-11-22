@@ -95,6 +95,11 @@ namespace NQuery.Symbols
             markup.Add(new SymbolMarkupToken(kind, text));
         }
 
+        private static void AppendName(this ICollection<SymbolMarkupToken> markup, SymbolMarkupKind kind, string name)
+        {
+            markup.Append(kind, SyntaxFacts.GetValidIdentifier(name));
+        }
+
         private static void AppendKeyword(this ICollection<SymbolMarkupToken> markup, string text)
         {
             markup.Append(SymbolMarkupKind.Keyword, text);
@@ -107,52 +112,52 @@ namespace NQuery.Symbols
 
         private static void AppendTableName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.TableName, text);
+            markup.AppendName(SymbolMarkupKind.TableName, text);
         }
 
         private static void AppendDerivedTableName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.DerivedTableName, text);
+            markup.AppendName(SymbolMarkupKind.DerivedTableName, text);
         }
 
         private static void AppendCommonTableExpressionName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.CommonTableExpressionName, text);
+            markup.AppendName(SymbolMarkupKind.CommonTableExpressionName, text);
         }
 
         private static void AppendColumnName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.ColumnName, text);
+            markup.AppendName(SymbolMarkupKind.ColumnName, text);
         }
 
         private static void AppendVariableName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.VariableName, text);
+            markup.AppendName(SymbolMarkupKind.VariableName, text);
         }
 
         private static void AppendParameterName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.ParameterName, text);
+            markup.AppendName(SymbolMarkupKind.ParameterName, text);
         }
 
         private static void AppendFunctionName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.FunctionName, text);
+            markup.AppendName(SymbolMarkupKind.FunctionName, text);
         }
 
         private static void AppendAggregateName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.AggregateName, text);
+            markup.AppendName(SymbolMarkupKind.AggregateName, text);
         }
 
         private static void AppendMethodName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.MethodName, text);
+            markup.AppendName(SymbolMarkupKind.MethodName, text);
         }
 
         private static void AppendPropertyName(this ICollection<SymbolMarkupToken> markup, string text)
         {
-            markup.Append(SymbolMarkupKind.PropertyName, text);
+            markup.AppendName(SymbolMarkupKind.PropertyName, text);
         }
 
         private static void AppendPunctuation(this ICollection<SymbolMarkupToken> markup, string text)
@@ -162,7 +167,7 @@ namespace NQuery.Symbols
 
         private static void AppendType(this ICollection<SymbolMarkupToken> markup, Type type)
         {
-            markup.Append(SymbolMarkupKind.TypeName, type.Name.ToUpper());
+            markup.AppendName(SymbolMarkupKind.TypeName, type.Name.ToUpper());
         }
 
         private static void AppendAsType(this ICollection<SymbolMarkupToken> markup, Type type)
