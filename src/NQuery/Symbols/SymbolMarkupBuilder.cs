@@ -192,7 +192,9 @@ namespace NQuery.Symbols
 
         private static void AppendDerivedTableSymbolInfo(this ICollection<SymbolMarkupNode> markup, DerivedTableSymbol symbol)
         {
-            markup.AppendKeyword("DERIVED TABLE");
+            markup.AppendKeyword("DERIVED");
+            markup.AppendSpace();
+            markup.AppendKeyword("TABLE");
             markup.AppendSpace();
             markup.AppendDerivedTableName(symbol.Name);
         }
@@ -225,7 +227,11 @@ namespace NQuery.Symbols
 
         private static void AppendCommonTableExpressionSymbolInfo(this ICollection<SymbolMarkupNode> markup, CommonTableExpressionSymbol symbol)
         {
-            markup.AppendKeyword("COMMON TABLE EXPRESSION");
+            markup.AppendKeyword("COMMON");
+            markup.AppendSpace();
+            markup.AppendKeyword("TABLE");
+            markup.AppendSpace();
+            markup.AppendKeyword("EXPRESSION");
             markup.AppendSpace();
             markup.AppendCommonTableExpressionName(symbol.Name);
         }
