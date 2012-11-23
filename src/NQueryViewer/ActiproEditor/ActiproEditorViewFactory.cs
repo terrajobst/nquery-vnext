@@ -18,6 +18,11 @@ namespace NQueryViewer.ActiproEditor
             return CreateEditorView();
         }
 
+        public int Priority
+        {
+            get { return 2; }
+        }
+
         public string DisplayName
         {
             get { return "Actipro SyntaxEditor"; }

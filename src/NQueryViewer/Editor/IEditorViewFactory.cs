@@ -6,6 +6,7 @@ namespace NQueryViewer.Editor
     {
         IEditorView CreateEditorView();
 
+        int Priority { get; }
         string DisplayName { get; }
     }
 }

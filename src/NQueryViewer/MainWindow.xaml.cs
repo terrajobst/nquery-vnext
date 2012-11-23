@@ -37,7 +37,7 @@ namespace NQueryViewer
 
         public void OnImportsSatisfied()
         {
-            foreach (var editorViewFactory in EditorViewFactories.OrderBy(e => e.DisplayName))
+            foreach (var editorViewFactory in EditorViewFactories.OrderBy(e => e.Priority))
                 EditorFactoryComboBox.Items.Add(editorViewFactory);
 
             if (EditorFactoryComboBox.Items.Count > 0)

@@ -89,6 +89,11 @@ namespace NQueryViewer.VSEditor
             return textViewHost;
         }
 
+        public int Priority
+        {
+            get { return 1; }
+        }
+
         public string DisplayName
         {
             get { return "Visual Studio Editor"; }
