@@ -4,8 +4,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpf="clr-namespace:NQuery.Authoring.Wpf;assembly=NQuery.Authoring.Wpf"
         Title="NQuery Viewer"
-        Height="350"
-        Width="525"
+        Width="1024"
+        Height="786"
+        WindowStartupLocation="CenterScreen"
         TextOptions.TextFormattingMode="Display"
         UseLayoutRounding="True"
         Background="LightGray">
