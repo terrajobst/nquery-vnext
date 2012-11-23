@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.Composition;
-using System.Linq;
 using System.Windows.Media;
 
 using Microsoft.VisualStudio.Text;
@@ -71,8 +70,7 @@ namespace NQueryViewer.VSEditor
             var contentType = ContentTypeRegistryService.GetContentType("NQuery");
             var textBuffer = TextBufferFactoryService.CreateTextBuffer(contentType);
 
-            var textViewRoleSet = TextEditorFactoryService.CreateTextViewRoleSet(TextEditorFactoryService.DefaultRoles.Concat(new[] { "Reviewable" }));
-            var textView = TextEditorFactoryService.CreateTextView(textBuffer, textViewRoleSet);
+            var textView = TextEditorFactoryService.CreateTextView(textBuffer);
             var textViewHost = TextEditorFactoryService.CreateTextViewHost(textView, false);
 
             // Set the appearance of collapsed text
