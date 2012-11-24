@@ -3,23 +3,23 @@ using System.Collections.ObjectModel;
 
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraConcatNode : AlgebraNode
+    internal sealed class AlgebraConcatNode : AlgebraRelation
     {
-        private readonly ReadOnlyCollection<AlgebraNode> _inputs;
+        private readonly ReadOnlyCollection<AlgebraRelation> _inputs;
 
-        public AlgebraConcatNode(params AlgebraNode[] inputs)
+        public AlgebraConcatNode(params AlgebraRelation[] inputs)
         {
-            _inputs = new ReadOnlyCollection<AlgebraNode>(inputs);
-        }
-
-        public ReadOnlyCollection<AlgebraNode> Inputs
-        {
-            get { return _inputs; }
+            _inputs = new ReadOnlyCollection<AlgebraRelation>(inputs);
         }
 
         public override AlgebraKind Kind
         {
             get { return AlgebraKind.Concat; }
+        }
+
+        public ReadOnlyCollection<AlgebraRelation> Inputs
+        {
+            get { return _inputs; }
         }
     }
 }

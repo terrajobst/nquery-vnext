@@ -4,7 +4,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraTableNode : AlgebraNode
+    internal sealed class AlgebraTableNode : AlgebraRelation
     {
         private readonly TableInstanceSymbol _symbol;
 
@@ -13,14 +13,14 @@ namespace NQuery.Algebra
             _symbol = symbol;
         }
 
-        public TableInstanceSymbol Symbol
-        {
-            get { return _symbol; }
-        }
-
         public override AlgebraKind Kind
         {
             get { return AlgebraKind.Table; }
+        }
+
+        public TableInstanceSymbol Symbol
+        {
+            get { return _symbol; }
         }
     }
 }

@@ -25,7 +25,12 @@
                                             Value="Green" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding Kind}"
-                                             Value="Node">
+                                             Value="Scalar">
+                                    <Setter Property="Foreground"
+                                            Value="Blue" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Kind}"
+                                             Value="Relational">
                                     <Setter Property="Foreground"
                                             Value="Maroon" />
                                 </DataTrigger>

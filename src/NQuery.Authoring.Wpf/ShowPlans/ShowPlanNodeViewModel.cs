@@ -31,7 +31,7 @@ namespace NQuery.Authoring.Wpf
 
         public override string Kind
         {
-            get { return "Node"; }
+            get { return _model.IsScalar ? "Scalar" : "Relational"; }
         }
     }
 }

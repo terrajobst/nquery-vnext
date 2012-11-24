@@ -1,24 +1,25 @@
 using System;
 
-using NQuery.BoundNodes;
-
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraJoinNode : AlgebraNode
+    internal sealed class AlgebraJoinNode : AlgebraRelation
     {
         private readonly AlgebraJoinKind _joinKind;
-        private readonly AlgebraNode _left;
-        private readonly AlgebraNode _right;
-        private readonly ValueSlot _probeValue;
-        private readonly BoundExpression _condition;
+        private readonly AlgebraRelation _left;
+        private readonly AlgebraRelation _right;
+        private readonly AlgebraExpression _condition;
 
-        public AlgebraJoinNode(AlgebraJoinKind joinKind, AlgebraNode left, AlgebraNode right, ValueSlot probeValue, BoundExpression condition)
+        public AlgebraJoinNode(AlgebraJoinKind joinKind, AlgebraRelation left, AlgebraRelation right, AlgebraExpression condition)
         {
             _joinKind = joinKind;
             _left = left;
             _right = right;
-            _probeValue = probeValue;
             _condition = condition;
+        }
+
+        public override AlgebraKind Kind
+        {
+            get { return AlgebraKind.Join; }
         }
 
         public AlgebraJoinKind JoinKind
@@ -26,29 +27,19 @@ namespace NQuery.Algebra
             get { return _joinKind; }
         }
 
-        public AlgebraNode Left
+        public AlgebraRelation Left
         {
             get { return _left; }
         }
 
-        public AlgebraNode Right
+        public AlgebraRelation Right
         {
             get { return _right; }
         }
 
-        public ValueSlot ProbeValue
-        {
-            get { return _probeValue; }
-        }
-
-        public BoundExpression Condition
+        public AlgebraExpression Condition
         {
             get { return _condition; }
-        }
-
-        public override AlgebraKind Kind
-        {
-            get { return AlgebraKind.Join; }
         }
     }
 }

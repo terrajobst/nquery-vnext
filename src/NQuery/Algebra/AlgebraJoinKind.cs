@@ -5,8 +5,8 @@ namespace NQuery.Algebra
     internal enum AlgebraJoinKind
     {
         Inner,
+        FullOuter,
         LeftOuter,
-        LeftSemiJoin,
-        LeftAntiSemiJoin
+        RightOuter
     }
 }

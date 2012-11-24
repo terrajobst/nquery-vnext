@@ -524,7 +524,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    lastTableReference = new BoundJoinedTableReference(BoundJoinType.InnerJoin, lastTableReference, boundTableReference, null);
+                    lastTableReference = new BoundJoinedTableReference(BoundJoinType.Inner, lastTableReference, boundTableReference, null);
                 }
             }
 

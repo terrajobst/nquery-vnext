@@ -28,7 +28,6 @@ namespace NQuery.BoundNodes
         SelectQuery,
         CombinedQuery,
         CommonTableExpression,
-        CommonTableExpressionQuery,
-        BoundValueSlot
+        CommonTableExpressionQuery
     }
 }

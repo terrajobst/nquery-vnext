@@ -85,7 +85,7 @@ namespace NQuery.Binding
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-            return new BoundJoinedTableReference(BoundJoinType.InnerJoin, left, right, null);
+            return new BoundJoinedTableReference(BoundJoinType.Inner, left, right, null);
         }
 
         private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
@@ -99,16 +99,16 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 _diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinedTableReference(BoundJoinType.InnerJoin, left, right, condition);
+            return new BoundJoinedTableReference(BoundJoinType.Inner, left, right, condition);
         }
 
         private BoundTableReference BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
         {
             var joinType = node.TypeKeyword.Kind == SyntaxKind.LeftKeyword
-                               ? BoundJoinType.LeftOuterJoin
+                               ? BoundJoinType.LeftOuter
                                : node.TypeKeyword.Kind == SyntaxKind.RightKeyword
-                                     ? BoundJoinType.RightOuterJoin
-                                     : BoundJoinType.FullOuterJoin;
+                                     ? BoundJoinType.RightOuter
+                                     : BoundJoinType.FullOuter;
 
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);

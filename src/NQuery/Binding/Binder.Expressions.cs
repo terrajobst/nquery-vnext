@@ -801,7 +801,10 @@ namespace NQuery.Binding
 
             var boundQuery = BindQuery(node.Query);
 
-            // TODO: Ensure query has exactly one column
+            if (boundQuery.SelectColumns.Count > 1)
+            {
+                // TODO: Error
+            }
 
             return new BoundSingleRowSubselect(boundQuery);
         }
@@ -836,7 +839,7 @@ namespace NQuery.Binding
             // if we could resolve both sides.
 
             if (left.Type.IsError() || right.Type.IsError())
-                return new BoundAllAnySubselect(left, boundQuery);
+                return new BoundAllAnySubselect(left, boundQuery, OverloadResolutionResult<BinaryOperatorSignature>.None);
 
             var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
             var operatorKind = expressionKind.ToBinaryOperatorKind();
@@ -859,7 +862,7 @@ namespace NQuery.Binding
                 throw new NotImplementedException("Converting right side of ALL/ANY/SOME not implemented yet.");
             }
 
-            return new BoundAllAnySubselect(convertedLeft, boundQuery);
+            return new BoundAllAnySubselect(convertedLeft, boundQuery, result);
         }
     }
 }

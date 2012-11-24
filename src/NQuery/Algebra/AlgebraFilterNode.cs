@@ -1,33 +1,31 @@
 using System;
 
-using NQuery.BoundNodes;
-
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraFilterNode : AlgebraNode
+    internal sealed class AlgebraFilterNode : AlgebraRelation
     {
-        private readonly AlgebraNode _input;
-        private readonly BoundExpression _condition;
+        private readonly AlgebraRelation _input;
+        private readonly AlgebraExpression _condition;
 
-        public AlgebraFilterNode(AlgebraNode input, BoundExpression condition)
+        public AlgebraFilterNode(AlgebraRelation input, AlgebraExpression condition)
         {
             _input = input;
             _condition = condition;
         }
 
-        public AlgebraNode Input
+        public override AlgebraKind Kind
+        {
+            get { return AlgebraKind.Filter; }
+        }
+
+        public AlgebraRelation Input
         {
             get { return _input; }
         }
 
-        public BoundExpression Condition
+        public AlgebraExpression Condition
         {
             get { return _condition; }
-        }
-
-        public override AlgebraKind Kind
-        {
-            get { return AlgebraKind.Filter; }
         }
     }
 }

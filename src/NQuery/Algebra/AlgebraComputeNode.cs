@@ -1,33 +1,33 @@
 using System;
-
-using NQuery.BoundNodes;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraComputeNode : AlgebraNode
+    internal sealed class AlgebraComputeNode : AlgebraRelation
     {
-        private readonly AlgebraNode _input;
-        private readonly BoundExpression[] _resultExpressions;
+        private readonly AlgebraRelation _input;
+        private readonly ReadOnlyCollection<AlgebraExpression> _expressions;
 
-        public AlgebraComputeNode(AlgebraNode input, BoundExpression[] resultExpressions)
+        public AlgebraComputeNode(AlgebraRelation input, IList<AlgebraExpression> expressions)
         {
             _input = input;
-            _resultExpressions = resultExpressions;
-        }
-
-        public AlgebraNode Input
-        {
-            get { return _input; }
-        }
-
-        public BoundExpression[] ResultExpressions
-        {
-            get { return _resultExpressions; }
+            _expressions = new ReadOnlyCollection<AlgebraExpression>(expressions);
         }
 
         public override AlgebraKind Kind
         {
             get { return AlgebraKind.Compute; }
+        }
+
+        public AlgebraRelation Input
+        {
+            get { return _input; }
+        }
+
+        public ReadOnlyCollection<AlgebraExpression> Expressions
+        {
+            get { return _expressions; }
         }
     }
 }

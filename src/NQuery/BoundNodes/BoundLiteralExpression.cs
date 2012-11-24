@@ -29,6 +29,11 @@ namespace NQuery.BoundNodes
             }
         }
 
+        public object Value
+        {
+            get { return _value; }
+        }
+
         public override string ToString()
         {
             if (_value == null)

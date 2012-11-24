@@ -8,7 +8,24 @@ namespace NQuery.Algebra
 {
     partial class Algebrizer
     {
-        private AlgebraNode AlgebrizeQuery(BoundQuery node)
+        private static AlgebraQueryCombinator GetQueryCombinator(BoundQueryCombinator combinator)
+        {
+            switch (combinator)
+            {
+                case BoundQueryCombinator.Union:
+                    return AlgebraQueryCombinator.Union;
+                case BoundQueryCombinator.UnionAll:
+                    return AlgebraQueryCombinator.UnionAll;
+                case BoundQueryCombinator.Except:
+                    return AlgebraQueryCombinator.Except;
+                case BoundQueryCombinator.Intersect:
+                    return AlgebraQueryCombinator.Intersect;
+                default:
+                    throw new ArgumentOutOfRangeException("combinator");
+            }
+        }
+
+        private AlgebraRelation AlgebrizeQuery(BoundQuery node)
         {
             switch (node.Kind)
             {
@@ -23,7 +40,7 @@ namespace NQuery.Algebra
             }
         }
 
-        private AlgebraNode AlgebrizeSelectQuery(BoundSelectQuery node)
+        private AlgebraRelation AlgebrizeSelectQuery(BoundSelectQuery node)
         {
             var algebrizedFrom = AlgebrizeFrom(node.FromClause);
             var algebrizedWhere = AlgebrizeFilter(algebrizedFrom, node.WhereClause);
@@ -40,53 +57,48 @@ namespace NQuery.Algebra
             return algebrizedTop;
         }
 
-        private AlgebraNode AlgebrizeFrom(BoundTableReference boundTableReference)
+        private AlgebraRelation AlgebrizeFrom(BoundTableReference boundTableReference)
         {
-            if (boundTableReference == null)
-                return new AlgebraConstantNode();
-
-            return AlgebrizeTableReference(boundTableReference);
+            return boundTableReference == null
+                       ? new AlgebraConstantNode()
+                       : AlgebrizeTableReference(boundTableReference);
         }
 
-        private AlgebraNode AlgebrizeFilter(AlgebraNode input, BoundExpression condition)
+        private AlgebraRelation AlgebrizeFilter(AlgebraRelation input, BoundExpression condition)
         {
             if (condition == null)
                 return input;
 
-            var algebrizedExpression = AlgebrizeExpression(input, condition);
-            var resultInput = algebrizedExpression.Input;
-            var resultCondition = algebrizedExpression.Expression;
-
-            return new AlgebraFilterNode(resultInput, resultCondition);
+            var algebrizedCondition = AlgebrizeExpression(condition);
+            return new AlgebraFilterNode(input, algebrizedCondition);
         }
 
-        private AlgebraNode AlgebrizeSelect(AlgebraNode input, IEnumerable<BoundSelectColumn> selectColumns)
+        private AlgebraRelation AlgebrizeSelect(AlgebraRelation input, IEnumerable<BoundSelectColumn> selectColumns)
         {
-            var expresions = selectColumns.Select(c => c.Expression).ToArray();
-            var algebrizedExpressions = AlgebrizeExpressionList(input, expresions);
-
-            var resultInput = algebrizedExpressions.Input;
-            var resultExpressions = algebrizedExpressions.Expressions;
-
-            return new AlgebraComputeNode(resultInput, resultExpressions);
+            var expresions = selectColumns.Select(c => AlgebrizeExpression(c.Expression)).ToArray();
+            return new AlgebraComputeNode(input, expresions);
         }
 
-        private AlgebraNode AlgebrizeTop(AlgebraNode input, int? top, bool withTies)
+        private AlgebraRelation AlgebrizeTop(AlgebraRelation input, int? top, bool withTies)
         {
-            return top == null ? input : new AlgebraTopNode(input, top.Value, withTies);
+            return top == null
+                       ? input
+                       : new AlgebraTopNode(input, top.Value, withTies);
         }
 
-        private AlgebraNode AlgebrizeCombinedQuery(BoundCombinedQuery node)
+        private AlgebraRelation AlgebrizeCombinedQuery(BoundCombinedQuery node)
         {
-            throw new NotImplementedException("UNION/EXCEPT/INTERSECT not implemented yet");
+            var left = AlgebrizeQuery(node.Left);
+            var right = AlgebrizeQuery(node.Right);
+            var combinator = GetQueryCombinator(node.Combinator);
+            return new AlgebraBinaryQueryNode(left, right, combinator);
         }
 
-        private AlgebraNode AlgebrizeCommonTableExpressionQuery(BoundCommonTableExpressionQuery node)
+        private AlgebraRelation AlgebrizeCommonTableExpressionQuery(BoundCommonTableExpressionQuery node)
         {
             // Note: we don't need to do anything with the CTEs themselves -- they will be
             //       instantiated when they are being used.
-            return Algebrize(node.Query);
+            return AlgebrizeQuery(node.Query);
         }
-
     }
 }

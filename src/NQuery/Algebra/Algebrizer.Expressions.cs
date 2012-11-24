@@ -1,255 +1,149 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.BoundNodes;
+using NQuery.Symbols;
 
 namespace NQuery.Algebra
 {
     partial class Algebrizer
     {
-        private AlgebrizedExpression AlgebrizeExpression(AlgebraNode input, BoundExpression node)
+        private AlgebraExpression AlgebrizeExpression(BoundExpression node)
         {
             switch (node.Kind)
             {
                 case BoundNodeKind.NameExpression:
-                    return AlgebrizeNameExpression(input, (BoundNameExpression)node);
+                    return AlgebrizeNameExpression((BoundNameExpression)node);
                 case BoundNodeKind.UnaryExpression:
-                    return AlgebrizeUnaryExpression(input, (BoundUnaryExpression)node);
+                    return AlgebrizeUnaryExpression((BoundUnaryExpression)node);
                 case BoundNodeKind.BinaryExpression:
-                    return AlgebrizeBinaryExpression(input, (BoundBinaryExpression)node);
+                    return AlgebrizeBinaryExpression((BoundBinaryExpression)node);
                 case BoundNodeKind.LiteralExpression:
-                    return AlgebrizeLiteralExpression(input, (BoundLiteralExpression)node);
+                    return AlgebrizeLiteralExpression((BoundLiteralExpression)node);
                 case BoundNodeKind.VariableExpression:
-                    return AlgebrizeVariableExpression(input, (BoundVariableExpression)node);
+                    return AlgebrizeVariableExpression((BoundVariableExpression)node);
                 case BoundNodeKind.FunctionInvocationExpression:
-                    return AlgebrizeFunctionInvocationExpression(input, (BoundFunctionInvocationExpression)node);
+                    return AlgebrizeFunctionInvocationExpression((BoundFunctionInvocationExpression)node);
                 case BoundNodeKind.AggregateExpression:
-                    return AlgebrizeBoundAggregateExpression(input, (BoundAggregateExpression)node);
+                    return AlgebrizeAggregateExpression((BoundAggregateExpression)node);
                 case BoundNodeKind.PropertyAccessExpression:
-                    return AlgebrizePropertyAccessExpression(input, (BoundPropertyAccessExpression)node);
+                    return AlgebrizePropertyAccessExpression((BoundPropertyAccessExpression)node);
                 case BoundNodeKind.MethodInvocationExpression:
-                    return AlgebrizeMethodInvocationExpression(input, (BoundMethodInvocationExpression)node);
+                    return AlgebrizeMethodInvocationExpression((BoundMethodInvocationExpression)node);
                 case BoundNodeKind.CastExpression:
-                    return AlgebrizeCastExpression(input, (BoundCastExpression)node);
+                    return AlgebrizeCastExpression((BoundCastExpression)node);
                 case BoundNodeKind.IsNullExpression:
-                    return AlgebrizeIsNullExpression(input, (BoundIsNullExpression)node);
+                    return AlgebrizeIsNullExpression((BoundIsNullExpression)node);
                 case BoundNodeKind.CaseExpression:
-                    return AlgebrizeCaseExpression(input, (BoundCaseExpression)node);
+                    return AlgebrizeCaseExpression((BoundCaseExpression)node);
                 case BoundNodeKind.SingleRowSubselect:
-                    return AlgebrizeSingleRowSubselect(input, (BoundSingleRowSubselect)node);
+                    return AlgebrizeSingleRowSubselect((BoundSingleRowSubselect)node);
                 case BoundNodeKind.ExistsSubselect:
-                    return AlgebrizeExistsSubselect(input, (BoundExistsSubselect)node);
+                    return AlgebrizeExistsSubselect((BoundExistsSubselect)node);
                 case BoundNodeKind.AllAnySubselect:
-                    return AlgebrizeAllAnySubselect(input, (BoundAllAnySubselect)node);
+                    return AlgebrizeAllAnySubselect((BoundAllAnySubselect)node);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private AlgebrizedExpressionList AlgebrizeExpressionList(AlgebraNode input, IList<BoundExpression> nodes)
+        private AlgebraExpression AlgebrizeNameExpression(BoundNameExpression node)
         {
-            var resultInput = input;
-            var resultArguments = new BoundExpression[nodes.Count];
-
-            for (var i = 0; i < nodes.Count; i++)
-            {
-                var algebrizedExpression = AlgebrizeExpression(resultInput, nodes[i]);
-                resultInput = algebrizedExpression.Input;
-                resultArguments[i] = algebrizedExpression.Expression;
-            }
-
-            return new AlgebrizedExpressionList(resultInput, resultArguments);
+            var symbol = (ColumnInstanceSymbol) node.Symbol;
+            return new AlgebraColumnExpression(symbol);
         }
 
-        private AlgebrizedExpression AlgebrizeNameExpression(AlgebraNode input, BoundNameExpression node)
+        private AlgebraExpression AlgebrizeUnaryExpression(BoundUnaryExpression node)
         {
-            // TODO: Do we need this?
-            return new AlgebrizedExpression(input, node);
+            var expression = AlgebrizeExpression(node.Expression);
+            var signature = node.Result.Selected.Signature;
+            return new AlgebraUnaryExpression(expression, signature);
         }
 
-        private AlgebrizedExpression AlgebrizeUnaryExpression(AlgebraNode input, BoundUnaryExpression node)
+        private AlgebraExpression AlgebrizeBinaryExpression(BoundBinaryExpression node)
         {
-            var algebrizedExpression = AlgebrizeExpression(input, node.Expression);
-
-            var resultInput = algebrizedExpression.Input;
-            var resultNode = node.Update(algebrizedExpression.Expression);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var left = AlgebrizeExpression(node.Left);
+            var right = AlgebrizeExpression(node.Right);
+            var signature = node.Result.Selected.Signature;
+            return new AlgebraBinaryExpression(left, right, signature);
         }
 
-        private AlgebrizedExpression AlgebrizeBinaryExpression(AlgebraNode input, BoundBinaryExpression node)
+        private AlgebraExpression AlgebrizeLiteralExpression(BoundLiteralExpression node)
         {
-            var algebrizedLeft = AlgebrizeExpression(input, node.Left);
-            var algebrizedRight = AlgebrizeExpression(algebrizedLeft.Input, node.Right);
-
-            var resultInput = algebrizedRight.Input;
-            var resultNode = node.Update(algebrizedLeft.Expression, algebrizedRight.Expression);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            return new AlgebraLiteralExpression(node.Value);
         }
 
-        private AlgebrizedExpression AlgebrizeLiteralExpression(AlgebraNode input, BoundLiteralExpression node)
+        private AlgebraExpression AlgebrizeVariableExpression(BoundVariableExpression node)
         {
-            // TODO: Do we need this?
-            return new AlgebrizedExpression(input, node);
+            return new AlgebraVariableExpression(node.Symbol);
         }
 
-        private AlgebrizedExpression AlgebrizeVariableExpression(AlgebraNode input, BoundVariableExpression node)
+        private AlgebraExpression AlgebrizeFunctionInvocationExpression(BoundFunctionInvocationExpression node)
         {
-            // TODO: Do we need this?
-            return new AlgebrizedExpression(input, node);
+            var arguments = node.Arguments.Select(AlgebrizeExpression).ToArray();
+            var symbol = node.Symbol;
+            return new AlgebraFunctionInvocationExpression(arguments, symbol);
         }
 
-        private AlgebrizedExpression AlgebrizeFunctionInvocationExpression(AlgebraNode input, BoundFunctionInvocationExpression node)
+        private AlgebraExpression AlgebrizeAggregateExpression(BoundAggregateExpression node)
         {
-            var algebrizedArguments = AlgebrizeExpressionList(input, node.Arguments);
-
-            var resultInput = algebrizedArguments.Input;
-            var resultArguments = algebrizedArguments.Expressions;
-            var resultNode = node.Update(resultArguments);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var argument = AlgebrizeExpression(node.Argument);
+            var symbol = node.Symbol;
+            return new AlgebraAggregateExpression(argument, symbol);
         }
 
-        private AlgebrizedExpression AlgebrizeBoundAggregateExpression(AlgebraNode input, BoundAggregateExpression node)
+        private AlgebraExpression AlgebrizePropertyAccessExpression(BoundPropertyAccessExpression node)
         {
-            // TODO: Algebrize aggregation. We may need to do this from the BoundSelectQuery.
-            return new AlgebrizedExpression(input, node);
+            var target = AlgebrizeExpression(node.Target);
+            var symbol = node.PropertySymbol;
+            return new AlgebraPropertyAccessExpression(target, symbol);
         }
 
-        private AlgebrizedExpression AlgebrizePropertyAccessExpression(AlgebraNode input, BoundPropertyAccessExpression node)
+        private AlgebraExpression AlgebrizeMethodInvocationExpression(BoundMethodInvocationExpression node)
         {
-            var algebrizedTarget = AlgebrizeExpression(input, node.Target);
-
-            var resultInput = algebrizedTarget.Input;
-            var resultNode = node.Update(algebrizedTarget.Expression);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var target = AlgebrizeExpression(node.Target);
+            var arguments = node.Arguments.Select(AlgebrizeExpression).ToArray();
+            var symbol = node.Symbol;
+            return new AlgebraMethodInvocationExpression(target, arguments, symbol);
         }
 
-        private AlgebrizedExpression AlgebrizeMethodInvocationExpression(AlgebraNode input, BoundMethodInvocationExpression node)
+        private AlgebraExpression AlgebrizeCastExpression(BoundCastExpression node)
         {
-            var algebrizedTarget = AlgebrizeExpression(input, node.Target);
-            var algebrizedArguments = AlgebrizeExpressionList(algebrizedTarget.Input, node.Arguments);
-
-            var resultTarget = algebrizedTarget.Expression;
-            var resultArguments = algebrizedArguments.Expressions;
-
-            var resultInput = algebrizedArguments.Input;
-            var resultNode = node.Update(resultTarget, resultArguments);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var expression = AlgebrizeExpression(node.Expression);
+            var conversion = node.Conversion;
+            return new AlgebraConversionExpression(expression, conversion);
         }
 
-        private AlgebrizedExpression AlgebrizeCastExpression(AlgebraNode input, BoundCastExpression node)
+        private AlgebraExpression AlgebrizeIsNullExpression(BoundIsNullExpression node)
         {
-            var algebrizedExpression = AlgebrizeExpression(input, node.Expression);
-
-            var resultInput = algebrizedExpression.Input;
-            var resultNode = node.Update(algebrizedExpression.Expression);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var expression = AlgebrizeExpression(node.Expression);
+            return new AlgebraIsNullExpression(expression);
         }
 
-        private AlgebrizedExpression AlgebrizeIsNullExpression(AlgebraNode input, BoundIsNullExpression node)
-        {
-            var algebrizedExpression = AlgebrizeExpression(input, node.Expression);
-
-            var resultInput = algebrizedExpression.Input;
-            var resultNode = node.Update(algebrizedExpression.Expression);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
-        }
-
-        private AlgebrizedExpression AlgebrizeCaseExpression(AlgebraNode input, BoundCaseExpression node)
+        private AlgebraExpression AlgebrizeCaseExpression(BoundCaseExpression node)
         {
             // TODO: Algebrize CASE
-            return new AlgebrizedExpression(input, node);
+            return new AlgebraCaseExpression();
         }
 
-        private AlgebrizedExpression AlgebrizeSingleRowSubselect(AlgebraNode input, BoundSingleRowSubselect node)
+        private AlgebraExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node)
         {
-            var algebrizedQuery = AlgebrizeQuery(node.BoundQuery);
-
-            // TODO: We need to output an ASSERT operator that guarantees that input returns at most one row.
-            // TODO: We need to produce a value slot that represents the result of the query.
-
-            var valueSlot = CreateValueSlot(node.BoundQuery.SelectColumns[0].Expression.Type);
-            var resultInput = new AlgebraJoinNode(AlgebraJoinKind.LeftOuter, input, algebrizedQuery, null, null);
-            var resultNode = new BoundValueSlotExpression(valueSlot);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var query = AlgebrizeQuery(node.BoundQuery);
+            return new AlgebraSingleRowSubselect(query);
         }
 
-        private AlgebrizedExpression AlgebrizeExistsSubselect(AlgebraNode input, BoundExistsSubselect node)
+        private AlgebraExpression AlgebrizeExistsSubselect(BoundExistsSubselect node)
         {
-            var algebrizedQuery = AlgebrizeQuery(node.BoundQuery);
-
-            // TODO: Mark the join as a probing LEFT SEMI JOIN.
-            var valueSlot = CreateValueSlot(typeof(bool));
-            var resultInput = new AlgebraJoinNode(AlgebraJoinKind.LeftSemiJoin, input, algebrizedQuery, valueSlot, null);
-            var resultNode = new BoundValueSlotExpression(valueSlot);
-
-            return new AlgebrizedExpression(resultInput, resultNode);
+            var query = AlgebrizeQuery(node.BoundQuery);
+            return new AlgebraExistsSubselect(query);
         }
 
-        private AlgebrizedExpression AlgebrizeAllAnySubselect(AlgebraNode input, BoundAllAnySubselect node)
+        private AlgebraExpression AlgebrizeAllAnySubselect(BoundAllAnySubselect node)
         {
-            // TODO: We may want to re-write part of this during binding.
-            //
-            // left OP ALL (SELECT right FROM ...)
-            // ==>
-            // NOT EXISTS (SELECT right FROM ... WHERE NOT(left OP right))
-            //
-            // left OP ANY/SOME (SELECT right FROM ...)
-            // ==>
-            // EXISTS (SELECT right FROM ... WHERE left OP right)
-
-            return new AlgebrizedExpression(input, node);
-        }
-
-        private struct AlgebrizedExpression
-        {
-            private readonly AlgebraNode _input;
-            private readonly BoundExpression _expression;
-
-            public AlgebrizedExpression(AlgebraNode input, BoundExpression expression)
-            {
-                _input = input;
-                _expression = expression;
-            }
-
-            public AlgebraNode Input
-            {
-                get { return _input; }
-            }
-
-            public BoundExpression Expression
-            {
-                get { return _expression; }
-            }
-        }
-
-        private struct AlgebrizedExpressionList
-        {
-            private readonly AlgebraNode _input;
-            private readonly BoundExpression[] _expressions;
-
-            public AlgebrizedExpressionList(AlgebraNode input, BoundExpression[] expressions)
-            {
-                _input = input;
-                _expressions = expressions;
-            }
-
-            public AlgebraNode Input
-            {
-                get { return _input; }
-            }
-
-            public BoundExpression[] Expressions
-            {
-                get { return _expressions; }
-            }
+            var expression = AlgebrizeExpression(node.Left);
+            var query = AlgebrizeQuery(node.BoundQuery);
+            var signature = node.Result.Selected.Signature;
+            return new AlgebraAllAnySubselect(expression, query, signature);
         }
     }
 }
