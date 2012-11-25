@@ -95,35 +95,6 @@ namespace NQuery.Authoring.Completion
             return null;
         }
 
-        private static bool InAlias(SyntaxNode root, int position)
-        {
-            var token = root.FindTokenOnLeft(position);
-            var node = token.Parent as AliasSyntax;
-            return node != null && node.Span.ContainsOrTouches(position);
-        }
-
-        private static bool InCteName(SyntaxNode root, int position)
-        {
-            var token = root.FindTokenOnLeft(position);
-            var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte != null && cte.Name.Span.ContainsOrTouches(position);
-        }
-
-        private static bool InCteColumnList(SyntaxNode root, int position)
-        {
-            var node = root.FindTokenOnLeft(position).Parent;
-            return node.Span.ContainsOrTouches(position) &&
-                   (node is CommonTableExpressionColumnNameSyntax ||
-                    node is CommonTableExpressionColumnNameListSyntax);
-        }
-
-        private static bool InDerivedTableName(SyntaxNode root, int position)
-        {
-            var syntaxToken = root.FindTokenOnLeft(position);
-            var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
-            return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
-        }
-
         private static IEnumerable<CompletionItem> CreateSymbolCompletions(IEnumerable<Symbol> symbols)
         {
             return from s in symbols
