@@ -31,14 +31,14 @@ namespace NQuery.Binding
             }
         }
 
-        public override IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
+        public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
-            return Parent.LookupProperty(type, name);
+            return Parent.LookupProperties(type);
         }
 
-        public override IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
+        public override IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
-            return Parent.LookupMethod(type, name);
+            return Parent.LookupMethods(type);
         }
     }
 }

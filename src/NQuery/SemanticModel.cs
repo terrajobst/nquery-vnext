@@ -143,7 +143,7 @@ namespace NQuery
 
         private static IEnumerable<Symbol> LookupSymbols(Binder binder)
         {
-            // NOTE: We want to only show the *available* symbols. That means, we need
+            // NOTE: We want to only show the *available* symbols. That means, we need to
             //       hide symbols from the parent binder that have same name as the ones
             //       from a nested binder.
             //
@@ -182,22 +182,12 @@ namespace NQuery
 
         public IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
-            // TODO: Should we cache them to ensure object identity for method symbols?
-            var dataContext = _compilation.DataContext;
-            var methodProvider = dataContext.MethodProviders.LookupValue(type);
-            return methodProvider == null
-                       ? Enumerable.Empty<MethodSymbol>()
-                       : methodProvider.GetMethods(type);
+            return _bindingResult.RootBinder.LookupMethods(type);
         }
 
         public IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
-            // TODO: Should we cache them to ensure object identity for property symbols?
-            var dataContext = _compilation.DataContext;
-            var propertyProvider = dataContext.PropertyProviders.LookupValue(type);
-            return propertyProvider == null
-                       ? Enumerable.Empty<PropertySymbol>()
-                       : propertyProvider.GetProperties(type);
+            return _bindingResult.RootBinder.LookupProperties(type);
         }
     }
 }

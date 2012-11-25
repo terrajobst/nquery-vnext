@@ -33,6 +33,11 @@ namespace NQuery.Binding
             get { return _boundRoot; }
         }
 
+        public Binder RootBinder
+        {
+            get { return _binderFromBoundNode[_boundRoot]; }
+        }
+
         public ReadOnlyCollection<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }

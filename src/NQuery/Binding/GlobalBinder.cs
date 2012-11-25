@@ -25,20 +25,22 @@ namespace NQuery.Binding
                                .Concat(_dataContext.Variables);
         }
 
-        public override IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
+        public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
+            // TODO: Should we cache them to ensure object identity for property symbols?
             var propertyProvider = _dataContext.PropertyProviders.LookupValue(type);
             return propertyProvider == null
                        ? Enumerable.Empty<PropertySymbol>()
-                       : propertyProvider.GetProperties(type).Where(p => name.Matches(p.Name));
+                       : propertyProvider.GetProperties(type);
         }
 
-        public override IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
+        public override IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
+            // TODO: Should we cache them to ensure object identity for method symbols?
             var methodProvider = _dataContext.MethodProviders.LookupValue(type);
             return methodProvider == null
                        ? Enumerable.Empty<MethodSymbol>()
-                       : methodProvider.GetMethods(type).Where(m => name.Matches(m.Name));
+                       : methodProvider.GetMethods(type);
         }
     }
 }

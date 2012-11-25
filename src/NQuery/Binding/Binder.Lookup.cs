@@ -102,7 +102,12 @@ namespace NQuery.Binding
             return GetLocalSymbols(name).OfType<TableInstanceSymbol>();
         }
 
-        public abstract IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name);
+        public abstract IEnumerable<PropertySymbol> LookupProperties(Type type);
+
+        private IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
+        {
+            return LookupProperties(type).Where(p => name.Matches(p.Name));
+        }
 
         private static OverloadResolutionResult<UnaryOperatorSignature> LookupUnaryOperator(UnaryOperatorKind operatorKind, BoundExpression expression)
         {
@@ -119,7 +124,12 @@ namespace NQuery.Binding
             return BinaryOperator.Resolve(operatorKind, left, right);
         }
 
-        public abstract IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name);
+        public abstract IEnumerable<MethodSymbol> LookupMethods(Type type);
+
+        private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
+        {
+            return LookupMethods(type).Where(m => name.Matches(m.Name));
+        }
 
         public OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
         {
