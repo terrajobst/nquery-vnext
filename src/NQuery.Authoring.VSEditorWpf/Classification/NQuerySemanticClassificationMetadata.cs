@@ -107,7 +107,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public PunctuationFormat()
             {
                 DisplayName = "Punctuation";
-                ForegroundColor = Color.FromRgb(0, 139, 139);
+                ForegroundColor = Colors.DarkCyan;
             }
         }
 
@@ -122,7 +122,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public SchemaTableFormat()
             {
                 DisplayName = "Schema Table";
-                ForegroundColor = Color.FromRgb(0, 0, 139);
+                ForegroundColor = Colors.DarkBlue;
             }
         }
 
@@ -137,7 +137,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public DerivedTableFormat()
             {
                 DisplayName = "Derived Table";
-                ForegroundColor = Color.FromRgb(0, 0, 139);
+                ForegroundColor = Colors.DarkBlue;
             }
         }
 
@@ -152,7 +152,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public CommonTableExpressionFormat()
             {
                 DisplayName = "Common Table Expression";
-                ForegroundColor = Color.FromRgb(0, 0, 139);
+                ForegroundColor = Colors.DarkBlue;
             }
         }
 
@@ -167,7 +167,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public FunctionFormat()
             {
                 DisplayName = "Event";
-                ForegroundColor = Color.FromRgb(255, 0, 255);
+                ForegroundColor = Colors.Fuchsia;
             }
         }
 
@@ -182,7 +182,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public ColumnFormat()
             {
                 DisplayName = "Column";
-                ForegroundColor = Color.FromRgb(128, 0, 128);
+                ForegroundColor = Colors.Purple;
             }
         }
 
@@ -197,7 +197,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public MethodFormat()
             {
                 DisplayName = "Method";
-                ForegroundColor = Color.FromRgb(0, 139, 139);
+                ForegroundColor = Colors.DarkCyan;
             }
         }
 
@@ -212,8 +212,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public AggregateFormat()
             {
                 DisplayName = "Aggregate Function";
-                ForegroundColor = Color.FromRgb(255, 0, 255);
-                IsBold = true;
+                ForegroundColor = Colors.OrangeRed;
             }
         }
 
@@ -228,7 +227,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public PropertyFormat()
             {
                 DisplayName = "Property";
-                ForegroundColor = Color.FromRgb(0, 139, 139);
+                ForegroundColor = Colors.DarkCyan;
             }
         }
 
@@ -243,7 +242,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             public VariableFormat()
             {
                 DisplayName = "Variable";
-                ForegroundColor = Color.FromRgb(0, 139, 139);
+                ForegroundColor = Colors.DarkCyan;
             }
         }
     }
