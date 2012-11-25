@@ -7,7 +7,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed partial class Binder
+    partial class Binder
     {
         private void EnsureCaseLabelsEvaluateToBool(IList<CaseLabelSyntax> caseLabels, IList<BoundCaseLabel> boundCaseLabels)
         {
@@ -568,8 +568,8 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                var isInvocable = LookupSymbols(name).OfType<FunctionSymbol>().Any() ||
-                                  LookupSymbols(name).OfType<AggregateSymbol>().Any();
+                var isInvocable = GetLocalSymbols(name).OfType<FunctionSymbol>().Any() ||
+                                  GetLocalSymbols(name).OfType<AggregateSymbol>().Any();
                 if (isInvocable)
                     _diagnostics.ReportInvocationRequiresParenthesis(name);
                 else

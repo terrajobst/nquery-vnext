@@ -11,15 +11,15 @@ namespace NQuery.Binding
         private readonly SyntaxNode _root;
         private readonly BoundNode _boundRoot;
         private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
-        private readonly IDictionary<BoundNode, BindingContext> _bindingContextFromBoundNode;
+        private readonly IDictionary<BoundNode, Binder> _binderFromBoundNode;
         private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
 
-        public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, IDictionary<BoundNode, BindingContext> bindingContextFromBoundNode, IList<Diagnostic> diagnostics)
+        public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
         {
             _root = root;
             _boundRoot = boundRoot;
             _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
-            _bindingContextFromBoundNode = bindingContextFromBoundNode;
+            _binderFromBoundNode = binderFromBoundNode;
             _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
         }
 
@@ -45,16 +45,16 @@ namespace NQuery.Binding
             return result;
         }
 
-        public BindingContext GetBindingContext(SyntaxNode syntaxNode)
+        public Binder GetBinder(SyntaxNode syntaxNode)
         {
             var boundNode = GetBoundNode(syntaxNode);
-            return boundNode == null ? null : GetBindingContext(boundNode);
+            return boundNode == null ? null : GetBinder(boundNode);
         }
 
-        public BindingContext GetBindingContext(BoundNode boundNode)
+        public Binder GetBinder(BoundNode boundNode)
         {
-            BindingContext result;
-            _bindingContextFromBoundNode.TryGetValue(boundNode, out result);
+            Binder result;
+            _binderFromBoundNode.TryGetValue(boundNode, out result);
             return result;
         }
     }

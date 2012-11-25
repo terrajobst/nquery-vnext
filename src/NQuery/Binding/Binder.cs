@@ -7,51 +7,44 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed partial class Binder
+    internal abstract partial class Binder
     {
-        private readonly DataContext _dataContext;
-        private readonly BindingContext _bindingContext;
+        private readonly Binder _parent;
         private readonly Dictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
-        private readonly Dictionary<BoundNode, BindingContext> _bindingContextFromBoundNode;
+        private readonly Dictionary<BoundNode, Binder> _binderFromBoundNode;
         private readonly List<Diagnostic> _diagnostics;
 
-        private Binder(DataContext dataContext, BindingContext bindingContext, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, BindingContext> bindingContextFromBoundNode, List<Diagnostic> diagnostics)
+        protected Binder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics)
         {
-            _bindingContext = bindingContext;
+            _parent = parent;
             _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
-            _bindingContextFromBoundNode = bindingContextFromBoundNode;
+            _binderFromBoundNode = binderFromBoundNode;
             _diagnostics = diagnostics;
-            _dataContext = dataContext;
         }
 
-        private Binder GetBinder(BindingContext bindingContext)
+        public Binder Parent
         {
-            return bindingContext == _bindingContext
-                       ? this
-                       : new Binder(_dataContext, bindingContext, _boundNodeFromSynatxNode, _bindingContextFromBoundNode, _diagnostics);
+            get { return _parent; }
         }
 
-        private Binder GetBinderWithAdditionalSymbols(IEnumerable<Symbol> symbols)
+        private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)
         {
-            var bindingContext = new AdditionalSymbolsBindingContext(_bindingContext, symbols);
-            return GetBinder(bindingContext);
+            return new LocalBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, symbols);
         }
 
-        private Binder GetBinderWithAdditionalSymbols(params Symbol[] symbols)
+        private Binder CreateLocalBinder(params Symbol[] symbols)
         {
-            return GetBinderWithAdditionalSymbols(symbols.AsEnumerable());
+            return CreateLocalBinder(symbols.AsEnumerable());
         }
 
         public static BindingResult Bind(CompilationUnitSyntax compilationUnit, DataContext dataContext)
         {
-            var bindingContext = new DataContextBindingContext(dataContext);
             var boundNodeFromSynatxNode = new Dictionary<SyntaxNode, BoundNode>();
-            var bindingContextFromBoundNode = new Dictionary<BoundNode, BindingContext>();
+            var binderFromBoundNode = new Dictionary<BoundNode, Binder>();
             var diagnostics = new List<Diagnostic>();
-            var binder = new Binder(dataContext, bindingContext, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
-
+            var binder = new GlobalBinder(boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, dataContext);
             var boundRoot = binder.BindRoot(compilationUnit.Root);
-            return new BindingResult(compilationUnit, boundRoot, boundNodeFromSynatxNode, bindingContextFromBoundNode, diagnostics);
+            return new BindingResult(compilationUnit, boundRoot, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics);
         }
 
         private BoundNode BindRoot(SyntaxNode root)
@@ -75,8 +68,8 @@ namespace NQuery.Binding
 
             _boundNodeFromSynatxNode.Add(node, boundNode);
 
-            if (!_bindingContextFromBoundNode.ContainsKey(boundNode))
-                _bindingContextFromBoundNode.Add(boundNode, _bindingContext);
+            if (!_binderFromBoundNode.ContainsKey(boundNode))
+                _binderFromBoundNode.Add(boundNode, this);
 
             return boundNode;
         }

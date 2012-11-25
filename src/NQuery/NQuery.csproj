@@ -35,12 +35,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Binding\AdditionalSymbolsBindingContext.cs" />
     <Compile Include="Binding\BinaryOperator.cs" />
     <Compile Include="Binding\BinaryOperatorSignature.cs" />
     <Compile Include="Binding\Binder.Queries.cs" />
     <Compile Include="Binding\Binder.Expressions.cs" />
     <Compile Include="Binding\Binder.Tables.cs" />
+    <Compile Include="Binding\GlobalBinder.cs" />
+    <Compile Include="Binding\LocalBinder.cs" />
     <Compile Include="BoundNodes\BoundAggregateExpression.cs" />
     <Compile Include="Runtime\BuiltInAggregates.cs" />
     <Compile Include="Runtime\BuiltInFunctions.cs" />
@@ -65,7 +66,6 @@
     <Compile Include="BoundNodes\BoundIsNullExpression.cs" />
     <Compile Include="BoundNodes\BoundMethodInvocationExpression.cs" />
     <Compile Include="BoundNodes\BoundPropertyAccessExpression.cs" />
-    <Compile Include="Binding\DataContextBindingContext.cs" />
     <Compile Include="Binding\BindingResult.cs" />
     <Compile Include="BoundNodes\BoundBinaryExpression.cs" />
     <Compile Include="BoundNodes\BoundCaseExpression.cs" />
@@ -96,7 +96,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Binding\Binder.cs" />
-    <Compile Include="Binding\BindingContext.cs" />
     <Compile Include="BoundNodes\BoundNode.cs" />
     <Compile Include="Binding\BinaryOperatorKind.cs" />
     <Compile Include="Binding\UnaryOperatorKind.cs" />

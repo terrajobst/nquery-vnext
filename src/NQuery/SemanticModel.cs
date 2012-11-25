@@ -134,29 +134,48 @@ namespace NQuery
 
         public IEnumerable<Symbol> LookupSymbols(int position)
         {
-            // TODO: I think we should'nt associate the binding context with a node but instead the whole binder.
-            // TODO: Once this is done, our Lookup* methods should simply call the Binder ones.
-            var node = FindClosestNodeWithBindingContext(_bindingResult.Root, position);
-            var bindingContext = node == null ? null : _bindingResult.GetBindingContext(node);
-            var symbols = bindingContext != null ? bindingContext.LookupSymbols() : Enumerable.Empty<Symbol>();
-            foreach (var symbol in symbols)
-            {
-                yield return symbol;
+            var node = FindClosestNodeWithBinder(_bindingResult.Root, position);
+            var binder = node == null ? null : _bindingResult.GetBinder(node);
+            return binder == null
+                       ? Enumerable.Empty<Symbol>()
+                       : LookupSymbols(binder);
+        }
 
-                var tableInstance = symbol as TableInstanceSymbol;
-                if (tableInstance != null)
+        private static IEnumerable<Symbol> LookupSymbols(Binder binder)
+        {
+            // NOTE: We want to only show the *available* symbols. That means, we need
+            //       hide symbols from the parent binder that have same name as the ones
+            //       from a nested binder.
+            //
+            //       We do this by simply recording which names we've already seen.
+            //       Please note that we *do* want to see duplicate names within the
+            //       *same* binder.
+
+            var allNames = new HashSet<string>();
+
+            while (binder != null)
+            {
+                var localNames = new HashSet<string>();
+
+                foreach (var symbol in binder.GetLocalSymbols())
                 {
-                    foreach (var columnInstance in tableInstance.ColumnInstances)
-                        yield return columnInstance;
+                    if (!allNames.Contains(symbol.Name))
+                    {
+                        localNames.Add(symbol.Name);
+                        yield return symbol;
+                    }
                 }
+
+                allNames.UnionWith(localNames);
+                binder = binder.Parent;
             }
         }
 
-        private SyntaxNode FindClosestNodeWithBindingContext(SyntaxNode root, int position)
+        private SyntaxNode FindClosestNodeWithBinder(SyntaxNode root, int position)
         {
             var token = root.FindTokenContext(position);
             return (from n in token.Parent.AncestorsAndSelf()
-                    let bc = _bindingResult.GetBindingContext(n)
+                    let bc = _bindingResult.GetBinder(n)
                     where bc != null
                     select n).FirstOrDefault();
         }

@@ -6,15 +6,14 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed partial class Binder
+    partial class Binder
     {
         private Binder GetJoinConditionBinder(BoundTableReference left, BoundTableReference right)
         {
             var leftTables = left.GetDeclaredTableInstances();
             var rightTables = right.GetDeclaredTableInstances();
             var tables = leftTables.Concat(rightTables);
-            var parentWithLeftAndRight = new AdditionalSymbolsBindingContext(_bindingContext, tables);
-            return GetBinder(parentWithLeftAndRight);
+            return CreateLocalBinder(tables);
         }
 
         private BoundTableReference BindTableReference(TableReferenceSyntax node)

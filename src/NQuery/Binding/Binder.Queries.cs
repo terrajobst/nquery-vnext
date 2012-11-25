@@ -7,7 +7,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed partial class Binder
+    partial class Binder
     {
         private static bool IsRecursive(CommonTableExpressionSyntax commonTableExpression)
         {
@@ -146,7 +146,7 @@ namespace NQuery.Binding
                 if (!uniqueTableNames.Add(tableSymbol.Name))
                     _diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.Name);
 
-                currentBinder = currentBinder.GetBinderWithAdditionalSymbols(tableSymbol);
+                currentBinder = currentBinder.CreateLocalBinder(tableSymbol);
 
             }
 
@@ -329,7 +329,7 @@ namespace NQuery.Binding
 
             Func<CommonTableExpressionSymbol, IList<BoundQuery>> lazyBoundRecursiveMembers = s =>
             {
-                var binder = GetBinderWithAdditionalSymbols(s);
+                var binder = CreateLocalBinder(s);
                 var boundRecursiveMembers = recursiveMembers.Select(binder.BindQuery).ToArray();
 
                 foreach (var boundRecursiveMember in boundRecursiveMembers)
@@ -374,7 +374,7 @@ namespace NQuery.Binding
 
             var binder = fromClause == null
                              ? this
-                             : GetBinderWithAdditionalSymbols(fromClause.GetDeclaredTableInstances());
+                             : CreateLocalBinder(fromClause.GetDeclaredTableInstances());
 
             var whereClause = binder.BindWhereClause(node.WhereClause);
             var selectColumns = binder.BindSelectColumns(node.SelectClause.Columns);

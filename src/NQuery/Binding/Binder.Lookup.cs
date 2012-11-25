@@ -7,7 +7,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed partial class Binder
+    partial class Binder
     {
         private static Type LookupType(SyntaxToken name)
         {
@@ -60,50 +60,49 @@ namespace NQuery.Binding
             }
         }
 
-        private IEnumerable<Symbol> LookupSymbols()
-        {
-            return _bindingContext.LookupSymbols();
-        }
+        public abstract IEnumerable<Symbol> GetLocalSymbols();
 
-        private IEnumerable<Symbol> LookupSymbols(SyntaxToken token)
+        private IEnumerable<Symbol> GetLocalSymbols(SyntaxToken token)
         {
-            return LookupSymbols().Where(s => token.Matches(s.Name));
+            IEnumerable<Symbol> result;
+            var binder = this;
+            do
+            {
+                result = binder.GetLocalSymbols().Where(s => token.Matches(s.Name));
+                binder = binder.Parent;
+            } while (!result.Any() && binder != null);
+
+            return result;
         }
 
         private IEnumerable<Symbol> LookupColumnTableOrVariable(SyntaxToken name)
         {
-            var columns = LookupTableInstances().SelectMany(t => t.ColumnInstances).Where(c => name.Matches(c.Name));
-            var symbols = LookupSymbols(name).Where(s => s is TableInstanceSymbol || s is VariableSymbol);
-            return columns.Concat(symbols);
+            return GetLocalSymbols(name).Where(s => s is ColumnInstanceSymbol ||
+                                                  s is TableInstanceSymbol ||
+                                                  s is VariableSymbol);
         }
 
         private IEnumerable<VariableSymbol> LookupVariable(SyntaxToken name)
         {
-            return LookupSymbols(name).OfType<VariableSymbol>();
+            return GetLocalSymbols(name).OfType<VariableSymbol>();
         }
 
         private IEnumerable<TableSymbol> LookupTable(SyntaxToken name)
         {
-            return LookupSymbols(name).OfType<TableSymbol>();
+            return GetLocalSymbols(name).OfType<TableSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return LookupSymbols().OfType<TableInstanceSymbol>();
+            return GetLocalSymbols().OfType<TableInstanceSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstance(SyntaxToken name)
         {
-            return LookupSymbols(name).OfType<TableInstanceSymbol>();
+            return GetLocalSymbols(name).OfType<TableInstanceSymbol>();
         }
 
-        private IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
-        {
-            var propertyProvider = _dataContext.PropertyProviders.LookupValue(type);
-            return propertyProvider == null
-                       ? Enumerable.Empty<PropertySymbol>()
-                       : propertyProvider.GetProperties(type).Where(p => name.Matches(p.Name));
-        }
+        public abstract IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name);
 
         private static OverloadResolutionResult<UnaryOperatorSignature> LookupUnaryOperator(UnaryOperatorKind operatorKind, BoundExpression expression)
         {
@@ -120,27 +119,18 @@ namespace NQuery.Binding
             return BinaryOperator.Resolve(operatorKind, left, right);
         }
 
-        private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
-        {
-            var methodProvider = _dataContext.MethodProviders.LookupValue(type);
-            if (methodProvider == null)
-                return Enumerable.Empty<MethodSymbol>();
+        public abstract IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name);
 
-            return from m in methodProvider.GetMethods(type)
-                   where name.Matches(m.Name)
-                   select m;
-        }
-
-        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
+        public OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
         {
             var signatures = from m in LookupMethod(type, name)
                              select new MethodSymbolSignature(m);
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
 
-        private OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, IList<Type> argumentTypes)
+        public OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, IList<Type> argumentTypes)
         {
-            var signatures = from f in _dataContext.Functions
+            var signatures = from f in GetLocalSymbols(name).OfType<FunctionSymbol>()
                              where name.Matches(f.Name)
                              select new FunctionSymbolSignature(f);
             return OverloadResolution.Perform(signatures, argumentTypes);
@@ -148,14 +138,14 @@ namespace NQuery.Binding
 
         private IEnumerable<FunctionSymbol> LookupFunctionWithSingleParameter(SyntaxToken name)
         {
-            return from f in _dataContext.Functions
-                   where f.Parameters.Count == 1 && name.Matches(f.Name)
+            return from f in GetLocalSymbols(name).OfType<FunctionSymbol>()
+                   where f.Parameters.Count == 1
                    select f;
         }
 
-        private IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
+        public IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
         {
-            return LookupSymbols(name).OfType<AggregateSymbol>();
+            return GetLocalSymbols(name).OfType<AggregateSymbol>();
         }
     }
 }
