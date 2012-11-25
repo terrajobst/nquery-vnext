@@ -27,6 +27,7 @@ namespace NQuery
         InvalidOperatorForAllAny,
 
         UndeclaredTable,
+        UndeclaredTableInstance,
         UndeclaredVariable,
         UndeclaredFunction,
         UndeclaredAggregate,
@@ -70,6 +71,7 @@ namespace NQuery
         TopWithTiesRequiresOrderBy,
         OrderByColumnPositionIsOutOfRange,
         WhereClauseMustEvaluateToBool,
+        OnClauseMustEvaluateToBool,
         HavingClauseMustEvaluateToBool,
         SelectExpressionNotAggregatedAndNoGroupBy,
         SelectExpressionNotAggregatedOrGrouped,

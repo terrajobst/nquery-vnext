@@ -135,16 +135,6 @@ namespace NQuery
         //    return new Diagnostic(DiagnosticId.OrderByColumnPositionIsOutOfRange, message);
         //}
 
-        //public static Diagnostic WhereClauseMustEvaluateToBool()
-        //{
-        //    return new Diagnostic(DiagnosticId.WhereClauseMustEvaluateToBool, Resources.WhereClauseMustEvaluateToBool);
-        //}
-
-        //public static Diagnostic HavingClauseMustEvaluateToBool()
-        //{
-        //    return new Diagnostic(DiagnosticId.HavingClauseMustEvaluateToBool, Resources.HavingClauseMustEvaluateToBool);
-        //}
-
         //public static Diagnostic SelectExpressionNotAggregatedAndNoGroupBy(ColumnRefBinding columnRefBinding)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.SelectExpressionNotAggregatedAndNoGroupBy, columnRefBinding.GetFullName());

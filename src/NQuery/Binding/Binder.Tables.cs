@@ -96,7 +96,8 @@ namespace NQuery.Binding
             var binder = GetJoinConditionBinder(left, right);
             var condition = binder.BindExpression(node.Condition);
 
-            // TODO: Ensure condition evaluates to boolean
+            if (condition.Type.IsNonBoolean())
+                _diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
             return new BoundJoinedTableReference(BoundJoinType.InnerJoin, left, right, condition);
         }
@@ -115,7 +116,8 @@ namespace NQuery.Binding
             var binder = GetJoinConditionBinder(left, right);
             var condition = binder.BindExpression(node.Condition);
 
-            // TODO: Ensure condition evaluates to boolean
+            if (condition.Type.IsNonBoolean())
+                _diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
             return new BoundJoinedTableReference(joinType, left, right, condition);
         }

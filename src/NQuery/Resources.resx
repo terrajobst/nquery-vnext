@@ -714,6 +714,9 @@
   <data name="UndeclaredTable" xml:space="preserve">
     <value>Table '{0}' is not declared.</value>
   </data>
+  <data name="UndeclaredTableInstance" xml:space="preserve">
+    <value>The column prefix '{0}' does not match with a table name or alias name used in the query.</value>
+  </data>
   <data name="UndeclaredType" xml:space="preserve">
     <value>Cannot resolve type: {0}</value>
   </data>
@@ -743,6 +746,9 @@
   </data>
   <data name="WhereClauseMustEvaluateToBool" xml:space="preserve">
     <value>WHERE clause must evaluate to BOOLEAN expression.</value>
+  </data>
+  <data name="OnClauseMustEvaluateToBool" xml:space="preserve">
+    <value>ON clause must evaluate to BOOLEAN expression.</value>
   </data>
   <data name="TypeIsAlreadyRegistered" xml:space="preserve">
     <value>The type '{0}' is already registered.</value>

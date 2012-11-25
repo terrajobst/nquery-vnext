@@ -32,6 +32,11 @@ namespace NQuery.Symbols
             return type == Null;
         }
 
+        internal static bool IsNonBoolean(this Type type)
+        {
+            return !type.IsError() && type != typeof(bool);
+        }
+
         internal static bool IsNumericType(this KnownType value)
         {
             switch (value)

@@ -150,6 +150,13 @@ namespace NQuery
             diagnostics.Add(diagnostic);
         }
 
+        public static void ReportUndeclaredTableInstance(this ICollection<Diagnostic> diagnostics, SyntaxToken name)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.UndeclaredTableInstance, name.ValueText);
+            var diagnostic = new Diagnostic(name.Span, DiagnosticId.UndeclaredTableInstance, message);
+            diagnostics.Add(diagnostic);
+        }
+
         public static void ReportUndeclaredVariable(this ICollection<Diagnostic> diagnostics, VariableExpressionSyntax node)
         {
             var variableName = node.Name;
@@ -449,15 +456,23 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.OrderByColumnPositionIsOutOfRange(index));
         //}
 
-        //public static void ReportWhereClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.WhereClauseMustEvaluateToBool());
-        //}
+        public static void ReportWhereClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
+        {
+            var diagnostic = new Diagnostic(span, DiagnosticId.WhereClauseMustEvaluateToBool, Resources.WhereClauseMustEvaluateToBool);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportHavingClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.HavingClauseMustEvaluateToBool());
-        //}
+        public static void ReportOnClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
+        {
+            var diagnostic = new Diagnostic(span, DiagnosticId.OnClauseMustEvaluateToBool, Resources.OnClauseMustEvaluateToBool);
+            diagnostics.Add(diagnostic);
+        }
+
+        public static void ReportHavingClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
+        {
+            var diagnostic = new Diagnostic(span, DiagnosticId.HavingClauseMustEvaluateToBool, Resources.HavingClauseMustEvaluateToBool);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportSelectExpressionNotAggregatedAndNoGroupBy(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
         //{

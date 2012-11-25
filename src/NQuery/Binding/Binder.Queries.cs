@@ -443,14 +443,12 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                // TODO: Report unresolved
+                _diagnostics.ReportUndeclaredTableInstance(tableName);
                 return Enumerable.Empty<BoundSelectColumn>();
             }
 
             if (symbols.Length > 1)
-            {
-                // TODO: Report ambiguous match
-            }
+                _diagnostics.ReportAmbiguousName(tableName, symbols);
 
             var tableInstance = symbols[0];
             return BindWildcardSelectColumnForTableInstance(tableInstance);
@@ -501,9 +499,12 @@ namespace NQuery.Binding
             if (node == null)
                 return null;
 
-            var boundWhereClause = BindExpression(node.Predicate);
-            // TODO: Ensure where evaluates to boolean
-            return boundWhereClause;
+            var predicate = BindExpression(node.Predicate);
+
+            if (predicate.Type.IsNonBoolean())
+                _diagnostics.ReportWhereClauseMustEvaluateToBool(node.Predicate.Span);
+
+            return predicate;
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)
@@ -511,10 +512,12 @@ namespace NQuery.Binding
             if (node == null)
                 return null;
 
-            var boundHavingClause = BindExpression(node.Predicate);
-            // TODO: Ensure having evaluates to boolean
+            var predicate = BindExpression(node.Predicate);
 
-            return boundHavingClause;
+            if (predicate.Type.IsNonBoolean())
+                _diagnostics.ReportHavingClauseMustEvaluateToBool(node.Predicate.Span);
+
+            return predicate;
         }
     }
 }

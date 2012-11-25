@@ -1051,6 +1051,15 @@ namespace NQuery {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ON clause must evaluate to BOOLEAN expression..
+        /// </summary>
+        internal static string OnClauseMustEvaluateToBool {
+            get {
+                return ResourceManager.GetString("OnClauseMustEvaluateToBool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ORDER BY position number {0} is out of range of the number of items in the select list..
         /// </summary>
         internal static string OrderByColumnPositionIsOutOfRange {
@@ -1857,6 +1866,15 @@ namespace NQuery {
         internal static string UndeclaredTable {
             get {
                 return ResourceManager.GetString("UndeclaredTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The column prefix &apos;{0}&apos; does not match with a table name or alias name used in the query..
+        /// </summary>
+        internal static string UndeclaredTableInstance {
+            get {
+                return ResourceManager.GetString("UndeclaredTableInstance", resourceCulture);
             }
         }
         
