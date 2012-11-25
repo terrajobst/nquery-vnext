@@ -8,7 +8,6 @@ namespace NQuery.Symbols
         Punctuation,
         Keyword,
         TableName,
-        DerivedTableName,
         CommonTableExpressionName,
         ColumnName,
         VariableName,

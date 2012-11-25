@@ -115,11 +115,6 @@ namespace NQuery.Symbols
             markup.AppendName(SymbolMarkupKind.TableName, text);
         }
 
-        private static void AppendDerivedTableName(this ICollection<SymbolMarkupToken> markup, string text)
-        {
-            markup.AppendName(SymbolMarkupKind.DerivedTableName, text);
-        }
-
         private static void AppendCommonTableExpressionName(this ICollection<SymbolMarkupToken> markup, string text)
         {
             markup.AppendName(SymbolMarkupKind.CommonTableExpressionName, text);
@@ -203,8 +198,6 @@ namespace NQuery.Symbols
             markup.AppendKeyword("DERIVED");
             markup.AppendSpace();
             markup.AppendKeyword("TABLE");
-            markup.AppendSpace();
-            markup.AppendDerivedTableName(symbol.Name);
         }
 
         private static void AppendTableInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, TableInstanceSymbol symbol)

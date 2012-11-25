@@ -52,8 +52,6 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
                     return classificationTypes.Keyword;
                 case SymbolMarkupKind.TableName:
                     return classificationTypes.SchemaTable;
-                case SymbolMarkupKind.DerivedTableName:
-                    return classificationTypes.DerivedTable;
                 case SymbolMarkupKind.CommonTableExpressionName:
                     return classificationTypes.CommonTableExpression;
                 case SymbolMarkupKind.ColumnName:

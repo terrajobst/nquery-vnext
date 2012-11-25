@@ -105,8 +105,6 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                     return GetClassifiedText(markupToken.Text, _classificationService.WhiteSpace);
                 case SymbolMarkupKind.TableName:
                     return GetClassifiedText(markupToken.Text, _classificationService.SchemaTable);
-                case SymbolMarkupKind.DerivedTableName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.DerivedTable);
                 case SymbolMarkupKind.CommonTableExpressionName:
                     return GetClassifiedText(markupToken.Text, _classificationService.CommonTableExpression);
                 case SymbolMarkupKind.ColumnName:
