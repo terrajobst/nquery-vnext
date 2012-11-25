@@ -115,13 +115,13 @@ namespace NQuery
             return result == null ? null : result.TableSymbol;
         }
 
-        public TableInstanceSymbol GetDeclaredSymbol(TableReferenceSyntax tableReference)
+        public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
         {
             var result = _bindingResult.GetBoundNode(tableReference) as BoundNamedTableReference;
             return result == null ? null : result.TableInstance;
         }
 
-        public Symbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
+        public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
         {
             var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableReference;
             return result == null ? null : result.TableInstance;
