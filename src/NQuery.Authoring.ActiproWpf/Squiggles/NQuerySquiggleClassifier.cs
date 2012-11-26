@@ -31,7 +31,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             using (CreateBatch())
             {
                 Clear();
-                
+
                 foreach (var diagnostic in diagnostics)
                 {
                     var snapshotRange = textBuffer.ToSnapshotRange(snapshot, diagnostic.Span);

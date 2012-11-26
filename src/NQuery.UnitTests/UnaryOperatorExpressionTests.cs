@@ -16,7 +16,7 @@ namespace NQuery.UnitTests
             var semanticMoel = compilation.GetSemanticModel();
 
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
-            
+
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }

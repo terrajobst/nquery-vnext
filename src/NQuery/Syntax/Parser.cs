@@ -893,7 +893,7 @@ namespace NQuery
 
                 if (Current.Kind != SyntaxKind.CommaToken && !SyntaxFacts.CanStartExpression(Current.Kind))
                     break;
-                
+
                 var comma = Match(SyntaxKind.CommaToken);
                 columnsWithCommas.Add(comma);
             }
@@ -921,7 +921,7 @@ namespace NQuery
                 var asteriskToken = Match(SyntaxKind.AsteriskToken);
                 return new WildcardSelectColumnSyntax(_syntaxTree, tableName, dotToken, asteriskToken);
             }
-            
+
             var expression = ParseExpression();
             var alias = ParseOptionalColumnAlias();
             return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);

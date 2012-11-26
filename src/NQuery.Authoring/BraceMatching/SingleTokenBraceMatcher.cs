@@ -22,7 +22,7 @@ namespace NQuery.Authoring.BraceMatching
                 right = default(TextSpan);
                 return false;
             }
-            
+
             left = new TextSpan(token.Span.Start, 1);
             right = new TextSpan(token.Span.End - 1, 1);
             return true;

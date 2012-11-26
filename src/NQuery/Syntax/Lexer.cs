@@ -13,7 +13,7 @@ namespace NQuery
         private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
         private readonly List<SyntaxTrivia> _trailingTrivia = new List<SyntaxTrivia>();
         private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
-        
+
         private SyntaxKind _kind;
         private SyntaxKind _contextualKind;
         private object _value;
@@ -436,7 +436,7 @@ namespace NQuery
 
                         if (_charReader.Current != '\'')
                             goto ExitLoop;
-                        
+
                         sb.Append(_charReader.Current);
                         _charReader.NextChar();
                         break;
@@ -516,7 +516,7 @@ namespace NQuery
                         hasDotModifier = true;
                         break;
 
-                    // special handling for e, it could be the exponent indicator 
+                    // special handling for e, it could be the exponent indicator
                     // followed by an optional sign
 
                     case 'E':
@@ -582,7 +582,7 @@ namespace NQuery
             catch (OverflowException)
             {
                 return int64;
-            } 
+            }
         }
 
         private long ReadInt64(string text)
@@ -672,7 +672,7 @@ namespace NQuery
                 {
                     checked
                     {
-                        // Don't use >> because this implicitly casts the operator to Int32. 
+                        // Don't use >> because this implicitly casts the operator to Int32.
                         // Also this operation will never detect an overflow.
                         val += (long)Math.Pow(2, j);
                     }
@@ -748,7 +748,7 @@ namespace NQuery
         private void ReadQuotedIdentifier()
         {
             _kind = SyntaxKind.IdentifierToken;
-            
+
             // Skip initial quote
             _charReader.NextChar();
 

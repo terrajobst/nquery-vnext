@@ -25,7 +25,7 @@ namespace NQuery.Authoring.BraceMatching
             if (previousToken != null && previousToken.Span.End == token.Span.Start)
             {
                 if (TryFindBrace(previousToken, position, out left, out right))
-                    return true;                
+                    return true;
             }
 
             var nextToken = token.GetPreviousToken();

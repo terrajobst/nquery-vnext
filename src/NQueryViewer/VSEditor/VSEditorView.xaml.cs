@@ -27,7 +27,7 @@ namespace NQueryViewer.VSEditor
             _document = document;
             _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
             _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
-            
+
             _selectionProvider = selectionProvider;
 
             InitializeComponent();

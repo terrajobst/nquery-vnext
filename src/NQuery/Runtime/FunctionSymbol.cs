@@ -27,7 +27,7 @@ namespace NQuery.Runtime
         public FunctionSymbol(string name, Func<T,TResult> function)
             : this(name, "arg", function)
         {
-                    
+
         }
 
         public FunctionSymbol(string name, string argumentName, Func<T,TResult> function)

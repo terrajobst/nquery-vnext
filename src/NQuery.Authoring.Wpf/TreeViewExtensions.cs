@@ -54,7 +54,7 @@ namespace NQuery.Authoring.Wpf
                         childNode.IsExpanded = true;
                         goto continueWithNextItem;
                     }
-                    
+
                     generator.StatusChanged += ItemContainerGeneratorStatusChanged;
                     childNode.IsExpanded = true;
                 }

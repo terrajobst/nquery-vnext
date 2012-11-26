@@ -38,7 +38,7 @@ namespace NQuery
                                    Functions.ToArray(),
                                    Aggregates.ToArray(),
                                    Variables.ToArray(),
-                                   new TypeRegistry<IPropertyProvider>(PropertyProviders), 
+                                   new TypeRegistry<IPropertyProvider>(PropertyProviders),
                                    new TypeRegistry<IMethodProvider>(MethodProviders));
         }
 

@@ -991,70 +991,70 @@ namespace NQuery
             {
                 case BinaryOperatorKind.Power:
                     return SyntaxKind.AsteriskAsteriskToken.GetText();
-                
+
                 case BinaryOperatorKind.Multiply:
                     return SyntaxKind.AsteriskToken.GetText();
-                
+
                 case BinaryOperatorKind.Divide:
                     return SyntaxKind.SlashToken.GetText();
-                
+
                 case BinaryOperatorKind.Modulus:
                     return SyntaxKind.PercentToken.GetText();
-                
+
                 case BinaryOperatorKind.Add:
                     return SyntaxKind.PlusToken.GetText();
-                
+
                 case BinaryOperatorKind.Sub:
                     return SyntaxKind.MinusToken.GetText();
-                
+
                 case BinaryOperatorKind.Equal:
                     return SyntaxKind.EqualsToken.GetText();
-                
+
                 case BinaryOperatorKind.NotEqual:
                     return SyntaxKind.ExclamationEqualsToken.GetText();
-                
+
                 case BinaryOperatorKind.Less:
                     return SyntaxKind.LessToken.GetText();
-                
+
                 case BinaryOperatorKind.LessOrEqual:
                     return SyntaxKind.LessEqualToken.GetText();
-                
+
                 case BinaryOperatorKind.Greater:
                     return SyntaxKind.GreaterToken.GetText();
-                
+
                 case BinaryOperatorKind.GreaterOrEqual:
                     return SyntaxKind.GreaterEqualToken.GetText();
-                
+
                 case BinaryOperatorKind.BitXor:
                     return SyntaxKind.CaretToken.GetText();
-                
+
                 case BinaryOperatorKind.BitAnd:
                     return SyntaxKind.AmpersandToken.GetText();
-                
+
                 case BinaryOperatorKind.BitOr:
                     return SyntaxKind.BarToken.GetText();
-                
+
                 case BinaryOperatorKind.LeftShift:
                     return SyntaxKind.LessLessToken.GetText();
-                
+
                 case BinaryOperatorKind.RightShift:
                     return SyntaxKind.GreaterGreaterToken.GetText();
-                
+
                 case BinaryOperatorKind.Like:
                     return SyntaxKind.LikeKeyword.GetText();
-                
+
                 case BinaryOperatorKind.SimilarTo:
                     return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
-                
+
                 case BinaryOperatorKind.Soundslike:
                     return SyntaxKind.SoundslikeKeyword.GetText();
-                
+
                 case BinaryOperatorKind.LogicalAnd:
                     return SyntaxKind.AndKeyword.GetText();
-                
+
                 case BinaryOperatorKind.LogicalOr:
                     return SyntaxKind.OrKeyword.GetText();
-                
+
                 default:
                     throw new ArgumentOutOfRangeException("operatorKind");
             }

@@ -60,7 +60,7 @@ namespace NQuery.Authoring.VSEditorWpf.Document
         private static SyntaxTree ParseSyntaxTree(ITextSnapshot snapshot, CancellationToken cancellationToken)
         {
             Trace.WriteLine("ParseSyntaxTree for " + snapshot.Version);
-            
+
             var syntaxTree = SyntaxTree.ParseQuery(snapshot.GetText());
             lock (_syntaxTreeSnapshotMap)
                 _syntaxTreeSnapshotMap.Add(syntaxTree, snapshot);

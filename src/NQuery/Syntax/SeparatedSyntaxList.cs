@@ -92,7 +92,7 @@ namespace NQuery
                 yield return entry.Node;
                 if (entry.Separator != null)
                     yield return entry.Separator;
-            }            
+            }
         }
 
         public IEnumerable<SyntaxToken> GetSeparators()

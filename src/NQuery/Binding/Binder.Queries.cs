@@ -137,7 +137,7 @@ namespace NQuery.Binding
             // This means each CTE will produce a new binder that will contain the
             // introduced table symbol.
             //
-            // We will also verify that there are no duplicate table names. 
+            // We will also verify that there are no duplicate table names.
 
             var currentBinder = this;
             var uniqueTableNames = new HashSet<string>();
@@ -202,7 +202,7 @@ namespace NQuery.Binding
             }
             else
             {
-                // If the CTE has a column list we need to make sure the number of 
+                // If the CTE has a column list we need to make sure the number of
                 // names matches the number of columns in the underlying query.
 
                 var specifiedCount = specifiedColumnNames.Count;
@@ -222,7 +222,7 @@ namespace NQuery.Binding
             //
             // We need to make sure that we produce a sensible result even if the
             // syntax is slightly inconsistent:
-            // 
+            //
             // (1) The number of columns should neither exceed an explicit column list
             //     nor the number of columns provided by the underlying query.
             //

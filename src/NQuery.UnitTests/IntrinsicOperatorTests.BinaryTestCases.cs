@@ -4091,7 +4091,7 @@ namespace NQuery.UnitTests
             new BinaryOperatorTestCase("OR", "object", "decimal", "#inapplicable"),
             new BinaryOperatorTestCase("OR", "object", "bool", "#inapplicable"),
             new BinaryOperatorTestCase("OR", "object", "string", "#inapplicable"),
-            new BinaryOperatorTestCase("OR", "object", "object", "#inapplicable")            
+            new BinaryOperatorTestCase("OR", "object", "object", "#inapplicable")
         };
     }
 }

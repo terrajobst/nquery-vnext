@@ -166,7 +166,7 @@ namespace NQuery.Runtime
                     // The existing member is more specific. So we don't add the new one.
                     return;
                 }
-                
+
                 // The new member is more specific. Remove the old one.
                 propertyTable.Remove(exisitingMemberEntry);
                 memberList.Remove(exisitingMemberEntry.PropertySymbol);
@@ -191,7 +191,7 @@ namespace NQuery.Runtime
                     // The existing member is more specific. So we don't add the new one.
                     return;
                 }
-                
+
                 // The new member is more specific. Remove the old one.
                 methodTable.Remove(exisitingMethodEntry);
                 methodList.Remove(exisitingMethodEntry.MethodSymbol);
@@ -242,7 +242,7 @@ namespace NQuery.Runtime
         }
 
         /// <summary>
-        /// Checks whether the given <see cref="MethodInfo"/> is invocable by the query engine, i.e. it can be used 
+        /// Checks whether the given <see cref="MethodInfo"/> is invocable by the query engine, i.e. it can be used
         /// as <see cref="InvocableSymbol"/>.
         /// </summary>
         /// <remarks>

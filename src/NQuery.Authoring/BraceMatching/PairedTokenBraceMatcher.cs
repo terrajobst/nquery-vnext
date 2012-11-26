@@ -28,7 +28,7 @@ namespace NQuery.Authoring.BraceMatching
                 right = default(TextSpan);
                 return false;
             }
-            
+
             if (isLeft)
             {
                 left = token.Span;

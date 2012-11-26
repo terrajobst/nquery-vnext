@@ -15,6 +15,6 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         public ISignatureHelpSource TryCreateSignatureHelpSource(ITextBuffer textBuffer)
         {
             return textBuffer.Properties.GetOrCreateSingletonProperty(() => new NQuerySignatureHelpSource(textBuffer));
-        }        
+        }
     }
 }

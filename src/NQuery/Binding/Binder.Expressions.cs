@@ -282,7 +282,7 @@ namespace NQuery.Binding
             }
 
             // Convert argument (if necessary)
-            
+
             var convertedArgument = BindArgument(expression, result, 0);
 
             return new BoundUnaryExpression(convertedArgument, result);
@@ -373,7 +373,7 @@ namespace NQuery.Binding
         private BoundExpression BindBetweenExpression(BetweenExpressionSyntax node)
         {
             // left BETWEEN lowerBound AND upperBound
-            // 
+            //
             // ===>
             //
             // left >= lowerBound AND left <= upperBound
@@ -633,7 +633,7 @@ namespace NQuery.Binding
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol);
             }
-            
+
             var propertySymbols = LookupProperty(target.Type, name).ToArray();
 
             if (propertySymbols.Length == 0)
@@ -745,7 +745,7 @@ namespace NQuery.Binding
                     var errorSymbol = new BadSymbol(name.ValueText);
                     return new BoundNameExpression(errorSymbol);
                 }
-                
+
                 var symbol1 = result.Selected.Signature.Symbol;
                 var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
                 _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
@@ -782,7 +782,7 @@ namespace NQuery.Binding
                     var errorSymbol = new BadSymbol(name.ValueText);
                     return new BoundNameExpression(errorSymbol);
                 }
-                
+
                 var symbol1 = result.Selected.Signature.Symbol;
                 var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
                 _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
@@ -800,7 +800,7 @@ namespace NQuery.Binding
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
             var boundQuery = BindQuery(node.Query);
-      
+
             // TODO: Ensure query has exactly one column
 
             return new BoundSingleRowSubselect(boundQuery);
@@ -837,7 +837,7 @@ namespace NQuery.Binding
 
             if (left.Type.IsError() || right.Type.IsError())
                 return new BoundAllAnySubselect(left, boundQuery);
-            
+
             var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
             var operatorKind = expressionKind.ToBinaryOperatorKind();
 

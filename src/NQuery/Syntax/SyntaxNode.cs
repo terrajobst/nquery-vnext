@@ -213,7 +213,7 @@ namespace NQuery
         {
             foreach (var syntaxNode in ChildNodesAndTokens())
             {
-                if (syntaxNode.IsToken)   
+                if (syntaxNode.IsToken)
                     syntaxNode.AsToken().WriteTo(writer);
                 else
                     syntaxNode.AsNode().WriteTo(writer);

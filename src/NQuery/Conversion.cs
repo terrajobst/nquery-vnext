@@ -171,7 +171,7 @@ namespace NQuery
                 var targetIndex = (int) targetType;
                 return ImplicitNumericConversions[sourceIndex, targetIndex];
             }
-            
+
             return false;
         }
 

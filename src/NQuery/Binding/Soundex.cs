@@ -7,10 +7,10 @@ namespace NQuery.Binding
 {
     /// <summary>
     /// Utility class for performing soundex algorithm.
-    /// 
+    ///
     /// The Soundex algorithm is used to convert a word to a
     /// code based upon the phonetic sound of the word.
-    /// 
+    ///
     /// The soundex algorithm is outlined below:
     ///     Rule 1. Keep the first character of the name.
     ///     Rule 2. Perform a transformation on each remaining characters:
@@ -57,7 +57,7 @@ namespace NQuery.Binding
                     // Rule 4. If character is "A" or "S" do not include in code
                     if (transformedChar != 'A' && transformedChar != 'S')
                     {
-                        // Rule 5. If a character is blank, then do not include in code 
+                        // Rule 5. If a character is blank, then do not include in code
                         if (transformedChar != ' ')
                         {
                             sb.Append(transformedChar);

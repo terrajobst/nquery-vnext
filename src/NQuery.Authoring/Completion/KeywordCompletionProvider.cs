@@ -87,7 +87,7 @@ namespace NQuery.Authoring.Completion
             }
 
             // DISTINCT
-            
+
             if (IsAfterSelectKeyword(syntaxTree, position))
             {
                 yield return SyntaxKind.DistinctKeyword;
@@ -110,7 +110,7 @@ namespace NQuery.Authoring.Completion
             }
 
             // TIES
-            
+
             if (IsAfterWithKeyword(syntaxTree, position))
             {
                 yield return SyntaxKind.TiesKeyword;
@@ -125,7 +125,7 @@ namespace NQuery.Authoring.Completion
             }
 
             // WHEN
-            
+
             if (IsInCaseAndAfterLabelOrAtStart(syntaxTree, position))
             {
                 yield return SyntaxKind.WhenKeyword;

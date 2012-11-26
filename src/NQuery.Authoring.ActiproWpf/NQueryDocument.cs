@@ -96,7 +96,7 @@ namespace NQuery.Authoring.ActiproWpf
         protected override void OnParseDataChanged(ParseDataPropertyChangedEventArgs e)
         {
             base.OnParseDataChanged(e);
-            
+
             if (_synchronizationContext.IsWaitNotificationRequired())
                 _synchronizationContext.Post(s => UpdateSemanticData(), null);
             else

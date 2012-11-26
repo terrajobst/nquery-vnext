@@ -40,9 +40,9 @@ namespace NQuery.UnitTests
             var syntaxTree = SyntaxTree.ParseExpression("COALESCE()");
             var diagnostics = syntaxTree.GetDiagnostics().ToArray();
             Assert.AreEqual(3, diagnostics.Length);
-            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);                        
-            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[1].DiagnosticId);                        
-            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[2].DiagnosticId);                        
+            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
+            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[1].DiagnosticId);
+            Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[2].DiagnosticId);
         }
 
         [TestMethod]

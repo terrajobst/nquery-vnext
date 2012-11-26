@@ -70,7 +70,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             }
 
             if (existingSession == null)
-                completionSession.Open(view);            
+                completionSession.Open(view);
         }
 
         private CompletionItem GetActiproCompletionItem(Authoring.Completion.CompletionItem completionItem)

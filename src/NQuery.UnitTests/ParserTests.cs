@@ -27,7 +27,7 @@ namespace NQuery.UnitTests
 
             Assert.AreEqual("First", left.Value);
             Assert.AreEqual("Last", right.Value);
-            
+
             Assert.AreEqual(SyntaxKind.BadToken, skippedToken.Kind);
             Assert.AreEqual("!", skippedToken.ValueText);
 

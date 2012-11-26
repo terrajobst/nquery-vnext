@@ -107,10 +107,10 @@ namespace NQuery.UnitTests
                 (
 	                SELECT	1 AS Id,
 			                -1 AS ReportsTo
-	
+
 	                UNION ALL
-	
-	                SELECT d.Id, 
+
+	                SELECT d.Id,
 		                   d.ReportsTo
 	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
 			                UNION ALL
@@ -143,15 +143,15 @@ namespace NQuery.UnitTests
                 (
 	                SELECT	1 AS Id,
 			                -1 AS ReportsTo
-	
+
 	                UNION ALL
 
 	                SELECT	2 AS Id,
 			                -1 AS ReportsTo
-	
+
 	                UNION ALL
-	
-	                SELECT d.Id, 
+
+	                SELECT d.Id,
 		                   d.ReportsTo
 	                FROM   (SELECT 3 AS Id, 1 AS ReportsTo
 			                UNION ALL
@@ -295,7 +295,7 @@ namespace NQuery.UnitTests
             Assert.AreEqual("One", cteSymbols[0].Columns[0].Name);
             Assert.AreEqual("MyCte", cteSymbols[1].Name);
             Assert.AreEqual("Two", cteSymbols[1].Columns[0].Name);
-            
+
             Assert.AreEqual("Duplicate common table expression name 'MyCte' was specified.", error.Message);
         }
 
@@ -381,16 +381,16 @@ namespace NQuery.UnitTests
             const string query = @"
                 WITH MyCte AS
                 (
-	                SELECT d.Id, 
+	                SELECT d.Id,
 		                   d.ReportsTo
 	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
 			                UNION ALL
 			                SELECT 3, 1) d
 				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
-	
+
 	                UNION
-	
-	                SELECT d.Id, 
+
+	                SELECT d.Id,
 		                   d.ReportsTo
 	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
 			                UNION ALL
@@ -416,10 +416,10 @@ namespace NQuery.UnitTests
                 (
 	                SELECT	1 AS Id,
 			                -1 AS ReportsTo
-	
+
 	                UNION
-	
-	                SELECT d.Id, 
+
+	                SELECT d.Id,
 		                   d.ReportsTo
 	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
 			                UNION ALL

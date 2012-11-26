@@ -16,6 +16,6 @@ namespace NQuery.Authoring.Outlining
             var worker = new OutliningWorker(root.SyntaxTree.TextBuffer, result, span);
             worker.Visit(root);
             return result;
-        }        
+        }
     }
 }

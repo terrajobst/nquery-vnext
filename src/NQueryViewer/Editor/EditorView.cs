@@ -146,15 +146,15 @@ namespace NQueryViewer.Editor
         }
 
         public event EventHandler CaretPositionChanged;
-        
+
         public event EventHandler SelectionChanged;
-        
+
         public event EventHandler DocumentTypeChanged;
-        
+
         public new event EventHandler DataContextChanged;
-        
+
         public event EventHandler SyntaxTreeChanged;
-        
+
         public event EventHandler SemanticModelChanged;
     }
 }

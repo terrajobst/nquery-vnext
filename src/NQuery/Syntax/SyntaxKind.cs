@@ -42,7 +42,7 @@ namespace NQuery
         LessLessToken,
 
         // Keywords
-        
+
         AndKeyword,
         OrKeyword,
         IsKeyword,

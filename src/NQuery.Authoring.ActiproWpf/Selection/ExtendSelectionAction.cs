@@ -15,7 +15,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
         }
 
         public override void Execute(IEditorView view)
-        {            
+        {
             ExtendSelection(view);
         }
     }

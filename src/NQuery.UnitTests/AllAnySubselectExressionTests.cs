@@ -18,7 +18,7 @@ namespace NQuery.UnitTests
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
 
             Assert.AreEqual(1, diagnostics.Length);
-            Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);            
+            Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace NQuery.UnitTests
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
 
             Assert.AreEqual(1, diagnostics.Length);
-            Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);            
+            Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
     }
 }
