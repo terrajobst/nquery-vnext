@@ -19,6 +19,9 @@ namespace NQuery.Authoring.Outlining
 
         private void AddOutlineRegion(TextSpan textSpan, string text)
         {
+            if (!IsMultipleLines(textSpan))
+                return;
+
             var outliningData = new OutliningRegionSpan(textSpan, text);
             _outlineRegions.Add(outliningData);
         }
@@ -35,8 +38,15 @@ namespace NQuery.Authoring.Outlining
             if (!node.FullSpan.OverlapsWith(_span))
                 return;
 
-            if (node.Kind == SyntaxKind.SelectQuery && IsMultipleLines(node.Span))
-                AddOutlineRegion(node.Span, "SELECT");
+            switch (node.Kind)
+            {
+                case SyntaxKind.OrderedQuery:
+                    VisitOrderedQuery((OrderedQuerySyntax) node);
+                    break;
+                case SyntaxKind.SelectQuery:
+                    VisitSelectQuery((SelectQuerySyntax)node);
+                    break;
+            }
 
             var nodes = node.ChildNodesAndTokens()
                 .SkipWhile(c => !c.FullSpan.IntersectsWith(_span))
@@ -44,6 +54,19 @@ namespace NQuery.Authoring.Outlining
 
             foreach (var syntaxNodeOrToken in nodes)
                 Visit(syntaxNodeOrToken);
+        }
+
+        private void VisitOrderedQuery(OrderedQuerySyntax node)
+        {
+            var text = node.Query is SelectQuerySyntax ? "SELECT" : "...";
+            AddOutlineRegion(node.Span, text);
+        }
+
+        private void VisitSelectQuery(SelectQuerySyntax node)
+        {
+            var parentIsOrderedQuery = node.Parent is OrderedQuerySyntax;
+            if (!parentIsOrderedQuery)
+                AddOutlineRegion(node.Span, "SELECT");
         }
 
         private void Visit(SyntaxNodeOrToken nodeOrToken)
@@ -67,10 +90,7 @@ namespace NQuery.Authoring.Outlining
         private void Visit(SyntaxTrivia trivia)
         {
             if (trivia.Kind == SyntaxKind.SingleLineCommentTrivia || trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
-            {
-                if (IsMultipleLines(trivia.Span))
-                    AddOutlineRegion(trivia.Span, "/**/");
-            }
+                AddOutlineRegion(trivia.Span, "/**/");
         }
     }
 }
