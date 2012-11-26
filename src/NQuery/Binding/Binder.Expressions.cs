@@ -660,6 +660,7 @@ namespace NQuery.Binding
             var columnInstances = tableInstance.ColumnInstances.Where(c => columnName.Matches(c.Name)).ToArray();
             if (columnInstances.Length == 0)
             {
+                // TODO: Check whether we can resolve to a method and if so give error ReportInvocationRequiresParenthesis
                 _diagnostics.ReportUndeclaredColumn(node, tableInstance);
                 var errorSymbol = new BadSymbol(columnName.ValueText);
                 return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
@@ -714,6 +715,10 @@ namespace NQuery.Binding
 
                         var aggregate = aggregates[0];
                         var argument = BindExpression(node.ArgumentList.Arguments[0]);
+
+                        // TODO: Check that argument doesn't contain another aggregate.
+                        // TODO: Check that argument doesn't contain any subqueries.
+
                         return new BoundAggregateExpression(argument, aggregate);
                     }
                 }
@@ -792,6 +797,8 @@ namespace NQuery.Binding
 
         private BoundExpression BindSingleRowSubselect(SingleRowSubselectSyntax node)
         {
+            // TODO: Ensure query has no ORDER BY unless TOP is also specified
+
             var boundQuery = BindQuery(node.Query);
       
             // TODO: Ensure query has exactly one column
@@ -801,6 +808,8 @@ namespace NQuery.Binding
 
         private BoundExpression BindExistsSubselect(ExistsSubselectSyntax node)
         {
+            // TODO: Ensure query has no ORDER BY unless TOP is also specified
+
             var boundQuery = BindQuery(node.Query);
 
             // NOTE: Number of columns doesn't matter here
@@ -810,6 +819,8 @@ namespace NQuery.Binding
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
         {
+            // TODO: Ensure query has no ORDER BY unless TOP is also specified
+
             var left = BindExpression(node.Left);
             var boundQuery = BindQuery(node.Query);
 

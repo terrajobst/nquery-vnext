@@ -124,6 +124,8 @@ namespace NQuery.Binding
 
         private BoundTableReference BindDerivedTableReference(DerivedTableReferenceSyntax node)
         {
+            // TODO: Ensure query has no ORDER BY unless TOP is also specified
+
             var query = BindQuery(node.Query);
 
             var columns = (from c in query.SelectColumns

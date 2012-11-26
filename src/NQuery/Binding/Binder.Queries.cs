@@ -64,6 +64,8 @@ namespace NQuery.Binding
         {
             // TODO: Check column count
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
+            // TODO: Ensure all column data types are comparable.
+
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             return new BoundCombinedQuery(left, BoundQueryCombinator.Except, right);
@@ -73,6 +75,8 @@ namespace NQuery.Binding
         {
             // TODO: Check column count
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
+            // TODO: If ALL is not specified, ensure all column data types are comparable.
+
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var combinator = node.AllKeyword == null
@@ -111,6 +115,10 @@ namespace NQuery.Binding
             //
             // (5) ORDER BY cannot appear in subselect expressions, derived tables or common table
             //     expression, unless TOP is also specified.
+
+            // TODO: Ensure that all ORDER BY datatypes are comparable.
+            // TODO: Ensure that no constant expression is in ORDER BY
+            // TODO: Ensure that all ORDER BY expressions are present in the input.
 
             var query = BindQuery(node.Query);
 
@@ -377,14 +385,32 @@ namespace NQuery.Binding
                              : CreateLocalBinder(fromClause.GetDeclaredTableInstances());
 
             var whereClause = binder.BindWhereClause(node.WhereClause);
+
+            var groupByClause = binder.BindGroupByClause(node.GroupByClause);
+            var havingClause = binder.BindHavingClause(node.HavingClause);
+            var aggregations = node.DescendantNodes()
+                                   .Select(i => _boundNodeFromSynatxNode[i])
+                                   .OfType<BoundAggregateExpression>();
+
+            // TODO: The aggregations should be filered to only those whose columns are part of this query.
+            // TODO: Check that no aggregations mix columns from different queries
+
             var selectColumns = binder.BindSelectColumns(node.SelectClause.Columns);
 
-            if (node.GroupByClause != null)
-            {
-                // TODO: Bind GroupByClause            
-            }
+            // TODO: If GROUP BY is specified, ensure the following conditions:
+            //
+            //        1. All expressions in GROUP BY must have a datatype that is comparable.
+            //        2. All expressions in GROUP BY must not be aggregated
+            //        3. All expressions in SELECT, ORDER BY, and HAVING must be aggregated,
+            //           grouped or must not reference columns.
+            //
+            // TODO: If aggregation is required by no GROUP BY is specified, ensure the following:
+            //
+            //        All expressions in SELECT, ORDER BY, nd HAVING are either aggregated or
+            //        do not reference any column.
 
-            var havingClause = binder.BindHavingClause(node.HavingClause);
+            // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
+            // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
 
             // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
             //       literal. Thuse, we can simply ignore the case where topClause.Value.Value cannot be casted
@@ -393,6 +419,8 @@ namespace NQuery.Binding
             var topClause = node.SelectClause.TopClause;
             var top = topClause == null ? null : topClause.Value.Value as int?;
             var withTies = topClause != null && (topClause.TiesKeyword != null || topClause.WithKeyword != null);
+
+            // TODO: If TOP WITH TIES, we require an ORDER BY
 
             return new BoundSelectQuery(selectColumns, top, withTies, fromClause, whereClause, havingClause);
         }
@@ -465,6 +493,8 @@ namespace NQuery.Binding
         {
             var symbols = LookupTableInstances().ToArray();
 
+            // TODO: If symbols.Length == 0, report "Must specify table to select from."
+
             return from tableInstance in symbols
                    from column in BindWildcardSelectColumnForTableInstance(tableInstance)
                    select column;
@@ -505,6 +535,12 @@ namespace NQuery.Binding
                 _diagnostics.ReportWhereClauseMustEvaluateToBool(node.Predicate.Span);
 
             return predicate;
+        }
+
+        private object BindGroupByClause(GroupByClauseSyntax groupByClause)
+        {
+            // TODO: Bind GROUP BY
+            return null;
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)
