@@ -462,7 +462,7 @@ namespace NQuery.Binding
         {
             return node.TableName != null
                        ? BindWildcardSelectColumnForTable(node.TableName)
-                       : BindWildcardSelectColumnForAllTables();
+                       : BindWildcardSelectColumnForAllTables(node.AsteriskToken);
         }
 
         private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTable(SyntaxToken tableName)
@@ -489,11 +489,12 @@ namespace NQuery.Binding
                    select new BoundSelectColumn(expression, columnInstance.Name);
         }
 
-        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForAllTables()
+        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForAllTables(SyntaxToken asteriskToken)
         {
             var symbols = LookupTableInstances().ToArray();
 
-            // TODO: If symbols.Length == 0, report "Must specify table to select from."
+            if (symbols.Length == 0)
+                _diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
 
             return from tableInstance in symbols
                    from column in BindWildcardSelectColumnForTableInstance(tableInstance)

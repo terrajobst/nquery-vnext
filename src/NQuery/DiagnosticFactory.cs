@@ -62,11 +62,6 @@ namespace NQuery
 
         #region Query Errors
 
-        //public static Diagnostic MustSpecifyTableToSelectFrom()
-        //{
-        //    return new Diagnostic(DiagnosticId.MustSpecifyTableToSelectFrom, Resources.MustSpecifyTableToSelectFrom);
-        //}
-
         //public static Diagnostic AggregateCannotContainAggregate(AggregateExpression expression, AggregateBinding parent, AggregateBinding nested)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateCannotContainAggregate, expression.GenerateSource(), parent.Name, nested.Name);

@@ -391,10 +391,11 @@ namespace NQuery
 
         #region Query Errors
 
-        //public static void ReportMustSpecifyTableToSelectFrom(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.MustSpecifyTableToSelectFrom());
-        //}
+        public static void ReportMustSpecifyTableToSelectFrom(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.MustSpecifyTableToSelectFrom, Resources.MustSpecifyTableToSelectFrom);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAggregateCannotContainAggregate(this ICollection<Diagnostic> diagnostics, AggregateExpression expression, AggregateBinding parent, AggregateBinding nested)
         //{
