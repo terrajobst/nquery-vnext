@@ -122,11 +122,6 @@ namespace NQuery
                 syntaxTrivia.WriteTo(writer);
         }
 
-        public SyntaxToken WithParentOld(SyntaxNode parent, int logicalIndex)
-        {
-            return this;
-        }
-
         public SyntaxToken WithDiagnotics(IList<Diagnostic> diagnostics)
         {
             return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
