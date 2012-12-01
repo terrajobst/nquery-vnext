@@ -122,6 +122,11 @@ namespace NQuery
                 syntaxTrivia.WriteTo(writer);
         }
 
+        public bool IsEquivalentTo(SyntaxToken other)
+        {
+            return SyntaxTreeEquivalence.AreEquivalent(this, other);
+        }
+
         public SyntaxToken WithDiagnotics(IList<Diagnostic> diagnostics)
         {
             return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);

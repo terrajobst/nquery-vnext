@@ -164,6 +164,11 @@ namespace NQuery
             return token;
         }
 
+        public bool IsEquivalentTo(SyntaxNode other)
+        {
+            return SyntaxTreeEquivalence.AreEquivalent(this, other);
+        }
+
         public SyntaxTree SyntaxTree
         {
             get { return _syntaxTree; }

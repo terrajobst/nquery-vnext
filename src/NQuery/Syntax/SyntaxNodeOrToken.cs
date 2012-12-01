@@ -39,6 +39,11 @@ namespace NQuery
             return _syntaxNode;
         }
 
+        public bool IsEquivalentTo(SyntaxNodeOrToken other)
+        {
+            return SyntaxTreeEquivalence.AreEquivalent(this, other);
+        }
+
         public SyntaxTree SyntaxTree
         {
             get { return IsNode ? AsNode().SyntaxTree: AsToken().Parent.SyntaxTree; }
