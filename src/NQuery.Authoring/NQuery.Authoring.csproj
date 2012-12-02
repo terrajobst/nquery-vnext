@@ -82,6 +82,7 @@
     <Compile Include="QuickInfo\QuickInfoModel.cs" />
     <Compile Include="QuickInfo\QuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\VariableExpressionQuickInfoModelProvider.cs" />
+    <Compile Include="QuickInfo\WildcardSelectColumnQuickInfoModelProvider.cs" />
     <Compile Include="ResultProducer.cs" />
     <Compile Include="Selection\SelectionExtensions.cs" />
     <Compile Include="SignatureHelp\CastSignatureModelProvider.cs" />

@@ -438,7 +438,8 @@ namespace NQuery.Binding
                         break;
 
                     case SyntaxKind.WildcardSelectColumn:
-                        var boundColumns = BindWildcardSelectColumn((WildcardSelectColumnSyntax)node);
+                        var wildcardSelectColumn = BindWildcardSelectColumn((WildcardSelectColumnSyntax)node);
+                        var boundColumns = BindSelectColumns(wildcardSelectColumn);
                         result.AddRange(boundColumns);
                         break;
                     default:
@@ -458,47 +459,52 @@ namespace NQuery.Binding
             return new BoundSelectColumn(expression, name);
         }
 
-        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
+        private BoundWildcardSelectColumn BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
+        {
+            return Bind(node, BindWildcardSelectColumnInternal);
+        }
+
+        private BoundWildcardSelectColumn BindWildcardSelectColumnInternal(WildcardSelectColumnSyntax node)
         {
             return node.TableName != null
                        ? BindWildcardSelectColumnForTable(node.TableName)
                        : BindWildcardSelectColumnForAllTables(node.AsteriskToken);
         }
 
-        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTable(SyntaxToken tableName)
+        private BoundWildcardSelectColumn BindWildcardSelectColumnForTable(SyntaxToken tableName)
         {
             var symbols = LookupTableInstance(tableName).ToArray();
 
             if (symbols.Length == 0)
             {
                 _diagnostics.ReportUndeclaredTableInstance(tableName);
-                return Enumerable.Empty<BoundSelectColumn>();
+                return new BoundWildcardSelectColumn(null, new ColumnInstanceSymbol[0]);
             }
 
             if (symbols.Length > 1)
                 _diagnostics.ReportAmbiguousName(tableName, symbols);
 
             var tableInstance = symbols[0];
-            return BindWildcardSelectColumnForTableInstance(tableInstance);
+            var columnInstances = tableInstance.ColumnInstances;
+            return new BoundWildcardSelectColumn(tableInstance, columnInstances);
         }
 
-        private static IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForTableInstance(TableInstanceSymbol tableInstance)
+        private BoundWildcardSelectColumn BindWildcardSelectColumnForAllTables(SyntaxToken asteriskToken)
         {
-            return from columnInstance in tableInstance.ColumnInstances
-                   let expression = new BoundNameExpression(columnInstance)
-                   select new BoundSelectColumn(expression, columnInstance.Name);
-        }
+            var tableInstances = LookupTableInstances().ToArray();
 
-        private IEnumerable<BoundSelectColumn> BindWildcardSelectColumnForAllTables(SyntaxToken asteriskToken)
-        {
-            var symbols = LookupTableInstances().ToArray();
-
-            if (symbols.Length == 0)
+            if (tableInstances.Length == 0)
                 _diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
 
-            return from tableInstance in symbols
-                   from column in BindWildcardSelectColumnForTableInstance(tableInstance)
-                   select column;
+            var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToArray();
+            return new BoundWildcardSelectColumn(null, columnInstances);
+        }
+
+        private static IEnumerable<BoundSelectColumn> BindSelectColumns(BoundWildcardSelectColumn selectColumn)
+        {
+            return from columnInstance in selectColumn.Columns
+                   let expression = new BoundNameExpression(columnInstance)
+                   select new BoundSelectColumn(expression, columnInstance.Name);
         }
 
         private BoundTableReference BindFromClause(FromClauseSyntax node)

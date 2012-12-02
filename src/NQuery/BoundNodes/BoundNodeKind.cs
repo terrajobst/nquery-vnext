@@ -24,6 +24,7 @@ namespace NQuery.BoundNodes
         DerivedTableReference,
         JoinedTableReference,
         SelectColumn,
+        WildcardSelectColumn,
         SelectQuery,
         CombinedQuery,
         CommonTableExpression,

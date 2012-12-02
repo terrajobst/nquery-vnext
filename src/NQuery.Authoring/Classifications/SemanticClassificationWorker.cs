@@ -109,6 +109,9 @@ namespace NQuery.Authoring.Classifications
                 case SyntaxKind.MethodInvocationExpression:
                     ClassifyMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
                     break;
+                case SyntaxKind.WildcardSelectColumn:
+                    ClassifyWildcardSelectColumn((WildcardSelectColumnSyntax)node);
+                    break;
                 case SyntaxKind.NamedTableReference:
                     ClassifyNamedTableReference((NamedTableReferenceSyntax)node);
                     break;
@@ -159,6 +162,15 @@ namespace NQuery.Authoring.Classifications
             ClassifyNodeWithoutChildren(node.Target);
             ClassifyExpression(node, node.Name);
             ClassifyNodeWithoutChildren(node.ArgumentList);
+        }
+
+        private void ClassifyWildcardSelectColumn(WildcardSelectColumnSyntax node)
+        {
+            var tableInstanceSymbol = _semanticModel.GetTableInstance(node);
+            if (tableInstanceSymbol == null)
+                return;
+
+            AddClassification(node.TableName, tableInstanceSymbol);
         }
 
         private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)

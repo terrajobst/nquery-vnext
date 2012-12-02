@@ -43,6 +43,7 @@
     <Compile Include="Binding\GlobalBinder.cs" />
     <Compile Include="Binding\LocalBinder.cs" />
     <Compile Include="BoundNodes\BoundAggregateExpression.cs" />
+    <Compile Include="BoundNodes\BoundWildcardSelectColumn.cs" />
     <Compile Include="Runtime\BuiltInAggregates.cs" />
     <Compile Include="Runtime\BuiltInFunctions.cs" />
     <Compile Include="Runtime\BuiltinOperators.cs" />

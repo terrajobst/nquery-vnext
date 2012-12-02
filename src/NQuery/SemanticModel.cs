@@ -29,6 +29,18 @@ namespace NQuery
             return Conversion.Classify(sourceType, targetType);
         }
 
+        public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax wildcardSelectColumn)
+        {
+            var boundExpression = _bindingResult.GetBoundNode(wildcardSelectColumn) as BoundWildcardSelectColumn;
+            return boundExpression == null ? null : boundExpression.Table;
+        }
+
+        public IEnumerable<ColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax wildcardSelectColumn)
+        {
+            var boundExpression = _bindingResult.GetBoundNode(wildcardSelectColumn) as BoundWildcardSelectColumn;
+            return boundExpression == null ? Enumerable.Empty<ColumnInstanceSymbol>() : boundExpression.Columns;
+        }
+
         public Symbol GetSymbol(ExpressionSyntax expression)
         {
             var boundExpression = GetBoundExpression(expression);
