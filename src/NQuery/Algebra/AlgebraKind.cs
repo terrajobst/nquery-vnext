@@ -12,15 +12,16 @@ namespace NQuery.Algebra
         Filter,
         Compute,
         Top,
-        Concat,
+        Sort,
         BinaryQuery,
+        GroupByAndAggregation,
 
         // Expressions
 
         UnaryExpression,
         BinaryExpression,
         LiteralExpression,
-        ColumnExpression,
+        ValueSlotExpression,
         VariableExpression,
         FunctionInvocationExpression,
         AggregateExpression,

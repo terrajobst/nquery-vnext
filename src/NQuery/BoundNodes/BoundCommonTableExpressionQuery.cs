@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using NQuery.Symbols;
+
 namespace NQuery.BoundNodes
 {
     internal sealed class BoundCommonTableExpressionQuery : BoundQuery
@@ -20,9 +22,9 @@ namespace NQuery.BoundNodes
             get { return BoundNodeKind.CommonTableExpressionQuery; }
         }
 
-        public override ReadOnlyCollection<BoundSelectColumn> SelectColumns
+        public override ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
         {
-            get { return _query.SelectColumns; }
+            get { return _query.OutputColumns; }
         }
 
         public ReadOnlyCollection<BoundCommonTableExpression> CommonTableExpressions

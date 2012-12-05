@@ -22,18 +22,20 @@ namespace NQuery.Algebra
                     return BuildJoin((AlgebraJoinNode)node);
                 case AlgebraKind.Top:
                     return BuildTop((AlgebraTopNode)node);
-                case AlgebraKind.Concat:
-                    return BuildConcat((AlgebraConcatNode)node);
+                case AlgebraKind.Sort:
+                    return BuildSort((AlgebraSortNode)node);
                 case AlgebraKind.BinaryQuery:
                     return BuildBinaryQuery((AlgebraBinaryQueryNode)node);
+                case AlgebraKind.GroupByAndAggregation:
+                    return BuildGroupByAndAggregation((AlgebraGroupByAndAggregation)node);
                 case AlgebraKind.UnaryExpression:
                     return BuildUnaryExpression((AlgebraUnaryExpression)node);
                 case AlgebraKind.BinaryExpression:
                     return BuildBinaryExpression((AlgebraBinaryExpression)node);
                 case AlgebraKind.LiteralExpression:
                     return BuildLiteralExpression((AlgebraLiteralExpression)node);
-                case AlgebraKind.ColumnExpression:
-                    return BuildColumnExpression((AlgebraColumnExpression)node);
+                case AlgebraKind.ValueSlotExpression:
+                    return BuildValueSlotExpression((AlgebraValueSlotExpression)node);
                 case AlgebraKind.VariableExpression:
                     return BuildVariableExpression((AlgebraVariableExpression)node);
                 case AlgebraKind.FunctionInvocationExpression:
@@ -113,11 +115,12 @@ namespace NQuery.Algebra
             return new ShowPlanNode(operatorName, properties, children);
         }
 
-        private static ShowPlanNode BuildConcat(AlgebraConcatNode node)
+        private static ShowPlanNode BuildSort(AlgebraSortNode node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = node.Inputs.Select(Build);
-            return new ShowPlanNode("Concat", properties, children);
+            var children = new[] { Build(node.Input) };
+            var slots = string.Join(", ", node.ValueSlots.Select(v => v.Name));
+            return new ShowPlanNode("Sort " + slots, properties, children);
         }
 
         private static ShowPlanNode BuildBinaryQuery(AlgebraBinaryQueryNode node)
@@ -125,6 +128,14 @@ namespace NQuery.Algebra
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
             return new ShowPlanNode(node.Combinator.ToString(), properties, children);
+        }
+
+        private static ShowPlanNode BuildGroupByAndAggregation(AlgebraGroupByAndAggregation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Input) };
+            var slots = string.Join(", ", node.ValueSlots.Select(v => v.Name));
+            return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
         }
 
         private static ShowPlanNode BuildUnaryExpression(AlgebraUnaryExpression node)
@@ -148,11 +159,11 @@ namespace NQuery.Algebra
             return new ShowPlanNode("Literal (" + node.Value + ")", properties, children, true);
         }
 
-        private static ShowPlanNode BuildColumnExpression(AlgebraColumnExpression node)
+        private static ShowPlanNode BuildValueSlotExpression(AlgebraValueSlotExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
-            return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
+            return new ShowPlanNode(node.ValueSlot.Name, properties, children, true);
         }
 
         private static ShowPlanNode BuildVariableExpression(AlgebraVariableExpression node)
@@ -172,7 +183,7 @@ namespace NQuery.Algebra
         private static ShowPlanNode BuildAggregateExpression(AlgebraAggregateExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] {Build(node.Argument)};
+            var children = new[] { Build(node.Argument) };
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 

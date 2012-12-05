@@ -6,13 +6,13 @@ namespace NQuery.BoundNodes
 {
     internal sealed class BoundAggregateExpression : BoundExpression
     {
-        private readonly BoundExpression _argument;
         private readonly AggregateSymbol _aggregate;
+        private readonly BoundExpression _argument;
 
-        public BoundAggregateExpression(BoundExpression argument, AggregateSymbol aggregate)
+        public BoundAggregateExpression(AggregateSymbol aggregate, BoundExpression argument)
         {
-            _argument = argument;
             _aggregate = aggregate;
+            _argument = argument;
         }
 
         public override BoundNodeKind Kind
@@ -22,6 +22,7 @@ namespace NQuery.BoundNodes
 
         public override Type Type
         {
+            // TODO: That's not correct. The aggregate symbol needs to create an aggregator that has a type.
             get { return _argument.Type; }
         }
 
@@ -30,14 +31,14 @@ namespace NQuery.BoundNodes
             get { return _aggregate; }
         }
 
-        public BoundExpression Argument
-        {
-            get { return _argument; }
-        }
-
         public AggregateSymbol Aggregate
         {
             get { return _aggregate; }
+        }
+
+        public BoundExpression Argument
+        {
+            get { return _argument; }
         }
 
         public override string ToString()

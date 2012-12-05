@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 
+using NQuery.Binding;
 using NQuery.BoundNodes;
 using NQuery.Symbols;
 
@@ -14,6 +15,8 @@ namespace NQuery.Algebra
             {
                 case BoundNodeKind.NameExpression:
                     return AlgebrizeNameExpression((BoundNameExpression)node);
+                case BoundNodeKind.ValueSlotExpression:
+                    return AlgebrizeValueSlotExpression((BoundValueSlotExpression)node);
                 case BoundNodeKind.UnaryExpression:
                     return AlgebrizeUnaryExpression((BoundUnaryExpression)node);
                 case BoundNodeKind.BinaryExpression:
@@ -50,7 +53,12 @@ namespace NQuery.Algebra
         private AlgebraExpression AlgebrizeNameExpression(BoundNameExpression node)
         {
             var symbol = (ColumnInstanceSymbol) node.Symbol;
-            return new AlgebraColumnExpression(symbol);
+            return new AlgebraValueSlotExpression(symbol.ValueSlot);
+        }
+
+        private AlgebraExpression AlgebrizeValueSlotExpression(BoundValueSlotExpression node)
+        {
+            return new AlgebraValueSlotExpression(node.ValueSlot);
         }
 
         private AlgebraExpression AlgebrizeUnaryExpression(BoundUnaryExpression node)
@@ -87,9 +95,9 @@ namespace NQuery.Algebra
 
         private AlgebraExpression AlgebrizeAggregateExpression(BoundAggregateExpression node)
         {
-            var argument = AlgebrizeExpression(node.Argument);
             var symbol = node.Symbol;
-            return new AlgebraAggregateExpression(argument, symbol);
+            var argument = AlgebrizeExpression(node.Argument);
+            return new AlgebraAggregateExpression(symbol, argument);
         }
 
         private AlgebraExpression AlgebrizePropertyAccessExpression(BoundPropertyAccessExpression node)

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
 
+using NQuery.Symbols;
+
 namespace NQuery.BoundNodes
 {
     internal abstract class BoundQuery : BoundNode
     {
-        public abstract ReadOnlyCollection<BoundSelectColumn> SelectColumns { get; }
+        public abstract ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns { get; }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using NQuery.BoundNodes;
@@ -9,6 +10,17 @@ namespace NQuery.Binding
 {
     partial class Binder
     {
+        private static SelectQuerySyntax GetAppliedSelectQuery(QuerySyntax node)
+        {
+            while (node is ParenthesizedQuerySyntax)
+            {
+                var parenthesizedQuery = (ParenthesizedQuerySyntax)node;
+                node = parenthesizedQuery.Query;
+            }
+
+            return node as SelectQuerySyntax;
+        }
+
         private static bool IsRecursive(CommonTableExpressionSyntax commonTableExpression)
         {
             return IsRecursive(commonTableExpression, commonTableExpression.Query);
@@ -23,6 +35,11 @@ namespace NQuery.Binding
         {
             var nameExpression = expression as BoundNameExpression;
             return nameExpression != null ? nameExpression.Symbol.Name : null;
+        }
+
+        protected virtual BoundQuery BindSubquery(QuerySyntax querySyntax)
+        {
+            return BindQuery(querySyntax);
         }
 
         private BoundQuery BindQuery(QuerySyntax node)
@@ -68,7 +85,9 @@ namespace NQuery.Binding
 
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
-            return new BoundCombinedQuery(left, BoundQueryCombinator.Except, right);
+            var columns = left.OutputColumns;
+
+            return new BoundCombinedQuery(left, BoundQueryCombinator.Except, right, columns);
         }
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
@@ -82,7 +101,11 @@ namespace NQuery.Binding
             var combinator = node.AllKeyword == null
                                  ? BoundQueryCombinator.Union
                                  : BoundQueryCombinator.UnionAll;
-            return new BoundCombinedQuery(left, combinator, right);
+            var columns = left.OutputColumns
+                              .Select(c => new QueryColumnInstanceSymbol(c.Name, c.Syntax, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                              .ToArray();
+
+            return new BoundCombinedQuery(left, combinator, right, columns);
         }
 
         private BoundQuery BindIntersectQuery(IntersectQuerySyntax node)
@@ -91,11 +114,16 @@ namespace NQuery.Binding
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
-            return new BoundCombinedQuery(left, BoundQueryCombinator.Intersect, right);
+            var columns = left.OutputColumns;
+            return new BoundCombinedQuery(left, BoundQueryCombinator.Intersect, right, columns);
         }
 
         private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)
         {
+            var selectQuery = GetAppliedSelectQuery(node.Query);
+            if (selectQuery != null)
+                return BindSelectQuery(selectQuery, node);
+
             // TODO: We need to verify a few things here.
             //
             // SQL's semantics for ORDER BY are kina weird.
@@ -121,8 +149,9 @@ namespace NQuery.Binding
             // TODO: Ensure that all ORDER BY expressions are present in the input.
 
             var query = BindQuery(node.Query);
+            var orderByClause = BindOrderByClause(query.OutputColumns, node);
 
-            throw new NotImplementedException();
+            return new BoundOrderedQuery(query, orderByClause.Columns);
         }
 
         private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
@@ -188,7 +217,7 @@ namespace NQuery.Binding
                                            ? null
                                            : commonTableExpression.ColumnNameList.ColumnNames;
 
-            var queryColumns = boundQuery.SelectColumns;
+            var queryColumns = boundQuery.OutputColumns;
 
             if (specifiedColumnNames == null)
             {
@@ -239,7 +268,7 @@ namespace NQuery.Binding
                                   : specifiedColumnNames.Select(t => t.Identifier.ValueText);
 
             var columns = queryColumns.Take(columnCount)
-                                      .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Expression.Type))
+                                      .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
                                       .Where(c => !string.IsNullOrEmpty(c.Name))
                                       .ToArray();
 
@@ -324,14 +353,18 @@ namespace NQuery.Binding
                 {
                     // TODO: Ensure number of columns are identical
                     // TODO: Check that all data types match exactly -- implicit conversions ARE supported here
-                    boundAnchorQuery = new BoundCombinedQuery(boundAnchorQuery, BoundQueryCombinator.UnionAll, boundAnchorMember);
+                    var outputColumns = boundAnchorQuery.OutputColumns
+                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, c.Syntax, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                                                  .ToArray();
+
+                    boundAnchorQuery = new BoundCombinedQuery(boundAnchorQuery, BoundQueryCombinator.UnionAll, boundAnchorMember, outputColumns);
                 }
             }
 
             // TODO: We should respect the CTE's column list, if present
             var columns = (boundAnchorQuery == null
                                ? Enumerable.Empty<ColumnSymbol>()
-                               : boundAnchorQuery.SelectColumns.Select(c => new ColumnSymbol(c.Name, c.Expression.Type))).ToArray();
+                               : boundAnchorQuery.OutputColumns.Select(c => new ColumnSymbol(c.Name, c.Type))).ToArray();
 
             var name = commonTableExpression.Name.ValueText;
 
@@ -378,35 +411,48 @@ namespace NQuery.Binding
 
         private BoundQuery BindSelectQuery(SelectQuerySyntax node)
         {
+            return BindSelectQuery(node, null);
+        }
+
+        private BoundQuery BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
+        {
             var fromClause = BindFromClause(node.FromClause);
 
-            var binder = fromClause == null
-                             ? this
-                             : CreateLocalBinder(fromClause.GetDeclaredTableInstances());
+            var queryBinder = CreateQueryBinder(fromClause);
 
-            var whereClause = binder.BindWhereClause(node.WhereClause);
+            var whereClause = queryBinder.BindWhereClause(node.WhereClause);
 
-            var groupByClause = binder.BindGroupByClause(node.GroupByClause);
-            var havingClause = binder.BindHavingClause(node.HavingClause);
-            var aggregations = node.DescendantNodes()
-                                   .Select(i => _boundNodeFromSynatxNode[i])
-                                   .OfType<BoundAggregateExpression>();
+            var groupByClause = queryBinder.BindGroupByClause(node.GroupByClause);
 
-            // TODO: The aggregations should be filered to only those whose columns are part of this query.
+            var havingClause = queryBinder.BindHavingClause(node.HavingClause);
+
+            // TODO: The aggregations should be filtered to those which only contain columns that are part of this query.
             // TODO: Check that no aggregations mix columns from different queries
+            // TODO: Aggregates that have same combination of function/argument shouldn't be computed twice.
 
-            var selectColumns = binder.BindSelectColumns(node.SelectClause.Columns);
+            var selectColumns = queryBinder.BindSelectColumns(node.SelectClause.Columns);
+
+            var outputColumns = selectColumns
+                                  .Select(s => new QueryColumnInstanceSymbol(s.Name, s.Syntax, s.ValueSlot))
+                                  .ToArray();
+
+            var orderByClause = queryBinder.BindOrderByClause(outputColumns, orderedQueryNode);
+
+            var localValues = queryBinder.ExpressionValueSlotFactory.LocalValues
+                             .Select(t => new BoundProjectedValue(t.Item1, t.Item2))
+                             .ToArray();
 
             // TODO: If GROUP BY is specified, ensure the following conditions:
             //
             //        1. All expressions in GROUP BY must have a datatype that is comparable.
-            //        2. All expressions in GROUP BY must not be aggregated
+            //        2. All expressions in GROUP BY must not be aggregated.
+            //        3. All expressions in GROUP BY must not contain subqueries.
             //        3. All expressions in SELECT, ORDER BY, and HAVING must be aggregated,
             //           grouped or must not reference columns.
             //
             // TODO: If aggregation is required by no GROUP BY is specified, ensure the following:
             //
-            //        All expressions in SELECT, ORDER BY, nd HAVING are either aggregated or
+            //        All expressions in SELECT, ORDER BY, and HAVING are either aggregated or
             //        do not reference any column.
 
             // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
@@ -420,9 +466,12 @@ namespace NQuery.Binding
             var top = topClause == null ? null : topClause.Value.Value as int?;
             var withTies = topClause != null && (topClause.TiesKeyword != null || topClause.WithKeyword != null);
 
-            // TODO: If TOP WITH TIES, we require an ORDER BY
+            if (withTies && orderedQueryNode == null)
+            {
+                // TODO: ERROR - we require an ORDER BY
+            }
 
-            return new BoundSelectQuery(selectColumns, top, withTies, fromClause, whereClause, havingClause);
+            return new BoundSelectQuery(top, withTies, selectColumns, fromClause, whereClause, localValues, groupByClause, havingClause, orderByClause, outputColumns);
         }
 
         private IList<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
@@ -452,11 +501,15 @@ namespace NQuery.Binding
 
         private BoundSelectColumn BindExpressionSelectColumn(ExpressionSelectColumnSyntax node)
         {
-            var expression = BindExpression(node.Expression);
+            var expression = node.Expression;
+            var boundExpression = BindExpression(expression);
             var name = node.Alias != null
                            ? node.Alias.Identifier.ValueText
-                           : InferColumnName(expression);
-            return new BoundSelectColumn(expression, name);
+                           : InferColumnName(boundExpression);
+
+            var valueSlot = ExpressionValueSlotFactory.GetOrCreateValueSlot(expression, boundExpression);
+
+            return new BoundSelectColumn(name, expression, valueSlot);
         }
 
         private BoundWildcardSelectColumn BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
@@ -478,7 +531,7 @@ namespace NQuery.Binding
             if (symbols.Length == 0)
             {
                 _diagnostics.ReportUndeclaredTableInstance(tableName);
-                return new BoundWildcardSelectColumn(null, new ColumnInstanceSymbol[0]);
+                return new BoundWildcardSelectColumn(null, new TableColumnInstanceSymbol[0]);
             }
 
             if (symbols.Length > 1)
@@ -503,8 +556,7 @@ namespace NQuery.Binding
         private static IEnumerable<BoundSelectColumn> BindSelectColumns(BoundWildcardSelectColumn selectColumn)
         {
             return from columnInstance in selectColumn.Columns
-                   let expression = new BoundNameExpression(columnInstance)
-                   select new BoundSelectColumn(expression, columnInstance.Name);
+                   select new BoundSelectColumn(columnInstance.Name, null, columnInstance.ValueSlot);
         }
 
         private BoundTableReference BindFromClause(FromClauseSyntax node)
@@ -536,7 +588,8 @@ namespace NQuery.Binding
             if (node == null)
                 return null;
 
-            var predicate = BindExpression(node.Predicate);
+            var binder = CreateWhereClauseBinder();
+            var predicate = binder.BindExpression(node.Predicate);
 
             if (predicate.Type.IsNonBoolean())
                 _diagnostics.ReportWhereClauseMustEvaluateToBool(node.Predicate.Span);
@@ -544,10 +597,19 @@ namespace NQuery.Binding
             return predicate;
         }
 
-        private object BindGroupByClause(GroupByClauseSyntax groupByClause)
+        private BoundGroupByClause BindGroupByClause(GroupByClauseSyntax groupByClause)
         {
-            // TODO: Bind GROUP BY
-            return null;
+            if (groupByClause == null)
+                return null;
+
+            var groupByBinder = CreateGroupByClauseBinder();
+
+            var boundColumns = (from column in groupByClause.Columns
+                                let expression = column.Expression
+                                let boundExpression = groupByBinder.BindExpression(expression)
+                                select ExpressionValueSlotFactory.GetOrCreateValueSlot(expression, boundExpression)).ToArray();
+
+            return new BoundGroupByClause(boundColumns);
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)
@@ -562,5 +624,214 @@ namespace NQuery.Binding
 
             return predicate;
         }
+
+        private BoundOrderByClause BindOrderByClause(IList<QueryColumnInstanceSymbol> queryColumns, OrderedQuerySyntax node)
+        {
+            if (node == null)
+                return null;
+
+            var selectorBinder = CreateLocalBinder(queryColumns);
+
+            var boundColumns = new List<BoundOrderByColumn>();
+
+            foreach (var column in node.Columns)
+            {
+                var selector = column.ColumnSelector;
+                var isAscending = column.Modifier == null ||
+                                  column.Modifier.Kind == SyntaxKind.AscKeyword;
+                var boundSelector = selectorBinder.BindExpression(selector);
+                var boundLiteral = boundSelector as BoundLiteralExpression;
+
+                ValueSlot slot;
+
+                if (boundLiteral != null && boundLiteral.Type == typeof (int))
+                {
+                    var index = ((int) boundLiteral.Value) - 1;
+                    // TODO: Ensure index is valid
+                    slot = queryColumns[index].ValueSlot;
+                }
+                else
+                {
+                    // TODO: Ensure boundSelector isn't a constant expression.
+                    slot = selectorBinder.ExpressionValueSlotFactory.GetOrCreateValueSlot(selector, boundSelector);
+                }
+
+                var boundColumn = new BoundOrderByColumn(slot, isAscending);
+                boundColumns.Add(boundColumn);
+            }
+
+            return new BoundOrderByClause(boundColumns);
+        }
     }
+
+    internal sealed class BoundProjectedValue
+    {
+        private readonly ValueSlot _valueSlot;
+        private readonly BoundExpression _expression;
+
+        public BoundProjectedValue(ValueSlot valueSlot, BoundExpression expression)
+        {
+            _valueSlot = valueSlot;
+            _expression = expression;
+        }
+
+        public ValueSlot ValueSlot
+        {
+            get { return _valueSlot; }
+        }
+
+        public BoundExpression Expression
+        {
+            get { return _expression; }
+        }
+    }
+
+    internal sealed class BoundGroupByClause
+    {
+        private readonly ReadOnlyCollection<ValueSlot> _columns;
+
+        public BoundGroupByClause(IList<ValueSlot> columns)
+        {
+            _columns = new ReadOnlyCollection<ValueSlot>(columns);
+        }
+
+        public ReadOnlyCollection<ValueSlot> Columns
+        {
+            get { return _columns; }
+        }
+    }
+
+    internal sealed class BoundOrderByClause
+    {
+        private readonly ReadOnlyCollection<BoundOrderByColumn> _columns;
+
+        public BoundOrderByClause(IList<BoundOrderByColumn> columns)
+        {
+            _columns = new ReadOnlyCollection<BoundOrderByColumn>(columns);
+        }
+
+        public ReadOnlyCollection<BoundOrderByColumn> Columns
+        {
+            get { return _columns; }
+        }
+    }
+
+    internal sealed class BoundValueSlotExpression : BoundExpression
+    {
+        private readonly ValueSlot _valueSlot;
+
+        public BoundValueSlotExpression(ValueSlot valueSlot)
+        {
+            _valueSlot = valueSlot;
+        }
+
+        public override BoundNodeKind Kind
+        {
+            get { return BoundNodeKind.ValueSlotExpression; }
+        }
+
+        public override Type Type
+        {
+            get { return _valueSlot.Type; }
+        }
+
+        public ValueSlot ValueSlot
+        {
+            get { return _valueSlot; }
+        }
+    }
+
+    internal sealed class BoundOrderByColumn
+    {
+        private readonly ValueSlot _valueSlot;
+        private readonly bool _isAscending;
+
+        public BoundOrderByColumn(ValueSlot valueSlot, bool isAscending)
+        {
+            _valueSlot = valueSlot;
+            _isAscending = isAscending;
+        }
+
+        public ValueSlot ValueSlot
+        {
+            get { return _valueSlot; }
+        }
+
+        public bool IsAscending
+        {
+            get { return _isAscending; }
+        }
+    }
+
+    internal sealed class BoundOrderedQuery : BoundQuery
+    {
+        private readonly BoundQuery _input;
+        private readonly IList<BoundOrderByColumn> _columns;
+
+        public BoundOrderedQuery(BoundQuery input, IList<BoundOrderByColumn> columns)
+        {
+            _input = input;
+            _columns = columns;
+        }
+
+        public override BoundNodeKind Kind
+        {
+            get { return BoundNodeKind.OrderedQuery; }
+        }
+
+        public override ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
+        {
+            get { return _input.OutputColumns; }
+        }
+
+        public BoundQuery Input
+        {
+            get { return _input; }
+        }
+
+        public IList<BoundOrderByColumn> Columns
+        {
+            get { return _columns; }
+        }
+    }
+
+    internal sealed class BoundTopQuery : BoundQuery
+    {
+        private readonly BoundQuery _input;
+        private readonly int _limit;
+        private readonly bool _withTies;
+
+        public BoundTopQuery(BoundQuery input, int limit, bool withTies)
+        {
+            _input = input;
+            _limit = limit;
+            _withTies = withTies;
+        }
+
+        public override BoundNodeKind Kind
+        {
+            get { return BoundNodeKind.TopQuery; }
+        }
+
+        public override ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
+        {
+            get { return _input.OutputColumns; }
+        }
+
+        public BoundQuery Input
+        {
+            get { return _input; }
+        }
+
+        public int Limit
+        {
+            get { return _limit; }
+        }
+
+        public bool WithTies
+        {
+            get { return _withTies; }
+        }
+    }
+
 }

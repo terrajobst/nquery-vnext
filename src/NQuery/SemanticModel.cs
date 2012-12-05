@@ -35,10 +35,10 @@ namespace NQuery
             return boundExpression == null ? null : boundExpression.Table;
         }
 
-        public IEnumerable<ColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax wildcardSelectColumn)
+        public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax wildcardSelectColumn)
         {
             var boundExpression = _bindingResult.GetBoundNode(wildcardSelectColumn) as BoundWildcardSelectColumn;
-            return boundExpression == null ? Enumerable.Empty<ColumnInstanceSymbol>() : boundExpression.Columns;
+            return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.Columns;
         }
 
         public Symbol GetSymbol(ExpressionSyntax expression)
@@ -168,8 +168,10 @@ namespace NQuery
             while (binder != null)
             {
                 var localNames = new HashSet<string>();
+                var localSymbols = binder.GetLocalSymbols()
+                                         .Where(s => !string.IsNullOrEmpty(s.Name));
 
-                foreach (var symbol in binder.GetLocalSymbols())
+                foreach (var symbol in localSymbols)
                 {
                     if (!allNames.Contains(symbol.Name))
                     {

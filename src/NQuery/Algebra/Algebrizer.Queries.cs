@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
+using NQuery.Binding;
 using NQuery.BoundNodes;
 
 namespace NQuery.Algebra
@@ -33,8 +34,6 @@ namespace NQuery.Algebra
                     return AlgebrizeSelectQuery((BoundSelectQuery)node);
                 case BoundNodeKind.CombinedQuery:
                     return AlgebrizeCombinedQuery((BoundCombinedQuery)node);
-                case BoundNodeKind.CommonTableExpressionQuery:
-                    return AlgebrizeCommonTableExpressionQuery((BoundCommonTableExpressionQuery)node);
                 default:
                     throw new ArgumentException();
             }
@@ -44,16 +43,11 @@ namespace NQuery.Algebra
         {
             var algebrizedFrom = AlgebrizeFrom(node.FromClause);
             var algebrizedWhere = AlgebrizeFilter(algebrizedFrom, node.WhereClause);
-
-            // TODO: Handle GROUP BY
-
-            var algebrizedSelect = AlgebrizeSelect(algebrizedWhere, node.SelectColumns);
-
-            // TODO: Handle HAVING
-            // TODO: Handle ORDER BY
-
-            var algebrizedTop = AlgebrizeTop(algebrizedSelect, node.Top, node.WithTies);
-
+            var algebrizedLocalValues = AlgebrizeLocalValues(algebrizedWhere, node.LocalValues);
+            var algebrizedGroupByAndAggregation = AlgebrizeGroupByAndAggregation(algebrizedLocalValues, node.GroupByClause);
+            var algebrizedHaving = AlgebrizeFilter(algebrizedGroupByAndAggregation, node.HavingClause);
+            var algebrizedOrderBy = AlgebrizeOrderBy(algebrizedHaving, node.OrderByClause);
+            var algebrizedTop = AlgebrizeTop(algebrizedOrderBy, node.Top, node.WithTies);
             return algebrizedTop;
         }
 
@@ -73,10 +67,32 @@ namespace NQuery.Algebra
             return new AlgebraFilterNode(input, algebrizedCondition);
         }
 
-        private AlgebraRelation AlgebrizeSelect(AlgebraRelation input, IEnumerable<BoundSelectColumn> selectColumns)
+        private AlgebraRelation AlgebrizeLocalValues(AlgebraRelation input, ReadOnlyCollection<BoundProjectedValue> localValues)
         {
-            var expresions = selectColumns.Select(c => AlgebrizeExpression(c.Expression)).ToArray();
-            return new AlgebraComputeNode(input, expresions);
+            if (localValues.Count == 0)
+                return input;
+
+            // TODO: We should somehow leave the ValueSlot in there
+            var expressions = localValues.Select(lv => AlgebrizeExpression(lv.Expression)).ToArray();
+
+            return new AlgebraComputeNode(input, expressions);
+        }
+
+        private AlgebraRelation AlgebrizeGroupByAndAggregation(AlgebraRelation input, BoundGroupByClause groupByClause)
+        {
+            if (groupByClause == null)
+                return input;
+
+            return new AlgebraGroupByAndAggregation(input, groupByClause.Columns);
+        }
+
+        private AlgebraRelation AlgebrizeOrderBy(AlgebraRelation input, BoundOrderByClause orderByClause)
+        {
+            if (orderByClause == null)
+                return input;
+
+            var expressions = orderByClause.Columns.Select(c => c.ValueSlot).ToArray();
+            return new AlgebraSortNode(input, expressions);
         }
 
         private AlgebraRelation AlgebrizeTop(AlgebraRelation input, int? top, bool withTies)
@@ -92,13 +108,6 @@ namespace NQuery.Algebra
             var right = AlgebrizeQuery(node.Right);
             var combinator = GetQueryCombinator(node.Combinator);
             return new AlgebraBinaryQueryNode(left, right, combinator);
-        }
-
-        private AlgebraRelation AlgebrizeCommonTableExpressionQuery(BoundCommonTableExpressionQuery node)
-        {
-            // Note: we don't need to do anything with the CTEs themselves -- they will be
-            //       instantiated when they are being used.
-            return AlgebrizeQuery(node.Query);
         }
     }
 }

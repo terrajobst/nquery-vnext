@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 
-using NQuery.Binding;
 using NQuery.Symbols;
 
 namespace NQuery.BoundNodes
@@ -14,10 +13,10 @@ namespace NQuery.BoundNodes
         public BoundSingleRowSubselect(BoundQuery boundQuery)
         {
             _boundQuery = boundQuery;
-            var firstColumn = _boundQuery.SelectColumns.FirstOrDefault();
+            var firstColumn = _boundQuery.OutputColumns.FirstOrDefault();
             _type = firstColumn == null
                         ? TypeFacts.Unknown
-                        : firstColumn.Expression.Type;
+                        : firstColumn.Type;
         }
 
         public override BoundNodeKind Kind

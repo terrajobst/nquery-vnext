@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.BoundNodes;
@@ -8,14 +9,6 @@ namespace NQuery.Binding
 {
     partial class Binder
     {
-        private Binder GetJoinConditionBinder(BoundTableReference left, BoundTableReference right)
-        {
-            var leftTables = left.GetDeclaredTableInstances();
-            var rightTables = right.GetDeclaredTableInstances();
-            var tables = leftTables.Concat(rightTables);
-            return CreateLocalBinder(tables);
-        }
-
         private BoundTableReference BindTableReference(TableReferenceSyntax node)
         {
             return Bind(node, BindTableReferenceInternal);
@@ -65,7 +58,7 @@ namespace NQuery.Binding
                 var badAlias = node.Alias == null
                                    ? badTableSymbol.Name
                                    : node.Alias.Identifier.ValueText;
-                var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol);
+                var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol, _valueSlotFactory);
                 return new BoundNamedTableReference(errorInstance);
             }
 
@@ -77,7 +70,7 @@ namespace NQuery.Binding
                             ? table.Name
                             : node.Alias.Identifier.ValueText;
 
-            var tableInstance = new TableInstanceSymbol(alias, table);
+            var tableInstance = new TableInstanceSymbol(alias, table, _valueSlotFactory);
             return new BoundNamedTableReference(tableInstance);
         }
 
@@ -93,7 +86,7 @@ namespace NQuery.Binding
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
 
-            var binder = GetJoinConditionBinder(left, right);
+            var binder = CreateJoinConditionBinder(left, right);
             var condition = binder.BindExpression(node.Condition);
 
             if (condition.Type.IsNonBoolean())
@@ -113,7 +106,7 @@ namespace NQuery.Binding
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
 
-            var binder = GetJoinConditionBinder(left, right);
+            var binder = CreateJoinConditionBinder(left, right);
             var condition = binder.BindExpression(node.Condition);
 
             if (condition.Type.IsNonBoolean())
@@ -128,12 +121,20 @@ namespace NQuery.Binding
 
             var query = BindQuery(node.Query);
 
-            var columns = (from c in query.SelectColumns
-                           where !string.IsNullOrEmpty(c.Name)
-                           select new ColumnSymbol(c.Name, c.Expression.Type)).ToArray();
+            var namedQueryColumns = query.OutputColumns.Where(c => !string.IsNullOrEmpty(c.Name));
+            var columns = new List<ColumnSymbol>();
+            var valueSlotFromColumn = new Dictionary<ColumnSymbol, ValueSlot>();
+
+            foreach (var queryColumn in namedQueryColumns)
+            {
+                var columnSymbol = new ColumnSymbol(queryColumn.Name, queryColumn.Type);
+                columns.Add(columnSymbol);
+                valueSlotFromColumn.Add(columnSymbol, queryColumn.ValueSlot);
+            }
 
             var derivedTable = new DerivedTableSymbol(columns);
-            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable);
+            var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((ti, c) => valueSlotFromColumn[c]);
+            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
             var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
             return boundTableReference;

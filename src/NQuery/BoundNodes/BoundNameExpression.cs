@@ -45,11 +45,7 @@ namespace NQuery.BoundNodes
 
         public override string ToString()
         {
-            var columnInstance = Symbol as ColumnInstanceSymbol;
-            if (columnInstance != null)
-                return string.Format("{0}.{1}", columnInstance.TableInstance.Name, columnInstance.Name);
-
-            return Symbol.Name;
+            return Symbol.ToString();
         }
     }
 }

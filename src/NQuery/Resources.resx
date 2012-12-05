@@ -187,7 +187,7 @@
     <value>Unary operator '{0}' invocation on type '{1}' is ambiguous.</value>
   </data>
   <data name="ArgMustBeOfType" xml:space="preserve">
-    <value>Argument must be of type '{0}'.</value>
+    <value>argumentValueSlot must be of type '{0}'.</value>
   </data>
   <data name="ArgumentArrayMustHaveSameSize" xml:space="preserve">
     <value>Array argument '{0}' must have same size as '{1}'.</value>
@@ -196,13 +196,13 @@
     <value>Array must not be empty.</value>
   </data>
   <data name="ArgumentOutOfRange" xml:space="preserve">
-    <value>Argument '{0}' is out-of-range ({2}-{3}), actual value was {1}.</value>
+    <value>argumentValueSlot '{0}' is out-of-range ({2}-{3}), actual value was {1}.</value>
   </data>
   <data name="AsteriskModifierNotAllowed" xml:space="preserve">
     <value>Aggregation modifier '*' not allowed in function call '{0}'.</value>
   </data>
   <data name="BinaryOperatorFailed" xml:space="preserve">
-    <value>Binary operator '{0} {1} {2}' threw an exception: {6}{7}Operator method: '{3}'. ArgumentList: '{4}', '{5}'.</value>
+    <value>Binary operator '{0} {1} {2}' threw an exception: {6}{7}Operator method: '{3}'. argumentValueSlotList: '{4}', '{5}'.</value>
   </data>
   <data name="BindingWithSameNameAlreadyInCollection" xml:space="preserve">
     <value>A binding with the same name '{0}' already exists in this collection.</value>
@@ -691,7 +691,7 @@
     <value>The type '{0}' is already registered.</value>
   </data>
   <data name="UnaryOperatorFailed" xml:space="preserve">
-    <value>Unary operator '{0} {1}' threw an exception: {3}{5}Operator method: '{2}'. Argument: '{4}'.</value>
+    <value>Unary operator '{0} {1}' threw an exception: {3}{5}Operator method: '{2}'. argumentValueSlot: '{4}'.</value>
   </data>
   <data name="UndeclaredColumn" xml:space="preserve">
     <value>Column '{1}' not declared in table '{0}'.</value>

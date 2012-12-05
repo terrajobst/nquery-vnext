@@ -6,13 +6,13 @@ namespace NQuery.Algebra
 {
     internal sealed class AlgebraAggregateExpression : AlgebraExpression
     {
-        private readonly AlgebraExpression _argument;
         private readonly AggregateSymbol _symbol;
+        private readonly AlgebraExpression _argument;
 
-        public AlgebraAggregateExpression(AlgebraExpression argument, AggregateSymbol symbol)
+        public AlgebraAggregateExpression(AggregateSymbol symbol, AlgebraExpression argument)
         {
-            _argument = argument;
             _symbol = symbol;
+            _argument = argument;
         }
 
         public override AlgebraKind Kind
@@ -20,14 +20,14 @@ namespace NQuery.Algebra
             get { return AlgebraKind.AggregateExpression; }
         }
 
-        public AlgebraExpression Argument
-        {
-            get { return _argument; }
-        }
-
         public AggregateSymbol Symbol
         {
             get { return _symbol; }
+        }
+
+        public AlgebraExpression Argument
+        {
+            get { return _argument; }
         }
     }
 }

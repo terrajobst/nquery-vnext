@@ -2,20 +2,27 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using NQuery.Binding;
+
 namespace NQuery.Symbols
 {
     public sealed class TableInstanceSymbol : Symbol
     {
         private readonly TableSymbol _table;
-        private readonly ReadOnlyCollection<ColumnInstanceSymbol> _columnInstances;
+        private readonly ReadOnlyCollection<TableColumnInstanceSymbol> _columnInstances;
 
-        public TableInstanceSymbol(string name, TableSymbol table)
+        internal TableInstanceSymbol(string name, TableSymbol table, ValueSlotFactory valueFactory)
+            : this(name, table, (ti, c) => valueFactory.CreateValueSlot(ti.Name + "." + c.Name, c.Type))
+        {
+        }
+
+        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, ValueSlot> valueFactory)
             : base(name)
         {
             _table = table;
 
-            var columns = table.Columns.Select(c => new ColumnInstanceSymbol(this, c)).ToArray();
-            _columnInstances = new ReadOnlyCollection<ColumnInstanceSymbol>(columns);
+            var columns = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToArray();
+            _columnInstances = new ReadOnlyCollection<TableColumnInstanceSymbol>(columns);
         }
 
         public override SymbolKind Kind
@@ -28,7 +35,7 @@ namespace NQuery.Symbols
             get { return _table; }
         }
 
-        public ReadOnlyCollection<ColumnInstanceSymbol> ColumnInstances
+        public ReadOnlyCollection<TableColumnInstanceSymbol> ColumnInstances
         {
             get { return _columnInstances; }
         }

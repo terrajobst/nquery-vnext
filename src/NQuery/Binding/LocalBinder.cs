@@ -6,12 +6,12 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed class LocalBinder : Binder
+    internal class LocalBinder : Binder
     {
         private readonly IEnumerable<Symbol> _localSymbols;
 
-        public LocalBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, IEnumerable<Symbol> localSymbols)
-            : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics)
+        public LocalBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, IEnumerable<Symbol> localSymbols)
+            : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
         {
             _localSymbols = localSymbols;
         }
@@ -29,16 +29,6 @@ namespace NQuery.Binding
                         yield return columnInstance;
                 }
             }
-        }
-
-        public override IEnumerable<PropertySymbol> LookupProperties(Type type)
-        {
-            return Parent.LookupProperties(type);
-        }
-
-        public override IEnumerable<MethodSymbol> LookupMethods(Type type)
-        {
-            return Parent.LookupMethods(type);
         }
     }
 }

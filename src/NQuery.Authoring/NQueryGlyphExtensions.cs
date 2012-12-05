@@ -18,7 +18,8 @@ namespace NQuery.Authoring
                     return NQueryGlyph.Table;
                 case SymbolKind.TableInstance:
                     return NQueryGlyph.TableInstance;
-                case SymbolKind.ColumnInstance:
+                case SymbolKind.TableColumnInstance:
+                case SymbolKind.QueryColumnInstance:
                     return NQueryGlyph.Column;
                 case SymbolKind.Variable:
                     return NQueryGlyph.Variable;

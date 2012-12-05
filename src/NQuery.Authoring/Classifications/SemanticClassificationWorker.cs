@@ -53,7 +53,8 @@ namespace NQuery.Authoring.Classifications
                     return SemanticClassification.CommonTableExpression;
                 case SymbolKind.TableInstance:
                     return GetClassification(((TableInstanceSymbol)symbol).Table);
-                case SymbolKind.ColumnInstance:
+                case SymbolKind.TableColumnInstance:
+                case SymbolKind.QueryColumnInstance:
                     return SemanticClassification.Column;
                 case SymbolKind.Function:
                     return SemanticClassification.Function;

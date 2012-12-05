@@ -1,16 +1,20 @@
 using System;
 
+using NQuery.Binding;
+
 namespace NQuery.BoundNodes
 {
     internal sealed class BoundSelectColumn : BoundNode
     {
-        private readonly BoundExpression _expression;
         private readonly string _name;
+        private readonly ExpressionSyntax _syntax;
+        private readonly ValueSlot _valueSlot;
 
-        public BoundSelectColumn(BoundExpression expression, string name)
+        public BoundSelectColumn(string name, ExpressionSyntax syntax, ValueSlot valueSlot)
         {
-            _expression = expression;
             _name = name;
+            _syntax = syntax;
+            _valueSlot = valueSlot;
         }
 
         public override BoundNodeKind Kind
@@ -18,14 +22,19 @@ namespace NQuery.BoundNodes
             get { return BoundNodeKind.SelectColumn; }
         }
 
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
-
         public string Name
         {
             get { return _name; }
+        }
+
+        public ExpressionSyntax Syntax
+        {
+            get { return _syntax; }
+        }
+
+        public ValueSlot ValueSlot
+        {
+            get { return _valueSlot; }
         }
     }
 }

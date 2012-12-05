@@ -102,9 +102,9 @@ namespace NQuery.Runtime
                 #region Date
                 new FunctionSymbol<DateTime>("GETDATE", GetDate),
                 new FunctionSymbol<DateTime>("GETUTCDATE", GetUtcDate),
-                new FunctionSymbol<DateTime, int>("GETDAY", "dateTime", GetDay),
-                new FunctionSymbol<DateTime, int>("GETMONTH", "dateTime", GetMonth),
-                new FunctionSymbol<DateTime, int>("GETYEAR", "dateTime", GetYear),
+                new FunctionSymbol<DateTime, int>("DAY", "dateTime", GetDay),
+                new FunctionSymbol<DateTime, int>("MONTH", "dateTime", GetMonth),
+                new FunctionSymbol<DateTime, int>("YEAR", "dateTime", GetYear),
                 #endregion
             };
         }

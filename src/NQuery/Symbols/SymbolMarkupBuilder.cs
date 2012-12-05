@@ -24,8 +24,11 @@ namespace NQuery.Symbols
                 case SymbolKind.TableInstance:
                     markup.AppendTableInstanceSymbolInfo((TableInstanceSymbol)symbol);
                     break;
-                case SymbolKind.ColumnInstance:
-                    markup.AppendColumnInstanceSymbolInfo((ColumnInstanceSymbol)symbol);
+                case SymbolKind.TableColumnInstance:
+                    markup.AppendTableColumnInstanceSymbolInfo((TableColumnInstanceSymbol)symbol);
+                    break;
+                case SymbolKind.QueryColumnInstance:
+                    markup.AppendQueryColumnInstanceSymbolInfo((QueryColumnInstanceSymbol)symbol);
                     break;
                 case SymbolKind.CommonTableExpression:
                     markup.AppendCommonTableExpressionSymbolInfo((CommonTableExpressionSymbol)symbol);
@@ -97,7 +100,10 @@ namespace NQuery.Symbols
 
         private static void AppendName(this ICollection<SymbolMarkupToken> markup, SymbolMarkupKind kind, string name)
         {
-            markup.Append(kind, SyntaxFacts.GetValidIdentifier(name));
+            var displayName = string.IsNullOrEmpty(name)
+                                  ? "?"
+                                  : SyntaxFacts.GetValidIdentifier(name);
+            markup.Append(kind, displayName);
         }
 
         private static void AppendKeyword(this ICollection<SymbolMarkupToken> markup, string text)
@@ -211,7 +217,7 @@ namespace NQuery.Symbols
             markup.AppendSymbol(symbol.Table);
         }
 
-        private static void AppendColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, ColumnInstanceSymbol symbol)
+        private static void AppendTableColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, TableColumnInstanceSymbol symbol)
         {
             markup.AppendKeyword("COLUMN");
             markup.AppendSpace();
@@ -224,6 +230,15 @@ namespace NQuery.Symbols
             markup.AppendKeyword("OF");
             markup.AppendSpace();
             markup.AppendSymbol(symbol.TableInstance.Table);
+        }
+
+        private static void AppendQueryColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, QueryColumnInstanceSymbol symbol)
+        {
+            markup.AppendKeyword("COLUMN");
+            markup.AppendSpace();
+            markup.AppendColumnName(symbol.Name);
+            markup.AppendSpace();
+            markup.AppendAsType(symbol.Type);
         }
 
         private static void AppendCommonTableExpressionSymbolInfo(this ICollection<SymbolMarkupToken> markup, CommonTableExpressionSymbol symbol)

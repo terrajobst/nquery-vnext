@@ -29,6 +29,16 @@ namespace NQuery.Binding
             return TypeFacts.Unknown;
         }
 
+        protected virtual ExpressionValueSlotFactory ExpressionValueSlotFactory
+        {
+            get
+            {
+                return _parent == null
+                           ? null
+                           : _parent.ExpressionValueSlotFactory;
+            }
+        }
+
         private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
         {
             var selected = result.Selected;
@@ -144,7 +154,16 @@ namespace NQuery.Binding
 
         private BoundExpression BindExpression(ExpressionSyntax node)
         {
-            return Bind(node, BindExpressionInternal);
+            var result = Bind(node, BindExpressionInternal);
+
+            if (ExpressionValueSlotFactory != null)
+            {
+                var valueSlot = ExpressionValueSlotFactory.GetValueSlot(node);
+                if (valueSlot != null)
+                    return new BoundValueSlotExpression(valueSlot);
+            }
+
+            return result;
         }
 
         private BoundExpression BindExpressionInternal(ExpressionSyntax node)
@@ -688,8 +707,9 @@ namespace NQuery.Binding
                 _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
 
             var aggregate = aggregates[0];
-            var argument = new BoundLiteralExpression(1);
-            return new BoundAggregateExpression(argument, aggregate);
+            var argument = new BoundLiteralExpression(0);
+            var boundAggregate = new BoundAggregateExpression(aggregate, argument);
+            return BindAggregate(node, boundAggregate);
         }
 
         private BoundExpression BindFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
@@ -714,12 +734,7 @@ namespace NQuery.Binding
                             _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
 
                         var aggregate = aggregates[0];
-                        var argument = BindExpression(node.ArgumentList.Arguments[0]);
-
-                        // TODO: Check that argument doesn't contain another aggregate.
-                        // TODO: Check that argument doesn't contain any subqueries.
-
-                        return new BoundAggregateExpression(argument, aggregate);
+                        return BindAggregateInvocationExpression(node, aggregate);
                     }
                 }
             }
@@ -756,6 +771,25 @@ namespace NQuery.Binding
             var convertedArguments = arguments.Select((a, i) => BindArgument(a, result, i)).ToArray();
 
             return new BoundFunctionInvocationExpression(convertedArguments, result);
+        }
+
+        private BoundExpression BindAggregateInvocationExpression(FunctionInvocationExpressionSyntax node, AggregateSymbol aggregate)
+        {
+            var argument = node.ArgumentList.Arguments[0];
+            var argumentBinder = CreateAggregateArgumentBinder();
+            var boundArgument = argumentBinder.BindExpression(argument);
+
+            // TODO: Check that argument doesn't contain another aggregate.
+            // TODO: Check that argument doesn't contain any subqueries.
+
+            var boundAggregate = new BoundAggregateExpression(aggregate, boundArgument);
+
+            return BindAggregate(node, boundAggregate);
+        }
+
+        protected virtual BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
+        {
+            return boundAggregate;
         }
 
         private BoundExpression BindMethodInvocationExpression(MethodInvocationExpressionSyntax node)
@@ -799,9 +833,9 @@ namespace NQuery.Binding
         {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
-            var boundQuery = BindQuery(node.Query);
+            var boundQuery = BindSubquery(node.Query);
 
-            if (boundQuery.SelectColumns.Count > 1)
+            if (boundQuery.OutputColumns.Count > 1)
             {
                 // TODO: Error
             }
@@ -813,7 +847,7 @@ namespace NQuery.Binding
         {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
-            var boundQuery = BindQuery(node.Query);
+            var boundQuery = BindSubquery(node.Query);
 
             // NOTE: Number of columns doesn't matter here
 
@@ -825,15 +859,15 @@ namespace NQuery.Binding
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
             var left = BindExpression(node.Left);
-            var boundQuery = BindQuery(node.Query);
+            var boundQuery = BindSubquery(node.Query);
 
-            if (boundQuery.SelectColumns.Count > 1)
+            if (boundQuery.OutputColumns.Count > 1)
             {
                 // TODO: Error
             }
 
-            var rightColumn = boundQuery.SelectColumns[0];
-            var right = rightColumn.Expression;
+            var rightColumn = boundQuery.OutputColumns[0];
+            var right = new BoundNameExpression(rightColumn);
 
             // To avoid cascading errors, we'll only validate the operator
             // if we could resolve both sides.

@@ -20,6 +20,7 @@ namespace NQuery.BoundNodes
         SingleRowSubselect,
         ExistsSubselect,
         AllAnySubselect,
+        ValueSlotExpression,
         NamedTableReference,
         DerivedTableReference,
         JoinedTableReference,
@@ -28,6 +29,8 @@ namespace NQuery.BoundNodes
         SelectQuery,
         CombinedQuery,
         CommonTableExpression,
-        CommonTableExpressionQuery
+        CommonTableExpressionQuery,
+        OrderedQuery,
+        TopQuery
     }
 }

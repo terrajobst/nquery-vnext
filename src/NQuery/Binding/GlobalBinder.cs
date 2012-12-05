@@ -12,8 +12,8 @@ namespace NQuery.Binding
     {
         private readonly DataContext _dataContext;
 
-        public GlobalBinder(Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, DataContext dataContext)
-            : base(null, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics)
+        public GlobalBinder(Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, DataContext dataContext)
+            : base(null, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
         {
             _dataContext = dataContext;
         }

@@ -60,7 +60,10 @@ namespace NQuery.Binding
             }
         }
 
-        public abstract IEnumerable<Symbol> GetLocalSymbols();
+        public virtual IEnumerable<Symbol> GetLocalSymbols()
+        {
+            return Enumerable.Empty<Symbol>();
+        }
 
         private IEnumerable<Symbol> GetLocalSymbols(SyntaxToken token)
         {
@@ -102,7 +105,10 @@ namespace NQuery.Binding
             return GetLocalSymbols(name).OfType<TableInstanceSymbol>();
         }
 
-        public abstract IEnumerable<PropertySymbol> LookupProperties(Type type);
+        public virtual IEnumerable<PropertySymbol> LookupProperties(Type type)
+        {
+            return Parent.LookupProperties(type);
+        }
 
         private IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
         {
@@ -124,7 +130,10 @@ namespace NQuery.Binding
             return BinaryOperator.Resolve(operatorKind, left, right);
         }
 
-        public abstract IEnumerable<MethodSymbol> LookupMethods(Type type);
+        public virtual IEnumerable<MethodSymbol> LookupMethods(Type type)
+        {
+            return Parent.LookupMethods(type);
+        }
 
         private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
         {
