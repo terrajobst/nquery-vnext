@@ -60,6 +60,7 @@ namespace NQuery
         MustSpecifyTableToSelectFrom,
         AggregateCannotContainAggregate,
         AggregateCannotContainSubquery,
+        GroupByCannotContainSubquery,
         AggregateDoesNotSupportType,
         AggregateInWhere,
         AggregateInOn,

@@ -37,8 +37,17 @@ namespace NQuery.Binding
             return nameExpression != null ? nameExpression.Symbol.Name : null;
         }
 
-        protected virtual BoundQuery BindSubquery(QuerySyntax querySyntax)
+        private BoundQuery BindSubquery(QuerySyntax querySyntax)
         {
+            if (InGroupByClause)
+            {
+                Diagnostics.ReportGroupByCannotContainSubquery(querySyntax.Span);
+            }
+            else if (InAggregateArgument)
+            {
+                Diagnostics.ReportAggregateCannotContainSubquery(querySyntax.Span);
+            }
+
             return BindQuery(querySyntax);
         }
 

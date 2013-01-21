@@ -116,6 +116,26 @@ namespace NQuery.Binding
             _expressionValueSlotFactory = new ExpressionValueSlotFactory(valueSlotFactory);
         }
 
+        protected override bool InWhereClause
+        {
+            get { return false; }
+        }
+
+        protected override bool InOnClause
+        {
+            get { return false; }
+        }
+
+        protected override bool InGroupByClause
+        {
+            get { return false; }
+        }
+
+        protected override bool InAggregateArgument
+        {
+            get { return false; }
+        }
+
         protected override ExpressionValueSlotFactory ExpressionValueSlotFactory
         {
             get { return _expressionValueSlotFactory; }
@@ -135,33 +155,22 @@ namespace NQuery.Binding
         {
         }
 
-        protected override BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
+        protected override bool InAggregateArgument
         {
-            Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateCannotContainAggregate, "Aggregate cannot contain another aggregate"));
-            return base.BindAggregate(aggregate, boundAggregate);
-        }
-
-        protected override BoundQuery BindSubquery(QuerySyntax querySyntax)
-        {
-            Diagnostics.Add(new Diagnostic(querySyntax.Span, DiagnosticId.AggregateCannotContainSubquery, "Aggregate cannot contain subqueries"));
-            return base.BindSubquery(querySyntax);
+            get { return true; }
         }
     }
 
     internal sealed class JoinConditionBinder : LocalBinder
     {
-        // Access to all table & column instances that are defined by left & right
-        // Reports errors for usages of aggregates
         public JoinConditionBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, IEnumerable<Symbol> localSymbols)
             : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory, localSymbols)
         {
         }
 
-        protected override BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
+        protected override bool InOnClause
         {
-            // TODO: Fix DiagnosticId
-            Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInWhere, "ON cannot contain aggregates"));
-            return base.BindAggregate(aggregate, boundAggregate);
+            get { return true; }
         }
     }
 
@@ -172,10 +181,9 @@ namespace NQuery.Binding
         {
         }
 
-        protected override BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
+        protected override bool InWhereClause
         {
-            Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInWhere, "WHERE cannot contain aggregates"));
-            return base.BindAggregate(aggregate, boundAggregate);
+            get { return true; }
         }
     }
 
@@ -186,17 +194,9 @@ namespace NQuery.Binding
         {
         }
 
-        protected override BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
+        protected override bool InGroupByClause
         {
-            Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInGroupBy, "GROUP BY cannot contain aggregates"));
-            return base.BindAggregate(aggregate, boundAggregate);
-        }
-
-        protected override BoundQuery BindSubquery(QuerySyntax querySyntax)
-        {
-            // TODO: Fix DiagnosticId
-            Diagnostics.Add(new Diagnostic(querySyntax.Span, DiagnosticId.AggregateInGroupBy, "GROUP BY cannot contain subqueries"));
-            return base.BindSubquery(querySyntax);
+            get { return true; }
         }
     }
 
@@ -225,6 +225,26 @@ namespace NQuery.Binding
         protected List<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }
+        }
+
+        protected virtual bool InWhereClause
+        {
+            get { return _parent != null && _parent.InWhereClause; }
+        }
+
+        protected virtual bool InOnClause
+        {
+            get { return _parent != null && _parent.InOnClause; }
+        }
+
+        protected virtual bool InGroupByClause
+        {
+            get { return _parent != null && _parent.InGroupByClause; }
+        }
+
+        protected virtual bool InAggregateArgument
+        {
+            get { return _parent != null && _parent.InAggregateArgument; }
         }
 
         private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)

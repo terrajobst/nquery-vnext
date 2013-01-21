@@ -70,7 +70,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot perform aggregate function on an expression containing a subquery: {0}..
+        ///   Looks up a localized string similar to Cannot perform aggregate function on an expression containing a subquery..
         /// </summary>
         internal static string AggregateCannotContainSubquery {
             get {
@@ -268,7 +268,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Argument must be of type &apos;{0}&apos;..
+        ///   Looks up a localized string similar to argumentValueSlot must be of type &apos;{0}&apos;..
         /// </summary>
         internal static string ArgMustBeOfType {
             get {
@@ -295,7 +295,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Argument &apos;{0}&apos; is out-of-range ({2}-{3}), actual value was {1}..
+        ///   Looks up a localized string similar to argumentValueSlot &apos;{0}&apos; is out-of-range ({2}-{3}), actual value was {1}..
         /// </summary>
         internal static string ArgumentOutOfRange {
             get {
@@ -313,7 +313,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Binary operator &apos;{0} {1} {2}&apos; threw an exception: {6}{7}Operator method: &apos;{3}&apos;. ArgumentList: &apos;{4}&apos;, &apos;{5}&apos;..
+        ///   Looks up a localized string similar to Binary operator &apos;{0} {1} {2}&apos; threw an exception: {6}{7}Operator method: &apos;{3}&apos;. argumentValueSlotList: &apos;{4}&apos;, &apos;{5}&apos;..
         /// </summary>
         internal static string BinaryOperatorFailed {
             get {
@@ -714,6 +714,15 @@ namespace NQuery {
         internal static string FunctionWithSameNameAndSignatureAlreadyInCollection {
             get {
                 return ResourceManager.GetString("FunctionWithSameNameAndSignatureAlreadyInCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to GROUP BY cannot contain subqueries.
+        /// </summary>
+        internal static string GroupByCannotContainSubquery {
+            get {
+                return ResourceManager.GetString("GroupByCannotContainSubquery", resourceCulture);
             }
         }
         
@@ -1807,7 +1816,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unary operator &apos;{0} {1}&apos; threw an exception: {3}{5}Operator method: &apos;{2}&apos;. Argument: &apos;{4}&apos;..
+        ///   Looks up a localized string similar to Unary operator &apos;{0} {1}&apos; threw an exception: {3}{5}Operator method: &apos;{2}&apos;. argumentValueSlot: &apos;{4}&apos;..
         /// </summary>
         internal static string UnaryOperatorFailed {
             get {

@@ -397,35 +397,46 @@ namespace NQuery
             diagnostics.Add(diagnostic);
         }
 
-        //public static void ReportAggregateCannotContainAggregate(this ICollection<Diagnostic> diagnostics, AggregateExpression expression, AggregateBinding parent, AggregateBinding nested)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AggregateCannotContainAggregate(expression, parent, nested));
-        //}
+        public static void ReportAggregateInAggregateArgument(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.AggregateCannotContainAggregate, Resources.AggregateCannotContainAggregate);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAggregateCannotContainSubquery(this ICollection<Diagnostic> diagnostics, AggregateExpression expression)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AggregateCannotContainSubquery(expression));
-        //}
+        public static void ReportAggregateCannotContainSubquery(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.AggregateCannotContainSubquery, Resources.AggregateCannotContainSubquery);
+            diagnostics.Add(diagnostic);
+        }
+
+        public static void ReportGroupByCannotContainSubquery(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.GroupByCannotContainSubquery, Resources.GroupByCannotContainSubquery);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAggregateDoesNotSupportType(this ICollection<Diagnostic> diagnostics, AggregateBinding aggregateBinding, Type argumentType)
         //{
         //    diagnostics.Add(DiagnosticFactory.AggregateDoesNotSupportType(aggregateBinding, argumentType));
         //}
 
-        //public static void ReportAggregateInWhere(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AggregateInWhere());
-        //}
+        public static void ReportAggregateInWhere(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.AggregateInWhere, Resources.AggregateInWhere);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAggregateInOn(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AggregateInOn());
-        //}
+        public static void ReportAggregateInOn(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.AggregateInOn, Resources.AggregateInOn);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportAggregateInGroupBy(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.AggregateInGroupBy());
-        //}
+        public static void ReportAggregateInGroupBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.AggregateInGroupBy, Resources.AggregateInGroupBy);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportAggregateContainsColumnsFromDifferentQueries(this ICollection<Diagnostic> diagnostics, ExpressionNode aggregateArgument)
         //{

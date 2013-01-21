@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace NQuery
 {
@@ -62,37 +63,10 @@ namespace NQuery
 
         #region Query Errors
 
-        //public static Diagnostic AggregateCannotContainAggregate(AggregateExpression expression, AggregateBinding parent, AggregateBinding nested)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateCannotContainAggregate, expression.GenerateSource(), parent.Name, nested.Name);
-        //    return new Diagnostic(DiagnosticId.AggregateCannotContainAggregate, message);
-        //}
-
-        //public static Diagnostic AggregateCannotContainSubquery(AggregateExpression expression)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateCannotContainSubquery, expression.GenerateSource());
-        //    return new Diagnostic(DiagnosticId.AggregateCannotContainAggregate, message);
-        //}
-
         //public static Diagnostic AggregateDoesNotSupportType(AggregateBinding aggregateBinding, Type argumentType)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateDoesNotSupportType, aggregateBinding.Name, FormattingHelpers.FormatType(argumentType));
         //    return new Diagnostic(DiagnosticId.AggregateDoesNotSupportType, message);
-        //}
-
-        //public static Diagnostic AggregateInWhere()
-        //{
-        //    return new Diagnostic(DiagnosticId.AggregateInWhere, Resources.AggregateInWhere);
-        //}
-
-        //public static Diagnostic AggregateInOn()
-        //{
-        //    return new Diagnostic(DiagnosticId.AggregateInOn, Resources.AggregateInOn);
-        //}
-
-        //public static Diagnostic AggregateInGroupBy()
-        //{
-        //    return new Diagnostic(DiagnosticId.AggregateInGroupBy, Resources.AggregateInGroupBy);
         //}
 
         //public static Diagnostic AggregateContainsColumnsFromDifferentQueries(ExpressionNode aggregateArgument)

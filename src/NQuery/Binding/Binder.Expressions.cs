@@ -709,6 +709,7 @@ namespace NQuery.Binding
             var aggregate = aggregates[0];
             var argument = new BoundLiteralExpression(0);
             var boundAggregate = new BoundAggregateExpression(aggregate, argument);
+            CheckAggregateUsageIsLegal(node, boundAggregate);
             return BindAggregate(node, boundAggregate);
         }
 
@@ -779,12 +780,32 @@ namespace NQuery.Binding
             var argumentBinder = CreateAggregateArgumentBinder();
             var boundArgument = argumentBinder.BindExpression(argument);
 
-            // TODO: Check that argument doesn't contain another aggregate.
-            // TODO: Check that argument doesn't contain any subqueries.
-
             var boundAggregate = new BoundAggregateExpression(aggregate, boundArgument);
-
+            CheckAggregateUsageIsLegal(node, boundAggregate);
             return BindAggregate(node, boundAggregate);
+        }
+
+        private void CheckAggregateUsageIsLegal(SyntaxNode node, BoundAggregateExpression boundAggregate)
+        {
+            if (InOnClause)
+            {
+                // TODO: Check that aggregate belongs to current query.
+                Diagnostics.ReportAggregateInOn(node.Span);
+            }
+            else if (InWhereClause)
+            {
+                // TODO: Check that aggregate belongs to current query.
+                Diagnostics.ReportAggregateInWhere(node.Span);
+            }
+            else if (InGroupByClause)
+            {
+                // TODO: Check that aggregate belongs to current query.
+                Diagnostics.ReportAggregateInGroupBy(node.Span);
+            }
+            else if (InAggregateArgument)
+            {
+                Diagnostics.ReportAggregateInAggregateArgument(node.Span);
+            }
         }
 
         protected virtual BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)

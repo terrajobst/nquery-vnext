@@ -121,7 +121,7 @@
     <value>Cannot perform aggregate function '{1}' on an expression containing an aggregate ('{2}'): {0}.</value>
   </data>
   <data name="AggregateCannotContainSubquery" xml:space="preserve">
-    <value>Cannot perform aggregate function on an expression containing a subquery: {0}.</value>
+    <value>Cannot perform aggregate function on an expression containing a subquery.</value>
   </data>
   <data name="AggregateContainsColumnsFromDifferentQueries" xml:space="preserve">
     <value>Multiple columns are specified in aggregated expression '{0}' containing an outer reference. If an expression being aggregated contains an outer reference, then that outer reference must be the only column referenced in the expression.</value>
@@ -755,5 +755,8 @@
   </data>
   <data name="UndeclaredAggregate" xml:space="preserve">
     <value>Aggregate '{0}' is not declared.</value>
+  </data>
+  <data name="GroupByCannotContainSubquery" xml:space="preserve">
+    <value>GROUP BY cannot contain subqueries</value>
   </data>
 </root>
