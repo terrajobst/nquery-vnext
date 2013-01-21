@@ -140,14 +140,15 @@ namespace NQuery.Binding
             return LookupMethods(type).Where(m => name.Matches(m.Name));
         }
 
-        public OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
+        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
         {
+            if (name == null) throw new ArgumentNullException("name");
             var signatures = from m in LookupMethod(type, name)
                              select new MethodSymbolSignature(m);
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
 
-        public OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, IList<Type> argumentTypes)
+        private OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, IList<Type> argumentTypes)
         {
             var signatures = from f in LookupSymbols(name).OfType<FunctionSymbol>()
                              where name.Matches(f.Name)
@@ -162,7 +163,7 @@ namespace NQuery.Binding
                    select f;
         }
 
-        public IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
+        private IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
         {
             return LookupSymbols(name).OfType<AggregateSymbol>();
         }
