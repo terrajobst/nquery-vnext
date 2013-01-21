@@ -78,6 +78,7 @@
     <Compile Include="Algebra\ShowPlanBuilder.cs" />
     <Compile Include="Algebra\AlgebraTableNode.cs" />
     <Compile Include="Algebra\AlgebraTopNode.cs" />
+    <Compile Include="Binding\SymbolTable.cs" />
     <Compile Include="ShowPlanNode.cs" />
     <Compile Include="Binding\BinaryOperator.cs" />
     <Compile Include="Binding\BinaryOperatorSignature.cs" />

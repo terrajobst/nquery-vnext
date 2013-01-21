@@ -168,7 +168,7 @@ namespace NQuery
             while (binder != null)
             {
                 var localNames = new HashSet<string>();
-                var localSymbols = binder.GetLocalSymbols()
+                var localSymbols = binder.LocalSymbols
                                          .Where(s => !string.IsNullOrEmpty(s.Name));
 
                 foreach (var symbol in localSymbols)

@@ -9,6 +9,11 @@ namespace NQuery.Binding
 {
     partial class Binder
     {
+        public virtual SymbolTable LocalSymbols
+        {
+            get { return SymbolTable.Empty; }
+        }
+
         private static Type LookupType(SyntaxToken name)
         {
             var normalizedName = name.IsQuotedIdentifier()
@@ -60,18 +65,16 @@ namespace NQuery.Binding
             }
         }
 
-        public virtual IEnumerable<Symbol> GetLocalSymbols()
-        {
-            return Enumerable.Empty<Symbol>();
-        }
-
         private IEnumerable<Symbol> LookupSymbols(SyntaxToken name)
         {
+            var text = name.ValueText;
+            var isCaseSensitive = name.IsQuotedIdentifier();
+
             IEnumerable<Symbol> result;
             var binder = this;
             do
             {
-                result = binder.GetLocalSymbols().Where(s => name.Matches(s.Name));
+                result = binder.LocalSymbols.Lookup(text, isCaseSensitive);
                 binder = binder.Parent;
             } while (!result.Any() && binder != null);
 
@@ -97,7 +100,7 @@ namespace NQuery.Binding
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return GetLocalSymbols().OfType<TableInstanceSymbol>();
+            return LocalSymbols.OfType<TableInstanceSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstance(SyntaxToken name)

@@ -8,17 +8,22 @@ namespace NQuery.Binding
 {
     internal class LocalBinder : Binder
     {
-        private readonly IEnumerable<Symbol> _localSymbols;
+        private readonly SymbolTable _localSymbols;
 
         public LocalBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, IEnumerable<Symbol> localSymbols)
             : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
         {
-            _localSymbols = localSymbols;
+            _localSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
         }
 
-        public override IEnumerable<Symbol> GetLocalSymbols()
+        public override SymbolTable LocalSymbols
         {
-            foreach (var symbol in _localSymbols)
+            get { return _localSymbols; }
+        }
+
+        private static IEnumerable<Symbol> ExpandTableInstances(IEnumerable<Symbol> symbols)
+        {
+            foreach (var symbol in symbols)
             {
                 yield return symbol;
 

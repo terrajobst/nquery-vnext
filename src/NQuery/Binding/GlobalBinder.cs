@@ -11,19 +11,23 @@ namespace NQuery.Binding
     internal sealed class GlobalBinder : Binder
     {
         private readonly DataContext _dataContext;
+        private readonly SymbolTable _localSymbols;
 
         public GlobalBinder(Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, DataContext dataContext)
             : base(null, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
         {
+            var symbols = dataContext.Tables.Cast<Symbol>()
+                                     .Concat(dataContext.Functions)
+                                     .Concat(dataContext.Aggregates)
+                                     .Concat(dataContext.Variables);
+
             _dataContext = dataContext;
+            _localSymbols = SymbolTable.Create(symbols);
         }
 
-        public override IEnumerable<Symbol> GetLocalSymbols()
+        public override SymbolTable LocalSymbols
         {
-            return _dataContext.Tables.Cast<Symbol>()
-                               .Concat(_dataContext.Functions)
-                               .Concat(_dataContext.Aggregates)
-                               .Concat(_dataContext.Variables);
+            get { return _localSymbols; }
         }
 
         public override IEnumerable<PropertySymbol> LookupProperties(Type type)
