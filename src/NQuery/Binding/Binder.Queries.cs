@@ -556,7 +556,28 @@ namespace NQuery.Binding
             var tableInstances = LookupTableInstances().ToArray();
 
             if (tableInstances.Length == 0)
-                _diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
+            {
+                // Normally, SELECT * is disallowed.
+                //
+                // But if the current query is contained in an EXISTS query, that's considered OK.
+                // Please note that finding our parent doesn't require handling query combinators,
+                // such as UNION/EXCEPT/INTERSECT, as those are invalid. Same is true for ordered
+                // queries.
+                //
+                // We want, however, skip any parenthesized queries in the process.
+
+                var query = asteriskToken.Parent.AncestorsAndSelf()
+                                         .OfType<SelectQuerySyntax>()
+                                         .First();
+
+                var firstRealParent = query.Parent.AncestorsAndSelf()
+                                           .SkipWhile(n => n is ParenthesizedQuerySyntax)
+                                           .FirstOrDefault();
+
+                var isInExists = firstRealParent is ExistsSubselectSyntax;
+                if (!isInExists)
+                    _diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
+            }
 
             var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToArray();
             return new BoundWildcardSelectColumn(null, columnInstances);
