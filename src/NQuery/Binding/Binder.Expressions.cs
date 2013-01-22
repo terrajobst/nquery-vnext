@@ -29,16 +29,6 @@ namespace NQuery.Binding
             return TypeFacts.Unknown;
         }
 
-        protected virtual ExpressionValueSlotFactory ExpressionValueSlotFactory
-        {
-            get
-            {
-                return _parent == null
-                           ? null
-                           : _parent.ExpressionValueSlotFactory;
-            }
-        }
-
         private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
         {
             var selected = result.Selected;
@@ -156,12 +146,23 @@ namespace NQuery.Binding
         {
             var result = Bind(node, BindExpressionInternal);
 
-            if (ExpressionValueSlotFactory != null)
-            {
-                var valueSlot = ExpressionValueSlotFactory.GetValueSlot(node);
-                if (valueSlot != null)
-                    return new BoundValueSlotExpression(valueSlot);
-            }
+            // Replace existing expression for which we've already allocated
+            // a value slot, such as aggregates and groups.
+            //
+            // NOTE: Keep this before the column instance check -- if the a column
+            //       is grouped, we need to record that fact in the query state.
+
+            var existingSlot = FindGroupedOrAggregatedValueSlot(node);
+            if (existingSlot != null)
+                return new BoundValueSlotExpression(existingSlot);
+
+            // If the expression refers to a column, we actually want our caller
+            // to refer to it's value slot.
+
+            var nameExpression = result as BoundNameExpression;
+            var columnInstance = nameExpression == null ? null : nameExpression.Symbol as ColumnInstanceSymbol;
+            if (columnInstance != null)
+                return new BoundValueSlotExpression(columnInstance.ValueSlot);
 
             return result;
         }
@@ -709,7 +710,6 @@ namespace NQuery.Binding
             var aggregate = aggregates[0];
             var argument = new BoundLiteralExpression(0);
             var boundAggregate = new BoundAggregateExpression(aggregate, argument);
-            CheckAggregateUsageIsLegal(node, boundAggregate);
             return BindAggregate(node, boundAggregate);
         }
 
@@ -781,35 +781,61 @@ namespace NQuery.Binding
             var boundArgument = argumentBinder.BindExpression(argument);
 
             var boundAggregate = new BoundAggregateExpression(aggregate, boundArgument);
-            CheckAggregateUsageIsLegal(node, boundAggregate);
             return BindAggregate(node, boundAggregate);
         }
 
-        private void CheckAggregateUsageIsLegal(SyntaxNode node, BoundAggregateExpression boundAggregate)
+        private BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
         {
-            if (InOnClause)
+            var affectedQueryScopes = aggregate.DescendantNodes()
+                                               .Where(n => _boundNodeFromSynatxNode.ContainsKey(n))
+                                               .Select(n => _boundNodeFromSynatxNode[n])
+                                               .OfType<BoundNameExpression>()
+                                               .Select(b => b.Symbol)
+                                               .OfType<TableColumnInstanceSymbol>()
+                                               .Select(c => FindQueryState(c.TableInstance))
+                                               .Distinct()
+                                               .Take(2)
+                                               .ToArray();
+
+            if (affectedQueryScopes.Length > 1)
+                _diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateContainsColumnsFromDifferentQueries, "AggregateContainsColumnsFromDifferentQueries"));
+
+            var queryState = affectedQueryScopes.DefaultIfEmpty(QueryState)
+                                                .First();
+
+            if (queryState == null)
             {
-                // TODO: Check that aggregate belongs to current query.
-                Diagnostics.ReportAggregateInOn(node.Span);
+                _diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInvalidInCurrentContext, "AggregateInvalidInCurrentContext"));
             }
-            else if (InWhereClause)
+            else
             {
-                // TODO: Check that aggregate belongs to current query.
-                Diagnostics.ReportAggregateInWhere(node.Span);
+                var existingSlot = FindValueSlot(aggregate, queryState.AggregateSlots);
+                if (existingSlot == null)
+                {
+                    var slot = _valueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
+                    queryState.AggregateSlots.Add(Tuple.Create((SyntaxNode)aggregate, slot));
+                }
             }
-            else if (InGroupByClause)
+
+            var aggregateBelongsToCurrentQuery = QueryState == queryState;
+
+            if (InOnClause && aggregateBelongsToCurrentQuery)
             {
-                // TODO: Check that aggregate belongs to current query.
-                Diagnostics.ReportAggregateInGroupBy(node.Span);
+                Diagnostics.ReportAggregateInOn(aggregate.Span);
+            }
+            else if (InWhereClause && aggregateBelongsToCurrentQuery)
+            {
+                Diagnostics.ReportAggregateInWhere(aggregate.Span);
+            }
+            else if (InGroupByClause && aggregateBelongsToCurrentQuery)
+            {
+                Diagnostics.ReportAggregateInGroupBy(aggregate.Span);
             }
             else if (InAggregateArgument)
             {
-                Diagnostics.ReportAggregateInAggregateArgument(node.Span);
+                Diagnostics.ReportAggregateInAggregateArgument(aggregate.Span);
             }
-        }
 
-        protected virtual BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
-        {
             return boundAggregate;
         }
 

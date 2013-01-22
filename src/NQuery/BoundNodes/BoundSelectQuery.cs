@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using System.Linq;
-
 using NQuery.Binding;
 using NQuery.Symbols;
 
@@ -17,12 +15,12 @@ namespace NQuery.BoundNodes
         private readonly ReadOnlyCollection<BoundSelectColumn> _selectColumns;
         private readonly BoundTableReference _fromClause;
         private readonly BoundExpression _whereClause;
-        private readonly ReadOnlyCollection<BoundProjectedValue> _localValues;
+        private readonly ReadOnlyCollection<Tuple<BoundAggregateExpression, ValueSlot>> _aggregates;
         private readonly BoundGroupByClause _groupByClause;
         private readonly BoundExpression _havingClause;
         private readonly BoundOrderByClause _orderByClause;
 
-        public BoundSelectQuery(int? top, bool withTies, IList<BoundSelectColumn> selectColumns, BoundTableReference fromClause, BoundExpression whereClause, IList<BoundProjectedValue> localValues, BoundGroupByClause groupByClause, BoundExpression havingClause, BoundOrderByClause orderByClause, IList<QueryColumnInstanceSymbol> outputColumns)
+        public BoundSelectQuery(int? top, bool withTies, IList<BoundSelectColumn> selectColumns, BoundTableReference fromClause, BoundExpression whereClause, IList<Tuple<BoundAggregateExpression, ValueSlot>> aggregates, BoundGroupByClause groupByClause, BoundExpression havingClause, BoundOrderByClause orderByClause, IList<QueryColumnInstanceSymbol> outputColumns)
         {
             _outputColumns = new ReadOnlyCollection<QueryColumnInstanceSymbol>(outputColumns);
             _selectColumns = new ReadOnlyCollection<BoundSelectColumn>(selectColumns);
@@ -30,10 +28,10 @@ namespace NQuery.BoundNodes
             _withTies = withTies;
             _fromClause = fromClause;
             _whereClause = whereClause;
-            _localValues = new ReadOnlyCollection<BoundProjectedValue>(localValues);
             _groupByClause = groupByClause;
             _havingClause = havingClause;
             _orderByClause = orderByClause;
+            _aggregates = new ReadOnlyCollection<Tuple<BoundAggregateExpression, ValueSlot>>(aggregates);
         }
 
         public override BoundNodeKind Kind
@@ -71,9 +69,9 @@ namespace NQuery.BoundNodes
             get { return _whereClause; }
         }
 
-        public ReadOnlyCollection<BoundProjectedValue> LocalValues
+        public ReadOnlyCollection<Tuple<BoundAggregateExpression, ValueSlot>> Aggregates
         {
-            get { return _localValues; }
+            get { return _aggregates; }
         }
 
         public BoundGroupByClause GroupByClause

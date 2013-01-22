@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -43,8 +44,7 @@ namespace NQuery.Algebra
         {
             var algebrizedFrom = AlgebrizeFrom(node.FromClause);
             var algebrizedWhere = AlgebrizeFilter(algebrizedFrom, node.WhereClause);
-            var algebrizedLocalValues = AlgebrizeLocalValues(algebrizedWhere, node.LocalValues);
-            var algebrizedGroupByAndAggregation = AlgebrizeGroupByAndAggregation(algebrizedLocalValues, node.GroupByClause);
+            var algebrizedGroupByAndAggregation = AlgebrizeGroupByAndAggregation(algebrizedWhere, node.GroupByClause, node.Aggregates);
             var algebrizedHaving = AlgebrizeFilter(algebrizedGroupByAndAggregation, node.HavingClause);
             var algebrizedOrderBy = AlgebrizeOrderBy(algebrizedHaving, node.OrderByClause);
             var algebrizedTop = AlgebrizeTop(algebrizedOrderBy, node.Top, node.WithTies);
@@ -67,23 +67,22 @@ namespace NQuery.Algebra
             return new AlgebraFilterNode(input, algebrizedCondition);
         }
 
-        private AlgebraRelation AlgebrizeLocalValues(AlgebraRelation input, ReadOnlyCollection<BoundProjectedValue> localValues)
+        private AlgebraRelation AlgebrizeGroupByAndAggregation(AlgebraRelation input, BoundGroupByClause groupByClause, ICollection<Tuple<BoundAggregateExpression, ValueSlot>> aggregates)
         {
-            if (localValues.Count == 0)
+            if (groupByClause == null && aggregates.Count == 0)
                 return input;
 
-            // TODO: We should somehow leave the ValueSlot in there
-            var expressions = localValues.Select(lv => AlgebrizeExpression(lv.Expression)).ToArray();
+            var columns = groupByClause == null
+                              ? new ReadOnlyCollection<ValueSlot>(new ValueSlot[0])
+                              : groupByClause.Columns;
 
-            return new AlgebraComputeNode(input, expressions);
-        }
+            var algberizedAggregates = (from t in aggregates
+                                        let aggregate = t.Item1.Aggregate
+                                        let argument = AlgebrizeExpression(t.Item1.Argument)
+                                        let output = t.Item2
+                                        select new AlgebraAggregateDefinition(output, aggregate, argument)).ToArray();
 
-        private AlgebraRelation AlgebrizeGroupByAndAggregation(AlgebraRelation input, BoundGroupByClause groupByClause)
-        {
-            if (groupByClause == null)
-                return input;
-
-            return new AlgebraGroupByAndAggregation(input, groupByClause.Columns);
+            return new AlgebraGroupByAndAggregation(input, columns, algberizedAggregates);
         }
 
         private AlgebraRelation AlgebrizeOrderBy(AlgebraRelation input, BoundOrderByClause orderByClause)

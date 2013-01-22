@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using NQuery.Binding;
@@ -8,12 +9,14 @@ namespace NQuery.Algebra
     internal sealed class AlgebraGroupByAndAggregation : AlgebraRelation
     {
         private readonly AlgebraRelation _input;
-        private readonly ReadOnlyCollection<ValueSlot> _valueSlots;
+        private readonly ReadOnlyCollection<ValueSlot> _groups;
+        private readonly ReadOnlyCollection<AlgebraAggregateDefinition> _aggregates;
 
-        public AlgebraGroupByAndAggregation(AlgebraRelation input, ReadOnlyCollection<ValueSlot> valueSlots)
+        public AlgebraGroupByAndAggregation(AlgebraRelation input, ReadOnlyCollection<ValueSlot> groups, IList<AlgebraAggregateDefinition> aggregates)
         {
             _input = input;
-            _valueSlots = valueSlots;
+            _groups = groups;
+            _aggregates = new ReadOnlyCollection<AlgebraAggregateDefinition>(aggregates);
         }
 
         public override AlgebraKind Kind
@@ -26,9 +29,14 @@ namespace NQuery.Algebra
             get { return _input; }
         }
 
-        public ReadOnlyCollection<ValueSlot> ValueSlots
+        public ReadOnlyCollection<ValueSlot> Groups
         {
-            get { return _valueSlots; }
+            get { return _groups; }
+        }
+
+        public ReadOnlyCollection<AlgebraAggregateDefinition> Aggregates
+        {
+            get { return _aggregates; }
         }
     }
 }

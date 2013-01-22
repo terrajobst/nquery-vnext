@@ -8,8 +8,52 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
+    internal sealed class QueryState
+    {
+        private readonly QueryState _parent;
+        private readonly HashSet<TableInstanceSymbol> _introducedTables = new HashSet<TableInstanceSymbol>();
+        private readonly List<Tuple<SyntaxNode, ValueSlot>> _groupSlots = new List<Tuple<SyntaxNode, ValueSlot>>(); 
+        private readonly List<Tuple<SyntaxNode, ValueSlot>> _aggregateSlots = new List<Tuple<SyntaxNode, ValueSlot>>(); 
+        private readonly HashSet<SyntaxNode> _grouppedOrAggregated = new HashSet<SyntaxNode>();
+
+        public QueryState(QueryState parent)
+        {
+            _parent = parent;
+        }
+
+        public QueryState Parent
+        {
+            get { return _parent; }
+        }
+
+        public HashSet<TableInstanceSymbol> IntroducedTables
+        {
+            get { return _introducedTables; }
+        }
+
+        public List<Tuple<SyntaxNode, ValueSlot>> GroupSlots
+        {
+            get { return _groupSlots; }
+        }
+
+        public List<Tuple<SyntaxNode, ValueSlot>> AggregateSlots
+        {
+            get { return _aggregateSlots; }
+        }
+
+        public HashSet<SyntaxNode> GrouppedOrAggregated
+        {
+            get { return _grouppedOrAggregated; }
+        }
+    }
+
     partial class Binder
     {
+        public virtual QueryState QueryState
+        {
+            get { return _parent == null ? null : _parent.QueryState; }
+        }
+
         private static SelectQuerySyntax GetAppliedSelectQuery(QuerySyntax node)
         {
             while (node is ParenthesizedQuerySyntax)
@@ -35,6 +79,93 @@ namespace NQuery.Binding
         {
             var nameExpression = expression as BoundNameExpression;
             return nameExpression != null ? nameExpression.Symbol.Name : null;
+        }
+
+        private QueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)
+        {
+            var queryState = QueryState;
+            while (queryState != null)
+            {
+                if (queryState.IntroducedTables.Contains(tableInstanceSymbol))
+                    return queryState;
+
+                queryState = queryState.Parent;
+            }
+
+            return null;
+        }
+
+        private ValueSlot FindGroupedOrAggregatedValueSlot(ExpressionSyntax expressionSyntax)
+        {
+            var queryState = QueryState;
+            while (queryState != null)
+            {
+                var candidates = queryState.GroupSlots.Concat(queryState.AggregateSlots);
+                var slot = FindValueSlot(expressionSyntax, candidates);
+
+                if (slot != null)
+                {
+                    queryState.GrouppedOrAggregated.Add(expressionSyntax);
+                    return slot;
+                }
+
+                queryState = queryState.Parent;
+            }
+
+            return null;
+        }
+
+        private static ValueSlot FindValueSlot(SyntaxNode expressionSyntax, IEnumerable<Tuple<SyntaxNode, ValueSlot>> candidates)
+        {
+            return (from c in candidates
+                    let candidateSyntax = c.Item1
+                    let candidateSlot = c.Item2
+                    where candidateSyntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
+                    select candidateSlot).FirstOrDefault();
+        }
+
+        private void EnsureAllColumnReferencesAreLegal(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
+        {
+            var isAggregated = QueryState.AggregateSlots.Count > 0;
+            var isGrouped = QueryState.GroupSlots.Count > 0;
+
+            if (!isAggregated && !isGrouped)
+                return;
+
+            var selectDiagnosticId = isGrouped
+                                         ? DiagnosticId.SelectExpressionNotAggregatedOrGrouped
+                                         : DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy;
+
+            EnsureAllColumnReferencesAreAggregatedOrGrouped(node.SelectClause, selectDiagnosticId);
+
+            if (node.HavingClause != null)
+                EnsureAllColumnReferencesAreAggregatedOrGrouped(node.HavingClause,
+                                                                DiagnosticId.HavingExpressionNotAggregatedOrGrouped);
+
+            if (orderedQueryNode != null)
+            {
+                var orderByDiagnosticId = isGrouped
+                                              ? DiagnosticId.OrderByExpressionNotAggregatedOrGrouped
+                                              : DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy;
+                foreach (var column in orderedQueryNode.Columns)
+                    EnsureAllColumnReferencesAreAggregatedOrGrouped(column, orderByDiagnosticId);
+            }
+        }
+
+        private void EnsureAllColumnReferencesAreAggregatedOrGrouped(SyntaxNode node, DiagnosticId diagnosticId)
+        {
+            var invalidColumnReferences = from n in node.DescendantNodes()
+                                          where !n.AncestorsAndSelf().Any(QueryState.GrouppedOrAggregated.Contains)
+                                          where _boundNodeFromSynatxNode.ContainsKey(n)
+                                          let e = _boundNodeFromSynatxNode[n] as BoundNameExpression
+                                          where e != null
+                                          let c = e.Symbol as TableColumnInstanceSymbol
+                                          where c != null
+                                          where QueryState.IntroducedTables.Contains(c.TableInstance)
+                                          select n;
+
+            foreach (var invalidColumnReference in invalidColumnReferences)
+                _diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
         }
 
         private BoundQuery BindSubquery(QuerySyntax querySyntax)
@@ -425,44 +556,39 @@ namespace NQuery.Binding
 
         private BoundQuery BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
         {
-            var fromClause = BindFromClause(node.FromClause);
+            var queryBinder = CreateQueryBinder();
 
-            var queryBinder = CreateQueryBinder(fromClause);
+            var fromClause = queryBinder.BindFromClause(node.FromClause);
+            var declaredTableInstances = fromClause == null
+                                             ? null
+                                             : fromClause.GetDeclaredTableInstances();
+            if (declaredTableInstances != null)
+                queryBinder.QueryState.IntroducedTables.UnionWith(declaredTableInstances);
 
-            var whereClause = queryBinder.BindWhereClause(node.WhereClause);
+            var fromAwareBinder = declaredTableInstances == null
+                                      ? queryBinder
+                                      : queryBinder.CreateLocalBinder(declaredTableInstances);
 
-            var groupByClause = queryBinder.BindGroupByClause(node.GroupByClause);
+            var whereClause = fromAwareBinder.BindWhereClause(node.WhereClause);
 
-            var havingClause = queryBinder.BindHavingClause(node.HavingClause);
+            var groupByClause = fromAwareBinder.BindGroupByClause(node.GroupByClause);
 
-            // TODO: The aggregations should be filtered to those which only contain columns that are part of this query.
-            // TODO: Check that no aggregations mix columns from different queries
-            // TODO: Aggregates that have same combination of function/argument shouldn't be computed twice.
+            var havingClause = fromAwareBinder.BindHavingClause(node.HavingClause);
 
-            var selectColumns = queryBinder.BindSelectColumns(node.SelectClause.Columns);
+            var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns);
 
             var outputColumns = selectColumns
                                   .Select(s => new QueryColumnInstanceSymbol(s.Name, s.Syntax, s.ValueSlot))
                                   .ToArray();
 
-            var orderByClause = queryBinder.BindOrderByClause(outputColumns, orderedQueryNode);
+            var orderByClause = fromAwareBinder.BindOrderByClause(outputColumns, orderedQueryNode);
 
-            var localValues = queryBinder.ExpressionValueSlotFactory.LocalValues
-                             .Select(t => new BoundProjectedValue(t.Item1, t.Item2))
-                             .ToArray();
+            queryBinder.EnsureAllColumnReferencesAreLegal(node, orderedQueryNode);
 
-            // TODO: If GROUP BY is specified, ensure the following conditions:
-            //
-            //        1. All expressions in GROUP BY must have a datatype that is comparable.
-            //        2. All expressions in GROUP BY must not be aggregated.
-            //        3. All expressions in GROUP BY must not contain subqueries.
-            //        3. All expressions in SELECT, ORDER BY, and HAVING must be aggregated,
-            //           grouped or must not reference columns.
-            //
-            // TODO: If aggregation is required by no GROUP BY is specified, ensure the following:
-            //
-            //        All expressions in SELECT, ORDER BY, and HAVING are either aggregated or
-            //        do not reference any column.
+            var aggregates = (from t in queryBinder.QueryState.AggregateSlots
+                              let aggregate = (BoundAggregateExpression) _boundNodeFromSynatxNode[t.Item1]
+                              let slot = t.Item2
+                              select Tuple.Create(aggregate, slot)).ToArray();
 
             // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
             // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
@@ -480,7 +606,7 @@ namespace NQuery.Binding
                 // TODO: ERROR - we require an ORDER BY
             }
 
-            return new BoundSelectQuery(top, withTies, selectColumns, fromClause, whereClause, localValues, groupByClause, havingClause, orderByClause, outputColumns);
+            return new BoundSelectQuery(top, withTies, selectColumns, fromClause, whereClause, aggregates, groupByClause, havingClause, orderByClause, outputColumns);
         }
 
         private IList<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
@@ -516,7 +642,7 @@ namespace NQuery.Binding
                            ? node.Alias.Identifier.ValueText
                            : InferColumnName(boundExpression);
 
-            var valueSlot = ExpressionValueSlotFactory.GetOrCreateValueSlot(expression, boundExpression);
+            var valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
 
             return new BoundSelectColumn(name, expression, valueSlot);
         }
@@ -634,12 +760,25 @@ namespace NQuery.Binding
 
             var groupByBinder = CreateGroupByClauseBinder();
 
-            var boundColumns = (from column in groupByClause.Columns
-                                let expression = column.Expression
-                                let boundExpression = groupByBinder.BindExpression(expression)
-                                select ExpressionValueSlotFactory.GetOrCreateValueSlot(expression, boundExpression)).ToArray();
+            var boundColumns = new List<ValueSlot>(groupByClause.Columns.Count);
 
-            return new BoundGroupByClause(boundColumns);
+            foreach (var column in groupByClause.Columns)
+            {
+                // TODO: Ensure datatype that is comparable.
+                var expression = column.Expression;
+                var boundExpression = groupByBinder.BindExpression(expression);
+                var boundValueSlotExpression = boundExpression as BoundValueSlotExpression;
+                var existingValueSlot = boundValueSlotExpression == null
+                                            ? null
+                                            : boundValueSlotExpression.ValueSlot;
+                var valueSlot = existingValueSlot ?? _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+
+                QueryState.GroupSlots.Add(Tuple.Create((SyntaxNode) expression, valueSlot));
+
+                boundColumns.Add(valueSlot);
+            }
+
+            return new BoundGroupByClause(boundColumns.ToArray());
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)
@@ -683,7 +822,7 @@ namespace NQuery.Binding
                 else
                 {
                     // TODO: Ensure boundSelector isn't a constant expression.
-                    slot = selectorBinder.ExpressionValueSlotFactory.GetOrCreateValueSlot(selector, boundSelector);
+                    slot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
                 }
 
                 var boundColumn = new BoundOrderByColumn(slot, isAscending);
@@ -691,28 +830,6 @@ namespace NQuery.Binding
             }
 
             return new BoundOrderByClause(boundColumns);
-        }
-    }
-
-    internal sealed class BoundProjectedValue
-    {
-        private readonly ValueSlot _valueSlot;
-        private readonly BoundExpression _expression;
-
-        public BoundProjectedValue(ValueSlot valueSlot, BoundExpression expression)
-        {
-            _valueSlot = valueSlot;
-            _expression = expression;
-        }
-
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
-
-        public BoundExpression Expression
-        {
-            get { return _expression; }
         }
     }
 
@@ -824,44 +941,4 @@ namespace NQuery.Binding
             get { return _columns; }
         }
     }
-
-    internal sealed class BoundTopQuery : BoundQuery
-    {
-        private readonly BoundQuery _input;
-        private readonly int _limit;
-        private readonly bool _withTies;
-
-        public BoundTopQuery(BoundQuery input, int limit, bool withTies)
-        {
-            _input = input;
-            _limit = limit;
-            _withTies = withTies;
-        }
-
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.TopQuery; }
-        }
-
-        public override ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
-        {
-            get { return _input.OutputColumns; }
-        }
-
-        public BoundQuery Input
-        {
-            get { return _input; }
-        }
-
-        public int Limit
-        {
-            get { return _limit; }
-        }
-
-        public bool WithTies
-        {
-            get { return _withTies; }
-        }
-    }
-
 }

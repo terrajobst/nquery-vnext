@@ -136,7 +136,6 @@ namespace NQuery.Binding
             var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((ti, c) => valueSlotFromColumn[c]);
             var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
             var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
-
             return boundTableReference;
         }
     }

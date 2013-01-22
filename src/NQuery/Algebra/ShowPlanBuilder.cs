@@ -40,8 +40,6 @@ namespace NQuery.Algebra
                     return BuildVariableExpression((AlgebraVariableExpression)node);
                 case AlgebraKind.FunctionInvocationExpression:
                     return BuildFunctionInvocationExpression((AlgebraFunctionInvocationExpression)node);
-                case AlgebraKind.AggregateExpression:
-                    return BuildAggregateExpression((AlgebraAggregateExpression)node);
                 case AlgebraKind.PropertyAccessExpression:
                     return BuildPropertyAccessExpression((AlgebraPropertyAccessExpression)node);
                 case AlgebraKind.MethodInvocationExpression:
@@ -133,8 +131,14 @@ namespace NQuery.Algebra
         private static ShowPlanNode BuildGroupByAndAggregation(AlgebraGroupByAndAggregation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Input) };
-            var slots = string.Join(", ", node.ValueSlots.Select(v => v.Name));
+            var input = new[] { Build(node.Input) };
+            var aggregates = from a in node.Aggregates
+                             let aName = a.Output + " = " + a.Aggregate.Name
+                             let aProperties = Enumerable.Empty<KeyValuePair<string, string>>()
+                             let aChildren = new[] {Build(a.Argument)}
+                             select new ShowPlanNode(aName, aProperties, aChildren);
+            var children = input.Concat(aggregates);
+            var slots = string.Join(", ", node.Groups.Select(v => v.Name));
             return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
         }
 
@@ -177,13 +181,6 @@ namespace NQuery.Algebra
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Arguments.Select(Build);
-            return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
-        }
-
-        private static ShowPlanNode BuildAggregateExpression(AlgebraAggregateExpression node)
-        {
-            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Argument) };
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 

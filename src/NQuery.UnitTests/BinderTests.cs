@@ -79,28 +79,24 @@ namespace NQuery.UnitTests
             Assert.AreEqual(DiagnosticId.AggregateCannotContainSubquery, diagnostics[0].DiagnosticId);
         }
 
-//        [TestMethod]
-//        public void Binder_DisallowsColumnsFromDifferentQueriesInAggregate()
-//        {
-//            var syntaxTree = SyntaxTree.ParseQuery(@"
-//SELECT  COUNT(*)
-//FROM    Table t1
-//HAVING  1 >= ALL (
-//            SELECT  SUM(t1.Id + t2.Id)
-//            FROM    Table t2
-//        )");
-//            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
-//            var semanticModel = compilation.GetSemanticModel();
-//            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+        [TestMethod]
+        public void Binder_DisallowsColumnsFromDifferentQueriesInAggregate()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                SELECT  COUNT(*)
+                FROM    Table t1
+                HAVING  1 >= ALL (
+                            SELECT  SUM(t1.Id + t2.Id)
+                            FROM    Table t2
+                        )
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
 
-//            Assert.AreEqual(1, diagnostics.Length);
-//            Assert.AreEqual(DiagnosticId.AggregateContainsColumnsFromDifferentQueries, diagnostics[0].DiagnosticId);
-//        }
-
-        // Aggregated and/or grouped queries:
-        // * SELECT must not contain column instances that aren't grouped or aggregated
-        // * HAVING must not contain column instances that aren't grouped or aggregated
-        // * ORDER BY must not contain column instances that aren't grouped or aggregated
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.AggregateContainsColumnsFromDifferentQueries, diagnostics[0].DiagnosticId);
+        }
 
         [TestMethod]
         public void Binder_DisallowsSelectStarWithoutTables()
@@ -124,5 +120,230 @@ namespace NQuery.UnitTests
 
             Assert.AreEqual(0, diagnostics.Length);
         }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_WhenGrouped()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Id FROM Table t GROUP BY t.Name");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_WhenGrouped_UnlessAggregated()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      COUNT(t.Id)
+                    FROM        Table t
+                    GROUP BY    t.Name
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_WhenGrouped_UnlessSameAsGroup()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      t.Name + ' ' + t.Id.ToString()
+                    FROM        Table t
+                    GROUP BY    t.Name + ' ' + t.Id.ToString()
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_WhenCountStarIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(*) FROM Table t");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_WhenAggregateIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(t.Id) FROM Table t");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInSelect_UnlessBelongsToDifferentQuery()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                SELECT  COUNT(*)
+                FROM    Table t1
+                HAVING  1 >= ALL (
+                            SELECT  SUM(t1.Id)
+                            FROM    Table t2
+                        )
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInHaving_WhenGrouped()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table t GROUP BY t.Name HAVING t.Id <> 1");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInHaving_WhenGrouped_UnlessAggregated()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      1
+                    FROM        Table t
+                    GROUP BY    t.Name
+                    HAVING      SUM(t.Id) > 10
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInHaving_WhenGrouped_UnlessSameAsGroup()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      1
+                    FROM        Table t
+                    GROUP BY    t.Name
+                    HAVING      t.Name <> 'test'
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInHaving_WhenCountStarIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*) FROM Table t HAVING t.Name <> 'test'");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInHaving_WhenAggregateIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(t.Id) FROM Table t HAVING t.Name <> 'test'");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInOrderBy_WhenGrouped()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table t GROUP BY t.Name ORDER BY t.Id");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.OrderByExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInOrderBy_WhenGrouped_UnlessAggregated()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      1
+                    FROM        Table t
+                    GROUP BY    t.Name
+                    ORDER BY    SUM(t.Id)
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInOrderBy_WhenGrouped_UnlessSameAsGroup()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(@"
+                    SELECT      1
+                    FROM        Table t
+                    GROUP BY    t.Id, t.Name + '*'
+                    ORDER BY    t.Name + '*'
+            ");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInOrderBy_WhenCountStarIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*) FROM Table t ORDER BY t.Name");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Binder_DisallowsColumnInstanceInOrderBy_WhenAggregateIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(t.Id) FROM Table t ORDER BY t.Name");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
+        }
+
+        //// TODO: ERROR
+        //SELECT  *
+        //FROM    Employees e
+        //GROUP   BY e.EmployeeID
     }
 }

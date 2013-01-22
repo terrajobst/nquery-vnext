@@ -59,61 +59,19 @@ namespace NQuery.Binding
         }
     }
 
-    internal sealed class ExpressionValueSlotFactory
+    internal sealed class QueryBinder : Binder
     {
-        private readonly ValueSlotFactory _valueSlotFactory;
-        private readonly List<Tuple<ExpressionSyntax, ValueSlot, BoundExpression>> _localValues = new List<Tuple<ExpressionSyntax, ValueSlot, BoundExpression>>();
+        private readonly QueryState _queryState;
 
-        public ExpressionValueSlotFactory(ValueSlotFactory valueSlotFactory)
+        public QueryBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory)
+            : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
         {
-            _valueSlotFactory = valueSlotFactory;
+            _queryState = new QueryState(parent.QueryState);
         }
 
-        public ValueSlot GetValueSlot(ExpressionSyntax expression)
+        public override QueryState QueryState
         {
-            return _localValues
-                   .Where(t => t.Item1.IsEquivalentTo(expression))
-                   .Select(t => t.Item2)
-                   .FirstOrDefault();
-        }
-
-        public ValueSlot GetOrCreateValueSlot(ExpressionSyntax expression, BoundExpression boundExpression)
-        {
-            var existing = GetValueSlot(expression);
-
-            if (existing != null)
-                return existing;
-
-            var boundNameExpression = boundExpression as BoundNameExpression;
-            var columnInstanceSymbol = boundNameExpression == null
-                                           ? null
-                                           : boundNameExpression.Symbol as ColumnInstanceSymbol;
-
-            if (columnInstanceSymbol != null)
-                return columnInstanceSymbol.ValueSlot;
-
-            var valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
-            _localValues.Add(Tuple.Create(expression, valueSlot, boundExpression));
-            return valueSlot;
-        }
-
-        public IEnumerable<Tuple<ValueSlot, BoundExpression>> LocalValues
-        {
-            get { return _localValues.Select(t => Tuple.Create(t.Item2, t.Item3)); }
-        }
-    }
-
-    internal sealed class QueryBinder : LocalBinder
-    {
-        // Access to all table & column instances
-        // Should create unique value slots per aggregate/argument combination
-
-        private readonly ExpressionValueSlotFactory _expressionValueSlotFactory;
-
-        public QueryBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, IEnumerable<Symbol> localSymbols)
-            : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory, localSymbols)
-        {
-            _expressionValueSlotFactory = new ExpressionValueSlotFactory(valueSlotFactory);
+            get { return _queryState; }
         }
 
         protected override bool InWhereClause
@@ -134,17 +92,6 @@ namespace NQuery.Binding
         protected override bool InAggregateArgument
         {
             get { return false; }
-        }
-
-        protected override ExpressionValueSlotFactory ExpressionValueSlotFactory
-        {
-            get { return _expressionValueSlotFactory; }
-        }
-
-        protected override BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
-        {
-            ExpressionValueSlotFactory.GetOrCreateValueSlot(aggregate, boundAggregate);
-            return boundAggregate;
         }
     }
 
@@ -265,12 +212,9 @@ namespace NQuery.Binding
             return new JoinConditionBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory, tables);
         }
 
-        private Binder CreateQueryBinder(BoundTableReference fromClause)
+        private Binder CreateQueryBinder()
         {
-            var symbols = fromClause == null
-                              ? Enumerable.Empty<Symbol>()
-                              : fromClause.GetDeclaredTableInstances();
-            return new QueryBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory, symbols);
+            return new QueryBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory);
         }
 
         private Binder CreateGroupByClauseBinder()

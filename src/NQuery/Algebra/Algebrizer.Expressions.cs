@@ -27,8 +27,6 @@ namespace NQuery.Algebra
                     return AlgebrizeVariableExpression((BoundVariableExpression)node);
                 case BoundNodeKind.FunctionInvocationExpression:
                     return AlgebrizeFunctionInvocationExpression((BoundFunctionInvocationExpression)node);
-                case BoundNodeKind.AggregateExpression:
-                    return AlgebrizeAggregateExpression((BoundAggregateExpression)node);
                 case BoundNodeKind.PropertyAccessExpression:
                     return AlgebrizePropertyAccessExpression((BoundPropertyAccessExpression)node);
                 case BoundNodeKind.MethodInvocationExpression:
@@ -91,13 +89,6 @@ namespace NQuery.Algebra
             var arguments = node.Arguments.Select(AlgebrizeExpression).ToArray();
             var symbol = node.Symbol;
             return new AlgebraFunctionInvocationExpression(arguments, symbol);
-        }
-
-        private AlgebraExpression AlgebrizeAggregateExpression(BoundAggregateExpression node)
-        {
-            var symbol = node.Symbol;
-            var argument = AlgebrizeExpression(node.Argument);
-            return new AlgebraAggregateExpression(symbol, argument);
         }
 
         private AlgebraExpression AlgebrizePropertyAccessExpression(BoundPropertyAccessExpression node)
