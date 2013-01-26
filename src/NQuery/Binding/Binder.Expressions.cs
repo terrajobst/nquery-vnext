@@ -152,7 +152,7 @@ namespace NQuery.Binding
             // NOTE: Keep this before the column instance check -- if the a column
             //       is grouped, we need to record that fact in the query state.
 
-            var existingSlot = FindGroupedOrAggregatedValueSlot(node);
+            var existingSlot = FindComputedGroupingOrAggregate(node);
             if (existingSlot != null)
                 return new BoundValueSlotExpression(existingSlot);
 
@@ -809,11 +809,11 @@ namespace NQuery.Binding
             }
             else
             {
-                var existingSlot = FindValueSlot(aggregate, queryState.AggregateSlots);
+                var existingSlot = FindComputedResult(aggregate, queryState.ComputedAggregates);
                 if (existingSlot == null)
                 {
                     var slot = _valueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
-                    queryState.AggregateSlots.Add(Tuple.Create((SyntaxNode)aggregate, slot));
+                    queryState.ComputedAggregates.Add(new ComputedExpression(aggregate, slot));
                 }
             }
 

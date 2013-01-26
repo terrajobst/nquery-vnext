@@ -8,12 +8,34 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
+    internal struct ComputedExpression
+    {
+        private readonly ExpressionSyntax _syntax;
+        private readonly ValueSlot _result;
+
+        public ComputedExpression(ExpressionSyntax syntax, ValueSlot result)
+        {
+            _syntax = syntax;
+            _result = result;
+        }
+
+        public ExpressionSyntax Syntax
+        {
+            get { return _syntax; }
+        }
+
+        public ValueSlot Result
+        {
+            get { return _result; }
+        }
+    }
+
     internal sealed class QueryState
     {
         private readonly QueryState _parent;
         private readonly HashSet<TableInstanceSymbol> _introducedTables = new HashSet<TableInstanceSymbol>();
-        private readonly List<Tuple<SyntaxNode, ValueSlot>> _groupSlots = new List<Tuple<SyntaxNode, ValueSlot>>(); 
-        private readonly List<Tuple<SyntaxNode, ValueSlot>> _aggregateSlots = new List<Tuple<SyntaxNode, ValueSlot>>(); 
+        private readonly List<ComputedExpression> _computedGroupings = new List<ComputedExpression>();
+        private readonly List<ComputedExpression> _computedAggregates = new List<ComputedExpression>(); 
         private readonly HashSet<SyntaxNode> _grouppedOrAggregated = new HashSet<SyntaxNode>();
 
         public QueryState(QueryState parent)
@@ -31,14 +53,14 @@ namespace NQuery.Binding
             get { return _introducedTables; }
         }
 
-        public List<Tuple<SyntaxNode, ValueSlot>> GroupSlots
+        public List<ComputedExpression> ComputedGroupings
         {
-            get { return _groupSlots; }
+            get { return _computedGroupings; }
         }
 
-        public List<Tuple<SyntaxNode, ValueSlot>> AggregateSlots
+        public List<ComputedExpression> ComputedAggregates
         {
-            get { return _aggregateSlots; }
+            get { return _computedAggregates; }
         }
 
         public HashSet<SyntaxNode> GrouppedOrAggregated
@@ -95,13 +117,13 @@ namespace NQuery.Binding
             return null;
         }
 
-        private ValueSlot FindGroupedOrAggregatedValueSlot(ExpressionSyntax expressionSyntax)
+        private ValueSlot FindComputedGroupingOrAggregate(ExpressionSyntax expressionSyntax)
         {
             var queryState = QueryState;
             while (queryState != null)
             {
-                var candidates = queryState.GroupSlots.Concat(queryState.AggregateSlots);
-                var slot = FindValueSlot(expressionSyntax, candidates);
+                var candidates = queryState.ComputedGroupings.Concat(queryState.ComputedAggregates);
+                var slot = FindComputedResult(expressionSyntax, candidates);
 
                 if (slot != null)
                 {
@@ -115,19 +137,17 @@ namespace NQuery.Binding
             return null;
         }
 
-        private static ValueSlot FindValueSlot(SyntaxNode expressionSyntax, IEnumerable<Tuple<SyntaxNode, ValueSlot>> candidates)
+        private static ValueSlot FindComputedResult(ExpressionSyntax expressionSyntax, IEnumerable<ComputedExpression> candidates)
         {
             return (from c in candidates
-                    let candidateSyntax = c.Item1
-                    let candidateSlot = c.Item2
-                    where candidateSyntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
-                    select candidateSlot).FirstOrDefault();
+                    where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
+                    select c.Result).FirstOrDefault();
         }
 
         private void EnsureAllColumnReferencesAreLegal(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
         {
-            var isAggregated = QueryState.AggregateSlots.Count > 0;
-            var isGrouped = QueryState.GroupSlots.Count > 0;
+            var isAggregated = QueryState.ComputedAggregates.Count > 0;
+            var isGrouped = QueryState.ComputedGroupings.Count > 0;
 
             if (!isAggregated && !isGrouped)
                 return;
@@ -585,9 +605,9 @@ namespace NQuery.Binding
 
             queryBinder.EnsureAllColumnReferencesAreLegal(node, orderedQueryNode);
 
-            var aggregates = (from t in queryBinder.QueryState.AggregateSlots
-                              let aggregate = (BoundAggregateExpression) _boundNodeFromSynatxNode[t.Item1]
-                              let slot = t.Item2
+            var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
+                              let aggregate = (BoundAggregateExpression) _boundNodeFromSynatxNode[t.Syntax]
+                              let slot = t.Result
                               select Tuple.Create(aggregate, slot)).ToArray();
 
             // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
@@ -776,7 +796,7 @@ namespace NQuery.Binding
                                             : boundValueSlotExpression.ValueSlot;
                 var valueSlot = existingValueSlot ?? _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
 
-                QueryState.GroupSlots.Add(Tuple.Create((SyntaxNode) expression, valueSlot));
+                QueryState.ComputedGroupings.Add(new ComputedExpression(expression, valueSlot));
 
                 boundColumns.Add(valueSlot);
             }
