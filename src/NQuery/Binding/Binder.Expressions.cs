@@ -39,7 +39,7 @@ namespace NQuery.Binding
             var conversion = selected.ArgumentConversions[argumentIndex];
             return conversion.IsIdentity
                        ? expression
-                       : new BoundCastExpression(expression, targetType, conversion);
+                       : new BoundConversionExpression(expression, targetType, conversion);
         }
 
         private IList<BoundExpression> BindToCommonType(IList<ExpressionSyntax> expressions)
@@ -139,7 +139,7 @@ namespace NQuery.Binding
                     _diagnostics.ReportAmbiguousConversion(errorSpan, sourceType, targetType);
             }
 
-            return new BoundCastExpression(expression, targetType, conversion);
+            return new BoundConversionExpression(expression, targetType, conversion);
         }
 
         private BoundExpression BindExpression(ExpressionSyntax node)

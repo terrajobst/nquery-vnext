@@ -31,8 +31,8 @@ namespace NQuery.Algebra
                     return AlgebrizePropertyAccessExpression((BoundPropertyAccessExpression)node);
                 case BoundNodeKind.MethodInvocationExpression:
                     return AlgebrizeMethodInvocationExpression((BoundMethodInvocationExpression)node);
-                case BoundNodeKind.CastExpression:
-                    return AlgebrizeCastExpression((BoundCastExpression)node);
+                case BoundNodeKind.ConversionExpression:
+                    return AlgebrizeCastExpression((BoundConversionExpression)node);
                 case BoundNodeKind.IsNullExpression:
                     return AlgebrizeIsNullExpression((BoundIsNullExpression)node);
                 case BoundNodeKind.CaseExpression:
@@ -106,7 +106,7 @@ namespace NQuery.Algebra
             return new AlgebraMethodInvocationExpression(target, arguments, symbol);
         }
 
-        private AlgebraExpression AlgebrizeCastExpression(BoundCastExpression node)
+        private AlgebraExpression AlgebrizeCastExpression(BoundConversionExpression node)
         {
             var expression = AlgebrizeExpression(node.Expression);
             var conversion = node.Conversion;

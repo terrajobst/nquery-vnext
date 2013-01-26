@@ -13,7 +13,7 @@ namespace NQuery.BoundNodes
         AggregateExpression,
         PropertyAccessExpression,
         MethodInvocationExpression,
-        CastExpression,
+        ConversionExpression,
         IsNullExpression,
         CaseLabel,
         CaseExpression,

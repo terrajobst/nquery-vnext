@@ -106,7 +106,7 @@ namespace NQuery
 
         public Conversion GetConversion(CastExpressionSyntax expression)
         {
-            var boundExpression = GetBoundExpression(expression) as BoundCastExpression;
+            var boundExpression = GetBoundExpression(expression) as BoundConversionExpression;
             return boundExpression == null ? null : boundExpression.Conversion;
         }
 

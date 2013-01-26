@@ -4,13 +4,13 @@ using NQuery.Symbols;
 
 namespace NQuery.BoundNodes
 {
-    internal sealed class BoundCastExpression : BoundExpression
+    internal sealed class BoundConversionExpression : BoundExpression
     {
         private readonly BoundExpression _expression;
         private readonly Type _type;
         private readonly Conversion _conversion;
 
-        public BoundCastExpression(BoundExpression expression, Type type, Conversion conversion)
+        public BoundConversionExpression(BoundExpression expression, Type type, Conversion conversion)
         {
             _expression = expression;
             _type = type;
@@ -19,7 +19,7 @@ namespace NQuery.BoundNodes
 
         public override BoundNodeKind Kind
         {
-            get { return BoundNodeKind.CastExpression; }
+            get { return BoundNodeKind.ConversionExpression; }
         }
 
         public override Type Type
@@ -41,7 +41,7 @@ namespace NQuery.BoundNodes
         {
             return _expression == expression
                        ? this
-                       : new BoundCastExpression(expression, _type, _conversion);
+                       : new BoundConversionExpression(expression, _type, _conversion);
         }
 
         public override string ToString()

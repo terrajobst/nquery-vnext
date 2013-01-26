@@ -104,7 +104,7 @@
     <Compile Include="Binding\UnaryOperator.cs" />
     <Compile Include="Binding\UnaryOperatorSignature.cs" />
     <Compile Include="Conversion.cs" />
-    <Compile Include="BoundNodes\BoundCastExpression.cs" />
+    <Compile Include="BoundNodes\BoundConversionExpression.cs" />
     <Compile Include="BoundNodes\BoundAllAnySubselect.cs" />
     <Compile Include="BoundNodes\BoundCommonTableExpression.cs" />
     <Compile Include="BoundNodes\BoundCommonTableExpressionQuery.cs" />
