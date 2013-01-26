@@ -15,6 +15,7 @@ namespace NQuery.Algebra
         Sort,
         BinaryQuery,
         GroupByAndAggregation,
+        Project,
 
         // Expressions
 

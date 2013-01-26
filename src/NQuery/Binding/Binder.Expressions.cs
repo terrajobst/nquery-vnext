@@ -146,23 +146,12 @@ namespace NQuery.Binding
         {
             var result = Bind(node, BindExpressionInternal);
 
-            // Replace existing expression for which we've already allocated
-            // a value slot, such as aggregates and groups.
-            //
-            // NOTE: Keep this before the column instance check -- if the a column
-            //       is grouped, we need to record that fact in the query state.
+            // If we've already allocated a value slot for the given expression,
+            // we want our caller to refer to this value slot.
 
-            var existingSlot = FindComputedGroupingOrAggregate(node);
-            if (existingSlot != null)
-                return new BoundValueSlotExpression(existingSlot);
-
-            // If the expression refers to a column, we actually want our caller
-            // to refer to it's value slot.
-
-            var nameExpression = result as BoundNameExpression;
-            var columnInstance = nameExpression == null ? null : nameExpression.Symbol as ColumnInstanceSymbol;
-            if (columnInstance != null)
-                return new BoundValueSlotExpression(columnInstance.ValueSlot);
+            ValueSlot valueSlot;
+            if (TryReplaceExpression(node, result, out valueSlot))
+                return new BoundValueSlotExpression(valueSlot);
 
             return result;
         }
@@ -809,11 +798,11 @@ namespace NQuery.Binding
             }
             else
             {
-                var existingSlot = FindComputedResult(aggregate, queryState.ComputedAggregates);
+                var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
                 if (existingSlot == null)
                 {
                     var slot = _valueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
-                    queryState.ComputedAggregates.Add(new ComputedExpression(aggregate, slot));
+                    queryState.ComputedAggregates.Add(new ComputedValue(aggregate, boundAggregate, slot));
                 }
             }
 

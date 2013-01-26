@@ -48,6 +48,8 @@
     <Compile Include="Algebra\AlgebraBinaryExpression.cs" />
     <Compile Include="Algebra\AlgebraBinaryQueryNode.cs" />
     <Compile Include="Algebra\AlgebraCaseExpression.cs" />
+    <Compile Include="Algebra\AlgebraComputedValue.cs" />
+    <Compile Include="Algebra\AlgebraProjectNode.cs" />
     <Compile Include="Algebra\AlgebraValueSlotExpression.cs" />
     <Compile Include="Algebra\AlgebraConversionExpression.cs" />
     <Compile Include="Algebra\AlgebraExistsSubselect.cs" />

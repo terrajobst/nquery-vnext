@@ -5,6 +5,7 @@ using System.Linq;
 
 using NQuery.Binding;
 using NQuery.BoundNodes;
+using NQuery.Symbols;
 
 namespace NQuery.Algebra
 {
@@ -44,11 +45,14 @@ namespace NQuery.Algebra
         {
             var algebrizedFrom = AlgebrizeFrom(node.FromClause);
             var algebrizedWhere = AlgebrizeFilter(algebrizedFrom, node.WhereClause);
-            var algebrizedGroupByAndAggregation = AlgebrizeGroupByAndAggregation(algebrizedWhere, node.GroupByClause, node.Aggregates);
+            var algebrizedGroups = AlgebrizeCompute(algebrizedWhere, node.Groups);
+            var algebrizedGroupByAndAggregation = AlgebrizeGroupByAndAggregation(algebrizedGroups, node.Groups, node.Aggregates);
             var algebrizedHaving = AlgebrizeFilter(algebrizedGroupByAndAggregation, node.HavingClause);
-            var algebrizedOrderBy = AlgebrizeOrderBy(algebrizedHaving, node.OrderByClause);
+            var algebrizedProjections = AlgebrizeCompute(algebrizedHaving, node.Projections);
+            var algebrizedOrderBy = AlgebrizeOrderBy(algebrizedProjections, node.OrderByClause);
             var algebrizedTop = AlgebrizeTop(algebrizedOrderBy, node.Top, node.WithTies);
-            return algebrizedTop;
+            var algebrizedProject = AlgebrizeProject(algebrizedTop, node.OutputColumns);
+            return algebrizedProject;
         }
 
         private AlgebraRelation AlgebrizeFrom(BoundTableReference boundTableReference)
@@ -67,14 +71,29 @@ namespace NQuery.Algebra
             return new AlgebraFilterNode(input, algebrizedCondition);
         }
 
-        private AlgebraRelation AlgebrizeGroupByAndAggregation(AlgebraRelation input, BoundGroupByClause groupByClause, ICollection<Tuple<BoundAggregateExpression, ValueSlot>> aggregates)
+        private AlgebraRelation AlgebrizeCompute(AlgebraRelation input, IEnumerable<Tuple<BoundExpression, ValueSlot>> projections)
         {
-            if (groupByClause == null && aggregates.Count == 0)
+            var definedValues = (from c in projections
+                                 let expression = c.Item1
+                                 let valueSlot = c.Item2
+                                 where !(expression is BoundValueSlotExpression)
+                                 let algebraExpression = AlgebrizeExpression(expression)
+                                 select new AlgebraComputedValue(algebraExpression, valueSlot)).ToArray();
+
+            if (definedValues.Length == 0)
                 return input;
 
-            var columns = groupByClause == null
-                              ? new ReadOnlyCollection<ValueSlot>(new ValueSlot[0])
-                              : groupByClause.Columns;
+            return new AlgebraComputeNode(input, definedValues);
+        }
+
+        private AlgebraRelation AlgebrizeGroupByAndAggregation(AlgebraRelation input, ICollection<Tuple<BoundExpression, ValueSlot>> groups, ICollection<Tuple<BoundAggregateExpression, ValueSlot>> aggregates)
+        {
+            if (groups.Count == 0 && aggregates.Count == 0)
+                return input;
+
+            // TODO: Emit compute for GROUPs
+
+            var columns = new ReadOnlyCollection<ValueSlot>(groups.Select(g => g.Item2).ToArray());
 
             var algberizedAggregates = (from t in aggregates
                                         let aggregate = t.Item1.Aggregate
@@ -99,6 +118,12 @@ namespace NQuery.Algebra
             return top == null
                        ? input
                        : new AlgebraTopNode(input, top.Value, withTies);
+        }
+
+        private AlgebraRelation AlgebrizeProject(AlgebraRelation input, IEnumerable<QueryColumnInstanceSymbol> outputColumns)
+        {
+            var output = outputColumns.Select(c => c.ValueSlot).ToArray();
+            return new AlgebraProjectNode(input, output);
         }
 
         private AlgebraRelation AlgebrizeCombinedQuery(BoundCombinedQuery node)

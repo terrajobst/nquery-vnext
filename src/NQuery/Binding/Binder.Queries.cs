@@ -8,20 +8,27 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal struct ComputedExpression
+    internal struct ComputedValue
     {
         private readonly ExpressionSyntax _syntax;
+        private readonly BoundExpression _expression;
         private readonly ValueSlot _result;
 
-        public ComputedExpression(ExpressionSyntax syntax, ValueSlot result)
+        public ComputedValue(ExpressionSyntax syntax, BoundExpression expression, ValueSlot result)
         {
             _syntax = syntax;
+            _expression = expression;
             _result = result;
         }
 
         public ExpressionSyntax Syntax
         {
             get { return _syntax; }
+        }
+
+        public BoundExpression Expression
+        {
+            get { return _expression; }
         }
 
         public ValueSlot Result
@@ -34,9 +41,10 @@ namespace NQuery.Binding
     {
         private readonly QueryState _parent;
         private readonly HashSet<TableInstanceSymbol> _introducedTables = new HashSet<TableInstanceSymbol>();
-        private readonly List<ComputedExpression> _computedGroupings = new List<ComputedExpression>();
-        private readonly List<ComputedExpression> _computedAggregates = new List<ComputedExpression>(); 
-        private readonly HashSet<SyntaxNode> _grouppedOrAggregated = new HashSet<SyntaxNode>();
+        private readonly List<ComputedValue> _computedGroupings = new List<ComputedValue>();
+        private readonly List<ComputedValue> _computedAggregates = new List<ComputedValue>(); 
+        private readonly List<ComputedValue> _computedProjections = new List<ComputedValue>(); 
+        private readonly Dictionary<ExpressionSyntax, ValueSlot> _replacedExpression = new Dictionary<ExpressionSyntax, ValueSlot>();
 
         public QueryState(QueryState parent)
         {
@@ -53,19 +61,24 @@ namespace NQuery.Binding
             get { return _introducedTables; }
         }
 
-        public List<ComputedExpression> ComputedGroupings
+        public List<ComputedValue> ComputedGroupings
         {
             get { return _computedGroupings; }
         }
 
-        public List<ComputedExpression> ComputedAggregates
+        public List<ComputedValue> ComputedAggregates
         {
             get { return _computedAggregates; }
         }
 
-        public HashSet<SyntaxNode> GrouppedOrAggregated
+        public List<ComputedValue> ComputedProjections
         {
-            get { return _grouppedOrAggregated; }
+            get { return _computedProjections; }
+        }
+
+        public Dictionary<ExpressionSyntax, ValueSlot> ReplacedExpression
+        {
+            get { return _replacedExpression; }
         }
     }
 
@@ -97,9 +110,9 @@ namespace NQuery.Binding
             return query.DescendantNodes().OfType<NamedTableReferenceSyntax>().Any(n => n.TableName.Matches(commonTableExpression.Name.ValueText));
         }
 
-        private static string InferColumnName(BoundExpression expression)
+        private string InferColumnName(ExpressionSyntax expressionSyntax)
         {
-            var nameExpression = expression as BoundNameExpression;
+            var nameExpression = _boundNodeFromSynatxNode[expressionSyntax] as BoundNameExpression;
             return nameExpression != null ? nameExpression.Symbol.Name : null;
         }
 
@@ -117,27 +130,58 @@ namespace NQuery.Binding
             return null;
         }
 
-        private ValueSlot FindComputedGroupingOrAggregate(ExpressionSyntax expressionSyntax)
+        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out ValueSlot valueSlot)
         {
             var queryState = QueryState;
+
+            // If the expression refers to a column we already know the value slot.
+
+            var nameExpression = boundExpression as BoundNameExpression;
+            var columnInstance = nameExpression == null ? null : nameExpression.Symbol as ColumnInstanceSymbol;
+            if (columnInstance != null)
+            {
+                valueSlot = columnInstance.ValueSlot;
+                queryState.ReplacedExpression.Add(expression, valueSlot);
+                return true;
+            }
+
+            // Replace existing expression for which we've already allocated
+            // a value slot, such as aggregates and groups.
+
             while (queryState != null)
             {
-                var candidates = queryState.ComputedGroupings.Concat(queryState.ComputedAggregates);
-                var slot = FindComputedResult(expressionSyntax, candidates);
+                var candidates = queryState.ComputedGroupings
+                                           .Concat(queryState.ComputedAggregates)
+                                           .Concat(queryState.ComputedProjections);
+                valueSlot = FindComputedValue(expression, candidates);
 
-                if (slot != null)
+                if (valueSlot != null)
                 {
-                    queryState.GrouppedOrAggregated.Add(expressionSyntax);
-                    return slot;
+                    queryState.ReplacedExpression.Add(expression, valueSlot);
+                    return true;
                 }
 
                 queryState = queryState.Parent;
             }
 
-            return null;
+            valueSlot = null;
+            return false;
         }
 
-        private static ValueSlot FindComputedResult(ExpressionSyntax expressionSyntax, IEnumerable<ComputedExpression> candidates)
+        private static bool TryGetExistingValue(BoundExpression boundExpression, out ValueSlot valueSlot)
+        {
+            var boundValueSlot = boundExpression as BoundValueSlotExpression;
+            if (boundValueSlot == null)
+            {
+                valueSlot = null;
+                return false;
+            }
+
+            valueSlot = boundValueSlot.ValueSlot;
+            return true;
+        }
+
+        private static ValueSlot FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<ComputedValue> candidates)
         {
             return (from c in candidates
                     where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
@@ -174,8 +218,8 @@ namespace NQuery.Binding
 
         private void EnsureAllColumnReferencesAreAggregatedOrGrouped(SyntaxNode node, DiagnosticId diagnosticId)
         {
-            var invalidColumnReferences = from n in node.DescendantNodes()
-                                          where !n.AncestorsAndSelf().Any(QueryState.GrouppedOrAggregated.Contains)
+            var invalidColumnReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
+                                          where !n.AncestorsAndSelf().OfType<ExpressionSyntax>().Any(IsGroupedOrAggregated)
                                           where _boundNodeFromSynatxNode.ContainsKey(n)
                                           let e = _boundNodeFromSynatxNode[n] as BoundNameExpression
                                           where e != null
@@ -186,6 +230,19 @@ namespace NQuery.Binding
 
             foreach (var invalidColumnReference in invalidColumnReferences)
                 _diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
+        }
+
+        private bool IsGroupedOrAggregated(ExpressionSyntax expressionSyntax)
+        {
+            if (QueryState == null)
+                return false;
+
+            ValueSlot valueSlot;
+            if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out valueSlot))
+                return false;
+
+            var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
+            return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
         }
 
         private BoundQuery BindSubquery(QuerySyntax querySyntax)
@@ -606,9 +663,14 @@ namespace NQuery.Binding
             queryBinder.EnsureAllColumnReferencesAreLegal(node, orderedQueryNode);
 
             var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
-                              let aggregate = (BoundAggregateExpression) _boundNodeFromSynatxNode[t.Syntax]
-                              let slot = t.Result
-                              select Tuple.Create(aggregate, slot)).ToArray();
+                              let aggregate = (BoundAggregateExpression)t.Expression
+                              select Tuple.Create(aggregate, t.Result)).ToArray();
+
+            var groups = (from t in queryBinder.QueryState.ComputedGroupings
+                          select Tuple.Create(t.Expression, t.Result)).ToArray();
+
+            var projections = (from t in queryBinder.QueryState.ComputedProjections
+                               select Tuple.Create(t.Expression, t.Result)).ToArray();
 
             // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
             // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
@@ -626,7 +688,16 @@ namespace NQuery.Binding
                 // TODO: ERROR - we require an ORDER BY
             }
 
-            return new BoundSelectQuery(top, withTies, selectColumns, fromClause, whereClause, aggregates, groupByClause, havingClause, orderByClause, outputColumns);
+            return new BoundSelectQuery(top,
+                                        withTies,
+                                        fromClause,
+                                        whereClause,
+                                        aggregates,
+                                        groups,
+                                        havingClause,
+                                        projections,
+                                        orderByClause,
+                                        outputColumns);
         }
 
         private IList<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
@@ -660,12 +731,14 @@ namespace NQuery.Binding
             var boundExpression = BindExpression(expression);
             var name = node.Alias != null
                            ? node.Alias.Identifier.ValueText
-                           : InferColumnName(boundExpression);
+                           : InferColumnName(expression);
 
-            // TODO: Fix this
-            // (1) If bound expression is already a BoundValueSlot, we must reused that slot.
-            // (2) Otherwise, we need to record the fact that this expression needs to be computed.
-            var valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+            ValueSlot valueSlot;
+            if (!TryGetExistingValue(boundExpression, out valueSlot))
+            {
+                valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+                QueryState.ComputedProjections.Add(new ComputedValue(expression, boundExpression, valueSlot));
+            }
 
             return new BoundSelectColumn(name, expression, valueSlot);
         }
@@ -790,13 +863,14 @@ namespace NQuery.Binding
                 // TODO: Ensure datatype that is comparable.
                 var expression = column.Expression;
                 var boundExpression = groupByBinder.BindExpression(expression);
-                var boundValueSlotExpression = boundExpression as BoundValueSlotExpression;
-                var existingValueSlot = boundValueSlotExpression == null
-                                            ? null
-                                            : boundValueSlotExpression.ValueSlot;
-                var valueSlot = existingValueSlot ?? _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
 
-                QueryState.ComputedGroupings.Add(new ComputedExpression(expression, valueSlot));
+                ValueSlot valueSlot;
+                if (!TryGetExistingValue(boundExpression, out valueSlot))
+                    valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+
+                // NOTE: Keep this outside the if check because we assume all groups are recorded
+                //       -- independent from whether they are based on existing values or not.
+                QueryState.ComputedGroupings.Add(new ComputedValue(expression, boundExpression, valueSlot));
 
                 boundColumns.Add(valueSlot);
             }
@@ -857,11 +931,13 @@ namespace NQuery.Binding
                 else
                 {
                     // TODO: Ensure boundSelector isn't a constant expression.
-                    // TODO: Fix this
-                    // (1) If bound selector is already a BoundValueSlot, we must reused that slot.
-                    // (2) Otherwise, we need to record the fact that this expression needs to be computed.
-                    // (3) If our input is not a SELECT query, that would be an error.
-                    slot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+                    // TODO: If our input is not a SELECT query, that would be an error.
+
+                    if (!TryGetExistingValue(boundSelector, out slot))
+                    {
+                        slot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+                        QueryState.ComputedProjections.Add(new ComputedValue(selector, boundSelector, slot));
+                    }
                 }
 
                 var boundColumn = new BoundOrderByColumn(slot, isAscending);

@@ -7,12 +7,12 @@ namespace NQuery.Algebra
     internal sealed class AlgebraComputeNode : AlgebraRelation
     {
         private readonly AlgebraRelation _input;
-        private readonly ReadOnlyCollection<AlgebraExpression> _expressions;
+        private readonly ReadOnlyCollection<AlgebraComputedValue> _definedValues;
 
-        public AlgebraComputeNode(AlgebraRelation input, IList<AlgebraExpression> expressions)
+        public AlgebraComputeNode(AlgebraRelation input, IList<AlgebraComputedValue> definedValues)
         {
             _input = input;
-            _expressions = new ReadOnlyCollection<AlgebraExpression>(expressions);
+            _definedValues = new ReadOnlyCollection<AlgebraComputedValue>(definedValues);
         }
 
         public override AlgebraKind Kind
@@ -25,9 +25,9 @@ namespace NQuery.Algebra
             get { return _input; }
         }
 
-        public ReadOnlyCollection<AlgebraExpression> Expressions
+        public ReadOnlyCollection<AlgebraComputedValue> DefinedValues
         {
-            get { return _expressions; }
+            get { return _definedValues; }
         }
     }
 }

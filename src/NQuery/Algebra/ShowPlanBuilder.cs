@@ -28,6 +28,8 @@ namespace NQuery.Algebra
                     return BuildBinaryQuery((AlgebraBinaryQueryNode)node);
                 case AlgebraKind.GroupByAndAggregation:
                     return BuildGroupByAndAggregation((AlgebraGroupByAndAggregation)node);
+                case AlgebraKind.Project:
+                    return BuildProject((AlgebraProjectNode)node);
                 case AlgebraKind.UnaryExpression:
                     return BuildUnaryExpression((AlgebraUnaryExpression)node);
                 case AlgebraKind.BinaryExpression:
@@ -85,7 +87,13 @@ namespace NQuery.Algebra
         private static ShowPlanNode BuildCompute(AlgebraComputeNode node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] {Build(node.Input)}.Concat(node.Expressions.Select(Build));
+            var input = new[] {Build(node.Input)};
+            var aggregates = from d in node.DefinedValues
+                             let dName = d.Value.Name
+                             let dProperties = Enumerable.Empty<KeyValuePair<string, string>>()
+                             let dChildren = new[] { Build(d.Expression) }
+                             select new ShowPlanNode(dName, dProperties, dChildren);
+            var children = input.Concat(aggregates);
             return new ShowPlanNode("Compute", properties, children);
         }
 
@@ -140,6 +148,14 @@ namespace NQuery.Algebra
             var children = input.Concat(aggregates);
             var slots = string.Join(", ", node.Groups.Select(v => v.Name));
             return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
+        }
+
+        private static ShowPlanNode BuildProject(AlgebraProjectNode node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Input) };
+            var slots = string.Join(", ", node.Output.Select(v => v.Name));
+            return new ShowPlanNode("Project " + slots, properties, children);
         }
 
         private static ShowPlanNode BuildUnaryExpression(AlgebraUnaryExpression node)
