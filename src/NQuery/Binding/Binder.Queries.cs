@@ -642,6 +642,9 @@ namespace NQuery.Binding
                            ? node.Alias.Identifier.ValueText
                            : InferColumnName(boundExpression);
 
+            // TODO: Fix this
+            // (1) If bound expression is already a BoundValueSlot, we must reused that slot.
+            // (2) Otherwise, we need to record the fact that this expression needs to be computed.
             var valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
 
             return new BoundSelectColumn(name, expression, valueSlot);
@@ -799,6 +802,18 @@ namespace NQuery.Binding
             if (node == null)
                 return null;
 
+            // TODO: That is incorrect, because compound expressions must not be matched.
+            // For example, consider this:
+            //
+            //      SELECT  e.FirstName + ' ' + e.LastName AS FullName
+            //      FROM    Employees e
+            //      ORDER   BY FullName, LEN(FullName)
+            //
+            // The first ORDER BY expression should bind against FullName. The second must not.
+            //
+            // However, for IntelliSense purposes we'd like to pretend that the aliases introduced by the select
+            // clause are part of the current scope. It's probaby best to have a separate symbol for those and
+            // change the binding rules so that those symbols aren't considered when binding a name.
             var selectorBinder = CreateLocalBinder(queryColumns);
 
             var boundColumns = new List<BoundOrderByColumn>();
@@ -822,6 +837,10 @@ namespace NQuery.Binding
                 else
                 {
                     // TODO: Ensure boundSelector isn't a constant expression.
+                    // TODO: Fix this
+                    // (1) If bound selector is already a BoundValueSlot, we must reused that slot.
+                    // (2) Otherwise, we need to record the fact that this expression needs to be computed.
+                    // (3) If our input is not a SELECT query, that would be an error.
                     slot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
                 }
 
