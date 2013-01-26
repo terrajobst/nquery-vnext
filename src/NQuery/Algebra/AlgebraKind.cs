@@ -25,7 +25,6 @@ namespace NQuery.Algebra
         ValueSlotExpression,
         VariableExpression,
         FunctionInvocationExpression,
-        AggregateExpression,
         PropertyAccessExpression,
         MethodInvocationExpression,
         ConversionExpression,
