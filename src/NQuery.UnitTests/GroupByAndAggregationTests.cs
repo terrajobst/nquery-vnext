@@ -141,6 +141,19 @@ namespace NQuery.UnitTests
         }
 
         [TestMethod]
+        public void GroupByAndAggregation_DisallowsSelectStar_WhenCountStarIsPresent()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT *, COUNT(*) FROM Table t");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(2, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[1].DiagnosticId);
+        }
+
+        [TestMethod]
         public void GroupByAndAggregation_DisallowsColumnInstanceInSelect_WhenCountStarIsPresent()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(*) FROM Table t");

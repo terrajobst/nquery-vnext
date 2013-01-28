@@ -112,7 +112,7 @@ namespace NQuery.Binding
 
         private string InferColumnName(ExpressionSyntax expressionSyntax)
         {
-            var nameExpression = _boundNodeFromSynatxNode[expressionSyntax] as BoundNameExpression;
+            var nameExpression = GetBoundNode<BoundNameExpression>(expressionSyntax);
             return nameExpression != null ? nameExpression.Symbol.Name : null;
         }
 
@@ -218,15 +218,24 @@ namespace NQuery.Binding
 
         private void EnsureAllColumnReferencesAreAggregatedOrGrouped(SyntaxNode node, DiagnosticId diagnosticId)
         {
-            var invalidColumnReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
-                                          where !n.AncestorsAndSelf().OfType<ExpressionSyntax>().Any(IsGroupedOrAggregated)
-                                          where _boundNodeFromSynatxNode.ContainsKey(n)
-                                          let e = _boundNodeFromSynatxNode[n] as BoundNameExpression
-                                          where e != null
-                                          let c = e.Symbol as TableColumnInstanceSymbol
-                                          where c != null
-                                          where QueryState.IntroducedTables.Contains(c.TableInstance)
-                                          select n;
+            var wildcardReferences = from n in node.DescendantNodes().OfType<WildcardSelectColumnSyntax>()
+                                     let bw = GetBoundNode<BoundWildcardSelectColumn>(n)
+                                     where bw != null
+                                     from c in bw.TableColumns
+                                     where !IsGroupedOrAggregated(c.ValueSlot)
+                                     select Tuple.Create((SyntaxNode)n, c);
+
+            var expressionReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
+                                       where !n.AncestorsAndSelf().OfType<ExpressionSyntax>().Any(IsGroupedOrAggregated)
+                                       let e = GetBoundNode<BoundNameExpression>(n)
+                                       where e != null
+                                       let c = e.Symbol as TableColumnInstanceSymbol
+                                       where c != null
+                                       select Tuple.Create((SyntaxNode) n, c);
+
+            var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
+                                          where QueryState.IntroducedTables.Contains(t.Item2.TableInstance)
+                                          select t.Item1;
 
             foreach (var invalidColumnReference in invalidColumnReferences)
                 _diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
@@ -241,6 +250,11 @@ namespace NQuery.Binding
             if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out valueSlot))
                 return false;
 
+            return IsGroupedOrAggregated(valueSlot);
+        }
+
+        private bool IsGroupedOrAggregated(ValueSlot valueSlot)
+        {
             var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
             return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
         }

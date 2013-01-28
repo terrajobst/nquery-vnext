@@ -275,5 +275,13 @@ namespace NQuery.Binding
             if (!_binderFromBoundNode.ContainsKey(boundNode))
                 _binderFromBoundNode.Add(boundNode, this);
         }
+
+        private T GetBoundNode<T>(SyntaxNode node)
+            where T : BoundNode
+        {
+            BoundNode result;
+            _boundNodeFromSynatxNode.TryGetValue(node, out result);
+            return result as T;
+        }
     }
 }
