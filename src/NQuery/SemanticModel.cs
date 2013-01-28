@@ -29,16 +29,22 @@ namespace NQuery
             return Conversion.Classify(sourceType, targetType);
         }
 
-        public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax wildcardSelectColumn)
+        public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax selectColumn)
         {
-            var boundExpression = _bindingResult.GetBoundNode(wildcardSelectColumn) as BoundWildcardSelectColumn;
+            var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
             return boundExpression == null ? null : boundExpression.Table;
         }
 
-        public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax wildcardSelectColumn)
+        public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
         {
-            var boundExpression = _bindingResult.GetBoundNode(wildcardSelectColumn) as BoundWildcardSelectColumn;
-            return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.Columns;
+            var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
+            return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.TableColumns;
+        }
+
+        public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
+        {
+            var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;
+            return boundOrderByColumn == null ? null : boundOrderByColumn.QueryColumn;
         }
 
         public Symbol GetSymbol(ExpressionSyntax expression)
@@ -137,6 +143,18 @@ namespace NQuery
         {
             var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableReference;
             return result == null ? null : result.TableInstance;
+        }
+
+        public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
+        {
+            var result = _bindingResult.GetBoundNode(selectColumn) as BoundSelectColumn;
+            return result == null ? null : result.Column;
+        }
+
+        public IEnumerable<QueryColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
+        {
+            var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
+            return boundExpression == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundExpression.QueryColumns;
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics()

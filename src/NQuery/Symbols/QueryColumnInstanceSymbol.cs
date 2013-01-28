@@ -6,13 +6,11 @@ namespace NQuery.Symbols
 {
     public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
     {
-        private readonly ExpressionSyntax _syntax;
         private readonly ValueSlot _valueSlot;
 
-        internal QueryColumnInstanceSymbol(string name, ExpressionSyntax syntax, ValueSlot valueSlot)
+        internal QueryColumnInstanceSymbol(string name, ValueSlot valueSlot)
             : base(name)
         {
-            _syntax = syntax;
             _valueSlot = valueSlot;
         }
 
@@ -24,11 +22,6 @@ namespace NQuery.Symbols
         internal override ValueSlot ValueSlot
         {
             get { return _valueSlot; }
-        }
-
-        public ExpressionSyntax Syntax
-        {
-            get { return _syntax; }
         }
     }
 }

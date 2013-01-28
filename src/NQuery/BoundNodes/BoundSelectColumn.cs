@@ -1,20 +1,16 @@
 using System;
 
-using NQuery.Binding;
+using NQuery.Symbols;
 
 namespace NQuery.BoundNodes
 {
     internal sealed class BoundSelectColumn : BoundNode
     {
-        private readonly string _name;
-        private readonly ExpressionSyntax _syntax;
-        private readonly ValueSlot _valueSlot;
+        private readonly QueryColumnInstanceSymbol _column;
 
-        public BoundSelectColumn(string name, ExpressionSyntax syntax, ValueSlot valueSlot)
+        public BoundSelectColumn(QueryColumnInstanceSymbol column)
         {
-            _name = name;
-            _syntax = syntax;
-            _valueSlot = valueSlot;
+            _column = column;
         }
 
         public override BoundNodeKind Kind
@@ -22,19 +18,9 @@ namespace NQuery.BoundNodes
             get { return BoundNodeKind.SelectColumn; }
         }
 
-        public string Name
+        public QueryColumnInstanceSymbol Column
         {
-            get { return _name; }
-        }
-
-        public ExpressionSyntax Syntax
-        {
-            get { return _syntax; }
-        }
-
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
+            get { return _column; }
         }
     }
 }

@@ -463,10 +463,12 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.TopWithTiesRequiresOrderBy());
         //}
 
-        //public static void ReportOrderByColumnPositionIsOutOfRange(this ICollection<Diagnostic> diagnostics, long index)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.OrderByColumnPositionIsOutOfRange(index));
-        //}
+        public static void ReportOrderByColumnPositionIsOutOfRange(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, int position, int numberOfColumns)
+        {
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.OrderByColumnPositionIsOutOfRange, position, numberOfColumns);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.OrderByColumnPositionIsOutOfRange, message);
+            diagnostics.Add(diagnostic);
+        }
 
         public static void ReportWhereClauseMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
         {
@@ -556,10 +558,11 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.GroupByItemDoesNotReferenceAnyColumns());
         //}
 
-        //public static void ReportConstantExpressionInOrderBy(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.ConstantExpressionInOrderBy());
-        //}
+        public static void ReportConstantExpressionInOrderBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.ConstantExpressionInOrderBy, Resources.ConstantExpressionInOrderBy);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportTooManyExpressionsInSelectListOfSubquery(this ICollection<Diagnostic> diagnostics)
         //{

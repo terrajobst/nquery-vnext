@@ -160,7 +160,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Column ref name {0} is ambiguous between {1}..
+        ///   Looks up a localized string similar to Column ref name {0} is ambiguous between {1} and {2}..
         /// </summary>
         internal static string AmbiguousColumnRef {
             get {
@@ -1069,7 +1069,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The ORDER BY position number {0} is out of range of the number of items in the select list..
+        ///   Looks up a localized string similar to The ORDER BY position number {0} is out of range of the number of items in the select list (1 to {1})..
         /// </summary>
         internal static string OrderByColumnPositionIsOutOfRange {
             get {

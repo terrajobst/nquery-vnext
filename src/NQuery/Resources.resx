@@ -154,7 +154,7 @@
     <value>Ambiguous conversions when converting from '{0}' to '{1}'</value>
   </data>
   <data name="AmbiguousColumnRef" xml:space="preserve">
-    <value>Column ref name {0} is ambiguous between {1}.</value>
+    <value>Column ref name {0} is ambiguous between {1} and {2}.</value>
   </data>
   <data name="AmbiguousConstant" xml:space="preserve">
     <value>Constant name {0} is ambiguous between {1}.</value>
@@ -445,7 +445,7 @@
     <value>The number '{0}' is too large.</value>
   </data>
   <data name="OrderByColumnPositionIsOutOfRange" xml:space="preserve">
-    <value>The ORDER BY position number {0} is out of range of the number of items in the select list.</value>
+    <value>The ORDER BY position number {0} is out of range of the number of items in the select list (1 to {1}).</value>
   </data>
   <data name="OrderByExpressionNotAggregatedAndNoGroupBy" xml:space="preserve">
     <value>Column '{0}' is invalid in the ORDER BY clause because it is not contained in an aggregate function and there is no GROUP BY clause.</value>

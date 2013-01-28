@@ -577,8 +577,8 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                var isInvocable = LookupSymbols(name).OfType<FunctionSymbol>().Any() ||
-                                  LookupSymbols(name).OfType<AggregateSymbol>().Any();
+                var isInvocable = LookupSymbols<FunctionSymbol>(name).Any() ||
+                                  LookupSymbols<AggregateSymbol>(name).Any();
                 if (isInvocable)
                     _diagnostics.ReportInvocationRequiresParenthesis(name);
                 else

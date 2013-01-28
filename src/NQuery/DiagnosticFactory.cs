@@ -98,12 +98,6 @@ namespace NQuery
         //    return new Diagnostic(DiagnosticId.TopWithTiesRequiresOrderBy, Resources.TopWithTiesRequiresOrderBy);
         //}
 
-        //public static Diagnostic OrderByColumnPositionIsOutOfRange(long index)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.OrderByColumnPositionIsOutOfRange, index);
-        //    return new Diagnostic(DiagnosticId.OrderByColumnPositionIsOutOfRange, message);
-        //}
-
         //public static Diagnostic SelectExpressionNotAggregatedAndNoGroupBy(ColumnRefBinding columnRefBinding)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.SelectExpressionNotAggregatedAndNoGroupBy, columnRefBinding.GetFullName());
@@ -182,11 +176,6 @@ namespace NQuery
         //public static Diagnostic GroupByItemDoesNotReferenceAnyColumns()
         //{
         //    return new Diagnostic(DiagnosticId.GroupByItemDoesNotReferenceAnyColumns, Resources.GroupByItemDoesNotReferenceAnyColumns);
-        //}
-
-        //public static Diagnostic ConstantExpressionInOrderBy()
-        //{
-        //    return new Diagnostic(DiagnosticId.ConstantExpressionInOrderBy, Resources.ConstantExpressionInOrderBy);
         //}
 
         //public static Diagnostic TooManyExpressionsInSelectListOfSubquery()

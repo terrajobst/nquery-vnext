@@ -262,12 +262,18 @@ namespace NQuery.Binding
         {
             var boundNode = bindMethod(node);
 
-            _boundNodeFromSynatxNode.Add(node, boundNode);
-
-            if (!_binderFromBoundNode.ContainsKey(boundNode))
-                _binderFromBoundNode.Add(boundNode, this);
+            Bind(node, boundNode);
 
             return boundNode;
+        }
+
+        private void Bind<TInput, TResult>(TInput node, TResult boundNode)
+            where TInput : SyntaxNode
+            where TResult : BoundNode
+        {
+            _boundNodeFromSynatxNode.Add(node, boundNode);
+            if (!_binderFromBoundNode.ContainsKey(boundNode))
+                _binderFromBoundNode.Add(boundNode, this);
         }
     }
 }

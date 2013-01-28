@@ -26,11 +26,12 @@ namespace NQuery.BoundNodes
         JoinedTableReference,
         SelectColumn,
         WildcardSelectColumn,
+        OrderByColumn,
         SelectQuery,
         CombinedQuery,
         CommonTableExpression,
         CommonTableExpressionQuery,
         OrderedQuery,
-        TopQuery
+        TopQuery,
     }
 }

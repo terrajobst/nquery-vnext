@@ -319,7 +319,7 @@ namespace NQuery.Binding
                                  ? BoundQueryCombinator.Union
                                  : BoundQueryCombinator.UnionAll;
             var columns = left.OutputColumns
-                              .Select(c => new QueryColumnInstanceSymbol(c.Name, c.Syntax, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                              .Select(c => new QueryColumnInstanceSymbol(c.Name, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                               .ToArray();
 
             return new BoundCombinedQuery(left, combinator, right, columns);
@@ -571,7 +571,7 @@ namespace NQuery.Binding
                     // TODO: Ensure number of columns are identical
                     // TODO: Check that all data types match exactly -- implicit conversions ARE supported here
                     var outputColumns = boundAnchorQuery.OutputColumns
-                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, c.Syntax, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                                                   .ToArray();
 
                     boundAnchorQuery = new BoundCombinedQuery(boundAnchorQuery, BoundQueryCombinator.UnionAll, boundAnchorMember, outputColumns);
@@ -654,9 +654,7 @@ namespace NQuery.Binding
 
             var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns);
 
-            var outputColumns = selectColumns
-                                  .Select(s => new QueryColumnInstanceSymbol(s.Name, s.Syntax, s.ValueSlot))
-                                  .ToArray();
+            var outputColumns = selectColumns.Select(s => s.Column).ToArray();
 
             var orderByClause = fromAwareBinder.BindOrderByClause(outputColumns, orderedQueryNode);
 
@@ -700,7 +698,7 @@ namespace NQuery.Binding
                                         outputColumns);
         }
 
-        private IList<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
+        private IEnumerable<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
         {
             var result = new List<BoundSelectColumn>();
             foreach (var node in nodes)
@@ -709,6 +707,7 @@ namespace NQuery.Binding
                 {
                     case SyntaxKind.ExpressionSelectColumn:
                         var boundColumn = BindExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
+                        Bind(node, boundColumn);
                         result.Add(boundColumn);
                         break;
 
@@ -740,7 +739,9 @@ namespace NQuery.Binding
                 QueryState.ComputedProjections.Add(new ComputedValue(expression, boundExpression, valueSlot));
             }
 
-            return new BoundSelectColumn(name, expression, valueSlot);
+            var queryColumn = new QueryColumnInstanceSymbol(name, valueSlot);
+
+            return new BoundSelectColumn(queryColumn);
         }
 
         private BoundWildcardSelectColumn BindWildcardSelectColumn(WildcardSelectColumnSyntax node)
@@ -807,8 +808,7 @@ namespace NQuery.Binding
 
         private static IEnumerable<BoundSelectColumn> BindSelectColumns(BoundWildcardSelectColumn selectColumn)
         {
-            return from columnInstance in selectColumn.Columns
-                   select new BoundSelectColumn(columnInstance.Name, null, columnInstance.ValueSlot);
+            return selectColumn.QueryColumns.Select(c => new BoundSelectColumn(c));
         }
 
         private BoundTableReference BindFromClause(FromClauseSyntax node)
@@ -896,51 +896,102 @@ namespace NQuery.Binding
             if (node == null)
                 return null;
 
-            // TODO: That is incorrect, because compound expressions must not be matched.
-            // For example, consider this:
-            //
-            //      SELECT  e.FirstName + ' ' + e.LastName AS FullName
-            //      FROM    Employees e
-            //      ORDER   BY FullName, LEN(FullName)
-            //
-            // The first ORDER BY expression should bind against FullName. The second must not.
-            //
-            // However, for IntelliSense purposes we'd like to pretend that the aliases introduced by the select
-            // clause are part of the current scope. It's probaby best to have a separate symbol for those and
-            // change the binding rules so that those symbols aren't considered when binding a name.
             var selectorBinder = CreateLocalBinder(queryColumns);
 
             var boundColumns = new List<BoundOrderByColumn>();
+
+            // Although ORDER BY can contain abitrary expression, there are special rules to how those
+            // expressions relate to the SELECT list of a query:
+            //
+            // (1) By position
+            //     If the selector is a literal integer we'll resolve to a query column by position.
+            //
+            // (2) By name
+            //     If the selector is a NameExpression we'll try to resolve a SELECT column by name.
+            //
+            // (3) By structure
+            //     If the selector matches an expression in the SELECT list, it will bind to it as well.
+            //
+            // If none of the above is true, ORDER BY may compute a new expression that will be used for
+            // ordering the query, but this requires that the query it's applied to is a SELECT query.
+            // In other words it can't be a query combined with UNION, EXCEPT, or INTERSECT.
 
             foreach (var column in node.Columns)
             {
                 var selector = column.ColumnSelector;
                 var isAscending = column.Modifier == null ||
                                   column.Modifier.Kind == SyntaxKind.AscKeyword;
-                var boundSelector = selectorBinder.BindExpression(selector);
-                var boundLiteral = boundSelector as BoundLiteralExpression;
 
-                ValueSlot slot;
+                ValueSlot valueSlot = null;
 
-                if (boundLiteral != null && boundLiteral.Type == typeof (int))
+                var selectorAsLiteral = selector as LiteralExpressionSyntax;
+                var selectorAsName = selector as NameExpressionSyntax;
+
+                // Case (1): Check for positional form.
+
+                if (selectorAsLiteral != null)
                 {
-                    var index = ((int) boundLiteral.Value) - 1;
-                    // TODO: Ensure index is valid
-                    slot = queryColumns[index].ValueSlot;
-                }
-                else
-                {
-                    // TODO: Ensure boundSelector isn't a constant expression.
-                    // TODO: If our input is not a SELECT query, that would be an error.
-
-                    if (!TryGetExistingValue(boundSelector, out slot))
+                    var position = selectorAsLiteral.Value as int?;
+                    if (position != null)
                     {
-                        slot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
-                        QueryState.ComputedProjections.Add(new ComputedValue(selector, boundSelector, slot));
+                        var index = position.Value - 1;
+                        var indexValid = 0 <= index && index < queryColumns.Count;
+                        if (indexValid)
+                        {
+                            valueSlot = queryColumns[index].ValueSlot;
+                        }
+                        else
+                        {
+                            // Report that the given position isn't valid.
+                            _diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Count);
+
+                            // And to avoid cascading errors, we'll bind to the first column in the query,
+                            // which is guaranteed to exist.
+                            valueSlot = queryColumns[0].ValueSlot;
+                        }
                     }
                 }
 
-                var boundColumn = new BoundOrderByColumn(slot, isAscending);
+                // Case (2): Check for query column name.
+
+                else if (selectorAsName != null)
+                {
+                    var columnSymbols = selectorBinder.LookupQueryColumn(selectorAsName.Name).ToArray();
+                    if (columnSymbols.Length > 0)
+                    {
+                        if (columnSymbols.Length > 1)
+                            _diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
+
+                        var columnSymbol = columnSymbols[0];
+
+                        // Since this name isn't bound as a regular expression we simple fake this one up.
+                        // This ensures that this name appears to be bound like any other expression.
+                        Bind(selectorAsName, new BoundNameExpression(columnSymbol));
+
+                        valueSlot = columnSymbol.ValueSlot;
+                    }
+                }
+
+                // Case (3): Bind regular expression.
+
+                if (valueSlot == null)
+                {
+                    var boundSelector = selectorBinder.BindExpression(selector);
+
+                    if (boundSelector is BoundLiteralExpression)
+                        _diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
+
+                    if (!TryGetExistingValue(boundSelector, out valueSlot))
+                    {
+                        // TODO: Ensure we are applied to a SELECT query.
+                        valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+                        QueryState.ComputedProjections.Add(new ComputedValue(selector, boundSelector, valueSlot));
+                    }
+                }
+
+                var queryColumn = queryColumns.SingleOrDefault(c => c.ValueSlot == valueSlot);
+                var boundColumn = new BoundOrderByColumn(queryColumn, valueSlot, isAscending);
+                Bind(column, boundColumn);
                 boundColumns.Add(boundColumn);
             }
 
@@ -1003,15 +1054,27 @@ namespace NQuery.Binding
         }
     }
 
-    internal sealed class BoundOrderByColumn
+    internal sealed class BoundOrderByColumn : BoundNode
     {
+        private readonly QueryColumnInstanceSymbol _queryColumn;
         private readonly ValueSlot _valueSlot;
         private readonly bool _isAscending;
 
-        public BoundOrderByColumn(ValueSlot valueSlot, bool isAscending)
+        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, ValueSlot valueSlot, bool isAscending)
         {
+            _queryColumn = queryColumn;
             _valueSlot = valueSlot;
             _isAscending = isAscending;
+        }
+
+        public override BoundNodeKind Kind
+        {
+            get { return BoundNodeKind.OrderByColumn; }
+        }
+
+        public QueryColumnInstanceSymbol QueryColumn
+        {
+            get { return _queryColumn; }
         }
 
         public ValueSlot ValueSlot
