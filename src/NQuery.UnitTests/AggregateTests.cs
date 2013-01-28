@@ -96,7 +96,7 @@ namespace NQuery.UnitTests
         }
 
         [TestMethod]
-        public void Aggregate_Aggregate_DetectsAmbiguityBetweenCountAggregates()
+        public void Aggregate_DetectsAmbiguityBetweenCountAggregates()
         {
             var dataContext = DataContext.Default.AddAggregates(new AggregateSymbol("Count"));
 

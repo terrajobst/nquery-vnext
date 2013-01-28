@@ -31,7 +31,7 @@ namespace NQuery.UnitTests
             Assert.AreEqual(0, diagnostics.Length);
         }
         [TestMethod]
-        public void In__DetectsTooFewArguments_WhenNoArgumentIsProvided()
+        public void In_DetectsTooFewArguments_WhenNoArgumentIsProvided()
         {
             var syntaxTree = SyntaxTree.ParseExpression("1 IN ()");
             var diagnostics = syntaxTree.GetDiagnostics().ToArray();
