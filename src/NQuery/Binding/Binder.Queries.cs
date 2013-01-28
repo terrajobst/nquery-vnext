@@ -707,7 +707,6 @@ namespace NQuery.Binding
                 {
                     case SyntaxKind.ExpressionSelectColumn:
                         var boundColumn = BindExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
-                        Bind(node, boundColumn);
                         result.Add(boundColumn);
                         break;
 
@@ -725,6 +724,11 @@ namespace NQuery.Binding
         }
 
         private BoundSelectColumn BindExpressionSelectColumn(ExpressionSelectColumnSyntax node)
+        {
+            return Bind(node, BindExpressionSelectColumnInternal);
+        }
+
+        private BoundSelectColumn BindExpressionSelectColumnInternal(ExpressionSelectColumnSyntax node)
         {
             var expression = node.Expression;
             var boundExpression = BindExpression(expression);
