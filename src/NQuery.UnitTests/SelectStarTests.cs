@@ -9,7 +9,7 @@ namespace NQuery.UnitTests
     public class SelectStarTests
     {
         [TestMethod]
-        public void Binder_DisallowsSelectStarWithoutTables()
+        public void SelectStar_Disallowed_WhenNoTablesSpecified()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT *");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
@@ -21,7 +21,7 @@ namespace NQuery.UnitTests
         }
 
         [TestMethod]
-        public void Binder_DisallowsSelectStarWithoutTables_UnlessInExists()
+        public void SelectStar_Disallowed_WhenNoTablesSpecified_UnlessInExists()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'Test' WHERE EXISTS (SELECT *)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
