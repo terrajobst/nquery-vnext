@@ -2,13 +2,13 @@
 
 namespace NQuery.Algebra
 {
-    internal sealed class AlgebraBinaryQueryNode : AlgebraRelation
+    internal sealed class AlgebraCombinedQuery : AlgebraRelation
     {
         private readonly AlgebraRelation _left;
         private readonly AlgebraRelation _right;
         private readonly AlgebraQueryCombinator _combinator;
 
-        public AlgebraBinaryQueryNode(AlgebraRelation left, AlgebraRelation right, AlgebraQueryCombinator combinator)
+        public AlgebraCombinedQuery(AlgebraRelation left, AlgebraRelation right, AlgebraQueryCombinator combinator)
         {
             _left = left;
             _right = right;

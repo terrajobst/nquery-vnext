@@ -131,7 +131,7 @@ namespace NQuery.Algebra
             var left = AlgebrizeQuery(node.Left);
             var right = AlgebrizeQuery(node.Right);
             var combinator = GetQueryCombinator(node.Combinator);
-            return new AlgebraBinaryQueryNode(left, right, combinator);
+            return new AlgebraCombinedQuery(left, right, combinator);
         }
     }
 }
