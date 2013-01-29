@@ -52,25 +52,25 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                _diagnostics.ReportUndeclaredTable(node);
+                Diagnostics.ReportUndeclaredTable(node);
 
                 var badTableSymbol = new BadTableSymbol(node.TableName.ValueText);
                 var badAlias = node.Alias == null
                                    ? badTableSymbol.Name
                                    : node.Alias.Identifier.ValueText;
-                var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol, _valueSlotFactory);
+                var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol, ValueSlotFactory);
                 return new BoundNamedTableReference(errorInstance);
             }
 
             if (symbols.Length > 1)
-                _diagnostics.ReportAmbiguousTable(node.TableName, symbols);
+                Diagnostics.ReportAmbiguousTable(node.TableName, symbols);
 
             var table = symbols[0];
             var alias = node.Alias == null
                             ? table.Name
                             : node.Alias.Identifier.ValueText;
 
-            var tableInstance = new TableInstanceSymbol(alias, table, _valueSlotFactory);
+            var tableInstance = new TableInstanceSymbol(alias, table, ValueSlotFactory);
             return new BoundNamedTableReference(tableInstance);
         }
 
@@ -90,7 +90,7 @@ namespace NQuery.Binding
             var condition = binder.BindExpression(node.Condition);
 
             if (condition.Type.IsNonBoolean())
-                _diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
+                Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
             return new BoundJoinedTableReference(BoundJoinType.Inner, left, right, condition);
         }
@@ -110,7 +110,7 @@ namespace NQuery.Binding
             var condition = binder.BindExpression(node.Condition);
 
             if (condition.Type.IsNonBoolean())
-                _diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
+                Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
             return new BoundJoinedTableReference(joinType, left, right, condition);
         }

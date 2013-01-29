@@ -84,6 +84,7 @@
     <Compile Include="Binding\GroupByClauseBinder.cs" />
     <Compile Include="Binding\JoinConditionBinder.cs" />
     <Compile Include="Binding\QueryBinder.cs" />
+    <Compile Include="Binding\SharedBinderState.cs" />
     <Compile Include="Binding\ValueSlot.cs" />
     <Compile Include="Binding\ValueSlotFactory.cs" />
     <Compile Include="Binding\WhereClauseBinder.cs" />

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using NQuery.BoundNodes;
 using NQuery.Symbols;
 
 namespace NQuery.Binding
@@ -13,8 +12,8 @@ namespace NQuery.Binding
         private readonly DataContext _dataContext;
         private readonly SymbolTable _localSymbols;
 
-        public GlobalBinder(Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory, DataContext dataContext)
-            : base(null, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
+        public GlobalBinder(SharedBinderState sharedBinderState, DataContext dataContext)
+            : base(sharedBinderState, null)
         {
             var symbols = dataContext.Tables.Cast<Symbol>()
                                      .Concat(dataContext.Functions)

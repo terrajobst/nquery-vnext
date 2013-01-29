@@ -9,19 +9,13 @@ namespace NQuery.Binding
 {
     internal abstract partial class Binder
     {
+        private readonly SharedBinderState _sharedBinderState;
         private readonly Binder _parent;
-        private readonly Dictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
-        private readonly Dictionary<BoundNode, Binder> _binderFromBoundNode;
-        private readonly List<Diagnostic> _diagnostics;
-        private readonly ValueSlotFactory _valueSlotFactory;
 
-        protected Binder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory)
+        protected Binder(SharedBinderState sharedBinderState, Binder parent)
         {
             _parent = parent;
-            _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
-            _binderFromBoundNode = binderFromBoundNode;
-            _diagnostics = diagnostics;
-            _valueSlotFactory = valueSlotFactory;
+            _sharedBinderState = sharedBinderState;
         }
 
         public Binder Parent
@@ -29,9 +23,14 @@ namespace NQuery.Binding
             get { return _parent; }
         }
 
-        protected List<Diagnostic> Diagnostics
+        private List<Diagnostic> Diagnostics
         {
-            get { return _diagnostics; }
+            get { return _sharedBinderState.Diagnostics; }
+        }
+
+        private ValueSlotFactory ValueSlotFactory
+        {
+            get { return _sharedBinderState.ValueSlotFactory; }
         }
 
         protected virtual bool InWhereClause
@@ -56,7 +55,7 @@ namespace NQuery.Binding
 
         private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)
         {
-            return new LocalBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory, symbols);
+            return new LocalBinder(_sharedBinderState, this, symbols);
         }
 
         private Binder CreateLocalBinder(params Symbol[] symbols)
@@ -69,38 +68,35 @@ namespace NQuery.Binding
             var leftTables = left.GetDeclaredTableInstances();
             var rightTables = right.GetDeclaredTableInstances();
             var tables = leftTables.Concat(rightTables);
-            return new JoinConditionBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory, tables);
+            return new JoinConditionBinder(_sharedBinderState, this, tables);
         }
 
         private Binder CreateQueryBinder()
         {
-            return new QueryBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory);
+            return new QueryBinder(_sharedBinderState, this);
         }
 
         private Binder CreateGroupByClauseBinder()
         {
-            return new GroupByClauseBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory);
+            return new GroupByClauseBinder(_sharedBinderState, this);
         }
 
         private Binder CreateWhereClauseBinder()
         {
-            return new WhereClauseBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory);
+            return new WhereClauseBinder(_sharedBinderState, this);
         }
 
         private Binder CreateAggregateArgumentBinder()
         {
-            return new AggregateArgumentBinder(this, _boundNodeFromSynatxNode, _binderFromBoundNode, _diagnostics, _valueSlotFactory);
+            return new AggregateArgumentBinder(_sharedBinderState, this);
         }
 
         public static BindingResult Bind(CompilationUnitSyntax compilationUnit, DataContext dataContext)
         {
-            var boundNodeFromSynatxNode = new Dictionary<SyntaxNode, BoundNode>();
-            var binderFromBoundNode = new Dictionary<BoundNode, Binder>();
-            var diagnostics = new List<Diagnostic>();
-            var valueSlotFactory = new ValueSlotFactory();
-            var binder = new GlobalBinder(boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory, dataContext);
+            var sharedBinderState = new SharedBinderState();
+            var binder = new GlobalBinder(sharedBinderState, dataContext);
             var boundRoot = binder.BindRoot(compilationUnit.Root);
-            return new BindingResult(compilationUnit, boundRoot, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics);
+            return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSynatxNode, sharedBinderState.BinderFromBoundNode, sharedBinderState.Diagnostics);
         }
 
         private BoundNode BindRoot(SyntaxNode root)
@@ -131,16 +127,16 @@ namespace NQuery.Binding
             where TInput : SyntaxNode
             where TResult : BoundNode
         {
-            _boundNodeFromSynatxNode.Add(node, boundNode);
-            if (!_binderFromBoundNode.ContainsKey(boundNode))
-                _binderFromBoundNode.Add(boundNode, this);
+            _sharedBinderState.BoundNodeFromSynatxNode.Add(node, boundNode);
+            if (!_sharedBinderState.BinderFromBoundNode.ContainsKey(boundNode))
+                _sharedBinderState.BinderFromBoundNode.Add(boundNode, this);
         }
 
         private T GetBoundNode<T>(SyntaxNode node)
             where T : BoundNode
         {
             BoundNode result;
-            _boundNodeFromSynatxNode.TryGetValue(node, out result);
+            _sharedBinderState.BoundNodeFromSynatxNode.TryGetValue(node, out result);
             return result as T;
         }
     }

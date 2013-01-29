@@ -238,7 +238,7 @@ namespace NQuery.Binding
                                           select t.Item1;
 
             foreach (var invalidColumnReference in invalidColumnReferences)
-                _diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
+                Diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
         }
 
         private bool IsGroupedOrAggregated(ExpressionSyntax expressionSyntax)
@@ -333,7 +333,7 @@ namespace NQuery.Binding
                                  ? BoundQueryCombinator.Union
                                  : BoundQueryCombinator.UnionAll;
             var columns = left.OutputColumns
-                              .Select(c => new QueryColumnInstanceSymbol(c.Name, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                              .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                               .ToArray();
 
             return new BoundCombinedQuery(left, combinator, right, columns);
@@ -412,7 +412,7 @@ namespace NQuery.Binding
                 var tableSymbol = boundCommonTableExpression.TableSymbol;
 
                 if (!uniqueTableNames.Add(tableSymbol.Name))
-                    _diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.Name);
+                    Diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.Name);
 
                 currentBinder = currentBinder.CreateLocalBinder(tableSymbol);
 
@@ -457,7 +457,7 @@ namespace NQuery.Binding
                 for (var i = 0; i < queryColumns.Count; i++)
                 {
                     if (string.IsNullOrEmpty(queryColumns[i].Name))
-                        _diagnostics.ReportNoColumnAliasSpecified(commonTableExpression.Name, i);
+                        Diagnostics.ReportNoColumnAliasSpecified(commonTableExpression.Name, i);
                 }
             }
             else
@@ -470,11 +470,11 @@ namespace NQuery.Binding
 
                 if (actualCount > specifiedCount)
                 {
-                    _diagnostics.ReportCteHasMoreColumnsThanSpecified(commonTableExpression.Name);
+                    Diagnostics.ReportCteHasMoreColumnsThanSpecified(commonTableExpression.Name);
                 }
                 else if (actualCount < specifiedCount)
                 {
-                    _diagnostics.ReportCteHasFewerColumnsThanSpecified(commonTableExpression.Name);
+                    Diagnostics.ReportCteHasFewerColumnsThanSpecified(commonTableExpression.Name);
                 }
             }
 
@@ -505,7 +505,7 @@ namespace NQuery.Binding
 
             var uniqueColumnNames = new HashSet<string>();
             foreach (var column in columns.Where(c => !uniqueColumnNames.Add(c.Name)))
-                _diagnostics.ReportCteHasDuplicateColumnName(commonTableExpression.Name, column.Name);
+                Diagnostics.ReportCteHasDuplicateColumnName(commonTableExpression.Name, column.Name);
 
             // Given the bound query and the column list, we can now produce a CTE table symbol.
 
@@ -526,7 +526,7 @@ namespace NQuery.Binding
             var rootQuery = commonTableExpression.Query as UnionQuerySyntax;
             if (rootQuery == null || rootQuery.AllKeyword == null)
             {
-                _diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
+                Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
 
                 if (rootQuery == null)
                     return BindCommonTableExpressionNonRecursive(commonTableExpression);
@@ -566,7 +566,7 @@ namespace NQuery.Binding
 
             if (anchorMembers.Count == 0)
             {
-                _diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.Name);
+                Diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.Name);
                 return BindCommonTableExpressionNonRecursive(commonTableExpression);
             }
 
@@ -585,7 +585,7 @@ namespace NQuery.Binding
                     // TODO: Ensure number of columns are identical
                     // TODO: Check that all data types match exactly -- implicit conversions ARE supported here
                     var outputColumns = boundAnchorQuery.OutputColumns
-                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, _valueSlotFactory.CreateTemporaryValueSlot(c.Type)))
+                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                                                   .ToArray();
 
                     boundAnchorQuery = new BoundCombinedQuery(boundAnchorQuery, BoundQueryCombinator.UnionAll, boundAnchorMember, outputColumns);
@@ -753,7 +753,7 @@ namespace NQuery.Binding
             ValueSlot valueSlot;
             if (!TryGetExistingValue(boundExpression, out valueSlot))
             {
-                valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+                valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
                 QueryState.ComputedProjections.Add(new ComputedValue(expression, boundExpression, valueSlot));
             }
 
@@ -780,12 +780,12 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                _diagnostics.ReportUndeclaredTableInstance(tableName);
+                Diagnostics.ReportUndeclaredTableInstance(tableName);
                 return new BoundWildcardSelectColumn(null, new TableColumnInstanceSymbol[0]);
             }
 
             if (symbols.Length > 1)
-                _diagnostics.ReportAmbiguousName(tableName, symbols);
+                Diagnostics.ReportAmbiguousName(tableName, symbols);
 
             var tableInstance = symbols[0];
             var columnInstances = tableInstance.ColumnInstances;
@@ -817,7 +817,7 @@ namespace NQuery.Binding
 
                 var isInExists = firstRealParent is ExistsSubselectSyntax;
                 if (!isInExists)
-                    _diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
+                    Diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
             }
 
             var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToArray();
@@ -862,7 +862,7 @@ namespace NQuery.Binding
             var predicate = binder.BindExpression(node.Predicate);
 
             if (predicate.Type.IsNonBoolean())
-                _diagnostics.ReportWhereClauseMustEvaluateToBool(node.Predicate.Span);
+                Diagnostics.ReportWhereClauseMustEvaluateToBool(node.Predicate.Span);
 
             return predicate;
         }
@@ -884,7 +884,7 @@ namespace NQuery.Binding
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
-                    valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+                    valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
@@ -904,7 +904,7 @@ namespace NQuery.Binding
             var predicate = BindExpression(node.Predicate);
 
             if (predicate.Type.IsNonBoolean())
-                _diagnostics.ReportHavingClauseMustEvaluateToBool(node.Predicate.Span);
+                Diagnostics.ReportHavingClauseMustEvaluateToBool(node.Predicate.Span);
 
             return predicate;
         }
@@ -961,7 +961,7 @@ namespace NQuery.Binding
                         else
                         {
                             // Report that the given position isn't valid.
-                            _diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Count);
+                            Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Count);
 
                             // And to avoid cascading errors, we'll bind to the first column in the query,
                             // which is guaranteed to exist.
@@ -978,7 +978,7 @@ namespace NQuery.Binding
                     if (columnSymbols.Length > 0)
                     {
                         if (columnSymbols.Length > 1)
-                            _diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
+                            Diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
 
                         var columnSymbol = columnSymbols[0];
 
@@ -997,12 +997,12 @@ namespace NQuery.Binding
                     var boundSelector = selectorBinder.BindExpression(selector);
 
                     if (boundSelector is BoundLiteralExpression)
-                        _diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
+                        Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
 
                     if (!TryGetExistingValue(boundSelector, out valueSlot))
                     {
                         // TODO: Ensure we are applied to a SELECT query.
-                        valueSlot = _valueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+                        valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
                         QueryState.ComputedProjections.Add(new ComputedValue(selector, boundSelector, valueSlot));
                     }
                 }

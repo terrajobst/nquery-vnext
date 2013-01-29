@@ -15,7 +15,7 @@ namespace NQuery.Binding
             {
                 var type = boundCaseLabels[i].Condition.Type;
                 if (!type.IsError() && type != typeof(bool))
-                    _diagnostics.ReportWhenMustEvaluateToBool(caseLabels[i].WhenExpression.Span);
+                    Diagnostics.ReportWhenMustEvaluateToBool(caseLabels[i].WhenExpression.Span);
             }
         }
 
@@ -25,7 +25,7 @@ namespace NQuery.Binding
             if (type != null)
                 return type;
 
-            _diagnostics.ReportUndeclaredType(typeName);
+            Diagnostics.ReportUndeclaredType(typeName);
             return TypeFacts.Unknown;
         }
 
@@ -134,9 +134,9 @@ namespace NQuery.Binding
             if (!sourceType.IsError() && !targetType.IsError())
             {
                 if (!conversion.Exists)
-                    _diagnostics.ReportCannotConvert(errorSpan, sourceType, targetType);
+                    Diagnostics.ReportCannotConvert(errorSpan, sourceType, targetType);
                 else if (conversion.ConversionMethods.Count > 1)
-                    _diagnostics.ReportAmbiguousConversion(errorSpan, sourceType, targetType);
+                    Diagnostics.ReportAmbiguousConversion(errorSpan, sourceType, targetType);
             }
 
             return new BoundConversionExpression(expression, targetType, conversion);
@@ -282,11 +282,11 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportCannotApplyUnaryOperator(errorSpan, operatorKind, expression.Type);
+                    Diagnostics.ReportCannotApplyUnaryOperator(errorSpan, operatorKind, expression.Type);
                 }
                 else
                 {
-                    _diagnostics.ReportAmbiguousUnaryOperator(errorSpan, operatorKind, expression.Type);
+                    Diagnostics.ReportAmbiguousUnaryOperator(errorSpan, operatorKind, expression.Type);
                 }
             }
 
@@ -337,11 +337,11 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportCannotApplyBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportCannotApplyBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
                 }
                 else
                 {
-                    _diagnostics.ReportAmbiguousBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportAmbiguousBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
                 }
             }
 
@@ -549,14 +549,14 @@ namespace NQuery.Binding
 
             if (symbols.Length == 0)
             {
-                _diagnostics.ReportUndeclaredVariable(node);
+                Diagnostics.ReportUndeclaredVariable(node);
 
                 var badVariableSymbol = new BadVariableSymbol(node.Name.ValueText);
                 return new BoundVariableExpression(badVariableSymbol);
             }
 
             if (symbols.Length > 1)
-                _diagnostics.ReportAmbiguousVariable(node.Name);
+                Diagnostics.ReportAmbiguousVariable(node.Name);
 
             var variableSymbol = symbols[0];
             return new BoundVariableExpression(variableSymbol);
@@ -580,15 +580,15 @@ namespace NQuery.Binding
                 var isInvocable = LookupSymbols<FunctionSymbol>(name).Any() ||
                                   LookupSymbols<AggregateSymbol>(name).Any();
                 if (isInvocable)
-                    _diagnostics.ReportInvocationRequiresParenthesis(name);
+                    Diagnostics.ReportInvocationRequiresParenthesis(name);
                 else
-                    _diagnostics.ReportColumnTableOrVariableNotDeclared(name);
+                    Diagnostics.ReportColumnTableOrVariableNotDeclared(name);
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol);
             }
 
             if (symbols.Length > 1)
-                _diagnostics.ReportAmbiguousName(name, symbols);
+                Diagnostics.ReportAmbiguousName(name, symbols);
 
             var symbol = symbols[0];
 
@@ -611,7 +611,7 @@ namespace NQuery.Binding
                 var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
                 var hasNoType = tableInstance.Table.Type.IsMissing();
                 if (!isColumnAccess && hasNoType)
-                    _diagnostics.ReportInvalidRowReference(name);
+                    Diagnostics.ReportInvalidRowReference(name);
             }
 
             return new BoundNameExpression(symbol, symbols);
@@ -649,15 +649,15 @@ namespace NQuery.Binding
             {
                 var hasMethods = LookupMethod(target.Type, name).Any();
                 if (hasMethods)
-                    _diagnostics.ReportInvocationRequiresParenthesis(name);
+                    Diagnostics.ReportInvocationRequiresParenthesis(name);
                 else
-                    _diagnostics.ReportUndeclaredProperty(node, target.Type);
+                    Diagnostics.ReportUndeclaredProperty(node, target.Type);
                 var errorSymbol = new BadSymbol(name.ValueText);
                 return new BoundNameExpression(errorSymbol);
             }
 
             if (propertySymbols.Length > 1)
-                _diagnostics.ReportAmbiguousProperty(name);
+                Diagnostics.ReportAmbiguousProperty(name);
 
             var propertySymbol = propertySymbols[0];
             return new BoundPropertyAccessExpression(target, propertySymbol);
@@ -670,13 +670,13 @@ namespace NQuery.Binding
             if (columnInstances.Length == 0)
             {
                 // TODO: Check whether we can resolve to a method and if so give error ReportInvocationRequiresParenthesis
-                _diagnostics.ReportUndeclaredColumn(node, tableInstance);
+                Diagnostics.ReportUndeclaredColumn(node, tableInstance);
                 var errorSymbol = new BadSymbol(columnName.ValueText);
                 return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
             }
 
             if (columnInstances.Length > 1)
-                _diagnostics.ReportAmbiguousColumnInstance(columnName, columnInstances);
+                Diagnostics.ReportAmbiguousColumnInstance(columnName, columnInstances);
 
             var columnInstance = columnInstances.First();
             return new BoundNameExpression(columnInstance, columnInstances);
@@ -687,14 +687,14 @@ namespace NQuery.Binding
             var aggregates = LookupAggregate(node.Name).ToArray();
             if (aggregates.Length == 0)
             {
-                _diagnostics.ReportUndeclaredAggregate(node.Name);
+                Diagnostics.ReportUndeclaredAggregate(node.Name);
 
                 var badSymbol = new BadSymbol(node.Name.ValueText);
                 return new BoundNameExpression(badSymbol);
             }
 
             if (aggregates.Length > 1)
-                _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+                Diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
 
             var aggregate = aggregates[0];
             var argument = new BoundLiteralExpression(0);
@@ -716,12 +716,12 @@ namespace NQuery.Binding
                     if (funcionCandidate != null)
                     {
                         var symbols = new Symbol[] {aggregates[0], funcionCandidate};
-                        _diagnostics.ReportAmbiguousName(node.Name, symbols);
+                        Diagnostics.ReportAmbiguousName(node.Name, symbols);
                     }
                     else
                     {
                         if (aggregates.Length > 1)
-                            _diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+                            Diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
 
                         var aggregate = aggregates[0];
                         return BindAggregateInvocationExpression(node, aggregate);
@@ -746,14 +746,14 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportUndeclaredFunction(node, argumentTypes);
+                    Diagnostics.ReportUndeclaredFunction(node, argumentTypes);
                     var errorSymbol = new BadSymbol(name.ValueText);
                     return new BoundNameExpression(errorSymbol);
                 }
 
                 var symbol1 = result.Selected.Signature.Symbol;
                 var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
-                _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
+                Diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
             // Convert all arguments (if necessary)
@@ -776,9 +776,8 @@ namespace NQuery.Binding
         private BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
         {
             var affectedQueryScopes = aggregate.DescendantNodes()
-                                               .Where(n => _boundNodeFromSynatxNode.ContainsKey(n))
-                                               .Select(n => _boundNodeFromSynatxNode[n])
-                                               .OfType<BoundNameExpression>()
+                                               .Select(GetBoundNode<BoundNameExpression>)
+                                               .Where(n => n != null)
                                                .Select(b => b.Symbol)
                                                .OfType<TableColumnInstanceSymbol>()
                                                .Select(c => FindQueryState(c.TableInstance))
@@ -787,21 +786,21 @@ namespace NQuery.Binding
                                                .ToArray();
 
             if (affectedQueryScopes.Length > 1)
-                _diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateContainsColumnsFromDifferentQueries, "AggregateContainsColumnsFromDifferentQueries"));
+                Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateContainsColumnsFromDifferentQueries, "AggregateContainsColumnsFromDifferentQueries"));
 
             var queryState = affectedQueryScopes.DefaultIfEmpty(QueryState)
                                                 .First();
 
             if (queryState == null)
             {
-                _diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInvalidInCurrentContext, "AggregateInvalidInCurrentContext"));
+                Diagnostics.Add(new Diagnostic(aggregate.Span, DiagnosticId.AggregateInvalidInCurrentContext, "AggregateInvalidInCurrentContext"));
             }
             else
             {
                 var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
                 if (existingSlot == null)
                 {
-                    var slot = _valueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
+                    var slot = ValueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
                     queryState.ComputedAggregates.Add(new ComputedValue(aggregate, boundAggregate, slot));
                 }
             }
@@ -848,14 +847,14 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    _diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
+                    Diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
                     var errorSymbol = new BadSymbol(name.ValueText);
                     return new BoundNameExpression(errorSymbol);
                 }
 
                 var symbol1 = result.Selected.Signature.Symbol;
                 var symbol2 = result.Candidates.First(c => c.IsSuitable && c.Signature.Symbol != symbol1).Signature.Symbol;
-                _diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
+                Diagnostics.ReportAmbiguousInvocation(node.Span, symbol1, symbol2, argumentTypes);
             }
 
             // Convert all arguments (if necessary)
@@ -918,9 +917,9 @@ namespace NQuery.Binding
             if (result.Best == null)
             {
                 if (result.Selected == null)
-                    _diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportCannotApplyBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
                 else
-                    _diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportAmbiguousBinaryOperator(node.Span, operatorKind, left.Type, right.Type);
             }
 
             var convertedLeft = BindArgument(left, result, 0);

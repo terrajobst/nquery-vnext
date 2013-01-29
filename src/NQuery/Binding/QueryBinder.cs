@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-
-using NQuery.BoundNodes;
 
 namespace NQuery.Binding
 {
@@ -9,8 +6,8 @@ namespace NQuery.Binding
     {
         private readonly QueryState _queryState;
 
-        public QueryBinder(Binder parent, Dictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, Dictionary<BoundNode, Binder> binderFromBoundNode, List<Diagnostic> diagnostics, ValueSlotFactory valueSlotFactory)
-            : base(parent, boundNodeFromSynatxNode, binderFromBoundNode, diagnostics, valueSlotFactory)
+        public QueryBinder(SharedBinderState sharedBinderState, Binder parent)
+            : base(sharedBinderState, parent)
         {
             _queryState = new QueryState(parent.QueryState);
         }
