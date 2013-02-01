@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 
+using NQuery.Syntax;
+
 namespace NQuery.Authoring.Completion
 {
     [Export(typeof(ICompletionProvider))]

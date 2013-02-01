@@ -4,6 +4,8 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NQuery.Syntax;
+
 namespace NQuery.UnitTests
 {
     [TestClass]

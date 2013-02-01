@@ -1,7 +1,5 @@
 using System;
 
-using NQuery.Symbols;
-
 namespace NQuery.Authoring.Completion
 {
     public sealed class CompletionItem

@@ -1,8 +1,6 @@
 using System;
 using System.Windows.Media;
 
-using NQuery.Symbols;
-
 namespace NQuery.Authoring.Wpf
 {
     public static class NQueryGlyphServiceExtensions

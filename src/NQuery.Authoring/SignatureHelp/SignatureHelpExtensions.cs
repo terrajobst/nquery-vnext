@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using NQuery.Symbols;
+using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {

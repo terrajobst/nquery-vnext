@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using NQuery.Runtime;
+using NQuery.Hosting;
 using NQuery.Symbols;
 
 namespace NQuery

@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.Composition;
 
 using NQuery.Symbols;
+using NQuery.Syntax;
 
 namespace NQuery.Authoring.QuickInfo
 {

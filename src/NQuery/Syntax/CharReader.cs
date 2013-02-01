@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery
+namespace NQuery.Syntax
 {
     internal sealed class CharReader
     {

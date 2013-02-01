@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace NQuery
+namespace NQuery.Syntax
 {
     // TODO: Do we need this element at all?
     public sealed class GroupByColumnSyntax : SyntaxNode

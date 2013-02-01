@@ -1,7 +1,5 @@
 using System;
 
-using NQuery.Binding;
-
 namespace NQuery.Symbols
 {
     public sealed class BadTableSymbol : TableSymbol

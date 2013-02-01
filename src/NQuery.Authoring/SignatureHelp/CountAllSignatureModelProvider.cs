@@ -3,6 +3,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 
 using NQuery.Symbols;
+using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {

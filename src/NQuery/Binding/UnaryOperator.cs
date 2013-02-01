@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using NQuery.Runtime;
+using NQuery.Symbols;
 
 namespace NQuery.Binding
 {

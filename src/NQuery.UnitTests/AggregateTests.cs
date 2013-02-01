@@ -3,8 +3,9 @@ using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using NQuery.Runtime;
+using NQuery.Hosting;
 using NQuery.Symbols;
+using NQuery.Syntax;
 
 namespace NQuery.UnitTests
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 using NQuery.Binding;
-using NQuery.BoundNodes;
 
 namespace NQuery.Symbols
 {

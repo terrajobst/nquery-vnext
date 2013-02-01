@@ -1,6 +1,6 @@
 using System;
 
-using NQuery.BoundNodes;
+using NQuery.Binding;
 
 namespace NQuery.Algebra
 {

@@ -1,8 +1,6 @@
 using System;
 using System.Reflection;
 
-using NQuery.Symbols;
-
 namespace NQuery.Binding
 {
     internal sealed class UnaryOperatorSignature : Signature

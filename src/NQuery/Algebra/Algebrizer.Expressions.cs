@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NQuery.Binding;
-using NQuery.BoundNodes;
 using NQuery.Symbols;
 
 namespace NQuery.Algebra

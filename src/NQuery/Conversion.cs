@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 
-using NQuery.Binding;
 using NQuery.Symbols;
 
 namespace NQuery

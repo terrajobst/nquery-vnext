@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using NQuery.BoundNodes;
-
 namespace NQuery.Binding
 {
     internal sealed class BindingResult

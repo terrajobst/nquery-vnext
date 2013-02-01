@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.Composition;
 
+using NQuery.Syntax;
+
 namespace NQuery.Authoring.QuickInfo
 {
     [Export(typeof (IQuickInfoModelProvider))]

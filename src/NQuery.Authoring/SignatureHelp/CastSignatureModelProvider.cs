@@ -2,6 +2,8 @@ using System;
 using System.ComponentModel.Composition;
 using System.Linq;
 
+using NQuery.Syntax;
+
 namespace NQuery.Authoring.SignatureHelp
 {
     [Export(typeof(ISignatureModelProvider))]

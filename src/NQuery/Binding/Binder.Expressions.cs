@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using NQuery.BoundNodes;
 using NQuery.Symbols;
+using NQuery.Syntax;
 
 namespace NQuery.Binding
 {

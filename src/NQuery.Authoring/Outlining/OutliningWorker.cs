@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using NQuery.Syntax;
+
 namespace NQuery.Authoring.Outlining
 {
     internal sealed class OutliningWorker
