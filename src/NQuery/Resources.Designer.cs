@@ -10,8 +10,8 @@
 
 namespace NQuery {
     using System;
-
-
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -23,15 +23,15 @@ namespace NQuery {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
-
+        
         private static global::System.Resources.ResourceManager resourceMan;
-
+        
         private static global::System.Globalization.CultureInfo resourceCulture;
-
+        
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal Resources() {
         }
-
+        
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
@@ -45,7 +45,7 @@ namespace NQuery {
                 return resourceMan;
             }
         }
-
+        
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
@@ -59,7 +59,7 @@ namespace NQuery {
                 resourceCulture = value;
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot perform aggregate function &apos;{1}&apos; on an expression containing an aggregate (&apos;{2}&apos;): {0}..
         /// </summary>
@@ -68,7 +68,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateCannotContainAggregate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot perform aggregate function on an expression containing a subquery: {0}..
         /// </summary>
@@ -77,7 +77,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateCannotContainSubquery", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Multiple columns are specified in aggregated expression &apos;{0}&apos; containing an outer reference. If an expression being aggregated contains an outer reference, then that outer reference must be the only column referenced in the expression..
         /// </summary>
@@ -86,7 +86,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateContainsColumnsFromDifferentQueries", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The aggregate operation &apos;{0}&apos; cannot take a &apos;{1}&apos; data type as an argument..
         /// </summary>
@@ -95,7 +95,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateDoesNotSupportType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot use an aggregate or a subquery in an expression used for the group by list of a GROUP BY clause..
         /// </summary>
@@ -104,7 +104,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateInGroupBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to An aggregate cannot appear in an ON clause unless it is in a subquery contained in a HAVING clause or select list, and the column being aggregated is an outer reference..
         /// </summary>
@@ -113,7 +113,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateInOn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aggregation expression &apos;{0}&apos; not valid in this context..
         /// </summary>
@@ -122,7 +122,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateInvalidInCurrentContext", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to An aggregate may not appear in the WHERE clause unless it is in a subquery contained in a HAVING clause or a select list, and the column being aggregated is an outer reference..
         /// </summary>
@@ -131,7 +131,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AggregateInWhere", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to All columns in &apos;{0}&apos; must belong to the same table..
         /// </summary>
@@ -140,7 +140,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AllColumnsMustBelongToSameTable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aggregate name &apos;{0}&apos; is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
@@ -149,7 +149,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousAggregate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Binary operator &apos;{0}&apos; invocation on types &apos;{1}&apos; and &apos;{2}&apos; is ambiguous..
         /// </summary>
@@ -158,7 +158,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousBinaryOperator", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column ref name {0} is ambiguous between {1}..
         /// </summary>
@@ -167,7 +167,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousColumnRef", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Constant name {0} is ambiguous between {1}..
         /// </summary>
@@ -176,7 +176,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousConstant", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Ambiguous conversions when converting from &apos;{0}&apos; to &apos;{1}&apos;.
         /// </summary>
@@ -185,7 +185,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousConversion", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invocation with argument types &apos;{2}&apos; is ambiguous between &apos;{0}&apos; and &apos;{1}&apos;..
         /// </summary>
@@ -194,7 +194,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousInvocation", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invocation is ambiguous between &apos;{0}&apos; and &apos;{1}&apos;..
         /// </summary>
@@ -203,7 +203,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousInvocationNoArgs", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Property &apos;{0}&apos; is ambiguous..
         /// </summary>
@@ -212,7 +212,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousProperty", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Name &apos;{0}&apos; is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
@@ -221,7 +221,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousReference", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Table name {0} is ambiguous between &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
@@ -230,7 +230,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousTable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Table ref name {0} is ambiguous between {1}..
         /// </summary>
@@ -239,7 +239,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousTableRef", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Type reference &apos;{0}&apos; is ambiguous between 1}..
         /// </summary>
@@ -248,7 +248,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Unary operator &apos;{0}&apos; invocation on type &apos;{1}&apos; is ambiguous..
         /// </summary>
@@ -257,7 +257,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousUnaryOp", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Variable &apos;{0}&apos; is ambiguous..
         /// </summary>
@@ -266,7 +266,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AmbiguousVariable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Argument must be of type &apos;{0}&apos;..
         /// </summary>
@@ -275,7 +275,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ArgMustBeOfType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Array argument &apos;{0}&apos; must have same size as &apos;{1}&apos;..
         /// </summary>
@@ -284,7 +284,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ArgumentArrayMustHaveSameSize", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Array must not be empty..
         /// </summary>
@@ -293,7 +293,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ArgumentArrayMustNotBeEmpty", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Argument &apos;{0}&apos; is out-of-range ({2}-{3}), actual value was {1}..
         /// </summary>
@@ -302,7 +302,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ArgumentOutOfRange", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aggregation modifier &apos;*&apos; not allowed in function call &apos;{0}&apos;..
         /// </summary>
@@ -311,7 +311,7 @@ namespace NQuery {
                 return ResourceManager.GetString("AsteriskModifierNotAllowed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Binary operator &apos;{0} {1} {2}&apos; threw an exception: {6}{7}Operator method: &apos;{3}&apos;. ArgumentList: &apos;{4}&apos;, &apos;{5}&apos;..
         /// </summary>
@@ -320,7 +320,7 @@ namespace NQuery {
                 return ResourceManager.GetString("BinaryOperatorFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A binding with the same name &apos;{0}&apos; already exists in this collection..
         /// </summary>
@@ -329,7 +329,7 @@ namespace NQuery {
                 return ResourceManager.GetString("BindingWithSameNameAlreadyInCollection", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot apply binary operator &apos;{0}&apos; on types &apos;{1}&apos; and &apos;{2}&apos;..
         /// </summary>
@@ -338,7 +338,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CannotApplyBinaryOp", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot apply unary operator &apos;{0}&apos; on type &apos;{1}&apos;..
         /// </summary>
@@ -347,7 +347,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CannotApplyUnaryOperator", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot convert type &apos;{0}&apos; to &apos;{1}&apos;..
         /// </summary>
@@ -356,7 +356,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CannotConvert", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot evaluate constant expression: {0}.
         /// </summary>
@@ -365,7 +365,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CannotFoldConstants", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Could not load assembly &apos;{0}&apos;: {1}.
         /// </summary>
@@ -374,7 +374,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CannotLoadTypeAssembly", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Casting operator threw an exception..
         /// </summary>
@@ -383,7 +383,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CastingOperatorFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Child column &apos;{0}&apos; in table &apos;{1}&apos; not found..
         /// </summary>
@@ -392,7 +392,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ChildColumnNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to childColumns must not contain columns of different tables..
         /// </summary>
@@ -401,7 +401,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ChildColumnsMustNotContainColumnsOfOtherTables", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Child table must exist in data context..
         /// </summary>
@@ -410,7 +410,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ChildTableMustExistInDataContext", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot provide code assistance: {0}.
         /// </summary>
@@ -419,7 +419,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CodeAssistanceFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ColumnBinding.GetUnknown() threw an exception..
         /// </summary>
@@ -428,7 +428,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ColumnBindingGetValueFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The identifier &apos;{0}&apos; does not refer to a column, table, or variable..
         /// </summary>
@@ -437,7 +437,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ColumnTableOrVariableNotDeclared", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ConstantBinding.GetUnknown() threw an exception..
         /// </summary>
@@ -446,7 +446,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ConstantBindingGetValueFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A constant expression was encountered in the ORDER BY list..
         /// </summary>
@@ -455,7 +455,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ConstantExpressionInOrderBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Conversion of {0} to {1} failed: {2}.
         /// </summary>
@@ -464,7 +464,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ConversionFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to DISTINCT operator is not allowed in the recursive part of a recursive common table expression &apos;{0}&apos;..
         /// </summary>
@@ -473,7 +473,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsDistinct", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to GROUP BY, HAVING, or aggregate functions are not allowed in the recursive part of a recursive common table expression &apos;{0}&apos;..
         /// </summary>
@@ -482,7 +482,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsGroupByHavingOrAggregate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Recursive member of a common table expression &apos;{0}&apos; has multiple recursive references..
         /// </summary>
@@ -491,7 +491,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsMultipleRecursiveReferences", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Outer join is not allowed in the recursive part of a recursive common table expression &apos;{0}&apos;..
         /// </summary>
@@ -500,7 +500,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsOuterJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Recursive references are not allowed in subqueries.
         /// </summary>
@@ -509,7 +509,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsRecursiveReferenceInSubquery", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to TOP operator is not allowed in the recursive part of a recursive common table expression &apos;{0}&apos;..
         /// </summary>
@@ -518,7 +518,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsTop", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to An anchor member was found in the recursive part of recursive query &apos;{0}&apos;..
         /// </summary>
@@ -527,7 +527,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsUnexpectedAnchorMember", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to UNION operator is not allowed in the recursive part of a recursive common table expression &apos;{0}&apos;..
         /// </summary>
@@ -536,7 +536,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteContainsUnion", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No anchor member was specified for recursive query &apos;{0}&apos;..
         /// </summary>
@@ -545,7 +545,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteDoesNotHaveAnchorMember", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Recursive common table expression &apos;{0}&apos; does not contain a top-level UNION ALL operator..
         /// </summary>
@@ -554,7 +554,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteDoesNotHaveUnionAll", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The column &apos;{0}&apos; was specified multiple times for &apos;{1}&apos;..
         /// </summary>
@@ -563,7 +563,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteHasDuplicateColumnName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Duplicate common table expression name &apos;{0}&apos; was specified..
         /// </summary>
@@ -572,7 +572,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteHasDuplicateTableName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; has fewer columns than were specified in the column list..
         /// </summary>
@@ -581,7 +581,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteHasFewerColumnsThanSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; has more columns than were specified in the column list..
         /// </summary>
@@ -590,7 +590,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteHasMoreColumnsThanSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Types don&apos;t match between the anchor and the recursive part in column &apos;{0}&apos; of recursive query &apos;{1}&apos;..
         /// </summary>
@@ -599,7 +599,7 @@ namespace NQuery {
                 return ResourceManager.GetString("CteHasTypeMismatchBetweenAnchorAndRecursivePart", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to All queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists..
         /// </summary>
@@ -608,7 +608,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DifferentExpressionCountInBinaryQuery", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aggregate function named &apos;{0}&apos; already in list..
         /// </summary>
@@ -617,7 +617,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DuplicateAggregate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Function {0} already declared..
         /// </summary>
@@ -626,7 +626,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DuplicateFunction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The property collection already contains a property named &apos;{0}&apos;..
         /// </summary>
@@ -635,7 +635,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DuplicatePropertyReference", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to For the relation {0} is already a data gatherer registered..
         /// </summary>
@@ -644,7 +644,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DuplicateRelationDataGatherer", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The correlation name &apos;{0}&apos; is specified multiple times in a FROM clause..
         /// </summary>
@@ -653,7 +653,7 @@ namespace NQuery {
                 return ResourceManager.GetString("DuplicateTableRefInFrom", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Expression could not be compiled.{0}.
         /// </summary>
@@ -662,7 +662,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ExpressionCompilationFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to FunctionBinding.Invoke() threw an exception..
         /// </summary>
@@ -671,7 +671,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionBindingInvokeFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Function must return a value..
         /// </summary>
@@ -680,7 +680,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionMustNotBeVoid", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Functions with array parameters are not supported..
         /// </summary>
@@ -689,7 +689,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionMustNotHaveArrayParams", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Functions with optional parameters are not supported..
         /// </summary>
@@ -698,7 +698,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionMustNotHaveOptionalParams", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Functions with out or ref parameters are not supported..
         /// </summary>
@@ -707,7 +707,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionMustNotHaveRefOrOutParams", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A function with the same name and signature already exists: {0}.
         /// </summary>
@@ -716,7 +716,7 @@ namespace NQuery {
                 return ResourceManager.GetString("FunctionWithSameNameAndSignatureAlreadyInCollection", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Each GROUP BY expression must contain at least one column that is not an outer reference..
         /// </summary>
@@ -725,7 +725,7 @@ namespace NQuery {
                 return ResourceManager.GetString("GroupByItemDoesNotReferenceAnyColumns", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to HAVING clause must evaluate to BOOLEAN expression..
         /// </summary>
@@ -734,7 +734,7 @@ namespace NQuery {
                 return ResourceManager.GetString("HavingClauseMustEvaluateToBool", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the HAVING clause because it is not contained in either an aggregate function or the GROUP BY clause..
         /// </summary>
@@ -743,7 +743,7 @@ namespace NQuery {
                 return ResourceManager.GetString("HavingExpressionNotAggregatedOrGrouped", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to IAggregator.Accumulate() threw an exception..
         /// </summary>
@@ -752,7 +752,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IAggregatorAccumulateFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to IAggregator.Init() threw an exception..
         /// </summary>
@@ -761,7 +761,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IAggregatorInitFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to IAggregator.Terminate() threw an exception..
         /// </summary>
@@ -770,7 +770,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IAggregatorTerminateFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invalid character in input &apos;{0}&apos;..
         /// </summary>
@@ -779,7 +779,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IllegalInputCharacter", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to IMethodProvider.GetMethods() threw an exception..
         /// </summary>
@@ -788,7 +788,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IMethodProviderGetMethodsFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Internal Error: {0}.
         /// </summary>
@@ -797,7 +797,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InternalError", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to {0}.GetUnknown() not supported..
         /// </summary>
@@ -806,7 +806,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InternalErrorGetValueNotSupported", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invalid attempt to read when no data is present..
         /// </summary>
@@ -815,7 +815,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidAttemptToRead", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid binary number..
         /// </summary>
@@ -824,7 +824,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidBinary", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invalid binary operator: &apos;{0}&apos;..
         /// </summary>
@@ -833,7 +833,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidBinaryOperator", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in GROUP BY since it cannot be compared or sorted..
         /// </summary>
@@ -842,7 +842,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDataTypeInGroupBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in ORDER BY since it cannot be compared or sorted..
         /// </summary>
@@ -851,7 +851,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDataTypeInOrderBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in SELECT DISTINCT since it cannot be compared or sorted..
         /// </summary>
@@ -860,7 +860,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDataTypeInSelectDistinct", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in {1} since it cannot be compared or sorted..
         /// </summary>
@@ -869,7 +869,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDataTypeInUnion", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid date..
         /// </summary>
@@ -878,7 +878,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid decimal number..
         /// </summary>
@@ -887,7 +887,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidDecimal", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid hex number..
         /// </summary>
@@ -896,7 +896,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidHex", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The text &apos;{0}&apos; is not a valid identifier.
         /// </summary>
@@ -905,7 +905,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidIdentifier", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid integer..
         /// </summary>
@@ -914,7 +914,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidInteger", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid octal number..
         /// </summary>
@@ -923,7 +923,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidOctal", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=.
         /// </summary>
@@ -932,7 +932,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidOperatorForAllAny", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Row reference &apos;{0}&apos; is not valid since the table it is referring to is either a derived table, a common table expression (CTE) or doesn&apos;t have a row type..
         /// </summary>
@@ -941,7 +941,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidRowReference", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Type reference {0} is malformed. Neither quoted nor parenthesized identifiers can be used in type references. Use string literals to express case sensitivity..
         /// </summary>
@@ -950,7 +950,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidTypeReference", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to operator: &apos;{0}&apos;..
         /// </summary>
@@ -959,7 +959,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvalidUnaryOperator", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Invocation of &apos;{0}&apos; requires parenthesis..
         /// </summary>
@@ -968,7 +968,7 @@ namespace NQuery {
                 return ResourceManager.GetString("InvocationRequiresParenthesis", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to IPropertyProvider.GetProperties() threw an exception..
         /// </summary>
@@ -977,7 +977,7 @@ namespace NQuery {
                 return ResourceManager.GetString("IPropertyProviderGetPropertiesFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The maximum recursion 100 has been exhausted before statement completion..
         /// </summary>
@@ -986,7 +986,7 @@ namespace NQuery {
                 return ResourceManager.GetString("MaximumRecursionLevelExceeded", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to MethodBinding.Invoke() threw an exception..
         /// </summary>
@@ -995,7 +995,7 @@ namespace NQuery {
                 return ResourceManager.GetString("MethodBindingInvokeFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot add properties -- no property provider is registered for type &apos;{0}&apos;..
         /// </summary>
@@ -1004,7 +1004,7 @@ namespace NQuery {
                 return ResourceManager.GetString("MissingPropertyProvider", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot add table -- no table provider is registered for type &apos;{0}&apos;..
         /// </summary>
@@ -1013,7 +1013,7 @@ namespace NQuery {
                 return ResourceManager.GetString("MissingTableProvider", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Must specify table to select from..
         /// </summary>
@@ -1022,7 +1022,7 @@ namespace NQuery {
                 return ResourceManager.GetString("MustSpecifyTableToSelectFrom", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No column name was specified for column {0} of &apos;{1}&apos;..
         /// </summary>
@@ -1031,7 +1031,7 @@ namespace NQuery {
                 return ResourceManager.GetString("NoColumnAliasSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No property provider is registered for type &apos;{0}&apos; and there is no default property provider..
         /// </summary>
@@ -1040,7 +1040,7 @@ namespace NQuery {
                 return ResourceManager.GetString("NoPropertyProviderRegisteredAndDefaultProviderIsMissing", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The number &apos;{0}&apos; is too large..
         /// </summary>
@@ -1049,7 +1049,7 @@ namespace NQuery {
                 return ResourceManager.GetString("NumberTooLarge", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ON clause must evaluate to BOOLEAN expression..
         /// </summary>
@@ -1058,7 +1058,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OnClauseMustEvaluateToBool", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The ORDER BY position number {0} is out of range of the number of items in the select list..
         /// </summary>
@@ -1067,7 +1067,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByColumnPositionIsOutOfRange", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the ORDER BY clause because it is not contained in an aggregate function and there is no GROUP BY clause..
         /// </summary>
@@ -1076,7 +1076,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByExpressionNotAggregatedAndNoGroupBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the ORDER BY clause because it is not contained in either an aggregate function or the GROUP BY clause..
         /// </summary>
@@ -1085,7 +1085,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByExpressionNotAggregatedOrGrouped", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The ORDER BY clause is invalid in derived tables, subqueries, and common table expressions, unless TOP is also specified..
         /// </summary>
@@ -1094,7 +1094,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByInvalidInSubqueryUnlessTopIsAlsoSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ORDER BY items must appear in the select list if SELECT DISTINCT is specified..
         /// </summary>
@@ -1103,7 +1103,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByItemsMustBeInSelectListIfDistinctSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ORDER BY items must appear in the select list if the statement contains a UNION, INTERSECT or EXCEPT operator..
         /// </summary>
@@ -1112,7 +1112,7 @@ namespace NQuery {
                 return ResourceManager.GetString("OrderByItemsMustBeInSelectListIfUnionSpecified", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ParameterBinding.Unknown threw an exception..
         /// </summary>
@@ -1121,7 +1121,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParameterBindingGetValueFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The parameter type is not assignable from the given value..
         /// </summary>
@@ -1130,7 +1130,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParameterValueTypeMismatch", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Parent column &apos;{0}&apos; in table &apos;{1}&apos; not found..
         /// </summary>
@@ -1139,7 +1139,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParentColumnNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to parentColumns must contain at least one column..
         /// </summary>
@@ -1148,7 +1148,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParentColumnsMustContainAtLeastOneColumn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to childColumns.Length must match parentColumns.Length..
         /// </summary>
@@ -1157,7 +1157,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParentColumnsMustHaveSameSizeAsChildColumns", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to parentColumns must not contain columns of different tables..
         /// </summary>
@@ -1166,7 +1166,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParentColumnsMustNotContainColumnsOfOtherTables", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Parent table must exist in data context..
         /// </summary>
@@ -1175,7 +1175,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ParentTableMustExistInDataContext", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to PropertyBinding.GetUnknown() threw an exception..
         /// </summary>
@@ -1184,7 +1184,7 @@ namespace NQuery {
                 return ResourceManager.GetString("PropertyBindingGetValueFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The {0} property has not been initialized..
         /// </summary>
@@ -1193,7 +1193,7 @@ namespace NQuery {
                 return ResourceManager.GetString("PropertyNotInitialized", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Query could not be compiled.{0}.
         /// </summary>
@@ -1202,7 +1202,7 @@ namespace NQuery {
                 return ResourceManager.GetString("QueryCompilationFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the select list because it is not contained in an aggregate function and there is no GROUP BY clause..
         /// </summary>
@@ -1211,7 +1211,7 @@ namespace NQuery {
                 return ResourceManager.GetString("SelectExpressionNotAggregatedAndNoGroupBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the select list because it is not contained in either an aggregate function or the GROUP BY clause..
         /// </summary>
@@ -1220,7 +1220,7 @@ namespace NQuery {
                 return ResourceManager.GetString("SelectExpressionNotAggregatedOrGrouped", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Show Plan Element.
         /// </summary>
@@ -1229,7 +1229,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanElemenClassName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Defined Unknowns.
         /// </summary>
@@ -1238,7 +1238,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupDefinedValues", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Group By.
         /// </summary>
@@ -1247,7 +1247,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupGroupBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Order By.
         /// </summary>
@@ -1256,7 +1256,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupOrderBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Outer References.
         /// </summary>
@@ -1265,7 +1265,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupOuterReferences", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Output List.
         /// </summary>
@@ -1274,7 +1274,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupOutputList", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Statistics.
         /// </summary>
@@ -1283,7 +1283,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupStatistics", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Tie Columns.
         /// </summary>
@@ -1292,7 +1292,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanGroupTieColumns", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column.
         /// </summary>
@@ -1301,7 +1301,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyColumn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to DataType.
         /// </summary>
@@ -1310,7 +1310,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyDataType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Empty.
         /// </summary>
@@ -1319,7 +1319,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyEmpty", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hash Keys Build.
         /// </summary>
@@ -1328,7 +1328,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyHashKeysBuild", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hash Keys Probe.
         /// </summary>
@@ -1337,7 +1337,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyHashKeysProbe", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Index.
         /// </summary>
@@ -1346,7 +1346,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyIndex", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Limit.
         /// </summary>
@@ -1355,7 +1355,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyLimit", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Logical Operator.
         /// </summary>
@@ -1364,7 +1364,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyLogicalOperator", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Order.
         /// </summary>
@@ -1373,7 +1373,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyOrder", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Output Name.
         /// </summary>
@@ -1382,7 +1382,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyOutputName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Passthru.
         /// </summary>
@@ -1391,7 +1391,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyPassthru", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Predicate.
         /// </summary>
@@ -1400,7 +1400,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyPredicate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Probe.
         /// </summary>
@@ -1409,7 +1409,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyProbe", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Probe Column.
         /// </summary>
@@ -1418,7 +1418,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyProbeColumn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Probe Residual.
         /// </summary>
@@ -1427,7 +1427,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyProbeResidual", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Source.
         /// </summary>
@@ -1436,7 +1436,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeySource", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Average Row Count.
         /// </summary>
@@ -1445,7 +1445,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyStatisticsAverageRowCount", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Open Count.
         /// </summary>
@@ -1454,7 +1454,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyStatisticsOpenCount", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Row Count.
         /// </summary>
@@ -1463,7 +1463,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyStatisticsRowCount", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Table.
         /// </summary>
@@ -1472,7 +1472,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyTable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Target.
         /// </summary>
@@ -1481,7 +1481,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyTarget", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Warning.
         /// </summary>
@@ -1490,7 +1490,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyWarning", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to With Stack.
         /// </summary>
@@ -1499,7 +1499,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyWithStack", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to With Ties.
         /// </summary>
@@ -1508,7 +1508,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanKeyWithTies", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Distinct Sort.
         /// </summary>
@@ -1517,7 +1517,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorDistinctSort", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Eager Spool.
         /// </summary>
@@ -1526,7 +1526,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorEagerSpool", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Full Outer Join.
         /// </summary>
@@ -1535,7 +1535,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorFullOuterJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Inner Join.
         /// </summary>
@@ -1544,7 +1544,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorInnerJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Lazy Spool.
         /// </summary>
@@ -1553,7 +1553,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorLazySpool", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Left Anti Semi Join.
         /// </summary>
@@ -1562,7 +1562,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorLeftAntiSemiJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Left Outer Join.
         /// </summary>
@@ -1571,7 +1571,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorLeftOuterJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Left Semi Join.
         /// </summary>
@@ -1580,7 +1580,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorLeftSemiJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Right Anti Semi Join.
         /// </summary>
@@ -1589,7 +1589,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorRightAntiSemiJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Right Outer Join.
         /// </summary>
@@ -1598,7 +1598,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorRightOuterJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Right Semi Join.
         /// </summary>
@@ -1607,7 +1607,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorRightSemiJoin", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Sort.
         /// </summary>
@@ -1616,7 +1616,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanLogicalOperatorSort", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to ASC.
         /// </summary>
@@ -1625,7 +1625,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanSortOrderAscending", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to DESC.
         /// </summary>
@@ -1634,7 +1634,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanSortOrderDescending", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No join predicate.
         /// </summary>
@@ -1643,7 +1643,7 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanWarningNoJoinPredicate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Found &apos;{0}&apos; but &apos;&lt;Expression&gt;&apos; expected..
         /// </summary>
@@ -1652,7 +1652,7 @@ namespace NQuery {
                 return ResourceManager.GetString("SimpleExpressionExpected", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, &lt;, &lt;= , &gt;, &gt;= or when the subquery is used as an expression..
         /// </summary>
@@ -1661,7 +1661,7 @@ namespace NQuery {
                 return ResourceManager.GetString("SubqueryReturnedMoreThanRow", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A table must have at least one column..
         /// </summary>
@@ -1670,7 +1670,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TableMustHaveAtLeastOneColumn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A table provider for type &apos;{0}&apos; has already been assigned..
         /// </summary>
@@ -1679,7 +1679,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TableProviderAlreadyRegistered", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Found &apos;{0}&apos; but &apos;&lt;Table Reference&gt;&apos; expected.
         /// </summary>
@@ -1688,7 +1688,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TableReferenceExpected", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Table &apos;{0}: {1}&apos; is introduced in a different branch within the join hierarchy and is therefore inaccessible..
         /// </summary>
@@ -1697,7 +1697,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TableRefInaccessible", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot narrow down the target type to &apos;{1}&apos; since the static expression type &apos;{0}&apos; would not be assignable from the new target type &apos;{1}&apos; anymore..
         /// </summary>
@@ -1706,7 +1706,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TargetTypeMismatch", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;Date Literal&gt;.
         /// </summary>
@@ -1715,7 +1715,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenDateLiteral", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;End-of-File&gt;.
         /// </summary>
@@ -1724,7 +1724,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenEndOfFile", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Found &apos;{0}&apos; but expected &apos;{1}&apos;..
         /// </summary>
@@ -1733,7 +1733,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenExpected", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;Name&gt;.
         /// </summary>
@@ -1742,7 +1742,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenIdentifier", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;Number Literal&gt;.
         /// </summary>
@@ -1751,7 +1751,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenNumberLiteral", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;String Literal&gt;.
         /// </summary>
@@ -1760,7 +1760,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenStringLiteral", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to &lt;Unknown&gt;.
         /// </summary>
@@ -1769,7 +1769,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TokenUnknown", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Only one expression can be specified in the select list when the subquery is not introduced with EXISTS..
         /// </summary>
@@ -1778,7 +1778,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TooManyExpressionsInSelectListOfSubquery", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The TOP N WITH TIES clause is not allowed without a corresponding ORDER BY clause..
         /// </summary>
@@ -1787,7 +1787,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TopWithTiesRequiresOrderBy", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The type &apos;{0}&apos; is already registered..
         /// </summary>
@@ -1796,7 +1796,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TypeAlreadyRegistered", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The type &apos;{0}&apos; is already registered..
         /// </summary>
@@ -1805,7 +1805,7 @@ namespace NQuery {
                 return ResourceManager.GetString("TypeIsAlreadyRegistered", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Unary operator &apos;{0} {1}&apos; threw an exception: {3}{5}Operator method: &apos;{2}&apos;. Argument: &apos;{4}&apos;..
         /// </summary>
@@ -1814,7 +1814,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnaryOperatorFailed", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Aggregate &apos;{0}&apos; is not declared..
         /// </summary>
@@ -1823,7 +1823,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredAggregate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Column &apos;{1}&apos; not declared in table &apos;{0}&apos;..
         /// </summary>
@@ -1832,7 +1832,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredColumn", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Function &apos;{0}({1})&apos; is not declared..
         /// </summary>
@@ -1841,7 +1841,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredFunction", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Type &apos;{0}&apos; does not have a method &apos;{1}({2})&apos;..
         /// </summary>
@@ -1850,7 +1850,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredMethod", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Type &apos;{0}&apos; does not have a property &apos;{1}&apos;..
         /// </summary>
@@ -1859,7 +1859,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredProperty", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Table &apos;{0}&apos; is not declared..
         /// </summary>
@@ -1868,7 +1868,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredTable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The column prefix &apos;{0}&apos; does not match with a table name or alias name used in the query..
         /// </summary>
@@ -1877,7 +1877,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredTableInstance", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Cannot resolve type: {0}.
         /// </summary>
@@ -1886,7 +1886,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredType", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Variable &apos;{0}&apos; is not declared..
         /// </summary>
@@ -1895,7 +1895,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UndeclaredVariable", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Unhandled case label: {0}.
         /// </summary>
@@ -1904,7 +1904,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnhandledCaseLabel", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Unknown error {0}..
         /// </summary>
@@ -1913,7 +1913,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnknownError", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Comment is not properly terminated..
         /// </summary>
@@ -1922,7 +1922,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnterminatedComment", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Date is not properly terminated..
         /// </summary>
@@ -1931,7 +1931,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnterminatedDate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Parenthesized identifier is not properly terminated..
         /// </summary>
@@ -1940,7 +1940,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnterminatedParenthesizedIdentifier", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Quoted identifier is not properly terminated..
         /// </summary>
@@ -1949,7 +1949,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnterminatedQuotedIdentifier", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to String is not properly terminated..
         /// </summary>
@@ -1958,7 +1958,7 @@ namespace NQuery {
                 return ResourceManager.GetString("UnterminatedString", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to WHEN expression must evaluate to &apos;{0}&apos;..
         /// </summary>
@@ -1967,7 +1967,7 @@ namespace NQuery {
                 return ResourceManager.GetString("WhenMustEvaluateToBool", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to WHERE clause must evaluate to BOOLEAN expression..
         /// </summary>

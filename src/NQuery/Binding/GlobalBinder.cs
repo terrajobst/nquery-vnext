@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.BoundNodes;
@@ -28,7 +29,7 @@ namespace NQuery.Binding
         public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
             // TODO: Should we cache them to ensure object identity for property symbols?
-            var propertyProvider = _dataContext.PropertyProviders.LookupValue(type);
+            var propertyProvider = Lookup(_dataContext.PropertyProviders, type);
             return propertyProvider == null
                        ? Enumerable.Empty<PropertySymbol>()
                        : propertyProvider.GetProperties(type);
@@ -37,10 +38,24 @@ namespace NQuery.Binding
         public override IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
             // TODO: Should we cache them to ensure object identity for method symbols?
-            var methodProvider = _dataContext.MethodProviders.LookupValue(type);
+            var methodProvider = Lookup(_dataContext.MethodProviders, type);
             return methodProvider == null
                        ? Enumerable.Empty<MethodSymbol>()
                        : methodProvider.GetMethods(type);
+        }
+
+        private static T Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type key) where T: class
+        {
+            while (key != null)
+            {
+                T value;
+                if (dictionary.TryGetValue(key, out value))
+                    return value;
+
+                key = key.BaseType;
+            }
+
+            return null;
         }
     }
 }

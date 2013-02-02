@@ -14,14 +14,7 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_DetectsAmbiguityBetweenAggregates()
         {
-            var dataContext = new DataContextBuilder
-            {
-                Aggregates =
-                    {
-                        new AggregateSymbol("Agg"),
-                        new AggregateSymbol("AGG")
-                    }
-            }.GetResult();
+            var dataContext = DataContext.Default.AddAggregates(new AggregateSymbol("Agg"), new AggregateSymbol("AGG"));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
@@ -35,11 +28,9 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction()
         {
-            var dataContext = new DataContextBuilder
-            {
-                Aggregates = {new AggregateSymbol("AGG")},
-                Functions = {new FunctionSymbol<string, string>("AGG", x => x)}
-            }.GetResult();
+            var dataContext = DataContext.Default
+                                         .AddAggregates(new AggregateSymbol("AGG"))
+                                         .AddFunctions(new FunctionSymbol<string, string>("AGG", x => x));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
@@ -53,11 +44,9 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction_UnlessWrongArgumentCount()
         {
-            var dataContext = new DataContextBuilder
-            {
-                Aggregates = {new AggregateSymbol("AGG")},
-                Functions = {new FunctionSymbol<string, string, string>("AGG", (x, y) => x)}
-            }.GetResult();
+            var dataContext = DataContext.Default
+                                         .AddAggregates(new AggregateSymbol("AGG"))
+                                         .AddFunctions(new FunctionSymbol<string, string, string>("AGG", (x, y) => x));
 
             var aggregate = dataContext.Aggregates.Last();
 
@@ -76,7 +65,7 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_CountAllBindsToCount()
         {
-            var dataContext = new DataContextBuilder().GetResult();
+            var dataContext = DataContext.Default;
             var countAggregated = dataContext.Aggregates.Single(a => a.Name == "COUNT");
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
@@ -94,11 +83,8 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_DetectsNonExistingCountAggregate()
         {
-            var dataContextBuilder = new DataContextBuilder();
-            var countAggregated = dataContextBuilder.Aggregates.Single(a => a.Name == "COUNT");
-            dataContextBuilder.Aggregates.Remove(countAggregated);
-
-            var dataContext = dataContextBuilder.GetResult();
+            var countAggregated = DataContext.Default.Aggregates.Single(a => a.Name == "COUNT");
+            var dataContext = DataContext.Default.RemoveAggregates(countAggregated);
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
@@ -112,10 +98,7 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Aggregate_Aggregate_DetectsAmbiguityBetweenCountAggregates()
         {
-            var dataContextBuilder = new DataContextBuilder();
-            dataContextBuilder.Aggregates.Add(new AggregateSymbol("Count"));
-
-            var dataContext = dataContextBuilder.GetResult();
+            var dataContext = DataContext.Default.AddAggregates(new AggregateSymbol("Count"));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);

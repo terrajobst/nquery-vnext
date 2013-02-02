@@ -27,9 +27,7 @@ namespace NQuery.Data.Samples
             using (var stream = new MemoryStream(northwind))
                 dataSet.ReadXml(stream);
 
-            var dataContexBuilder = new DataContextBuilder();
-            dataContexBuilder.AddTablesAndRelations(dataSet);
-            return dataContexBuilder.GetResult();
+            return DataContext.Default.AddTablesAndRelations(dataSet);
         }
     }
 }
