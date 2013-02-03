@@ -154,6 +154,29 @@ namespace NQuery.UnitTests
         }
 
         [TestMethod]
+        public void GroupByAndAggregation_DisallowsSelectStar_WhenGrouped()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT * FROM Table t GROUP BY t.Id");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void GroupByAndAggregation_DisallowsSelectStar_WhenGrouped_UnlessAllGrouped()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT * FROM Table t GROUP BY t.Id, t.Name");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(0, diagnostics.Length);
+        }
+
+        [TestMethod]
         public void GroupByAndAggregation_DisallowsColumnInstanceInSelect_WhenCountStarIsPresent()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT t.Name, COUNT(*) FROM Table t");
@@ -330,10 +353,5 @@ namespace NQuery.UnitTests
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
         }
-
-        //// TODO: ERROR
-        //SELECT  *
-        //FROM    Employees e
-        //GROUP   BY e.EmployeeID
     }
 }
