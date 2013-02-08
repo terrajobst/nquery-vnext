@@ -365,6 +365,7 @@ namespace NQuery
                 case SyntaxKind.ExclamationEqualsToken:
                 case SyntaxKind.LessToken:
                 case SyntaxKind.LessEqualToken:
+                case SyntaxKind.LessGreaterToken:
                 case SyntaxKind.GreaterToken:
                 case SyntaxKind.GreaterEqualToken:
                 case SyntaxKind.ExclamationLessToken:
