@@ -58,7 +58,7 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void GroupByAndAggregation_DisallowsSubqueryInGroupBy()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table GROUP BY (SELECT NULL)");
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT 1 FROM Table GROUP BY (SELECT 1)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToArray();

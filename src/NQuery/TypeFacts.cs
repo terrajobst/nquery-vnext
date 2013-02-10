@@ -200,5 +200,11 @@ namespace NQuery
                     throw new ArgumentOutOfRangeException("type");
             }
         }
+
+        public static bool IsComparable(this Type type)
+        {
+            var comarable = typeof (IComparable);
+            return comarable.IsAssignableFrom(type);
+        }
     }
 }

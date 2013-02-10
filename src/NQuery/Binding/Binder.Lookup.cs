@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -181,6 +182,11 @@ namespace NQuery.Binding
         private IEnumerable<AggregateSymbol> LookupAggregate(SyntaxToken name)
         {
             return LookupSymbols<AggregateSymbol>(name);
+        }
+
+        public virtual IComparer LookupComparer(Type type)
+        {
+            return Parent.LookupComparer(type);
         }
     }
 }

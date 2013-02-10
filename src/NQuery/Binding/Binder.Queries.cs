@@ -421,9 +421,9 @@ namespace NQuery.Binding
             // will perform that mapping for us, but we have to pass in the value slots
             // of the first query and the query columns of our input.
 
-            var valueSlots = firstQuery.OutputColumns.Select(c => c.ValueSlot);
-            var queryColumns = query.OutputColumns;
-            var orderByClause = binder.BindOrderByClause(queryColumns, valueSlots, node, true);
+            var inputQueryColumns = firstQuery.OutputColumns;
+            var outputQueryCoumns = query.OutputColumns;
+            var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
 
             return new BoundOrderedQuery(query, orderByClause.Columns);
         }
@@ -714,9 +714,8 @@ namespace NQuery.Binding
             var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns);
 
             var outputColumns = selectColumns.Select(s => s.Column).ToArray();
-            var outputValueSlots = outputColumns.Select(c => c.ValueSlot);
 
-            var orderByClause = fromAwareBinder.BindOrderByClause(outputColumns, outputValueSlots, orderedQueryNode, false);
+            var orderByClause = fromAwareBinder.BindOrderByClause(orderedQueryNode, outputColumns, outputColumns);
 
             queryBinder.EnsureAllColumnReferencesAreLegal(node, orderedQueryNode);
 
@@ -925,13 +924,17 @@ namespace NQuery.Binding
 
             foreach (var column in groupByClause.Columns)
             {
-                // TODO: Ensure datatype that is comparable.
                 var expression = column.Expression;
                 var boundExpression = groupByBinder.BindExpression(expression);
+                var expressionType = boundExpression.Type;
+
+                var comparer = LookupComparer(expressionType);
+                if (comparer == null && !expressionType.IsError())
+                    Diagnostics.ReportInvalidDataTypeInGroupBy(expression.Span, expressionType);
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
-                    valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+                    valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
@@ -956,19 +959,97 @@ namespace NQuery.Binding
             return predicate;
         }
 
-        private BoundOrderByClause BindOrderByClause(IList<QueryColumnInstanceSymbol> outerQueryColumns, IEnumerable<ValueSlot> innerValueSlots, OrderedQuerySyntax node, bool selectorsMustBeInInput)
+        private BoundOrderByClause BindOrderByClause(OrderedQuerySyntax node, IList<QueryColumnInstanceSymbol> selectorQueryColumns, IList<QueryColumnInstanceSymbol> resultQueryColumns)
         {
             if (node == null)
                 return null;
 
-            var innerToOuterMapping = innerValueSlots.Zip(outerQueryColumns, Tuple.Create)
-                                                     .ToLookup(t => t.Item1, t => t.Item2)
-                                                     .ToDictionary(l => l.Key, l => l.First());
+            // We are called from two places:
+            //
+            // (1) An ORDER BY applied to a SELECT query
+            // (2) An ORDER BY applied to a combined query
+            //
+            // In the first case, selectorQueryColumns and resultQueryColumns are the same.
+            // In the second case, they are different. The selectorQueryColumns represent
+            // the output columns of the first SELECT query the ORDER BY is applied to.
+            // The resultQueryColumns represent the output columns of the query the ORDER BY
+            // is actually applied to (such as a UNION query).
+            //
+            // We want to return a bound ORDER BY which has the columns bound against the
+            // actual query.In order map from the selectors to the result query columns
+            // we will use their ordinals.
 
-            var selectorBinder = CreateLocalBinder(outerQueryColumns);
+            var selectorsMustBeInInput = !ReferenceEquals(selectorQueryColumns, resultQueryColumns);
+            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => Tuple.Create(c.ValueSlot, i))
+                                                                      .GroupBy(t => t.Item1, t => t.Item2)
+                                                                      .ToDictionary(g => g.Key, g => g.First());
+
+            var selectorBinder = CreateLocalBinder(selectorQueryColumns);
 
             var boundColumns = new List<BoundOrderByColumn>();
 
+            foreach (var column in node.Columns)
+            {
+                var selector = column.ColumnSelector;
+                var isAscending = column.Modifier == null ||
+                                  column.Modifier.Kind == SyntaxKind.AscKeyword;
+
+                // Let's bind the select against the query columns of the first SELECT query
+                // we are applied to.
+
+                var boundSelector = selectorBinder.BindOrderBySelector(selectorQueryColumns, column.ColumnSelector);
+
+                // If the expression didn't exist in the query output already, we need to
+                // compute it. This is only possible if we don't require selectors being
+                // present already.
+
+                if (boundSelector.ComputedValue != null && !selectorsMustBeInInput)
+                    QueryState.ComputedProjections.Add(boundSelector.ComputedValue.Value);
+
+                // We need to find the corresponding result query column for the selector.
+                // Please note that it might not exist and this is in fact valid. For example,
+                // This query is perfectly valid:
+                //
+                //        SELECT  e.FirstName, e.LastName
+                //          FROM  Employees e
+                //      ORDER BY  e.FirstName + ' ' + e.LastName
+                //
+                // However, if the query we are applied to is a combined query, it must exist
+                // in the input.
+
+                int columnOrdinal;
+                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.ValueSlot, out columnOrdinal))
+                {
+                    columnOrdinal = -1;
+                    if (selectorsMustBeInInput)
+                        Diagnostics.ReportOrderByItemsMustBeInSelectListIfUnionSpecified(selector.Span);
+                }
+
+                var queryColumn = columnOrdinal >= 0
+                                      ? resultQueryColumns[columnOrdinal]
+                                      : null;
+                var valueSlot = queryColumn != null
+                                    ? queryColumn.ValueSlot
+                                    : boundSelector.ValueSlot;
+
+                // Almost there. The only thing left to do is ensuring the data type
+                // of the selector can atually be used for sorting, i.e. it must have
+                // an associated comparer.
+
+                var comparer = LookupComparer(valueSlot.Type);
+                if (comparer == null && !valueSlot.Type.IsError())
+                    Diagnostics.ReportInvalidDataTypeInOrderBy(selector.Span, valueSlot.Type);
+
+                var boundColumn = new BoundOrderByColumn(queryColumn, valueSlot, isAscending, comparer);
+                Bind(column, boundColumn);
+                boundColumns.Add(boundColumn);
+            }
+
+            return new BoundOrderByClause(boundColumns);
+        }
+
+        private BoundOrderBySelector BindOrderBySelector(IList<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
+        {
             // Although ORDER BY can contain abitrary expression, there are special rules to how those
             // expressions relate to the SELECT list of a query:
             //
@@ -983,104 +1064,89 @@ namespace NQuery.Binding
             //
             // If none of the above is true, ORDER BY may compute a new expression that will be used for
             // ordering the query, but this requires that the query it's applied to is a SELECT query.
-            // In other words it can't be a query combined with UNION, EXCEPT, or INTERSECT.
+            // In other words it can't be a query combined with UNION, EXCEPT, or INTERSECT. However,
+            // we don't have to check for that case, our caller is reponsible for doing it.
 
-            foreach (var column in node.Columns)
+            // Case (1): Check for positional form.
+
+            var selectorAsLiteral = selector as LiteralExpressionSyntax;
+            if (selectorAsLiteral != null)
             {
-                var selector = column.ColumnSelector;
-                var isAscending = column.Modifier == null ||
-                                  column.Modifier.Kind == SyntaxKind.AscKeyword;
-
-                ValueSlot valueSlot = null;
-                QueryColumnInstanceSymbol outerQueryColumn = null;
-
-                var selectorAsLiteral = selector as LiteralExpressionSyntax;
-                var selectorAsName = selector as NameExpressionSyntax;
-
-                // Case (1): Check for positional form.
-
-                if (selectorAsLiteral != null)
+                var position = selectorAsLiteral.Value as int?;
+                if (position != null)
                 {
-                    var position = selectorAsLiteral.Value as int?;
-                    if (position != null)
-                    {
-                        var index = position.Value - 1;
-                        var indexValid = 0 <= index && index < outerQueryColumns.Count;
-                        if (indexValid)
-                        {
-                            outerQueryColumn = outerQueryColumns[index];
-                            valueSlot = outerQueryColumn.ValueSlot;
-                        }
-                        else
-                        {
-                            // Report that the given position isn't valid.
-                            Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, outerQueryColumns.Count);
+                    var index = position.Value - 1;
+                    var indexValid = 0 <= index && index < queryColumns.Count;
+                    if (indexValid)
+                        return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
 
-                            // And to avoid cascading errors, we'll bind to the first column in the query,
-                            // which is guaranteed to exist.
-                            outerQueryColumn = outerQueryColumns[0];
-                            valueSlot = outerQueryColumn.ValueSlot;
-                        }
-                    }
+                    // Report that the given position isn't valid.
+                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Count);
+
+                    // And to avoid cascading errors, we'll fake up an invalid slot.
+                    var errorSlot = ValueSlotFactory.CreateTemporaryValueSlot(TypeFacts.Missing);
+                    return new BoundOrderBySelector(errorSlot, null);
                 }
-
-                // Case (2): Check for query column name.
-
-                else if (selectorAsName != null)
-                {
-                    var columnSymbols = selectorBinder.LookupQueryColumn(selectorAsName.Name).ToArray();
-                    if (columnSymbols.Length > 0)
-                    {
-                        if (columnSymbols.Length > 1)
-                            Diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
-
-                        outerQueryColumn = columnSymbols[0];
-
-                        // Since this name isn't bound as a regular expression we simple fake this one up.
-                        // This ensures that this name appears to be bound like any other expression.
-                        Bind(selectorAsName, new BoundNameExpression(outerQueryColumn));
-
-                        valueSlot = outerQueryColumn.ValueSlot;
-                    }
-                }
-
-                // Case (3): Bind regular expression.
-
-                if (valueSlot == null)
-                {
-                    var boundSelector = selectorBinder.BindExpression(selector);
-
-                    if (boundSelector is BoundLiteralExpression)
-                        Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
-
-                    ValueSlot innerValueSlot;
-
-                    if (!TryGetExistingValue(boundSelector, out innerValueSlot))
-                    {
-                        innerValueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
-
-                        if (!selectorsMustBeInInput)
-                            QueryState.ComputedProjections.Add(new ComputedValue(selector, boundSelector, innerValueSlot));
-                    }
-
-                    if (innerToOuterMapping.TryGetValue(innerValueSlot, out outerQueryColumn))
-                    {
-                        valueSlot = outerQueryColumn.ValueSlot;
-                    }
-                    else
-                    {
-                        valueSlot = innerValueSlot;
-                        if (selectorsMustBeInInput)
-                            Diagnostics.ReportOrderByItemsMustBeInSelectListIfUnionSpecified(selector.Span);
-                    }
-                }
-
-                var boundColumn = new BoundOrderByColumn(outerQueryColumn, valueSlot, isAscending);
-                Bind(column, boundColumn);
-                boundColumns.Add(boundColumn);
             }
 
-            return new BoundOrderByClause(boundColumns);
+            // Case (2): Check for query column name.
+
+            var selectorAsName = selector as NameExpressionSyntax;
+            if (selectorAsName != null)
+            {
+                var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToArray();
+                if (columnSymbols.Length > 0)
+                {
+                    if (columnSymbols.Length > 1)
+                        Diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
+
+                    var queryColumn = columnSymbols[0];
+
+                    // Since this name isn't bound as a regular expression we simple fake this one up.
+                    // This ensures that this name appears to be bound like any other expression.
+                    Bind(selectorAsName, new BoundNameExpression(queryColumn));
+
+                    return new BoundOrderBySelector(queryColumn.ValueSlot, null);
+                }
+            }
+
+            // Case (3): Bind regular expression.
+
+            var boundSelector = BindExpression(selector);
+
+            if (boundSelector is BoundLiteralExpression)
+                Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
+
+            ValueSlot valueSlot;
+
+            if (TryGetExistingValue(boundSelector, out valueSlot))
+                return new BoundOrderBySelector(valueSlot, null);
+
+            valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+            var computedValue = new ComputedValue(selector, boundSelector, valueSlot);
+            return new BoundOrderBySelector(valueSlot, computedValue);
+        }
+    }
+
+    internal struct BoundOrderBySelector
+    {
+        private readonly ValueSlot _valueSlot;
+        private readonly ComputedValue? _computedValue;
+
+        public BoundOrderBySelector(ValueSlot valueSlot, ComputedValue? computedValue)
+        {
+            _valueSlot = valueSlot;
+            _computedValue = computedValue;
+        }
+
+        public ValueSlot ValueSlot
+        {
+            get { return _valueSlot; }
+        }
+
+        public ComputedValue? ComputedValue
+        {
+            get { return _computedValue; }
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -45,6 +46,15 @@ namespace NQuery.Binding
             return methodProvider == null
                        ? Enumerable.Empty<MethodSymbol>()
                        : methodProvider.GetMethods(type);
+        }
+
+        public override IComparer LookupComparer(Type type)
+        {
+            var registeredComparer = Lookup(_dataContext.Comparers, type);
+            if (registeredComparer != null)
+                return registeredComparer;
+
+            return type.IsComparable() ? Comparer.Default : null;
         }
 
         private static T Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type key) where T: class

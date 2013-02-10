@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace NQuery
 {
@@ -136,18 +137,6 @@ namespace NQuery
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInSelectDistinct, FormattingHelpers.FormatType(expressionType));
         //    return new Diagnostic(DiagnosticId.InvalidDataTypeInSelectDistinct, message);
-        //}
-
-        //public static Diagnostic InvalidDataTypeInGroupBy(Type expressionType)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInGroupBy, FormattingHelpers.FormatType(expressionType));
-        //    return new Diagnostic(DiagnosticId.InvalidDataTypeInGroupBy, message);
-        //}
-
-        //public static Diagnostic InvalidDataTypeInOrderBy(Type expressionType)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInOrderBy, FormattingHelpers.FormatType(expressionType));
-        //    return new Diagnostic(DiagnosticId.InvalidDataTypeInOrderBy, message);
         //}
 
         //public static Diagnostic InvalidDataTypeInUnion(Type expressionType, BinaryQueryOperator unionOperator)

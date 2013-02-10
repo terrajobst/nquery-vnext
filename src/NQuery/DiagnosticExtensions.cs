@@ -524,15 +524,21 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.InvalidDataTypeInSelectDistinct(expressionType));
         //}
 
-        //public static void ReportInvalidDataTypeInGroupBy(this ICollection<Diagnostic> diagnostics, Type expressionType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidDataTypeInGroupBy(expressionType));
-        //}
+        public static void ReportInvalidDataTypeInGroupBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, Type expressionType)
+        {
+            var typeDisplayName = expressionType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInGroupBy, typeDisplayName);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidDataTypeInGroupBy, message);
+            diagnostics.Add(diagnostic);
+        }
 
-        //public static void ReportInvalidDataTypeInOrderBy(this ICollection<Diagnostic> diagnostics, Type expressionType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidDataTypeInOrderBy(expressionType));
-        //}
+        public static void ReportInvalidDataTypeInOrderBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, Type expressionType)
+        {
+            var typeDisplayName = expressionType.ToDisplayName();
+            var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInOrderBy, typeDisplayName);
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.InvalidDataTypeInOrderBy, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportInvalidDataTypeInUnion(this ICollection<Diagnostic> diagnostics, Type expressionType, BinaryQueryOperator unionOperator)
         //{
