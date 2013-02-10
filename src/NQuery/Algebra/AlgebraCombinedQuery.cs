@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+using NQuery.Binding;
 
 namespace NQuery.Algebra
 {
@@ -7,12 +11,14 @@ namespace NQuery.Algebra
         private readonly AlgebraRelation _left;
         private readonly AlgebraRelation _right;
         private readonly AlgebraQueryCombinator _combinator;
+        private readonly ReadOnlyCollection<ValueSlot> _outputValueSlots;
 
-        public AlgebraCombinedQuery(AlgebraRelation left, AlgebraRelation right, AlgebraQueryCombinator combinator)
+        public AlgebraCombinedQuery(AlgebraRelation left, AlgebraRelation right, AlgebraQueryCombinator combinator, IList<ValueSlot> outputValueSlots)
         {
             _left = left;
             _right = right;
             _combinator = combinator;
+            _outputValueSlots = new ReadOnlyCollection<ValueSlot>(outputValueSlots);
         }
 
         public override AlgebraKind Kind
@@ -33,6 +39,11 @@ namespace NQuery.Algebra
         public AlgebraQueryCombinator Combinator
         {
             get { return _combinator; }
+        }
+
+        public ReadOnlyCollection<ValueSlot> OutputValueSlots
+        {
+            get { return _outputValueSlots; }
         }
     }
 }

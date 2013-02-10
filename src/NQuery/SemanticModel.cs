@@ -41,6 +41,12 @@ namespace NQuery
             return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.TableColumns;
         }
 
+        public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
+        {
+            var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
+            return boundQuery == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundQuery.OutputColumns;
+        }
+
         public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
         {
             var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;

@@ -35,6 +35,8 @@ namespace NQuery.Algebra
                     return AlgebrizeSelectQuery((BoundSelectQuery)node);
                 case BoundNodeKind.CombinedQuery:
                     return AlgebrizeCombinedQuery((BoundCombinedQuery)node);
+                case BoundNodeKind.OrderedQuery:
+                    return AlgebrizeOrderedQuery((BoundOrderedQuery)node);
                 default:
                     throw new ArgumentException();
             }
@@ -130,7 +132,15 @@ namespace NQuery.Algebra
             var left = AlgebrizeQuery(node.Left);
             var right = AlgebrizeQuery(node.Right);
             var combinator = GetQueryCombinator(node.Combinator);
-            return new AlgebraCombinedQuery(left, right, combinator);
+            var outputValueSlots = node.OutputColumns.Select(c => c.ValueSlot).ToArray();
+            return new AlgebraCombinedQuery(left, right, combinator, outputValueSlots);
+        }
+
+        private AlgebraRelation AlgebrizeOrderedQuery(BoundOrderedQuery node)
+        {
+            var input = AlgebrizeQuery(node.Input);
+            var valueSlots = node.Columns.Select(s => s.ValueSlot).ToArray();
+            return new AlgebraSortNode(input, valueSlots);
         }
     }
 }

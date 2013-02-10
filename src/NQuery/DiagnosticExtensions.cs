@@ -544,10 +544,12 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.DifferentExpressionCountInBinaryQuery());
         //}
 
-        //public static void ReportOrderByItemsMustBeInSelectListIfUnionSpecified(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.OrderByItemsMustBeInSelectListIfUnionSpecified());
-        //}
+        public static void ReportOrderByItemsMustBeInSelectListIfUnionSpecified(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            var message = Resources.OrderByItemsMustBeInSelectListIfUnionSpecified;
+            var diagnostic = new Diagnostic(textSpan, DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified, message);
+            diagnostics.Add(diagnostic);
+        }
 
         //public static void ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(this ICollection<Diagnostic> diagnostics)
         //{

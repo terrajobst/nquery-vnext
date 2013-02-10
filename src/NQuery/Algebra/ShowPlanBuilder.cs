@@ -25,7 +25,7 @@ namespace NQuery.Algebra
                 case AlgebraKind.Sort:
                     return BuildSort((AlgebraSortNode)node);
                 case AlgebraKind.BinaryQuery:
-                    return BuildBinaryQuery((AlgebraCombinedQuery)node);
+                    return BuildCombinedQuery((AlgebraCombinedQuery)node);
                 case AlgebraKind.GroupByAndAggregation:
                     return BuildGroupByAndAggregation((AlgebraGroupByAndAggregation)node);
                 case AlgebraKind.Project:
@@ -129,11 +129,13 @@ namespace NQuery.Algebra
             return new ShowPlanNode("Sort " + slots, properties, children);
         }
 
-        private static ShowPlanNode BuildBinaryQuery(AlgebraCombinedQuery node)
+        private static ShowPlanNode BuildCombinedQuery(AlgebraCombinedQuery node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
-            return new ShowPlanNode(node.Combinator.ToString(), properties, children);
+            var slots = string.Join(", ", node.OutputValueSlots.Select(v => v.Name));
+            var name = string.Format("{0} {1}", node.Combinator, slots);
+            return new ShowPlanNode(name, properties, children);
         }
 
         private static ShowPlanNode BuildGroupByAndAggregation(AlgebraGroupByAndAggregation node)

@@ -162,11 +162,6 @@ namespace NQuery
         //    return new Diagnostic(DiagnosticId.DifferentExpressionCountInBinaryQuery, Resources.DifferentExpressionCountInBinaryQuery);
         //}
 
-        //public static Diagnostic OrderByItemsMustBeInSelectListIfUnionSpecified()
-        //{
-        //    return new Diagnostic(DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified, Resources.OrderByItemsMustBeInSelectListIfUnionSpecified);
-        //}
-
         //public static Diagnostic OrderByItemsMustBeInSelectListIfDistinctSpecified()
         //{
         //    return new Diagnostic(DiagnosticId.OrderByItemsMustBeInSelectListIfDistinctSpecified, Resources.OrderByItemsMustBeInSelectListIfDistinctSpecified);

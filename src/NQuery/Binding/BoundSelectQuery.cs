@@ -8,6 +8,7 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSelectQuery : BoundQuery
     {
+        private readonly Binder _fromAwareBinder;
         private readonly ReadOnlyCollection<QueryColumnInstanceSymbol> _outputColumns;
         private readonly int? _top;
         private readonly bool _withTies;
@@ -19,8 +20,9 @@ namespace NQuery.Binding
         private readonly ReadOnlyCollection<Tuple<BoundExpression, ValueSlot>> _projections;
         private readonly BoundOrderByClause _orderByClause;
 
-        public BoundSelectQuery(int? top, bool withTies, BoundTableReference fromClause, BoundExpression whereClause, IList<Tuple<BoundAggregateExpression, ValueSlot>> aggregates, IList<Tuple<BoundExpression, ValueSlot>> groups, BoundExpression havingClause, IList<Tuple<BoundExpression, ValueSlot>> projections, BoundOrderByClause orderByClause, IList<QueryColumnInstanceSymbol> outputColumns)
+        public BoundSelectQuery(Binder fromAwareBinder, int? top, bool withTies, BoundTableReference fromClause, BoundExpression whereClause, IList<Tuple<BoundAggregateExpression, ValueSlot>> aggregates, IList<Tuple<BoundExpression, ValueSlot>> groups, BoundExpression havingClause, IList<Tuple<BoundExpression, ValueSlot>> projections, BoundOrderByClause orderByClause, IList<QueryColumnInstanceSymbol> outputColumns)
         {
+            _fromAwareBinder = fromAwareBinder;
             _outputColumns = new ReadOnlyCollection<QueryColumnInstanceSymbol>(outputColumns);
             _top = top;
             _withTies = withTies;
@@ -41,6 +43,11 @@ namespace NQuery.Binding
         public override ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
         {
             get { return _outputColumns; }
+        }
+
+        public Binder FromAwareBinder
+        {
+            get { return _fromAwareBinder; }
         }
 
         public int? Top
