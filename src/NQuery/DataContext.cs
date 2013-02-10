@@ -342,6 +342,38 @@ namespace NQuery
 
         // Property Providers
 
+        public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
+        {
+            var newProviders = _propertyProviders.Add(type, provider);
+            return WithPropertyProviders(newProviders);
+        }
+
+        public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
+        {
+            var newProviders = _propertyProviders.AddRange(providers);
+            return WithPropertyProviders(newProviders);
+        }
+
+        public DataContext RemovePropertyProviders(params Type[] types)
+        {
+            if (types == null || types.Length == 0)
+                return this;
+
+            return RemovePropertyProviders(types.AsEnumerable());
+        }
+
+        public DataContext RemovePropertyProviders(IEnumerable<Type> types)
+        {
+            var newProviders = _propertyProviders.RemoveRange(types);
+            return WithPropertyProviders(newProviders);
+        }
+
+        public DataContext RemoveAllPropertyProviders()
+        {
+            var newProviders = ImmutableDictionary<Type, IPropertyProvider>.Empty;
+            return WithPropertyProviders(newProviders);
+        }
+
         public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
         {
             if (ReferenceEquals(_propertyProviders, providers))
@@ -351,6 +383,38 @@ namespace NQuery
         }
 
         // Method Providers
+
+        public DataContext AddMethodProvider(Type type, IMethodProvider provider)
+        {
+            var newProviders = _methodProviders.Add(type, provider);
+            return WithMethodProviders(newProviders);
+        }
+
+        public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
+        {
+            var newProviders = _methodProviders.AddRange(providers);
+            return WithMethodProviders(newProviders);
+        }
+
+        public DataContext RemoveMethodProviders(params Type[] types)
+        {
+            if (types == null || types.Length == 0)
+                return this;
+
+            return RemoveMethodProviders(types.AsEnumerable());
+        }
+
+        public DataContext RemoveMethodProviders(IEnumerable<Type> types)
+        {
+            var newProviders = _methodProviders.RemoveRange(types);
+            return WithMethodProviders(newProviders);
+        }
+
+        public DataContext RemoveAllMethodProviders()
+        {
+            var newProviders = ImmutableDictionary<Type, IMethodProvider>.Empty;
+            return WithMethodProviders(newProviders);
+        }
 
         public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
         {
