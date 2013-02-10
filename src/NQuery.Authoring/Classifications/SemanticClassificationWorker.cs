@@ -114,6 +114,9 @@ namespace NQuery.Authoring.Classifications
                 case SyntaxKind.WildcardSelectColumn:
                     ClassifyWildcardSelectColumn((WildcardSelectColumnSyntax)node);
                     break;
+                case SyntaxKind.ExpressionSelectColumn:
+                    ClassifyExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
+                    break;
                 case SyntaxKind.NamedTableReference:
                     ClassifyNamedTableReference((NamedTableReferenceSyntax)node);
                     break;
@@ -173,6 +176,15 @@ namespace NQuery.Authoring.Classifications
                 return;
 
             AddClassification(node.TableName, tableInstanceSymbol);
+        }
+
+        private void ClassifyExpressionSelectColumn(ExpressionSelectColumnSyntax node)
+        {
+            if (node.Alias == null)
+                return;
+
+            var queryColumnInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
+            AddClassification(node.Alias.Identifier, queryColumnInstanceSymbol);
         }
 
         private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)
