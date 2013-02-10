@@ -110,5 +110,13 @@ namespace NQuery.UnitTests
             var after = before.WithMethodProviders(before.MethodProviders);
             Assert.AreSame(before, after);
         }
+
+        [TestMethod]
+        public void DataContext_ReplacingWithSameComparersYieldsSameInstance()
+        {
+            var before = DataContext.Empty;
+            var after = before.WithComparers(before.Comparers);
+            Assert.AreSame(before, after);
+        }
     }
 }

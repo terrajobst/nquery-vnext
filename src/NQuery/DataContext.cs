@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace NQuery
         private readonly IImmutableList<VariableSymbol> _variables;
         private readonly IImmutableDictionary<Type, IPropertyProvider> _propertyProviders;
         private readonly IImmutableDictionary<Type, IMethodProvider> _methodProviders;
+        private readonly IImmutableDictionary<Type, IComparer> _comparers;
 
         private DataContext(IImmutableList<TableSymbol> tables,
                             IImmutableList<TableRelation> relations,
@@ -24,7 +26,8 @@ namespace NQuery
                             IImmutableList<AggregateSymbol> aggregates,
                             IImmutableList<VariableSymbol> variables,
                             IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
-                            IImmutableDictionary<Type, IMethodProvider> methodProviders)
+                            IImmutableDictionary<Type, IMethodProvider> methodProviders,
+                            IImmutableDictionary<Type, IComparer> comparers)
         {
             _tables = tables;
             _relations = relations;
@@ -33,6 +36,7 @@ namespace NQuery
             _variables = variables;
             _propertyProviders = propertyProviders;
             _methodProviders = methodProviders;
+            _comparers = comparers;
         }
 
         public static readonly DataContext Empty = CreateEmpty();
@@ -73,6 +77,11 @@ namespace NQuery
             get { return _methodProviders; }
         }
 
+        public IImmutableDictionary<Type, IComparer> Comparers
+        {
+            get { return _comparers; }
+        }
+
         private static DataContext CreateEmpty()
         {
             return new DataContext(ImmutableList<TableSymbol>.Empty,
@@ -81,7 +90,8 @@ namespace NQuery
                                    ImmutableList<AggregateSymbol>.Empty,
                                    ImmutableList<VariableSymbol>.Empty,
                                    ImmutableDictionary<Type, IPropertyProvider>.Empty,
-                                   ImmutableDictionary<Type, IMethodProvider>.Empty);
+                                   ImmutableDictionary<Type, IMethodProvider>.Empty,
+                                   ImmutableDictionary<Type, IComparer>.Empty);
         }
 
         private static DataContext CreateDefault()
@@ -91,13 +101,15 @@ namespace NQuery
             var reflectionProvider = new ReflectionProvider();
             var propertyProviders = ImmutableDictionary<Type, IPropertyProvider>.Empty.Add(typeof(object), reflectionProvider);
             var methodProviders = ImmutableDictionary<Type, IMethodProvider>.Empty.Add(typeof(object), reflectionProvider);
+            var comparers = ImmutableDictionary<Type, IComparer>.Empty;
             return new DataContext(ImmutableList<TableSymbol>.Empty,
                                    ImmutableList<TableRelation>.Empty,
                                    functions,
                                    aggregates,
                                    ImmutableList<VariableSymbol>.Empty,
                                    propertyProviders,
-                                   methodProviders);
+                                   methodProviders,
+                                   comparers);
         }
 
         // Tables
@@ -145,7 +157,7 @@ namespace NQuery
                 return this;
 
             var newTables = tables.ToImmutableList();
-            return new DataContext(newTables, _relations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders);
+            return new DataContext(newTables, _relations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
         }
 
         // Relations
@@ -193,7 +205,7 @@ namespace NQuery
                 return this;
 
             var newRelations = relations.ToImmutableList();
-            return new DataContext(_tables, newRelations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders);
+            return new DataContext(_tables, newRelations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
         }
 
         // Functions
@@ -241,7 +253,7 @@ namespace NQuery
                 return this;
 
             var newFunctions = functions.ToImmutableList();
-            return new DataContext(_tables, _relations, newFunctions, _aggregates, _variables, _propertyProviders, _methodProviders);
+            return new DataContext(_tables, _relations, newFunctions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
         }
 
         // Aggregates
@@ -289,7 +301,7 @@ namespace NQuery
                 return this;
 
             var newAggregates = aggregates.ToImmutableList();
-            return new DataContext(_tables, _relations, _functions, newAggregates, _variables, _propertyProviders, _methodProviders);
+            return new DataContext(_tables, _relations, _functions, newAggregates, _variables, _propertyProviders, _methodProviders, _comparers);
         }
 
         // Variables
@@ -337,7 +349,7 @@ namespace NQuery
                 return this;
 
             var newVariables = variables.ToImmutableList();
-            return new DataContext(_tables, _relations, _functions, _aggregates, newVariables, _propertyProviders, _methodProviders);
+            return new DataContext(_tables, _relations, _functions, _aggregates, newVariables, _propertyProviders, _methodProviders, _comparers);
         }
 
         // Property Providers
@@ -379,7 +391,7 @@ namespace NQuery
             if (ReferenceEquals(_propertyProviders, providers))
                 return this;
 
-            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, providers, _methodProviders);
+            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, providers, _methodProviders, _comparers);
         }
 
         // Method Providers
@@ -421,7 +433,49 @@ namespace NQuery
             if (ReferenceEquals(_methodProviders, providers))
                 return this;
 
-            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, _propertyProviders, providers);
+            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, _propertyProviders, providers, _comparers);
+        }
+
+        // Comparers
+
+        public DataContext AddComparer(Type type, IComparer comparer)
+        {
+            var newProviders = _comparers.Add(type, comparer);
+            return WithComparers(newProviders);
+        }
+
+        public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
+        {
+            var newProviders = _comparers.AddRange(comparer);
+            return WithComparers(newProviders);
+        }
+
+        public DataContext RemoveComparers(params Type[] types)
+        {
+            if (types == null || types.Length == 0)
+                return this;
+
+            return RemoveComparers(types.AsEnumerable());
+        }
+
+        public DataContext RemoveComparers(IEnumerable<Type> types)
+        {
+            var newProviders = _comparers.RemoveRange(types);
+            return WithComparers(newProviders);
+        }
+
+        public DataContext RemoveAllComparers()
+        {
+            var newProviders = ImmutableDictionary<Type, IComparer>.Empty;
+            return WithComparers(newProviders);
+        }
+
+        public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
+        {
+            if (ReferenceEquals(_comparers, comparers))
+                return this;
+
+            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, comparers);
         }
     }
 }
