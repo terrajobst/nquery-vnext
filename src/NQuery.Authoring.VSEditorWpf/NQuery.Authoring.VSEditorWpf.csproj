@@ -99,6 +99,8 @@
     <Compile Include="Document\INQueryDocument.cs" />
     <Compile Include="Document\INQueryDocumentManager.cs" />
     <Compile Include="Document\NQueryDocument.cs" />
+    <Compile Include="Highlighting\NQueryHighlightingTagger.cs" />
+    <Compile Include="Highlighting\NQueryHighlightingTaggerProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProviderService.cs" />
     <Compile Include="Classification\INQueryClassificationService.cs" />

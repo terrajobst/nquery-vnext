@@ -67,6 +67,17 @@
     <Compile Include="Completion\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\SymbolCompletionProvider.cs" />
     <Compile Include="Completion\TypeCompletionProvider.cs" />
+    <Compile Include="Highlighting\CaseKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\CastKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\HighlightingExtensions.cs" />
+    <Compile Include="Highlighting\IHighlighter.cs" />
+    <Compile Include="Highlighting\InnerJoinKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\KeywordHighlighter.cs" />
+    <Compile Include="Highlighting\OrderedQueryKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\OuterJoinKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\SelectQueryKeywordHighlighter.cs" />
+    <Compile Include="Highlighting\SelectQueryKeywordHighlighterBase.cs" />
+    <Compile Include="Highlighting\SymbolReferenceHighlighter.cs" />
     <Compile Include="NQueryDocumentType.cs" />
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphExtensions.cs" />
