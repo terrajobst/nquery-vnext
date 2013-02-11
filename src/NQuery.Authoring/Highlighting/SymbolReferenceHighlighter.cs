@@ -11,7 +11,7 @@ namespace NQuery.Authoring.Highlighting
         public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenContext(position);
+            var token = syntaxTree.Root.FindToken(position);
             var touchedSymbol = (from p in token.Parent.AncestorsAndSelf()
                                  from t in GetSymbols(semanticModel, p)
                                  where t != null

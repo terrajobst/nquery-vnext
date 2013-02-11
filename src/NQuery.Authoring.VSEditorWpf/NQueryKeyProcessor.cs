@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.VSEditorWpf.Completion;
+using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
 
 namespace NQuery.Authoring.VSEditorWpf
@@ -15,13 +16,15 @@ namespace NQuery.Authoring.VSEditorWpf
         private readonly IIntellisenseSessionStackMapService _intellisenseSessionStackMapService;
         private readonly ICompletionModelManager _completionModelManager;
         private readonly ISignatureHelpManager _signatureHelpManager;
+        private readonly IHighlightingNavigationManager _highlightingNavigationManager;
 
-        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager)
         {
             _textView = textView;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
             _completionModelManager = completionModelManager;
             _signatureHelpManager = signatureHelpManager;
+            _highlightingNavigationManager = highlightingNavigationManager;
         }
 
         public override bool IsInterestedInHandledEvents
@@ -61,6 +64,16 @@ namespace NQuery.Authoring.VSEditorWpf
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Space)
             {
                 ParameterInfo();
+                args.Handled = true;
+            }
+            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Up)
+            {
+                NavigateToPreviousHighlight();
+                args.Handled = true;
+            }
+            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Down)
+            {
+                NavigateToNextHighlight();
                 args.Handled = true;
             }
             else if (modifiers == ModifierKeys.None)
@@ -109,6 +122,17 @@ namespace NQuery.Authoring.VSEditorWpf
         private void ParameterInfo()
         {
             _signatureHelpManager.TriggerSignatureHelp();
+        }
+
+
+        private void NavigateToPreviousHighlight()
+        {
+            _highlightingNavigationManager.NavigateToPrevious();
+        }
+
+        private void NavigateToNextHighlight()
+        {
+            _highlightingNavigationManager.NavigateToNext();
         }
 
         private bool ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand command)

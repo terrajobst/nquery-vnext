@@ -12,7 +12,7 @@ using NQuery.Authoring.Highlighting;
 
 namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
-    internal sealed class NQueryHighlightingTagger : AsyncTagger<ITextMarkerTag, SnapshotSpan>
+    internal sealed class NQueryHighlightingTagger : AsyncTagger<HighlightTag, SnapshotSpan>
     {
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
@@ -49,10 +49,10 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
             return Tuple.Create(snapshot, spans);
         }
 
-        protected override ITagSpan<ITextMarkerTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)
+        protected override ITagSpan<HighlightTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)
         {
-            var tag = new TextMarkerTag("bracehighlight");
-            return new TagSpan<ITextMarkerTag>(rawTag, tag);
+            var tag = new HighlightTag();
+            return new TagSpan<HighlightTag>(rawTag, tag);
         }
     }
 }

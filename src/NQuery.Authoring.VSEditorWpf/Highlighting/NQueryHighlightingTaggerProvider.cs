@@ -11,7 +11,7 @@ using NQuery.Authoring.VSEditorWpf.Document;
 namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
     [Export(typeof(IViewTaggerProvider))]
-    [TagType(typeof(ITextMarkerTag))]
+    [TagType(typeof(HighlightTag))]
     [ContentType("NQuery")]
     internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
     {

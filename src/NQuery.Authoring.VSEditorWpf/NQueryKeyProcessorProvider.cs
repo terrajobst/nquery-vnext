@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.VSEditorWpf.Completion;
+using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
 
 namespace NQuery.Authoring.VSEditorWpf
@@ -25,13 +26,17 @@ namespace NQuery.Authoring.VSEditorWpf
         [Import]
         public ISignatureHelpManagerProvider SignatureHelpManagerProvider { get; set; }
 
+        [Import]
+        public IHighlightingNavigationManagerProvider HighlightingNavigationManagerProvider { get; set; }
+
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
             return wpfTextView.Properties.GetOrCreateSingletonProperty(() =>
             {
                 var completionModelManager = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
                 var signatureHelpManager = SignatureHelpManagerProvider.GetSignatureHelpManager(wpfTextView);
-                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager);
+                var highlightingNavigationManager = HighlightingNavigationManagerProvider.GetHighlightingNavigationManager(wpfTextView);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager);
             });
         }
     }

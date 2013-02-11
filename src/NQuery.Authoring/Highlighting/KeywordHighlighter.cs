@@ -10,9 +10,9 @@ namespace NQuery.Authoring.Highlighting
         public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var syntaxToken = syntaxTree.Root.FindTokenOnLeft(position);
+            var token = syntaxTree.Root.FindToken(position);
 
-            for (var current = syntaxToken.Parent; current != null; current = current.Parent)
+            for (var current = token.Parent; current != null; current = current.Parent)
             {
                 var node = current as T;
                 if (node != null)
