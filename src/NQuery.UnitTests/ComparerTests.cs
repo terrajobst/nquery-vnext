@@ -33,7 +33,7 @@ namespace NQuery.UnitTests
         }
 
         [TestMethod]
-        public void GroupBy_RequiresAllColumnsToBeComparable()
+        public void GroupByAndAggregation_RequiresAllColumnsToBeComparable()
         {
             var source = @"SELECT Data FROM Table GROUP BY Data";
             var syntaxTree = SyntaxTree.ParseQuery(source);
