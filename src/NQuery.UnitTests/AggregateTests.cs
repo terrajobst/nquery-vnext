@@ -109,5 +109,17 @@ namespace NQuery.UnitTests
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
         }
+
+        [TestMethod]
+        public void Aggregate_DetectsInvalidContextForAggregate()
+        {
+            var syntaxTree = SyntaxTree.ParseExpression("COUNT(4)");
+            var compilation = Compilation.Empty.WithDataContext(DataContext.Default).WithSyntaxTree(syntaxTree);
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.AggregateInvalidInCurrentContext, diagnostics[0].DiagnosticId);
+        }
     }
 }

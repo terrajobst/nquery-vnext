@@ -33,5 +33,15 @@ namespace NQuery.UnitTests
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
+
+        [TestMethod]
+        public void AllAnySubselect_DetectsInvalidOperator()
+        {
+            var syntaxTree = SyntaxTree.ParseExpression("'value' + ALL (SELECT foo)");
+            var diagnostics = syntaxTree.GetDiagnostics().ToArray();
+
+            Assert.AreEqual(1, diagnostics.Length);
+            Assert.AreEqual(DiagnosticId.InvalidOperatorForAllAny, diagnostics[0].DiagnosticId);
+        }
     }
 }
