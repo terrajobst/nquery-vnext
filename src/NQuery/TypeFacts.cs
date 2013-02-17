@@ -39,7 +39,7 @@ namespace NQuery
             return !type.IsError() && type != typeof(bool);
         }
 
-        internal static bool IsNumericType(this KnownType value)
+        internal static bool IsIntrinsicNumericType(this KnownType value)
         {
             switch (value)
             {
@@ -54,9 +54,9 @@ namespace NQuery
                 case KnownType.Char:
                 case KnownType.Single:
                 case KnownType.Double:
-                case KnownType.Decimal:
                     return true;
 
+                case KnownType.Decimal:
                 case KnownType.Boolean:
                 case KnownType.String:
                 case KnownType.Object:

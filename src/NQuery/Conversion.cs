@@ -19,19 +19,18 @@ namespace NQuery
 
         private static readonly bool[,] ImplicitNumericConversions = new[,]
         {
-            /*                SByte     Byte     Short     UShort     Int     UInt     Long     ULong     Char     Float     Double      Decimal*/
-            /* SByte   */  {  N,        N,       Y,        N,         Y,      N,       Y,       N,        N,       Y,        Y,           Y},
-            /* Byte    */  {  N,        N,       Y,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
-            /* Short   */  {  N,        N,       N,        N,         Y,      N,       Y,       N,        N,       Y,        Y,           Y},
-            /* UShort  */  {  N,        N,       N,        N,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
-            /* Int     */  {  N,        N,       N,        N,         N,      N,       Y,       N,        N,       Y,        Y,           Y},
-            /* UInt    */  {  N,        N,       N,        N,         N,      N,       Y,       Y,        N,       Y,        Y,           Y},
-            /* Long    */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y,           Y},
-            /* ULong   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y,           Y},
-            /* Char    */  {  N,        N,       N,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y,           Y},
-            /* Float   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        Y,           N},
-            /* Double  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N,           N},
-            /* Decimal */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N,           N}
+            /*                SByte     Byte     Short     UShort     Int     UInt     Long     ULong     Char     Float     Double*/
+            /* SByte   */  {  N,        N,       Y,        N,         Y,      N,       Y,       N,        N,       Y,        Y},
+            /* Byte    */  {  N,        N,       Y,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y},
+            /* Short   */  {  N,        N,       N,        N,         Y,      N,       Y,       N,        N,       Y,        Y},
+            /* UShort  */  {  N,        N,       N,        N,         Y,      Y,       Y,       Y,        N,       Y,        Y},
+            /* Int     */  {  N,        N,       N,        N,         N,      N,       Y,       N,        N,       Y,        Y},
+            /* UInt    */  {  N,        N,       N,        N,         N,      N,       Y,       Y,        N,       Y,        Y},
+            /* Long    */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y},
+            /* ULong   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       Y,        Y},
+            /* Char    */  {  N,        N,       N,        Y,         Y,      Y,       Y,       Y,        N,       Y,        Y},
+            /* Float   */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        Y},
+            /* Double  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N}
         };
 
         private readonly bool _exists;
@@ -164,7 +163,7 @@ namespace NQuery
 
         private static bool HasImplicitNumericConversion(KnownType sourceType, KnownType targetType)
         {
-            if (sourceType.IsNumericType() && targetType.IsNumericType())
+            if (sourceType.IsIntrinsicNumericType() && targetType.IsIntrinsicNumericType())
             {
                 var sourceIndex = (int) sourceType;
                 var targetIndex = (int) targetType;
@@ -176,7 +175,7 @@ namespace NQuery
 
         private static bool HasExplicitNumericConversion(KnownType sourceType, KnownType targetType)
         {
-            if (sourceType.IsNumericType() && targetType.IsNumericType())
+            if (sourceType.IsIntrinsicNumericType() && targetType.IsIntrinsicNumericType())
                 return !HasImplicitNumericConversion(sourceType, targetType);
 
             return false;
@@ -233,14 +232,12 @@ namespace NQuery
             {
                 var x = xKnown.Value;
                 var y = yKnown.Value;
-                if (x.IsNumericType() && y.IsNumericType())
-                {
-                    if (x.IsSignedNumericType() && y.IsUnsignedNumericType())
-                        return -1;
 
-                    if (x.IsUnsignedNumericType() && y.IsSignedNumericType())
-                        return 1;
-                }
+                if (x.IsSignedNumericType() && y.IsUnsignedNumericType())
+                    return -1;
+
+                if (x.IsUnsignedNumericType() && y.IsSignedNumericType())
+                    return 1;
             }
 
             return 0;
