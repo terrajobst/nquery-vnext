@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace NQuery
 {
@@ -13,6 +14,13 @@ namespace NQuery
             _textSpan = textSpan;
             _diagnosticId = diagnosticId;
             _message = message;
+        }
+
+        public static Diagnostic Format(TextSpan textSpan, DiagnosticId diagnosticId, params object[] args)
+        {
+            var message = diagnosticId.GetMessage();
+            var formattedMessage = String.Format(CultureInfo.CurrentCulture, message, args);
+            return new Diagnostic(textSpan, diagnosticId, formattedMessage);
         }
 
         public TextSpan Span

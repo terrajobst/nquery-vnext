@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AggregateCannotContainAggregate" xml:space="preserve">
-    <value>Cannot perform aggregate function '{1}' on an expression containing an aggregate ('{2}'): {0}.</value>
+    <value>Cannot perform aggregate function on an expression containing an aggregate.</value>
   </data>
   <data name="AggregateCannotContainSubquery" xml:space="preserve">
     <value>Cannot perform aggregate function on an expression containing a subquery.</value>
   </data>
   <data name="AggregateContainsColumnsFromDifferentQueries" xml:space="preserve">
-    <value>Multiple columns are specified in aggregated expression '{0}' containing an outer reference. If an expression being aggregated contains an outer reference, then that outer reference must be the only column referenced in the expression.</value>
+    <value>Multiple columns are specified in aggregated expression containing an outer reference. If an expression being aggregated contains an outer reference, then that outer reference must be the only column referenced in the expression.</value>
   </data>
   <data name="AggregateDoesNotSupportType" xml:space="preserve">
     <value>The aggregate operation '{0}' cannot take a '{1}' data type as an argument.</value>
@@ -136,7 +136,7 @@
     <value>An aggregate cannot appear in an ON clause unless it is in a subquery contained in a HAVING clause or select list, and the column being aggregated is an outer reference.</value>
   </data>
   <data name="AggregateInvalidInCurrentContext" xml:space="preserve">
-    <value>Aggregation expression '{0}' not valid in this context.</value>
+    <value>Aggregation expression not valid in this context.</value>
   </data>
   <data name="AggregateInWhere" xml:space="preserve">
     <value>An aggregate may not appear in the WHERE clause unless it is in a subquery contained in a HAVING clause or a select list, and the column being aggregated is an outer reference.</value>
@@ -183,7 +183,7 @@
   <data name="AmbiguousType" xml:space="preserve">
     <value>Type reference '{0}' is ambiguous between 1}.</value>
   </data>
-  <data name="AmbiguousUnaryOp" xml:space="preserve">
+  <data name="AmbiguousUnaryOperator" xml:space="preserve">
     <value>Unary operator '{0}' invocation on type '{1}' is ambiguous.</value>
   </data>
   <data name="ArgMustBeOfType" xml:space="preserve">
@@ -207,7 +207,7 @@
   <data name="BindingWithSameNameAlreadyInCollection" xml:space="preserve">
     <value>A binding with the same name '{0}' already exists in this collection.</value>
   </data>
-  <data name="CannotApplyBinaryOp" xml:space="preserve">
+  <data name="CannotApplyBinaryOperator" xml:space="preserve">
     <value>Cannot apply binary operator '{0}' on types '{1}' and '{2}'.</value>
   </data>
   <data name="CannotApplyUnaryOperator" xml:space="preserve">
@@ -382,12 +382,12 @@
     <value>The data type '{0}' cannot be used in SELECT DISTINCT since it cannot be compared or sorted.</value>
   </data>
   <data name="InvalidDataTypeInUnion" xml:space="preserve">
-    <value>The data type '{0}' cannot be used in {1} since it cannot be compared or sorted.</value>
+    <value>The data type '{0}' cannot be used in UNION since it cannot be compared or sorted.</value>
   </data>
   <data name="InvalidDate" xml:space="preserve">
     <value>'{0}' is not a valid date.</value>
   </data>
-  <data name="InvalidDecimal" xml:space="preserve">
+  <data name="InvalidReal" xml:space="preserve">
     <value>'{0}' is not a valid decimal number.</value>
   </data>
   <data name="InvalidHex" xml:space="preserve">

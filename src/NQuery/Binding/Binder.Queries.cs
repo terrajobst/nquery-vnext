@@ -262,10 +262,14 @@ namespace NQuery.Binding
 
             var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
                                           where QueryState.IntroducedTables.Contains(t.Item2.TableInstance)
-                                          select t.Item1;
+                                          select t;
 
             foreach (var invalidColumnReference in invalidColumnReferences)
-                Diagnostics.Add(new Diagnostic(invalidColumnReference.Span, diagnosticId, diagnosticId.ToString()));
+            {
+                var symbolSpan = invalidColumnReference.Item1.Span;
+                var symbol = invalidColumnReference.Item2;
+                Diagnostics.Report(symbolSpan, diagnosticId, symbol.Name);
+            }
         }
 
         private bool IsGroupedOrAggregated(ExpressionSyntax expressionSyntax)
