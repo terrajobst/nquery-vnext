@@ -221,7 +221,6 @@
     <Compile Include="Syntax\CrossJoinedTableReferenceSyntax.cs" />
     <Compile Include="Syntax\DerivedTableReferenceSyntax.cs" />
     <Compile Include="Diagnostic.cs" />
-    <Compile Include="DiagnosticFactory.cs" />
     <Compile Include="DiagnosticId.cs" />
     <Compile Include="Syntax\ExceptQuerySyntax.cs" />
     <Compile Include="Syntax\ExistsSubselectSyntax.cs" />
