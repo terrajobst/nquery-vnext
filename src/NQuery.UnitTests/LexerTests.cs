@@ -279,14 +279,248 @@ namespace NQuery.UnitTests
             Assert.AreEqual("test'", token.Value);
         }
 
-        // Int32
-        // Int64
-        // double
-        // float
-        // decimal
-        // binary, octal, hex
+        [TestMethod]
+        public void Lexer_CanLexInt32()
+        {
+            var value = int.MaxValue;
+            var input = value.ToString();
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+            Assert.AreEqual(value, token.Value);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt64()
+        {
+            var value = (long)int.MaxValue + 1;
+            var input = value.ToString();
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(typeof(long), token.Value.GetType());
+            Assert.AreEqual(value, token.Value);
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsNumbersTooLargeForLong()
+        {
+            var value = ulong.MaxValue;
+            var input = value.ToString();
+            var token = Helpers.LexSingleToken(input);
+            var diagnostics = token.Diagnostics;
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+            Assert.AreEqual(1, diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.NumberTooLarge, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexDouble()
+        {
+            var input = "1.0";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(1.0, token.Value);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexDouble_WhenHavingLeadingPeriod()
+        {
+            var input = ".0";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0.0, token.Value);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexDouble_WhenHavingExponentialSuffix()
+        {
+            var input = "1e4";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(1e4, token.Value);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexDouble_WhenHavingExponentialSuffixWithNegativeSign()
+        {
+            var input = "1e-4";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(1e-4, token.Value);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexDouble_WhenHavingExponentialSuffixWithPositiveSign()
+        {
+            var input = "1e+4";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(1e+4, token.Value);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsInvalidReal()
+        {
+            var input = "123e123e";
+            var token = Helpers.LexSingleToken(input);
+            var diagnostics = token.Diagnostics;
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(typeof(double), token.Value.GetType());
+            Assert.AreEqual(1, diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.InvalidReal, diagnostics[0].DiagnosticId);
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt32_WhenInBinary()
+        {
+            var input = "1010b";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(10, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt64_WhenInBinary()
+        {
+            var input = "10101010101010101010101010101010b";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(2863311530L, token.Value);
+            Assert.AreEqual(typeof(long), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsInvalidBinary()
+        {
+            var input = "1234b";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.InvalidBinary, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual(0, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt32_WhenInOctal()
+        {
+            var input = "12345o";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(5349, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt64_WhenInOctal()
+        {
+            var input = "12345671234567o";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(718046312823L, token.Value);
+            Assert.AreEqual(typeof(long), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsInvalidOctal()
+        {
+            var input = "78o";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.InvalidOctal, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual(0, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt32_WhenInHex()
+        {
+            var input = "0ABCh";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(2748, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_CanLexInt64_WhenInHex()
+        {
+            var input = "0FFFFFFFFFh";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(68719476735L, token.Value);
+            Assert.AreEqual(typeof(long), token.Value.GetType());
+        }
+
+        [TestMethod]
+        public void Lexer_DetectsInvalidHex()
+        {
+            var input = "0FGh";
+            var token = Helpers.LexSingleToken(input);
+
+            Assert.AreEqual(input, token.Text);
+            Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(DiagnosticId.InvalidHex, token.Diagnostics[0].DiagnosticId);
+            Assert.AreEqual(0, token.Value);
+            Assert.AreEqual(typeof(int), token.Value.GetType());
+        }
+
         // Independence of current culture
-        // Exponential suffix
-        // Exponential suffix with explicit sign
     }
 }
