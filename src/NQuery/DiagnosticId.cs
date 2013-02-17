@@ -4,8 +4,6 @@ namespace NQuery
 {
     public enum DiagnosticId
     {
-        InternalError,
-
         IllegalInputCharacter,
         UnterminatedComment,
         UnterminatedString,
@@ -19,11 +17,8 @@ namespace NQuery
         InvalidBinary,
         InvalidOctal,
         InvalidHex,
-        InvalidTypeReference,
         NumberTooLarge,
         TokenExpected,
-        SimpleExpressionExpected,
-        TableReferenceExpected,
         InvalidOperatorForAllAny,
 
         UndeclaredTable,
@@ -37,7 +32,6 @@ namespace NQuery
         UndeclaredType,
         ColumnTableOrVariableNotDeclared,
         AmbiguousReference,
-        AmbiguousTableRef,
         AmbiguousColumnRef,
         AmbiguousTable,
         AmbiguousVariable,
@@ -51,9 +45,7 @@ namespace NQuery
         CannotApplyBinaryOperator,
         AmbiguousBinaryOperator,
         AmbiguousConversion,
-        AsteriskModifierNotAllowed,
         WhenMustEvaluateToBool,
-        CannotLoadTypeAssembly,
         CannotFoldConstants,
         CannotConvert,
 
@@ -68,7 +60,6 @@ namespace NQuery
         AggregateContainsColumnsFromDifferentQueries,
         AggregateInvalidInCurrentContext,
         DuplicateTableRefInFrom,
-        TableRefInaccessible,
         TopWithTiesRequiresOrderBy,
         OrderByColumnPositionIsOutOfRange,
         WhereClauseMustEvaluateToBool,

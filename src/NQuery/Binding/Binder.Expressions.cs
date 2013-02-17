@@ -800,14 +800,14 @@ namespace NQuery.Binding
                                                .ToArray();
 
             if (affectedQueryScopes.Length > 1)
-                Diagnostics.Report(aggregate.Span, DiagnosticId.AggregateContainsColumnsFromDifferentQueries);
+                Diagnostics.ReportAggregateContainsColumnsFromDifferentQueries(aggregate.Span);
 
             var queryState = affectedQueryScopes.DefaultIfEmpty(QueryState)
                                                 .First();
 
             if (queryState == null)
             {
-                Diagnostics.Report(aggregate.Span, DiagnosticId.AggregateInvalidInCurrentContext);
+                Diagnostics.ReportAggregateInvalidInCurrentContext(aggregate.Span);
             }
             else
             {

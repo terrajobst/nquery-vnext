@@ -15,8 +15,6 @@ namespace NQuery
         {
             switch (diagnosticId)
             {
-                case DiagnosticId.InternalError:
-                    return Resources.InternalError;
                 case DiagnosticId.IllegalInputCharacter:
                     return Resources.IllegalInputCharacter;
                 case DiagnosticId.UnterminatedComment:
@@ -41,16 +39,10 @@ namespace NQuery
                     return Resources.InvalidOctal;
                 case DiagnosticId.InvalidHex:
                     return Resources.InvalidHex;
-                case DiagnosticId.InvalidTypeReference:
-                    return Resources.InvalidTypeReference;
                 case DiagnosticId.NumberTooLarge:
                     return Resources.NumberTooLarge;
                 case DiagnosticId.TokenExpected:
                     return Resources.TokenExpected;
-                case DiagnosticId.SimpleExpressionExpected:
-                    return Resources.SimpleExpressionExpected;
-                case DiagnosticId.TableReferenceExpected:
-                    return Resources.TableReferenceExpected;
                 case DiagnosticId.InvalidOperatorForAllAny:
                     return Resources.InvalidOperatorForAllAny;
                 case DiagnosticId.UndeclaredTable:
@@ -75,8 +67,6 @@ namespace NQuery
                     return Resources.ColumnTableOrVariableNotDeclared;
                 case DiagnosticId.AmbiguousReference:
                     return Resources.AmbiguousReference;
-                case DiagnosticId.AmbiguousTableRef:
-                    return Resources.AmbiguousTableRef;
                 case DiagnosticId.AmbiguousColumnRef:
                     return Resources.AmbiguousColumnRef;
                 case DiagnosticId.AmbiguousTable:
@@ -103,12 +93,8 @@ namespace NQuery
                     return Resources.AmbiguousBinaryOperator;
                 case DiagnosticId.AmbiguousConversion:
                     return Resources.AmbiguousConversion;
-                case DiagnosticId.AsteriskModifierNotAllowed:
-                    return Resources.AsteriskModifierNotAllowed;
                 case DiagnosticId.WhenMustEvaluateToBool:
                     return Resources.WhenMustEvaluateToBool;
-                case DiagnosticId.CannotLoadTypeAssembly:
-                    return Resources.CannotLoadTypeAssembly;
                 case DiagnosticId.CannotFoldConstants:
                     return Resources.CannotFoldConstants;
                 case DiagnosticId.CannotConvert:
@@ -135,8 +121,6 @@ namespace NQuery
                     return Resources.AggregateInvalidInCurrentContext;
                 case DiagnosticId.DuplicateTableRefInFrom:
                     return Resources.DuplicateTableRefInFrom;
-                case DiagnosticId.TableRefInaccessible:
-                    return Resources.TableRefInaccessible;
                 case DiagnosticId.TopWithTiesRequiresOrderBy:
                     return Resources.TopWithTiesRequiresOrderBy;
                 case DiagnosticId.OrderByColumnPositionIsOutOfRange:
@@ -228,7 +212,7 @@ namespace NQuery
             diagnostics.Add(diagnostic);
         }
 
-        #region Lexer CompilationErrors
+        #region Lexer Errors
 
         public static void ReportIllegalInputCharacter(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, char character)
         {
@@ -306,27 +290,6 @@ namespace NQuery
             diagnostics.Report(span, DiagnosticId.TokenExpected, actualText, expectedText);
         }
 
-        //public static void ReportInvalidTypeReference(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidTypeReference, tokenText);
-        //    var diagnostic = new Diagnostic(nodeOrToken, DiagnosticId.InvalidTypeReference, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportSimpleExpressionExpected(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, string tokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.SimpleExpressionExpected, tokenText);
-        //    var diagnostic = new Diagnostic(nodeOrToken, DiagnosticId.SimpleExpressionExpected, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportTableReferenceExpected(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, string foundTokenText)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.TableReferenceExpected, foundTokenText);
-        //    var diagnostic = new Diagnostic(nodeOrToken, DiagnosticId.TableReferenceExpected, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
         public static SyntaxToken WithInvalidOperatorForAllAnyDiagnostics(this SyntaxToken operatorToken)
         {
             var operatorText = operatorToken.Kind.GetText();
@@ -336,7 +299,7 @@ namespace NQuery
 
         #endregion
 
-        #region Resolving/Evaluation Errors
+        #region Binding Errors
 
         public static void ReportUndeclaredTable(this ICollection<Diagnostic> diagnostics, NamedTableReferenceSyntax namedTableReference)
         {
@@ -406,13 +369,6 @@ namespace NQuery
             var symbol2 = candidates[1];
             diagnostics.Report(name.Span, DiagnosticId.AmbiguousReference, name.ValueText, symbol1, symbol2);
         }
-
-        //public static void ReportAmbiguousTableRef(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, Identifier identifier, TableRefBinding[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousTableRef, identifier, FormattingHelpers.FormatBindingList(candidates));
-        //    var diagnostic = new Diagnostic(nodeOrToken, DiagnosticId.AmbiguousTableRef, message);
-        //    diagnostics.Add(diagnostic);
-        //}
 
         public static void ReportAmbiguousColumnInstance(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<ColumnInstanceSymbol> candidates)
         {
@@ -515,25 +471,11 @@ namespace NQuery
             diagnostics.Report(span, DiagnosticId.CannotConvert, sourceTypeName, targetTypeName);
         }
 
-        //public static void ReportAsteriskModifierNotAllowed(this ICollection<Diagnostic> diagnostics, SyntaxNodeOrToken nodeOrToken, ExpressionNode functionInvocation)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AsteriskModifierNotAllowed, functionInvocation.GenerateSource());
-        //    var diagnostic = new Diagnostic(nodeOrToken, DiagnosticId.AsteriskModifierNotAllowed, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
         public static void ReportWhenMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
         {
             var typeName = typeof (bool).ToDisplayName();
             diagnostics.Report(span, DiagnosticId.WhenMustEvaluateToBool, typeName);
         }
-
-        //public static void ReportCannotLoadTypeAssembly(this ICollection<Diagnostic> diagnostics, string assemblyName, Exception exception)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotLoadTypeAssembly, assemblyName, exception.Message);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CannotLoadTypeAssembly, message);
-        //    diagnostics.Add(diagnostic);
-        //}
 
         //public static void ReportCannotFoldConstants(this ICollection<Diagnostic> diagnostics, RuntimeException exception)
         //{
@@ -541,10 +483,6 @@ namespace NQuery
         //    var diagnostic = new Diagnostic(DiagnosticId.CannotFoldConstants, message);
         //    diagnostics.Add(diagnostic);
         //}
-
-        #endregion
-
-        #region Query Errors
 
         public static void ReportMustSpecifyTableToSelectFrom(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
@@ -588,31 +526,20 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.AggregateInGroupBy);
         }
 
-        //public static void ReportAggregateContainsColumnsFromDifferentQueries(this ICollection<Diagnostic> diagnostics, ExpressionNode aggregateArgument)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateContainsColumnsFromDifferentQueries, aggregateArgument.GenerateSource());
-        //    var diagnostic = new Diagnostic(DiagnosticId.AggregateContainsColumnsFromDifferentQueries, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportAggregateContainsColumnsFromDifferentQueries(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.AggregateContainsColumnsFromDifferentQueries);
+        }
 
-        //public static void ReportAggregateInvalidInCurrentContext(this ICollection<Diagnostic> diagnostics, AggregateExpression aggregateExpression)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateInvalidInCurrentContext, aggregateExpression.GenerateSource());
-        //    var diagnostic = new Diagnostic(DiagnosticId.AggregateInvalidInCurrentContext, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportAggregateInvalidInCurrentContext(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.AggregateInvalidInCurrentContext);
+        }
 
         //public static void ReportDuplicateTableRefInFrom(this ICollection<Diagnostic> diagnostics, Identifier identifier)
         //{
         //    var message = String.Format(CultureInfo.CurrentCulture, Resources.DuplicateTableRefInFrom, identifier);
         //    var diagnostic = new Diagnostic(DiagnosticId.DuplicateTableRefInFrom, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportTableRefInaccessible(this ICollection<Diagnostic> diagnostics, TableRefBinding tableRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.TableRefInaccessible, tableRefBinding.Name, tableRefBinding.TableBinding.Name);
-        //    var diagnostic = new Diagnostic(DiagnosticId.TableRefInaccessible, message);
         //    diagnostics.Add(diagnostic);
         //}
 
@@ -641,41 +568,6 @@ namespace NQuery
         {
             diagnostics.Report(span, DiagnosticId.HavingClauseMustEvaluateToBool);
         }
-
-        //public static void ReportSelectExpressionNotAggregatedAndNoGroupBy(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.SelectExpressionNotAggregatedAndNoGroupBy, columnRefBinding.GetFullName());
-        //    var diagnostic = new Diagnostic(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportSelectExpressionNotAggregatedOrGrouped(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.SelectExpressionNotAggregatedOrGrouped, columnRefBinding.GetFullName());
-        //    var diagnostic = new Diagnostic(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportHavingExpressionNotAggregatedOrGrouped(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.HavingExpressionNotAggregatedOrGrouped, columnRefBinding.GetFullName());
-        //    var diagnostic = new Diagnostic(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportOrderByExpressionNotAggregatedAndNoGroupBy(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.OrderByExpressionNotAggregatedAndNoGroupBy, columnRefBinding.GetFullName());
-        //    var diagnostic = new Diagnostic(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
-        //public static void ReportOrderByExpressionNotAggregatedOrGrouped(this ICollection<Diagnostic> diagnostics, ColumnRefBinding columnRefBinding)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.OrderByExpressionNotAggregatedOrGrouped, columnRefBinding.GetFullName());
-        //    var diagnostic = new Diagnostic(DiagnosticId.OrderByExpressionNotAggregatedOrGrouped, message);
-        //    diagnostics.Add(diagnostic);
-        //}
 
         //public static void ReportOrderByInvalidInSubqueryUnlessTopIsAlsoSpecified(this ICollection<Diagnostic> diagnostics)
         //{

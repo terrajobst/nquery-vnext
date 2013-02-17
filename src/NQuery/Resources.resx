@@ -177,9 +177,6 @@
   <data name="AmbiguousTable" xml:space="preserve">
     <value>Table name {0} is ambiguous between '{1}' and '{2}'.</value>
   </data>
-  <data name="AmbiguousTableRef" xml:space="preserve">
-    <value>Table ref name {0} is ambiguous between {1}.</value>
-  </data>
   <data name="AmbiguousType" xml:space="preserve">
     <value>Type reference '{0}' is ambiguous between 1}.</value>
   </data>
@@ -198,9 +195,6 @@
   <data name="ArgumentOutOfRange" xml:space="preserve">
     <value>argumentValueSlot '{0}' is out-of-range ({2}-{3}), actual value was {1}.</value>
   </data>
-  <data name="AsteriskModifierNotAllowed" xml:space="preserve">
-    <value>Aggregation modifier '*' not allowed in function call '{0}'.</value>
-  </data>
   <data name="BinaryOperatorFailed" xml:space="preserve">
     <value>Binary operator '{0} {1} {2}' threw an exception: {6}{7}Operator method: '{3}'. argumentValueSlotList: '{4}', '{5}'.</value>
   </data>
@@ -218,9 +212,6 @@
   </data>
   <data name="CannotFoldConstants" xml:space="preserve">
     <value>Cannot evaluate constant expression: {0}</value>
-  </data>
-  <data name="CannotLoadTypeAssembly" xml:space="preserve">
-    <value>Could not load assembly '{0}': {1}</value>
   </data>
   <data name="CastingOperatorFailed" xml:space="preserve">
     <value>Casting operator threw an exception.</value>
@@ -357,9 +348,6 @@
   <data name="IMethodProviderGetMethodsFailed" xml:space="preserve">
     <value>IMethodProvider.GetMethods() threw an exception.</value>
   </data>
-  <data name="InternalError" xml:space="preserve">
-    <value>Internal Error: {0}</value>
-  </data>
   <data name="InternalErrorGetValueNotSupported" xml:space="preserve">
     <value>{0}.GetUnknown() not supported.</value>
   </data>
@@ -413,9 +401,6 @@
   </data>
   <data name="InvalidRowReference" xml:space="preserve">
     <value>Row reference '{0}' is not valid since the table it is referring to is either a derived table, a common table expression (CTE) or doesn't have a row type.</value>
-  </data>
-  <data name="InvalidTypeReference" xml:space="preserve">
-    <value>Type reference {0} is malformed. Neither quoted nor parenthesized identifiers can be used in type references. Use string literals to express case sensitivity.</value>
   </data>
   <data name="InvalidUnaryOperator" xml:space="preserve">
     <value>operator: '{0}'.</value>
@@ -645,9 +630,6 @@
   <data name="ShowPlanWarningNoJoinPredicate" xml:space="preserve">
     <value>No join predicate</value>
   </data>
-  <data name="SimpleExpressionExpected" xml:space="preserve">
-    <value>Found '{0}' but '&lt;Expression&gt;' expected.</value>
-  </data>
   <data name="SubqueryReturnedMoreThanRow" xml:space="preserve">
     <value>Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, &lt;, &lt;= , &gt;, &gt;= or when the subquery is used as an expression.</value>
   </data>
@@ -656,12 +638,6 @@
   </data>
   <data name="TableProviderAlreadyRegistered" xml:space="preserve">
     <value>A table provider for type '{0}' has already been assigned.</value>
-  </data>
-  <data name="TableReferenceExpected" xml:space="preserve">
-    <value>Found '{0}' but '&lt;Table Reference&gt;' expected</value>
-  </data>
-  <data name="TableRefInaccessible" xml:space="preserve">
-    <value>Table '{0}: {1}' is introduced in a different branch within the join hierarchy and is therefore inaccessible.</value>
   </data>
   <data name="TargetTypeMismatch" xml:space="preserve">
     <value>Cannot narrow down the target type to '{1}' since the static expression type '{0}' would not be assignable from the new target type '{1}' anymore.</value>

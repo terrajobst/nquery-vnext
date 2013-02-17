@@ -232,15 +232,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Table ref name {0} is ambiguous between {1}..
-        /// </summary>
-        internal static string AmbiguousTableRef {
-            get {
-                return ResourceManager.GetString("AmbiguousTableRef", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Type reference &apos;{0}&apos; is ambiguous between 1}..
         /// </summary>
         internal static string AmbiguousType {
@@ -304,15 +295,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aggregation modifier &apos;*&apos; not allowed in function call &apos;{0}&apos;..
-        /// </summary>
-        internal static string AsteriskModifierNotAllowed {
-            get {
-                return ResourceManager.GetString("AsteriskModifierNotAllowed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Binary operator &apos;{0} {1} {2}&apos; threw an exception: {6}{7}Operator method: &apos;{3}&apos;. argumentValueSlotList: &apos;{4}&apos;, &apos;{5}&apos;..
         /// </summary>
         internal static string BinaryOperatorFailed {
@@ -363,15 +345,6 @@ namespace NQuery {
         internal static string CannotFoldConstants {
             get {
                 return ResourceManager.GetString("CannotFoldConstants", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Could not load assembly &apos;{0}&apos;: {1}.
-        /// </summary>
-        internal static string CannotLoadTypeAssembly {
-            get {
-                return ResourceManager.GetString("CannotLoadTypeAssembly", resourceCulture);
             }
         }
         
@@ -799,15 +772,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Internal Error: {0}.
-        /// </summary>
-        internal static string InternalError {
-            get {
-                return ResourceManager.GetString("InternalError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0}.GetUnknown() not supported..
         /// </summary>
         internal static string InternalErrorGetValueNotSupported {
@@ -966,15 +930,6 @@ namespace NQuery {
         internal static string InvalidRowReference {
             get {
                 return ResourceManager.GetString("InvalidRowReference", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type reference {0} is malformed. Neither quoted nor parenthesized identifiers can be used in type references. Use string literals to express case sensitivity..
-        /// </summary>
-        internal static string InvalidTypeReference {
-            get {
-                return ResourceManager.GetString("InvalidTypeReference", resourceCulture);
             }
         }
         
@@ -1672,15 +1627,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Found &apos;{0}&apos; but &apos;&lt;Expression&gt;&apos; expected..
-        /// </summary>
-        internal static string SimpleExpressionExpected {
-            get {
-                return ResourceManager.GetString("SimpleExpressionExpected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, &lt;, &lt;= , &gt;, &gt;= or when the subquery is used as an expression..
         /// </summary>
         internal static string SubqueryReturnedMoreThanRow {
@@ -1704,24 +1650,6 @@ namespace NQuery {
         internal static string TableProviderAlreadyRegistered {
             get {
                 return ResourceManager.GetString("TableProviderAlreadyRegistered", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Found &apos;{0}&apos; but &apos;&lt;Table Reference&gt;&apos; expected.
-        /// </summary>
-        internal static string TableReferenceExpected {
-            get {
-                return ResourceManager.GetString("TableReferenceExpected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Table &apos;{0}: {1}&apos; is introduced in a different branch within the join hierarchy and is therefore inaccessible..
-        /// </summary>
-        internal static string TableRefInaccessible {
-            get {
-                return ResourceManager.GetString("TableRefInaccessible", resourceCulture);
             }
         }
         
