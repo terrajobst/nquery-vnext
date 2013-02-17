@@ -60,6 +60,7 @@
     <Compile Include="AllAnySubselectExressionTests.cs" />
     <Compile Include="BetweenExpressionTests.cs" />
     <Compile Include="BinaryOperatorExpressionTests.cs" />
+    <Compile Include="ComparerTests.cs" />
     <Compile Include="GroupByAndAggregationTests.cs" />
     <Compile Include="CaseExpressionTests.cs" />
     <Compile Include="CastExpressionTests.cs" />

@@ -844,11 +844,29 @@ namespace NQuery {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in EXCEPT since it cannot be compared or sorted..
+        /// </summary>
+        internal static string InvalidDataTypeInExcept {
+            get {
+                return ResourceManager.GetString("InvalidDataTypeInExcept", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in GROUP BY since it cannot be compared or sorted..
         /// </summary>
         internal static string InvalidDataTypeInGroupBy {
             get {
                 return ResourceManager.GetString("InvalidDataTypeInGroupBy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The data type &apos;{0}&apos; cannot be used in INTERSECT since it cannot be compared or sorted..
+        /// </summary>
+        internal static string InvalidDataTypeInIntersect {
+            get {
+                return ResourceManager.GetString("InvalidDataTypeInIntersect", resourceCulture);
             }
         }
         

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -290,6 +291,23 @@ namespace NQuery.Binding
             return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
         }
 
+        private IComparer BindComparer(Type type, TextSpan errorSpan, DiagnosticId errorId)
+        {
+            var missingComparer = Comparer.Default;
+
+            if (type.IsError())
+                return missingComparer;
+
+            var comparer = LookupComparer(type);
+            if (comparer == null)
+            {
+                comparer = missingComparer;
+                Diagnostics.Report(errorSpan, errorId, type.ToDisplayName());
+            }
+
+            return comparer;
+        }
+
         private BoundQuery BindSubquery(QuerySyntax querySyntax)
         {
             if (InGroupByClause)
@@ -341,22 +359,24 @@ namespace NQuery.Binding
 
         private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
         {
-            // TODO: Check column count
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
-            // TODO: Ensure all column data types are comparable.
 
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
+
+            if (left.OutputColumns.Count != right.OutputColumns.Count)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
+
+            foreach (var column in columns)
+                BindComparer(column.Type, node.ExceptKeyword.Span, DiagnosticId.InvalidDataTypeInExcept);
 
             return new BoundCombinedQuery(left, BoundQueryCombinator.Except, right, columns);
         }
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
         {
-            // TODO: Check column count
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
-            // TODO: If ALL is not specified, ensure all column data types are comparable.
 
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
@@ -367,16 +387,31 @@ namespace NQuery.Binding
                               .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                               .ToArray();
 
+            if (combinator == BoundQueryCombinator.Union)
+            {
+                foreach (var column in columns)
+                    BindComparer(column.Type, node.UnionKeyword.Span, DiagnosticId.InvalidDataTypeInUnion);
+            }
+
+            if (left.OutputColumns.Count != right.OutputColumns.Count)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
+
             return new BoundCombinedQuery(left, combinator, right, columns);
         }
 
         private BoundQuery BindIntersectQuery(IntersectQuerySyntax node)
         {
-            // TODO: Check column count
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
+
+            if (left.OutputColumns.Count != right.OutputColumns.Count)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.IntersectKeyword.Span);
+
+            foreach (var column in columns)
+                BindComparer(column.Type, node.IntersectKeyword.Span, DiagnosticId.InvalidDataTypeInIntersect);
+
             return new BoundCombinedQuery(left, BoundQueryCombinator.Intersect, right, columns);
         }
 
@@ -733,7 +768,16 @@ namespace NQuery.Binding
             var projections = (from t in queryBinder.QueryState.ComputedProjections
                                select Tuple.Create(t.Expression, t.Result)).ToArray();
 
-            // TODO: If DISTINCT is specified, ensure that all column sources are datatypes that are comparable.
+            var distinctKeyword = node.SelectClause.DistinctAllKeyword;
+            var isDistinct = distinctKeyword != null &&
+                             distinctKeyword.Kind == SyntaxKind.DistinctKeyword;
+
+            if (isDistinct)
+            {
+                foreach (var column in outputColumns)
+                    BindComparer(column.Type, distinctKeyword.Span, DiagnosticId.InvalidDataTypeInSelectDistinct);
+            }
+
             // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
 
             // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
@@ -932,9 +976,7 @@ namespace NQuery.Binding
                 var boundExpression = groupByBinder.BindExpression(expression);
                 var expressionType = boundExpression.Type;
 
-                var comparer = LookupComparer(expressionType);
-                if (comparer == null && !expressionType.IsError())
-                    Diagnostics.ReportInvalidDataTypeInGroupBy(expression.Span, expressionType);
+                BindComparer(expressionType, expression.Span, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
@@ -1036,13 +1078,10 @@ namespace NQuery.Binding
                                     ? queryColumn.ValueSlot
                                     : boundSelector.ValueSlot;
 
-                // Almost there. The only thing left to do is ensuring the data type
-                // of the selector can atually be used for sorting, i.e. it must have
-                // an associated comparer.
+                // Almost there. Now the only thing left for us to do is getting
+                // the associated comparer.
 
-                var comparer = LookupComparer(valueSlot.Type);
-                if (comparer == null && !valueSlot.Type.IsError())
-                    Diagnostics.ReportInvalidDataTypeInOrderBy(selector.Span, valueSlot.Type);
+                var comparer = BindComparer(valueSlot.Type, selector.Span, DiagnosticId.InvalidDataTypeInOrderBy);
 
                 var boundColumn = new BoundOrderByColumn(queryColumn, valueSlot, isAscending, comparer);
                 Bind(column, boundColumn);

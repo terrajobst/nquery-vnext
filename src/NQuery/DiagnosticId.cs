@@ -84,6 +84,8 @@ namespace NQuery
         InvalidDataTypeInGroupBy,
         InvalidDataTypeInOrderBy,
         InvalidDataTypeInUnion,
+        InvalidDataTypeInExcept,
+        InvalidDataTypeInIntersect,
         DifferentExpressionCountInBinaryQuery,
         OrderByItemsMustBeInSelectListIfUnionSpecified,
         OrderByItemsMustBeInSelectListIfDistinctSpecified,

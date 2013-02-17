@@ -384,6 +384,12 @@
   <data name="InvalidDataTypeInUnion" xml:space="preserve">
     <value>The data type '{0}' cannot be used in UNION since it cannot be compared or sorted.</value>
   </data>
+  <data name="InvalidDataTypeInExcept" xml:space="preserve">
+    <value>The data type '{0}' cannot be used in EXCEPT since it cannot be compared or sorted.</value>
+  </data>
+  <data name="InvalidDataTypeInIntersect" xml:space="preserve">
+    <value>The data type '{0}' cannot be used in INTERSECT since it cannot be compared or sorted.</value>
+  </data>
   <data name="InvalidDate" xml:space="preserve">
     <value>'{0}' is not a valid date.</value>
   </data>

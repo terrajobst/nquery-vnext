@@ -133,24 +133,6 @@ namespace NQuery
         //    return new Diagnostic(DiagnosticId.OrderByInvalidInSubqueryUnlessTopIsAlsoSpecified, Resources.OrderByInvalidInSubqueryUnlessTopIsAlsoSpecified);
         //}
 
-        //public static Diagnostic InvalidDataTypeInSelectDistinct(Type expressionType)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInSelectDistinct, FormattingHelpers.FormatType(expressionType));
-        //    return new Diagnostic(DiagnosticId.InvalidDataTypeInSelectDistinct, message);
-        //}
-
-        //public static Diagnostic InvalidDataTypeInUnion(Type expressionType, BinaryQueryOperator unionOperator)
-        //{
-        //    string unionOperatorString = unionOperator.ToString().ToUpper(CultureInfo.CurrentCulture);
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.InvalidDataTypeInUnion, FormattingHelpers.FormatType(expressionType), unionOperatorString);
-        //    return new Diagnostic(DiagnosticId.InvalidDataTypeInUnion, message);
-        //}
-
-        //public static Diagnostic DifferentExpressionCountInBinaryQuery()
-        //{
-        //    return new Diagnostic(DiagnosticId.DifferentExpressionCountInBinaryQuery, Resources.DifferentExpressionCountInBinaryQuery);
-        //}
-
         //public static Diagnostic OrderByItemsMustBeInSelectListIfDistinctSpecified()
         //{
         //    return new Diagnostic(DiagnosticId.OrderByItemsMustBeInSelectListIfDistinctSpecified, Resources.OrderByItemsMustBeInSelectListIfDistinctSpecified);

@@ -167,6 +167,10 @@ namespace NQuery
                     return Resources.InvalidDataTypeInOrderBy;
                 case DiagnosticId.InvalidDataTypeInUnion:
                     return Resources.InvalidDataTypeInUnion;
+                case DiagnosticId.InvalidDataTypeInExcept:
+                    return Resources.InvalidDataTypeInExcept;
+                case DiagnosticId.InvalidDataTypeInIntersect:
+                    return Resources.InvalidDataTypeInIntersect;
                 case DiagnosticId.DifferentExpressionCountInBinaryQuery:
                     return Resources.DifferentExpressionCountInBinaryQuery;
                 case DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified:
@@ -646,32 +650,10 @@ namespace NQuery
         //    diagnostics.Add(DiagnosticFactory.OrderByInvalidInSubqueryUnlessTopIsAlsoSpecified());
         //}
 
-        //public static void ReportInvalidDataTypeInSelectDistinct(this ICollection<Diagnostic> diagnostics, Type expressionType)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidDataTypeInSelectDistinct(expressionType));
-        //}
-
-        public static void ReportInvalidDataTypeInGroupBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, Type type)
+        public static void ReportDifferentExpressionCountInBinaryQuery(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
-            var typeDisplayName = type.ToDisplayName();
-            diagnostics.Report(textSpan, DiagnosticId.InvalidDataTypeInGroupBy, typeDisplayName);
+            diagnostics.Report(textSpan, DiagnosticId.DifferentExpressionCountInBinaryQuery);
         }
-
-        public static void ReportInvalidDataTypeInOrderBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, Type type)
-        {
-            var typeDisplayName = type.ToDisplayName();
-            diagnostics.Report(textSpan, DiagnosticId.InvalidDataTypeInOrderBy, typeDisplayName);
-        }
-
-        //public static void ReportInvalidDataTypeInUnion(this ICollection<Diagnostic> diagnostics, Type expressionType, BinaryQueryOperator unionOperator)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.InvalidDataTypeInUnion(expressionType, unionOperator));
-        //}
-
-        //public static void ReportDifferentExpressionCountInBinaryQuery(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    diagnostics.Add(DiagnosticFactory.DifferentExpressionCountInBinaryQuery());
-        //}
 
         public static void ReportOrderByItemsMustBeInSelectListIfUnionSpecified(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
