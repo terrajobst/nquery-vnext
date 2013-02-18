@@ -37,6 +37,9 @@ namespace NQuery.Binding
 
             var targetType = selected.Signature.GetParameterType(argumentIndex);
             var conversion = selected.ArgumentConversions[argumentIndex];
+
+            // TODO: We need check for ambiguous conversions here as well.
+
             return conversion.IsIdentity
                        ? expression
                        : new BoundConversionExpression(expression, targetType, conversion);
