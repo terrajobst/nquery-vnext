@@ -84,14 +84,14 @@ namespace NQuery
 
         private static DataContext CreateEmpty()
         {
-            return new DataContext(ImmutableList<TableSymbol>.Empty,
-                                   ImmutableList<TableRelation>.Empty,
-                                   ImmutableList<FunctionSymbol>.Empty,
-                                   ImmutableList<AggregateSymbol>.Empty,
-                                   ImmutableList<VariableSymbol>.Empty,
-                                   ImmutableDictionary<Type, IPropertyProvider>.Empty,
-                                   ImmutableDictionary<Type, IMethodProvider>.Empty,
-                                   ImmutableDictionary<Type, IComparer>.Empty);
+            return new DataContext(ImmutableList.Create<TableSymbol>(),
+                                   ImmutableList.Create<TableRelation>(),
+                                   ImmutableList.Create<FunctionSymbol>(),
+                                   ImmutableList.Create<AggregateSymbol>(),
+                                   ImmutableList.Create<VariableSymbol>(),
+                                   ImmutableDictionary.Create<Type, IPropertyProvider>(),
+                                   ImmutableDictionary.Create<Type, IMethodProvider>(),
+                                   ImmutableDictionary.Create<Type, IComparer>());
         }
 
         private static DataContext CreateDefault()
@@ -99,14 +99,16 @@ namespace NQuery
             var functions = BuiltInFunctions.GetFunctions().ToImmutableList();
             var aggregates = BuiltInAggregates.GetAggregates().ToImmutableList();
             var reflectionProvider = new ReflectionProvider();
-            var propertyProviders = ImmutableDictionary<Type, IPropertyProvider>.Empty.Add(typeof(object), reflectionProvider);
-            var methodProviders = ImmutableDictionary<Type, IMethodProvider>.Empty.Add(typeof(object), reflectionProvider);
-            var comparers = ImmutableDictionary<Type, IComparer>.Empty;
-            return new DataContext(ImmutableList<TableSymbol>.Empty,
-                                   ImmutableList<TableRelation>.Empty,
+            var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
+                                                       .Add(typeof (object), reflectionProvider);
+            var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
+                                                     .Add(typeof (object), reflectionProvider);
+            var comparers = ImmutableDictionary.Create<Type, IComparer>();
+            return new DataContext(ImmutableList.Create<TableSymbol>(),
+                                   ImmutableList.Create<TableRelation>(),
                                    functions,
                                    aggregates,
-                                   ImmutableList<VariableSymbol>.Empty,
+                                   ImmutableList.Create<VariableSymbol>(),
                                    propertyProviders,
                                    methodProviders,
                                    comparers);
@@ -138,16 +140,13 @@ namespace NQuery
 
         public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
         {
-            var newTables = _tables;
-            foreach (var tableSymbol in tables)
-                newTables = newTables.Remove(tableSymbol);
-
+            var newTables = _tables.RemoveRange(tables);
             return WithTables(newTables);
         }
 
         public DataContext RemoveAllTables()
         {
-            var newTables = ImmutableList<TableSymbol>.Empty;
+            var newTables = _tables.Clear();
             return WithTables(newTables);
         }
 
@@ -186,16 +185,13 @@ namespace NQuery
 
         public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
         {
-            var newRelations = _relations;
-            foreach (var relationSymbol in relations)
-                newRelations = newRelations.Remove(relationSymbol);
-
+            var newRelations = _relations.RemoveRange(relations);
             return WithRelations(newRelations);
         }
 
         public DataContext RemoveAllRelations()
         {
-            var newRelations = ImmutableList<TableRelation>.Empty;
+            var newRelations = _relations.Clear();
             return WithRelations(newRelations);
         }
 
@@ -234,16 +230,13 @@ namespace NQuery
 
         public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            var newFunctions = _functions;
-            foreach (var functionSymbol in functions)
-                newFunctions = newFunctions.Remove(functionSymbol);
-
+            var newFunctions = _functions.RemoveRange(functions);
             return WithFunctions(newFunctions);
         }
 
         public DataContext RemoveAllFunctions()
         {
-            var newFunctions = ImmutableList<FunctionSymbol>.Empty;
+            var newFunctions = _functions.Clear();
             return WithFunctions(newFunctions);
         }
 
@@ -282,16 +275,13 @@ namespace NQuery
 
         public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            var newAggregates = _aggregates;
-            foreach (var aggregateSymbol in aggregates)
-                newAggregates = newAggregates.Remove(aggregateSymbol);
-
+            var newAggregates = _aggregates.RemoveRange(aggregates);
             return WithAggregates(newAggregates);
         }
 
         public DataContext RemoveAllAggregates()
         {
-            var newAggregates = ImmutableList<AggregateSymbol>.Empty;
+            var newAggregates = _aggregates.Clear();
             return WithAggregates(newAggregates);
         }
 
@@ -330,16 +320,13 @@ namespace NQuery
 
         public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
         {
-            var newVariables = _variables;
-            foreach (var variableSymbol in variables)
-                newVariables = newVariables.Remove(variableSymbol);
-
+            var newVariables = _variables.RemoveRange(variables);
             return WithVariables(newVariables);
         }
 
         public DataContext RemoveAllVariables()
         {
-            var newVariables = ImmutableList<VariableSymbol>.Empty;
+            var newVariables = _variables.Clear();
             return WithVariables(newVariables);
         }
 
@@ -382,7 +369,7 @@ namespace NQuery
 
         public DataContext RemoveAllPropertyProviders()
         {
-            var newProviders = ImmutableDictionary<Type, IPropertyProvider>.Empty;
+            var newProviders = _propertyProviders.Clear();
             return WithPropertyProviders(newProviders);
         }
 
@@ -424,7 +411,7 @@ namespace NQuery
 
         public DataContext RemoveAllMethodProviders()
         {
-            var newProviders = ImmutableDictionary<Type, IMethodProvider>.Empty;
+            var newProviders = _methodProviders.Clear();
             return WithMethodProviders(newProviders);
         }
 
@@ -466,7 +453,7 @@ namespace NQuery
 
         public DataContext RemoveAllComparers()
         {
-            var newProviders = ImmutableDictionary<Type, IComparer>.Empty;
+            var newProviders = _comparers.Clear();
             return WithComparers(newProviders);
         }
 
