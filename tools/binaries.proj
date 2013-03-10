@@ -10,7 +10,7 @@
     -->
 
   <PropertyGroup>
-    <CustomAfterMicrosoftCSharpTargets>$(ProjectDir)compile.targets</CustomAfterMicrosoftCSharpTargets>
+    <CustomAfterMicrosoftCSharpTargets>$(ToolsDir)compile.targets</CustomAfterMicrosoftCSharpTargets>
     <ProjectProperties>
       Configuration=$(Configuration);
       Platform=$(Platform);
