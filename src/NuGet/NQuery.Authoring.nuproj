@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <NuProjPath Condition=" '$(NuProjPath)' == '' ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
+  </PropertyGroup>
+  <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
+
+  <Import Project="$(MSBuildThisFileDirectory)\..\Common\CommonProperties.nuproj" />
+
+  <PropertyGroup>
+    <Id>NQuery.Authoring</Id>
+    <Title>NQuery.Authoring</Title>
+    <Summary>NQuery.Authoring</Summary>
+    <Description>NQuery.Authoring</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Dependency Include="NQuery">
+      <Version>$(Version)</Version>
+    </Dependency>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Library Include="$(BasePath)NQuery.Authoring.dll">
+      <TargetFramework>net45</TargetFramework>
+    </Library>
+  </ItemGroup>
+
+  <Import Project="$(NuProjPath)\NuProj.targets" />
+
+</Project>

@@ -9,10 +9,7 @@
     -->
 
   <PropertyGroup>
-    <OutDir Condition="'$(OutDir)' == ''">$(ProjectDir)bin\</OutDir>
-    <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' ">$(ProjectDir)obj\</IntermediateOutputPath>
-    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    <Platform Condition="'$(Platform)' == ''">Any CPU</Platform>
+    <BuildInParallel Condition="'$(BuildInParallel)' == ''">True</BuildInParallel>
   </PropertyGroup>
 
   <!--
@@ -22,37 +19,34 @@
     -->
 
   <PropertyGroup>
-    <BuildInParallel>False</BuildInParallel>
     <ProjectProperties>
-      Configuration=$(Configuration);
-      Platform=$(Platform);
+      BasePath=$(OutDir);
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
+      NuProjPath=$(SourceDir)packages\NuProj.0.9.2-beta\tools\;
     </ProjectProperties>
   </PropertyGroup>
 
   <ItemGroup>
-    <BuildStep Include="$(ToolsDir)restore.proj" />
-    <BuildStep Include="$(ToolsDir)binaries.proj" />
-    <BuildStep Include="$(ToolsDir)package.proj" />
+    <NuProj Include="$(SourceDir)NuGet\*.nuproj" />
   </ItemGroup>
 
   <Target Name="Clean">
-    <MSBuild Projects="@(BuildStep)"
+    <MSBuild Projects="@(NuProj)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Clean"
              Properties="$(ProjectProperties)" />
   </Target>
 
   <Target Name="Build">
-    <MSBuild Projects="@(BuildStep)"
+    <MSBuild Projects="@(NuProj)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Build"
              Properties="$(ProjectProperties)" />
   </Target>
 
   <Target Name="Rebuild">
-    <MSBuild Projects="@(BuildStep)"
+    <MSBuild Projects="@(NuProj)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Rebuild"
              Properties="$(ProjectProperties)" />

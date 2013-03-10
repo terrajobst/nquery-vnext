@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <PackagesDir>$(SourceDir)packages\</PackagesDir>
-    <NuGetToolPath>$(MSBuildThisFileDirectory)NuGet.exe</NuGetToolPath>
+    <NuGetToolPath>$(MSBuildThisFileDirectory)NuGet\NuGet.exe</NuGetToolPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -4,18 +4,6 @@
   <Import Project="build.props" />
 
   <!--
-      DEFAULT SETTINGS
-      Those can be customized from the outside.
-    -->
-
-  <PropertyGroup>
-    <OutDir Condition="'$(OutDir)' == ''">$(ProjectDir)bin\</OutDir>
-    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
-    <Platform Condition="'$(Platform)' == ''">Any CPU</Platform>
-    <BuildInParallel Condition="'$(BuildInParallel)' == ''">True</BuildInParallel>
-  </PropertyGroup>
-
-  <!--
        FORWARDING
        The properties below handle forwarding of properties to the
        underlying MSBuild projects.
@@ -27,6 +15,7 @@
       Configuration=$(Configuration);
       Platform=$(Platform);
       OutDir=$(OutDir);
+      IntermediateOutputPath=$(IntermediateOutputPath);
       CustomAfterMicrosoftCSharpTargets=$(CustomAfterMicrosoftCSharpTargets)
     </ProjectProperties>
   </PropertyGroup>
