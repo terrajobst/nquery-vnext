@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <BuildStep Include="$(ToolsDir)restore.proj" />
-    <BuildStep Include="$(ToolsDir)binaries.proj" />
+    <BuildStep Include="$(ToolsDir)compile.proj" />
     <BuildStep Include="$(ToolsDir)package.proj" />
   </ItemGroup>
 
