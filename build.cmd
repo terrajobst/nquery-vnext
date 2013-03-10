@@ -5,4 +5,4 @@
 ::       means that that rebuilding cannot successully delete the task
 ::       assembly.
 
-"%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" build.proj /nologo /m /v:m /nr:false /flp:verbosity=normal %1 %2 %3 %4 %5 %6 %7 %8 %9
+"%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" /nologo /m /v:m /nr:false /flp:verbosity=normal %1 %2 %3 %4 %5 %6 %7 %8 %9

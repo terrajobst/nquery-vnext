@@ -2,8 +2,9 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <ProjectDir>$(MSBuildThisFileDirectory)\</ProjectDir>
+    <ProjectDir>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\'))</ProjectDir>
     <SourceDir>$(ProjectDir)src\</SourceDir>
+    <ToolsDir>$(ProjectDir)tools\</ToolsDir>
   </PropertyGroup>
  
 </Project>
