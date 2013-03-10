@@ -31,11 +31,19 @@
     </ProjectProperties>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <RestoreProject>$(ProjectDir)restore.proj</RestoreProject>
+  </PropertyGroup>
+
   <ItemGroup>
     <SolutionFiles Include="$(SourceDir)*.sln" />
   </ItemGroup>
 
   <Target Name="Clean">
+    <MSBuild Projects="$(RestoreProject)"
+             BuildInParallel="$(BuildInParallel)"
+             Targets="Clean"
+             Properties="$(ProjectProperties)" />
     <MSBuild Projects="@(SolutionFiles)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Clean"
@@ -43,6 +51,10 @@
   </Target>
 
   <Target Name="Build">
+    <MSBuild Projects="$(RestoreProject)"
+             BuildInParallel="$(BuildInParallel)"
+             Targets="Build"
+             Properties="$(ProjectProperties)" />
     <MSBuild Projects="@(SolutionFiles)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Build"
@@ -50,6 +62,10 @@
   </Target>
 
   <Target Name="Rebuild">
+    <MSBuild Projects="$(RestoreProject)"
+             BuildInParallel="$(BuildInParallel)"
+             Targets="Rebuild"
+             Properties="$(ProjectProperties)" />
     <MSBuild Projects="@(SolutionFiles)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Rebuild"
