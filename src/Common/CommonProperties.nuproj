@@ -2,13 +2,14 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <!-- TODO: Should be passed in -->
+    <!-- Those are passed in during build:
     <Version>1.0.0</Version>
     <Authors>Immo Landwerth</Authors>
     <Owners>Immo Landwerth</Owners>
     <ProjectUrl>http://nquery.codeplex.com</ProjectUrl>
     <LicenseUrl>http://nquery.codeplex.com/license</LicenseUrl>
     <Copyright>Copyright (c) Immo Landwerth</Copyright>
+    -->
     <RequireLicenseAcceptance>False</RequireLicenseAcceptance>
     <Tags>NQuery SQL</Tags>
   </PropertyGroup>
