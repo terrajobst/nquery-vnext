@@ -91,6 +91,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -186,6 +187,10 @@
     <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj">
       <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
       <Name>NQuery.Authoring.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
+      <Project>{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}</Project>
+      <Name>NQuery.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>

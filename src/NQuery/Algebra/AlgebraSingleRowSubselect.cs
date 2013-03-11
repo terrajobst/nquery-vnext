@@ -11,6 +11,11 @@ namespace NQuery.Algebra
             _query = query;
         }
 
+        public override Type Type
+        {
+            get { return TypeFacts.Unknown; }
+        }
+
         public override AlgebraKind Kind
         {
             get { return AlgebraKind.SingleRowSubselect; }

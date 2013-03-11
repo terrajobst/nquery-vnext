@@ -18,6 +18,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.ValueSlotExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _valueSlot.Type; }
+        }
+
         public ValueSlot ValueSlot
         {
             get { return _valueSlot; }

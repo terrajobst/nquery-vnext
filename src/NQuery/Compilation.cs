@@ -2,6 +2,7 @@ using System;
 
 using NQuery.Algebra;
 using NQuery.Binding;
+using NQuery.Plan;
 
 namespace NQuery
 {
@@ -22,7 +23,25 @@ namespace NQuery
             return new SemanticModel(this, bindingResult);
         }
 
+        public QueryReader GetQueryReader()
+        {
+            var relation = GetAlgebraNode() as AlgebraRelation;
+            if (relation == null)
+                return null;
+
+            var iterator = PlanBuilder.Build(relation);
+            return new QueryReader(iterator);
+        }
+
         public ShowPlanNode GetShowPlan()
+        {
+            var algebraNode = GetAlgebraNode();
+            return algebraNode == null
+                       ? null
+                       : ShowPlanBuilder.Build(algebraNode);
+        }
+
+        private AlgebraNode GetAlgebraNode()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundRoot = bindingResult.BoundRoot as BoundQuery;
@@ -30,7 +49,7 @@ namespace NQuery
                 return null;
 
             var algebraNode = Algebrizer.Algebrize(boundRoot);
-            return ShowPlanBuilder.Build(algebraNode);
+            return algebraNode;
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

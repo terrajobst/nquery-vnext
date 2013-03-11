@@ -16,6 +16,16 @@ namespace NQuery.Algebra
             get { return AlgebraKind.LiteralExpression; }
         }
 
+        public override Type Type
+        {
+            get
+            {
+                return _value == null
+                           ? TypeFacts.Null
+                           : _value.GetType();
+            }
+        }
+
         public object Value
         {
             get { return _value; }

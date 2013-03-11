@@ -16,6 +16,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.ExistsSubselect; }
         }
 
+        public override Type Type
+        {
+            get { return typeof (bool); }
+        }
+
         public AlgebraRelation Query
         {
             get { return _query; }

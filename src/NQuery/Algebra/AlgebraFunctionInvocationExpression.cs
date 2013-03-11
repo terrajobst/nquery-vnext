@@ -22,6 +22,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.FunctionInvocationExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _symbol.Type; }
+        }
+
         public ReadOnlyCollection<AlgebraExpression> Arguments
         {
             get { return _arguments; }

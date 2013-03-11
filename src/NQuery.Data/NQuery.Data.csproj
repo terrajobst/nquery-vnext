@@ -44,8 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataColumnDefinition.cs" />
     <Compile Include="DataContextExtensions.cs" />
+    <Compile Include="DataTableDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryReaderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery\NQuery.csproj">

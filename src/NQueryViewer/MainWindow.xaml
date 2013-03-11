@@ -14,6 +14,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               Background="LemonChiffon">
@@ -51,24 +52,79 @@
                     <RowDefinition Height="3" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <TabControl x:Name="TabControl"
+                <TabControl x:Name="DocumentTabControl"
                             Grid.Row="0"
                             SelectionChanged="TabControlOnSelectionChanged"/>
                 <GridSplitter Grid.Row="1"
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch" />
-                <TabControl Grid.Row="2">
+                <TabControl x:Name="BottomToolWindowTabControl"
+                    Grid.Row="2">
                     <TabItem Header="Error List">
                         <wpf:DiagnosticGrid x:Name="DiagnosticGrid"
                                             Grid.Row="2"
                                             MouseDoubleClick="DiagnosticGridMouseDoubleClick" />
                     </TabItem>
                     <TabItem Header="Execution Plan">
-                        <wpf:ShowPlanView x:Name="_showPlanView"
+                        <wpf:ShowPlanView x:Name="ShowPlanView"
                                            ShowPlan="{Binding Plan}" />
+                    </TabItem>
+                    <TabItem x:Name="ResultsTabItem"
+                             Header="Results">
+                        <TabItem.Resources>
+                            <Style TargetType="DataGrid">
+                                <Setter Property="GridLinesVisibility"
+                                        Value="None" />
+                                <Setter Property="BorderBrush"
+                                        Value="{x:Static SystemColors.ControlLightBrush}" />
+                                <Setter Property="Background"
+                                        Value="White" />
+                            </Style>
+                            <Style TargetType="DataGridCell">
+                                <Style.Triggers>
+                                    <Trigger Property="IsKeyboardFocusWithin"
+                                             Value="true">
+                                        <Setter Property="BorderBrush"
+                                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                                <Setter Property="FocusVisualStyle">
+                                    <Setter.Value>
+                                        <Style />
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TabItem.Resources>
+                        <DataGrid x:Name="DataGrid"
+                                  IsReadOnly="True" />
                     </TabItem>
                 </TabControl>
             </Grid>
         </Grid>
+        <StatusBar Grid.Row="2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <TextBlock>Ready</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <TextBlock Text="{Binding ElementName=DataGrid,Path=Items.Count,StringFormat={}{0} rows.}" />
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="2">
+                <TextBlock x:Name="ExecutionTimeTextBlock" />
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>

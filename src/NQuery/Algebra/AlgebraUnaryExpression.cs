@@ -20,6 +20,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.UnaryExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _signature.ReturnType; }
+        }
+
         public AlgebraExpression Expression
         {
             get { return _expression; }

@@ -40,6 +40,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.8-beta\lib\net45\System.Collections.Immutable.dll</HintPath>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -91,6 +93,10 @@
     <Compile Include="UnaryOperatorExpressionTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
+      <Project>{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}</Project>
+      <Name>NQuery.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery</Name>

@@ -109,7 +109,8 @@ namespace NQuery.Algebra
         {
             var expression = AlgebrizeExpression(node.Expression);
             var conversion = node.Conversion;
-            return new AlgebraConversionExpression(expression, conversion);
+            var type = node.Type;
+            return new AlgebraConversionExpression(expression, conversion, type);
         }
 
         private AlgebraExpression AlgebrizeIsNullExpression(BoundIsNullExpression node)

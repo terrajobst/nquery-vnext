@@ -90,6 +90,20 @@
     <Compile Include="Binding\BoundOrderedQuery.cs" />
     <Compile Include="Binding\BoundValueSlotExpression.cs" />
     <Compile Include="Binding\SymbolTable.cs" />
+    <Compile Include="Plan\ArrayRowBuffer.cs" />
+    <Compile Include="Plan\CombinedRowBuffer.cs" />
+    <Compile Include="Plan\ComputeScalarIterator.cs" />
+    <Compile Include="Plan\EmptyIterator.cs" />
+    <Compile Include="Plan\EmptyRowBuffer.cs" />
+    <Compile Include="Plan\ExpressionBuilder.cs" />
+    <Compile Include="Plan\FilterIterator.cs" />
+    <Compile Include="Plan\InnerNestedLoopsIterator.cs" />
+    <Compile Include="Plan\Iterator.cs" />
+    <Compile Include="Plan\PlanBuilder.cs" />
+    <Compile Include="Plan\RowBuffer.cs" />
+    <Compile Include="Plan\TableIterator.cs" />
+    <Compile Include="Plan\ValueSlotSettings.cs" />
+    <Compile Include="QueryReader.cs" />
     <Compile Include="ShowPlanNode.cs" />
     <Compile Include="Binding\BinaryOperator.cs" />
     <Compile Include="Binding\BinaryOperatorSignature.cs" />
@@ -104,6 +118,7 @@
     <Compile Include="Symbols\BuiltInFunctions.cs" />
     <Compile Include="Symbols\BuiltinOperators.cs" />
     <Compile Include="Binding\FunctionSymbolSignature.cs" />
+    <Compile Include="Symbols\ColumnDefinition.cs" />
     <Compile Include="Symbols\ColumnInstanceSymbol.cs" />
     <Compile Include="Symbols\KnownType.cs" />
     <Compile Include="Binding\MethodSymbolSignature.cs" />
@@ -168,6 +183,7 @@
     <Compile Include="Symbols\SymbolMarkupBuilder.cs" />
     <Compile Include="Symbols\SymbolMarkupKind.cs" />
     <Compile Include="Symbols\SymbolMarkupToken.cs" />
+    <Compile Include="Symbols\TableDefinition.cs" />
     <Compile Include="Symbols\TableRelation.cs" />
     <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
     <Compile Include="Syntax\InQueryExpressionSyntax.cs" />

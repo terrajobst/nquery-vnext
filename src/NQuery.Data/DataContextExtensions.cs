@@ -56,11 +56,8 @@ namespace NQuery.Data
 
         private static SchemaTableSymbol CreateTable(DataTable dataTable)
         {
-            var columns = dataTable.Columns
-                                   .Cast<DataColumn>()
-                                   .Select(c => new ColumnSymbol(c.ColumnName, c.DataType))
-                                   .ToArray();
-            return new SchemaTableSymbol(dataTable.TableName, columns);
+            var tableDefinition = new DataTableDefinition(dataTable);
+            return new SchemaTableSymbol(tableDefinition);
         }
 
         private static TableRelation CreateRelation(IReadOnlyList<TableSymbol> tables, DataRelation dataRelation)

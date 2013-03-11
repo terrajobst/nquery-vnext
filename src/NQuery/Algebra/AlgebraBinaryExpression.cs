@@ -22,6 +22,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.BinaryExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _signature.ReturnType; }
+        }
+
         public AlgebraExpression Left
         {
             get { return _left; }

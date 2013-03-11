@@ -20,6 +20,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.PropertyAccessExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _symbol.Type; }
+        }
+
         public AlgebraExpression Target
         {
             get { return _target; }

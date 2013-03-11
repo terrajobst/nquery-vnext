@@ -16,6 +16,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.IsNullExpression; }
         }
 
+        public override Type Type
+        {
+            get { return typeof (bool); }
+        }
+
         public AlgebraExpression Expression
         {
             get { return _expression; }

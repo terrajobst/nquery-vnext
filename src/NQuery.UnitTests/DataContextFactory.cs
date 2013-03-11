@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Data;
 
-using NQuery.Symbols;
+using NQuery.Data;
 
 namespace NQuery.UnitTests
 {
@@ -18,26 +19,18 @@ namespace NQuery.UnitTests
 
         public static DataContext CreateIdNameTable()
         {
-            var columns = new[]
-                              {
-                                  new ColumnSymbol("Id", typeof (int)),
-                                  new ColumnSymbol("Name", typeof (string))
-                              };
-            var table = new SchemaTableSymbol("Table", columns);
-
+            var table = new DataTable("Table");
+            table.Columns.Add(new DataColumn("Id", typeof (int)));
+            table.Columns.Add(new DataColumn("Name", typeof (string)));
             return DataContext.Default.AddTables(table);
         }
 
         public static DataContext CreateIdNameDataTable()
         {
-            var columns = new[]
-                              {
-                                  new ColumnSymbol("Id", typeof (int)),
-                                  new ColumnSymbol("Name", typeof (string)),
-                                  new ColumnSymbol("Data", typeof (byte[]))
-                              };
-            var table = new SchemaTableSymbol("Table", columns);
-
+            var table = new DataTable("Table");
+            table.Columns.Add(new DataColumn("Id", typeof(int)));
+            table.Columns.Add(new DataColumn("Name", typeof(string)));
+            table.Columns.Add(new DataColumn("Data", typeof(byte[])));
             return DataContext.Default.AddTables(table);
         }
     }

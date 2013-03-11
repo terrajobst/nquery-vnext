@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 using NQuery;
+using NQuery.Data;
 using NQuery.Data.Samples;
 
 using NQueryViewer.Editor;
@@ -32,7 +36,7 @@ namespace NQueryViewer
 
         private IEditorView CurrentEditorView
         {
-            get { return TabControl.SelectedContent as IEditorView; }
+            get { return DocumentTabControl.SelectedContent as IEditorView; }
         }
 
         public void OnImportsSatisfied()
@@ -62,15 +66,15 @@ namespace NQueryViewer
             editorView.SyntaxTreeChanged += EditorViewOnSyntaxTreeChanged;
             editorView.SemanticModelChanged += EditorViewOnSemanticModelChanged;
 
-            var id = TabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
+            var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
             var tabItem = new TabItem
             {
                 Header = string.Format("Query {0} [{1}]", id, editorViewFactory.DisplayName),
                 Content = editorView.Element,
                 Tag = id,
             };
-            TabControl.Items.Add(tabItem);
-            TabControl.SelectedItem = tabItem;
+            DocumentTabControl.Items.Add(tabItem);
+            DocumentTabControl.SelectedItem = tabItem;
             editorView.Focus();
         }
 
@@ -84,7 +88,37 @@ namespace NQueryViewer
             editorView.SyntaxTreeChanged -= EditorViewOnSyntaxTreeChanged;
             editorView.SemanticModelChanged -= EditorViewOnSemanticModelChanged;
 
-            TabControl.Items.RemoveAt(TabControl.SelectedIndex);
+            DocumentTabControl.Items.RemoveAt(DocumentTabControl.SelectedIndex);
+        }
+
+        private async void RunQuery()
+        {
+            var editorView = CurrentEditorView;
+            if (editorView == null)
+                return;
+
+            var semanticModel = editorView.SemanticModel;
+            if (semanticModel == null)
+                return;
+
+            if (semanticModel.GetDiagnostics().Any())
+                return;
+
+            var queryReader = semanticModel.Compilation.GetQueryReader();
+            if (queryReader == null)
+                return;
+
+            var stopwatch = Stopwatch.StartNew();
+            var data = await Task.Run(() =>
+            {
+                using (queryReader)
+                    return queryReader.ExecuteDataTable();
+            });
+            var elapsed = stopwatch.Elapsed;
+
+            DataGrid.ItemsSource = data.DefaultView;
+            BottomToolWindowTabControl.SelectedItem = ResultsTabItem;
+            ExecutionTimeTextBlock.Text = string.Format("Completed in {0}", elapsed);
         }
 
         private void UpdateTree()
@@ -121,6 +155,11 @@ namespace NQueryViewer
             else if (e.Key == Key.F4 && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
             {
                 CloseEditor();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F8 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
+            {
+                RunQuery();
                 e.Handled = true;
             }
 
@@ -173,7 +212,7 @@ namespace NQueryViewer
         {
             if (CurrentEditorView == null)
             {
-                _showPlanView.ShowPlan = null;
+                ShowPlanView.ShowPlan = null;
             }
             else
             {
@@ -183,7 +222,7 @@ namespace NQueryViewer
                 if (hasDiagnostics)
                     return;
 
-                _showPlanView.ShowPlan = semanticModel.Compilation.GetShowPlan();
+                ShowPlanView.ShowPlan = semanticModel.Compilation.GetShowPlan();
             }
         }
 
@@ -198,7 +237,7 @@ namespace NQueryViewer
                     CurrentEditorView.Focus();
             }));
 
-            TabControl.Visibility = TabControl.Items.Count > 0
+            DocumentTabControl.Visibility = DocumentTabControl.Items.Count > 0
                                         ? Visibility.Visible
                                         : Visibility.Collapsed;
         }

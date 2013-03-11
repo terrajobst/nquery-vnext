@@ -18,6 +18,11 @@ namespace NQuery.Algebra
             get { return AlgebraKind.VariableExpression; }
         }
 
+        public override Type Type
+        {
+            get { return _symbol.Type; }
+        }
+
         public VariableSymbol Symbol
         {
             get { return _symbol; }

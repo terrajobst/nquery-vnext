@@ -2,11 +2,11 @@ using System;
 
 namespace NQuery.Symbols
 {
-    public sealed class ColumnSymbol : Symbol
+    public class ColumnSymbol : Symbol
     {
         private readonly Type _type;
 
-        public ColumnSymbol(string name, Type type)
+        internal ColumnSymbol(string name, Type type)
             : base(name)
         {
             _type = type;

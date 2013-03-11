@@ -8,5 +8,10 @@ namespace NQuery.Algebra
         {
             get { return AlgebraKind.CaseExpression; }
         }
+
+        public override Type Type
+        {
+            get { return TypeFacts.Unknown; }
+        }
     }
 }
