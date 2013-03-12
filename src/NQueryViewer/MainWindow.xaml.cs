@@ -112,7 +112,19 @@ namespace NQueryViewer
             var data = await Task.Run(() =>
             {
                 using (queryReader)
-                    return queryReader.ExecuteDataTable();
+                {
+                    var dataTable = queryReader.ExecuteDataTable();
+
+                    foreach (DataColumn column in dataTable.Columns)
+                    {
+                        var columnName = column.ColumnName;
+                        var columnType = column.DataType.Name;
+                        var header = string.Format("{0}{1}{2}", columnName, Environment.NewLine, columnType);
+                        column.ColumnName = header;
+                    }
+
+                    return dataTable;
+                }
             });
             var elapsed = stopwatch.Elapsed;
 
