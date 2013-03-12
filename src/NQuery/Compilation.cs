@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using NQuery.Algebra;
 using NQuery.Binding;
@@ -23,25 +24,25 @@ namespace NQuery
             return new SemanticModel(this, bindingResult);
         }
 
+        // TODO: Should this live on SemanticModel?
         public QueryReader GetQueryReader()
         {
-            var relation = GetAlgebraNode() as AlgebraRelation;
+            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+            var boundQuery = bindingResult.BoundRoot as BoundQuery;
+            if (boundQuery == null)
+                return null;
+
+            var relation = Algebrizer.Algebrize(boundQuery) as AlgebraRelation;
             if (relation == null)
                 return null;
 
+            var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type)).ToArray();
             var iterator = PlanBuilder.Build(relation);
-            return new QueryReader(iterator);
+            return new QueryReader(iterator, columnNamesAndTypes);
         }
 
+        // TODO: Should this live on SemanticModel?
         public ShowPlanNode GetShowPlan()
-        {
-            var algebraNode = GetAlgebraNode();
-            return algebraNode == null
-                       ? null
-                       : ShowPlanBuilder.Build(algebraNode);
-        }
-
-        private AlgebraNode GetAlgebraNode()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundRoot = bindingResult.BoundRoot as BoundQuery;
@@ -49,7 +50,9 @@ namespace NQuery
                 return null;
 
             var algebraNode = Algebrizer.Algebrize(boundRoot);
-            return algebraNode;
+            return algebraNode == null
+                       ? null
+                       : ShowPlanBuilder.Build(algebraNode);
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

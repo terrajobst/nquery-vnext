@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 using NQuery.Plan;
 
@@ -7,10 +10,15 @@ namespace NQuery
     public sealed class QueryReader : IDisposable
     {
         private readonly Iterator _iterator;
+        private readonly ReadOnlyCollection<string> _columnNames;
+        private readonly ReadOnlyCollection<Type> _columnTypes;
 
-        internal QueryReader(Iterator iterator)
+        internal QueryReader(Iterator iterator, IReadOnlyCollection<Tuple<string, Type>> columnNamesAndTypes)
         {
             _iterator = iterator;
+            _columnNames = new ReadOnlyCollection<string>(columnNamesAndTypes.Select(t => t.Item1).ToArray());
+            _columnTypes = new ReadOnlyCollection<Type>(columnNamesAndTypes.Select(t => t.Item2).ToArray());
+
             _iterator.Initialize();
             _iterator.Open();
         }
@@ -27,14 +35,12 @@ namespace NQuery
 
         public string GetColumnName(int columnIndex)
         {
-            // TODO: Implement this
-            return string.Empty;
+            return _columnNames[columnIndex];
         }
 
         public Type GetColumnType(int columnIndex)
         {
-            // TODO: Implement this
-            return typeof(string);
+            return _columnTypes[columnIndex];
         }
 
         public object this[int columnIndex]
