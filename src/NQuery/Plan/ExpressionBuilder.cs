@@ -42,7 +42,8 @@ namespace NQuery.Plan
             //return type.IsValueType
             //           ? typeof (Nullable<>).MakeGenericType(type)
             //           : type;
-            return type;
+
+            return type.IsNull() ? typeof(object) : type;
         }
 
         private Expression BuildExpression(AlgebraExpression expression)
@@ -152,7 +153,7 @@ namespace NQuery.Plan
 
         private Expression BuildLiteralExpression(AlgebraLiteralExpression expression)
         {
-            return Expression.Constant(expression.Value, expression.Type);
+            return Expression.Constant(expression.Value, GetTargetType(expression.Type));
         }
 
         private Expression BuildValueSlotExpression(AlgebraValueSlotExpression expression)
@@ -203,7 +204,7 @@ namespace NQuery.Plan
         private Expression BuildIsNullExpression(AlgebraIsNullExpression expression)
         {
             var input = BuildExpression(expression.Expression);
-            return Expression.ReferenceEqual(input, Expression.Constant(null, GetTargetType(expression.Type)));
+            return Expression.ReferenceEqual(input, Expression.Constant(null, GetTargetType(TypeFacts.Null)));
         }
 
         private Expression BuildCaseExpression(AlgebraCaseExpression expression)
