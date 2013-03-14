@@ -32,6 +32,12 @@ namespace NQuery
             if (boundQuery == null)
                 return null;
 
+            var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
+            var semanticDiagnostics = bindingResult.Diagnostics;
+            var dignostics = syntaxDiagnostics.Concat(semanticDiagnostics).ToArray();
+            if (dignostics.Length > 0)
+                throw new CompilationException(dignostics);
+
             var relation = Algebrizer.Algebrize(boundQuery) as AlgebraRelation;
             if (relation == null)
                 return null;

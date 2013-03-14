@@ -40,5 +40,20 @@ namespace NQuery.Data
 
             return dataTable;
         }
+
+        public static QueryDataReader ExecuteDataReader(this Query query)
+        {
+            return query.ExecuteReader().ToDataReader();
+        }
+
+        public static DataTable ExecuteDataTable(this Query query)
+        {
+            return query.ExecuteReader().ExecuteDataTable();
+        }
+
+        public static DataTable ExecuteSchemaDataTable(this Query query)
+        {
+            return query.ExecuteReader().CreateSchemaTable();
+        }
     }
 }

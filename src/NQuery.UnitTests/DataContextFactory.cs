@@ -9,29 +9,36 @@ namespace NQuery.UnitTests
     {
         public static Compilation WithIdNameTable(this Compilation compilation)
         {
-            return compilation.WithDataContext(CreateIdNameTable());
+            var table = TestData.IdNameTable();
+            return compilation.WithDataContext(DataContext.Default.AddTables(table));
         }
 
         public static Compilation WithIdNameDataTable(this Compilation compilation)
         {
-            return compilation.WithDataContext(CreateIdNameDataTable());
+            var table = TestData.IdNameBytesDataTable();
+            return compilation.WithDataContext(DataContext.Default.AddTables(table));
         }
+    }
 
-        public static DataContext CreateIdNameTable()
+    public static class TestData
+    {
+        public static DataTable IdNameTable()
         {
             var table = new DataTable("Table");
             table.Columns.Add(new DataColumn("Id", typeof (int)));
             table.Columns.Add(new DataColumn("Name", typeof (string)));
-            return DataContext.Default.AddTables(table);
+            table.Rows.Add(1, "One");
+            table.Rows.Add(2, "Two");
+            return table;
         }
 
-        public static DataContext CreateIdNameDataTable()
+        public static DataTable IdNameBytesDataTable()
         {
             var table = new DataTable("Table");
-            table.Columns.Add(new DataColumn("Id", typeof(int)));
-            table.Columns.Add(new DataColumn("Name", typeof(string)));
-            table.Columns.Add(new DataColumn("Data", typeof(byte[])));
-            return DataContext.Default.AddTables(table);
+            table.Columns.Add(new DataColumn("Id", typeof (int)));
+            table.Columns.Add(new DataColumn("Name", typeof (string)));
+            table.Columns.Add(new DataColumn("Data", typeof (byte[])));
+            return table;
         }
     }
 }

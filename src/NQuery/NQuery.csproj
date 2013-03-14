@@ -90,6 +90,8 @@
     <Compile Include="Binding\BoundOrderedQuery.cs" />
     <Compile Include="Binding\BoundValueSlotExpression.cs" />
     <Compile Include="Binding\SymbolTable.cs" />
+    <Compile Include="CompilationException.cs" />
+    <Compile Include="Expression.cs" />
     <Compile Include="Plan\ArrayRowBuffer.cs" />
     <Compile Include="Plan\CombinedRowBuffer.cs" />
     <Compile Include="Plan\ComputeScalarIterator.cs" />
@@ -103,6 +105,7 @@
     <Compile Include="Plan\RowBuffer.cs" />
     <Compile Include="Plan\TableIterator.cs" />
     <Compile Include="Plan\ValueSlotSettings.cs" />
+    <Compile Include="Query.cs" />
     <Compile Include="QueryReader.cs" />
     <Compile Include="ShowPlanNode.cs" />
     <Compile Include="Binding\BinaryOperator.cs" />
