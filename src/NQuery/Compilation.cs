@@ -25,7 +25,7 @@ namespace NQuery
         }
 
         // TODO: Should this live on SemanticModel?
-        public QueryReader GetQueryReader()
+        public QueryReader GetQueryReader(bool schemaOnly)
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundQuery = bindingResult.BoundRoot as BoundQuery;
@@ -38,7 +38,7 @@ namespace NQuery
 
             var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type)).ToArray();
             var iterator = PlanBuilder.Build(relation);
-            return new QueryReader(iterator, columnNamesAndTypes);
+            return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
 
         // TODO: Should this live on SemanticModel?

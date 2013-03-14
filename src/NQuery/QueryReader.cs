@@ -9,28 +9,50 @@ namespace NQuery
 {
     public sealed class QueryReader : IDisposable
     {
-        private readonly Iterator _iterator;
         private readonly ReadOnlyCollection<string> _columnNames;
         private readonly ReadOnlyCollection<Type> _columnTypes;
+        private readonly bool _schemaOnly;
 
-        internal QueryReader(Iterator iterator, IReadOnlyCollection<Tuple<string, Type>> columnNamesAndTypes)
+        private Iterator _iterator;
+        private bool _isBof;
+
+        internal QueryReader(Iterator iterator, IReadOnlyCollection<Tuple<string, Type>> columnNamesAndTypes, bool schemaOnly)
         {
             _iterator = iterator;
+            _schemaOnly = schemaOnly;
             _columnNames = new ReadOnlyCollection<string>(columnNamesAndTypes.Select(t => t.Item1).ToArray());
             _columnTypes = new ReadOnlyCollection<Type>(columnNamesAndTypes.Select(t => t.Item2).ToArray());
 
-            _iterator.Initialize();
-            _iterator.Open();
+            if (!_schemaOnly)
+            {
+                _iterator.Initialize();
+                _iterator.Open();
+            }
+
+            _isBof = true;
         }
 
         public void Dispose()
         {
+            if (_iterator == null)
+                return;
+
             _iterator.Dispose();
+            _iterator = null;
         }
 
         public bool Read()
         {
-            return _iterator.Read();
+            if (_schemaOnly)
+                return false;
+
+            if (_iterator.Read())
+            {
+                _isBof = false;
+                return true;
+            }
+
+            return false;
         }
 
         public string GetColumnName(int columnIndex)
@@ -45,7 +67,13 @@ namespace NQuery
 
         public object this[int columnIndex]
         {
-            get { return _iterator.RowBuffer[columnIndex]; }
+            get
+            {
+                if (_isBof || _iterator == null)
+                    throw new InvalidOperationException("Invalid attempt to read when no data is present.");
+
+                return _iterator.RowBuffer[columnIndex];
+            }
         }
 
         public int ColumnCount

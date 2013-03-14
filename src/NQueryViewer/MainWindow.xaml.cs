@@ -104,7 +104,7 @@ namespace NQueryViewer
             if (semanticModel.GetDiagnostics().Any())
                 return;
 
-            var queryReader = semanticModel.Compilation.GetQueryReader();
+            var queryReader = semanticModel.Compilation.GetQueryReader(schemaOnly: false);
             if (queryReader == null)
                 return;
 
