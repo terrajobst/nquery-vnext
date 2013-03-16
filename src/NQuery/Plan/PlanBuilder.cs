@@ -151,7 +151,15 @@ namespace NQuery.Plan
 
         private IteratorResult BuildProject(AlgebraProjectNode relation)
         {
-            return BuildRelation(relation.Input);
+            var inputResult = BuildRelation(relation.Input);
+            var inputValueSlotMapping = inputResult.ValueSlotMapping;
+            var outputIndices  = relation.Output.Select(vs => inputValueSlotMapping[vs]).ToArray();
+            var outputIterator = new ProjectionIterator(inputResult.Iterator, outputIndices);
+            var outputValueMapping = relation.Output
+                                             .Select(vs => new KeyValuePair<ValueSlot, int>(vs, inputValueSlotMapping[vs]))
+                                             .ToImmutableDictionary();
+
+            return new IteratorResult(outputIterator, outputValueMapping);
         }
 
         private struct IteratorResult
