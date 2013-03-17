@@ -101,7 +101,11 @@ namespace NQueryViewer
             if (semanticModel == null)
                 return;
 
-            if (semanticModel.GetDiagnostics().Any())
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxDiagnostics = syntaxTree.GetDiagnostics();
+            var semanticModelDiagnostcics = semanticModel.GetDiagnostics();
+            var diagnostics = syntaxDiagnostics.Concat(semanticModelDiagnostcics);
+            if (diagnostics.Any())
                 return;
 
             var queryReader = semanticModel.Compilation.GetQueryReader(schemaOnly: false);
