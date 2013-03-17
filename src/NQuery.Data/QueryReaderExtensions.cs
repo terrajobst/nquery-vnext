@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace NQuery.Data
@@ -38,16 +39,33 @@ namespace NQuery.Data
                 throw new ArgumentNullException("queryReader");
 
             var dataTable = new DataTable("Results");
+            var existingColumnNames = new HashSet<string>();
 
             for (var i = 0; i < queryReader.ColumnCount; i++)
             {
                 var columnName = queryReader.GetColumnName(i);
+                var uniqueColumnName = GenerateUniqueColumnName(existingColumnNames, columnName);
                 var columnType = queryReader.GetColumnType(i);
-                var dataColumn = new DataColumn(columnName, columnType);
+                var dataColumn = new DataColumn(uniqueColumnName, columnType);
+                dataColumn.Caption = columnName;
                 dataTable.Columns.Add(dataColumn);
+                existingColumnNames.Add(uniqueColumnName);
             }
 
             return dataTable;
+        }
+
+        private static string GenerateUniqueColumnName(HashSet<string> existingColumnNames, string columnName)
+        {
+            if (string.IsNullOrWhiteSpace(columnName))
+                columnName = "Column";
+
+            var result = columnName;
+            var count = 0;
+            while (existingColumnNames.Contains(result))
+                result = String.Concat(columnName, ++count);
+
+            return result;
         }
 
         public static QueryDataReader ExecuteDataReader(this Query query)
