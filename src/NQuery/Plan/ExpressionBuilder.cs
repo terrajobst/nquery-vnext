@@ -165,19 +165,63 @@ namespace NQuery.Plan
             var nullableResultType = expression.Type.GetNullableType();
             var signature = expression.Signature;
 
-            return Expression.Condition(
-                Expression.OrElse(
-                    BuildNullCheck(liftedLeft),
-                    BuildNullCheck(liftedRight)
-                ),
-                BuildNullValue(nullableResultType),
-                BuildLiftedExpression(
-                    BuildBinaryExpression(signature,
-                        BuildLoweredExpression(liftedLeft),
-                        BuildLoweredExpression(liftedRight)
-                    )
-                )
-            );
+            var result = Expression.Condition(
+                            Expression.OrElse(
+                                BuildNullCheck(liftedLeft),
+                                BuildNullCheck(liftedRight)
+                            ),
+                            BuildNullValue(nullableResultType),
+                            BuildLiftedExpression(
+                                BuildBinaryExpression(signature,
+                                                      BuildLoweredExpression(liftedLeft),
+                                                      BuildLoweredExpression(liftedRight)
+                                )
+                            )
+                         );
+
+            // If this is is not a logical operator, we are done.
+
+            if (signature.Kind != BinaryOperatorKind.LogicalAnd && signature.Kind != BinaryOperatorKind.LogicalOr)
+                return result;
+
+            // For logical operators we have to pay special attention to NULL values.
+            //
+            // Normally, a binary expression will yield NULL if any of the operands is NULL.
+            //
+            // For conjuctions and disjunctions this is not true. For certain values these
+            // operators will return TRUE or FALSE though an operand was null. The following 
+            // truth table must hold, sepcial cases are marked in parentheses:
+            //
+            //    AND |  F  |  T  |  N       OR |  F  |  T  |  N
+            //    ----+-----+-----+----      ---+-----+-----+-----
+            //     F  |  F  |  F  | (F)      F  |  F  |  T  |  N
+            //     T  |  F  |  T  |  N       T  |  T  |  T  | (T)
+            //     N  | (F) |  N  |  N       N  |  N  | (T) |  N
+            //
+            // The special cases for conjuctions and disjunctions are
+            // pretty much the same:
+            //
+            // Logical And --> If either side is FALSE, the result is FALSE.
+            // Logical Or  --> If either side is TRUE, the result is TRUE.
+
+            var specialValue = signature.Kind == BinaryOperatorKind.LogicalOr;
+            var constant = Expression.Convert(Expression.Constant(specialValue), typeof (bool?));
+
+            return
+                Expression.Condition(
+                    Expression.OrElse(
+                        Expression.Equal(
+                            liftedLeft,
+                            constant
+                        ),
+                        Expression.Equal(
+                            liftedRight,
+                            constant
+                        )
+                    ),
+                    constant,
+                    result
+                );
         }
 
         private static Expression BuildBinaryExpression(BinaryOperatorSignature signature, Expression left, Expression right)
