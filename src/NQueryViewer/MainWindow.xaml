@@ -96,6 +96,7 @@
                             </Style>
                         </TabItem.Resources>
                         <DataGrid x:Name="DataGrid"
+                                  AutoGeneratingColumn="DataGridAutoGeneratingColumn"
                                   IsReadOnly="True" />
                     </TabItem>
                 </TabControl>

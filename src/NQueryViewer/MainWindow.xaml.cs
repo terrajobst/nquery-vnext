@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 using NQuery;
@@ -113,26 +115,14 @@ namespace NQueryViewer
                 return;
 
             var stopwatch = Stopwatch.StartNew();
-            var data = await Task.Run(() =>
+            var dataTable = await Task.Run(() =>
             {
                 using (queryReader)
-                {
-                    var dataTable = queryReader.ExecuteDataTable();
-
-                    foreach (DataColumn column in dataTable.Columns)
-                    {
-                        var columnName = column.ColumnName;
-                        var columnType = column.DataType.Name;
-                        var header = string.Format("{0}{1}{2}", columnName, Environment.NewLine, columnType);
-                        column.ColumnName = header;
-                    }
-
-                    return dataTable;
-                }
+                    return queryReader.ExecuteDataTable();
             });
             var elapsed = stopwatch.Elapsed;
 
-            DataGrid.ItemsSource = data.DefaultView;
+            DataGrid.ItemsSource = dataTable.DefaultView;
             BottomToolWindowTabControl.SelectedItem = ResultsTabItem;
             ExecutionTimeTextBlock.Text = string.Format("Completed in {0}", elapsed);
         }
@@ -278,6 +268,30 @@ namespace NQueryViewer
 
             if (CurrentEditorView != null)
                 CurrentEditorView.Selection = diagnostic.Span;
+        }
+
+        private void DataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            var dataView = (DataView) DataGrid.ItemsSource;
+            var dataTable = dataView.Table;
+            var dataColumn = dataTable.Columns[e.PropertyName];
+            var columnName = string.IsNullOrWhiteSpace(dataColumn.Caption)
+                                 ? "(No column name)"
+                                 : dataColumn.Caption;
+            var columnType = dataColumn.DataType.Name;
+            var header = new StackPanel
+                             {
+                                 Orientation = Orientation.Vertical,
+                                 Children =
+                                     {
+                                         new TextBlock(new Run(columnName)),
+                                         new TextBlock(new Run(columnType))
+                                             {
+                                                 Foreground = Brushes.Gray
+                                             }
+                                     }
+                             };
+            e.Column.Header = header;
         }
     }
 }
