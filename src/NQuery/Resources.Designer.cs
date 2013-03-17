@@ -133,11 +133,20 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All columns in &apos;{0}&apos; must belong to the same table..
+        ///   Looks up a localized string similar to All child columns in must belong to the same table..
         /// </summary>
-        internal static string AllColumnsMustBelongToSameTable {
+        internal static string AllChildColumnsMustBelongToSameTable {
             get {
-                return ResourceManager.GetString("AllColumnsMustBelongToSameTable", resourceCulture);
+                return ResourceManager.GetString("AllChildColumnsMustBelongToSameTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All parent columns in must belong to the same table..
+        /// </summary>
+        internal static string AllParentColumnsMustBelongToSameTable {
+            get {
+                return ResourceManager.GetString("AllParentColumnsMustBelongToSameTable", resourceCulture);
             }
         }
         
@@ -363,6 +372,15 @@ namespace NQuery {
         internal static string ChildColumnNotFound {
             get {
                 return ResourceManager.GetString("ChildColumnNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to childColumns.Length must match parentColumns.Length..
+        /// </summary>
+        internal static string ChildColumnsMustHaveSameSizeAsParentColumns {
+            get {
+                return ResourceManager.GetString("ChildColumnsMustHaveSameSizeAsParentColumns", resourceCulture);
             }
         }
         
@@ -1105,15 +1123,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter type is not assignable from the given value..
-        /// </summary>
-        internal static string ParameterValueTypeMismatch {
-            get {
-                return ResourceManager.GetString("ParameterValueTypeMismatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Parent column &apos;{0}&apos; in table &apos;{1}&apos; not found..
         /// </summary>
         internal static string ParentColumnNotFound {
@@ -1128,15 +1137,6 @@ namespace NQuery {
         internal static string ParentColumnsMustContainAtLeastOneColumn {
             get {
                 return ResourceManager.GetString("ParentColumnsMustContainAtLeastOneColumn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to childColumns.Length must match parentColumns.Length..
-        /// </summary>
-        internal static string ParentColumnsMustHaveSameSizeAsChildColumns {
-            get {
-                return ResourceManager.GetString("ParentColumnsMustHaveSameSizeAsChildColumns", resourceCulture);
             }
         }
         
@@ -1911,6 +1911,15 @@ namespace NQuery {
         internal static string UnterminatedString {
             get {
                 return ResourceManager.GetString("UnterminatedString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; cannot be assigned to variable of type {1}..
+        /// </summary>
+        internal static string VariableValueTypeMismatch {
+            get {
+                return ResourceManager.GetString("VariableValueTypeMismatch", resourceCulture);
             }
         }
         

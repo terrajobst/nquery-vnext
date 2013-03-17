@@ -141,8 +141,11 @@
   <data name="AggregateInWhere" xml:space="preserve">
     <value>An aggregate may not appear in the WHERE clause unless it is in a subquery contained in a HAVING clause or a select list, and the column being aggregated is an outer reference.</value>
   </data>
-  <data name="AllColumnsMustBelongToSameTable" xml:space="preserve">
-    <value>All columns in '{0}' must belong to the same table.</value>
+  <data name="AllChildColumnsMustBelongToSameTable" xml:space="preserve">
+    <value>All child columns in must belong to the same table.</value>
+  </data>
+  <data name="AllParentColumnsMustBelongToSameTable" xml:space="preserve">
+    <value>All parent columns in must belong to the same table.</value>
   </data>
   <data name="AmbiguousAggregate" xml:space="preserve">
     <value>Aggregate name '{0}' is ambiguous between '{1}' and '{2}'.</value>
@@ -456,8 +459,8 @@
   <data name="ParameterBindingGetValueFailed" xml:space="preserve">
     <value>ParameterBinding.Unknown threw an exception.</value>
   </data>
-  <data name="ParameterValueTypeMismatch" xml:space="preserve">
-    <value>The parameter type is not assignable from the given value.</value>
+  <data name="VariableValueTypeMismatch" xml:space="preserve">
+    <value>The value '{0}' cannot be assigned to variable of type {1}.</value>
   </data>
   <data name="ParentColumnNotFound" xml:space="preserve">
     <value>Parent column '{0}' in table '{1}' not found.</value>
@@ -465,7 +468,7 @@
   <data name="ParentColumnsMustContainAtLeastOneColumn" xml:space="preserve">
     <value>parentColumns must contain at least one column.</value>
   </data>
-  <data name="ParentColumnsMustHaveSameSizeAsChildColumns" xml:space="preserve">
+  <data name="ChildColumnsMustHaveSameSizeAsParentColumns" xml:space="preserve">
     <value>childColumns.Length must match parentColumns.Length.</value>
   </data>
   <data name="ParentColumnsMustNotContainColumnsOfOtherTables" xml:space="preserve">

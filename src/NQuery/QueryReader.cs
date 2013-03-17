@@ -70,7 +70,7 @@ namespace NQuery
             get
             {
                 if (_isBof || _iterator == null)
-                    throw new InvalidOperationException("Invalid attempt to read when no data is present.");
+                    throw new InvalidOperationException(Resources.InvalidAttemptToRead);
 
                 return _iterator.RowBuffer[columnIndex];
             }

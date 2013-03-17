@@ -36,7 +36,7 @@ namespace NQuery.Symbols
             set
             {
                 if (value != null && !_type.IsInstanceOfType(value))
-                    throw new ArgumentException(string.Format("The value '{0}' cannot be assigned to variable of type {1}", value, _type), "value");
+                    throw new ArgumentException(string.Format(Resources.VariableValueTypeMismatch, value, _type), "value");
 
                 _value = value;
             }

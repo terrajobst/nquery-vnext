@@ -21,16 +21,16 @@ namespace NQuery.Symbols
                 throw new ArgumentNullException("childColumns");
 
             if (parentColumns.Count == 0)
-                throw new ArgumentException("collection cannot be empty", "parentColumns");
+                throw new ArgumentException(Resources.ParentColumnsMustContainAtLeastOneColumn, "parentColumns");
 
             if (childColumns.Count != parentColumns.Count)
-                throw new ArgumentException("chilColumns must have the same number of elements as parentColumns", "childColumns");
+                throw new ArgumentException(Resources.ChildColumnsMustHaveSameSizeAsParentColumns, "childColumns");
 
             if (parentColumns.Any(c => !parentTable.Columns.Contains(c)))
-                throw new ArgumentException("All parent columns must belong to parentTable", "parentColumns");
+                throw new ArgumentException(Resources.AllParentColumnsMustBelongToSameTable, "parentColumns");
 
             if (childColumns.Any(c => !childTable.Columns.Contains(c)))
-                throw new ArgumentException("All child columns must belong to childTable", "childColumns");
+                throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, "childColumns");
 
             _parentTable = parentTable;
             _parentColumns = new ReadOnlyCollection<ColumnSymbol>(parentColumns);
