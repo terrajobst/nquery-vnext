@@ -143,11 +143,11 @@ namespace NQuery.Plan
                     return Expression.AndAlso(left, right, signature.MethodInfo);
                 case BinaryOperatorKind.LogicalOr:
                     return Expression.OrElse(left, right, signature.MethodInfo);
-                // The following do exist, but are invalid in this context.
-                //case BinaryOperatorKind.Power:
-                //case BinaryOperatorKind.Like:
-                //case BinaryOperatorKind.SimilarTo:
-                //case BinaryOperatorKind.Soundslike:
+                case BinaryOperatorKind.Power:
+                case BinaryOperatorKind.Like:
+                case BinaryOperatorKind.SimilarTo:
+                case BinaryOperatorKind.Soundslike:
+                    return Expression.Call(signature.MethodInfo, left, right);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
