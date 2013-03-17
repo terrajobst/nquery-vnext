@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace NQuery.Symbols
@@ -17,6 +18,11 @@ namespace NQuery.Symbols
                 throw new ArgumentNullException("propertyInfo");
 
             PropertyInfo = propertyInfo;
+        }
+
+        public override Expression CreateInvocation(Expression instance)
+        {
+            return Expression.MakeMemberAccess(instance, PropertyInfo);
         }
 
         public PropertyInfo PropertyInfo { get; private set; }

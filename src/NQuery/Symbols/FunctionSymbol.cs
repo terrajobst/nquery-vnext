@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace NQuery.Symbols
 {
@@ -15,6 +16,8 @@ namespace NQuery.Symbols
         {
         }
 
+        public abstract Expression CreateInvocation(IEnumerable<Expression> arguments);
+
         public override SymbolKind Kind
         {
             get { return SymbolKind.Function; }
@@ -29,6 +32,11 @@ namespace NQuery.Symbols
             : base(name, typeof(TResult))
         {
             _function = function;
+        }
+
+        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            return Expression.Call(Function.Method, arguments);
         }
 
         public Func<TResult> Function
@@ -53,6 +61,11 @@ namespace NQuery.Symbols
             _function = function;
         }
 
+        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            return Expression.Call(Function.Method, arguments);
+        }
+
         public Func<T, TResult> Function
         {
             get { return _function; }
@@ -74,6 +87,11 @@ namespace NQuery.Symbols
             _function = function;
         }
 
+        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            return Expression.Call(Function.Method, arguments);
+        }
+
         public Func<T1, T2, TResult> Function
         {
             get { return _function; }
@@ -93,6 +111,11 @@ namespace NQuery.Symbols
             : base(name, typeof(TResult), new ParameterSymbol(parameterName1, typeof(T1)), new ParameterSymbol(parameterName2, typeof(T2)), new ParameterSymbol(parameterName3, typeof(T2)))
         {
             _function = function;
+        }
+
+        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            return Expression.Call(Function.Method, arguments);
         }
 
         public Func<T1, T2, T3, TResult> Function

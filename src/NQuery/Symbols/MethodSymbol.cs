@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace NQuery.Symbols
 {
-    public class MethodSymbol : InvocableSymbol
+    public abstract class MethodSymbol : InvocableSymbol
     {
         public MethodSymbol(string name, Type type, IList<ParameterSymbol> parameters)
             : base(name, type, parameters)
         {
         }
+
+        public abstract Expression CreateInvocation(Expression instance, IEnumerable<Expression> arguments);
 
         public override SymbolKind Kind
         {

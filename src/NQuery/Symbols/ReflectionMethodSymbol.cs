@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace NQuery.Symbols
@@ -26,6 +27,11 @@ namespace NQuery.Symbols
             return (methodInfo == null
                         ? Enumerable.Empty<ParameterSymbol>()
                         : methodInfo.GetParameters().Select(p => new ReflectionParameterSymbol(p))).ToList();
+        }
+
+        public override Expression CreateInvocation(Expression instance, IEnumerable<Expression> arguments)
+        {
+            return Expression.Call(instance, MethodInfo, arguments);
         }
 
         public MethodInfo MethodInfo { get; private set; }

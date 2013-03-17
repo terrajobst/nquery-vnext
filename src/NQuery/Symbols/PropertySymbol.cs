@@ -1,8 +1,9 @@
 using System;
+using System.Linq.Expressions;
 
 namespace NQuery.Symbols
 {
-    public class PropertySymbol : Symbol
+    public abstract class PropertySymbol : Symbol
     {
         private readonly Type _type;
 
@@ -11,6 +12,8 @@ namespace NQuery.Symbols
         {
             _type = type;
         }
+
+        public abstract Expression CreateInvocation(Expression instance);
 
         public override SymbolKind Kind
         {

@@ -5,12 +5,14 @@ using System.Reflection;
 
 using NQuery.Algebra;
 using NQuery.Binding;
+using NQuery.Symbols;
 
 namespace NQuery.Plan
 {
     internal sealed class ExpressionBuilder
     {
         private readonly static PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) });
+        private readonly static PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
         private readonly ValueSlotSettings _valueSlotSettings;
 
@@ -175,22 +177,26 @@ namespace NQuery.Plan
 
         private Expression BuildVariableExpression(AlgebraVariableExpression expression)
         {
-            throw new NotImplementedException();
+            return ConvertToTargetType(expression.Type, Expression.MakeMemberAccess(Expression.Constant(expression.Symbol), VariableSymbolValueProperty));
         }
 
         private Expression BuildFunctionInvocationExpression(AlgebraFunctionInvocationExpression expression)
         {
-            throw new NotImplementedException();
+            var arguments = expression.Arguments.Select(BuildExpression);
+            return expression.Symbol.CreateInvocation(arguments);
         }
 
         private Expression BuildPropertyAccessExpression(AlgebraPropertyAccessExpression expression)
         {
-            throw new NotImplementedException();
+            var instance = BuildExpression(expression.Target);
+            return expression.Symbol.CreateInvocation(instance);
         }
 
         private Expression BuildMethodInvocationExpression(AlgebraMethodInvocationExpression expression)
         {
-            throw new NotImplementedException();
+            var instance = BuildExpression(expression.Target);
+            var arguments = expression.Arguments.Select(BuildExpression);
+            return expression.Symbol.CreateInvocation(instance, arguments);
         }
 
         private Expression BuildConversionExpression(AlgebraConversionExpression expression)
