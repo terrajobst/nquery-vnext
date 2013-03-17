@@ -12,6 +12,9 @@ namespace NQuery.Data
 
         public DataColumnDefinition(DataColumn dataColumn)
         {
+            if (dataColumn == null)
+                throw new ArgumentNullException("dataColumn");
+
             _dataColumn = dataColumn;
         }
 

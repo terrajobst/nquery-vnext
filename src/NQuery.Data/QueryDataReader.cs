@@ -2,8 +2,6 @@
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
-using NQuery.Data.Properties;
-
 namespace NQuery.Data
 {
     /// <summary>
@@ -12,12 +10,10 @@ namespace NQuery.Data
     public sealed class QueryDataReader : IDataReader
     {
         private QueryReader _queryReader;
-        private bool _isBof;
 
         internal QueryDataReader(QueryReader queryReader)
         {
             _queryReader = queryReader;
-            _isBof = true;
         }
 
         /// <summary>
@@ -41,6 +37,12 @@ namespace NQuery.Data
             Dispose();
         }
 
+        private void EnsureNotDisposed()
+        {
+            if (_queryReader == null)
+                throw new ObjectDisposedException("QueryDataReader");
+        }
+
         /// <summary>
         ///  Advances the data reader to the next result, when reading the results of batch SQL statements.
         /// </summary>
@@ -49,6 +51,7 @@ namespace NQuery.Data
         /// </returns>
         bool IDataReader.NextResult()
         {
+            EnsureNotDisposed();
             return false;
         }
 
@@ -60,6 +63,7 @@ namespace NQuery.Data
         /// </returns>
         public bool Read()
         {
+            EnsureNotDisposed();
             return _queryReader.Read();
         }
 
@@ -73,6 +77,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.InvalidOperationException">The <see cref="T:System.Data.IDataReader" /> is closed.</exception>
         public DataTable GetSchemaTable()
         {
+            EnsureNotDisposed();
             return _queryReader.CreateSchemaTable();
         }
 
@@ -81,7 +86,11 @@ namespace NQuery.Data
         /// </summary>
         int IDataReader.Depth
         {
-            get { return 0; }
+            get
+            {
+                EnsureNotDisposed();
+                return 0;
+            }
         }
 
         /// <summary>
@@ -97,7 +106,11 @@ namespace NQuery.Data
         /// </summary>
         int IDataReader.RecordsAffected
         {
-            get { return 0; }
+            get
+            {
+                EnsureNotDisposed();
+                return 0;
+            }
         }
 
         /// <summary>
@@ -110,6 +123,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />.</exception>
         public string GetName(int i)
         {
+            EnsureNotDisposed();
             return _queryReader.GetColumnName(i);
         }
 
@@ -123,6 +137,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />.</exception>
         public string GetDataTypeName(int i)
         {
+            EnsureNotDisposed();
             return _queryReader.GetColumnType(i).FullName;
         }
 
@@ -138,6 +153,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />.</exception>
         public Type GetFieldType(int i)
         {
+            EnsureNotDisposed();
             return _queryReader.GetColumnType(i);
         }
 
@@ -153,9 +169,7 @@ namespace NQuery.Data
         /// </exception>
         public object GetValue(int i)
         {
-            if (_isBof || _queryReader == null)
-                throw new InvalidOperationException(Resources.InvalidAttemptToRead);
-
+            EnsureNotDisposed();
             return _queryReader[i];
         }
 
@@ -171,8 +185,7 @@ namespace NQuery.Data
             if (values == null)
                 throw new ArgumentNullException("values");
 
-            if (_isBof || _queryReader == null)
-                throw new InvalidOperationException(Resources.InvalidAttemptToRead);
+            EnsureNotDisposed();
 
             var upperBound = Math.Min(values.Length, _queryReader.ColumnCount);
 
@@ -193,6 +206,8 @@ namespace NQuery.Data
         {
             if (name == null)
                 throw new ArgumentNullException("name");
+
+            EnsureNotDisposed();
 
             for (var i = 0; i < _queryReader.ColumnCount; i++)
             {
@@ -245,6 +260,9 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
+            if (buffer == null)
+                throw new ArgumentNullException("buffer");
+
             var fieldData = (byte[])GetValue(i);
 
             var dataLength = fieldOffset + length;
@@ -285,6 +303,9 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
         {
+            if (buffer == null)
+                throw new ArgumentNullException("buffer");
+
             var fieldData = (char[])GetValue(i);
 
             var dataLength = fieldoffset + length;
@@ -449,7 +470,11 @@ namespace NQuery.Data
         /// </summary>
         public int FieldCount
         {
-            get { return _queryReader.ColumnCount; }
+            get
+            {
+                EnsureNotDisposed();
+                return _queryReader.ColumnCount;
+            }
         }
 
         /// <summary>

@@ -7,11 +7,17 @@ namespace NQuery.Data
     {
         public static QueryDataReader ToDataReader(this QueryReader queryReader)
         {
+            if (queryReader == null)
+                throw new ArgumentNullException("queryReader");
+
             return new QueryDataReader(queryReader);
         }
 
         public static DataTable ExecuteDataTable(this QueryReader queryReader)
         {
+            if (queryReader == null)
+                throw new ArgumentNullException("queryReader");
+
             var dataTable = queryReader.CreateSchemaTable();
             var values = new object[queryReader.ColumnCount];
 
@@ -28,6 +34,9 @@ namespace NQuery.Data
 
         public static DataTable CreateSchemaTable(this QueryReader queryReader)
         {
+            if (queryReader == null)
+                throw new ArgumentNullException("queryReader");
+
             var dataTable = new DataTable("Results");
 
             for (var i = 0; i < queryReader.ColumnCount; i++)
@@ -43,16 +52,25 @@ namespace NQuery.Data
 
         public static QueryDataReader ExecuteDataReader(this Query query)
         {
+            if (query == null)
+                throw new ArgumentNullException("query");
+
             return query.ExecuteReader().ToDataReader();
         }
 
         public static DataTable ExecuteDataTable(this Query query)
         {
+            if (query == null)
+                throw new ArgumentNullException("query");
+
             return query.ExecuteReader().ExecuteDataTable();
         }
 
         public static DataTable ExecuteSchemaDataTable(this Query query)
         {
+            if (query == null)
+                throw new ArgumentNullException("query");
+
             return query.ExecuteReader().CreateSchemaTable();
         }
     }
