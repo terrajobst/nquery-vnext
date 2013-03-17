@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -15,37 +16,78 @@ namespace NQuery.Plan
         private readonly static PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
         private readonly ValueSlotSettings _valueSlotSettings;
+        private readonly List<ParameterExpression> _locals = new List<ParameterExpression>();
+        private readonly List<Expression> _assignments = new List<Expression>();
 
         private ExpressionBuilder(ValueSlotSettings valueSlotSettings)
         {
             _valueSlotSettings = valueSlotSettings;
         }
 
-        public static Func<T> CompileExpression<T>(AlgebraExpression expression, ValueSlotSettings valueSlotSettings)
+        public static Func<T> BuildExpression<T>(AlgebraExpression expression, ValueSlotSettings valueSlotSettings)
         {
             var builder = new ExpressionBuilder(valueSlotSettings);
+            return builder.BuildExpression<T>(expression);
+        }
+
+        private ParameterExpression BuildCachedExpression(AlgebraExpression expression)
+        {
+            var result = BuildExpression(expression);
+            var liftedExpression = BuildLiftedExpression(result);
+            var local = Expression.Variable(liftedExpression.Type);
+            var assignment = Expression.Assign(local, liftedExpression);
+            _locals.Add(local);
+            _assignments.Add(assignment);
+            return local;
+        }
+
+        private static Expression BuildLiftedExpression(Expression result)
+        {
+            return result.Type.CanBeNull()
+                       ? result
+                       : Expression.Convert(result, result.Type.GetNullableType());
+        }
+
+        private static Expression BuildLoweredExpression(Expression expression)
+        {
+            if (!expression.Type.IsNullableOfT())
+                return expression;
+
+            var nonNullableType = expression.Type.GetNonNullableType();
+            return Expression.Convert(expression, nonNullableType);
+        }
+
+        private static Expression BuildNullValue(Type type)
+        {
+            return Expression.Constant(null, type.GetNullableType());
+        }
+
+        private static Expression BuildNullCheck(Expression expression)
+        {
+            return expression.Type.IsNullableOfT()
+                       ? (Expression)Expression.Not(Expression.Property(expression, "HasValue"))
+                       : Expression.ReferenceEqual(expression, Expression.Constant(null, expression.Type));
+        }
+
+        private static Expression BuildNullCheck(IEnumerable<Expression> expressions)
+        {
+            return expressions
+                .Select(BuildNullCheck)
+                .Aggregate<Expression, Expression>(null, (current, nullCheck) => current == null ? nullCheck : Expression.OrElse(current, nullCheck));
+        }
+
+        private Func<T> BuildExpression<T>(AlgebraExpression expression)
+        {
             var targetType = typeof (T);
-            var body = Expression.Convert(builder.BuildExpression(expression), targetType);
+            var actualExpression = BuildCachedExpression(expression);
+            var coalescedExpression = targetType.CanBeNull()
+                                          ? (Expression) actualExpression
+                                          : Expression.Coalesce(actualExpression, Expression.Default(targetType));
+            var resultExpression = Expression.Convert(coalescedExpression, targetType);
+            var expressions = _assignments.Concat(new[] { resultExpression });
+            var body = Expression.Block(_locals, expressions);
             var lambda = Expression.Lambda<Func<T>>(body);
             return lambda.Compile();
-        }
-
-        private static Expression ConvertToTargetType(Type type, Expression expression)
-        {
-            var targetType = GetTargetType(type);
-            return expression.Type == targetType
-                       ? expression
-                       : Expression.Convert(expression, targetType);
-        }
-
-        private static Type GetTargetType(Type type)
-        {
-            // TODO: We should keep everything as nullable.
-            //return type.IsValueType
-            //           ? typeof (Nullable<>).MakeGenericType(type)
-            //           : type;
-
-            return type.IsNull() ? typeof(object) : type;
         }
 
         private Expression BuildExpression(AlgebraExpression expression)
@@ -81,8 +123,25 @@ namespace NQuery.Plan
 
         private Expression BuildUnaryExpression(AlgebraUnaryExpression expression)
         {
-            var input = BuildExpression(expression.Expression);
+            var liftedInput = BuildCachedExpression(expression.Expression);
+            var nullableResultType = expression.Type.GetNullableType();
             var signature = expression.Signature;
+
+            return Expression.Condition(
+                BuildNullCheck(liftedInput),
+                BuildNullValue(nullableResultType),
+                BuildLiftedExpression(
+                    BuildUnaryExpression(
+                        signature,
+                        BuildLoweredExpression(liftedInput)
+                    )
+                )
+            );
+        }
+
+        private static Expression BuildUnaryExpression(UnaryOperatorSignature unaryOperatorSignature, Expression input)
+        {
+            var signature = unaryOperatorSignature;
 
             switch (signature.Kind)
             {
@@ -101,10 +160,28 @@ namespace NQuery.Plan
 
         private Expression BuildBinaryExpression(AlgebraBinaryExpression expression)
         {
-            var left = BuildExpression(expression.Left);
-            var right = BuildExpression(expression.Right);
+            var liftedLeft = BuildCachedExpression(expression.Left);
+            var liftedRight = BuildCachedExpression(expression.Right);
+            var nullableResultType = expression.Type.GetNullableType();
             var signature = expression.Signature;
 
+            return Expression.Condition(
+                Expression.OrElse(
+                    BuildNullCheck(liftedLeft),
+                    BuildNullCheck(liftedRight)
+                ),
+                BuildNullValue(nullableResultType),
+                BuildLiftedExpression(
+                    BuildBinaryExpression(signature,
+                        BuildLoweredExpression(liftedLeft),
+                        BuildLoweredExpression(liftedRight)
+                    )
+                )
+            );
+        }
+
+        private static Expression BuildBinaryExpression(BinaryOperatorSignature signature, Expression left, Expression right)
+        {
             switch (signature.Kind)
             {
                 case BinaryOperatorKind.Multiply:
@@ -153,9 +230,9 @@ namespace NQuery.Plan
             }
         }
 
-        private Expression BuildLiteralExpression(AlgebraLiteralExpression expression)
+        private static Expression BuildLiteralExpression(AlgebraLiteralExpression expression)
         {
-            return Expression.Constant(expression.Value, GetTargetType(expression.Type));
+            return Expression.Constant(expression.Value, expression.Type);
         }
 
         private Expression BuildValueSlotExpression(AlgebraValueSlotExpression expression)
@@ -163,57 +240,111 @@ namespace NQuery.Plan
             var rowBufferIndex = _valueSlotSettings.GetRowBufferIndex(expression.ValueSlot);
             var rowBufferFunc = _valueSlotSettings.RowBufferProvider;
             return
-                ConvertToTargetType(
-                    expression.ValueSlot.Type,
+                Expression.Convert(
                     Expression.MakeIndex(
                         Expression.Invoke(
                             Expression.Constant(rowBufferFunc)
                         ),
                         RowBufferIndexer,
                         new[] { Expression.Constant(rowBufferIndex) }
-                    )
+                    ),
+                    expression.ValueSlot.Type.GetNullableType()
                 );
         }
 
-        private Expression BuildVariableExpression(AlgebraVariableExpression expression)
+        private static Expression BuildVariableExpression(AlgebraVariableExpression expression)
         {
-            return ConvertToTargetType(expression.Type, Expression.MakeMemberAccess(Expression.Constant(expression.Symbol), VariableSymbolValueProperty));
+            return
+                Expression.Convert(
+                    Expression.MakeMemberAccess(
+                        Expression.Constant(expression.Symbol),
+                        VariableSymbolValueProperty
+                    ),
+                    expression.Type.GetNullableType()
+                );
         }
 
         private Expression BuildFunctionInvocationExpression(AlgebraFunctionInvocationExpression expression)
         {
-            var arguments = expression.Arguments.Select(BuildExpression);
-            return expression.Symbol.CreateInvocation(arguments);
+            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
+            var nullableResultType = expression.Type.GetNullableType();
+
+            return
+                Expression.Condition(
+                    BuildNullCheck(liftedArguments),
+                    BuildNullValue(nullableResultType),
+                    BuildLiftedExpression(
+                        expression.Symbol.CreateInvocation(
+                            liftedArguments.Select(BuildLoweredExpression)
+                        )
+                    )
+                );
         }
 
         private Expression BuildPropertyAccessExpression(AlgebraPropertyAccessExpression expression)
         {
-            var instance = BuildExpression(expression.Target);
-            return expression.Symbol.CreateInvocation(instance);
+            var liftedInstance = BuildCachedExpression(expression.Target);
+            var nullableResultType = expression.Type.GetNullableType();
+
+            return
+                Expression.Condition(
+                    BuildNullCheck(liftedInstance),
+                    BuildNullValue(nullableResultType),
+                    BuildLiftedExpression(
+                        expression.Symbol.CreateInvocation(
+                            BuildLoweredExpression(liftedInstance)
+                        )
+                    )
+                );
         }
 
         private Expression BuildMethodInvocationExpression(AlgebraMethodInvocationExpression expression)
         {
-            var instance = BuildExpression(expression.Target);
-            var arguments = expression.Arguments.Select(BuildExpression);
-            return expression.Symbol.CreateInvocation(instance, arguments);
+            var liftedInstance = BuildCachedExpression(expression.Target);
+            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
+            var nullableResultType = expression.Type.GetNullableType();
+
+            return
+                Expression.Condition(
+                    Expression.OrElse(
+                        BuildNullCheck(liftedInstance),
+                        BuildNullCheck(liftedArguments)
+                    ),
+                    BuildNullValue(nullableResultType),
+                    BuildLiftedExpression(
+                        expression.Symbol.CreateInvocation(
+                            BuildLoweredExpression(liftedInstance),
+                            liftedArguments.Select(BuildLoweredExpression)
+                        )
+                    )
+                );
         }
 
         private Expression BuildConversionExpression(AlgebraConversionExpression expression)
         {
-            var input = BuildExpression(expression.Expression);
+            var input = BuildCachedExpression(expression.Expression);
             var targetType = expression.Type;
-            var conversionMethod = expression.Conversion.ConversionMethods.FirstOrDefault();
-            return Expression.Convert(input, targetType, conversionMethod);
+            var conversionMethod = expression.Conversion.ConversionMethods.SingleOrDefault();
+            return
+                Expression.Condition(
+                    BuildNullCheck(input),
+                    BuildNullValue(targetType),
+                    BuildLiftedExpression(
+                        Expression.Convert(
+                            input,
+                            targetType,
+                            conversionMethod
+                        )
+                    )
+                );
         }
 
         private Expression BuildIsNullExpression(AlgebraIsNullExpression expression)
         {
-            var input = BuildExpression(expression.Expression);
-            return Expression.ReferenceEqual(input, Expression.Constant(null, GetTargetType(TypeFacts.Null)));
+            return BuildNullCheck(BuildExpression(expression.Expression));
         }
 
-        private Expression BuildCaseExpression(AlgebraCaseExpression expression)
+        private static Expression BuildCaseExpression(AlgebraCaseExpression expression)
         {
             throw new NotImplementedException();
         }

@@ -36,7 +36,7 @@ namespace NQuery.Plan
         {
             var rowBufferProvider = new Func<RowBuffer>(() => rowBuffer);
             var valueSlotSettings = new ValueSlotSettings(valueSlotMapping, rowBufferProvider);
-            return ExpressionBuilder.CompileExpression<T>(expression, valueSlotSettings);
+            return ExpressionBuilder.BuildExpression<T>(expression, valueSlotSettings);
         }
 
         private IteratorResult BuildRelation(AlgebraRelation relation)

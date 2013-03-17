@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using NQuery.Symbols;
 
@@ -205,6 +206,34 @@ namespace NQuery
         {
             var comarable = typeof (IComparable);
             return comarable.IsAssignableFrom(type);
+        }
+
+        public static bool CanBeNull(this Type type)
+        {
+            var isReferenceType = type.IsClass;
+            var isNullableOfT = type.IsNullableOfT();
+            return isReferenceType || isNullableOfT;
+        }
+
+        public static bool IsNullableOfT(this Type type)
+        {
+            return type.IsValueType &&
+                   type.IsGenericType &&
+                   type.GetGenericTypeDefinition() == typeof (Nullable<>);
+        }
+
+        public static Type GetNonNullableType(this Type type)
+        {
+            return type.IsNullableOfT()
+                       ? type.GetGenericArguments().Single()
+                       : type;
+        }
+
+        public static Type GetNullableType(this Type type)
+        {
+            return type.CanBeNull()
+                       ? type
+                       : typeof (Nullable<>).MakeGenericType(type);
         }
     }
 }
