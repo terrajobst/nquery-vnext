@@ -184,6 +184,7 @@
     <Compile Include="Hosting\ReflectionProvider.cs" />
     <Compile Include="Symbols\AggregateSymbol.cs" />
     <Compile Include="Symbols\QueryColumnInstanceSymbol.cs" />
+    <Compile Include="Symbols\SchemaColumnSymbol.cs" />
     <Compile Include="Symbols\SymbolMarkup.cs" />
     <Compile Include="Symbols\SymbolMarkupBuilder.cs" />
     <Compile Include="Symbols\SymbolMarkupKind.cs" />
