@@ -163,7 +163,7 @@ namespace NQueryViewer
                 CloseEditor();
                 e.Handled = true;
             }
-            else if (e.Key == Key.F8 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
+            else if (e.Key == Key.F5 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
             {
                 RunQuery();
                 e.Handled = true;
