@@ -114,6 +114,8 @@ namespace NQueryViewer
             if (queryReader == null)
                 return;
 
+            ExecutionTimeTextBlock.Text = "Running query...";
+
             var stopwatch = Stopwatch.StartNew();
             var dataTable = await Task.Run(() =>
             {
