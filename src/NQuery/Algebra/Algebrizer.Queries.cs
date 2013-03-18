@@ -111,7 +111,8 @@ namespace NQuery.Algebra
                 return input;
 
             var expressions = orderByClause.Columns.Select(c => c.ValueSlot).ToArray();
-            return new AlgebraSortNode(input, expressions);
+            var comparers = orderByClause.Columns.Select(c => c.Comparer).ToArray();
+            return new AlgebraSortNode(input, expressions, comparers);
         }
 
         private AlgebraRelation AlgebrizeTop(AlgebraRelation input, int? top, bool withTies)
@@ -140,7 +141,8 @@ namespace NQuery.Algebra
         {
             var input = AlgebrizeQuery(node.Input);
             var valueSlots = node.Columns.Select(s => s.ValueSlot).ToArray();
-            return new AlgebraSortNode(input, valueSlots);
+            var comparers = node.Columns.Select(c => c.Comparer).ToArray();
+            return new AlgebraSortNode(input, valueSlots, comparers);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -10,11 +11,13 @@ namespace NQuery.Algebra
     {
         private readonly AlgebraRelation _input;
         private readonly ReadOnlyCollection<ValueSlot> _valueSlots;
+        private readonly ReadOnlyCollection<IComparer> _comparers;
 
-        public AlgebraSortNode(AlgebraRelation input, IList<ValueSlot> valueSlots)
+        public AlgebraSortNode(AlgebraRelation input, IList<ValueSlot> valueSlots, IList<IComparer> comparers)
         {
             _input = input;
             _valueSlots = new ReadOnlyCollection<ValueSlot>(valueSlots);
+            _comparers = new ReadOnlyCollection<IComparer>(comparers);
         }
 
         public override AlgebraKind Kind
@@ -30,6 +33,11 @@ namespace NQuery.Algebra
         public ReadOnlyCollection<ValueSlot> ValueSlots
         {
             get { return _valueSlots; }
+        }
+
+        public ReadOnlyCollection<IComparer> Comparers
+        {
+            get { return _comparers; }
         }
     }
 }

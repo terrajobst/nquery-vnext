@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -136,7 +137,15 @@ namespace NQuery.Plan
 
         private IteratorResult BuildSort(AlgebraSortNode relation)
         {
-            throw new NotImplementedException();
+            var inputResult = BuildRelation(relation.Input);
+            var input = inputResult.Iterator;
+            var inputValueSlotMapping = inputResult.ValueSlotMapping;
+            var sortEntries = relation.ValueSlots
+                                      .Select(v => inputValueSlotMapping[v])
+                                      .ToArray();
+            var comparers = relation.Comparers;
+            var outputIterator = new SortIterator(input, sortEntries, comparers);
+            return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
 
         private IteratorResult BuildCombinedQuery(AlgebraCombinedQuery relation)

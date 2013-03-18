@@ -9,14 +9,12 @@ namespace NQuery.Binding
     {
         private readonly QueryColumnInstanceSymbol _queryColumn;
         private readonly ValueSlot _valueSlot;
-        private readonly bool _isAscending;
         private readonly IComparer _comparer;
 
-        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, ValueSlot valueSlot, bool isAscending, IComparer comparer)
+        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, ValueSlot valueSlot, IComparer comparer)
         {
             _queryColumn = queryColumn;
             _valueSlot = valueSlot;
-            _isAscending = isAscending;
             _comparer = comparer;
         }
 
@@ -33,11 +31,6 @@ namespace NQuery.Binding
         public ValueSlot ValueSlot
         {
             get { return _valueSlot; }
-        }
-
-        public bool IsAscending
-        {
-            get { return _isAscending; }
         }
 
         public IComparer Comparer

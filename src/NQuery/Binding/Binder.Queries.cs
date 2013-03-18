@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
+using NQuery.Plan;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
@@ -1081,9 +1082,12 @@ namespace NQuery.Binding
                 // Almost there. Now the only thing left for us to do is getting
                 // the associated comparer.
 
-                var comparer = BindComparer(valueSlot.Type, selector.Span, DiagnosticId.InvalidDataTypeInOrderBy);
+                var baseComparer = BindComparer(valueSlot.Type, selector.Span, DiagnosticId.InvalidDataTypeInOrderBy);
+                var comparer = isAscending || baseComparer == null
+                                   ? baseComparer
+                                   : new NegatedComparer(baseComparer);
 
-                var boundColumn = new BoundOrderByColumn(queryColumn, valueSlot, isAscending, comparer);
+                var boundColumn = new BoundOrderByColumn(queryColumn, valueSlot, comparer);
                 Bind(column, boundColumn);
                 boundColumns.Add(boundColumn);
             }

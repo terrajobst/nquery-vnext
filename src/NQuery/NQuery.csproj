@@ -101,10 +101,12 @@
     <Compile Include="Plan\FilterIterator.cs" />
     <Compile Include="Plan\InnerNestedLoopsIterator.cs" />
     <Compile Include="Plan\Iterator.cs" />
+    <Compile Include="Plan\NegatedComparer.cs" />
     <Compile Include="Plan\PlanBuilder.cs" />
     <Compile Include="Plan\ProjectedRowBuffer.cs" />
     <Compile Include="Plan\ProjectionIterator.cs" />
     <Compile Include="Plan\RowBuffer.cs" />
+    <Compile Include="Plan\SortIterator.cs" />
     <Compile Include="Plan\TableIterator.cs" />
     <Compile Include="Plan\ValueSlotSettings.cs" />
     <Compile Include="Query.cs" />
