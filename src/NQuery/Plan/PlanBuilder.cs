@@ -69,12 +69,14 @@ namespace NQuery.Plan
             }
         }
 
-        private IteratorResult BuildConstant(AlgebraConstantNode relation)
+        private static IteratorResult BuildConstant(AlgebraConstantNode relation)
         {
-            throw new NotImplementedException();
+            var result = new ConstantIterator();
+            var mapping = ImmutableDictionary.Create<ValueSlot, int>();
+            return new IteratorResult(result, mapping);
         }
 
-        private IteratorResult BuildTable(AlgebraTableNode relation)
+        private static IteratorResult BuildTable(AlgebraTableNode relation)
         {
             var schemaTableSymbol = (SchemaTableSymbol) relation.Symbol.Table;
             var tableDefinition = schemaTableSymbol.Definition;
@@ -132,7 +134,29 @@ namespace NQuery.Plan
 
         private IteratorResult BuildTop(AlgebraTopNode relation)
         {
-            throw new NotImplementedException();
+            return relation.WithTies
+                       ? BuildTopWithTies(relation)
+                       : BuildTopWithoutTies(relation);
+        }
+
+        private IteratorResult BuildTopWithTies(AlgebraTopNode relation)
+        {
+            var inputResult = BuildRelation(relation.Input);
+            var input = inputResult.Iterator;
+            var inputValueSlotMapping = inputResult.ValueSlotMapping;
+            var tieEntries = relation.TieEntries.Select(v => inputValueSlotMapping[v]).ToArray();
+            var tieComparers = relation.TieComparers;
+            var outputIterator = new TopWithTiesIterator(input, relation.Limit, tieEntries, tieComparers);
+            return new IteratorResult(outputIterator, inputValueSlotMapping);
+        }
+
+        private IteratorResult BuildTopWithoutTies(AlgebraTopNode relation)
+        {
+            var inputResult = BuildRelation(relation.Input);
+            var input = inputResult.Iterator;
+            var inputValueSlotMapping = inputResult.ValueSlotMapping;
+            var outputIterator = new TopIterator(input, relation.Limit);
+            return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
 
         private IteratorResult BuildSort(AlgebraSortNode relation)

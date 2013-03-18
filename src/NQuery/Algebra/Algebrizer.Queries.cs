@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace NQuery.Algebra
             var algebrizedHaving = AlgebrizeFilter(algebrizedGroupByAndAggregation, node.HavingClause);
             var algebrizedProjections = AlgebrizeCompute(algebrizedHaving, node.Projections);
             var algebrizedOrderBy = AlgebrizeOrderBy(algebrizedProjections, node.OrderByClause);
-            var algebrizedTop = AlgebrizeTop(algebrizedOrderBy, node.Top, node.WithTies);
+            var algebrizedTop = AlgebrizeTop(algebrizedOrderBy, node.Top, node.WithTies ? node.OrderByClause.Columns : null);
             var algebrizedProject = AlgebrizeProject(algebrizedTop, node.OutputColumns);
             return algebrizedProject;
         }
@@ -115,11 +116,18 @@ namespace NQuery.Algebra
             return new AlgebraSortNode(input, expressions, comparers);
         }
 
-        private AlgebraRelation AlgebrizeTop(AlgebraRelation input, int? top, bool withTies)
+        private AlgebraRelation AlgebrizeTop(AlgebraRelation input, int? top, ReadOnlyCollection<BoundOrderByColumn> orderByColumns)
         {
-            return top == null
-                       ? input
-                       : new AlgebraTopNode(input, top.Value, withTies);
+            if (top == null)
+                return input;
+
+            var tieEntries = orderByColumns == null
+                                 ? new ValueSlot[0]
+                                 : orderByColumns.Select(c => c.ValueSlot).ToArray();
+            var tieComparer = orderByColumns == null
+                                  ? new IComparer[0]
+                                  : orderByColumns.Select(c => c.Comparer).ToArray();
+            return new AlgebraTopNode(input, top.Value, tieEntries, tieComparer);
         }
 
         private AlgebraRelation AlgebrizeProject(AlgebraRelation input, IEnumerable<QueryColumnInstanceSymbol> outputColumns)

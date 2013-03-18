@@ -106,8 +106,11 @@
     <Compile Include="Plan\ProjectedRowBuffer.cs" />
     <Compile Include="Plan\ProjectionIterator.cs" />
     <Compile Include="Plan\RowBuffer.cs" />
+    <Compile Include="Plan\ConstantIterator.cs" />
     <Compile Include="Plan\SortIterator.cs" />
     <Compile Include="Plan\TableIterator.cs" />
+    <Compile Include="Plan\TopIterator.cs" />
+    <Compile Include="Plan\TopWithTiesIterator.cs" />
     <Compile Include="Plan\ValueSlotSettings.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="QueryReader.cs" />

@@ -115,7 +115,7 @@ namespace NQuery.Algebra
 
         private static ShowPlanNode BuildTop(AlgebraTopNode node)
         {
-            var operatorName = string.Format("Top {0}{1}", node.Top, node.WithTies ? " With Ties" : string.Empty);
+            var operatorName = string.Format("Top {0}{1}", node.Limit, node.WithTies ? " With Ties" : string.Empty);
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
             return new ShowPlanNode(operatorName, properties, children);

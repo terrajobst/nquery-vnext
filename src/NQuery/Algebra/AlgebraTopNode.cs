@@ -1,18 +1,25 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+using NQuery.Binding;
 
 namespace NQuery.Algebra
 {
     internal sealed class AlgebraTopNode : AlgebraRelation
     {
         private readonly AlgebraRelation _input;
-        private readonly int _top;
-        private readonly bool _withTies;
+        private readonly int _limit;
+        private readonly ReadOnlyCollection<ValueSlot> _tieEntries;
+        private readonly ReadOnlyCollection<IComparer> _tieComparers;
 
-        public AlgebraTopNode(AlgebraRelation input, int top, bool withTies)
+        public AlgebraTopNode(AlgebraRelation input, int limit, IList<ValueSlot> tieEntries, IList<IComparer> tieComparer)
         {
             _input = input;
-            _top = top;
-            _withTies = withTies;
+            _limit = limit;
+            _tieEntries = new ReadOnlyCollection<ValueSlot>(tieEntries);
+            _tieComparers = new ReadOnlyCollection<IComparer>(tieComparer);
         }
 
         public override AlgebraKind Kind
@@ -25,14 +32,24 @@ namespace NQuery.Algebra
             get { return _input; }
         }
 
-        public int Top
+        public int Limit
         {
-            get { return _top; }
+            get { return _limit; }
         }
 
         public bool WithTies
         {
-            get { return _withTies; }
+            get { return _tieEntries.Count > 0; }
+        }
+
+        public ReadOnlyCollection<ValueSlot> TieEntries
+        {
+            get { return _tieEntries; }
+        }
+
+        public ReadOnlyCollection<IComparer> TieComparers
+        {
+            get { return _tieComparers; }
         }
     }
 }
