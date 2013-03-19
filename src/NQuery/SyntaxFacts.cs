@@ -35,7 +35,7 @@ namespace NQuery
             yield return SyntaxKind.NullKeyword;
             yield return SyntaxKind.NotKeyword;
             yield return SyntaxKind.LikeKeyword;
-            yield return SyntaxKind.SoundslikeKeyword;
+            yield return SyntaxKind.SoundsKeyword;
             yield return SyntaxKind.SimilarKeyword;
             yield return SyntaxKind.BetweenKeyword;
             yield return SyntaxKind.InKeyword;
@@ -149,8 +149,8 @@ namespace NQuery
                     return "NOT";
                 case SyntaxKind.LikeKeyword:
                     return "LIKE";
-                case SyntaxKind.SoundslikeKeyword:
-                    return "SOUNDSLIKE";
+                case SyntaxKind.SoundsKeyword:
+                    return "SOUNDS";
                 case SyntaxKind.SimilarKeyword:
                     return "SIMILAR";
                 case SyntaxKind.ToKeyword:
@@ -289,7 +289,7 @@ namespace NQuery
                 case SyntaxKind.NullKeyword:
                 case SyntaxKind.NotKeyword:
                 case SyntaxKind.LikeKeyword:
-                case SyntaxKind.SoundslikeKeyword:
+                case SyntaxKind.SoundsKeyword:
                 case SyntaxKind.SimilarKeyword:
                 case SyntaxKind.BetweenKeyword:
                 case SyntaxKind.InKeyword:
@@ -497,8 +497,8 @@ namespace NQuery
                 case "SIMILAR":
                     return SyntaxKind.SimilarKeyword;
 
-                case "SOUNDSLIKE":
-                    return SyntaxKind.SoundslikeKeyword;
+                case "SOUNDS":
+                    return SyntaxKind.SoundsKeyword;
 
                 case "THEN":
                     return SyntaxKind.ThenKeyword;
@@ -787,7 +787,7 @@ namespace NQuery
                 case SyntaxKind.LikeKeyword:
                     return SyntaxKind.LikeExpression;
 
-                case SyntaxKind.SoundslikeKeyword:
+                case SyntaxKind.SoundsKeyword:
                     return SyntaxKind.SoundslikeExpression;
 
                 case SyntaxKind.SimilarKeyword:
@@ -1048,7 +1048,7 @@ namespace NQuery
                     return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
 
                 case BinaryOperatorKind.Soundslike:
-                    return SyntaxKind.SoundslikeKeyword.GetText();
+                    return SyntaxKind.SoundsKeyword.GetText() + " " + SyntaxKind.LikeKeyword.GetText();
 
                 case BinaryOperatorKind.LogicalAnd:
                     return SyntaxKind.AndKeyword.GetText();
@@ -1079,7 +1079,7 @@ namespace NQuery
                    syntaxKind == SyntaxKind.InKeyword ||
                    syntaxKind == SyntaxKind.LikeKeyword ||
                    syntaxKind == SyntaxKind.SimilarKeyword ||
-                   syntaxKind == SyntaxKind.SoundslikeKeyword;
+                   syntaxKind == SyntaxKind.SoundsKeyword;
         }
 
         public static IEnumerable<string> GetTypeNames()

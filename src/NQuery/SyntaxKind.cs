@@ -49,7 +49,7 @@ namespace NQuery
         NullKeyword,
         NotKeyword,
         LikeKeyword,
-        SoundslikeKeyword,
+        SoundsKeyword,
         SimilarKeyword,
         BetweenKeyword,
         InKeyword,

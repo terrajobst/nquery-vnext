@@ -7,15 +7,17 @@ namespace NQuery.Syntax
     {
         private readonly ExpressionSyntax _left;
         private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _soundslikeKeyword;
+        private readonly SyntaxToken _soundsKeyword;
+        private readonly SyntaxToken _likeKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SoundslikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundslikeKeyword, ExpressionSyntax right)
+        public SoundslikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundsKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;
             _notKeyword = notKeyword;
-            _soundslikeKeyword = soundslikeKeyword;
+            _soundsKeyword = soundsKeyword;
+            _likeKeyword = likeKeyword;
             _right = right;
         }
 
@@ -29,7 +31,8 @@ namespace NQuery.Syntax
             yield return _left;
             if (_notKeyword != null)
                 yield return _notKeyword;
-            yield return _soundslikeKeyword;
+            yield return _soundsKeyword;
+            yield return _likeKeyword;
             yield return _right;
         }
 
@@ -43,9 +46,14 @@ namespace NQuery.Syntax
             get { return _notKeyword; }
         }
 
-        public SyntaxToken SoundslikeKeyword
+        public SyntaxToken SoundsKeyword
         {
-            get { return _soundslikeKeyword; }
+            get { return _soundsKeyword; }
+        }
+
+        public SyntaxToken LikeKeyword
+        {
+            get { return _likeKeyword; }
         }
 
         public ExpressionSyntax Right

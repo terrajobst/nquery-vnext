@@ -209,7 +209,7 @@ namespace NQuery.Syntax
 
             while (Current.Kind != SyntaxKind.EndOfFileToken)
             {
-                // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUNDSLIKE.
+                // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUND SLIKE.
 
                 var notKeyword = Current.Kind == SyntaxKind.NotKeyword && Lookahead.Kind.CanHaveLeadingNot()
                                      ? NextToken()
@@ -261,7 +261,7 @@ namespace NQuery.Syntax
             {
                 case SyntaxKind.SimilarKeyword:
                     return ParseSimilarToExpression(left, notKeyword, operatorPrecedence, operatorToken);
-                case SyntaxKind.SoundslikeKeyword:
+                case SyntaxKind.SoundsKeyword:
                     return ParseSoundslikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
                 case SyntaxKind.LikeKeyword:
                     return ParseLikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
@@ -301,10 +301,11 @@ namespace NQuery.Syntax
             return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
         }
 
-        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
         {
+            var likeKeyword = Match(SyntaxKind.LikeKeyword);
             var expression = ParseSubExpression(null, operatorPrecedence);
-            return new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
+            return new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, soundsKeywordToken, likeKeyword, expression);
         }
 
         private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)

@@ -56,7 +56,7 @@ namespace NQuery.Authoring.Completion
             // OR
             // IS
             // LIKE
-            // SOUNDSLIKE
+            // SOUNDS
             // SIMILAR
             // BETWEEN
             // IN
@@ -67,7 +67,7 @@ namespace NQuery.Authoring.Completion
                 yield return SyntaxKind.OrKeyword;
                 yield return SyntaxKind.IsKeyword;
                 yield return SyntaxKind.LikeKeyword;
-                yield return SyntaxKind.SoundslikeKeyword;
+                yield return SyntaxKind.SoundsKeyword;
                 yield return SyntaxKind.SimilarKeyword;
                 yield return SyntaxKind.BetweenKeyword;
                 yield return SyntaxKind.InKeyword;
@@ -79,6 +79,13 @@ namespace NQuery.Authoring.Completion
                 InIsNullAfterIsKeyword(syntaxTree, position))
             {
                 yield return SyntaxKind.NullKeyword;
+            }
+
+            // LIKE
+
+            if (IsAfterSoundsKeyword(syntaxTree, position))
+            {
+                yield return SyntaxKind.LikeKeyword;
             }
 
             // TO
@@ -607,6 +614,11 @@ namespace NQuery.Authoring.Completion
         private static bool IsAfterUnionKeyword(SyntaxTree syntaxTree, int position)
         {
             return IsAfterToken(syntaxTree, position, SyntaxKind.UnionKeyword);
+        }
+
+        private static bool IsAfterSoundsKeyword(SyntaxTree syntaxTree, int position)
+        {
+            return IsAfterToken(syntaxTree, position, SyntaxKind.SoundsKeyword);
         }
 
         private static bool IsAfterSimilarKeyword(SyntaxTree syntaxTree, int position)
