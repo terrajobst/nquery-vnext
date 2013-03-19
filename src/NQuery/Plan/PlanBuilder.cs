@@ -174,7 +174,20 @@ namespace NQuery.Plan
 
         private IteratorResult BuildCombinedQuery(AlgebraCombinedQuery relation)
         {
-            throw new NotImplementedException();
+            // TODO: We should handle UNION ALL, EXCEPT and INTERSECT differently
+
+            var inputs = new[]
+                             {
+                                 BuildRelation(relation.Left).Iterator,
+                                 BuildRelation(relation.Right).Iterator
+                             };
+
+            var outputValueSlotCount = relation.OutputValueSlots.Count;
+            var outputValueSlotMapping = relation.OutputValueSlots
+                                                 .Select((v, i) => new KeyValuePair<ValueSlot, int>(v, i))
+                                                 .ToImmutableDictionary();
+            var outputIterator = new ConcatenationIterator(inputs, outputValueSlotCount);
+            return new IteratorResult(outputIterator, outputValueSlotMapping);
         }
 
         private IteratorResult BuildGroupByAndAggregation(AlgebraGroupByAndAggregation relation)
