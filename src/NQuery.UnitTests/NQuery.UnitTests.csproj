@@ -82,6 +82,7 @@
     <Compile Include="MethodInvocationExressionTests.cs" />
     <Compile Include="NameExpressionTests.cs" />
     <Compile Include="NullIfExpressionTests.cs" />
+    <Compile Include="NullTests.cs" />
     <Compile Include="OrderByTests.cs" />
     <Compile Include="ParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -51,6 +51,7 @@ namespace NQuery
         }
 
         private static readonly Conversion None = new Conversion(false, false, false, false, false, null);
+        private static readonly Conversion Null = new Conversion(true, false, true, false, false, null);
         private static readonly Conversion Identity = new Conversion(true, true, true, false, false, null);
         private static readonly Conversion Implicit = new Conversion(true, false, true, false, false, null);
         private static readonly Conversion Explicit = new Conversion(true, false, false, false, false, null);
@@ -126,6 +127,12 @@ namespace NQuery
             {
                 // Converting object to a value type is always possible (AKA 'unboxing').
                 return Unboxing;
+            }
+
+            if (sourceType.IsNull() || targetType.IsNull())
+            {
+                // If either side is the null type, we have an implicit conversion to or from NULL.
+                return Null;
             }
 
             if (!sourceType.IsValueType && !targetType.IsValueType)

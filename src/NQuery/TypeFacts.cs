@@ -35,6 +35,11 @@ namespace NQuery
             return type == Null;
         }
 
+        internal static Type ToOutputType(this Type type)
+        {
+            return type.IsNull() ? typeof (object) : type;
+        }
+
         internal static bool IsNonBoolean(this Type type)
         {
             return !type.IsError() && type != typeof(bool);

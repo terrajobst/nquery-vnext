@@ -42,7 +42,7 @@ namespace NQuery
             if (relation == null)
                 return null;
 
-            var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type)).ToArray();
+            var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
             var iterator = PlanBuilder.Build(relation);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
