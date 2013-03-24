@@ -225,7 +225,7 @@ namespace NQuery.Algebra
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Expression) };
-            return new ShowPlanNode("Conversion", properties, children, true);
+            return new ShowPlanNode("Conversion (" + node.Type.ToDisplayName() + ")", properties, children, true);
         }
 
         private static ShowPlanNode BuildIsNullExpression(AlgebraIsNullExpression node)
