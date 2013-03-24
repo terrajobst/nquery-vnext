@@ -239,7 +239,9 @@ namespace NQuery.Algebra
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var caseLabels = node.CaseLabels.Select(BuildCaseLabel);
-            var elseLabel = new[] { Build(node.ElseExpression) };
+            var elseLabel = node.ElseExpression == null
+                                ? Enumerable.Empty<ShowPlanNode>()
+                                : new[] {Build(node.ElseExpression)};
             var children = caseLabels.Concat(elseLabel);
             return new ShowPlanNode("Case", properties, children, true);
         }

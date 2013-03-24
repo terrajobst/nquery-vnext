@@ -48,6 +48,11 @@ namespace NQuery.Plan
                        : Expression.Convert(result, result.Type.GetNullableType());
         }
 
+        private Expression BuildLiftedExpression(AlgebraExpression expression)
+        {
+            return BuildLiftedExpression(BuildExpression(expression));
+        }
+
         private static Expression BuildLoweredExpression(Expression expression)
         {
             if (!expression.Type.IsNullableOfT())
@@ -371,6 +376,9 @@ namespace NQuery.Plan
 
         private Expression BuildConversionExpression(AlgebraConversionExpression expression)
         {
+            if (expression.Expression.Type.IsNull())
+                return BuildNullValue(expression.Type);
+
             var input = BuildCachedExpression(expression.Expression);
             var targetType = expression.Type;
             var conversionMethod = expression.Conversion.ConversionMethods.SingleOrDefault();
@@ -401,7 +409,9 @@ namespace NQuery.Plan
         private Expression BuildCaseLabel(AlgebraCaseExpression caseExpression, int caseLabelIndex)
         {
             if (caseLabelIndex == caseExpression.CaseLabels.Count)
-                return BuildExpression(caseExpression.ElseExpression);
+                return caseExpression.ElseExpression == null
+                           ? BuildNullValue(caseExpression.Type)
+                           : BuildLiftedExpression(caseExpression.ElseExpression);
 
             var caseLabel = caseExpression.CaseLabels[caseLabelIndex];
             var condition = caseLabel.Condition;
@@ -410,12 +420,10 @@ namespace NQuery.Plan
             return
                 Expression.Condition(
                     Expression.Equal(
-                        BuildLiftedExpression(
-                            BuildExpression(condition)
-                        ),
+                        BuildLiftedExpression(condition),
                         BuildNullableTrue()
                     ),
-                    BuildExpression(result),
+                    BuildLiftedExpression(result),
                     BuildCaseLabel(caseExpression, caseLabelIndex + 1)
                 );
         }

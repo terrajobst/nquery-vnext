@@ -126,7 +126,9 @@ namespace NQuery.Algebra
                               let result = AlgebrizeExpression(c.ThenExpression)
                               select new AlgebraCaseLabel(condition, result)).ToArray();
 
-            var elseExpression = AlgebrizeExpression(node.ElseExpresion);
+            var elseExpression = node.ElseExpresion == null
+                                     ? null
+                                     : AlgebrizeExpression(node.ElseExpresion);
 
             return new AlgebraCaseExpression(caseLabels, elseExpression);
         }
