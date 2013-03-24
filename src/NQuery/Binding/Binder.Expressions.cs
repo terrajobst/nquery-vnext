@@ -508,7 +508,17 @@ namespace NQuery.Binding
 
             var boundArguments = BindToCommonType(node.ArgumentList.Arguments);
             var caseLabelCount = node.ArgumentList.Arguments.Count - 1;
-            var caseLabels = boundArguments.Take(caseLabelCount).Select(a => new BoundCaseLabel(new BoundIsNullExpression(a), a)).ToArray();
+            var caseLabels = new BoundCaseLabel[caseLabelCount];
+            for (var i = 0; i < caseLabelCount; i++)
+            {
+                var argument = node.ArgumentList.Arguments[i];
+                var boundArgument = boundArguments[i];
+                var boundIsNullExpression = new BoundIsNullExpression(boundArgument);
+                var boundIsNullNegation = BindUnaryExpression(argument.Span, UnaryOperatorKind.LogicalNot, boundIsNullExpression);
+                var caseLabel = new BoundCaseLabel(boundIsNullNegation, boundArgument);
+                caseLabels[i] = caseLabel;
+            }
+
             var elseExpresion = boundArguments.Last();
             return new BoundCaseExpression(caseLabels, elseExpresion);
         }
