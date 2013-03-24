@@ -76,6 +76,11 @@ namespace NQuery.Plan
                 .Aggregate<Expression, Expression>(null, (current, nullCheck) => current == null ? nullCheck : Expression.OrElse(current, nullCheck));
         }
 
+        private static UnaryExpression BuildNullableTrue()
+        {
+            return Expression.Convert(Expression.Constant(true), typeof(bool?));
+        }
+
         private Func<T> BuildExpression<T>(AlgebraExpression expression)
         {
             var targetType = typeof (T);
@@ -388,9 +393,31 @@ namespace NQuery.Plan
             return BuildNullCheck(BuildExpression(expression.Expression));
         }
 
-        private static Expression BuildCaseExpression(AlgebraCaseExpression expression)
+        private Expression BuildCaseExpression(AlgebraCaseExpression expression)
         {
-            throw new NotImplementedException();
+            return BuildCaseLabel(expression, 0);
+        }
+
+        private Expression BuildCaseLabel(AlgebraCaseExpression caseExpression, int caseLabelIndex)
+        {
+            if (caseLabelIndex == caseExpression.CaseLabels.Count)
+                return BuildExpression(caseExpression.ElseExpression);
+
+            var caseLabel = caseExpression.CaseLabels[caseLabelIndex];
+            var condition = caseLabel.Condition;
+            var result = caseLabel.Result;
+
+            return
+                Expression.Condition(
+                    Expression.Equal(
+                        BuildLiftedExpression(
+                            BuildExpression(condition)
+                        ),
+                        BuildNullableTrue()
+                    ),
+                    BuildExpression(result),
+                    BuildCaseLabel(caseExpression, caseLabelIndex + 1)
+                );
         }
     }
 }

@@ -121,8 +121,14 @@ namespace NQuery.Algebra
 
         private AlgebraExpression AlgebrizeCaseExpression(BoundCaseExpression node)
         {
-            // TODO: Algebrize CASE
-            return new AlgebraCaseExpression();
+            var caseLabels = (from c in node.CaseLabels
+                              let condition = AlgebrizeExpression(c.Condition)
+                              let result = AlgebrizeExpression(c.ThenExpression)
+                              select new AlgebraCaseLabel(condition, result)).ToArray();
+
+            var elseExpression = AlgebrizeExpression(node.ElseExpresion);
+
+            return new AlgebraCaseExpression(caseLabels, elseExpression);
         }
 
         private AlgebraExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node)

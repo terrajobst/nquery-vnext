@@ -436,7 +436,9 @@ namespace NQuery.Binding
 
             var boundResults = BindCaseResultExpressions(node);
             var boundCaseLabels = node.CaseLabels.Select((l, i) => new BoundCaseLabel(BindExpression(l.WhenExpression), boundResults[i])).ToArray();
-            var boundElse = node.ElseLabel == null ? null : boundResults.Last();
+            var boundElse = node.ElseLabel == null
+                                ? new BoundLiteralExpression(null)
+                                : boundResults.Last();
 
             EnsureCaseLabelsEvaluateToBool(node.CaseLabels, boundCaseLabels);
 
@@ -473,7 +475,7 @@ namespace NQuery.Binding
                                    select new BoundCaseLabel(boundCondition, boundThen)).ToArray();
 
             var boundElse = node.ElseLabel == null
-                                ? null
+                                ? new BoundLiteralExpression(null)
                                 : boundResults.Last();
 
             EnsureCaseLabelsEvaluateToBool(node.CaseLabels, boundCaseLabels);

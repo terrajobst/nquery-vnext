@@ -232,10 +232,22 @@ namespace NQuery.Algebra
 
         private static ShowPlanNode BuildCaseExpression(AlgebraCaseExpression node)
         {
-            // TODO: Handle CASE
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = Enumerable.Empty<ShowPlanNode>();
+            var caseLabels = node.CaseLabels.Select(BuildCaseLabel);
+            var elseLabel = new[] { Build(node.ElseExpression) };
+            var children = caseLabels.Concat(elseLabel);
             return new ShowPlanNode("Case", properties, children, true);
+        }
+
+        private static ShowPlanNode BuildCaseLabel(AlgebraCaseLabel node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[]
+                               {
+                                   Build(node.Condition),
+                                   Build(node.Result)
+                               };
+            return new ShowPlanNode("When", properties, children, true);
         }
 
         private static ShowPlanNode BuildSingleRowSubselect(AlgebraSingleRowSubselect node)

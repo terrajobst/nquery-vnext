@@ -44,6 +44,7 @@
     <Compile Include="Algebra\AlgebraAggregateDefinition.cs" />
     <Compile Include="Algebra\AlgebraAllAnySubselect.cs" />
     <Compile Include="Algebra\AlgebraBinaryExpression.cs" />
+    <Compile Include="Algebra\AlgebraCaseLabel.cs" />
     <Compile Include="Algebra\AlgebraCombinedQuery.cs" />
     <Compile Include="Algebra\AlgebraCaseExpression.cs" />
     <Compile Include="Algebra\AlgebraComputedValue.cs" />
