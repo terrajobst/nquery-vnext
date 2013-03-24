@@ -977,6 +977,8 @@ namespace NQuery.Binding
                 var boundExpression = groupByBinder.BindExpression(expression);
                 var expressionType = boundExpression.Type;
 
+                // TODO: We need to very expression references at least one column that is not an outer reference.
+
                 BindComparer(expressionType, expression.Span, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 ValueSlot valueSlot;
