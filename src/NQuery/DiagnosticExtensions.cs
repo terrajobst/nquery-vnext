@@ -412,11 +412,12 @@ namespace NQuery
         {
             if (argumentTypes.Count > 0)
             {
-                diagnostics.Report(span, DiagnosticId.AmbiguousInvocation, symbol1, symbol2);
+                var displayTypes = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+                diagnostics.Report(span, DiagnosticId.AmbiguousInvocation, symbol1, symbol2, displayTypes);
             }
             else
             {
-                var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocationNoArgs, symbol1, symbol2);
+                var message = string.Format(CultureInfo.CurrentCulture, Resources.AmbiguousInvocationNoArgs, symbol1, symbol2);
                 var diagnostic = new Diagnostic(span, DiagnosticId.AmbiguousInvocation, message);
                 diagnostics.Add(diagnostic);
             }
