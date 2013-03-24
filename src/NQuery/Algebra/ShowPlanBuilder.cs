@@ -178,7 +178,12 @@ namespace NQuery.Algebra
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
-            return new ShowPlanNode("Literal (" + node.Value + ")", properties, children, true);
+            var value = node.Value == null
+                            ? "NULL"
+                            : node.Value is string
+                                  ? "'" + node.Value.ToString().Replace("'", "''") + "'"
+                                  : node.Value.ToString();
+            return new ShowPlanNode("Literal (" + value + ")", properties, children, true);
         }
 
         private static ShowPlanNode BuildValueSlotExpression(AlgebraValueSlotExpression node)
