@@ -81,6 +81,49 @@ namespace NQuery.Plan
                 .Aggregate<Expression, Expression>(null, (current, nullCheck) => current == null ? nullCheck : Expression.OrElse(current, nullCheck));
         }
 
+        private static Expression BuildNullCheck(Expression instance, ICollection<Expression> arguments)
+        {
+            if (arguments.Count == 0)
+                return BuildNullCheck(instance);
+
+            return
+                Expression.OrElse(
+                    BuildNullCheck(instance),
+                    BuildNullCheck(arguments)
+                );
+        }
+
+        private static Expression BuildInvocation(MethodSymbol methodSymbol, Expression instance, IEnumerable<Expression> arguments)
+        {
+            return
+                BuildLiftedExpression(
+                    methodSymbol.CreateInvocation(
+                    BuildLoweredExpression(instance),
+                        arguments.Select(BuildLoweredExpression)
+                    )
+                );
+        }
+
+        private static Expression BuildInvocation(FunctionSymbol functionSymbol, IEnumerable<Expression> arguments)
+        {
+            return
+                BuildLiftedExpression(
+                    functionSymbol.CreateInvocation(
+                        arguments.Select(BuildLoweredExpression)
+                    )
+                );
+        }
+
+        private static Expression BuildInvocation(PropertySymbol propertySymbol, Expression instance)
+        {
+            return
+                BuildLiftedExpression(
+                    propertySymbol.CreateInvocation(
+                        BuildLoweredExpression(instance)
+                    )
+                );
+        }
+
         private static UnaryExpression BuildNullableTrue()
         {
             return Expression.Convert(Expression.Constant(true), typeof(bool?));
@@ -321,17 +364,15 @@ namespace NQuery.Plan
         private Expression BuildFunctionInvocationExpression(AlgebraFunctionInvocationExpression expression)
         {
             var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
-            var nullableResultType = expression.Type.GetNullableType();
+            if (liftedArguments.Length == 0)
+                return BuildInvocation(expression.Symbol, liftedArguments);
 
+            var nullableResultType = expression.Type.GetNullableType();
             return
                 Expression.Condition(
                     BuildNullCheck(liftedArguments),
                     BuildNullValue(nullableResultType),
-                    BuildLiftedExpression(
-                        expression.Symbol.CreateInvocation(
-                            liftedArguments.Select(BuildLoweredExpression)
-                        )
-                    )
+                    BuildInvocation(expression.Symbol, liftedArguments)
                 );
         }
 
@@ -344,11 +385,7 @@ namespace NQuery.Plan
                 Expression.Condition(
                     BuildNullCheck(liftedInstance),
                     BuildNullValue(nullableResultType),
-                    BuildLiftedExpression(
-                        expression.Symbol.CreateInvocation(
-                            BuildLoweredExpression(liftedInstance)
-                        )
-                    )
+                    BuildInvocation(expression.Symbol, liftedInstance)
                 );
         }
 
@@ -360,17 +397,9 @@ namespace NQuery.Plan
 
             return
                 Expression.Condition(
-                    Expression.OrElse(
-                        BuildNullCheck(liftedInstance),
-                        BuildNullCheck(liftedArguments)
-                    ),
+                    BuildNullCheck(liftedInstance, liftedArguments),
                     BuildNullValue(nullableResultType),
-                    BuildLiftedExpression(
-                        expression.Symbol.CreateInvocation(
-                            BuildLoweredExpression(liftedInstance),
-                            liftedArguments.Select(BuildLoweredExpression)
-                        )
-                    )
+                    BuildInvocation(expression.Symbol, liftedInstance, liftedArguments)
                 );
         }
 
