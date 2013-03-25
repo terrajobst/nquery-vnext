@@ -637,9 +637,14 @@ namespace NQuery.Binding
             var tableInstance = symbol as TableInstanceSymbol;
             if (tableInstance != null)
             {
+                // TODO: Fully support row access
+                //var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
+                //var hasNoType = tableInstance.Table.Type.IsMissing();
+                //if (!isColumnAccess && hasNoType)
+                //    Diagnostics.ReportInvalidRowReference(name);
+
                 var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
-                var hasNoType = tableInstance.Table.Type.IsMissing();
-                if (!isColumnAccess && hasNoType)
+                if (!isColumnAccess)
                     Diagnostics.ReportInvalidRowReference(name);
             }
 
