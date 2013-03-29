@@ -202,7 +202,7 @@ namespace NQuery.Plan
             var outputIndices  = relation.Output.Select(vs => inputValueSlotMapping[vs]).ToArray();
             var outputIterator = new ProjectionIterator(inputResult.Iterator, outputIndices);
             var outputValueMapping = relation.Output
-                                             .Select(vs => new KeyValuePair<ValueSlot, int>(vs, inputValueSlotMapping[vs]))
+                                             .Select((vs, i) => new KeyValuePair<ValueSlot, int>(vs, i))
                                              .ToImmutableDictionary();
 
             return new IteratorResult(outputIterator, outputValueMapping);
