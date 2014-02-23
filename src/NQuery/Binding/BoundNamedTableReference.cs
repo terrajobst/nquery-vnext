@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 using NQuery.Symbols;
 
@@ -22,11 +21,6 @@ namespace NQuery.Binding
         public TableInstanceSymbol TableInstance
         {
             get { return _tableInstance; }
-        }
-
-        public override IEnumerable<TableInstanceSymbol> GetDeclaredTableInstances()
-        {
-            return new[] { _tableInstance };
         }
     }
 }

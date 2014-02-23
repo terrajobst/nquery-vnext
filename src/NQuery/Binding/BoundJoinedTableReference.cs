@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
@@ -44,11 +40,6 @@ namespace NQuery.Binding
         public BoundExpression Condition
         {
             get { return _condition; }
-        }
-
-        public override IEnumerable<TableInstanceSymbol> GetDeclaredTableInstances()
-        {
-            return _left.GetDeclaredTableInstances().Concat(_right.GetDeclaredTableInstances());
         }
     }
 }

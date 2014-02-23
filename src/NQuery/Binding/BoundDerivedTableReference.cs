@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 using NQuery.Symbols;
 
@@ -29,11 +28,6 @@ namespace NQuery.Binding
         public BoundQuery Query
         {
             get { return _query; }
-        }
-
-        public override IEnumerable<TableInstanceSymbol> GetDeclaredTableInstances()
-        {
-            return new[] { _tableInstance };
         }
     }
 }
