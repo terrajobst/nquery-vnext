@@ -54,11 +54,11 @@ namespace NQuery.Binding
             {
                 Diagnostics.ReportUndeclaredTable(node);
 
-                var badTableSymbol = new BadTableSymbol(node.TableName.ValueText);
-                var badAlias = node.Alias == null
-                                   ? badTableSymbol.Name
+                var errorTable = new ErrorTableSymbol(node.TableName.ValueText);
+                var errorAlias = node.Alias == null
+                                   ? errorTable.Name
                                    : node.Alias.Identifier.ValueText;
-                var errorInstance = new TableInstanceSymbol(badAlias, badTableSymbol, ValueSlotFactory);
+                var errorInstance = new TableInstanceSymbol(errorAlias, errorTable, ValueSlotFactory);
                 return new BoundNamedTableReference(errorInstance);
             }
 

@@ -9,8 +9,7 @@ namespace NQuery.Symbols
         {
             switch (symbol.Kind)
             {
-                case SymbolKind.BadSymbol:
-                case SymbolKind.BadTable:
+                case SymbolKind.ErrorTable:
                     break;
                 case SymbolKind.Column:
                     markup.AppendColumnSymbolInfo((ColumnSymbol)symbol);

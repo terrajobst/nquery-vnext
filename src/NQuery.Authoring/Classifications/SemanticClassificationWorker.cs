@@ -41,8 +41,7 @@ namespace NQuery.Authoring.Classifications
         {
             switch (symbol.Kind)
             {
-                case SymbolKind.BadSymbol:
-                case SymbolKind.BadTable:
+                case SymbolKind.ErrorTable:
                     return null;
                 case SymbolKind.SchemaTable:
                     return SemanticClassification.SchemaTable;

@@ -21,7 +21,7 @@ namespace NQuery.Authoring.QuickInfo
 
         public static QuickInfoModel ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
         {
-            if (symbol.Kind == SymbolKind.BadSymbol || symbol.Kind == SymbolKind.BadTable)
+            if (symbol.Kind == SymbolKind.ErrorTable)
                 return null;
 
             var glyph = symbol.GetGlyph();

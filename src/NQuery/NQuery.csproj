@@ -80,6 +80,9 @@
     <Compile Include="Algebra\AlgebraTableNode.cs" />
     <Compile Include="Algebra\AlgebraTopNode.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
+    <Compile Include="Binding\BoundColumnExpression.cs" />
+    <Compile Include="Binding\BoundErrorExpression.cs" />
+    <Compile Include="Binding\BoundTableExpression.cs" />
     <Compile Include="Binding\GroupByClauseBinder.cs" />
     <Compile Include="Binding\JoinConditionBinder.cs" />
     <Compile Include="Binding\QueryBinder.cs" />
@@ -162,7 +165,6 @@
     <Compile Include="Binding\BoundJoinType.cs" />
     <Compile Include="Binding\BoundLiteralExpression.cs" />
     <Compile Include="Binding\BoundNamedTableReference.cs" />
-    <Compile Include="Binding\BoundNameExpression.cs" />
     <Compile Include="Binding\BoundNodeKind.cs" />
     <Compile Include="Binding\BoundQuery.cs" />
     <Compile Include="Binding\BoundQueryCombinator.cs" />
@@ -208,9 +210,7 @@
     <Compile Include="TextLocation.cs" />
     <Compile Include="SemanticModel.cs" />
     <Compile Include="TypeFacts.cs" />
-    <Compile Include="Symbols\BadSymbol.cs" />
-    <Compile Include="Symbols\BadTableSymbol.cs" />
-    <Compile Include="Symbols\BadVariableSymbol.cs" />
+    <Compile Include="Symbols\ErrorTableSymbol.cs" />
     <Compile Include="Symbols\TableColumnInstanceSymbol.cs" />
     <Compile Include="Symbols\ColumnSymbol.cs" />
     <Compile Include="DataContext.cs" />

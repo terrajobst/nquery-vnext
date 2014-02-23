@@ -4,7 +4,9 @@ namespace NQuery.Binding
 {
     internal enum BoundNodeKind
     {
-        NameExpression,
+        ErrorExpression,
+        TableExpression,
+        ColumnExpression,
         UnaryExpression,
         BinaryExpression,
         LiteralExpression,

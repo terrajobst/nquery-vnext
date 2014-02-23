@@ -141,8 +141,8 @@ namespace NQuery.Binding
 
         private string InferColumnName(ExpressionSyntax expressionSyntax)
         {
-            var nameExpression = GetBoundNode<BoundNameExpression>(expressionSyntax);
-            return nameExpression != null ? nameExpression.Symbol.Name : null;
+            var columnExpression = GetBoundNode<BoundColumnExpression>(expressionSyntax);
+            return columnExpression != null ? columnExpression.Symbol.Name : null;
         }
 
         private QueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)
@@ -165,8 +165,8 @@ namespace NQuery.Binding
 
             // If the expression refers to a column we already know the value slot.
 
-            var nameExpression = boundExpression as BoundNameExpression;
-            var columnInstance = nameExpression == null ? null : nameExpression.Symbol as ColumnInstanceSymbol;
+            var columnExpression = boundExpression as BoundColumnExpression;
+            var columnInstance = columnExpression == null ? null : columnExpression.Symbol;
             if (columnInstance != null && queryState != null)
             {
                 valueSlot = columnInstance.ValueSlot;
@@ -256,7 +256,7 @@ namespace NQuery.Binding
 
             var expressionReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
                                        where !n.AncestorsAndSelf().OfType<ExpressionSyntax>().Any(IsGroupedOrAggregated)
-                                       let e = GetBoundNode<BoundNameExpression>(n)
+                                       let e = GetBoundNode<BoundColumnExpression>(n)
                                        where e != null
                                        let c = e.Symbol as TableColumnInstanceSymbol
                                        where c != null
@@ -1153,7 +1153,7 @@ namespace NQuery.Binding
 
                     // Since this name isn't bound as a regular expression we simple fake this one up.
                     // This ensures that this name appears to be bound like any other expression.
-                    Bind(selectorAsName, new BoundNameExpression(queryColumn));
+                    Bind(selectorAsName, new BoundColumnExpression(queryColumn));
 
                     return new BoundOrderBySelector(queryColumn.ValueSlot, null);
                 }

@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Symbols
 {
-    public class VariableSymbol : Symbol
+    public sealed class VariableSymbol : Symbol
     {
         private readonly Type _type;
 

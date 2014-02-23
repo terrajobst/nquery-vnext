@@ -580,8 +580,7 @@ namespace NQuery.Binding
             {
                 Diagnostics.ReportUndeclaredVariable(node);
 
-                var badVariableSymbol = new BadVariableSymbol(node.Name.ValueText);
-                return new BoundVariableExpression(badVariableSymbol);
+                return new BoundErrorExpression();
             }
 
             if (symbols.Length > 1)
@@ -597,8 +596,7 @@ namespace NQuery.Binding
             {
                 // If this token was inserted by the parser, there is no point in
                 // trying to resolve this guy.
-                var errorSymbol = new BadSymbol(string.Empty);
-                return new BoundNameExpression(errorSymbol);
+                return new BoundErrorExpression();
             }
 
             var name = node.Name;
@@ -612,43 +610,58 @@ namespace NQuery.Binding
                     Diagnostics.ReportInvocationRequiresParenthesis(name);
                 else
                     Diagnostics.ReportColumnTableOrVariableNotDeclared(name);
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol);
+
+                return new BoundErrorExpression();
             }
 
             if (symbols.Length > 1)
                 Diagnostics.ReportAmbiguousName(name, symbols);
 
-            var symbol = symbols[0];
+            var symbol = symbols.First();
 
-            // If symbol refers to a table, we need to make sure that it's either not a derived table/CTE
-            // or we are used in column access context (i.e. our parent is a a property access).
-            //
-            // For example, the following query is invalid
-            //
-            //    SELECT  D -- ERROR
-            //    FROM    (
-            //               SELECT  *
-            //               FROM    Employees e
-            //            ) AS D
-            //
-            // You cannot obtain a value for D itself.
-
-            var tableInstance = symbol as TableInstanceSymbol;
-            if (tableInstance != null)
+            switch (symbol.Kind)
             {
-                // TODO: Fully support row access
-                //var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
-                //var hasNoType = tableInstance.Table.Type.IsMissing();
-                //if (!isColumnAccess && hasNoType)
-                //    Diagnostics.ReportInvalidRowReference(name);
+                case SymbolKind.TableColumnInstance:
+                    return new BoundColumnExpression((ColumnInstanceSymbol)symbol);
+                case SymbolKind.Variable:
+                    return new BoundVariableExpression((VariableSymbol) symbol);
+                case SymbolKind.TableInstance:
+                {
+                    // If symbol refers to a table, we need to make sure that it's either not a derived table/CTE
+                    // or we are used in column access context (i.e. our parent is a a property access).
+                    //
+                    // For example, the following query is invalid
+                    //
+                    //    SELECT  D -- ERROR
+                    //    FROM    (
+                    //               SELECT  *
+                    //               FROM    Employees e
+                    //            ) AS D
+                    //
+                    // You cannot obtain a value for D itself.
 
-                var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
-                if (!isColumnAccess)
-                    Diagnostics.ReportInvalidRowReference(name);
+                    var tableInstance = symbol as TableInstanceSymbol;
+                    if (tableInstance != null)
+                    {
+                        // TODO: Fully support row access
+                        //var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
+                        //var hasNoType = tableInstance.Table.Type.IsMissing();
+                        //if (!isColumnAccess && hasNoType)
+                        //    Diagnostics.ReportInvalidRowReference(name);
+
+                        var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
+                        if (!isColumnAccess)
+                        {
+                            Diagnostics.ReportInvalidRowReference(name);
+                            return new BoundErrorExpression();
+                        }
+                    }
+
+                    return new BoundTableExpression(tableInstance);
+                }
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return new BoundNameExpression(symbol, symbols);
         }
 
         private BoundExpression BindPropertyAccessExpression(PropertyAccessExpressionSyntax node)
@@ -658,11 +671,11 @@ namespace NQuery.Binding
             // For cases like Foo.Bar we check whether 'Foo' was resolved to a table instance.
             // If that's the case we bind a column otherwise we bind a normal expression.
 
-            var boundName = target as BoundNameExpression;
-            if (boundName != null && boundName.Symbol.Kind == SymbolKind.TableInstance)
+            var boundTable = target as BoundTableExpression;
+            if (boundTable != null)
             {
                 // In Foo.Bar, Foo was resolved to a table. Bind Bar as column.
-                var tableInstance = (TableInstanceSymbol) boundName.Symbol;
+                var tableInstance = boundTable.Symbol;
                 return BindColumnInstance(node, tableInstance);
             }
 
@@ -673,8 +686,7 @@ namespace NQuery.Binding
             if (target.Type.IsError())
             {
                 // To avoid cascading errors, we'll give up early.
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol);
+                return new BoundErrorExpression();
             }
 
             var propertySymbols = LookupProperty(target.Type, name).ToArray();
@@ -686,8 +698,8 @@ namespace NQuery.Binding
                     Diagnostics.ReportInvocationRequiresParenthesis(name);
                 else
                     Diagnostics.ReportUndeclaredProperty(node, target.Type);
-                var errorSymbol = new BadSymbol(name.ValueText);
-                return new BoundNameExpression(errorSymbol);
+
+                return new BoundErrorExpression();
             }
 
             if (propertySymbols.Length > 1)
@@ -705,15 +717,14 @@ namespace NQuery.Binding
             {
                 // TODO: Check whether we can resolve to a method and if so give error ReportInvocationRequiresParenthesis
                 Diagnostics.ReportUndeclaredColumn(node, tableInstance);
-                var errorSymbol = new BadSymbol(columnName.ValueText);
-                return new BoundNameExpression(errorSymbol, tableInstance.ColumnInstances);
+                return new BoundErrorExpression();
             }
 
             if (columnInstances.Length > 1)
                 Diagnostics.ReportAmbiguousColumnInstance(columnName, columnInstances);
 
             var columnInstance = columnInstances.First();
-            return new BoundNameExpression(columnInstance, columnInstances);
+            return new BoundColumnExpression(columnInstance);
         }
 
         private BoundExpression BindCountAllExpression(CountAllExpressionSyntax node)
@@ -722,9 +733,7 @@ namespace NQuery.Binding
             if (aggregates.Length == 0)
             {
                 Diagnostics.ReportUndeclaredAggregate(node.Name);
-
-                var badSymbol = new BadSymbol(node.Name.ValueText);
-                return new BoundNameExpression(badSymbol);
+                return new BoundErrorExpression();
             }
 
             if (aggregates.Length > 1)
@@ -781,8 +790,7 @@ namespace NQuery.Binding
                 if (result.Selected == null)
                 {
                     Diagnostics.ReportUndeclaredFunction(node, argumentTypes);
-                    var errorSymbol = new BadSymbol(name.ValueText);
-                    return new BoundNameExpression(errorSymbol);
+                    return new BoundErrorExpression();
                 }
 
                 var symbol1 = result.Selected.Signature.Symbol;
@@ -810,7 +818,7 @@ namespace NQuery.Binding
         private BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)
         {
             var affectedQueryScopes = aggregate.DescendantNodes()
-                                               .Select(GetBoundNode<BoundNameExpression>)
+                                               .Select(GetBoundNode<BoundColumnExpression>)
                                                .Where(n => n != null)
                                                .Select(b => b.Symbol)
                                                .OfType<TableColumnInstanceSymbol>()
@@ -882,8 +890,7 @@ namespace NQuery.Binding
                 if (result.Selected == null)
                 {
                     Diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
-                    var errorSymbol = new BadSymbol(name.ValueText);
-                    return new BoundNameExpression(errorSymbol);
+                    return new BoundErrorExpression();
                 }
 
                 var symbol1 = result.Selected.Signature.Symbol;
@@ -943,7 +950,7 @@ namespace NQuery.Binding
             }
 
             var rightColumn = boundQuery.OutputColumns[0];
-            var right = new BoundNameExpression(rightColumn);
+            var right = new BoundColumnExpression(rightColumn);
 
             // To avoid cascading errors, we'll only validate the operator
             // if we could resolve both sides.

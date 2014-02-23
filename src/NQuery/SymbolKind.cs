@@ -4,8 +4,7 @@ namespace NQuery
 {
     public enum SymbolKind
     {
-        BadSymbol,
-        BadTable,
+        ErrorTable,
         Column,
         SchemaTable,
         DerivedTable,

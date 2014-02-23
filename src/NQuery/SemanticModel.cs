@@ -63,8 +63,10 @@ namespace NQuery
         {
             switch (expression.Kind)
             {
-                case BoundNodeKind.NameExpression:
-                    return GetSymbol((BoundNameExpression) expression);
+                case BoundNodeKind.TableExpression:
+                    return GetSymbol((BoundTableExpression) expression);
+                case BoundNodeKind.ColumnExpression:
+                    return GetSymbol((BoundColumnExpression) expression);
                 case BoundNodeKind.VariableExpression:
                     return GetSymbol((BoundVariableExpression) expression);
                 case BoundNodeKind.FunctionInvocationExpression:
@@ -80,7 +82,12 @@ namespace NQuery
             }
         }
 
-        private static Symbol GetSymbol(BoundNameExpression expression)
+        private static Symbol GetSymbol(BoundTableExpression expression)
+        {
+            return expression.Symbol;
+        }
+
+        private static Symbol GetSymbol(BoundColumnExpression expression)
         {
             return expression.Symbol;
         }

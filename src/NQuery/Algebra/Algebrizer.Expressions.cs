@@ -2,7 +2,6 @@
 using System.Linq;
 
 using NQuery.Binding;
-using NQuery.Symbols;
 
 namespace NQuery.Algebra
 {
@@ -12,8 +11,8 @@ namespace NQuery.Algebra
         {
             switch (node.Kind)
             {
-                case BoundNodeKind.NameExpression:
-                    return AlgebrizeNameExpression((BoundNameExpression)node);
+                case BoundNodeKind.ColumnExpression:
+                    return AlgebrizeColumnExpression((BoundColumnExpression)node);
                 case BoundNodeKind.ValueSlotExpression:
                     return AlgebrizeValueSlotExpression((BoundValueSlotExpression)node);
                 case BoundNodeKind.UnaryExpression:
@@ -47,9 +46,9 @@ namespace NQuery.Algebra
             }
         }
 
-        private AlgebraExpression AlgebrizeNameExpression(BoundNameExpression node)
+        private AlgebraExpression AlgebrizeColumnExpression(BoundColumnExpression node)
         {
-            var symbol = (ColumnInstanceSymbol) node.Symbol;
+            var symbol = node.Symbol;
             return new AlgebraValueSlotExpression(symbol.ValueSlot);
         }
 
