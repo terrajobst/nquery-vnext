@@ -35,5 +35,18 @@ namespace NQuery.Binding
         CommonTableExpressionQuery,
         OrderedQuery,
         TopQuery,
+
+        // Algebra
+        ComputeRelation,
+        FilterRelation,
+        GroupByAndAggregationRelation,
+        TableRelation,
+        JoinRelation,
+        ConstantRelation,
+        CombinedRelation,
+        ProjectRelation,
+        SortRelation,
+        TopRelation,
+        DerivedTableRelation
     }
 }
