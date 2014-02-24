@@ -41,43 +41,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algebra\AlgebraAggregateDefinition.cs" />
-    <Compile Include="Algebra\AlgebraAllAnySubselect.cs" />
-    <Compile Include="Algebra\AlgebraBinaryExpression.cs" />
-    <Compile Include="Algebra\AlgebraCaseLabel.cs" />
-    <Compile Include="Algebra\AlgebraCombinedQuery.cs" />
-    <Compile Include="Algebra\AlgebraCaseExpression.cs" />
-    <Compile Include="Algebra\AlgebraComputedValue.cs" />
-    <Compile Include="Algebra\AlgebraProjectNode.cs" />
-    <Compile Include="Algebra\AlgebraValueSlotExpression.cs" />
-    <Compile Include="Algebra\AlgebraConversionExpression.cs" />
-    <Compile Include="Algebra\AlgebraExistsSubselect.cs" />
-    <Compile Include="Algebra\AlgebraExpression.cs" />
-    <Compile Include="Algebra\AlgebraFunctionInvocationExpression.cs" />
-    <Compile Include="Algebra\AlgebraGroupByAndAggregation.cs" />
-    <Compile Include="Algebra\AlgebraIsNullExpression.cs" />
-    <Compile Include="Algebra\AlgebraKind.cs" />
-    <Compile Include="Algebra\AlgebraLiteralExpression.cs" />
-    <Compile Include="Algebra\AlgebraMethodInvocationExpression.cs" />
-    <Compile Include="Algebra\AlgebraNode.cs" />
-    <Compile Include="Algebra\AlgebraPropertyAccessExpression.cs" />
-    <Compile Include="Algebra\AlgebraQueryCombinator.cs" />
-    <Compile Include="Algebra\AlgebraRelation.cs" />
-    <Compile Include="Algebra\AlgebraSingleRowSubselect.cs" />
-    <Compile Include="Algebra\AlgebraSortNode.cs" />
-    <Compile Include="Algebra\AlgebraUnaryExpression.cs" />
-    <Compile Include="Algebra\AlgebraVariableExpression.cs" />
-    <Compile Include="Algebra\Algebrizer.cs" />
-    <Compile Include="Algebra\Algebrizer.Relations.cs" />
-    <Compile Include="Algebra\AlgebraComputeNode.cs" />
-    <Compile Include="Algebra\AlgebraConstantNode.cs" />
-    <Compile Include="Algebra\Algebrizer.Expressions.cs" />
-    <Compile Include="Algebra\AlgebraFilterNode.cs" />
-    <Compile Include="Algebra\AlgebraJoinKind.cs" />
-    <Compile Include="Algebra\AlgebraJoinNode.cs" />
-    <Compile Include="Algebra\ShowPlanBuilder.cs" />
-    <Compile Include="Algebra\AlgebraTableNode.cs" />
-    <Compile Include="Algebra\AlgebraTopNode.cs" />
+    <Compile Include="ShowPlanBuilder.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
     <Compile Include="Binding\BoundColumnExpression.cs" />
     <Compile Include="Binding\BoundErrorExpression.cs" />
@@ -330,6 +294,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

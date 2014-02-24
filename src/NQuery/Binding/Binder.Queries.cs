@@ -832,9 +832,13 @@ namespace NQuery.Binding
                 ? (BoundRelation)selectComputeRelation
                 : new BoundSortRelation(selectComputeRelation, sortedValues);
 
+            var tieEntries = top == null || sortedValues == null || !withTies
+                ? new BoundSortedValue[0]
+                : sortedValues;
+
             var topRelation = top == null
                 ? sortRelation
-                : new BoundTopRelation(sortRelation, top.Value, sortedValues);
+                : new BoundTopRelation(sortRelation, top.Value, tieEntries);
 
             var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToArray());
 

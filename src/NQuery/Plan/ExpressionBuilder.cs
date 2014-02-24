@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using NQuery.Algebra;
 using NQuery.Binding;
 using NQuery.Symbols;
 
@@ -24,13 +23,13 @@ namespace NQuery.Plan
             _valueSlotSettings = valueSlotSettings;
         }
 
-        public static Func<T> BuildExpression<T>(AlgebraExpression expression, ValueSlotSettings valueSlotSettings)
+        public static Func<T> BuildExpression<T>(BoundExpression expression, ValueSlotSettings valueSlotSettings)
         {
             var builder = new ExpressionBuilder(valueSlotSettings);
             return builder.BuildExpression<T>(expression);
         }
 
-        private ParameterExpression BuildCachedExpression(AlgebraExpression expression)
+        private ParameterExpression BuildCachedExpression(BoundExpression expression)
         {
             var result = BuildExpression(expression);
             var liftedExpression = BuildLiftedExpression(result);
@@ -48,7 +47,7 @@ namespace NQuery.Plan
                        : Expression.Convert(result, result.Type.GetNullableType());
         }
 
-        private Expression BuildLiftedExpression(AlgebraExpression expression)
+        private Expression BuildLiftedExpression(BoundExpression expression)
         {
             return BuildLiftedExpression(BuildExpression(expression));
         }
@@ -129,7 +128,7 @@ namespace NQuery.Plan
             return Expression.Convert(Expression.Constant(true), typeof(bool?));
         }
 
-        private Func<T> BuildExpression<T>(AlgebraExpression expression)
+        private Func<T> BuildExpression<T>(BoundExpression expression)
         {
             var targetType = typeof (T);
             var actualExpression = BuildCachedExpression(expression);
@@ -143,42 +142,42 @@ namespace NQuery.Plan
             return lambda.Compile();
         }
 
-        private Expression BuildExpression(AlgebraExpression expression)
+        private Expression BuildExpression(BoundExpression expression)
         {
             switch (expression.Kind)
             {
-                case AlgebraKind.UnaryExpression:
-                    return BuildUnaryExpression((AlgebraUnaryExpression) expression);
-                case AlgebraKind.BinaryExpression:
-                    return BuildBinaryExpression((AlgebraBinaryExpression)expression);
-                case AlgebraKind.LiteralExpression:
-                    return BuildLiteralExpression((AlgebraLiteralExpression)expression);
-                case AlgebraKind.ValueSlotExpression:
-                    return BuildValueSlotExpression((AlgebraValueSlotExpression)expression);
-                case AlgebraKind.VariableExpression:
-                    return BuildVariableExpression((AlgebraVariableExpression)expression);
-                case AlgebraKind.FunctionInvocationExpression:
-                    return BuildFunctionInvocationExpression((AlgebraFunctionInvocationExpression)expression);
-                case AlgebraKind.PropertyAccessExpression:
-                    return BuildPropertyAccessExpression((AlgebraPropertyAccessExpression)expression);
-                case AlgebraKind.MethodInvocationExpression:
-                    return BuildMethodInvocationExpression((AlgebraMethodInvocationExpression)expression);
-                case AlgebraKind.ConversionExpression:
-                    return BuildConversionExpression((AlgebraConversionExpression)expression);
-                case AlgebraKind.IsNullExpression:
-                    return BuildIsNullExpression((AlgebraIsNullExpression)expression);
-                case AlgebraKind.CaseExpression:
-                    return BuildCaseExpression((AlgebraCaseExpression)expression);
+                case BoundNodeKind.UnaryExpression:
+                    return BuildUnaryExpression((BoundUnaryExpression) expression);
+                case BoundNodeKind.BinaryExpression:
+                    return BuildBinaryExpression((BoundBinaryExpression)expression);
+                case BoundNodeKind.LiteralExpression:
+                    return BuildLiteralExpression((BoundLiteralExpression)expression);
+                case BoundNodeKind.ValueSlotExpression:
+                    return BuildValueSlotExpression((BoundValueSlotExpression)expression);
+                case BoundNodeKind.VariableExpression:
+                    return BuildVariableExpression((BoundVariableExpression)expression);
+                case BoundNodeKind.FunctionInvocationExpression:
+                    return BuildFunctionInvocationExpression((BoundFunctionInvocationExpression)expression);
+                case BoundNodeKind.PropertyAccessExpression:
+                    return BuildPropertyAccessExpression((BoundPropertyAccessExpression)expression);
+                case BoundNodeKind.MethodInvocationExpression:
+                    return BuildMethodInvocationExpression((BoundMethodInvocationExpression)expression);
+                case BoundNodeKind.ConversionExpression:
+                    return BuildConversionExpression((BoundConversionExpression)expression);
+                case BoundNodeKind.IsNullExpression:
+                    return BuildIsNullExpression((BoundIsNullExpression)expression);
+                case BoundNodeKind.CaseExpression:
+                    return BuildCaseExpression((BoundCaseExpression)expression);
                 default:
                     throw new ArgumentOutOfRangeException("expression", string.Format("Unknown expression kind: {0}.", expression.Kind));
             }
         }
 
-        private Expression BuildUnaryExpression(AlgebraUnaryExpression expression)
+        private Expression BuildUnaryExpression(BoundUnaryExpression expression)
         {
             var liftedInput = BuildCachedExpression(expression.Expression);
             var nullableResultType = expression.Type.GetNullableType();
-            var signature = expression.Signature;
+            var signature = expression.Result.Best.Signature;
 
             return Expression.Condition(
                 BuildNullCheck(liftedInput),
@@ -211,12 +210,12 @@ namespace NQuery.Plan
             }
         }
 
-        private Expression BuildBinaryExpression(AlgebraBinaryExpression expression)
+        private Expression BuildBinaryExpression(BoundBinaryExpression expression)
         {
             var liftedLeft = BuildCachedExpression(expression.Left);
             var liftedRight = BuildCachedExpression(expression.Right);
             var nullableResultType = expression.Type.GetNullableType();
-            var signature = expression.Signature;
+            var signature = expression.Result.Best.Signature;
 
             var result = Expression.Condition(
                             Expression.OrElse(
@@ -327,12 +326,12 @@ namespace NQuery.Plan
             }
         }
 
-        private static Expression BuildLiteralExpression(AlgebraLiteralExpression expression)
+        private static Expression BuildLiteralExpression(BoundLiteralExpression expression)
         {
             return Expression.Constant(expression.Value, expression.Type);
         }
 
-        private Expression BuildValueSlotExpression(AlgebraValueSlotExpression expression)
+        private Expression BuildValueSlotExpression(BoundValueSlotExpression expression)
         {
             var rowBufferIndex = _valueSlotSettings.GetRowBufferIndex(expression.ValueSlot);
             var rowBufferFunc = _valueSlotSettings.RowBufferProvider;
@@ -349,7 +348,7 @@ namespace NQuery.Plan
                 );
         }
 
-        private static Expression BuildVariableExpression(AlgebraVariableExpression expression)
+        private static Expression BuildVariableExpression(BoundVariableExpression expression)
         {
             return
                 Expression.Convert(
@@ -361,7 +360,7 @@ namespace NQuery.Plan
                 );
         }
 
-        private Expression BuildFunctionInvocationExpression(AlgebraFunctionInvocationExpression expression)
+        private Expression BuildFunctionInvocationExpression(BoundFunctionInvocationExpression expression)
         {
             var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
             if (liftedArguments.Length == 0)
@@ -376,7 +375,7 @@ namespace NQuery.Plan
                 );
         }
 
-        private Expression BuildPropertyAccessExpression(AlgebraPropertyAccessExpression expression)
+        private Expression BuildPropertyAccessExpression(BoundPropertyAccessExpression expression)
         {
             var liftedInstance = BuildCachedExpression(expression.Target);
             var nullableResultType = expression.Type.GetNullableType();
@@ -389,7 +388,7 @@ namespace NQuery.Plan
                 );
         }
 
-        private Expression BuildMethodInvocationExpression(AlgebraMethodInvocationExpression expression)
+        private Expression BuildMethodInvocationExpression(BoundMethodInvocationExpression expression)
         {
             var liftedInstance = BuildCachedExpression(expression.Target);
             var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
@@ -403,7 +402,7 @@ namespace NQuery.Plan
                 );
         }
 
-        private Expression BuildConversionExpression(AlgebraConversionExpression expression)
+        private Expression BuildConversionExpression(BoundConversionExpression expression)
         {
             if (expression.Expression.Type.IsNull())
                 return BuildNullValue(expression.Type);
@@ -425,17 +424,17 @@ namespace NQuery.Plan
                 );
         }
 
-        private Expression BuildIsNullExpression(AlgebraIsNullExpression expression)
+        private Expression BuildIsNullExpression(BoundIsNullExpression expression)
         {
             return BuildNullCheck(BuildExpression(expression.Expression));
         }
 
-        private Expression BuildCaseExpression(AlgebraCaseExpression expression)
+        private Expression BuildCaseExpression(BoundCaseExpression expression)
         {
             return BuildCaseLabel(expression, 0);
         }
 
-        private Expression BuildCaseLabel(AlgebraCaseExpression caseExpression, int caseLabelIndex)
+        private Expression BuildCaseLabel(BoundCaseExpression caseExpression, int caseLabelIndex)
         {
             if (caseLabelIndex == caseExpression.CaseLabels.Count)
                 return caseExpression.ElseExpression == null
@@ -444,7 +443,7 @@ namespace NQuery.Plan
 
             var caseLabel = caseExpression.CaseLabels[caseLabelIndex];
             var condition = caseLabel.Condition;
-            var result = caseLabel.Result;
+            var result = caseLabel.ThenExpression;
 
             return
                 Expression.Condition(

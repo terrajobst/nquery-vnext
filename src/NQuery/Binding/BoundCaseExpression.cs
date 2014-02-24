@@ -8,12 +8,12 @@ namespace NQuery.Binding
     internal sealed class BoundCaseExpression : BoundExpression
     {
         private readonly ReadOnlyCollection<BoundCaseLabel> _caseLabels;
-        private readonly BoundExpression _elseExpresion;
+        private readonly BoundExpression _elseExpression;
 
-        public BoundCaseExpression(IList<BoundCaseLabel> caseLabels, BoundExpression elseExpresion)
+        public BoundCaseExpression(IList<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
         {
             _caseLabels = new ReadOnlyCollection<BoundCaseLabel>(caseLabels);
-            _elseExpresion = elseExpresion;
+            _elseExpression = elseExpression;
         }
 
         public override BoundNodeKind Kind
@@ -31,9 +31,9 @@ namespace NQuery.Binding
             get { return _caseLabels; }
         }
 
-        public BoundExpression ElseExpresion
+        public BoundExpression ElseExpression
         {
-            get { return _elseExpresion; }
+            get { return _elseExpression; }
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
 using NQuery.Binding;
 using NQuery.Symbols;
 
@@ -13,14 +11,14 @@ namespace NQuery.Plan
 {
     internal sealed class PlanBuilder
     {
-        public static Iterator Build(AlgebraRelation relation)
+        public static Iterator Build(BoundRelation relation)
         {
             var builder = new PlanBuilder();
             var result = builder.BuildRelation(relation);
             return result.Iterator;
         }
 
-        private static Func<bool> BuildPredicate(AlgebraExpression predicate, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        private static Func<bool> BuildPredicate(BoundExpression predicate, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
         {
             if (predicate == null)
                 return () => true;
@@ -28,60 +26,67 @@ namespace NQuery.Plan
             return BuildExpression<bool>(predicate, rowBuffer, valueSlotMapping);
         }
 
-        private static Func<object> BuildValue(AlgebraExpression expression, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        private static Func<object> BuildValue(BoundExpression expression, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
         {
             return BuildExpression<object>(expression, rowBuffer, valueSlotMapping);
         }
 
-        private static Func<T> BuildExpression<T>(AlgebraExpression expression, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        private static Func<T> BuildExpression<T>(BoundExpression expression, RowBuffer rowBuffer, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
         {
             var rowBufferProvider = new Func<RowBuffer>(() => rowBuffer);
             var valueSlotSettings = new ValueSlotSettings(valueSlotMapping, rowBufferProvider);
             return ExpressionBuilder.BuildExpression<T>(expression, valueSlotSettings);
         }
 
-        private IteratorResult BuildRelation(AlgebraRelation relation)
+        private IteratorResult BuildRelation(BoundRelation relation)
         {
             switch (relation.Kind)
             {
-                case AlgebraKind.Constant:
-                    return BuildConstant((AlgebraConstantNode)relation);
-                case AlgebraKind.Table:
-                    return BuildTable((AlgebraTableNode)relation);
-                case AlgebraKind.Join:
-                    return BuildJoin((AlgebraJoinNode)relation);
-                case AlgebraKind.Filter:
-                    return BuildFilter((AlgebraFilterNode)relation);
-                case AlgebraKind.Compute:
-                    return BuildCompute((AlgebraComputeNode)relation);
-                case AlgebraKind.Top:
-                    return BuildTop((AlgebraTopNode)relation);
-                case AlgebraKind.Sort:
-                    return BuildSort((AlgebraSortNode)relation);
-                case AlgebraKind.BinaryQuery:
-                    return BuildCombinedQuery((AlgebraCombinedQuery)relation);
-                case AlgebraKind.GroupByAndAggregation:
-                    return BuildGroupByAndAggregation((AlgebraGroupByAndAggregation)relation);
-                case AlgebraKind.Project:
-                    return BuildProject((AlgebraProjectNode)relation);
+                case BoundNodeKind.QueryRelation:
+                    return BuildQueryRelation((BoundQueryRelation)relation);
+                case BoundNodeKind.ConstantRelation:
+                    return BuildConstant((BoundConstantRelation)relation);
+                case BoundNodeKind.TableRelation:
+                    return BuildTable((BoundTableRelation)relation);
+                case BoundNodeKind.JoinRelation:
+                    return BuildJoin((BoundJoinRelation)relation);
+                case BoundNodeKind.FilterRelation:
+                    return BuildFilter((BoundFilterRelation)relation);
+                case BoundNodeKind.ComputeRelation:
+                    return BuildCompute((BoundComputeRelation)relation);
+                case BoundNodeKind.TopRelation:
+                    return BuildTop((BoundTopRelation)relation);
+                case BoundNodeKind.SortRelation:
+                    return BuildSort((BoundSortRelation)relation);
+                case BoundNodeKind.CombinedRelation:
+                    return BuildCombinedQuery((BoundCombinedRelation)relation);
+                case BoundNodeKind.GroupByAndAggregationRelation:
+                    return BuildGroupByAndAggregation((BoundGroupByAndAggregationRelation)relation);
+                case BoundNodeKind.ProjectRelation:
+                    return BuildProject((BoundProjectRelation)relation);
                 default:
                     throw new ArgumentOutOfRangeException("relation", string.Format("Unknown relation kind: {0}.", relation.Kind));
             }
         }
 
-        private static IteratorResult BuildConstant(AlgebraConstantNode relation)
+        private IteratorResult BuildQueryRelation(BoundQueryRelation relation)
+        {
+            return BuildRelation(relation.Relation);
+        }
+
+        private static IteratorResult BuildConstant(BoundConstantRelation relation)
         {
             var result = new ConstantIterator();
             var mapping = ImmutableDictionary.Create<ValueSlot, int>();
             return new IteratorResult(result, mapping);
         }
 
-        private static IteratorResult BuildTable(AlgebraTableNode relation)
+        private static IteratorResult BuildTable(BoundTableRelation relation)
         {
-            var schemaTableSymbol = (SchemaTableSymbol) relation.Symbol.Table;
+            var schemaTableSymbol = (SchemaTableSymbol) relation.TableInstance.Table;
             var tableDefinition = schemaTableSymbol.Definition;
             // TODO: We proably want to only define the needed columns here.
-            var columnInstances = relation.Symbol.ColumnInstances;
+            var columnInstances = relation.TableInstance.ColumnInstances;
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
                                                .Select(c => c.Definition)
@@ -91,7 +96,7 @@ namespace NQuery.Plan
             return new IteratorResult(result, mapping);
         }
 
-        private IteratorResult BuildJoin(AlgebraJoinNode relation)
+        private IteratorResult BuildJoin(BoundJoinRelation relation)
         {
             var leftResult = BuildRelation(relation.Left);
             var left = leftResult.Iterator;
@@ -106,7 +111,7 @@ namespace NQuery.Plan
             return new IteratorResult(outputIterator, outputValueSlotMapping);
         }
 
-        private IteratorResult BuildFilter(AlgebraFilterNode relation)
+        private IteratorResult BuildFilter(BoundFilterRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
@@ -116,7 +121,7 @@ namespace NQuery.Plan
             return new IteratorResult(iterator, valueSlotMapping);
         }
 
-        private IteratorResult BuildCompute(AlgebraComputeNode relation)
+        private IteratorResult BuildCompute(BoundComputeRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
@@ -126,31 +131,31 @@ namespace NQuery.Plan
             var definedValue = relation.DefinedValues
                                        .Select(dv => BuildValue(dv.Expression, inputRowBuffer, inputValueSlotMapping))
                                        .ToArray();
-            var additionalValueSlotMappings = relation.DefinedValues.Select((dv, i) => new KeyValuePair<ValueSlot, int>(dv.Value, i + inputCount));
+            var additionalValueSlotMappings = relation.DefinedValues.Select((dv, i) => new KeyValuePair<ValueSlot, int>(dv.ValueSlot, i + inputCount));
             var outputValueSlotMapping = inputValueSlotMapping.AddRange(additionalValueSlotMappings);
             var outputItererator = new ComputeScalarIterator(input, definedValue);
             return new IteratorResult(outputItererator, outputValueSlotMapping);
         }
 
-        private IteratorResult BuildTop(AlgebraTopNode relation)
+        private IteratorResult BuildTop(BoundTopRelation relation)
         {
-            return relation.WithTies
+            return relation.TieEntries.Any()
                        ? BuildTopWithTies(relation)
                        : BuildTopWithoutTies(relation);
         }
 
-        private IteratorResult BuildTopWithTies(AlgebraTopNode relation)
+        private IteratorResult BuildTopWithTies(BoundTopRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
-            var tieEntries = relation.TieEntries.Select(v => inputValueSlotMapping[v]).ToArray();
-            var tieComparers = relation.TieComparers;
+            var tieEntries = relation.TieEntries.Select(t => inputValueSlotMapping[t.ValueSlot]).ToArray();
+            var tieComparers = relation.TieEntries.Select(t => t.Comparer).ToArray();
             var outputIterator = new TopWithTiesIterator(input, relation.Limit, tieEntries, tieComparers);
             return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
 
-        private IteratorResult BuildTopWithoutTies(AlgebraTopNode relation)
+        private IteratorResult BuildTopWithoutTies(BoundTopRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
@@ -159,20 +164,20 @@ namespace NQuery.Plan
             return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
 
-        private IteratorResult BuildSort(AlgebraSortNode relation)
+        private IteratorResult BuildSort(BoundSortRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
-            var sortEntries = relation.ValueSlots
-                                      .Select(v => inputValueSlotMapping[v])
+            var sortEntries = relation.SortedValues
+                                      .Select(v => inputValueSlotMapping[v.ValueSlot])
                                       .ToArray();
-            var comparers = relation.Comparers;
+            var comparers = relation.SortedValues.Select(v => v.Comparer).ToArray();
             var outputIterator = new SortIterator(input, sortEntries, comparers);
             return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
 
-        private IteratorResult BuildCombinedQuery(AlgebraCombinedQuery relation)
+        private IteratorResult BuildCombinedQuery(BoundCombinedRelation relation)
         {
             // TODO: We should handle UNION ALL, EXCEPT and INTERSECT differently
 
@@ -182,26 +187,26 @@ namespace NQuery.Plan
                                  BuildRelation(relation.Right).Iterator
                              };
 
-            var outputValueSlotCount = relation.OutputValueSlots.Count;
-            var outputValueSlotMapping = relation.OutputValueSlots
+            var outputValueSlotCount = relation.Outputs.Count;
+            var outputValueSlotMapping = relation.Outputs
                                                  .Select((v, i) => new KeyValuePair<ValueSlot, int>(v, i))
                                                  .ToImmutableDictionary();
             var outputIterator = new ConcatenationIterator(inputs, outputValueSlotCount);
             return new IteratorResult(outputIterator, outputValueSlotMapping);
         }
 
-        private IteratorResult BuildGroupByAndAggregation(AlgebraGroupByAndAggregation relation)
+        private IteratorResult BuildGroupByAndAggregation(BoundGroupByAndAggregationRelation relation)
         {
             throw new NotImplementedException();
         }
 
-        private IteratorResult BuildProject(AlgebraProjectNode relation)
+        private IteratorResult BuildProject(BoundProjectRelation relation)
         {
             var inputResult = BuildRelation(relation.Input);
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
-            var outputIndices  = relation.Output.Select(vs => inputValueSlotMapping[vs]).ToArray();
+            var outputIndices  = relation.Outputs.Select(vs => inputValueSlotMapping[vs]).ToArray();
             var outputIterator = new ProjectionIterator(inputResult.Iterator, outputIndices);
-            var outputValueMapping = relation.Output
+            var outputValueMapping = relation.Outputs
                                              .Select((vs, i) => new KeyValuePair<ValueSlot, int>(vs, i))
                                              .ToImmutableDictionary();
 

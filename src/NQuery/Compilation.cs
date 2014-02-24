@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 
-using NQuery.Algebra;
 using NQuery.Binding;
 using NQuery.Plan;
 
@@ -38,12 +37,8 @@ namespace NQuery
             if (dignostics.Length > 0)
                 throw new CompilationException(dignostics);
 
-            var relation = Algebrizer.Algebrize(boundQuery) as AlgebraRelation;
-            if (relation == null)
-                return null;
-
             var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
-            var iterator = PlanBuilder.Build(relation);
+            var iterator = PlanBuilder.Build(boundQuery);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
 
@@ -52,13 +47,9 @@ namespace NQuery
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundRoot = bindingResult.BoundRoot as BoundQueryRelation;
-            if (boundRoot == null)
-                return null;
-
-            var algebraNode = Algebrizer.Algebrize(boundRoot);
-            return algebraNode == null
-                       ? null
-                       : ShowPlanBuilder.Build(algebraNode);
+            return boundRoot == null
+                     ? null
+                     : ShowPlanBuilder.Build(bindingResult.BoundRoot);
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

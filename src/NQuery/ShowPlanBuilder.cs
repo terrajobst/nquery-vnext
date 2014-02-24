@@ -2,94 +2,115 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace NQuery.Algebra
+using NQuery.Binding;
+
+namespace NQuery
 {
     internal static class ShowPlanBuilder
     {
-        public static ShowPlanNode Build(AlgebraNode node)
+        public static ShowPlanNode Build(BoundNode node)
         {
             switch (node.Kind)
             {
-                case AlgebraKind.Constant:
-                    return BuildConstant((AlgebraConstantNode)node);
-                case AlgebraKind.Table:
-                    return BuildTable((AlgebraTableNode)node);
-                case AlgebraKind.Filter:
-                    return BuildFilter((AlgebraFilterNode)node);
-                case AlgebraKind.Compute:
-                    return BuildCompute((AlgebraComputeNode)node);
-                case AlgebraKind.Join:
-                    return BuildJoin((AlgebraJoinNode)node);
-                case AlgebraKind.Top:
-                    return BuildTop((AlgebraTopNode)node);
-                case AlgebraKind.Sort:
-                    return BuildSort((AlgebraSortNode)node);
-                case AlgebraKind.BinaryQuery:
-                    return BuildCombinedQuery((AlgebraCombinedQuery)node);
-                case AlgebraKind.GroupByAndAggregation:
-                    return BuildGroupByAndAggregation((AlgebraGroupByAndAggregation)node);
-                case AlgebraKind.Project:
-                    return BuildProject((AlgebraProjectNode)node);
-                case AlgebraKind.UnaryExpression:
-                    return BuildUnaryExpression((AlgebraUnaryExpression)node);
-                case AlgebraKind.BinaryExpression:
-                    return BuildBinaryExpression((AlgebraBinaryExpression)node);
-                case AlgebraKind.LiteralExpression:
-                    return BuildLiteralExpression((AlgebraLiteralExpression)node);
-                case AlgebraKind.ValueSlotExpression:
-                    return BuildValueSlotExpression((AlgebraValueSlotExpression)node);
-                case AlgebraKind.VariableExpression:
-                    return BuildVariableExpression((AlgebraVariableExpression)node);
-                case AlgebraKind.FunctionInvocationExpression:
-                    return BuildFunctionInvocationExpression((AlgebraFunctionInvocationExpression)node);
-                case AlgebraKind.PropertyAccessExpression:
-                    return BuildPropertyAccessExpression((AlgebraPropertyAccessExpression)node);
-                case AlgebraKind.MethodInvocationExpression:
-                    return BuildMethodInvocationExpression((AlgebraMethodInvocationExpression)node);
-                case AlgebraKind.ConversionExpression:
-                    return BuildConversionExpression((AlgebraConversionExpression)node);
-                case AlgebraKind.IsNullExpression:
-                    return BuildIsNullExpression((AlgebraIsNullExpression)node);
-                case AlgebraKind.CaseExpression:
-                    return BuildCaseExpression((AlgebraCaseExpression)node);
-                case AlgebraKind.SingleRowSubselect:
-                    return BuildSingleRowSubselect((AlgebraSingleRowSubselect)node);
-                case AlgebraKind.ExistsSubselect:
-                    return BuildExistsSubselect((AlgebraExistsSubselect)node);
-                case AlgebraKind.AllAnySubselect:
-                    return BuildAllAnySubselect((AlgebraAllAnySubselect)node);
+                case BoundNodeKind.QueryRelation:
+                    return BuildQueryRelation((BoundQueryRelation)node);
+                case BoundNodeKind.ConstantRelation:
+                    return BuildConstant((BoundConstantRelation)node);
+                case BoundNodeKind.TableRelation:
+                    return BuildTable((BoundTableRelation)node);
+                case BoundNodeKind.DerivedTableRelation:
+                    return BuildDerivedTable((BoundDerivedTableRelation)node);
+                case BoundNodeKind.FilterRelation:
+                    return BuildFilter((BoundFilterRelation)node);
+                case BoundNodeKind.ComputeRelation:
+                    return BuildCompute((BoundComputeRelation)node);
+                case BoundNodeKind.JoinRelation:
+                    return BuildJoin((BoundJoinRelation)node);
+                case BoundNodeKind.TopRelation:
+                    return BuildTop((BoundTopRelation)node);
+                case BoundNodeKind.SortRelation:
+                    return BuildSort((BoundSortRelation)node);
+                case BoundNodeKind.CombinedRelation:
+                    return BuildCombinedQuery((BoundCombinedRelation)node);
+                case BoundNodeKind.GroupByAndAggregationRelation:
+                    return BuildGroupByAndAggregation((BoundGroupByAndAggregationRelation)node);
+                case BoundNodeKind.ProjectRelation:
+                    return BuildProject((BoundProjectRelation)node);
+                case BoundNodeKind.UnaryExpression:
+                    return BuildUnaryExpression((BoundUnaryExpression)node);
+                case BoundNodeKind.BinaryExpression:
+                    return BuildBinaryExpression((BoundBinaryExpression)node);
+                case BoundNodeKind.LiteralExpression:
+                    return BuildLiteralExpression((BoundLiteralExpression)node);
+                case BoundNodeKind.ValueSlotExpression:
+                    return BuildValueSlotExpression((BoundValueSlotExpression)node);
+                case BoundNodeKind.VariableExpression:
+                    return BuildVariableExpression((BoundVariableExpression)node);
+                case BoundNodeKind.FunctionInvocationExpression:
+                    return BuildFunctionInvocationExpression((BoundFunctionInvocationExpression)node);
+                case BoundNodeKind.PropertyAccessExpression:
+                    return BuildPropertyAccessExpression((BoundPropertyAccessExpression)node);
+                case BoundNodeKind.MethodInvocationExpression:
+                    return BuildMethodInvocationExpression((BoundMethodInvocationExpression)node);
+                case BoundNodeKind.ConversionExpression:
+                    return BuildConversionExpression((BoundConversionExpression)node);
+                case BoundNodeKind.IsNullExpression:
+                    return BuildIsNullExpression((BoundIsNullExpression)node);
+                case BoundNodeKind.CaseExpression:
+                    return BuildCaseExpression((BoundCaseExpression)node);
+                case BoundNodeKind.SingleRowSubselect:
+                    return BuildSingleRowSubselect((BoundSingleRowSubselect)node);
+                case BoundNodeKind.ExistsSubselect:
+                    return BuildExistsSubselect((BoundExistsSubselect)node);
+                case BoundNodeKind.AllAnySubselect:
+                    return BuildAllAnySubselect((BoundAllAnySubselect)node);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static ShowPlanNode BuildConstant(AlgebraConstantNode node)
+        private static ShowPlanNode BuildQueryRelation(BoundQueryRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Relation) };
+            var slots = string.Join(", ", node.OutputColumns.Select(v => v.Name));
+            return new ShowPlanNode("Query " + slots, properties, children);
+        }
+
+        private static ShowPlanNode BuildConstant(BoundConstantRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
             return new ShowPlanNode("Constant", properties, children);
         }
 
-        private static ShowPlanNode BuildTable(AlgebraTableNode node)
+        private static ShowPlanNode BuildTable(BoundTableRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
-            return new ShowPlanNode("Table (" + node.Symbol + ")", properties, children);
+            return new ShowPlanNode("Table (" + node.TableInstance + ")", properties, children);
         }
 
-        private static ShowPlanNode BuildFilter(AlgebraFilterNode node)
+        private static ShowPlanNode BuildDerivedTable(BoundDerivedTableRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Query) };
+            return new ShowPlanNode("Derived Table (" + node.TableInstance + ")", properties, children);
+        }
+
+        private static ShowPlanNode BuildFilter(BoundFilterRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input), Build(node.Condition) };
             return new ShowPlanNode("Filter", properties, children);
         }
 
-        private static ShowPlanNode BuildCompute(AlgebraComputeNode node)
+        private static ShowPlanNode BuildCompute(BoundComputeRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var input = new[] {Build(node.Input)};
             var aggregates = from d in node.DefinedValues
-                             let dName = d.Value.Name
+                             let dName = d.ValueSlot.Name
                              let dProperties = Enumerable.Empty<KeyValuePair<string, string>>()
                              let dChildren = new[] { Build(d.Expression) }
                              select new ShowPlanNode(dName, dProperties, dChildren);
@@ -97,7 +118,7 @@ namespace NQuery.Algebra
             return new ShowPlanNode("Compute", properties, children);
         }
 
-        private static ShowPlanNode BuildJoin(AlgebraJoinNode node)
+        private static ShowPlanNode BuildJoin(BoundJoinRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var leftAndRight = new[]
@@ -110,35 +131,36 @@ namespace NQuery.Algebra
                                ? leftAndRight
                                : leftAndRight.Concat(new[] {Build(node.Condition)});
 
-            return new ShowPlanNode(node.JoinKind + "Join", properties, children);
+            return new ShowPlanNode(node.JoinType + "Join", properties, children);
         }
 
-        private static ShowPlanNode BuildTop(AlgebraTopNode node)
+        private static ShowPlanNode BuildTop(BoundTopRelation node)
         {
-            var operatorName = string.Format("Top {0}{1}", node.Limit, node.WithTies ? " With Ties" : string.Empty);
+            var tieEntries = string.Join(", ", node.TieEntries.Select(v => v.ValueSlot.Name));
+            var operatorName = string.Format("Top {0}{1}", node.Limit, !node.TieEntries.Any() ? string.Empty : string.Format(" With Ties ({0})", tieEntries));
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
             return new ShowPlanNode(operatorName, properties, children);
         }
 
-        private static ShowPlanNode BuildSort(AlgebraSortNode node)
+        private static ShowPlanNode BuildSort(BoundSortRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
-            var slots = string.Join(", ", node.ValueSlots.Select(v => v.Name));
+            var slots = string.Join(", ", node.SortedValues.Select(v => v.ValueSlot.Name));
             return new ShowPlanNode("Sort " + slots, properties, children);
         }
 
-        private static ShowPlanNode BuildCombinedQuery(AlgebraCombinedQuery node)
+        private static ShowPlanNode BuildCombinedQuery(BoundCombinedRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
-            var slots = string.Join(", ", node.OutputValueSlots.Select(v => v.Name));
+            var slots = string.Join(", ", node.Outputs.Select(v => v.Name));
             var name = string.Format("{0} {1}", node.Combinator, slots);
             return new ShowPlanNode(name, properties, children);
         }
 
-        private static ShowPlanNode BuildGroupByAndAggregation(AlgebraGroupByAndAggregation node)
+        private static ShowPlanNode BuildGroupByAndAggregation(BoundGroupByAndAggregationRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var input = new[] { Build(node.Input) };
@@ -152,29 +174,29 @@ namespace NQuery.Algebra
             return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
         }
 
-        private static ShowPlanNode BuildProject(AlgebraProjectNode node)
+        private static ShowPlanNode BuildProject(BoundProjectRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
-            var slots = string.Join(", ", node.Output.Select(v => v.Name));
+            var slots = string.Join(", ", node.Outputs.Select(v => v.Name));
             return new ShowPlanNode("Project " + slots, properties, children);
         }
 
-        private static ShowPlanNode BuildUnaryExpression(AlgebraUnaryExpression node)
+        private static ShowPlanNode BuildUnaryExpression(BoundUnaryExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] {Build(node.Expression)};
-            return new ShowPlanNode(node.Signature.Kind.ToString(), properties, children, true);
+            return new ShowPlanNode(node.Result.Selected.Signature.Kind.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildBinaryExpression(AlgebraBinaryExpression node)
+        private static ShowPlanNode BuildBinaryExpression(BoundBinaryExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
-            return new ShowPlanNode(node.Signature.Kind.ToString(), properties, children, true);
+            return new ShowPlanNode(node.Result.Selected.Signature.Kind.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildLiteralExpression(AlgebraLiteralExpression node)
+        private static ShowPlanNode BuildLiteralExpression(BoundLiteralExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
@@ -186,56 +208,56 @@ namespace NQuery.Algebra
             return new ShowPlanNode("Literal (" + value + ")", properties, children, true);
         }
 
-        private static ShowPlanNode BuildValueSlotExpression(AlgebraValueSlotExpression node)
+        private static ShowPlanNode BuildValueSlotExpression(BoundValueSlotExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
             return new ShowPlanNode(node.ValueSlot.Name, properties, children, true);
         }
 
-        private static ShowPlanNode BuildVariableExpression(AlgebraVariableExpression node)
+        private static ShowPlanNode BuildVariableExpression(BoundVariableExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildFunctionInvocationExpression(AlgebraFunctionInvocationExpression node)
+        private static ShowPlanNode BuildFunctionInvocationExpression(BoundFunctionInvocationExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Arguments.Select(Build);
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildPropertyAccessExpression(AlgebraPropertyAccessExpression node)
+        private static ShowPlanNode BuildPropertyAccessExpression(BoundPropertyAccessExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Target) };
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildMethodInvocationExpression(AlgebraMethodInvocationExpression node)
+        private static ShowPlanNode BuildMethodInvocationExpression(BoundMethodInvocationExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] {Build(node.Target)}.Concat(node.Arguments.Select(Build));
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 
-        private static ShowPlanNode BuildConversionExpression(AlgebraConversionExpression node)
+        private static ShowPlanNode BuildConversionExpression(BoundConversionExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Expression) };
             return new ShowPlanNode("Conversion (" + node.Type.ToDisplayName() + ")", properties, children, true);
         }
 
-        private static ShowPlanNode BuildIsNullExpression(AlgebraIsNullExpression node)
+        private static ShowPlanNode BuildIsNullExpression(BoundIsNullExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Expression) };
             return new ShowPlanNode("IsNull", properties, children, true);
         }
 
-        private static ShowPlanNode BuildCaseExpression(AlgebraCaseExpression node)
+        private static ShowPlanNode BuildCaseExpression(BoundCaseExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var caseLabels = node.CaseLabels.Select(BuildCaseLabel);
@@ -246,37 +268,37 @@ namespace NQuery.Algebra
             return new ShowPlanNode("Case", properties, children, true);
         }
 
-        private static ShowPlanNode BuildCaseLabel(AlgebraCaseLabel node)
+        private static ShowPlanNode BuildCaseLabel(BoundCaseLabel node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[]
                                {
                                    Build(node.Condition),
-                                   Build(node.Result)
+                                   Build(node.ThenExpression)
                                };
             return new ShowPlanNode("When", properties, children, true);
         }
 
-        private static ShowPlanNode BuildSingleRowSubselect(AlgebraSingleRowSubselect node)
+        private static ShowPlanNode BuildSingleRowSubselect(BoundSingleRowSubselect node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Query)};
             return new ShowPlanNode("Subselect", properties, children, true);
         }
 
-        private static ShowPlanNode BuildExistsSubselect(AlgebraExistsSubselect node)
+        private static ShowPlanNode BuildExistsSubselect(BoundExistsSubselect node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Query) };
             return new ShowPlanNode("Exists", properties, children, true);
         }
 
-        private static ShowPlanNode BuildAllAnySubselect(AlgebraAllAnySubselect node)
+        private static ShowPlanNode BuildAllAnySubselect(BoundAllAnySubselect node)
         {
             // TODO: Extract actual kind (ALL or ANY)
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Expression), Build(node.Query) };
-            return new ShowPlanNode("AllAny (" + node.Signature.Kind + ")", properties, children, true);
+            var children = new[] { Build(node.Left), Build(node.Query) };
+            return new ShowPlanNode("AllAny (" + node.Result.Selected.Signature.Kind + ")", properties, children, true);
         }
     }
 }
