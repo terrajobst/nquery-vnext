@@ -78,8 +78,7 @@
     </PropertyGroup>
   </Target>
 
-  <Target Name="Clean"
-          DependsOnTargets="GetCommonMetadata">
+  <Target Name="Clean">
     <MSBuild Projects="@(NuProj)"
              BuildInParallel="$(BuildInParallel)"
              Targets="Clean"
