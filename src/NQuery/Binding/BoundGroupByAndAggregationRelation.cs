@@ -7,19 +7,34 @@ namespace NQuery.Binding
     internal sealed class BoundGroupByAndAggregationRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly IReadOnlyCollection<ValueSlot> _groups;
-        private readonly IReadOnlyCollection<BoundAggregateDefinition> _aggregates;
+        private readonly ReadOnlyCollection<ValueSlot> _groups;
+        private readonly ReadOnlyCollection<BoundAggregatedValue> _aggregates;
 
-        public BoundGroupByAndAggregationRelation(BoundRelation input, IList<ValueSlot> groups, IList<BoundAggregateDefinition> aggregates)
+        public BoundGroupByAndAggregationRelation(BoundRelation input, IList<ValueSlot> groups, IList<BoundAggregatedValue> aggregates)
         {
             _input = input;
             _groups = new ReadOnlyCollection<ValueSlot>(groups);
-            _aggregates = new ReadOnlyCollection<BoundAggregateDefinition>(aggregates);
+            _aggregates = new ReadOnlyCollection<BoundAggregatedValue>(aggregates);
         }
 
         public override BoundNodeKind Kind
         {
             get { return BoundNodeKind.GroupByAndAggregationRelation; }
+        }
+
+        public BoundRelation Input
+        {
+            get { return _input; }
+        }
+
+        public ReadOnlyCollection<ValueSlot> Groups
+        {
+            get { return _groups; }
+        }
+
+        public ReadOnlyCollection<BoundAggregatedValue> Aggregates
+        {
+            get { return _aggregates; }
         }
     }
 }

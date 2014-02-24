@@ -4,13 +4,13 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal struct BoundAggregateDefinition
+    internal struct BoundAggregatedValue
     {
         private readonly ValueSlot _output;
         private readonly AggregateSymbol _aggregate;
         private readonly BoundExpression _argument;
 
-        public BoundAggregateDefinition(ValueSlot output, AggregateSymbol aggregate, BoundExpression argument)
+        public BoundAggregatedValue(ValueSlot output, AggregateSymbol aggregate, BoundExpression argument)
         {
             _output = output;
             _aggregate = aggregate;

@@ -4,6 +4,7 @@ namespace NQuery.Binding
 {
     internal enum BoundNodeKind
     {
+        // Expressions
         ErrorExpression,
         TableExpression,
         ColumnExpression,
@@ -17,36 +18,30 @@ namespace NQuery.Binding
         MethodInvocationExpression,
         ConversionExpression,
         IsNullExpression,
-        CaseLabel,
         CaseExpression,
         SingleRowSubselect,
         ExistsSubselect,
         AllAnySubselect,
         ValueSlotExpression,
-        NamedTableReference,
-        DerivedTableReference,
-        JoinedTableReference,
-        SelectColumn,
-        WildcardSelectColumn,
-        OrderByColumn,
-        SelectQuery,
-        CombinedQuery,
-        CommonTableExpression,
-        CommonTableExpressionQuery,
-        OrderedQuery,
-        TopQuery,
 
-        // Algebra
+        // Relations
+        TableRelation,
+        DerivedTableRelation,
+        JoinRelation,
         ComputeRelation,
         FilterRelation,
         GroupByAndAggregationRelation,
-        TableRelation,
-        JoinRelation,
         ConstantRelation,
         CombinedRelation,
         ProjectRelation,
         SortRelation,
         TopRelation,
-        DerivedTableRelation
+        QueryRelation,
+
+        // Other
+        SelectColumn,
+        WildcardSelectColumn,
+        OrderByColumn,
+        CommonTableExpression,
     }
 }

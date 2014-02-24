@@ -9,12 +9,12 @@ namespace NQuery.Binding
 {
     partial class Binder
     {
-        private BoundTableReference BindTableReference(TableReferenceSyntax node)
+        private BoundRelation BindTableReference(TableReferenceSyntax node)
         {
             return Bind(node, BindTableReferenceInternal);
         }
 
-        private BoundTableReference BindTableReferenceInternal(TableReferenceSyntax node)
+        private BoundRelation BindTableReferenceInternal(TableReferenceSyntax node)
         {
             switch (node.Kind)
             {
@@ -41,12 +41,12 @@ namespace NQuery.Binding
             }
         }
 
-        private BoundTableReference BindParenthesizedTableReference(ParenthesizedTableReferenceSyntax node)
+        private BoundRelation BindParenthesizedTableReference(ParenthesizedTableReferenceSyntax node)
         {
             return BindTableReference(node.TableReference);
         }
 
-        private BoundTableReference BindNamedTableReference(NamedTableReferenceSyntax node)
+        private BoundRelation BindNamedTableReference(NamedTableReferenceSyntax node)
         {
             var symbols = LookupTable(node.TableName).ToArray();
 
@@ -59,7 +59,7 @@ namespace NQuery.Binding
                                    ? errorTable.Name
                                    : node.Alias.Identifier.ValueText;
                 var errorInstance = new TableInstanceSymbol(errorAlias, errorTable, ValueSlotFactory);
-                return new BoundNamedTableReference(errorInstance);
+                return new BoundTableRelation(errorInstance);
             }
 
             if (symbols.Length > 1)
@@ -71,17 +71,17 @@ namespace NQuery.Binding
                             : node.Alias.Identifier.ValueText;
 
             var tableInstance = new TableInstanceSymbol(alias, table, ValueSlotFactory);
-            return new BoundNamedTableReference(tableInstance);
+            return new BoundTableRelation(tableInstance);
         }
 
-        private BoundTableReference BindCrossJoinedTableReference(CrossJoinedTableReferenceSyntax node)
+        private BoundRelation BindCrossJoinedTableReference(CrossJoinedTableReferenceSyntax node)
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-            return new BoundJoinedTableReference(BoundJoinType.Inner, left, right, null);
+            return new BoundJoinRelation(BoundJoinType.Inner, left, right, null);
         }
 
-        private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
+        private BoundRelation BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
@@ -92,10 +92,10 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinedTableReference(BoundJoinType.Inner, left, right, condition);
+            return new BoundJoinRelation(BoundJoinType.Inner, left, right, condition);
         }
 
-        private BoundTableReference BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
+        private BoundRelation BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
         {
             var joinType = node.TypeKeyword.Kind == SyntaxKind.LeftKeyword
                                ? BoundJoinType.LeftOuter
@@ -112,10 +112,10 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinedTableReference(joinType, left, right, condition);
+            return new BoundJoinRelation(joinType, left, right, condition);
         }
 
-        private BoundTableReference BindDerivedTableReference(DerivedTableReferenceSyntax node)
+        private BoundRelation BindDerivedTableReference(DerivedTableReferenceSyntax node)
         {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
@@ -135,7 +135,7 @@ namespace NQuery.Binding
             var derivedTable = new DerivedTableSymbol(columns);
             var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((ti, c) => valueSlotFromColumn[c]);
             var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
-            var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
+            var boundTableReference = new BoundDerivedTableRelation(derivedTableInstance, query);
             return boundTableReference;
         }
     }

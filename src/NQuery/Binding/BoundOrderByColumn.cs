@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 
 using NQuery.Symbols;
 
@@ -8,14 +7,12 @@ namespace NQuery.Binding
     internal sealed class BoundOrderByColumn : BoundNode
     {
         private readonly QueryColumnInstanceSymbol _queryColumn;
-        private readonly ValueSlot _valueSlot;
-        private readonly IComparer _comparer;
+        private readonly BoundSortedValue _sortedValue;
 
-        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, ValueSlot valueSlot, IComparer comparer)
+        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, BoundSortedValue sortedValue)
         {
             _queryColumn = queryColumn;
-            _valueSlot = valueSlot;
-            _comparer = comparer;
+            _sortedValue = sortedValue;
         }
 
         public override BoundNodeKind Kind
@@ -28,14 +25,9 @@ namespace NQuery.Binding
             get { return _queryColumn; }
         }
 
-        public ValueSlot ValueSlot
+        public BoundSortedValue SortedValue
         {
-            get { return _valueSlot; }
-        }
-
-        public IComparer Comparer
-        {
-            get { return _comparer; }
+            get { return _sortedValue; }
         }
     }
 }

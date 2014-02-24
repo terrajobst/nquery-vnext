@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using NQuery.Symbols;
 
@@ -6,13 +6,13 @@ namespace NQuery.Binding
 {
     internal sealed class BoundDerivedTableRelation : BoundRelation
     {
-        private readonly BoundRelation _query;
-        private readonly TableInstanceSymbol _symbol;
+        private readonly TableInstanceSymbol _tableInstance;
+        private readonly BoundQueryRelation _query;
 
-        public BoundDerivedTableRelation(BoundRelation query, TableInstanceSymbol symbol)
+        public BoundDerivedTableRelation(TableInstanceSymbol tableInstance, BoundQueryRelation query)
         {
+            _tableInstance = tableInstance;
             _query = query;
-            _symbol = symbol;
         }
 
         public override BoundNodeKind Kind
@@ -20,14 +20,14 @@ namespace NQuery.Binding
             get { return BoundNodeKind.DerivedTableRelation; }
         }
 
-        public BoundRelation Query
+        public TableInstanceSymbol TableInstance
         {
-            get { return _query; }
+            get { return _tableInstance; }
         }
 
-        public TableInstanceSymbol Symbol
+        public BoundQueryRelation Query
         {
-            get { return _symbol; }
+            get { return _query; }
         }
     }
 }

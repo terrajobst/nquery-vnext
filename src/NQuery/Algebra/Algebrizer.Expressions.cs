@@ -134,20 +134,20 @@ namespace NQuery.Algebra
 
         private AlgebraExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node)
         {
-            var query = AlgebrizeQuery(node.BoundQuery);
+            var query = AlgebrizeRelation(node.BoundQuery);
             return new AlgebraSingleRowSubselect(query);
         }
 
         private AlgebraExpression AlgebrizeExistsSubselect(BoundExistsSubselect node)
         {
-            var query = AlgebrizeQuery(node.BoundQuery);
+            var query = AlgebrizeRelation(node.BoundQuery);
             return new AlgebraExistsSubselect(query);
         }
 
         private AlgebraExpression AlgebrizeAllAnySubselect(BoundAllAnySubselect node)
         {
             var expression = AlgebrizeExpression(node.Left);
-            var query = AlgebrizeQuery(node.BoundQuery);
+            var query = AlgebrizeRelation(node.BoundQuery);
             var signature = node.Result.Selected.Signature;
             return new AlgebraAllAnySubselect(expression, query, signature);
         }

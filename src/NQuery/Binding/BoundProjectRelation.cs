@@ -7,7 +7,7 @@ namespace NQuery.Binding
     internal sealed class BoundProjectRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly IReadOnlyCollection<ValueSlot> _outputs;
+        private readonly ReadOnlyCollection<ValueSlot> _outputs;
 
         public BoundProjectRelation(BoundRelation input, IList<ValueSlot> outputs)
         {
@@ -25,7 +25,7 @@ namespace NQuery.Binding
             get { return _input; }
         }
 
-        public IReadOnlyCollection<ValueSlot> Outputs
+        public ReadOnlyCollection<ValueSlot> Outputs
         {
             get { return _outputs; }
         }

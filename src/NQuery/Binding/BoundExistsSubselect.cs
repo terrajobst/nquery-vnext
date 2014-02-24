@@ -4,9 +4,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundExistsSubselect : BoundExpression
     {
-        private readonly BoundQuery _boundQuery;
+        private readonly BoundQueryRelation _boundQuery;
 
-        public BoundExistsSubselect(BoundQuery boundQuery)
+        public BoundExistsSubselect(BoundQueryRelation boundQuery)
         {
             _boundQuery = boundQuery;
         }
@@ -16,7 +16,7 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ExistsSubselect; }
         }
 
-        public BoundQuery BoundQuery
+        public BoundQueryRelation BoundQuery
         {
             get { return _boundQuery; }
         }

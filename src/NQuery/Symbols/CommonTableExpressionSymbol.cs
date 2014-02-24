@@ -8,19 +8,19 @@ namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
-        private readonly BoundQuery _query;
-        private readonly ReadOnlyCollection<BoundQuery> _recursiveMembers;
+        private readonly BoundQueryRelation _query;
+        private readonly ReadOnlyCollection<BoundQueryRelation> _recursiveMembers;
 
-        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQuery query)
-            : this(name, columns, query, s => new BoundQuery[0])
+        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQueryRelation query)
+            : this(name, columns, query, s => new BoundQueryRelation[0])
         {
         }
 
-        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQuery query, Func<CommonTableExpressionSymbol, IList<BoundQuery>> lazyBoundRecursiveMembers)
+        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQueryRelation query, Func<CommonTableExpressionSymbol, IList<BoundQueryRelation>> lazyBoundRecursiveMembers)
             : base(name, columns)
         {
             _query = query;
-            _recursiveMembers = new ReadOnlyCollection<BoundQuery>(lazyBoundRecursiveMembers(this));
+            _recursiveMembers = new ReadOnlyCollection<BoundQueryRelation>(lazyBoundRecursiveMembers(this));
         }
 
         public override SymbolKind Kind
@@ -33,12 +33,12 @@ namespace NQuery.Symbols
             get { return TypeFacts.Missing; }
         }
 
-        internal BoundQuery Query
+        internal BoundQueryRelation Query
         {
             get { return _query; }
         }
 
-        internal ReadOnlyCollection<BoundQuery> RecursiveMembers
+        internal ReadOnlyCollection<BoundQueryRelation> RecursiveMembers
         {
             get { return _recursiveMembers; }
         }

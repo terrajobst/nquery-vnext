@@ -62,7 +62,7 @@ namespace NQuery.Binding
             return CreateLocalBinder(symbols.AsEnumerable());
         }
 
-        private Binder CreateJoinConditionBinder(BoundTableReference left, BoundTableReference right)
+        private Binder CreateJoinConditionBinder(BoundRelation left, BoundRelation right)
         {
             var leftTables = left.GetDeclaredTableInstances();
             var rightTables = right.GetDeclaredTableInstances();

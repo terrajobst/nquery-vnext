@@ -4,27 +4,22 @@ namespace NQuery.Binding
 {
     internal sealed class BoundJoinRelation : BoundRelation
     {
-        private readonly BoundJoinType _joinType;
         private readonly BoundRelation _left;
         private readonly BoundRelation _right;
+        private readonly BoundJoinType _joinType;
         private readonly BoundExpression _condition;
 
         public BoundJoinRelation(BoundJoinType joinType, BoundRelation left, BoundRelation right, BoundExpression condition)
         {
-            _joinType = joinType;
             _left = left;
             _right = right;
+            _joinType = joinType;
             _condition = condition;
         }
 
         public override BoundNodeKind Kind
         {
             get { return BoundNodeKind.JoinRelation; }
-        }
-
-        public BoundJoinType JoinType
-        {
-            get { return _joinType; }
         }
 
         public BoundRelation Left
@@ -35,6 +30,11 @@ namespace NQuery.Binding
         public BoundRelation Right
         {
             get { return _right; }
+        }
+
+        public BoundJoinType JoinType
+        {
+            get { return _joinType; }
         }
 
         public BoundExpression Condition

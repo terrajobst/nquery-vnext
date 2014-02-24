@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Binding
 {
-    internal sealed class BoundCaseLabel : BoundNode
+    internal sealed class BoundCaseLabel
     {
         private readonly BoundExpression _condition;
         private readonly BoundExpression _thenExpression;
@@ -11,11 +11,6 @@ namespace NQuery.Binding
         {
             _condition = condition;
             _thenExpression = thenExpression;
-        }
-
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.CaseLabel; }
         }
 
         public BoundExpression Condition

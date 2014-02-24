@@ -5,10 +5,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSingleRowSubselect : BoundExpression
     {
-        private readonly BoundQuery _boundQuery;
+        private readonly BoundQueryRelation _boundQuery;
         private readonly Type _type;
 
-        public BoundSingleRowSubselect(BoundQuery boundQuery)
+        public BoundSingleRowSubselect(BoundQueryRelation boundQuery)
         {
             _boundQuery = boundQuery;
             var firstColumn = _boundQuery.OutputColumns.FirstOrDefault();
@@ -22,7 +22,7 @@ namespace NQuery.Binding
             get { return BoundNodeKind.SingleRowSubselect; }
         }
 
-        public BoundQuery BoundQuery
+        public BoundQueryRelation BoundQuery
         {
             get { return _boundQuery; }
         }

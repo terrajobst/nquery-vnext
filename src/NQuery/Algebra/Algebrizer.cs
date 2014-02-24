@@ -10,10 +10,10 @@ namespace NQuery.Algebra
         {
         }
 
-        public static AlgebraNode Algebrize(BoundQuery node)
+        public static AlgebraNode Algebrize(BoundRelation node)
         {
             var algebrizer = new Algebrizer();
-            return algebrizer.AlgebrizeQuery(node);
+            return algebrizer.AlgebrizeRelation(node);
         }
     }
 }

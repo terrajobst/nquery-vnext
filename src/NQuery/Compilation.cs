@@ -28,7 +28,7 @@ namespace NQuery
         public QueryReader GetQueryReader(bool schemaOnly)
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundQuery = bindingResult.BoundRoot as BoundQuery;
+            var boundQuery = bindingResult.BoundRoot as BoundQueryRelation;
             if (boundQuery == null)
                 return null;
 
@@ -51,7 +51,7 @@ namespace NQuery
         public ShowPlanNode GetShowPlan()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundRoot = bindingResult.BoundRoot as BoundQuery;
+            var boundRoot = bindingResult.BoundRoot as BoundQueryRelation;
             if (boundRoot == null)
                 return null;
 

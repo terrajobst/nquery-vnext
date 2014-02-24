@@ -43,7 +43,7 @@ namespace NQuery
 
         public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
         {
-            var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
+            var boundQuery = _bindingResult.GetBoundNode(query) as BoundQueryRelation;
             return boundQuery == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundQuery.OutputColumns;
         }
 
@@ -136,7 +136,7 @@ namespace NQuery
 
         public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
         {
-            var result = _bindingResult.GetBoundNode(tableReference) as BoundTableReference;
+            var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
             return result == null ? null : result.GetDeclaredTableInstances();
         }
 
@@ -148,13 +148,13 @@ namespace NQuery
 
         public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
         {
-            var result = _bindingResult.GetBoundNode(tableReference) as BoundNamedTableReference;
+            var result = _bindingResult.GetBoundNode(tableReference) as BoundTableRelation;
             return result == null ? null : result.TableInstance;
         }
 
         public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
         {
-            var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableReference;
+            var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableRelation;
             return result == null ? null : result.TableInstance;
         }
 
