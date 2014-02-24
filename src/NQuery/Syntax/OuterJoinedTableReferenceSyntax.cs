@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _joinKeyword;
 
         public OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
-            : base(syntaxTree, left, right, onKeyword, 3, condition)
+            : base(syntaxTree, left, right, onKeyword, condition)
         {
             _typeKeyword = typeKeyword;
             _outerKeyword = outerKeyword;
