@@ -822,14 +822,16 @@ namespace NQuery.Binding
                 ? groupByAndAggregationRelation
                 : new BoundFilterRelation(groupByAndAggregationRelation, havingClause);
 
-            var selectComputeRelation = new BoundComputeRelation(havingRelation, projections);
+            var selectComputeRelation = projections.Length == 0
+                ? havingRelation
+                : new BoundComputeRelation(havingRelation, projections);
 
             var sortedValues = orderByClause == null
                 ? null
                 : orderByClause.Columns.Select(c => c.SortedValue).ToArray();
 
             var sortRelation = sortedValues == null
-                ? (BoundRelation)selectComputeRelation
+                ? selectComputeRelation
                 : new BoundSortRelation(selectComputeRelation, sortedValues);
 
             var tieEntries = top == null || sortedValues == null || !withTies
