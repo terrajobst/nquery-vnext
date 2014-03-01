@@ -6,12 +6,12 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed class BoundQueryRelation : BoundRelation
+    internal sealed class BoundQuery : BoundNode
     {
         private readonly BoundRelation _relation;
         private readonly ReadOnlyCollection<QueryColumnInstanceSymbol> _output;
 
-        public BoundQueryRelation(BoundRelation relation, IList<QueryColumnInstanceSymbol> output)
+        public BoundQuery(BoundRelation relation, IList<QueryColumnInstanceSymbol> output)
         {
             _relation = relation;
             _output = new ReadOnlyCollection<QueryColumnInstanceSymbol>(output);
@@ -19,7 +19,7 @@ namespace NQuery.Binding
 
         public override BoundNodeKind Kind
         {
-            get { return BoundNodeKind.QueryRelation; }
+            get { return BoundNodeKind.Query; }
         }
 
         public ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns

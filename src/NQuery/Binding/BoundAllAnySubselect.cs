@@ -5,13 +5,13 @@ namespace NQuery.Binding
     internal sealed class BoundAllAnySubselect : BoundExpression
     {
         private readonly BoundExpression _left;
-        private readonly BoundQueryRelation _query;
+        private readonly BoundRelation _relation;
         private readonly OverloadResolutionResult<BinaryOperatorSignature> _result;
 
-        public BoundAllAnySubselect(BoundExpression left, BoundQueryRelation query, OverloadResolutionResult<BinaryOperatorSignature> result)
+        public BoundAllAnySubselect(BoundExpression left, BoundRelation relation, OverloadResolutionResult<BinaryOperatorSignature> result)
         {
             _left = left;
-            _query = query;
+            _relation = relation;
             _result = result;
         }
 
@@ -25,9 +25,9 @@ namespace NQuery.Binding
             get { return _left; }
         }
 
-        public BoundQueryRelation Query
+        public BoundRelation Relation
         {
-            get { return _query; }
+            get { return _relation; }
         }
 
         public OverloadResolutionResult<BinaryOperatorSignature> Result

@@ -139,7 +139,7 @@
     <Compile Include="Binding\BoundLiteralExpression.cs" />
     <Compile Include="Binding\BoundTableRelation.cs" />
     <Compile Include="Binding\BoundNodeKind.cs" />
-    <Compile Include="Binding\BoundQueryRelation.cs" />
+    <Compile Include="Binding\BoundQuery.cs" />
     <Compile Include="Binding\BoundQueryCombinator.cs" />
     <Compile Include="Binding\BoundSelectColumn.cs" />
     <Compile Include="Binding\BoundSingleRowSubselect.cs" />

@@ -307,7 +307,7 @@ namespace NQuery.Binding
             return comparer;
         }
 
-        private BoundQueryRelation BindSubquery(QuerySyntax querySyntax)
+        private BoundQuery BindSubquery(QuerySyntax querySyntax)
         {
             if (InGroupByClause)
             {
@@ -321,12 +321,12 @@ namespace NQuery.Binding
             return BindQuery(querySyntax);
         }
 
-        private BoundQueryRelation BindQuery(QuerySyntax node)
+        private BoundQuery BindQuery(QuerySyntax node)
         {
             return Bind(node, BindQueryInternal);
         }
 
-        private BoundQueryRelation BindQueryInternal(QuerySyntax node)
+        private BoundQuery BindQueryInternal(QuerySyntax node)
         {
             switch (node.Kind)
             {
@@ -356,7 +356,7 @@ namespace NQuery.Binding
             }
         }
 
-        private BoundQueryRelation BindExceptQuery(ExceptQuerySyntax node)
+        private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
         {
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
 
@@ -370,11 +370,11 @@ namespace NQuery.Binding
             foreach (var column in columns)
                 BindComparer(column.Type, node.ExceptKeyword.Span, DiagnosticId.InvalidDataTypeInExcept);
 
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, left, right, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQueryRelation(relation, columns);
+            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
+            return new BoundQuery(relation, columns);
         }
 
-        private BoundQueryRelation BindUnionQuery(UnionQuerySyntax node)
+        private BoundQuery BindUnionQuery(UnionQuerySyntax node)
         {
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
 
@@ -396,11 +396,11 @@ namespace NQuery.Binding
             if (left.OutputColumns.Count != right.OutputColumns.Count)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
 
-            var relation = new BoundCombinedRelation(combinator, left, right, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQueryRelation(relation, columns);
+            var relation = new BoundCombinedRelation(combinator, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
+            return new BoundQuery(relation, columns);
         }
 
-        private BoundQueryRelation BindIntersectQuery(IntersectQuerySyntax node)
+        private BoundQuery BindIntersectQuery(IntersectQuerySyntax node)
         {
             // TODO: Ensure all types are identical, if not we need to insert conversion operators
             var left = BindQuery(node.LeftQuery);
@@ -413,11 +413,11 @@ namespace NQuery.Binding
             foreach (var column in columns)
                 BindComparer(column.Type, node.IntersectKeyword.Span, DiagnosticId.InvalidDataTypeInIntersect);
 
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, left, right, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQueryRelation(relation, columns);
+            var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
+            return new BoundQuery(relation, columns);
         }
 
-        private BoundQueryRelation BindOrderedQuery(OrderedQuerySyntax node)
+        private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)
         {
             // Depending on the query the ORDER BY was applied on, the binding rules
             // differ.
@@ -452,7 +452,7 @@ namespace NQuery.Binding
 
             var query = BindQuery(node.Query);
             var firstQuerySyntax = GetFirstSelectQuery(node);
-            var firstQuery = GetBoundNode<BoundQueryRelation>(firstQuerySyntax);
+            var firstQuery = GetBoundNode<BoundQuery>(firstQuerySyntax);
             var firstFromClauseSyntax = firstQuerySyntax.FromClause;
             var firstFromClause = firstFromClauseSyntax == null
                                     ? null
@@ -474,16 +474,16 @@ namespace NQuery.Binding
             var outputQueryCoumns = query.OutputColumns;
             var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
 
-            var relation = new BoundSortRelation(query, orderByClause.Columns.Select(c => c.SortedValue).ToArray());
-            return new BoundQueryRelation(relation, outputQueryCoumns);
+            var relation = new BoundSortRelation(query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToArray());
+            return new BoundQuery(relation, outputQueryCoumns);
         }
 
-        private BoundQueryRelation BindParenthesizedQuery(ParenthesizedQuerySyntax node)
+        private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
         {
             return BindQuery(node.Query);
         }
 
-        private BoundQueryRelation BindCommonTableExpressionQuery(CommonTableExpressionQuerySyntax node)
+        private BoundQuery BindCommonTableExpressionQuery(CommonTableExpressionQuerySyntax node)
         {
             // Each CTE has access to all tables plus any CTE specified previously.
             //
@@ -661,7 +661,7 @@ namespace NQuery.Binding
                 return BindCommonTableExpressionNonRecursive(commonTableExpression);
             }
 
-            BoundQueryRelation boundAnchorQuery = null;
+            BoundQuery boundAnchorQuery = null;
 
             foreach (var anchorMember in anchorMembers)
             {
@@ -679,8 +679,8 @@ namespace NQuery.Binding
                                                   .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
                                                   .ToArray();
 
-                    var combinedRelation = new BoundCombinedRelation(BoundQueryCombinator.UnionAll, boundAnchorQuery, boundAnchorMember, outputColumns.Select(c => c.ValueSlot).ToArray());
-                    boundAnchorQuery = new BoundQueryRelation(combinedRelation, outputColumns);
+                    var combinedRelation = new BoundCombinedRelation(BoundQueryCombinator.UnionAll, boundAnchorQuery.Relation, boundAnchorMember.Relation, outputColumns.Select(c => c.ValueSlot).ToArray());
+                    boundAnchorQuery = new BoundQuery(combinedRelation, outputColumns);
                 }
             }
 
@@ -691,7 +691,7 @@ namespace NQuery.Binding
 
             var name = commonTableExpression.Name.ValueText;
 
-            Func<CommonTableExpressionSymbol, IList<BoundQueryRelation>> lazyBoundRecursiveMembers = s =>
+            Func<CommonTableExpressionSymbol, IList<BoundQuery>> lazyBoundRecursiveMembers = s =>
             {
                 var binder = CreateLocalBinder(s);
                 var boundRecursiveMembers = recursiveMembers.Select(binder.BindQuery).ToArray();
@@ -732,12 +732,12 @@ namespace NQuery.Binding
             return new BoundCommonTableExpression(commonTableExpressionSymbol);
         }
 
-        private BoundQueryRelation BindSelectQuery(SelectQuerySyntax node)
+        private BoundQuery BindSelectQuery(SelectQuerySyntax node)
         {
             return BindSelectQuery(node, null);
         }
 
-        private BoundQueryRelation BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
+        private BoundQuery BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
         {
             var queryBinder = CreateQueryBinder();
 
@@ -842,7 +842,7 @@ namespace NQuery.Binding
 
             var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToArray());
 
-            return new BoundQueryRelation(projectRelation, outputColumns);
+            return new BoundQuery(projectRelation, outputColumns);
         }
 
         private IEnumerable<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)

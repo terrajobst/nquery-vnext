@@ -27,7 +27,7 @@ namespace NQuery
         public QueryReader GetQueryReader(bool schemaOnly)
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundQuery = bindingResult.BoundRoot as BoundQueryRelation;
+            var boundQuery = bindingResult.BoundRoot as BoundQuery;
             if (boundQuery == null)
                 return null;
 
@@ -38,7 +38,7 @@ namespace NQuery
                 throw new CompilationException(dignostics);
 
             var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
-            var iterator = PlanBuilder.Build(boundQuery);
+            var iterator = PlanBuilder.Build(boundQuery.Relation);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
 
@@ -46,7 +46,7 @@ namespace NQuery
         public ShowPlanNode GetShowPlan()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundRoot = bindingResult.BoundRoot as BoundQueryRelation;
+            var boundRoot = bindingResult.BoundRoot as BoundQuery;
             return boundRoot == null
                      ? null
                      : ShowPlanBuilder.Build(bindingResult.BoundRoot);

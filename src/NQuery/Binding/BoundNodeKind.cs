@@ -36,9 +36,9 @@ namespace NQuery.Binding
         ProjectRelation,
         SortRelation,
         TopRelation,
-        QueryRelation,
 
         // Other
+        Query,
         SelectColumn,
         WildcardSelectColumn,
         OrderByColumn,

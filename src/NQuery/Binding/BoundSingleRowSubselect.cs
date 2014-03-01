@@ -1,20 +1,16 @@
 using System;
-using System.Linq;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundSingleRowSubselect : BoundExpression
     {
-        private readonly BoundQueryRelation _query;
-        private readonly Type _type;
+        private readonly ValueSlot _value;
+        private readonly BoundRelation _relation;
 
-        public BoundSingleRowSubselect(BoundQueryRelation query)
+        public BoundSingleRowSubselect(ValueSlot value, BoundRelation relation)
         {
-            _query = query;
-            var firstColumn = _query.OutputColumns.FirstOrDefault();
-            _type = firstColumn == null
-                        ? TypeFacts.Unknown
-                        : firstColumn.Type;
+            _value = value;
+            _relation = relation;
         }
 
         public override BoundNodeKind Kind
@@ -22,14 +18,19 @@ namespace NQuery.Binding
             get { return BoundNodeKind.SingleRowSubselect; }
         }
 
-        public BoundQueryRelation Query
-        {
-            get { return _query; }
-        }
-
         public override Type Type
         {
-            get { return _type; }
+            get { return _value.Type; }
+        }
+
+        public ValueSlot Value
+        {
+            get { return _value; }
+        }
+
+        public BoundRelation Relation
+        {
+            get { return _relation; }
         }
     }
 }

@@ -916,7 +916,9 @@ namespace NQuery.Binding
                 // TODO: Error
             }
 
-            return new BoundSingleRowSubselect(boundQuery);
+            var value = boundQuery.OutputColumns.First().ValueSlot;
+
+            return new BoundSingleRowSubselect(value, boundQuery.Relation);
         }
 
         private BoundExpression BindExistsSubselect(ExistsSubselectSyntax node)
@@ -927,7 +929,7 @@ namespace NQuery.Binding
 
             // NOTE: Number of columns doesn't matter here
 
-            return new BoundExistsSubselect(boundQuery);
+            return new BoundExistsSubselect(boundQuery.Relation);
         }
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
@@ -956,7 +958,7 @@ namespace NQuery.Binding
             // if we could resolve both sides.
 
             if (left.Type.IsError() || right.Type.IsError())
-                return new BoundAllAnySubselect(left, boundQuery, OverloadResolutionResult<BinaryOperatorSignature>.None);
+                return new BoundAllAnySubselect(left, boundQuery.Relation, OverloadResolutionResult<BinaryOperatorSignature>.None);
 
             var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
             if (result.Best == null)
@@ -976,7 +978,7 @@ namespace NQuery.Binding
                 throw new NotImplementedException("Converting right side of ALL/ANY/SOME not implemented yet.");
             }
 
-            return new BoundAllAnySubselect(convertedLeft, boundQuery, result);
+            return new BoundAllAnySubselect(convertedLeft, boundQuery.Relation, result);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace NQuery
         {
             switch (node.Kind)
             {
-                case BoundNodeKind.QueryRelation:
-                    return BuildQueryRelation((BoundQueryRelation)node);
+                case BoundNodeKind.Query:
+                    return BuildQueryRelation((BoundQuery)node);
                 case BoundNodeKind.ConstantRelation:
                     return BuildConstant((BoundConstantRelation)node);
                 case BoundNodeKind.TableRelation:
@@ -69,7 +69,7 @@ namespace NQuery
             }
         }
 
-        private static ShowPlanNode BuildQueryRelation(BoundQueryRelation node)
+        private static ShowPlanNode BuildQueryRelation(BoundQuery node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Relation) };
@@ -94,7 +94,7 @@ namespace NQuery
         private static ShowPlanNode BuildDerivedTable(BoundDerivedTableRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Query) };
+            var children = new[] { Build(node.Relation) };
             return new ShowPlanNode("Derived Table (" + node.TableInstance + ")", properties, children);
         }
 
@@ -282,14 +282,14 @@ namespace NQuery
         private static ShowPlanNode BuildSingleRowSubselect(BoundSingleRowSubselect node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Query)};
+            var children = new[] { Build(node.Relation)};
             return new ShowPlanNode("Subselect", properties, children, true);
         }
 
         private static ShowPlanNode BuildExistsSubselect(BoundExistsSubselect node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Query) };
+            var children = new[] { Build(node.Relation) };
             return new ShowPlanNode("Exists", properties, children, true);
         }
 
@@ -297,7 +297,7 @@ namespace NQuery
         {
             // TODO: Extract actual kind (ALL or ANY)
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Left), Build(node.Query) };
+            var children = new[] { Build(node.Left), Build(node.Relation) };
             return new ShowPlanNode("AllAny (" + node.Result.Selected.Signature.Kind + ")", properties, children, true);
         }
     }

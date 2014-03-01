@@ -43,7 +43,7 @@ namespace NQuery
 
         public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
         {
-            var boundQuery = _bindingResult.GetBoundNode(query) as BoundQueryRelation;
+            var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
             return boundQuery == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundQuery.OutputColumns;
         }
 

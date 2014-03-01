@@ -7,12 +7,12 @@ namespace NQuery.Binding
     internal sealed class BoundDerivedTableRelation : BoundRelation
     {
         private readonly TableInstanceSymbol _tableInstance;
-        private readonly BoundQueryRelation _query;
+        private readonly BoundRelation _relation;
 
-        public BoundDerivedTableRelation(TableInstanceSymbol tableInstance, BoundQueryRelation query)
+        public BoundDerivedTableRelation(TableInstanceSymbol tableInstance, BoundRelation relation)
         {
             _tableInstance = tableInstance;
-            _query = query;
+            _relation = relation;
         }
 
         public override BoundNodeKind Kind
@@ -25,9 +25,9 @@ namespace NQuery.Binding
             get { return _tableInstance; }
         }
 
-        public BoundQueryRelation Query
+        public BoundRelation Relation
         {
-            get { return _query; }
+            get { return _relation; }
         }
     }
 }

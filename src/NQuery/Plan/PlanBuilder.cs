@@ -42,8 +42,6 @@ namespace NQuery.Plan
         {
             switch (relation.Kind)
             {
-                case BoundNodeKind.QueryRelation:
-                    return BuildQueryRelation((BoundQueryRelation)relation);
                 case BoundNodeKind.ConstantRelation:
                     return BuildConstant((BoundConstantRelation)relation);
                 case BoundNodeKind.TableRelation:
@@ -67,11 +65,6 @@ namespace NQuery.Plan
                 default:
                     throw new ArgumentOutOfRangeException("relation", string.Format("Unknown relation kind: {0}.", relation.Kind));
             }
-        }
-
-        private IteratorResult BuildQueryRelation(BoundQueryRelation relation)
-        {
-            return BuildRelation(relation.Relation);
         }
 
         private static IteratorResult BuildConstant(BoundConstantRelation relation)

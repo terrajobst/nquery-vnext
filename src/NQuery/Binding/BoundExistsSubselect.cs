@@ -4,11 +4,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundExistsSubselect : BoundExpression
     {
-        private readonly BoundQueryRelation _query;
+        private readonly BoundRelation _relation;
 
-        public BoundExistsSubselect(BoundQueryRelation query)
+        public BoundExistsSubselect(BoundRelation relation)
         {
-            _query = query;
+            _relation = relation;
         }
 
         public override BoundNodeKind Kind
@@ -16,9 +16,9 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ExistsSubselect; }
         }
 
-        public BoundQueryRelation Query
+        public BoundRelation Relation
         {
-            get { return _query; }
+            get { return _relation; }
         }
 
         public override Type Type
