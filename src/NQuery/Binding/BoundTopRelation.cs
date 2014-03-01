@@ -36,5 +36,13 @@ namespace NQuery.Binding
         {
             get { return _tieEntries; }
         }
+
+        public BoundTopRelation Update(BoundRelation input, int limit, IList<BoundSortedValue> tieEntries)
+        {
+            if (input == _input && limit == _limit && tieEntries == _tieEntries)
+                return this;
+
+            return new BoundTopRelation(input, limit, tieEntries);
+        }
     }
 }

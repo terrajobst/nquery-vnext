@@ -41,5 +41,13 @@ namespace NQuery.Binding
         {
             get { return _condition; }
         }
+
+        public BoundJoinRelation Update(BoundJoinType joinType, BoundRelation left, BoundRelation right, BoundExpression condition)
+        {
+            if (joinType == _joinType && left == _left && right == _right && condition == _condition)
+                return this;
+
+            return new BoundJoinRelation(joinType, left, right, condition);
+        }
     }
 }

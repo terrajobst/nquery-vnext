@@ -44,5 +44,13 @@ namespace NQuery.Binding
                            : _result.Selected.Signature.ReturnType;
             }
         }
+
+        public BoundAllAnySubselect Update(BoundExpression left, BoundRelation relation, OverloadResolutionResult<BinaryOperatorSignature> result)
+        {
+            if (left == _left && relation == _relation && result == _result)
+                return this;
+
+            return new BoundAllAnySubselect(left, relation, result);
+        }
     }
 }

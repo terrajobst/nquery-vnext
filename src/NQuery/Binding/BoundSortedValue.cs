@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace NQuery.Binding
 {
-    internal struct BoundSortedValue
+    internal sealed class BoundSortedValue
     {
         private readonly ValueSlot _valueSlot;
         private readonly IComparer _comparer;
@@ -22,6 +22,14 @@ namespace NQuery.Binding
         public IComparer Comparer
         {
             get { return _comparer; }
+        }
+
+        public BoundSortedValue Update(ValueSlot valueSlot, IComparer comparer)
+        {
+            if (valueSlot == _valueSlot && comparer == _comparer)
+                return this;
+
+            return new BoundSortedValue(valueSlot, comparer);
         }
     }
 }

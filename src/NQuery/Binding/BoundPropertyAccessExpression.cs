@@ -40,11 +40,12 @@ namespace NQuery.Binding
             get { return _propertySymbol; }
         }
 
-        public BoundExpression Update(BoundExpression target)
+        public BoundPropertyAccessExpression Update(BoundExpression target, PropertySymbol propertySymbol)
         {
-            return _target == target
-                       ? this
-                       : new BoundPropertyAccessExpression(target, _propertySymbol);
+            if (target == _target && propertySymbol == _propertySymbol)
+                return this;
+
+            return new BoundPropertyAccessExpression(target, propertySymbol);
         }
 
         public override string ToString()

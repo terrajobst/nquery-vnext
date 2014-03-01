@@ -41,6 +41,14 @@ namespace NQuery.Binding
             get { return _argument; }
         }
 
+        public BoundAggregateExpression Update(AggregateSymbol aggregate, BoundExpression argument)
+        {
+            if (aggregate == _aggregate && argument == _argument)
+                return this;
+
+            return new BoundAggregateExpression(aggregate, argument);
+        }
+
         public override string ToString()
         {
             return string.Format("{0}({1})", _aggregate.Name, _argument);

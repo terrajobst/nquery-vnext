@@ -25,5 +25,13 @@ namespace NQuery.Binding
         {
             get { return _valueSlot; }
         }
+
+        public BoundValueSlotExpression Update(ValueSlot valueSlot)
+        {
+            if (valueSlot == _valueSlot)
+                return this;
+
+            return new BoundValueSlotExpression(valueSlot);
+        }
     }
 }

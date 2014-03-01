@@ -29,5 +29,13 @@ namespace NQuery.Binding
         {
             get { return _definedValues; }
         }
+
+        public BoundComputeRelation Update(BoundRelation input, IList<BoundComputedValue> definedValues)
+        {
+            if (input == _input && definedValues == _definedValues)
+                return this;
+
+            return new BoundComputeRelation(input, definedValues);
+        }
     }
 }

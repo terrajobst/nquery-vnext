@@ -43,11 +43,12 @@ namespace NQuery.Binding
             get { return _result; }
         }
 
-        public BoundExpression Update(BoundExpression[] newArguments)
+        public BoundFunctionInvocationExpression Update(IList<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
         {
-            return _arguments.SequenceEqual(newArguments)
-                       ? this
-                       : new BoundFunctionInvocationExpression(newArguments, _result);
+            if (arguments == _arguments && result == _result)
+                return this;
+
+            return new BoundFunctionInvocationExpression(arguments, result);
         }
 
         public override string ToString()

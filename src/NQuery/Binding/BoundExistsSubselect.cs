@@ -25,5 +25,13 @@ namespace NQuery.Binding
         {
             get { return typeof(bool); }
         }
+
+        public BoundExistsSubselect Update(BoundRelation relation)
+        {
+            if (relation == _relation)
+                return this;
+
+            return new BoundExistsSubselect(relation);
+        }
     }
 }

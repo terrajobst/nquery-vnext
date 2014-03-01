@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace NQuery.Binding
 {
@@ -34,6 +35,14 @@ namespace NQuery.Binding
         public BoundExpression ElseExpression
         {
             get { return _elseExpression; }
+        }
+
+        public BoundCaseExpression Update(IList<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
+        {
+            if (caseLabels == _caseLabels && elseExpression == _elseExpression)
+                return this;
+
+            return new BoundCaseExpression(caseLabels, elseExpression);
         }
     }
 }

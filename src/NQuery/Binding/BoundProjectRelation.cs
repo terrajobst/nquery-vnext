@@ -29,5 +29,13 @@ namespace NQuery.Binding
         {
             get { return _outputs; }
         }
+
+        public BoundProjectRelation Update(BoundRelation input, IList<ValueSlot> outputs)
+        {
+            if (input == _input && outputs == _outputs)
+                return this;
+
+            return new BoundProjectRelation(input, outputs);
+        }
     }
 }

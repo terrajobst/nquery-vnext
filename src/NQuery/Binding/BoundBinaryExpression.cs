@@ -46,11 +46,12 @@ namespace NQuery.Binding
             get { return _right; }
         }
 
-        public BoundExpression Update(BoundExpression left, BoundExpression right)
+        public BoundBinaryExpression Update(BoundExpression left, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
         {
-            return (left == _left && right == _right)
-                       ? this
-                       : new BoundBinaryExpression(left, _result, right);
+            if (left == _left && result == _result && right == _right)
+                return this;
+
+            return new BoundBinaryExpression(left, result, right);
         }
 
         public override string ToString()

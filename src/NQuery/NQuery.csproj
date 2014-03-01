@@ -41,6 +41,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\BoundTreeRewriter.cs" />
+    <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
+    <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />
+    <Compile Include="Binding\BoundTreeRewriter.Expression.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
     <Compile Include="Binding\BoundColumnExpression.cs" />

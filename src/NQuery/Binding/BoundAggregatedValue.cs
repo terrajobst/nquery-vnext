@@ -4,7 +4,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal struct BoundAggregatedValue
+    internal sealed class BoundAggregatedValue
     {
         private readonly ValueSlot _output;
         private readonly AggregateSymbol _aggregate;
@@ -30,6 +30,14 @@ namespace NQuery.Binding
         public BoundExpression Argument
         {
             get { return _argument; }
+        }
+
+        public BoundAggregatedValue Update(ValueSlot output, AggregateSymbol aggregate, BoundExpression argument)
+        {
+            if (output == _output && aggregate == _aggregate && argument == _argument)
+                return this;
+
+            return new BoundAggregatedValue(output, aggregate, argument);
         }
     }
 }

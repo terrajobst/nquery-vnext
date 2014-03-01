@@ -26,11 +26,12 @@ namespace NQuery.Binding
             get { return _expression; }
         }
 
-        public BoundExpression Update(BoundExpression expression)
+        public BoundIsNullExpression Update(BoundExpression expression)
         {
-            return _expression == expression
-                       ? this
-                       : new BoundIsNullExpression(expression);
+            if (expression == _expression)
+                return this;
+
+            return new BoundIsNullExpression(expression);
         }
 
         public override string ToString()

@@ -39,11 +39,12 @@ namespace NQuery.Binding
             get { return _result; }
         }
 
-        public BoundExpression Update(BoundExpression expression)
+        public BoundUnaryExpression Update(BoundExpression expression, OverloadResolutionResult<UnaryOperatorSignature> result)
         {
-            return expression == _expression
-                       ? this
-                       : new BoundUnaryExpression(expression, _result);
+            if (expression == _expression && result == _result)
+                return this;
+            
+            return new BoundUnaryExpression(expression, result);
         }
 
         public override string ToString()

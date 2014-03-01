@@ -28,5 +28,13 @@ namespace NQuery.Binding
         {
             get { return _sortedValues; }
         }
+
+        public BoundSortRelation Update(BoundRelation input, IList<BoundSortedValue> sortedValues)
+        {
+            if (input == _input && sortedValues == _sortedValues)
+                return this;
+
+            return new BoundSortRelation(input, sortedValues);
+        }
     }
 }

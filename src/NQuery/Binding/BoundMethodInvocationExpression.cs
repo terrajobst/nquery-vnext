@@ -50,11 +50,12 @@ namespace NQuery.Binding
             get { return _result; }
         }
 
-        public BoundExpression Update(BoundExpression target, BoundExpression[] arguments)
+        public BoundMethodInvocationExpression Update(BoundExpression target, IList<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
-            return (_target == target && _arguments.SequenceEqual(arguments))
-                       ? this
-                       : new BoundMethodInvocationExpression(target, arguments, _result);
+            if (target == _target && arguments == _arguments && result == _result)
+                return this;
+
+            return new BoundMethodInvocationExpression(target, arguments, result);
         }
 
         public override string ToString()

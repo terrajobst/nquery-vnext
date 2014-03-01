@@ -35,11 +35,12 @@ namespace NQuery.Binding
             get { return _conversion; }
         }
 
-        public BoundExpression Update(BoundExpression expression)
+        public BoundConversionExpression Update(BoundExpression expression, Type type, Conversion conversion)
         {
-            return _expression == expression
-                       ? this
-                       : new BoundConversionExpression(expression, _type, _conversion);
+            if (expression == _expression && type == _type && conversion == _conversion)
+                return this;
+
+            return new BoundConversionExpression(expression, type, conversion);
         }
 
         public override string ToString()

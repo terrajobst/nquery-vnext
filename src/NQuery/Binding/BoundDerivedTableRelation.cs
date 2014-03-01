@@ -29,5 +29,13 @@ namespace NQuery.Binding
         {
             get { return _relation; }
         }
+
+        public BoundDerivedTableRelation Update(TableInstanceSymbol tableInstance, BoundRelation relation)
+        {
+            if (tableInstance == _tableInstance && _relation == relation)
+                return this;
+
+            return new BoundDerivedTableRelation(tableInstance, relation);
+        }
     }
 }

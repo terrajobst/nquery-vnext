@@ -32,5 +32,13 @@ namespace NQuery.Binding
         {
             get { return _relation; }
         }
-    }
+
+        public BoundSingleRowSubselect Update(ValueSlot value, BoundRelation relation)
+        {
+            if (value == _value && relation == _relation)
+                return this;
+
+            return new BoundSingleRowSubselect(value, relation);
+        }
+   }
 }

@@ -2,7 +2,7 @@
 
 namespace NQuery.Binding
 {
-    internal struct BoundComputedValue
+    internal sealed class BoundComputedValue
     {
         private readonly BoundExpression _expression;
         private readonly ValueSlot _valueSlot;
@@ -21,6 +21,14 @@ namespace NQuery.Binding
         public ValueSlot ValueSlot
         {
             get { return _valueSlot; }
+        }
+
+        public BoundComputedValue Update(BoundExpression expression, ValueSlot valueSlot)
+        {
+            if (expression == _expression && valueSlot == _valueSlot)
+                return this;
+
+            return new BoundComputedValue(expression, valueSlot);
         }
     }
 }

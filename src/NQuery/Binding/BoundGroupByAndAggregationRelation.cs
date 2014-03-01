@@ -36,5 +36,13 @@ namespace NQuery.Binding
         {
             get { return _aggregates; }
         }
+
+        public BoundGroupByAndAggregationRelation Update(BoundRelation input, IList<ValueSlot> groups, IList<BoundAggregatedValue> aggregates)
+        {
+            if (input == _input && groups == _groups && aggregates == _aggregates)
+                return this;
+
+            return new BoundGroupByAndAggregationRelation(input, groups, aggregates);
+        }
     }
 }
