@@ -27,6 +27,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private readonly IClassificationType _aggregate = new ClassificationType("aggregate");
         private readonly IClassificationType _operator = new ClassificationType("operator");
         private readonly IClassificationType _variable = new ClassificationType("variable");
+        private readonly IClassificationType _unnecessary = new ClassificationType("unnecessary");
 
         public IClassificationType WhiteSpace
         {
@@ -111,6 +112,11 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         public IClassificationType Variable
         {
             get { return _variable; }
+        }
+
+        public IClassificationType Unnecessary
+        {
+            get { return _unnecessary; }
         }
     }
 }

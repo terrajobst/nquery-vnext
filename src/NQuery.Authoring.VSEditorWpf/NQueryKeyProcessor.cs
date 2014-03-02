@@ -17,14 +17,16 @@ namespace NQuery.Authoring.VSEditorWpf
         private readonly ICompletionModelManager _completionModelManager;
         private readonly ISignatureHelpManager _signatureHelpManager;
         private readonly IHighlightingNavigationManager _highlightingNavigationManager;
+        private readonly ISmartTagBroker _smartTagBroker;
 
-        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ISmartTagBroker smartTagBroker)
         {
             _textView = textView;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
             _completionModelManager = completionModelManager;
             _signatureHelpManager = signatureHelpManager;
             _highlightingNavigationManager = highlightingNavigationManager;
+            _smartTagBroker = smartTagBroker;
         }
 
         public override bool IsInterestedInHandledEvents
@@ -51,7 +53,13 @@ namespace NQuery.Authoring.VSEditorWpf
             var key = args.Key;
             var modifiers = args.KeyboardDevice.Modifiers;
 
-            if (modifiers == ModifierKeys.Control && key == Key.Space)
+            if (modifiers == ModifierKeys.Control && key == Key.OemPeriod)
+            {
+                var sessions = _smartTagBroker.GetSessions(_textView);
+                foreach (var session in sessions)
+                    session.State = SmartTagState.Expanded;
+            }
+            else if (modifiers == ModifierKeys.Control && key == Key.Space)
             {
                 CompleteWord();
                 args.Handled = true;

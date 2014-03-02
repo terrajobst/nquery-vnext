@@ -23,5 +23,6 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         IClassificationType Aggregate { get; }
         IClassificationType Operator { get; }
         IClassificationType Variable { get; }
+        IClassificationType Unnecessary { get; }
     }
 }

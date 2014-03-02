@@ -22,5 +22,6 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         IClassificationType Function { get; }
         IClassificationType Aggregate { get; }
         IClassificationType Variable { get; }
+        IClassificationType Unnecessary { get; }
     }
 }

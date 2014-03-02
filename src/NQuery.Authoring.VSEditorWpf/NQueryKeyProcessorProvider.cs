@@ -29,6 +29,9 @@ namespace NQuery.Authoring.VSEditorWpf
         [Import]
         public IHighlightingNavigationManagerProvider HighlightingNavigationManagerProvider { get; set; }
 
+        [Import]
+        public ISmartTagBroker SmartTagBroker { get; set; }
+
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
             return wpfTextView.Properties.GetOrCreateSingletonProperty(() =>
@@ -36,7 +39,7 @@ namespace NQuery.Authoring.VSEditorWpf
                 var completionModelManager = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
                 var signatureHelpManager = SignatureHelpManagerProvider.GetSignatureHelpManager(wpfTextView);
                 var highlightingNavigationManager = HighlightingNavigationManagerProvider.GetHighlightingNavigationManager(wpfTextView);
-                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager, SmartTagBroker);
             });
         }
     }

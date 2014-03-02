@@ -110,5 +110,10 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.VariableClassificationTypeName); }
         }
+
+        public IClassificationType Unnecessary
+        {
+            get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.UnnecessaryClassificationTypeName); }
+        }
     }
 }

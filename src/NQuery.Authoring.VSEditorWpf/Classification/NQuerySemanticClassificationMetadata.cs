@@ -40,6 +40,9 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         public const string VariableClassificationFormatName = "NQuery.Variable.Format";
         public const string VariableClassificationTypeName = "NQuery.Variable";
 
+        public const string UnnecessaryClassificationFormatName = "NQuery.Unnecessary.Format";
+        public const string UnnecessaryClassificationTypeName = "NQuery.Unnecessary";
+
         // Types ------------------
 
 #pragma warning disable 649
@@ -93,6 +96,11 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         [Name(VariableClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition VariableType;
+
+        [Export]
+        [Name(UnnecessaryClassificationTypeName)]
+        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+        public ClassificationTypeDefinition UnnecessaryType;
 
 #pragma warning restore 649
 
@@ -243,6 +251,21 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             {
                 DisplayName = "Variable";
                 ForegroundColor = Colors.DarkCyan;
+            }
+        }
+
+        [Export(typeof(EditorFormatDefinition))]
+        [Name(UnnecessaryClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = UnnecessaryClassificationTypeName)]
+        [UserVisible(true)]
+        [Order(After = PredefinedClassificationTypeNames.Identifier)]
+        [Order(After = PredefinedClassificationTypeNames.Keyword)]
+        public sealed class UnnecessaryFormat : ClassificationFormatDefinition
+        {
+            public UnnecessaryFormat()
+            {
+                DisplayName = "Unnecessary";
+                ForegroundOpacity = 0.6;
             }
         }
     }

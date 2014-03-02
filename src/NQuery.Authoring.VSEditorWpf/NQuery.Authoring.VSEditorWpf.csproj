@@ -91,6 +91,11 @@
     <Compile Include="AsyncTagger.cs" />
     <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
     <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
+    <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
+    <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
+    <Compile Include="CodeActions\CodeActionSet.cs" />
+    <Compile Include="CodeActions\NQueryCodeActionTagger.cs" />
+    <Compile Include="CodeActions\NQueryCodeActionTaggerProvider.cs" />
     <Compile Include="Completion\CompletionModelManager.cs" />
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />

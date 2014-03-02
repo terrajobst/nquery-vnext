@@ -32,6 +32,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             registry.Register(classificationTypes.Aggregate, new HighlightingStyle(new SolidColorBrush(Colors.OrangeRed)));
             registry.Register(classificationTypes.Operator, new HighlightingStyle(new SolidColorBrush(Colors.DarkCyan)));
             registry.Register(classificationTypes.Variable, new HighlightingStyle(new SolidColorBrush(Colors.DarkCyan)));
+            registry.Register(classificationTypes.Unnecessary, new HighlightingStyle(new SolidColorBrush(Colors.Gray)));
         }
     }
 }

@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 namespace NQuery.Authoring.VSEditorWpf
 {
-    internal abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
+    public abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
         where TTag: ITag
     {
         private List<TRawTag> _rawTags = new List<TRawTag>();
