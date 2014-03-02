@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 
 using NQuery.Binding;
-using NQuery.Plan;
+using NQuery.Symbols;
 
 namespace NQuery
 {
@@ -23,33 +23,42 @@ namespace NQuery
             return new SemanticModel(this, bindingResult);
         }
 
-        // TODO: Should this live on SemanticModel?
-        public QueryReader GetQueryReader(bool schemaOnly)
+        public CompiledResult Compile()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundQuery = bindingResult.BoundRoot as BoundQuery;
-            if (boundQuery == null)
-                return null;
+            var boundQuery = GetBoundQuery(bindingResult.BoundRoot);
 
             var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
             var semanticDiagnostics = bindingResult.Diagnostics;
-            var dignostics = syntaxDiagnostics.Concat(semanticDiagnostics).ToArray();
-            if (dignostics.Length > 0)
-                throw new CompilationException(dignostics);
+            var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics).ToList().AsReadOnly();
 
-            var columnNamesAndTypes = boundQuery.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
-            var iterator = PlanBuilder.Build(boundQuery.Relation);
-            return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
+            if (diagnostics.Any())
+                throw new CompilationException(diagnostics);
+
+            return new CompiledResult(boundQuery);
         }
 
-        // TODO: Should this live on SemanticModel?
-        public ShowPlanNode GetShowPlan()
+        private static BoundQuery GetBoundQuery(BoundNode boundRoot)
         {
-            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
-            var boundRoot = bindingResult.BoundRoot as BoundQuery;
-            return boundRoot == null
-                     ? null
-                     : ShowPlanBuilder.Build(bindingResult.BoundRoot);
+            if (boundRoot == null)
+                return null;
+
+            var query = boundRoot as BoundQuery;
+            if (query != null)
+                return query;
+
+            var expression = (BoundExpression) boundRoot;
+            return CreateBoundQuery(expression);
+        }
+
+        private static BoundQuery CreateBoundQuery(BoundExpression expression)
+        {
+            var valueSlot = new ValueSlot("result", expression.Type);
+            var computedValue = new BoundComputedValue(expression, valueSlot);
+            var constantRelation = new BoundConstantRelation();
+            var computeRelation = new BoundComputeRelation(constantRelation, new[] {computedValue});
+            var columnSymbol = new QueryColumnInstanceSymbol(valueSlot.Name, valueSlot);
+            return new BoundQuery(computeRelation, new[] {columnSymbol});
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

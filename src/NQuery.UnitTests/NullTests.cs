@@ -10,11 +10,10 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Null_SelectNullLiteralReturnsObjectNull()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT NULL");
-            var compilation = Compilation.Empty.WithDataContext(DataContext.Default)
-                                               .WithSyntaxTree(syntaxTree);
+            var text = "SELECT NULL";
+            var query = new Query(DataContext.Default, text);
 
-            using (var queryReader = compilation.GetQueryReader(false))
+            using (var queryReader = query.ExecuteReader())
             {
                 Assert.AreEqual(1, queryReader.ColumnCount);
                 Assert.AreEqual(typeof(object), queryReader.GetColumnType(0));
@@ -28,11 +27,10 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Null_SelectNullExpressionReturnsTypedNull()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT 1.0 + NULL");
-            var compilation = Compilation.Empty.WithDataContext(DataContext.Default)
-                                               .WithSyntaxTree(syntaxTree);
+            var text = "SELECT 1.0 + NULL";
+            var query = new Query(DataContext.Default, text);
 
-            using (var queryReader = compilation.GetQueryReader(false))
+            using (var queryReader = query.ExecuteReader())
             {
                 Assert.AreEqual(1, queryReader.ColumnCount);
                 Assert.AreEqual(typeof(double), queryReader.GetColumnType(0));
@@ -46,11 +44,10 @@ namespace NQuery.UnitTests
         [TestMethod]
         public void Null_SelectIsNullReturnsBooleanTrue()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT NULL IS NULL");
-            var compilation = Compilation.Empty.WithDataContext(DataContext.Default)
-                                               .WithSyntaxTree(syntaxTree);
+            var text = "SELECT NULL IS NULL";
+            var query = new Query(DataContext.Default, text);
 
-            using (var queryReader = compilation.GetQueryReader(false))
+            using (var queryReader = query.ExecuteReader())
             {
                 Assert.AreEqual(1, queryReader.ColumnCount);
                 Assert.AreEqual(typeof(bool), queryReader.GetColumnType(0));

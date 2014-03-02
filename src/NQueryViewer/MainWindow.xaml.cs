@@ -110,7 +110,8 @@ namespace NQueryViewer
             if (diagnostics.Any())
                 return;
 
-            var queryReader = semanticModel.Compilation.GetQueryReader(schemaOnly: false);
+            var result = semanticModel.Compilation.Compile();
+            var queryReader = result.CreateQueryReader(schemaOnly:false);
             if (queryReader == null)
                 return;
 
@@ -230,7 +231,8 @@ namespace NQueryViewer
                 if (hasDiagnostics)
                     return;
 
-                ShowPlanView.ShowPlan = semanticModel.Compilation.GetShowPlan();
+                var result = semanticModel.Compilation.Compile();
+                ShowPlanView.ShowPlan = result.GetShowPlan();
             }
         }
 

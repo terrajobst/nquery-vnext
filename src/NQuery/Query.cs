@@ -1,10 +1,13 @@
 using System;
+using System.Threading;
 
 namespace NQuery
 {
     public sealed class Query
     {
         private readonly Compilation _compilation;
+
+        private CompiledResult _result;
 
         public Query(DataContext dataContext, string text)
         {
@@ -16,6 +19,12 @@ namespace NQuery
 
             var syntaxTree = SyntaxTree.ParseQuery(text);
             _compilation = new Compilation(syntaxTree, dataContext);
+        }
+
+        private void EnsureCompiled()
+        {
+            if (_result == null)
+                Interlocked.CompareExchange(ref _result, _compilation.Compile(), null);
         }
 
         public object ExecuteScalar()
@@ -35,12 +44,14 @@ namespace NQuery
 
         public QueryReader ExecuteReader()
         {
-            return _compilation.GetQueryReader(false);
+            EnsureCompiled();
+            return _result.CreateQueryReader(false);
         }
 
         public QueryReader ExecuteSchemaReader()
         {
-            return _compilation.GetQueryReader(true);
+            EnsureCompiled();
+            return _result.CreateQueryReader(true);
         }
 
         public DataContext DataContext

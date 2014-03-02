@@ -1,10 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-
-using NQuery.Symbols;
+using System.Threading;
 
 namespace NQuery
 {
@@ -13,6 +8,8 @@ namespace NQuery
         private readonly Compilation _compilation;
         private readonly T _nullValue;
         private readonly Type _targetType;
+
+        private CompiledResult _result;
 
         public Expression(DataContext dataContext, string text)
             : this(dataContext, text, default(T))
@@ -44,53 +41,32 @@ namespace NQuery
             _compilation = new Compilation(syntaxTree, dataContext);
         }
 
-        private sealed class FakeTable : TableDefinition
+        private void EnsureCompiled()
         {
-            public override string Name
-            {
-                get { return "$FakeTable"; }
-            }
-
-            public override Type RowType
-            {
-                get { return TypeFacts.Missing; }
-            }
-
-            protected override IEnumerable<ColumnDefinition> GetColumns()
-            {
-                return Enumerable.Empty<ColumnDefinition>();
-            }
-
-            public override IEnumerable GetRows()
-            {
-                return new object[] { 0 };
-            }
-        }
-
-        private Query CreateFakeQuery()
-        {
-            var fakeTable = new SchemaTableSymbol(new FakeTable());
-            var dataContext = _compilation.DataContext.AddTables(fakeTable);
-            var text = string.Format("SELECT {0} FROM [$FakeTable]", Text);
-            return new Query(dataContext, text);
+            if (_result == null)
+                Interlocked.CompareExchange(ref _result, _compilation.Compile(), null);
         }
 
         public Type Resolve()
         {
-            // TODO: That's a hack -- expressions should be first class citizens.
-            // TODO: We need to validate the TargetType.
-            var query = CreateFakeQuery();
-            using (var reader = query.ExecuteSchemaReader())
+            EnsureCompiled();
+            using (var reader = _result.CreateQueryReader(true))
                 return reader.GetColumnType(0);
         }
 
         public T Evaluate()
         {
-            // TODO: That's a hack -- expressions should be first class citizens.
-            // TODO: We need to validate the TargetType.
-            var query = CreateFakeQuery();
-            var result = query.ExecuteScalar();
-            return result == null ? NullValue : (T) result;
+            EnsureCompiled();
+            using (var reader = _result.CreateQueryReader(false))
+            {
+                var result = !reader.Read() || reader.ColumnCount == 0
+                    ? null
+                    : reader[0];
+
+                return result == null
+                    ? _nullValue
+                    : (T) result;
+            }
         }
 
         public DataContext DataContext
