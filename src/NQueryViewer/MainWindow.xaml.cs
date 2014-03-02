@@ -232,7 +232,7 @@ namespace NQueryViewer
                     return;
 
                 var result = semanticModel.Compilation.Compile();
-                ShowPlanView.ShowPlan = result.GetShowPlan();
+                ShowPlanView.ShowPlan = result.CreateShowPlan();
             }
         }
 

@@ -32,7 +32,7 @@ namespace NQuery
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
 
-        public ShowPlanNode GetShowPlan()
+        public ShowPlanNode CreateShowPlan()
         {
             return ShowPlanBuilder.Build(_query);
         }
