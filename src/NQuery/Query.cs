@@ -5,7 +5,8 @@ namespace NQuery
 {
     public sealed class Query
     {
-        private readonly Compilation _compilation;
+        private readonly DataContext _dataContext;
+        private readonly string _text;
 
         private CompiledResult _result;
 
@@ -17,14 +18,18 @@ namespace NQuery
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            var syntaxTree = SyntaxTree.ParseQuery(text);
-            _compilation = new Compilation(syntaxTree, dataContext);
+            _dataContext = dataContext;
+            _text = text;
         }
 
         private void EnsureCompiled()
         {
-            if (_result == null)
-                Interlocked.CompareExchange(ref _result, _compilation.Compile(), null);
+            if (_result != null)
+                return;
+
+            var syntaxTree = SyntaxTree.ParseQuery(_text);
+            var compilation = new Compilation(syntaxTree, _dataContext);
+            Interlocked.CompareExchange(ref _result, compilation.Compile(), null);
         }
 
         public object ExecuteScalar()
@@ -56,12 +61,12 @@ namespace NQuery
 
         public DataContext DataContext
         {
-            get { return _compilation.DataContext; }
+            get { return _dataContext; }
         }
 
         public string Text
         {
-            get { return _compilation.SyntaxTree.TextBuffer.Text; }
+            get { return _text; }
         }
     }
 }

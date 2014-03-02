@@ -5,7 +5,8 @@ namespace NQuery
 {
     public sealed class Expression<T>
     {
-        private readonly Compilation _compilation;
+        private readonly DataContext _dataContext;
+        private readonly string _text;
         private readonly T _nullValue;
         private readonly Type _targetType;
 
@@ -35,16 +36,20 @@ namespace NQuery
             if (!typeof(T).IsAssignableFrom(targetType))
                 throw new ArgumentException(string.Format("The target type must be a sub type of {0}", typeof(T).FullName), "targetType");
 
+            _dataContext = dataContext;
+            _text = text;
             _nullValue = nullValue;
             _targetType = targetType;
-            var syntaxTree = SyntaxTree.ParseExpression(text);
-            _compilation = new Compilation(syntaxTree, dataContext);
         }
 
         private void EnsureCompiled()
         {
-            if (_result == null)
-                Interlocked.CompareExchange(ref _result, _compilation.Compile(), null);
+            if (_result != null)
+                return;
+
+            var syntaxTree = SyntaxTree.ParseExpression(_text);
+            var compilation = new Compilation(syntaxTree, _dataContext);
+            Interlocked.CompareExchange(ref _result, compilation.Compile(), null);
         }
 
         public Type Resolve()
@@ -71,12 +76,12 @@ namespace NQuery
 
         public DataContext DataContext
         {
-            get { return _compilation.DataContext; }
+            get { return _dataContext; }
         }
 
         public string Text
         {
-            get { return _compilation.SyntaxTree.TextBuffer.Text; }
+            get { return _text; }
         }
 
         public T NullValue
