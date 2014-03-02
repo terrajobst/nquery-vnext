@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal sealed class SortIterator : Iterator
     {

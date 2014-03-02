@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal abstract class Iterator : IDisposable
     {

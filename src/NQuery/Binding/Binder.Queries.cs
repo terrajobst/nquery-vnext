@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using NQuery.Plan;
+using NQuery.Iterators;
 using NQuery.Symbols;
 using NQuery.Syntax;
 

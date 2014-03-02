@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using NQuery.Binding;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal sealed class ValueSlotSettings
     {

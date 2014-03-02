@@ -7,7 +7,7 @@ using System.Reflection;
 using NQuery.Binding;
 using NQuery.Symbols;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal sealed class ExpressionBuilder
     {

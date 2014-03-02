@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 using NQuery.Binding;
 using NQuery.Symbols;
 
-using System.Linq;
-
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
-    internal sealed class PlanBuilder
+    internal sealed class IteratorBuilder
     {
         public static Iterator Build(BoundRelation relation)
         {
-            var builder = new PlanBuilder();
+            var builder = new IteratorBuilder();
             var result = builder.BuildRelation(relation);
             return result.Iterator;
         }

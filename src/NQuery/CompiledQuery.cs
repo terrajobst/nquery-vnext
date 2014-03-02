@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 
 using NQuery.Binding;
-using NQuery.Plan;
+using NQuery.Iterators;
 
 namespace NQuery
 {
@@ -28,7 +28,7 @@ namespace NQuery
         private QueryReader CreateReader(bool schemaOnly)
         {
             var columnNamesAndTypes = _query.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
-            var iterator = PlanBuilder.Build(_query.Relation);
+            var iterator = IteratorBuilder.Build(_query.Relation);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
 

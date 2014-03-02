@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal sealed class NegatedComparer : IComparer
     {

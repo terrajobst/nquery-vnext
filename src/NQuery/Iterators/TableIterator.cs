@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 
 using NQuery.Symbols;
 
-namespace NQuery.Plan
+namespace NQuery.Iterators
 {
     internal sealed class TableIterator : Iterator
     {
