@@ -55,14 +55,14 @@ namespace NQuery
         public Type Resolve()
         {
             EnsureCompiled();
-            using (var reader = _query.CreateReader(true))
+            using (var reader = _query.CreateSchemaReader())
                 return reader.GetColumnType(0);
         }
 
         public T Evaluate()
         {
             EnsureCompiled();
-            using (var reader = _query.CreateReader(false))
+            using (var reader = _query.CreateReader())
             {
                 var result = !reader.Read() || reader.ColumnCount == 0
                     ? null
