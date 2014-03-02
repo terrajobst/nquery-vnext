@@ -45,7 +45,7 @@
     <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Expression.cs" />
-    <Compile Include="CompiledResult.cs" />
+    <Compile Include="CompiledQuery.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
     <Compile Include="Binding\BoundColumnExpression.cs" />

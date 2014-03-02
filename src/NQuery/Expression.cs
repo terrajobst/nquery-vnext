@@ -10,7 +10,7 @@ namespace NQuery
         private readonly T _nullValue;
         private readonly Type _targetType;
 
-        private CompiledResult _result;
+        private CompiledQuery _query;
 
         public Expression(DataContext dataContext, string text)
             : this(dataContext, text, default(T))
@@ -44,25 +44,25 @@ namespace NQuery
 
         private void EnsureCompiled()
         {
-            if (_result != null)
+            if (_query != null)
                 return;
 
             var syntaxTree = SyntaxTree.ParseExpression(_text);
             var compilation = new Compilation(_dataContext, syntaxTree);
-            Interlocked.CompareExchange(ref _result, compilation.Compile(), null);
+            Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
         }
 
         public Type Resolve()
         {
             EnsureCompiled();
-            using (var reader = _result.CreateQueryReader(true))
+            using (var reader = _query.CreateQueryReader(true))
                 return reader.GetColumnType(0);
         }
 
         public T Evaluate()
         {
             EnsureCompiled();
-            using (var reader = _result.CreateQueryReader(false))
+            using (var reader = _query.CreateQueryReader(false))
             {
                 var result = !reader.Read() || reader.ColumnCount == 0
                     ? null

@@ -23,7 +23,7 @@ namespace NQuery
             return new SemanticModel(this, bindingResult);
         }
 
-        public CompiledResult Compile()
+        public CompiledQuery Compile()
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundQuery = GetBoundQuery(bindingResult.BoundRoot);
@@ -35,7 +35,7 @@ namespace NQuery
             if (diagnostics.Any())
                 throw new CompilationException(diagnostics);
 
-            return new CompiledResult(boundQuery);
+            return new CompiledQuery(boundQuery);
         }
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)

@@ -8,7 +8,7 @@ namespace NQuery
         private readonly DataContext _dataContext;
         private readonly string _text;
 
-        private CompiledResult _result;
+        private CompiledQuery _query;
 
         public Query(DataContext dataContext, string text)
         {
@@ -24,12 +24,12 @@ namespace NQuery
 
         private void EnsureCompiled()
         {
-            if (_result != null)
+            if (_query != null)
                 return;
 
             var syntaxTree = SyntaxTree.ParseQuery(_text);
             var compilation = new Compilation(_dataContext, syntaxTree);
-            Interlocked.CompareExchange(ref _result, compilation.Compile(), null);
+            Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
         }
 
         public object ExecuteScalar()
@@ -50,13 +50,13 @@ namespace NQuery
         public QueryReader ExecuteReader()
         {
             EnsureCompiled();
-            return _result.CreateQueryReader(false);
+            return _query.CreateQueryReader(false);
         }
 
         public QueryReader ExecuteSchemaReader()
         {
             EnsureCompiled();
-            return _result.CreateQueryReader(true);
+            return _query.CreateQueryReader(true);
         }
 
         public DataContext DataContext

@@ -110,8 +110,8 @@ namespace NQueryViewer
             if (diagnostics.Any())
                 return;
 
-            var result = semanticModel.Compilation.Compile();
-            var queryReader = result.CreateQueryReader(schemaOnly:false);
+            var query = semanticModel.Compilation.Compile();
+            var queryReader = query.CreateQueryReader(schemaOnly:false);
             if (queryReader == null)
                 return;
 
