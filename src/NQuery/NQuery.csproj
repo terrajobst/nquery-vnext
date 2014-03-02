@@ -50,7 +50,18 @@
     <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Expression.cs" />
+    <Compile Include="Binding\BoundTreeWalker.Relations.cs" />
+    <Compile Include="Binding\BoundTreeWalker.Expression.cs" />
     <Compile Include="CompiledQuery.cs" />
+    <Compile Include="Binding\BoundTreeWalker.cs" />
+    <Compile Include="Optimization\Condition.cs" />
+    <Compile Include="Optimization\DerivedTableRemover.cs" />
+    <Compile Include="Optimization\JoinLinearizer.cs" />
+    <Compile Include="Optimization\Optimizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Optimization\SelectionPusher.cs" />
+    <Compile Include="Optimization\ValueSlotDependencyFinder.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
     <Compile Include="Binding\BoundColumnExpression.cs" />

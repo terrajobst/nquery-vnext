@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace NQuery.Binding
 {
@@ -43,6 +44,16 @@ namespace NQuery.Binding
                 return this;
 
             return new BoundGroupByAndAggregationRelation(input, groups, aggregates);
+        }
+
+        public override IEnumerable<ValueSlot> GetDefinedValues()
+        {
+            return _aggregates.Select(v => v.Output);
+        }
+
+        public override IEnumerable<ValueSlot> GetOutputValues()
+        {
+            return _input.GetOutputValues().Concat(GetDefinedValues());
         }
     }
 }

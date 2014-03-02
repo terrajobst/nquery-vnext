@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.Symbols;
 
@@ -29,6 +31,16 @@ namespace NQuery.Binding
                 return this;
 
             return new BoundTableRelation(tableInstance);
+        }
+
+        public override IEnumerable<ValueSlot> GetDefinedValues()
+        {
+            return _tableInstance.ColumnInstances.Select(c => c.ValueSlot);
+        }
+
+        public override IEnumerable<ValueSlot> GetOutputValues()
+        {
+            return GetDefinedValues();
         }
     }
 }

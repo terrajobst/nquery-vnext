@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace NQuery.Binding
 {
@@ -28,6 +29,16 @@ namespace NQuery.Binding
         public ReadOnlyCollection<BoundComputedValue> DefinedValues
         {
             get { return _definedValues; }
+        }
+
+        public override IEnumerable<ValueSlot> GetDefinedValues()
+        {
+            return _definedValues.Select(c => c.ValueSlot);
+        }
+
+        public override IEnumerable<ValueSlot> GetOutputValues()
+        {
+            return _input.GetOutputValues().Concat(GetDefinedValues());
         }
 
         public BoundComputeRelation Update(BoundRelation input, IList<BoundComputedValue> definedValues)

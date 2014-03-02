@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading;
 
 namespace NQuery.Binding
 {
@@ -43,6 +42,16 @@ namespace NQuery.Binding
         public ReadOnlyCollection<ValueSlot> Outputs
         {
             get { return _outputs; }
+        }
+
+        public override IEnumerable<ValueSlot> GetDefinedValues()
+        {
+            return _outputs;
+        }
+
+        public override IEnumerable<ValueSlot> GetOutputValues()
+        {
+            return _outputs;
         }
 
         public BoundCombinedRelation Update(BoundQueryCombinator combinator, BoundRelation left, BoundRelation right, IList<ValueSlot> outputs)

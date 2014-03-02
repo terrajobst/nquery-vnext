@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NQuery.Binding
 {
@@ -35,6 +36,16 @@ namespace NQuery.Binding
                 return this;
 
             return new BoundSortRelation(input, sortedValues);
+        }
+
+        public override IEnumerable<ValueSlot> GetDefinedValues()
+        {
+            return Enumerable.Empty<ValueSlot>();
+        }
+
+        public override IEnumerable<ValueSlot> GetOutputValues()
+        {
+            return _input.GetOutputValues();
         }
     }
 }

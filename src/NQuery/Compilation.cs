@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 
 using NQuery.Binding;
+using NQuery.Optimization;
 using NQuery.Symbols;
 
 namespace NQuery
@@ -35,7 +36,9 @@ namespace NQuery
             if (diagnostics.Any())
                 throw new CompilationException(diagnostics);
 
-            return new CompiledQuery(boundQuery);
+            var optimizedQuery = Optimizer.Optimize(boundQuery);
+
+            return new CompiledQuery(optimizedQuery);
         }
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)
