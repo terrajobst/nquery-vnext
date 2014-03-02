@@ -50,13 +50,13 @@ namespace NQuery
         public QueryReader ExecuteReader()
         {
             EnsureCompiled();
-            return _query.CreateQueryReader(false);
+            return _query.CreateReader(false);
         }
 
         public QueryReader ExecuteSchemaReader()
         {
             EnsureCompiled();
-            return _query.CreateQueryReader(true);
+            return _query.CreateReader(true);
         }
 
         public DataContext DataContext

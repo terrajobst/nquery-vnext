@@ -15,7 +15,7 @@ namespace NQuery
             _query = query;
         }
 
-        public QueryReader CreateQueryReader(bool schemaOnly)
+        public QueryReader CreateReader(bool schemaOnly)
         {
             var columnNamesAndTypes = _query.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToArray();
             var iterator = PlanBuilder.Build(_query.Relation);

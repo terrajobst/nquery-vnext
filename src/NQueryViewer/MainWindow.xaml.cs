@@ -111,7 +111,7 @@ namespace NQueryViewer
                 return;
 
             var query = semanticModel.Compilation.Compile();
-            var queryReader = query.CreateQueryReader(schemaOnly:false);
+            var queryReader = query.CreateReader(schemaOnly:false);
             if (queryReader == null)
                 return;
 
