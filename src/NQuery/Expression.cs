@@ -48,7 +48,7 @@ namespace NQuery
                 return;
 
             var syntaxTree = SyntaxTree.ParseExpression(_text);
-            var compilation = new Compilation(syntaxTree, _dataContext);
+            var compilation = new Compilation(_dataContext, syntaxTree);
             Interlocked.CompareExchange(ref _result, compilation.Compile(), null);
         }
 

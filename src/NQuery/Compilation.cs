@@ -8,13 +8,13 @@ namespace NQuery
 {
     public sealed class Compilation
     {
-        private readonly SyntaxTree _syntaxTree;
         private readonly DataContext _dataContext;
+        private readonly SyntaxTree _syntaxTree;
 
-        public Compilation(SyntaxTree syntaxTree, DataContext dataContext)
+        public Compilation(DataContext dataContext, SyntaxTree syntaxTree)
         {
-            _syntaxTree = syntaxTree;
             _dataContext = dataContext;
+            _syntaxTree = syntaxTree;
         }
 
         public SemanticModel GetSemanticModel()
@@ -63,15 +63,15 @@ namespace NQuery
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
         {
-            return _syntaxTree == syntaxTree ? this : new Compilation(syntaxTree, _dataContext);
+            return _syntaxTree == syntaxTree ? this : new Compilation(_dataContext, syntaxTree);
         }
 
         public Compilation WithDataContext(DataContext dataContext)
         {
-            return _dataContext == dataContext ? this : new Compilation(_syntaxTree, dataContext);
+            return _dataContext == dataContext ? this : new Compilation(dataContext, _syntaxTree);
         }
 
-        public static readonly Compilation Empty = new Compilation(SyntaxTree.Empty, DataContext.Empty);
+        public static readonly Compilation Empty = new Compilation(DataContext.Empty, SyntaxTree.Empty);
 
         public SyntaxTree SyntaxTree
         {
