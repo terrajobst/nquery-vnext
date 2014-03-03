@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Binding;
@@ -28,10 +29,7 @@ namespace NQuery
         {
             var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
             var boundQuery = GetBoundQuery(bindingResult.BoundRoot);
-
-            var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
-            var semanticDiagnostics = bindingResult.Diagnostics;
-            var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics).ToList().AsReadOnly();
+            var diagnostics = GetDiagnostics(bindingResult);
 
             if (diagnostics.Any())
                 throw new CompilationException(diagnostics);
@@ -39,6 +37,47 @@ namespace NQuery
             var optimizedQuery = Optimizer.Optimize(boundQuery);
 
             return new CompiledQuery(optimizedQuery);
+        }
+
+        private List<Diagnostic> GetDiagnostics(BindingResult bindingResult)
+        {
+            var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
+            var semanticDiagnostics = bindingResult.Diagnostics;
+            return syntaxDiagnostics.Concat(semanticDiagnostics).ToList();
+        }
+
+        public ShowPlan GetShowPlan()
+        {
+            return GetShowPlanSteps().LastOrDefault();
+        }
+
+        public IEnumerable<ShowPlan> GetShowPlanSteps()
+        {
+            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+
+            if (GetDiagnostics(bindingResult).Any())
+                yield break;
+
+            var inputQuery = GetBoundQuery(bindingResult.BoundRoot);
+            yield return ShowPlanBuilder.Build("Unoptimized", inputQuery);
+
+            var relation = inputQuery.Relation;
+
+            foreach (var rewriter in Optimizer.GetOptimizationSteps())
+            {
+                var step = rewriter.RewriteRelation(relation);
+                if (step != relation)
+                {
+                    var stepName = string.Format("Optimization Step: {0}", rewriter.GetType().Name);
+                    var stepQuery = new BoundQuery(step, inputQuery.OutputColumns);
+                    yield return ShowPlanBuilder.Build(stepName, stepQuery);
+                }
+
+                relation = step;
+            }
+
+            var ouputQuery = new BoundQuery(relation, inputQuery.OutputColumns);
+            yield return ShowPlanBuilder.Build("Optimized", ouputQuery);
         }
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)

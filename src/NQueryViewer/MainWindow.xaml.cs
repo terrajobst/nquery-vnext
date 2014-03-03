@@ -221,18 +221,14 @@ namespace NQueryViewer
         {
             if (CurrentEditorView == null)
             {
-                ShowPlanView.ShowPlan = null;
+                ShowPlanComboBox.ItemsSource = null;
             }
             else
             {
                 var semanticModel = CurrentEditorView.SemanticModel;
-                var syntaxTree = semanticModel.Compilation.SyntaxTree;
-                var hasDiagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).Any();
-                if (hasDiagnostics)
-                    return;
-
-                var result = semanticModel.Compilation.Compile();
-                ShowPlanView.ShowPlan = result.CreateShowPlan();
+                var optimizationSteps = semanticModel.Compilation.GetShowPlanSteps().ToArray();
+                ShowPlanComboBox.ItemsSource = optimizationSteps;
+                ShowPlanComboBox.SelectedItem = optimizationSteps.LastOrDefault();
             }
         }
 

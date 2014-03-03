@@ -62,6 +62,7 @@
     </Compile>
     <Compile Include="Optimization\SelectionPusher.cs" />
     <Compile Include="Optimization\ValueSlotDependencyFinder.cs" />
+    <Compile Include="ShowPlan.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
     <Compile Include="Binding\AggregateArgumentBinder.cs" />
     <Compile Include="Binding\BoundColumnExpression.cs" />

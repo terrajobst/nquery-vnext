@@ -8,7 +8,13 @@ namespace NQuery
 {
     internal static class ShowPlanBuilder
     {
-        public static ShowPlanNode Build(BoundNode node)
+        public static ShowPlan Build(string name, BoundQuery node)
+        {
+            var showPlanNode = Build(node);
+            return new ShowPlan(name, showPlanNode);
+        }
+
+        private static ShowPlanNode Build(BoundNode node)
         {
             switch (node.Kind)
             {

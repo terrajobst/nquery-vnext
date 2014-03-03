@@ -31,10 +31,5 @@ namespace NQuery
             var iterator = IteratorBuilder.Build(_query.Relation);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }
-
-        public ShowPlanNode CreateShowPlan()
-        {
-            return ShowPlanBuilder.Build(_query);
-        }
     }
 }

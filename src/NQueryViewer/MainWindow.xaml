@@ -66,8 +66,18 @@
                                             MouseDoubleClick="DiagnosticGridMouseDoubleClick" />
                     </TabItem>
                     <TabItem Header="Execution Plan">
-                        <wpf:ShowPlanView x:Name="ShowPlanView"
-                                           ShowPlan="{Binding Plan}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ComboBox Grid.Row="0"
+                                      x:Name="ShowPlanComboBox"
+                                      DisplayMemberPath="Name"/>
+                            <wpf:ShowPlanView x:Name="ShowPlanView"
+                                              Grid.Row="1"
+                                              ShowPlan="{Binding ElementName=ShowPlanComboBox, Path=SelectedItem.Root}" />
+                        </Grid>
                     </TabItem>
                     <TabItem x:Name="ResultsTabItem"
                              Header="Results">

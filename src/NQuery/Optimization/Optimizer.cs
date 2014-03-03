@@ -20,7 +20,7 @@ namespace NQuery.Optimization
             return relation;
         }
 
-        private static IEnumerable<BoundTreeRewriter> GetOptimizationSteps()
+        public static IEnumerable<BoundTreeRewriter> GetOptimizationSteps()
         {
             // TODO: This shouldn't be necessary
             yield return new DerivedTableRemover();
