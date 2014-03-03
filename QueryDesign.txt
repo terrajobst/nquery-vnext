@@ -1,0 +1,36 @@
+QueryDesign
+	Compilation: Compilation
+	Columns: ImmutableArray<ColumDesign>
+		QueryColumn: QueryColumnInstanceSymbol
+		TableColumn: TableColumnInstanceSymbol
+		Table: TableInstanceSymbol
+		Text: string
+		Alias: string
+		Sort: QuerySortOrder
+		SortOrder: int
+		Aggregate: AggregateSymbol
+		GroupOrder: int?
+	Joins: ImmutableArray<JoinDesign>
+		Kind: JoinKindDesign
+		Left: TableInstanceSymbol
+		LeftColumn: TableColumnInstanceSymbol
+		Right: TableInstanceSymbol
+		RightColumn: TableColumnInstanceSymbol
+	Tables: ImmutableArray<TableInstance>
+
+	AddColumn(): QueryDesign
+	RemoveColumn(ColumDesign): QueryDesign
+	SetTable(ColumDesign column, TableSymbol table): QueryDesign
+    SetText(ColumDesign column, string text): QueryDesign
+    SetAlias(ColumDesign column, string alias): QueryDesign
+    SetSort(ColumDesign column, QuerySortOrder sort): QueryDesign
+    SetSortOrder(ColumDesign column, int sortOrder): QueryDesign
+    SetAggregate(ColumDesign column, AggregateSymbol aggregate): QueryDesign
+    SetGroupOrder(ColumDesign column, int? groupOrder): QueryDesign
+
+    AddJoin(TableColumnInstanceSymbol column1, TableColumnInstanceSymbol column2): QueryDesign
+    RemoveJoin(JoinDesign join): QueryDesign
+    SetJoinKind(JoinDesign join, JoinKindDesign kind): QueryDesign
+
+    AddTable(TableSymbol table): QueryDesign
+    RemoveTable(TableInstanceSymbol table): QueryDesign

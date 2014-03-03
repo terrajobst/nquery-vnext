@@ -1,0 +1,63 @@
+﻿<Window x:Class="NQueryDesigner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:NQueryDesigner.Controls"
+        Title="MainWindow"
+        Width="800"
+        Height="600"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="DataGridCell">
+                <Style.Triggers>
+                    <Trigger Property="IsKeyboardFocusWithin"
+                             Value="true">
+                        <Setter Property="BorderBrush"
+                                Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                    </Trigger>
+                </Style.Triggers>
+                <Setter Property="FocusVisualStyle">
+                    <Setter.Value>
+                        <Style />
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="3" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ItemsControl ItemsSource="{Binding Path=Tables}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <controls:TableControl />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <GridSplitter Grid.Row="1"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"/>
+        <DataGrid Grid.Row="2"
+                  GridLinesVisibility="None"
+                  ItemsSource="{Binding Path=SelectionRows}"/>
+        <GridSplitter Grid.Row="3"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"/>
+        <TextBox Grid.Row="4"
+                 AcceptsReturn="True"
+                 AcceptsTab="True"
+                 FontFamily="Source Code Pro"
+                 FontSize="10pt"
+                 Text="{Binding Path=Text}"/>
+    </Grid>
+</Window>
