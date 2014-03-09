@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Selection;
 using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection
 {

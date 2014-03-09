@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery
 {

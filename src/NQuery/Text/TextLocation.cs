@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery
+namespace NQuery.Text
 {
     public struct TextLocation : IEquatable<TextLocation>
     {

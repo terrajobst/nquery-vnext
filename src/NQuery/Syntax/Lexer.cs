@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
+using NQuery.Text;
+
 namespace NQuery.Syntax
 {
     internal sealed class Lexer

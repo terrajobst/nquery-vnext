@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 
+using NQuery.Text;
+
 namespace NQuery
 {
     public sealed class SyntaxToken

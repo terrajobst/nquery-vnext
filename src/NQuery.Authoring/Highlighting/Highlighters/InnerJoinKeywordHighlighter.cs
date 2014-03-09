@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.Highlighting.Highlighters
 {

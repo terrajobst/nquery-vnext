@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.Wpf
 {
     internal sealed class SyntaxNodeViewModel

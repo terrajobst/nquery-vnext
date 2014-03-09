@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
 {

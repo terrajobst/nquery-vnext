@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery
 {

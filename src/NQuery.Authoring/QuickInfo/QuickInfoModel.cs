@@ -1,6 +1,7 @@
 using System;
 
 using NQuery.Symbols;
+using NQuery.Text;
 
 namespace NQuery.Authoring.QuickInfo
 {

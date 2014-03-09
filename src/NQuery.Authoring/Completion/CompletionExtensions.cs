@@ -2,6 +2,7 @@
 using System.Linq;
 
 using NQuery.Authoring.Completion.Providers;
+using NQuery.Text;
 
 namespace NQuery.Authoring.Completion
 {

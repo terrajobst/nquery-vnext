@@ -1,6 +1,8 @@
 using System;
 using System.Globalization;
 
+using NQuery.Text;
+
 namespace NQuery
 {
     public sealed class Diagnostic

@@ -4,6 +4,7 @@ using System.Windows.Controls;
 
 using NQuery;
 using NQuery.Authoring;
+using NQuery.Text;
 
 namespace NQueryViewer.Editor
 {

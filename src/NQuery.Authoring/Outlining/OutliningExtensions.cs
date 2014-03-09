@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.Outlining
 {
     public static class OutliningExtensions

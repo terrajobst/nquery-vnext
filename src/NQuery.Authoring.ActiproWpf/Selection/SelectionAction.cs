@@ -5,6 +5,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Implementation;
 
 using NQuery.Authoring.Selection;
+using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Selection
 {

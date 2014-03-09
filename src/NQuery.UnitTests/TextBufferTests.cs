@@ -2,6 +2,8 @@ using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using NQuery.Text;
+
 namespace NQuery.UnitTests
 {
     [TestClass]

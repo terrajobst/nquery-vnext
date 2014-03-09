@@ -1,6 +1,7 @@
 using System;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions
 {

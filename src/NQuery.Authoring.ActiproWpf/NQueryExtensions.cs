@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.ActiproWpf
 {
     public static class NQueryExtensions

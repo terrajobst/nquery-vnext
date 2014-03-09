@@ -1,5 +1,7 @@
 using System;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.BraceMatching.Matchers
 {
     internal sealed class IdentifierBraceMatcher : SingleTokenBraceMatcher

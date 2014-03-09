@@ -3,6 +3,7 @@ using System.Windows;
 
 using NQuery;
 using NQuery.Authoring;
+using NQuery.Text;
 
 namespace NQueryViewer.Editor
 {

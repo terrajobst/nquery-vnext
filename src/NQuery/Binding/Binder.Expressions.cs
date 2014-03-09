@@ -4,6 +4,7 @@ using System.Linq;
 
 using NQuery.Symbols;
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Binding
 {

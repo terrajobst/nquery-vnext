@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using NQuery.Authoring.BraceMatching.Matchers;
+using NQuery.Text;
 
 namespace NQuery.Authoring.BraceMatching
 {

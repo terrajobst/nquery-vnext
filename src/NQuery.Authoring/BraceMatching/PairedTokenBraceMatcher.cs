@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.BraceMatching
 {
     internal abstract class PairedTokenBraceMatcher : IBraceMatcher

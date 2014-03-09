@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text;
 
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Wpf;
+using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion
 {

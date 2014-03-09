@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.Wpf
 {
     public sealed partial class SyntaxTreeVisualizer

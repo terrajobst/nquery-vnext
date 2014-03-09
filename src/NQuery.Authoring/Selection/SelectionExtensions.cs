@@ -1,4 +1,6 @@
-﻿namespace NQuery.Authoring.Selection
+﻿using NQuery.Text;
+
+namespace NQuery.Authoring.Selection
 {
     public static class SelectionExtensions
     {

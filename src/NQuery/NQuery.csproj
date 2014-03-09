@@ -188,7 +188,7 @@
     <Compile Include="SyntaxExtensions.cs" />
     <Compile Include="SyntaxTreeEquivalence.cs" />
     <Compile Include="SyntaxTreeNavigation.cs" />
-    <Compile Include="TextLocation.cs" />
+    <Compile Include="Text\TextLocation.cs" />
     <Compile Include="SemanticModel.cs" />
     <Compile Include="TypeFacts.cs" />
     <Compile Include="Symbols\ErrorTableSymbol.cs" />
@@ -282,9 +282,9 @@
     <Compile Include="SyntaxVisitorOfTResult.cs" />
     <Compile Include="SyntaxWalker.cs" />
     <Compile Include="Syntax\TableReferenceSyntax.cs" />
-    <Compile Include="TextBuffer.cs" />
-    <Compile Include="TextLine.cs" />
-    <Compile Include="TextSpan.cs" />
+    <Compile Include="Text\TextBuffer.cs" />
+    <Compile Include="Text\TextLine.cs" />
+    <Compile Include="Text\TextSpan.cs" />
     <Compile Include="Syntax\TopClauseSyntax.cs" />
     <Compile Include="Syntax\UnaryExpressionSyntax.cs" />
     <Compile Include="Syntax\UnionQuerySyntax.cs" />

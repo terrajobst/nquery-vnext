@@ -1,5 +1,7 @@
 ﻿using System;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.Classifications
 {
     public struct SyntaxClassificationSpan
