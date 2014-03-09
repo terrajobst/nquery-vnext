@@ -843,7 +843,7 @@ namespace NQuery.Binding
                 if (existingSlot == null)
                 {
                     var slot = ValueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
-                    queryState.ComputedAggregates.Add(new ComputedValue(aggregate, boundAggregate, slot));
+                    queryState.ComputedAggregates.Add(new BoundComputedValueWithSyntax(aggregate, boundAggregate, slot));
                 }
             }
 

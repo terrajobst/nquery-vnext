@@ -41,6 +41,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\BoundComputedValueWithSyntax.cs" />
+    <Compile Include="Binding\BoundGroupByClause.cs" />
+    <Compile Include="Binding\BoundOrderByClause.cs" />
+    <Compile Include="Binding\BoundOrderBySelector.cs" />
+    <Compile Include="Binding\BoundQueryState.cs" />
     <Compile Include="Binding\BoundTreeRewriter.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />

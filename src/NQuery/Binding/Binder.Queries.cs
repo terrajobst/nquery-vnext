@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 using NQuery.Iterators;
@@ -10,83 +9,9 @@ using NQuery.Syntax;
 
 namespace NQuery.Binding
 {
-    internal struct ComputedValue
-    {
-        private readonly ExpressionSyntax _syntax;
-        private readonly BoundExpression _expression;
-        private readonly ValueSlot _result;
-
-        public ComputedValue(ExpressionSyntax syntax, BoundExpression expression, ValueSlot result)
-        {
-            _syntax = syntax;
-            _expression = expression;
-            _result = result;
-        }
-
-        public ExpressionSyntax Syntax
-        {
-            get { return _syntax; }
-        }
-
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
-
-        public ValueSlot Result
-        {
-            get { return _result; }
-        }
-    }
-
-    internal sealed class QueryState
-    {
-        private readonly QueryState _parent;
-        private readonly HashSet<TableInstanceSymbol> _introducedTables = new HashSet<TableInstanceSymbol>();
-        private readonly List<ComputedValue> _computedGroupings = new List<ComputedValue>();
-        private readonly List<ComputedValue> _computedAggregates = new List<ComputedValue>(); 
-        private readonly List<ComputedValue> _computedProjections = new List<ComputedValue>(); 
-        private readonly Dictionary<ExpressionSyntax, ValueSlot> _replacedExpression = new Dictionary<ExpressionSyntax, ValueSlot>();
-
-        public QueryState(QueryState parent)
-        {
-            _parent = parent;
-        }
-
-        public QueryState Parent
-        {
-            get { return _parent; }
-        }
-
-        public HashSet<TableInstanceSymbol> IntroducedTables
-        {
-            get { return _introducedTables; }
-        }
-
-        public List<ComputedValue> ComputedGroupings
-        {
-            get { return _computedGroupings; }
-        }
-
-        public List<ComputedValue> ComputedAggregates
-        {
-            get { return _computedAggregates; }
-        }
-
-        public List<ComputedValue> ComputedProjections
-        {
-            get { return _computedProjections; }
-        }
-
-        public Dictionary<ExpressionSyntax, ValueSlot> ReplacedExpression
-        {
-            get { return _replacedExpression; }
-        }
-    }
-
     partial class Binder
     {
-        public virtual QueryState QueryState
+        public virtual BoundQueryState QueryState
         {
             get { return _parent == null ? null : _parent.QueryState; }
         }
@@ -143,7 +68,7 @@ namespace NQuery.Binding
             return columnExpression != null ? columnExpression.Symbol.Name : null;
         }
 
-        private QueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)
+        private BoundQueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)
         {
             var queryState = QueryState;
             while (queryState != null)
@@ -208,7 +133,7 @@ namespace NQuery.Binding
             return true;
         }
 
-        private static ValueSlot FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<ComputedValue> candidates)
+        private static ValueSlot FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
         {
             return (from c in candidates
                     where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
@@ -889,7 +814,7 @@ namespace NQuery.Binding
             if (!TryGetExistingValue(boundExpression, out valueSlot))
             {
                 valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
-                QueryState.ComputedProjections.Add(new ComputedValue(expression, boundExpression, valueSlot));
+                QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
             }
 
             var queryColumn = new QueryColumnInstanceSymbol(name, valueSlot);
@@ -1038,7 +963,7 @@ namespace NQuery.Binding
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
-                QueryState.ComputedGroupings.Add(new ComputedValue(expression, boundExpression, valueSlot));
+                QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
 
                 boundColumns.Add(valueSlot);
             }
@@ -1224,60 +1149,8 @@ namespace NQuery.Binding
                 return new BoundOrderBySelector(valueSlot, null);
 
             valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
-            var computedValue = new ComputedValue(selector, boundSelector, valueSlot);
+            var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
             return new BoundOrderBySelector(valueSlot, computedValue);
-        }
-    }
-
-    internal struct BoundOrderBySelector
-    {
-        private readonly ValueSlot _valueSlot;
-        private readonly ComputedValue? _computedValue;
-
-        public BoundOrderBySelector(ValueSlot valueSlot, ComputedValue? computedValue)
-        {
-            _valueSlot = valueSlot;
-            _computedValue = computedValue;
-        }
-
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
-
-        public ComputedValue? ComputedValue
-        {
-            get { return _computedValue; }
-        }
-    }
-
-    internal sealed class BoundGroupByClause
-    {
-        private readonly ReadOnlyCollection<ValueSlot> _columns;
-
-        public BoundGroupByClause(IList<ValueSlot> columns)
-        {
-            _columns = new ReadOnlyCollection<ValueSlot>(columns);
-        }
-
-        public ReadOnlyCollection<ValueSlot> Columns
-        {
-            get { return _columns; }
-        }
-    }
-
-    internal sealed class BoundOrderByClause
-    {
-        private readonly ReadOnlyCollection<BoundOrderByColumn> _columns;
-
-        public BoundOrderByClause(IList<BoundOrderByColumn> columns)
-        {
-            _columns = new ReadOnlyCollection<BoundOrderByColumn>(columns);
-        }
-
-        public ReadOnlyCollection<BoundOrderByColumn> Columns
-        {
-            get { return _columns; }
         }
     }
 }

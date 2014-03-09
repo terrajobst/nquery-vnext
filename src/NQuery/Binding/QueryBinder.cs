@@ -4,15 +4,15 @@ namespace NQuery.Binding
 {
     internal sealed class QueryBinder : Binder
     {
-        private readonly QueryState _queryState;
+        private readonly BoundQueryState _queryState;
 
         public QueryBinder(SharedBinderState sharedBinderState, Binder parent)
             : base(sharedBinderState, parent)
         {
-            _queryState = new QueryState(parent.QueryState);
+            _queryState = new BoundQueryState(parent.QueryState);
         }
 
-        public override QueryState QueryState
+        public override BoundQueryState QueryState
         {
             get { return _queryState; }
         }
