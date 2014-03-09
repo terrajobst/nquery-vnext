@@ -124,6 +124,32 @@ namespace NQuery.Binding
             return boundExpressions.Select((e, i) => BindConversion(expressions[i].Span, e, commonType)).ToArray();
         }
 
+        private void BindToCommonType(TextSpan errorSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
+        {
+            newLeft = null;
+            newRight = null;
+
+            if (left.Type == right.Type || left.Type.IsError() || right.Type.IsError())
+                return;
+
+            var conversionLeftToRight = Conversion.Classify(left.Type, right.Type);
+            var conversionRightToLeft = Conversion.Classify(right.Type, left.Type);
+
+            if (conversionLeftToRight.IsImplicit && conversionRightToLeft.IsImplicit)
+            {
+                // TODO: We may want to report an ambiguity error here.
+            }
+            
+            if (conversionLeftToRight.IsImplicit)
+            {
+                newLeft = BindConversion(errorSpan, new BoundValueSlotExpression(left), right.Type);
+            }
+            else
+            {
+                newRight = BindConversion(errorSpan, new BoundValueSlotExpression(right), left.Type);
+            }
+        }
+
         private BoundExpression BindConversion(TextSpan errorSpan, BoundExpression expression, Type targetType)
         {
             var sourceType = expression.Type;
@@ -947,13 +973,19 @@ namespace NQuery.Binding
             var left = BindExpression(leftNode);
             var boundQuery = BindSubquery(queryNode);
 
+            if (boundQuery.OutputColumns.Count == 0)
+            {
+                var outputValue = ValueSlotFactory.CreateTemporaryValueSlot(typeof(bool));
+                return new BoundValueSlotExpression(outputValue);
+            }
+
             if (boundQuery.OutputColumns.Count > 1)
             {
                 // TODO: Error
             }
 
             var rightColumn = boundQuery.OutputColumns[0];
-            var right = new BoundColumnExpression(rightColumn);
+            var right = new BoundValueSlotExpression(rightColumn.ValueSlot);
 
             // To avoid cascading errors, we'll only validate the operator
             // if we could resolve both sides.
@@ -973,13 +1005,23 @@ namespace NQuery.Binding
             var convertedLeft = BindArgument(left, result, 0);
             var convertedRight = BindArgument(right, result, 1);
 
-            if (convertedRight != right)
+            BoundRelation relation;
+
+            if (convertedRight == right)
             {
-                // TODO: We need a BoundNode that can convert the output of a query.
-                throw new NotImplementedException("Converting right side of ALL/ANY/SOME not implemented yet.");
+                relation = boundQuery.Relation;
+            }
+            else
+            {
+                var outputValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedRight.Type);
+                var outputValues = new[] {outputValue};
+                var computedValue = new BoundComputedValue(convertedRight, outputValue);
+                var computedValues = new[] {computedValue};
+                var computeRelation = new BoundComputeRelation(boundQuery.Relation, computedValues);
+                relation = new BoundProjectRelation(computeRelation, outputValues);
             }
 
-            return new BoundAllAnySubselect(convertedLeft, boundQuery.Relation, result);
+            return new BoundAllAnySubselect(convertedLeft, relation, result);
         }
     }
 }

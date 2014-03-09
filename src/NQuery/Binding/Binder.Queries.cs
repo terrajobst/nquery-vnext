@@ -284,8 +284,6 @@ namespace NQuery.Binding
 
         private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
         {
-            // TODO: Ensure all types are identical, if not we need to insert conversion operators
-
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
@@ -293,42 +291,50 @@ namespace NQuery.Binding
             if (left.OutputColumns.Count != right.OutputColumns.Count)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
 
-            foreach (var column in columns)
+            BoundRelation leftInput;
+            BoundRelation rightInput;
+            var leftOutputValues = BindToCommonTypes(node.ExceptKeyword.Span, left, right, out leftInput, out rightInput);
+
+            var outputValues = leftOutputValues;
+            var outputColumns = BindOutputColumns(columns, outputValues);
+
+            foreach (var column in outputColumns)
                 BindComparer(column.Type, node.ExceptKeyword.Span, DiagnosticId.InvalidDataTypeInExcept);
 
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQuery(relation, columns);
+            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, leftInput, rightInput, outputValues);
+            return new BoundQuery(relation, outputColumns);
         }
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
         {
-            // TODO: Ensure all types are identical, if not we need to insert conversion operators
-
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var combinator = node.AllKeyword == null
                                  ? BoundQueryCombinator.Union
                                  : BoundQueryCombinator.UnionAll;
-            var columns = left.OutputColumns
-                              .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
-                              .ToArray();
-
-            if (combinator == BoundQueryCombinator.Union)
-            {
-                foreach (var column in columns)
-                    BindComparer(column.Type, node.UnionKeyword.Span, DiagnosticId.InvalidDataTypeInUnion);
-            }
 
             if (left.OutputColumns.Count != right.OutputColumns.Count)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
 
-            var relation = new BoundCombinedRelation(combinator, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQuery(relation, columns);
+            BoundRelation leftInput;
+            BoundRelation rightInput;
+            var leftOutputValues = BindToCommonTypes(node.UnionKeyword.Span, left, right, out leftInput, out rightInput);
+
+            var outputValues = leftOutputValues.Select(c => ValueSlotFactory.CreateTemporaryValueSlot(c.Type)).ToArray();
+            var outputColumns = BindOutputColumns(left.OutputColumns, outputValues);
+
+            if (combinator == BoundQueryCombinator.Union)
+            {
+                foreach (var column in outputColumns)
+                    BindComparer(column.Type, node.UnionKeyword.Span, DiagnosticId.InvalidDataTypeInUnion);
+            }
+
+            var relation = new BoundCombinedRelation(combinator, leftInput, rightInput, outputValues);
+            return new BoundQuery(relation, outputColumns);
         }
 
         private BoundQuery BindIntersectQuery(IntersectQuerySyntax node)
         {
-            // TODO: Ensure all types are identical, if not we need to insert conversion operators
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
@@ -336,11 +342,95 @@ namespace NQuery.Binding
             if (left.OutputColumns.Count != right.OutputColumns.Count)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.IntersectKeyword.Span);
 
-            foreach (var column in columns)
+            BoundRelation leftInput;
+            BoundRelation rightInput;
+            var leftOutputValues = BindToCommonTypes(node.IntersectKeyword.Span, left, right, out leftInput, out rightInput);
+
+            var outputValues = leftOutputValues;
+            var outputColumns = BindOutputColumns(columns, outputValues);
+
+            foreach (var column in outputColumns)
                 BindComparer(column.Type, node.IntersectKeyword.Span, DiagnosticId.InvalidDataTypeInIntersect);
 
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, left.Relation, right.Relation, columns.Select(c => c.ValueSlot).ToArray());
-            return new BoundQuery(relation, columns);
+            var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, leftInput, rightInput, outputValues);
+            return new BoundQuery(relation, outputColumns);
+        }
+
+        private IList<ValueSlot> BindToCommonTypes(TextSpan errorSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
+        {
+            var columnCount = Math.Min(left.OutputColumns.Count, right.OutputColumns.Count);
+
+            var leftComputedValues = new List<BoundComputedValue>(columnCount);
+            var leftOutputs = new List<ValueSlot>(columnCount);
+
+            var rightComputedValues = new List<BoundComputedValue>(columnCount);
+            var rightOutputs = new List<ValueSlot>(columnCount);
+
+            for (var i = 0; i < columnCount; i++)
+            {
+                var leftValue = left.OutputColumns[i].ValueSlot;
+                var rightValue = right.OutputColumns[i].ValueSlot;
+
+                BoundExpression convertedLeft;
+                BoundExpression convertedRight;
+                BindToCommonType(errorSpan, leftValue, rightValue, out convertedLeft, out convertedRight);
+
+                if (convertedLeft == null)
+                {
+                    leftOutputs.Add(leftValue);
+                }
+                else
+                {
+                    var newLeftValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedLeft.Type);
+                    var computedValue = new BoundComputedValue(convertedLeft, newLeftValue);
+                    leftComputedValues.Add(computedValue);
+                    leftOutputs.Add(newLeftValue);
+                }
+
+                if (convertedRight == null)
+                {
+                    rightOutputs.Add(rightValue);
+                }
+                else
+                {
+                    var newRightValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedRight.Type);
+                    var computedValue = new BoundComputedValue(convertedRight, newRightValue);
+                    rightComputedValues.Add(computedValue);
+                    rightOutputs.Add(newRightValue);
+                }
+            }
+
+            newLeft = leftComputedValues.Count == 0
+                ? left.Relation
+                : new BoundProjectRelation(new BoundComputeRelation(left.Relation, leftComputedValues), leftOutputs);
+
+            newRight = rightComputedValues.Count == 0
+                ? right.Relation
+                : new BoundProjectRelation(new BoundComputeRelation(right.Relation, rightComputedValues), rightOutputs);
+
+            return leftOutputs;
+        }
+
+        private static IList<QueryColumnInstanceSymbol> BindOutputColumns(IList<QueryColumnInstanceSymbol> inputColumns, IList<ValueSlot> outputValues)
+        {
+            var result = new List<QueryColumnInstanceSymbol>(inputColumns.Count);
+
+            for (var i = 0; i < inputColumns.Count; i++)
+            {
+                if (i >= outputValues.Count)
+                    break;
+
+                var queryColum = inputColumns[i];
+                var valueSlot = outputValues[i];
+
+                var resultColumn = queryColum.ValueSlot == valueSlot
+                    ? queryColum
+                    : new QueryColumnInstanceSymbol(queryColum.Name, valueSlot);
+
+                result.Add(resultColumn);
+            }
+
+            return result;
         }
 
         private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)

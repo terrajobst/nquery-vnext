@@ -61,7 +61,9 @@
     <Compile Include="AllAnySubselectExressionTests.cs" />
     <Compile Include="BetweenExpressionTests.cs" />
     <Compile Include="BinaryOperatorExpressionTests.cs" />
+    <Compile Include="CombinedQueryTest.cs" />
     <Compile Include="ComparerTests.cs" />
+    <Compile Include="CompilationFactory.cs" />
     <Compile Include="DynamicTests.cs" />
     <Compile Include="ExpressionTests.cs" />
     <Compile Include="GroupByAndAggregationTests.cs" />
@@ -99,6 +101,10 @@
     <Compile Include="UnaryOperatorExpressionTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
+      <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
+      <Name>NQuery.Data.Samples</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
       <Project>{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}</Project>
       <Name>NQuery.Data</Name>
