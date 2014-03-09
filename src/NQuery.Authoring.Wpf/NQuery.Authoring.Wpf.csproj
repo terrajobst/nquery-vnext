@@ -36,7 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -52,9 +51,7 @@
     </Compile>
     <Compile Include="Diagnostics\DiagnosticsViewModel.cs" />
     <Compile Include="Diagnostics\DiagnosticViewModel.cs" />
-    <Compile Include="Glyphs\INQueryGlyphService.cs" />
-    <Compile Include="Glyphs\NQueryGlyphService.cs" />
-    <Compile Include="Glyphs\NQueryGlyphServiceExtensions.cs" />
+    <Compile Include="Glyphs\NQueryGlyphImageSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

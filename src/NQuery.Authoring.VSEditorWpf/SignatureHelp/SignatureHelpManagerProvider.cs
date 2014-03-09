@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Authoring.SignatureHelp;
+using NQuery.Authoring.Composition.SignatureHelp;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
@@ -19,15 +18,15 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         [Import]
         public ISignatureHelpBroker SignatureHelpBroker { get; set; }
 
-        [ImportMany]
-        public IEnumerable<ISignatureModelProvider> SignatureModelProviders { get; set; }
+        [Import]
+        public ISignatureHelpModelProviderService SignatureHelpModelProviderService { get; set; }
 
         public ISignatureHelpManager GetSignatureHelpManager(ITextView textView)
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
                 var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new SignatureHelpManager(textView, document, SignatureHelpBroker, SignatureModelProviders);
+                return new SignatureHelpManager(textView, document, SignatureHelpBroker, SignatureHelpModelProviderService);
             });
         }
     }

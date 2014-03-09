@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions.Refactorings
 {
-    [Export(typeof(ICodeRefactoringProvider))]
     internal sealed class AddAsAliasCodeRefactoringProvider : CodeRefactoringProvider<AliasSyntax>
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, AliasSyntax node)

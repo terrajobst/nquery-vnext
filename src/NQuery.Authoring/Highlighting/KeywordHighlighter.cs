@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace NQuery.Authoring.Highlighting
 {
-    public abstract class KeywordHighlighter<T> : IHighlighter
+    internal abstract class KeywordHighlighter<T> : IHighlighter
         where T: SyntaxNode
     {
         public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)

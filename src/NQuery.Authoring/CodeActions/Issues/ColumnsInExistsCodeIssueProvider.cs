@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.CodeActions.Issues
 {
-    [Export(typeof(ICodeIssueProvider))]
     internal sealed class ColumnsInExistsCodeIssueProvider : CodeIssueProvider<ExistsSubselectSyntax>
     {
         protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, ExistsSubselectSyntax node)

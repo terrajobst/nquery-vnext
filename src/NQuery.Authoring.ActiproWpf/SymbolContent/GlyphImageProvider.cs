@@ -9,18 +9,16 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     internal sealed class GlyphImageProvider : IImageSourceProvider
     {
-        private readonly INQueryGlyphService _glyphService;
         private readonly NQueryGlyph _glyph;
 
-        public GlyphImageProvider(INQueryGlyphService glyphService, NQueryGlyph glyph)
+        public GlyphImageProvider(NQueryGlyph glyph)
         {
-            _glyphService = glyphService;
             _glyph = glyph;
         }
 
         public ImageSource GetImageSource()
         {
-            return _glyphService.GetGlyph(_glyph);
+            return NQueryGlyphImageSource.Get(_glyph);
         }
     }
 }

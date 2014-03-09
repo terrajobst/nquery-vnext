@@ -1,5 +1,5 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Collections.ObjectModel;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Analysis;
@@ -9,15 +9,13 @@ using NQuery.Authoring.BraceMatching;
 
 namespace NQuery.Authoring.ActiproWpf.BraceMatching
 {
-    [ExportLanguageService(typeof(IStructureMatcher))]
-    internal sealed class NQueryBraceMatcher : IStructureMatcher
+    internal sealed class NQueryBraceMatcher : INQueryBraceMatcher
     {
-        private readonly IBraceMatchingService _braceMatchingService;
+        private readonly Collection<IBraceMatcher> _matchers = new Collection<IBraceMatcher>();
 
-        [ImportingConstructor]
-        public NQueryBraceMatcher(IBraceMatchingService braceMatchingService)
+        public Collection<IBraceMatcher> Matchers
         {
-            _braceMatchingService = braceMatchingService;
+            get { return _matchers; }
         }
 
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
@@ -31,13 +29,12 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
             var textBuffer = syntaxTree.TextBuffer;
             var position = snapshotOffset.ToOffset(textBuffer);
 
-            TextSpan leftSpan;
-            TextSpan rightSpan;
-            if (!_braceMatchingService.TryFindBrace(syntaxTree, position, out leftSpan, out rightSpan))
+            var result = syntaxTree.FindBrace(position, _matchers);
+            if (!result.IsValid)
                 return null;
 
-            var leftRange = textBuffer.ToSnapshotRange(snapshot, leftSpan);
-            var rightRange = textBuffer.ToSnapshotRange(snapshot, rightSpan);
+            var leftRange = textBuffer.ToSnapshotRange(snapshot, result.Left);
+            var rightRange = textBuffer.ToSnapshotRange(snapshot, result.Right);
             var results = new StructureMatchResultCollection
                               {
                                   new StructureMatchResult(leftRange),

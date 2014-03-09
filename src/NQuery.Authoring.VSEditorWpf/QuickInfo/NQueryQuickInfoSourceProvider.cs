@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.VSEditorWpf.Classification;
-using NQuery.Authoring.Wpf;
 
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
@@ -16,9 +15,6 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
     [ContentType("NQuery")]
     internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider
     {
-        [Import]
-        public INQueryGlyphService GlyphService { get; set; }
-
         [Import]
         public IClassificationFormatMapService ClassificationFormatMapService { get; set; }
 
@@ -32,7 +28,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         {
             var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap("text");
             var editorFormatMap = EditorFormatMapService.GetEditorFormatMap("text");
-            return new NQueryQuickInfoSource(GlyphService, classificationFormatMap, editorFormatMap, ClassificationService);
+            return new NQueryQuickInfoSource(classificationFormatMap, editorFormatMap, ClassificationService);
         }
     }
 }

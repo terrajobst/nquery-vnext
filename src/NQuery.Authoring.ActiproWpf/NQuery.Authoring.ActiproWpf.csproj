@@ -42,24 +42,24 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeActions\CodeIssueServiceRegistrar.cs" />
-    <Compile Include="CodeActions\CodeRefactoringServiceRegistrar.cs" />
+    <Compile Include="BraceMatching\INQueryBraceMatcher.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
+    <Compile Include="Completion\INQueryCompletionProvider.cs" />
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
+    <Compile Include="QuickInfo\INQueryQuickInfoProvider.cs" />
     <Compile Include="Selection\ExtendSelectionAction.cs" />
     <Compile Include="Selection\SelectionAction.cs" />
     <Compile Include="Selection\SelectionExtensions.cs" />
     <Compile Include="Selection\ShrinkSelectionAction.cs" />
+    <Compile Include="SignatureHelp\INQuerySignatureHelpProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
-    <Compile Include="Squiggles\SquiggleTagQuickInfoProviderRegistrar.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifier.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifierProvider.cs" />
     <Compile Include="Squiggles\NQuerySquiggleClassifier.cs" />
@@ -67,15 +67,10 @@
     <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifierProvider.cs" />
     <Compile Include="SymbolContent\HtmlContentProviderWithGlyph.cs" />
     <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
-    <Compile Include="SymbolContent\ISymbolContentProvider.cs" />
+    <Compile Include="SymbolContent\INQuerySymbolContentProvider.cs" />
     <Compile Include="SymbolContent\GlyphImageProvider.cs" />
     <Compile Include="NQueryDocument.cs" />
     <Compile Include="NQuerySemanticData.cs" />
-    <Compile Include="Outlining\CollapsedRegionQuickInfoProviderRegistrar.cs" />
-    <Compile Include="ComposableLanguageServiceRegistrar.cs" />
-    <Compile Include="BraceMatching\DelimiterHighlightTaggerRegistrar.cs" />
-    <Compile Include="ExportLanguageServiceAttribute.cs" />
-    <Compile Include="ILanguageServiceRegistrar.cs" />
     <Compile Include="Classification\INQueryClassificationTypes.cs" />
     <Compile Include="BraceMatching\NQueryBraceMatcher.cs" />
     <Compile Include="Classification\NQueryClassificationTypes.cs" />
@@ -94,7 +89,7 @@
     <Compile Include="Classification\NQuerySyntacticClassifierProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
-    <Compile Include="SymbolContent\SymbolContentProvider.cs" />
+    <Compile Include="SymbolContent\NQuerySymbolContentProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
-using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.SignatureHelp;
@@ -14,11 +13,14 @@ using SignatureItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPromp
 
 namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
-    [ExportLanguageService(typeof(IParameterInfoProvider))]
-    internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase
+    internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase, INQuerySignatureHelpProvider
     {
-        [ImportMany]
-        public IEnumerable<ISignatureModelProvider> SignatureModelProviders { get; set; }
+        private readonly Collection<ISignatureHelpModelProvider> _providers = new Collection<ISignatureHelpModelProvider>();
+
+        public Collection<ISignatureHelpModelProvider> Providers
+        {
+            get { return _providers; }
+        }
 
         public override bool RequestSession(IEditorView view)
         {
@@ -39,9 +41,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = SignatureModelProviders
-                .Select(p => p.GetModel(semanticData.SemanticModel, position))
-                .FirstOrDefault(m => m != null);
+            var model = semanticData.SemanticModel.GetSignatureHelpModel(position, _providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
 

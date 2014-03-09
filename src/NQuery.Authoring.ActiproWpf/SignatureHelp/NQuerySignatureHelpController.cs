@@ -6,7 +6,6 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 
 namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
-    [ExportLanguageService]
     internal sealed class NQuerySignatureHelpController : IEditorDocumentTextChangeEventSink, IEditorViewSelectionChangeEventSink
     {
         public void NotifyDocumentTextChanged(SyntaxEditor editor, EditorSnapshotChangedEventArgs e)

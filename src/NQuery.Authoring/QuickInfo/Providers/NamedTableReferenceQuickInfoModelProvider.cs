@@ -1,0 +1,30 @@
+using System;
+
+using NQuery.Syntax;
+
+namespace NQuery.Authoring.QuickInfo
+{
+    internal sealed class NamedTableReferenceQuickInfoModelProvider : QuickInfoModelProvider<NamedTableReferenceSyntax>
+    {
+        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, NamedTableReferenceSyntax node)
+        {
+            var symbol = semanticModel.GetDeclaredSymbol(node);
+            if (symbol == null)
+                return null;
+
+            if (node.TableName.Span.Contains(position))
+            {
+                SyntaxNodeOrToken nodeOrToken = node.TableName;
+                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol.Table);
+            }
+
+            if (node.Alias != null && node.Alias.Span.Contains(position))
+            {
+                SyntaxNodeOrToken nodeOrToken = node.Alias;
+                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol);
+            }
+
+            return null;
+        }
+    }
+}

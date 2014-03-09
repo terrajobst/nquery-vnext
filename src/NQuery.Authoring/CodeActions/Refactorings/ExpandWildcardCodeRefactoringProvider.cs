@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions.Refactorings
 {
-    [Export(typeof(ICodeRefactoringProvider))]
     internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringProvider<WildcardSelectColumnSyntax>
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, WildcardSelectColumnSyntax node)

@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Linq;
+using System.Collections.ObjectModel;
 
 using ActiproSoftware.Text;
+using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
-using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.ActiproWpf.SymbolContent;
@@ -13,14 +12,25 @@ using NQuery.Authoring.QuickInfo;
 
 namespace NQuery.Authoring.ActiproWpf.QuickInfo
 {
-    [ExportLanguageService(typeof(IQuickInfoProvider))]
-    internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase
+    internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQuickInfoProvider
     {
-        [Import]
-        public ISymbolContentProvider SymbolContentProvider { get; set; }
+        private readonly IServiceLocator _serviceLocator;
+        private readonly Collection<IQuickInfoModelProvider> _providers = new Collection<IQuickInfoModelProvider>();
 
-        [ImportMany]
-        public IEnumerable<IQuickInfoModelProvider> QuickInfoModelProviders { get; set; }
+        public NQueryQuickInfoProvider(IServiceLocator serviceLocator)
+        {
+            _serviceLocator = serviceLocator;
+        }
+
+        private INQuerySymbolContentProvider SymbolContentProvider
+        {
+            get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
+        }
+
+        public Collection<IQuickInfoModelProvider> Providers
+        {
+            get { return _providers; }
+        }
 
         public override object GetContext(IEditorView view, int offset)
         {
@@ -33,9 +43,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             var textBuffer = syntaxTree.TextBuffer;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = QuickInfoModelProviders
-                .Select(p => p.GetModel(semanticData.SemanticModel, position))
-                .FirstOrDefault(m => m != null);
+            var model = semanticData.SemanticModel.GetQuickInfoModel(position, _providers);
             return model;
         }
 

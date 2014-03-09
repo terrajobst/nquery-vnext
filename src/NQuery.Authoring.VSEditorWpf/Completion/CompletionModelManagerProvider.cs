@@ -4,7 +4,7 @@ using System.ComponentModel.Composition;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Authoring.Completion;
+using NQuery.Authoring.Composition.Completion;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion
@@ -19,14 +19,14 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         public ICompletionBroker CompletionBroker { get; set; }
 
         [Import]
-        public ICompletionModelProvider CompletionModelProvider { get; set; }
+        public ICompletionProviderService CompletionProviderService { get; set; }
 
         public ICompletionModelManager GetCompletionModel(ITextView textView)
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
                 var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new CompletionModelManager(textView, document, CompletionBroker, CompletionModelProvider);
+                return new CompletionModelManager(textView, document, CompletionBroker, CompletionProviderService);
             });
         }
     }

@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.Composition.QuickInfo;
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.VSEditorWpf.Document;
 
@@ -16,24 +15,23 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
         private readonly IQuickInfoBroker _quickInfoBroker;
-        private readonly IEnumerable<IQuickInfoModelProvider> _providers;
+        private readonly IQuickInfoModelProviderService _quickInfoModelProviderService;
 
         private QuickInfoModel _model;
         private IQuickInfoSession _session;
 
-        public QuickInfoManager(ITextView textView, INQueryDocument document, IQuickInfoBroker quickInfoBroker, IEnumerable<IQuickInfoModelProvider> providers)
+        public QuickInfoManager(ITextView textView, INQueryDocument document, IQuickInfoBroker quickInfoBroker, IQuickInfoModelProviderService quickInfoModelProviderService)
         {
             _textView = textView;
             _document = document;
             _quickInfoBroker = quickInfoBroker;
-            _providers = providers;
+            _quickInfoModelProviderService = quickInfoModelProviderService;
         }
 
         public async void TriggerQuickInfo(int offset)
         {
             var semanticModel = await _document.GetSemanticModelAsync();
-            var model = _providers.Select(p => p.GetModel(semanticModel, offset)).FirstOrDefault(m => m != null);
-            Model = model;
+            Model = semanticModel.GetQuickInfoModel(offset, _quickInfoModelProviderService.Providers);
         }
 
         private void OnModelChanged(EventArgs e)

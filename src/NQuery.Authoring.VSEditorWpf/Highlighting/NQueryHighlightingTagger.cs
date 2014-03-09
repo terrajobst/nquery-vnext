@@ -16,11 +16,13 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
     {
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
+        private readonly IReadOnlyCollection<IHighlighter> _highlighters;
 
-        public NQueryHighlightingTagger(ITextView textView, INQueryDocument document)
+        public NQueryHighlightingTagger(ITextView textView, INQueryDocument document, IReadOnlyCollection<IHighlighter> highlighters)
         {
             _textView = textView;
             _document = document;
+            _highlighters = highlighters;
             _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             InvalidateTags();
@@ -43,7 +45,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = _document.GetTextSnapshot(syntaxTree);
 
-            var spans = semanticModel.GetHighlights(position)
+            var spans = semanticModel.GetHighlights(position, _highlighters)
                                      .Select(span => new SnapshotSpan(snapshot, span.Start, span.Length));
 
             return Tuple.Create(snapshot, spans);

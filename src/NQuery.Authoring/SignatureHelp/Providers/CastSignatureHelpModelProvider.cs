@@ -1,0 +1,33 @@
+using System;
+using System.Linq;
+
+using NQuery.Syntax;
+
+namespace NQuery.Authoring.SignatureHelp
+{
+    internal sealed class CastSignatureHelpModelProvider : ISignatureHelpModelProvider
+    {
+        public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
+        {
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var token = syntaxTree.Root.FindTokenOnLeft(position);
+            var castExpression = token.Parent
+                                      .AncestorsAndSelf()
+                                      .OfType<CastExpressionSyntax>()
+                                      .FirstOrDefault(c => c.IsBetweenParentheses(position));
+
+            if (castExpression == null)
+                return null;
+
+            var span = castExpression.Span;
+            var signatures = new[] { SignatureHelpExtensions.GetCastSignatureItem() };
+
+            var selected = signatures.FirstOrDefault();
+            var asKeyword = castExpression.AsKeyword;
+            var isBeforeAsKeyword = asKeyword.IsMissing || position <= asKeyword.Span.Start;
+            var parameterIndex = isBeforeAsKeyword ? 0 : 1;
+
+            return new SignatureHelpModel(span, signatures, selected, parameterIndex);
+        }
+    }
+}

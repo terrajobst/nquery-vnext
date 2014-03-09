@@ -1,13 +1,10 @@
 using System;
-using System.ComponentModel.Composition;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 
 namespace NQuery.Authoring.ActiproWpf.Classification
 {
-    [Export(typeof(INQueryClassificationTypes))]
-    [ExportLanguageService(typeof(INQueryClassificationTypes))]
     internal sealed class NQueryClassificationTypes : INQueryClassificationTypes
     {
         private readonly IClassificationType _whiteSpace = new ClassificationType("whiteSpace");

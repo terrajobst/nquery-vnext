@@ -8,45 +8,72 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    internal static class SignatureHelpExtensions
+    public static class SignatureHelpExtensions
     {
-        public static int GetParameterIndex(this ArgumentListSyntax argumentList, int position)
+        public static IEnumerable<ISignatureHelpModelProvider> GetStandardSignatureHelpModelProviders()
+        {
+            return new ISignatureHelpModelProvider[]
+                   {
+                       new CastSignatureHelpModelProvider(),
+                       new CoalesceSignatureHelpModelProvider(),
+                       new CountAllSignatureHelpModelProvider(),
+                       new FunctionSignatureHelpModelProvider(),
+                       new MethodSignatureHelpModelProvider(),
+                       new NullIfSignatureHelpModelProvider(),
+                   };
+        }
+
+        public static SignatureHelpModel GetSignatureHelpModel(this SemanticModel semanticModel, int position)
+        {
+            var providers = GetStandardSignatureHelpModelProviders();
+            return semanticModel.GetSignatureHelpModel(position, providers);
+        }
+
+        public static SignatureHelpModel GetSignatureHelpModel(this SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers)
+        {
+            return providers.Select(p => p.GetModel(semanticModel, position))
+                            .Where(m => m != null)
+                            .OrderByDescending(m => m.ApplicableSpan.Start)
+                            .FirstOrDefault();
+        }
+
+        internal static int GetParameterIndex(this ArgumentListSyntax argumentList, int position)
         {
             var separators = argumentList.Arguments.GetSeparators();
             return separators.TakeWhile(s => !s.IsMissing && s.Span.End <= position).Count();
         }
 
-        public static bool IsBetweenParentheses(this ArgumentListSyntax argumentList, int position)
+        internal static bool IsBetweenParentheses(this ArgumentListSyntax argumentList, int position)
         {
             return IsBetweenParentheses(argumentList.FullSpan, argumentList.LeftParenthesis, argumentList.RightParenthesis, position);
         }
 
-        public static bool IsBetweenParentheses(this CastExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this CastExpressionSyntax expression, int position)
         {
             return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
         }
 
-        public static bool IsBetweenParentheses(this CountAllExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this CountAllExpressionSyntax expression, int position)
         {
             return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesis, expression.RightParenthesis, position);
         }
 
-        public static bool IsBetweenParentheses(this NullIfExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this NullIfExpressionSyntax expression, int position)
         {
             return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
         }
 
-        public static bool IsBetweenParentheses(this CoalesceExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this CoalesceExpressionSyntax expression, int position)
         {
             return expression.ArgumentList.IsBetweenParentheses(position);
         }
 
-        public static bool IsBetweenParentheses(this MethodInvocationExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this MethodInvocationExpressionSyntax expression, int position)
         {
             return expression.ArgumentList.IsBetweenParentheses(position);
         }
 
-        public static bool IsBetweenParentheses(this FunctionInvocationExpressionSyntax expression, int position)
+        internal static bool IsBetweenParentheses(this FunctionInvocationExpressionSyntax expression, int position)
         {
             return expression.ArgumentList.IsBetweenParentheses(position);
         }
@@ -114,27 +141,27 @@ namespace NQuery.Authoring.SignatureHelp
             return new SignatureItem(content, string.Empty, parameters);
         }
 
-        public static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<Symbol> symbols)
+        internal static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<Symbol> symbols)
         {
             return symbols.Select(ToSignatureItem);
         }
 
-        public static SignatureItem ToSignatureItem(this Symbol symbol)
+        internal static SignatureItem ToSignatureItem(this Symbol symbol)
         {
             return SymbolMarkup.ForSymbol(symbol).ToSignatureItem(IsCommaToken);
         }
 
-        public static SignatureItem GetCastSignatureItem()
+        internal static SignatureItem GetCastSignatureItem()
         {
             return SymbolMarkup.ForCastSymbol().ToSignatureItem(IsAsKeyword);
         }
 
-        public static SignatureItem GetCoalesceSignatureItem()
+        internal static SignatureItem GetCoalesceSignatureItem()
         {
             return SymbolMarkup.ForCoalesceSymbol().ToSignatureItem(IsCommaToken);
         }
 
-        public static SignatureItem GetNullIfSignatureItem()
+        internal static SignatureItem GetNullIfSignatureItem()
         {
             return SymbolMarkup.ForNullIfSymbol().ToSignatureItem(IsCommaToken);
         }

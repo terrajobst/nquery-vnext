@@ -90,7 +90,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             return Task.Run(() =>
             {
                 var root = semanticModel.Compilation.SyntaxTree.Root;
-                return root.ClassifySemantic(semanticModel);
+                return root.ClassifySemantics(semanticModel);
             });
         }
     }

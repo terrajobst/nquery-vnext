@@ -1,8 +1,9 @@
 using System;
-using System.ComponentModel.Composition;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using ActiproSoftware.Text;
+using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
@@ -11,18 +12,29 @@ using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.Completion;
 
 using CompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
-using ICompletionProvider = NQuery.Authoring.Completion.ICompletionProvider;
+using NQueryICompletionProvider = NQuery.Authoring.Completion.ICompletionProvider;
 
 namespace NQuery.Authoring.ActiproWpf.Completion
 {
-    [ExportLanguageService(typeof (ICompletionProvider))]
-    internal sealed class NQueryCompletionProvider : CompletionProviderBase
+    internal sealed class NQueryCompletionProvider : CompletionProviderBase, INQueryCompletionProvider
     {
-        [Import]
-        public ICompletionModelProvider CompletionModelProvider { get; set; }
+        private readonly IServiceLocator _serviceLocator;
+        private readonly Collection<NQueryICompletionProvider> _providers = new Collection<NQueryICompletionProvider>();
 
-        [Import]
-        public ISymbolContentProvider SymbolContentProvider { get; set; }
+        public NQueryCompletionProvider(IServiceLocator serviceLocator)
+        {
+            _serviceLocator = serviceLocator;
+        }
+
+        public Collection<NQueryICompletionProvider> Providers
+        {
+            get { return _providers; }
+        }
+
+        private INQuerySymbolContentProvider SymbolContentProvider
+        {
+            get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
+        }
 
         public override bool RequestSession(IEditorView view, bool canCommitWithoutPopup)
         {
@@ -43,7 +55,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = CompletionModelProvider.GetModel(semanticModel, position);
+            var model = semanticModel.GetCompletionModel(position, _providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
             var completionSession = existingSession ?? new NQueryCompletionSession

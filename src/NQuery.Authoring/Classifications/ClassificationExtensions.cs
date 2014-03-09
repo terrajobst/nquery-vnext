@@ -18,18 +18,17 @@ namespace NQuery.Authoring.Classifications
             return result;
         }
 
-        public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantic(this SyntaxNode root, SemanticModel semanticModel)
+        public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(this SyntaxNode root, SemanticModel semanticModel)
         {
-            return root.ClassifySemantic(semanticModel, root.FullSpan);
+            return root.ClassifySemantics(semanticModel, root.FullSpan);
         }
 
-        public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantic(this SyntaxNode root, SemanticModel semanticModel, TextSpan span)
+        public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(this SyntaxNode root, SemanticModel semanticModel, TextSpan span)
         {
             var result = new List<SemanticClassificationSpan>();
             var worker = new SemanticClassificationWorker(result, semanticModel, span);
             worker.ClassifyNode(root);
             return result;
         }
-
     }
 }

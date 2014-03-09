@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions.Refactorings
 {
-    [Export(typeof(ICodeRefactoringProvider))]
     internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider<OrderByColumnSyntax>
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, OrderByColumnSyntax node)

@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.Composition.BraceMatching;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.BraceMatching
@@ -16,15 +17,15 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
     {
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
-        private readonly IBraceMatchingService _braceMatchingService;
+        private readonly IBraceMatcherService _braceMatcherService;
 
-        public NQueryBraceTagger(ITextView textView, INQueryDocument document, IBraceMatchingService braceMatchingService)
+        public NQueryBraceTagger(ITextView textView, INQueryDocument document, IBraceMatcherService braceMatcherService)
         {
             _textView = textView;
             _document = document;
+            _braceMatcherService = braceMatcherService;
             _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
-            _braceMatchingService = braceMatchingService;
             InvalidateTags();
         }
 
@@ -43,13 +44,12 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
             var position = _textView.Caret.Position.BufferPosition.Position;
             var syntaxTree = await _document.GetSyntaxTreeAsync();
             var snapshot = _document.GetTextSnapshot(syntaxTree);
-            TextSpan left;
-            TextSpan right;
-            if (!_braceMatchingService.TryFindBrace(syntaxTree, position, out left, out right))
+            var result = syntaxTree.FindBrace(position, _braceMatcherService.Matchers);
+            if (!result.IsValid)
                 return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());
 
-            var leftSpan = new SnapshotSpan(snapshot, left.Start, left.Length);
-            var rightSpan = new SnapshotSpan(snapshot, right.Start, right.Length);
+            var leftSpan = new SnapshotSpan(snapshot, result.Left.Start, result.Left.Length);
+            var rightSpan = new SnapshotSpan(snapshot, result.Right.Start, result.Right.Length);
 
             return Tuple.Create(snapshot, new[] { leftSpan, rightSpan }.AsEnumerable());
         }

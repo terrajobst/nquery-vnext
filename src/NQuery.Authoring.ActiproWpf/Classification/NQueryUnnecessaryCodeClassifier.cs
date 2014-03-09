@@ -14,13 +14,11 @@ namespace NQuery.Authoring.ActiproWpf.Classification
     internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassificationTag>
     {
         private readonly INQueryClassificationTypes _classificationTypes;
-        private readonly ICodeIssueService _codeIssueService;
 
         public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
             : base(typeof(NQueryUnnecessaryCodeClassifier).Name, null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
-            _codeIssueService = document.Language.GetService<ICodeIssueService>();
 
             var queryDocument = document as NQueryDocument;
             if (queryDocument == null)
@@ -62,7 +60,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
 
         private Task<IEnumerable<CodeIssue>> GetCodeIssuesAsync(NQuerySemanticData semanticData)
         {
-            return Task.Run<IEnumerable<CodeIssue>>(() => _codeIssueService.GetIssues(semanticData.SemanticModel).ToArray());
+            return Task.Run<IEnumerable<CodeIssue>>(() => semanticData.SemanticModel.GetIssues().ToArray());
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.Composition.BraceMatching;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.BraceMatching
@@ -20,12 +20,12 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
         public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
-        public IBraceMatchingService BraceMatchingService { get; set; }
+        public IBraceMatcherService BraceMatcherService { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             var document = DocumentManager.GetDocument(buffer);
-            return new NQueryBraceTagger(textView, document, BraceMatchingService) as ITagger<T>;
+            return new NQueryBraceTagger(textView, document, BraceMatcherService) as ITagger<T>;
         }
     }
 }

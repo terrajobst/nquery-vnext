@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.Composition.CodeActions;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.CodeActions
@@ -21,15 +21,15 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
         public INQueryDocumentManager DocumentManager { get; set; }
 
         [Import]
-        public ICodeIssueService CodeIssueService { get; set; }
+        public ICodeIssueProviderService CodeIssueProviderService { get; set; }
 
         [Import]
-        public ICodeRefactoringService CodeRefactoringService { get; set; }
+        public ICodeRefactoringProviderService CodeRefactoringProviderService { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
             var document = DocumentManager.GetDocument(buffer);
-            return new NQueryCodeActionTagger(textView, document, CodeIssueService, CodeRefactoringService) as ITagger<T>;
+            return new NQueryCodeActionTagger(textView, document, CodeIssueProviderService, CodeRefactoringProviderService) as ITagger<T>;
         }
     }
 }

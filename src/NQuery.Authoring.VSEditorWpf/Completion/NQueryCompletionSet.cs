@@ -14,13 +14,11 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
     internal sealed class NQueryCompletionSet : CompletionSet
     {
         private readonly ICompletionSession _session;
-        private readonly INQueryGlyphService _glyphService;
         private readonly ICompletionModelManager _completionModelManager;
 
-        public NQueryCompletionSet(ICompletionSession session, INQueryGlyphService glyphService, ICompletionModelManager completionModelManager)
+        public NQueryCompletionSet(ICompletionSession session, ICompletionModelManager completionModelManager)
         {
             _session = session;
-            _glyphService = glyphService;
             _completionModelManager = completionModelManager;
             _completionModelManager.ModelChanged += CompletionModelManagerOnModelChanged;
             _session.Dismissed += SessionOnDismissed;
@@ -91,7 +89,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         private ImageSource ToImage(NQueryGlyph? glyp)
         {
-            return glyp == null ? null : _glyphService.GetGlyph(glyp.Value);
+            return glyp == null ? null : NQueryGlyphImageSource.Get(glyp.Value);
         }
     }
 }

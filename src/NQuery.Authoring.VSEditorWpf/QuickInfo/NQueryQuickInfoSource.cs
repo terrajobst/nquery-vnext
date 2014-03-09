@@ -21,14 +21,12 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     internal sealed class NQueryQuickInfoSource : IQuickInfoSource
     {
-        private readonly INQueryGlyphService _glyphService;
         private readonly IClassificationFormatMap _classificationFormatMap;
         private readonly IEditorFormatMap _editorFormatMap;
         private readonly INQueryClassificationService _classificationService;
 
-        public NQueryQuickInfoSource(INQueryGlyphService glyphService, IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
+        public NQueryQuickInfoSource(IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
         {
-            _glyphService = glyphService;
             _classificationFormatMap = classificationFormatMap;
             _editorFormatMap = editorFormatMap;
             _classificationService = classificationService;
@@ -78,7 +76,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             {
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0, 0, 5, 0),
-                Source = _glyphService.GetGlyph(glyph)
+                Source = NQueryGlyphImageSource.Get(glyph)
             };
         }
 

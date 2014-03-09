@@ -6,7 +6,6 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 
 namespace NQuery.Authoring.ActiproWpf.Completion
 {
-    [ExportLanguageService]
     internal sealed class NQueryCompletionController : IEditorDocumentTextChangeEventSink
     {
         public void NotifyDocumentTextChanged(SyntaxEditor editor, EditorSnapshotChangedEventArgs e)

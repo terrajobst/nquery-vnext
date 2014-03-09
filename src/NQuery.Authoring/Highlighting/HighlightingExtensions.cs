@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 
+using NQuery.Authoring.Highlighting.Highlighters;
+
 namespace NQuery.Authoring.Highlighting
 {
     public static class HighlightingExtensions
     {
-        private static IEnumerable<IHighlighter> GetDefaultHighlighters()
+        public static IEnumerable<IHighlighter> GetStandardHighlighters()
         {
             return new IHighlighter[]
                        {
@@ -20,7 +22,12 @@ namespace NQuery.Authoring.Highlighting
 
         public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position)
         {
-            var highlighters = GetDefaultHighlighters();
+            var highlighters = GetStandardHighlighters();
+            return semanticModel.GetHighlights(position, highlighters);
+        }
+
+        public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position, IEnumerable<IHighlighter> highlighters)
+        {
             var result = new List<TextSpan>();
 
             foreach (var highlighter in highlighters)

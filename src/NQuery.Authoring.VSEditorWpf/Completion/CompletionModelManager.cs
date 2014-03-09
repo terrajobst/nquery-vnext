@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Completion;
+using NQuery.Authoring.Composition.Completion;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion
@@ -15,15 +16,15 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
         private readonly ICompletionBroker _completionBroker;
-        private readonly ICompletionModelProvider _completionModelProvider;
+        private readonly ICompletionProviderService _completionProviderService;
 
         private ICompletionSession _session;
         private CompletionModel _model;
 
-        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, ICompletionModelProvider completionModelProvider)
+        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
         {
             _completionBroker = completionBroker;
-            _completionModelProvider = completionModelProvider;
+            _completionProviderService = completionProviderService;
             _textView = textView;
             _document = document;
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
@@ -83,7 +84,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             var textView = _textView;
             var triggerPosition = textView.Caret.Position.BufferPosition;
             var semanticModel = await _document.GetSemanticModelAsync();
-            var model = _completionModelProvider.GetModel(semanticModel, triggerPosition);
+            var model = semanticModel.GetCompletionModel(triggerPosition, _completionProviderService.Providers);
 
             // Let observers know that we've a new model.
 

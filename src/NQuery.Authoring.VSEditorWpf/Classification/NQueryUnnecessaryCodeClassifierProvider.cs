@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
@@ -21,14 +20,11 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         [Import]
         public INQueryDocumentManager DocumentManager { get; set; }
 
-        [Import]
-        public ICodeIssueService CodeIssueService { get; set; }
-
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
             var semanticClassificationService = ClassificationService;
             var document = DocumentManager.GetDocument(buffer);
-            return new NQueryUnnecessaryCodeClassifier(semanticClassificationService, document, CodeIssueService) as ITagger<T>;
+            return new NQueryUnnecessaryCodeClassifier(semanticClassificationService, document) as ITagger<T>;
         }
     }
 }

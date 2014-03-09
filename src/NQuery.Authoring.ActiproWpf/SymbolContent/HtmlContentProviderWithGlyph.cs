@@ -14,12 +14,9 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     internal sealed class HtmlContentProviderWithGlyph : HtmlContentProvider
     {
-        private readonly INQueryGlyphService _glyphService;
-
-        private HtmlContentProviderWithGlyph(string htmlSnippet, INQueryGlyphService glyphService)
+        private HtmlContentProviderWithGlyph(string htmlSnippet)
             : base(htmlSnippet)
         {
-            _glyphService = glyphService;
         }
 
         protected override Image GetImage(string source)
@@ -28,7 +25,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             if (!Enum.TryParse(source, out glyph))
                 return null;
 
-            var imageSource = _glyphService.GetGlyph(glyph);
+            var imageSource = NQueryGlyphImageSource.Get(glyph);
             return new Image
                        {
                            Margin = new Thickness(0, 0, 4, 0),
@@ -38,10 +35,10 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
                        };
         }
 
-        public static HtmlContentProvider Create(NQueryGlyph glyph, SymbolMarkup symbolMarkup, INQueryGlyphService glyphService, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+        public static HtmlContentProvider Create(NQueryGlyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
         {
             var htmlSnippet = HtmlMarkupEmitter.GetHtml(glyph, symbolMarkup, classificationTypes, highlightingStyleRegistry);
-            return new HtmlContentProviderWithGlyph(htmlSnippet, glyphService);
+            return new HtmlContentProviderWithGlyph(htmlSnippet);
         }
     }
 }

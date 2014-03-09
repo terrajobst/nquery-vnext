@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.Composition.SignatureHelp;
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.VSEditorWpf.Document;
 
@@ -16,20 +16,20 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
         private readonly ISignatureHelpBroker _signatureHelpBroker;
-        private readonly IEnumerable<ISignatureModelProvider> _signatureModelProviders;
+        private readonly ISignatureHelpModelProviderService _signatureHelpModelProviderService;
         private readonly object _selectedItemIndexKey = new object();
 
         private ISignatureHelpSession _session;
         private SignatureHelpModel _model;
 
-        public SignatureHelpManager(ITextView textView, INQueryDocument document, ISignatureHelpBroker signatureHelpBroker, IEnumerable<ISignatureModelProvider> signatureModelProviders)
+        public SignatureHelpManager(ITextView textView, INQueryDocument document, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
         {
             _textView = textView;
             _document = document;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
             _signatureHelpBroker = signatureHelpBroker;
-            _signatureModelProviders = signatureModelProviders;
+            _signatureHelpModelProviderService = signatureHelpModelProviderService;
         }
 
         private void SessionOnDismissed(object sender, EventArgs e)
@@ -104,10 +104,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             var triggerPosition = textView.Caret.Position.BufferPosition.Position;
             var semanticModel = await _document.GetSemanticModelAsync();
 
-            var model = _signatureModelProviders.Select(p => p.GetModel(semanticModel, triggerPosition))
-                                                .Where(m => m != null)
-                                                .OrderByDescending(m => m.ApplicableSpan.Start)
-                                                .FirstOrDefault();
+            var model = semanticModel.GetSignatureHelpModel(triggerPosition, _signatureHelpModelProviderService.Providers);
 
             // If we previously recorded a selected item and the index is still valid,
             // let's restore it.

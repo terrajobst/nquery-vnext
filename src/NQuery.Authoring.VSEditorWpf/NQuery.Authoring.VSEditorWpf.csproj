@@ -154,6 +154,10 @@
     <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj">
+      <Project>{203BF9C4-4D04-4B4E-BE6C-1100EFCAF525}</Project>
+      <Name>NQuery.Authoring.Composition</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
       <Name>NQuery.Authoring</Name>

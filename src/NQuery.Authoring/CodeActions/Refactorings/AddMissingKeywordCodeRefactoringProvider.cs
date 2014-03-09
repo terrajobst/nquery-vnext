@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions.Refactorings
 {
-    [Export(typeof(ICodeRefactoringProvider))]
     internal sealed class AddMissingKeywordCodeRefactoringProvider : CodeRefactoringProvider<SyntaxNode>
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, SyntaxNode node)

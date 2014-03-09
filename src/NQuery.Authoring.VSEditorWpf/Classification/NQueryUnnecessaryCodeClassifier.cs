@@ -15,14 +15,12 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
     {
         private readonly INQueryClassificationService _classificationService;
         private readonly INQueryDocument _document;
-        private readonly ICodeIssueService _codeIssueService;
 
-        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, INQueryDocument document, ICodeIssueService codeIssueService)
+        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, INQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;
             _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
-            _codeIssueService = codeIssueService;
             InvalidateTags();
         }
 
@@ -36,7 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             var semanticModel = await _document.GetSemanticModelAsync();
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = _document.GetTextSnapshot(syntaxTree);
-            var unnecessarySpans = await Task.Run(() => _codeIssueService.GetIssues(semanticModel).Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
+            var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
             return Tuple.Create(snapshot, unnecessarySpans);
         }
 
