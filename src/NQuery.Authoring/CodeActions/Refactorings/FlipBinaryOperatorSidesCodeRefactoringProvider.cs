@@ -39,10 +39,9 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 var left = textBuffer.GetText(leftSpan);
                 var right = textBuffer.GetText(rightSpan);
                 
-                var source = textBuffer.Text;
-                var first = source.Substring(0, leftSpan.Start);
-                var second = source.Substring(leftSpan.End, secondLength);
-                var third = source.Substring(rightSpan.End);
+                var first = textBuffer.GetText(0, leftSpan.Start);
+                var second = textBuffer.GetText(leftSpan.End, secondLength);
+                var third = textBuffer.GetText(rightSpan.End);
 
                 var newSource = first + right + second + left + third;
                 return SyntaxTree.ParseQuery(newSource);

@@ -111,12 +111,32 @@ namespace NQuery.Text
 
         public string GetText(TextSpan textSpan)
         {
-            return _text.Substring(textSpan.Start, textSpan.Length);
+            return GetText(textSpan.Start, textSpan.Length);
         }
 
-        public string Text
+        public string GetText(int position, int length)
         {
-            get { return _text; }
+            return _text.Substring(position, length);
+        }
+
+        public string GetText(int position)
+        {
+            return _text.Substring(position);
+        }
+
+        public string GetText()
+        {
+            return _text;
+        }
+
+        public int Length
+        {
+            get { return _text.Length; }
+        }
+
+        public char this[int index]
+        {
+            get { return _text[index]; }
         }
 
         public ReadOnlyCollection<TextLine> Lines

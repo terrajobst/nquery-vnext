@@ -32,7 +32,7 @@ namespace NQuery.Syntax
 
         private void LexAllTokens(TextBuffer textBuffer)
         {
-            var lexer = new Lexer(_syntaxTree, textBuffer.Text);
+            var lexer = new Lexer(_syntaxTree, textBuffer);
             var badTokens = new List<SyntaxToken>();
 
             SyntaxToken token;

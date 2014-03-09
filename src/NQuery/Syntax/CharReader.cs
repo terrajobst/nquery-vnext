@@ -1,15 +1,17 @@
 using System;
 
+using NQuery.Text;
+
 namespace NQuery.Syntax
 {
     internal sealed class CharReader
     {
-        private readonly string _source;
+        private readonly TextBuffer _textBuffer;
         private int _position;
 
-        public CharReader(string source)
+        public CharReader(TextBuffer textBuffer)
         {
-            _source = source;
+            _textBuffer = textBuffer;
         }
 
         public void NextChar()
@@ -38,8 +40,8 @@ namespace NQuery.Syntax
         private char Peek(int offset)
         {
             var index = _position + offset;
-            return index < _source.Length
-                       ? _source[index]
+            return index < _textBuffer.Length
+                       ? _textBuffer[index]
                        : '\0';
         }
     }

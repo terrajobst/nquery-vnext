@@ -131,7 +131,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
                 var snapshot = _textBuffer.CurrentSnapshot;
                 var fullSpan = new Span(0, snapshot.Length);
                 var syntaxTree = _codeAction.GetEdit();
-                var newText = syntaxTree.TextBuffer.Text;
+                var newText = syntaxTree.TextBuffer.GetText();
                 _textBuffer.Replace(fullSpan, newText);
             }
         }

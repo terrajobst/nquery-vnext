@@ -13,7 +13,7 @@ namespace NQuery.UnitTests
         public void TextBuffer_EmptyHasALineWithoutLineBreak()
         {
             var textBuffer = new TextBuffer(string.Empty);
-            Assert.AreEqual(0, textBuffer.Text.Length);
+            Assert.AreEqual(0, textBuffer.Length);
             Assert.AreEqual(1, textBuffer.Lines.Count);
             Assert.AreEqual(new TextSpan(0, 0), textBuffer.Lines[0].TextSpan);
             Assert.AreEqual(new TextSpan(0, 0), textBuffer.Lines[0].TextSpanWithLineBreak);
@@ -25,7 +25,7 @@ namespace NQuery.UnitTests
             const string text = "text";
             var textBuffer = new TextBuffer(text);
 
-            Assert.AreEqual(text.Length, textBuffer.Text.Length);
+            Assert.AreEqual(text.Length, textBuffer.Length);
             Assert.AreEqual(1, textBuffer.Lines.Count);
 
             Assert.AreEqual(new TextSpan(0, text.Length), textBuffer.Lines[0].TextSpan);
@@ -40,7 +40,7 @@ namespace NQuery.UnitTests
             const string text = first + "\n";
             var textBuffer = new TextBuffer(text);
 
-            Assert.AreEqual(text.Length, textBuffer.Text.Length);
+            Assert.AreEqual(text.Length, textBuffer.Length);
             Assert.AreEqual(2, textBuffer.Lines.Count);
 
             Assert.AreEqual(new TextSpan(0, first.Length), textBuffer.Lines[0].TextSpan);
@@ -61,7 +61,7 @@ namespace NQuery.UnitTests
             const string text = first + "\n" + second + "\r" + third + "\r\n";
             var textBuffer = new TextBuffer(text);
 
-            Assert.AreEqual(text.Length, textBuffer.Text.Length);
+            Assert.AreEqual(text.Length, textBuffer.Length);
             Assert.AreEqual(4, textBuffer.Lines.Count);
 
             Assert.AreEqual(new TextSpan(0, first.Length), textBuffer.Lines[0].TextSpan);

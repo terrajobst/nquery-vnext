@@ -52,7 +52,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             var action = actions.Single();
             var syntaxTree = action.GetEdit();
 
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.Text);
+            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
     }
 }
