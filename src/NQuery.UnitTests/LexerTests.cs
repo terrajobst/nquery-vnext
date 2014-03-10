@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -103,6 +104,8 @@ namespace NQuery.UnitTests
             Assert.AreEqual(1, token.Diagnostics.Count);
             Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
+            Assert.AreEqual(0, token.Diagnostics[0].Span.Start);
+            Assert.AreEqual(2, token.Diagnostics[0].Span.End);
         }
 
         [TestMethod]
@@ -117,6 +120,8 @@ namespace NQuery.UnitTests
             Assert.AreEqual(1, token.Diagnostics.Count);
             Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
+            Assert.AreEqual(0, token.Diagnostics[0].Span.Start);
+            Assert.AreEqual(1, token.Diagnostics[0].Span.End);
         }
 
         [TestMethod]

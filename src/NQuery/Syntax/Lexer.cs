@@ -64,7 +64,7 @@ namespace NQuery.Syntax
 
         private TextSpan CurrentSpanStart
         {
-            get { return new TextSpan(_start, 2); }
+            get { return TextSpan.FromBounds(_start, Math.Min(_start + 2, _textBuffer.Length)); }
         }
 
         private void ReadTrivia(List<SyntaxTrivia> target, bool isLeading)
