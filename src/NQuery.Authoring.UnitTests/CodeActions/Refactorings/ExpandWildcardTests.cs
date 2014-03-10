@@ -71,7 +71,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 
             var action = codeActions.Single();
             var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 
             var action = codeActions.Single();
             var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
         }
     }
 }

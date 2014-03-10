@@ -10,5 +10,10 @@ namespace NQuery.Authoring.UnitTests
         {
             return text.Substring(span.Start, span.Length);
         }
+
+        public static string NormalizeLineEnding(this string text)
+        {
+            return text.Replace("\r\n", "\n").Replace("\r", "\n");
+        }
     }
 }
