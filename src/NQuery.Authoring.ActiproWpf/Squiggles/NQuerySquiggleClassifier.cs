@@ -23,9 +23,9 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
         protected async void UpdateTags()
         {
             var versionAndDiagnostics = await GetDiagnosticsAync();
-            var parseData = versionAndDiagnostics.Item1;
-            var snapshot = parseData.Snapshot;
-            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var syntaxTree = versionAndDiagnostics.Item1;
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var textBuffer = syntaxTree.TextBuffer;
             var diagnostics = versionAndDiagnostics.Item2;
 
             using (CreateBatch())
@@ -42,6 +42,6 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             }
         }
 
-        protected abstract Task<Tuple<NQueryParseData, IEnumerable<Diagnostic>>> GetDiagnosticsAync();
+        protected abstract Task<Tuple<SyntaxTree, IEnumerable<Diagnostic>>> GetDiagnosticsAync();
     }
 }

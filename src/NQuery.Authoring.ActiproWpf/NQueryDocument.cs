@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Parsing;
+
+using NQuery.Authoring.ActiproWpf.Text;
 
 namespace NQuery.Authoring.ActiproWpf
 {
@@ -132,26 +133,24 @@ namespace NQuery.Authoring.ActiproWpf
 
         private static NQueryParseData ComputeParseData(Tuple<ITextSnapshot, NQueryDocumentType> input, CancellationToken cancellationToken)
         {
-            Trace.WriteLine("Parsing");
             var snapshot = input.Item1;
-            var text = snapshot.Text;
+            var textBuffer = new SnapshotTextBuffer(snapshot);
             var documentType = input.Item2;
             var syntaxTree = documentType == NQueryDocumentType.Query
-                                 ? SyntaxTree.ParseQuery(text)
-                                 : SyntaxTree.ParseExpression(text);
-            return new NQueryParseData(snapshot, syntaxTree);
+                                 ? SyntaxTree.ParseQuery(textBuffer)
+                                 : SyntaxTree.ParseExpression(textBuffer);
+            return new NQueryParseData(syntaxTree);
         }
 
         private static NQuerySemanticData ComputeSemanticModel(Tuple<NQueryParseData, DataContext> input, CancellationToken cancellationToken)
         {
-            Trace.WriteLine("Binding");
             var parseData = input.Item1;
             var dataContext = input.Item2;
             var compilation = Compilation.Empty
                 .WithSyntaxTree(parseData.SyntaxTree)
                 .WithDataContext(dataContext);
             var semanticModel = compilation.GetSemanticModel();
-            return new NQuerySemanticData(parseData, semanticModel);
+            return new NQuerySemanticData(semanticModel);
         }
 
         protected virtual void OnSemanticModelChanged(EventArgs e)

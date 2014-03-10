@@ -15,9 +15,8 @@ namespace NQuery
 
         private Dictionary<object, object> _parentFromChild;
 
-        private SyntaxTree(string source, Func<Parser, CompilationUnitSyntax> parseMethod)
+        private SyntaxTree(TextBuffer textBuffer, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
-            var textBuffer = new TextBuffer(source);
             var parser = new Parser(textBuffer, this);
             _root = parseMethod(parser);
             _textBuffer = textBuffer;
@@ -25,12 +24,24 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(string source)
         {
-            return new SyntaxTree(source, p => p.ParseRootQuery());
+            var textBuffer = TextBuffer.From(source);
+            return ParseQuery(textBuffer);
+        }
+
+        public static SyntaxTree ParseQuery(TextBuffer textBuffer)
+        {
+            return new SyntaxTree(textBuffer, p => p.ParseRootQuery());
         }
 
         public static SyntaxTree ParseExpression(string source)
         {
-            return new SyntaxTree(source, p => p.ParseRootExpression());
+            var textBuffer = TextBuffer.From(source);
+            return ParseExpression(textBuffer);
+        }
+
+        public static SyntaxTree ParseExpression(TextBuffer textBuffer)
+        {
+            return new SyntaxTree(textBuffer, p => p.ParseRootExpression());
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics()

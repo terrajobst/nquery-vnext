@@ -90,6 +90,8 @@
     <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
     <Compile Include="SymbolContent\NQuerySymbolContentProvider.cs" />
+    <Compile Include="SyntaxTreeExtensions.cs" />
+    <Compile Include="Text\SnapshotTextBuffer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">

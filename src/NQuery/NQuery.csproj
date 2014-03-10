@@ -188,6 +188,9 @@
     <Compile Include="SyntaxExtensions.cs" />
     <Compile Include="SyntaxTreeEquivalence.cs" />
     <Compile Include="SyntaxTreeNavigation.cs" />
+    <Compile Include="Text\StringBuffer.cs" />
+    <Compile Include="Text\StringTextLineCollection.cs" />
+    <Compile Include="Text\TextLineCollection.cs" />
     <Compile Include="Text\TextLocation.cs" />
     <Compile Include="SemanticModel.cs" />
     <Compile Include="TypeFacts.cs" />

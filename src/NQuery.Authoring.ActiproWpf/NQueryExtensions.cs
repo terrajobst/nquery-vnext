@@ -24,7 +24,7 @@ namespace NQuery.Authoring.ActiproWpf
             if (parseData == null)
                 return null;
 
-            if (parseData.Snapshot != snapshot)
+            if (parseData.SyntaxTree.GetTextSnapshot() != snapshot)
                 return null;
 
             return parseData;
@@ -41,12 +41,12 @@ namespace NQuery.Authoring.ActiproWpf
             if (document == null)
                 return null;
 
-            var parseData = snapshot.GetParseData();
-            if (parseData == null)
+            var semanticData = document.SemanticData;
+            if (semanticData == null)
                 return null;
 
-            var semanticData = document.SemanticData;
-            if (semanticData == null || semanticData.ParseData != parseData)
+            var semanticSnapshot = semanticData.SemanticModel.Compilation.SyntaxTree.GetTextSnapshot();
+            if (semanticSnapshot != snapshot)
                 return null;
 
             return semanticData;
@@ -72,7 +72,7 @@ namespace NQuery.Authoring.ActiproWpf
         {
             var textLine = textBuffer.GetLineFromPosition(position);
             var line = textLine.Index;
-            var character = position - textLine.TextSpan.Start;
+            var character = position - textLine.Span.Start;
 
             var textPosition = new TextPosition(line, character);
             var offset = snapshot.PositionToOffset(textPosition);
@@ -90,7 +90,7 @@ namespace NQuery.Authoring.ActiproWpf
         {
             var textPosition = offset.Position;
             var line = textBuffer.Lines[textPosition.Line];
-            return line.TextSpan.Start + textPosition.Character;
+            return line.Span.Start + textPosition.Character;
         }
 
         public static TextSpan ToTextSpan(this TextSnapshotRange range, TextBuffer textBuffer)

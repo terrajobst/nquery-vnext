@@ -54,7 +54,7 @@ namespace NQueryViewer.ActiproEditor
         private async void UpdateCaretAndSelection()
         {
             var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.Snapshot;
+            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
             var textBuffer = parseData.SyntaxTree.TextBuffer;
 
             var snapshotRange = _syntaxEditor.ActiveView.Selection.SnapshotRange;
@@ -78,7 +78,7 @@ namespace NQueryViewer.ActiproEditor
         protected override async void OnCaretPositionChanged()
         {
             var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.Snapshot;
+            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
             var textBuffer = parseData.SyntaxTree.TextBuffer;
             var snapshotOffset = textBuffer.ToSnapshotOffset(snapshot, CaretPosition);
             _syntaxEditor.Caret.Position = snapshotOffset.Position;
@@ -88,7 +88,7 @@ namespace NQueryViewer.ActiproEditor
         protected override async void OnSelectionChanged()
         {
             var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.Snapshot;
+            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
             var textBuffer = parseData.SyntaxTree.TextBuffer;
             var snapshotRange = textBuffer.ToSnapshotRange(snapshot, Selection);
             _syntaxEditor.ActiveView.Selection.SelectRange(snapshotRange);

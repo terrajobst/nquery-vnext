@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -34,9 +33,8 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
             if (semanticData == null)
                 return;
 
-            var parseData = semanticData.ParseData;
-            var snapshot = parseData.Snapshot;
-            var syntaxTree = parseData.SyntaxTree;
+            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);

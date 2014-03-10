@@ -1,17 +1,15 @@
 using System;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Text;
 
+using NQuery.Authoring.VSEditorWpf.Text;
+
 namespace NQuery.Authoring.VSEditorWpf.Document
 {
     internal sealed class NQueryDocument : INQueryDocument
     {
-        private static readonly ConditionalWeakTable<SyntaxTree, ITextSnapshot> _syntaxTreeSnapshotMap = new ConditionalWeakTable<SyntaxTree, ITextSnapshot>();
-
         private readonly ITextBuffer _textBuffer;
         private readonly ResultProducer<ITextSnapshot, SyntaxTree> _syntaxTreeProducer;
         private readonly ResultProducer<Compilation, SemanticModel> _semanticModelProducer;
@@ -59,18 +57,12 @@ namespace NQuery.Authoring.VSEditorWpf.Document
 
         private static SyntaxTree ParseSyntaxTree(ITextSnapshot snapshot, CancellationToken cancellationToken)
         {
-            Trace.WriteLine("ParseSyntaxTree for " + snapshot.Version);
-
-            var syntaxTree = SyntaxTree.ParseQuery(snapshot.GetText());
-            lock (_syntaxTreeSnapshotMap)
-                _syntaxTreeSnapshotMap.Add(syntaxTree, snapshot);
-
-            return syntaxTree;
+            var textBuffer = new SnapshotTextBuffer(snapshot);
+            return SyntaxTree.ParseQuery(textBuffer);
         }
 
         private static SemanticModel GetSemanticModel(Compilation compilation, CancellationToken cancellationToken)
         {
-            Trace.WriteLine("GetSemanticModel");
             return compilation.GetSemanticModel();
         }
 
@@ -102,9 +94,8 @@ namespace NQuery.Authoring.VSEditorWpf.Document
 
         public ITextSnapshot GetTextSnapshot(SyntaxTree syntaxTree)
         {
-            ITextSnapshot result;
-            _syntaxTreeSnapshotMap.TryGetValue(syntaxTree, out result);
-            return result;
+            var textBuffer = syntaxTree.TextBuffer as SnapshotTextBuffer;
+            return textBuffer == null ? null : textBuffer.Snapshot;
         }
 
         public Task<SyntaxTree> GetSyntaxTreeAsync()

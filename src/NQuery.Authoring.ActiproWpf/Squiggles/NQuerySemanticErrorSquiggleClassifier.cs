@@ -24,11 +24,12 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             UpdateTags();
         }
 
-        protected override async Task<Tuple<NQueryParseData, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
+        protected override async Task<Tuple<SyntaxTree, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
         {
             var semanticData = await Document.GetSemanticDataAsync();
             var diagnostics = await Task.Run(() => semanticData.SemanticModel.GetDiagnostics());
-            return Tuple.Create(semanticData.ParseData, diagnostics);
+            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            return Tuple.Create(syntaxTree, diagnostics);
         }
     }
 }

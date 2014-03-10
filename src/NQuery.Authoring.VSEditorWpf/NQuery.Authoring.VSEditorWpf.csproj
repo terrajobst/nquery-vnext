@@ -152,6 +152,8 @@
     <Compile Include="SignatureHelp\NQuerySignature.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSource.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
+    <Compile Include="Text\SnapshotTextBuffer.cs" />
+    <Compile Include="Text\SnapshotTextLineCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj">

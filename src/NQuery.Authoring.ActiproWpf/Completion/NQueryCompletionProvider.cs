@@ -48,7 +48,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             if (semanticData == null)
                 return;
 
-            var snapshot = semanticData.ParseData.Snapshot;
+            var snapshot = semanticData.SemanticModel.Compilation.SyntaxTree.GetTextSnapshot();
             var semanticModel = semanticData.SemanticModel;
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;

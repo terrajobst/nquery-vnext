@@ -39,7 +39,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             if (semanticData == null)
                 return null;
 
-            var syntaxTree = semanticData.ParseData.SyntaxTree;
+            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 

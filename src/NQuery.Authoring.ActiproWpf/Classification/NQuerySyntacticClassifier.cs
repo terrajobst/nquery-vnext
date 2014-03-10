@@ -32,7 +32,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private async void UpdateTags()
         {
             var parseData = await Document.GetParseDataAsync();
-            var snapshot = parseData.Snapshot;
+            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
             var textBuffer = parseData.SyntaxTree.TextBuffer;
             var classificationSpans = await ClassifyTreeAsync(parseData.SyntaxTree);
 

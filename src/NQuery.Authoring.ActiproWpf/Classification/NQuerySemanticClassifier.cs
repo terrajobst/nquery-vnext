@@ -39,9 +39,9 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             if (semanticData == null)
                 return;
 
-            var parseData = semanticData.ParseData;
-            var snapshot = parseData.Snapshot;
-            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var textBuffer = syntaxTree.TextBuffer;
             var classificationSpans = await ClassifyAsync(semanticData.SemanticModel);
 
             var tags = from cs in classificationSpans

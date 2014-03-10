@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Implementation;
 
@@ -71,7 +72,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
             private void Select(TextSpan selection, NQueryParseData parseData)
             {
                 var textBuffer = parseData.SyntaxTree.TextBuffer;
-                var snapshot = parseData.Snapshot;
+                var snapshot = parseData.SyntaxTree.GetTextSnapshot();
                 var snapshotRange = textBuffer.ToSnapshotRange(snapshot, selection);
 
                 UnsubscribeToSelectionChanged();
