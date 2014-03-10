@@ -72,7 +72,7 @@
     <Compile Include="ContextualLeftAndRightKeywordTests.cs" />
     <Compile Include="ConversionTests.cs" />
     <Compile Include="DataContextTests.cs" />
-    <Compile Include="DataContextFactory.cs" />
+    <Compile Include="CompilationExtensions.cs" />
     <Compile Include="DerivedTableTests.cs" />
     <Compile Include="FunctionInvocationExressionTests.cs" />
     <Compile Include="InExpressionTests.cs" />
@@ -93,6 +93,7 @@
     <Compile Include="SelectStarTests.cs" />
     <Compile Include="SeparatedSyntaxListTests.cs" />
     <Compile Include="IntrinsicOperatorTests.cs" />
+    <Compile Include="TestData.cs" />
     <Compile Include="TextBufferTests.cs" />
     <Compile Include="TopTests.cs" />
     <Compile Include="UnaryOperatorExpressionTests.cs" />
