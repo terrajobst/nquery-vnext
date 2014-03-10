@@ -40,7 +40,7 @@ namespace NQuery.Authoring
             _cancellationTokenSource = new CancellationTokenSource();
             var cancellationToken = _cancellationTokenSource.Token;
 
-            _task = Task.Factory.StartNew(() => _selector(input, cancellationToken), cancellationToken);
+            _task = Task.Run(() => _selector(input, cancellationToken), cancellationToken);
             _task.ContinueWith(UpdateResult,
                                cancellationToken,
                                TaskContinuationOptions.None,
