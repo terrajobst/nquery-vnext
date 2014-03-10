@@ -14,7 +14,8 @@ namespace NQuery.Authoring.CodeActions
                    {
                        new ColumnsInExistsCodeIssueProvider(),
                        new ComparisonWithNullCodeIssueProvider(),
-                       new OrderByExpressionsCodeIssueProvider() 
+                       new OrderByExpressionsCodeIssueProvider(),
+                       new UnusedCommonTableExpressionCodeIssueProvider()
                    };
         }
 
