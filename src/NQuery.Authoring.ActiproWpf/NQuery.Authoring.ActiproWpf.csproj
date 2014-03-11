@@ -62,6 +62,8 @@
     <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifier.cs" />
     <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifierProvider.cs" />
+    <Compile Include="Squiggles\NQuerySemanticIssueSquiggleClassifier.cs" />
+    <Compile Include="Squiggles\NQuerySemanticIssueSquiggleClassifierProvider.cs" />
     <Compile Include="Squiggles\NQuerySquiggleClassifier.cs" />
     <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifier.cs" />
     <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifierProvider.cs" />

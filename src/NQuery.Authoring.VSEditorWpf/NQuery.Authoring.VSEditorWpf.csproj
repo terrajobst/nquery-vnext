@@ -120,6 +120,8 @@
     <Compile Include="Completion\NQueryCompletionSource.cs" />
     <Compile Include="Completion\NQueryCompletionSourceProvider.cs" />
     <Compile Include="NQueryContentTypeProvider.cs" />
+    <Compile Include="Squiggles\NQueryCodeIssueTagger.cs" />
+    <Compile Include="Squiggles\NQueryCodeIssueTaggerProvider.cs" />
     <Compile Include="Squiggles\NQueryErrorTagger.cs" />
     <Compile Include="NQueryKeyProcessor.cs" />
     <Compile Include="NQueryKeyProcessorProvider.cs" />
