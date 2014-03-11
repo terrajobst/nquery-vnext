@@ -58,6 +58,7 @@
     <Compile Include="CodeActions\CodeActionsExtensions.cs" />
     <Compile Include="CodeActions\CodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
+    <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsAliasCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\CodeIssue.cs" />
     <Compile Include="CodeActions\CodeIssueKind.cs" />
