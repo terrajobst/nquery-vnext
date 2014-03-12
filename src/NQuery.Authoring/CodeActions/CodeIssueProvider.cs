@@ -10,7 +10,7 @@ namespace NQuery.Authoring.CodeActions
         public IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel)
         {
             var syntaxTree = semanticModel.SyntaxTree;
-            var nodes = syntaxTree.Root.DescendantNodes().OfType<T>();
+            var nodes = syntaxTree.Root.DescendantNodesAndSelf().OfType<T>();
             return nodes.SelectMany(node => GetIssues(semanticModel, node));
         }
 

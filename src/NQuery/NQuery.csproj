@@ -241,6 +241,7 @@
     <Compile Include="Binding\UnaryOperatorKind.cs" />
     <Compile Include="Hosting\NullProviders.cs" />
     <Compile Include="Symbols\PropertyColumnDefinition.cs" />
+    <Compile Include="Symbols\QueryColumnSymbol.cs" />
     <Compile Include="Symbols\ReflectionFieldSymbol.cs" />
     <Compile Include="Symbols\ReflectionMethodSymbol.cs" />
     <Compile Include="Symbols\ReflectionParameterSymbol.cs" />

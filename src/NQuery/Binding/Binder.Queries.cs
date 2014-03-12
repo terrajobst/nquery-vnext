@@ -880,7 +880,7 @@ namespace NQuery.Binding
                 : specifiedColumnNames.Select(t => t.Identifier.ValueText);
 
             var columns = queryColumns.Take(columnCount)
-                                      .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
+                                      .Zip(columnNames, (c, n) => new QueryColumnSymbol(c))
                                       .Where(c => !string.IsNullOrEmpty(c.Name))
                                       .ToImmutableArray();
 

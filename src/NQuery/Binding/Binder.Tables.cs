@@ -133,7 +133,7 @@ namespace NQuery.Binding
 
             foreach (var queryColumn in namedQueryColumns)
             {
-                var columnSymbol = new ColumnSymbol(queryColumn.Name, queryColumn.Type);
+                var columnSymbol = new QueryColumnSymbol(queryColumn);
                 columns.Add(columnSymbol);
                 valueSlotFromColumn.Add(columnSymbol, queryColumn.ValueSlot);
             }
