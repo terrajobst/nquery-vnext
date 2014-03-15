@@ -100,6 +100,7 @@ namespace NQuery.Authoring.VSEditorWpf.Document
 
         public Task<SyntaxTree> GetSyntaxTreeAsync()
         {
+            UpdateSyntaxTree();
             return _syntaxTreeProducer.GetResultAsync();
         }
 
