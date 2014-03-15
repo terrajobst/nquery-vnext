@@ -23,6 +23,9 @@ namespace NQuery.Authoring.ActiproWpf
 
         public NQueryDocument()
         {
+            TabSize = 4;
+            AutoConvertTabsToSpaces = true;
+
             _parseDataProducer = new ResultProducer<Tuple<ITextSnapshot, NQueryDocumentType>, NQueryParseData>(ComputeParseData);
             _semanticDataProducer = new ResultProducer<Tuple<NQueryParseData, DataContext>, NQuerySemanticData>(ComputeSemanticModel);
             Language = new NQueryLanguage();
