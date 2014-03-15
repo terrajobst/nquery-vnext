@@ -455,7 +455,17 @@ namespace NQuery.Binding
             if (selectQuery != null)
             {
                 // This is case (1). We bind the select query and pass in ourselves.
-                return BindSelectQuery(selectQuery, node);
+                var boundQuery = BindSelectQuery(selectQuery, node);
+
+                // Since we've potentially skipped a bunch of parenthesized queries
+                // our regular binder hasn't seen those queries. In order to make
+                // sure that subsequent requests for GetBoundNode() will return a
+                // valid instance we must manually bind them to the bound query.
+                var queries = selectQuery.AncestorsAndSelf().OfType<QuerySyntax>().TakeWhile(n => n != node);
+                foreach (var queryNodes in queries)
+                    Bind(queryNodes, boundQuery);
+
+                return boundQuery;
             }
 
             // Alright, this is case (2) where we're applied to some sort of combined
