@@ -13,7 +13,8 @@ namespace NQuery.Authoring.CodeActions
             return new ICodeIssueProvider[]
                    {
                        new ColumnsInExistsCodeIssueProvider(),
-                       new ComparisonWithNullCodeIssueProvider()
+                       new ComparisonWithNullCodeIssueProvider(),
+                       new OrderByExpressionsCodeIssueProvider() 
                    };
         }
 

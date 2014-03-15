@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
+    <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsAliasTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordTests.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
