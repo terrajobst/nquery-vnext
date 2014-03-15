@@ -93,9 +93,7 @@
     <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
-    <Compile Include="CodeActions\CodeActionSet.cs" />
-    <Compile Include="CodeActions\NQueryCodeActionTagger.cs" />
-    <Compile Include="CodeActions\NQueryCodeActionTaggerProvider.cs" />
+    <Compile Include="CodeActions\TextBufferCodeActionModel.cs" />
     <Compile Include="Completion\CompletionModelManager.cs" />
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
@@ -111,6 +109,11 @@
     <Compile Include="Highlighting\IHighlightingNavigationManagerProvider.cs" />
     <Compile Include="Highlighting\NQueryHighlightingTagger.cs" />
     <Compile Include="Highlighting\NQueryHighlightingTaggerProvider.cs" />
+    <Compile Include="CodeActions\CodeActionGlyphBroker.cs" />
+    <Compile Include="CodeActions\ICodeActionGlyphBroker.cs" />
+    <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
+    <Compile Include="CodeActions\NQueryCodeActionsMargin.cs" />
+    <Compile Include="CodeActions\NQueryCodeActionsMarginProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProviderService.cs" />
     <Compile Include="Classification\INQueryClassificationService.cs" />
@@ -175,7 +178,6 @@
       <Name>NQuery</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

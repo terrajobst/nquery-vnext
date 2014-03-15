@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
+using NQuery.Authoring.VSEditorWpf.CodeActions;
 using NQuery.Authoring.VSEditorWpf.Completion;
 using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
@@ -30,7 +31,7 @@ namespace NQuery.Authoring.VSEditorWpf
         public IHighlightingNavigationManagerProvider HighlightingNavigationManagerProvider { get; set; }
 
         [Import]
-        public ISmartTagBroker SmartTagBroker { get; set; }
+        public ICodeActionGlyphBroker CodeActionGlyphBroker { get; set; }
 
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
@@ -39,7 +40,7 @@ namespace NQuery.Authoring.VSEditorWpf
                 var completionModelManager = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
                 var signatureHelpManager = SignatureHelpManagerProvider.GetSignatureHelpManager(wpfTextView);
                 var highlightingNavigationManager = HighlightingNavigationManagerProvider.GetHighlightingNavigationManager(wpfTextView);
-                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager, SmartTagBroker);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager, CodeActionGlyphBroker);
             });
         }
     }

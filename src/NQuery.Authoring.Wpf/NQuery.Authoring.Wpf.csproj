@@ -46,6 +46,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeActions\CodeActionGlyphPopup.xaml.cs">
+      <DependentUpon>CodeActionGlyphPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CodeActions\CodeActionKind.cs" />
+    <Compile Include="CodeActions\CodeActionModel.cs" />
     <Compile Include="Diagnostics\DiagnosticGrid.xaml.cs">
       <DependentUpon>DiagnosticGrid.xaml</DependentUpon>
     </Compile>
@@ -75,6 +80,10 @@
     <Resource Include="Images\Aggregate.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CodeActions\CodeActionGlyphPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Diagnostics\DiagnosticGrid.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -130,6 +139,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Variable.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\CodeActionIssue.png" />
+    <Resource Include="Images\CodeActionRefactoring.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

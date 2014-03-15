@@ -10,7 +10,8 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
 
 using NQuery.Authoring.ActiproWpf;
 using NQuery.Authoring.ActiproWpf.Classification;
-
+using NQuery.Authoring.ActiproWpf.CodeActions;
+using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
 
 namespace NQueryViewer.ActiproEditor
@@ -35,10 +36,14 @@ namespace NQueryViewer.ActiproEditor
             _document.SemanticDataChanged += DocumentOnSemanticDataChanged;
 
             _syntaxEditor = new SyntaxEditor();
+            _syntaxEditor.IsIndicatorMarginVisible = true;
+            _syntaxEditor.IsSelectionMarginVisible = false;
             _syntaxEditor.BorderThickness = new Thickness(0);
             _syntaxEditor.Document = _document;
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
+            _syntaxEditor.RegisterCodeActionCommands();
             _syntaxEditor.RegisterSelectionCommands();
+            _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
 
             EditorHost.Content = _syntaxEditor;
             DocumentType = _document.DocumentType;

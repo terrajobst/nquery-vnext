@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="NQuery.Authoring.Wpf.CodeActions.CodeActionGlyphPopup"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             TextOptions.TextFormattingMode="Display"
+             UseLayoutRounding="true"
+             Margin="-3"
+             Background="Transparent">
+    <FrameworkElement.Resources>
+        <BitmapImage x:Key="IssueFixImage"
+                     UriSource="..\Images\CodeActionIssue.png" />
+        <BitmapImage x:Key="RefactoringImage"
+                     UriSource="..\Images\CodeActionRefactoring.png"/>
+        <Style x:Key="GlyphIconStyle"
+               TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Padding="3">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="GlyphHoveringStyle"
+               TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                                BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+                                BorderThickness="1"
+                                CornerRadius="1"
+                                Padding="2">
+                            <ContentPresenter/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </FrameworkElement.Resources>
+    <StackPanel>
+        <Button x:Name="Glyph"
+                Cursor="Arrow"
+                Focusable="false"
+                BorderBrush="Silver"
+                Width="22"
+                Height="22"
+                Style="{StaticResource GlyphIconStyle}"
+                MouseEnter="GlyphOnMouseEnter"
+                MouseLeave="GlyphOnMouseLeave"
+                Click="GlyphOnClick">
+            <Image x:Name="GlyphImage" 
+                   Source="{StaticResource IssueFixImage}"/>
+            <FrameworkElement.ContextMenu>
+                <ContextMenu x:Name="GlyphContextMenu"
+                             Placement="Bottom"
+                             Closed="GlyphContextMenuOnClosed"
+                             IsVisibleChanged="GlyphContextMenuOnIsVisibleChanged"/>
+            </FrameworkElement.ContextMenu>
+        </Button>
+    </StackPanel>
+</UserControl>

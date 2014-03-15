@@ -50,6 +50,13 @@
     <Compile Include="BraceMatching\INQueryBraceMatcher.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
+    <Compile Include="CodeActions\CodeActionExtensions.cs" />
+    <Compile Include="CodeActions\ExpandCodeActionListEditAction.cs" />
+    <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
+    <Compile Include="CodeActions\NQueryEditorViewCodeActionMargin.cs" />
+    <Compile Include="Margins\NQueryEditorViewMarginKeys.cs" />
+    <Compile Include="CodeActions\TextDocumentCodeActionModel.cs" />
+    <Compile Include="Margins\NQueryCodeActionMarginProvider.cs" />
     <Compile Include="Completion\INQueryCompletionProvider.cs" />
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />

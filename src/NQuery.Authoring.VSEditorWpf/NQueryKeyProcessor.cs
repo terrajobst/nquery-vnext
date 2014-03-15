@@ -4,6 +4,7 @@ using System.Windows.Input;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.VSEditorWpf.CodeActions;
 using NQuery.Authoring.VSEditorWpf.Completion;
 using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
@@ -17,16 +18,16 @@ namespace NQuery.Authoring.VSEditorWpf
         private readonly ICompletionModelManager _completionModelManager;
         private readonly ISignatureHelpManager _signatureHelpManager;
         private readonly IHighlightingNavigationManager _highlightingNavigationManager;
-        private readonly ISmartTagBroker _smartTagBroker;
+        private readonly ICodeActionGlyphBroker _codeActionGlyphBroker;
 
-        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ISmartTagBroker smartTagBroker)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ICodeActionGlyphBroker codeActionGlyphBroker)
         {
             _textView = textView;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
             _completionModelManager = completionModelManager;
             _signatureHelpManager = signatureHelpManager;
             _highlightingNavigationManager = highlightingNavigationManager;
-            _smartTagBroker = smartTagBroker;
+            _codeActionGlyphBroker = codeActionGlyphBroker;
         }
 
         public override bool IsInterestedInHandledEvents
@@ -55,9 +56,8 @@ namespace NQuery.Authoring.VSEditorWpf
 
             if (modifiers == ModifierKeys.Control && key == Key.OemPeriod)
             {
-                var sessions = _smartTagBroker.GetSessions(_textView);
-                foreach (var session in sessions)
-                    session.State = SmartTagState.Expanded;
+                var controller = _codeActionGlyphBroker.GetController(_textView);
+                controller.Expand();
             }
             else if (modifiers == ModifierKeys.Control && key == Key.Space)
             {
