@@ -8,6 +8,7 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.CodeActions;
+using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Classification
 {
@@ -43,12 +44,12 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
 
-            var codeIssues = await GetCodeIssuesAsync(semanticData);
-            var tags = from cs in codeIssues
-                let textRange = textBuffer.ToSnapshotRange(snapshot, cs.Span)
-                let classificationType = _classificationTypes.Unnecessary
-                let tag = new ClassificationTag(classificationType)
-                select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);
+            var unnecessaryCodeSpans = await GetUnnecessaryCodeSpansAsync(semanticData);
+            var tags = from cs in unnecessaryCodeSpans
+                       let textRange = textBuffer.ToSnapshotRange(snapshot, cs)
+                       let classificationType = _classificationTypes.Unnecessary
+                       let tag = new ClassificationTag(classificationType)
+                       select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);
 
             using (CreateBatch())
             {
@@ -58,9 +59,12 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             }
         }
 
-        private Task<IEnumerable<CodeIssue>> GetCodeIssuesAsync(NQuerySemanticData semanticData)
+        private static Task<IEnumerable<TextSpan>> GetUnnecessaryCodeSpansAsync(NQuerySemanticData semanticData)
         {
-            return Task.Run<IEnumerable<CodeIssue>>(() => semanticData.SemanticModel.GetIssues().ToArray());
+            return Task.Run<IEnumerable<TextSpan>>(() => semanticData.SemanticModel.GetIssues()
+                                                                                   .Where(i => i.Kind == CodeIssueKind.Unnecessary)
+                                                                                   .Select(i => i.Span)
+                                                                                   .ToArray());
         }
     }
 }
