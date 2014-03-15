@@ -129,6 +129,9 @@ namespace NQuery.Authoring.ActiproWpf
             var semanticProvider = new NQuerySemanticErrorSquiggleClassifierProvider();
             RegisterService<CodeDocumentTaggerProvider<NQuerySemanticErrorSquiggleClassifier>>(semanticProvider);
 
+            var issueProvider = new NQuerySemanticIssueSquiggleClassifierProvider();
+            RegisterService<CodeDocumentTaggerProvider<NQuerySemanticIssueSquiggleClassifier>>(issueProvider);
+
             RegisterService(new SquiggleTagQuickInfoProvider());
         }
 

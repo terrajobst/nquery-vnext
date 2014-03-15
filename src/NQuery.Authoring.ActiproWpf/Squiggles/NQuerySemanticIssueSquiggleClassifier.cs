@@ -10,14 +10,14 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
     internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
     {
         public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
-            : base(typeof(NQuerySemanticErrorSquiggleClassifier).Name, null, document, true)
+            : base(typeof(NQuerySemanticIssueSquiggleClassifier).Name, null, document, true)
         {
             var nqueryDocument = document as NQueryDocument;
-            if (nqueryDocument != null)
-            {
-                nqueryDocument.SemanticDataChanged += NqueryDocumentOnSemanticDataChanged;
-                UpdateTags();
-            }
+            if (nqueryDocument == null)
+                return;
+
+            nqueryDocument.SemanticDataChanged += NqueryDocumentOnSemanticDataChanged;
+            UpdateTags();
         }
 
         private async void UpdateTags()
