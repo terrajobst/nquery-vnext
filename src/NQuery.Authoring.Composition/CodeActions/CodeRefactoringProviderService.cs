@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Composition.CodeActions
         [ImportingConstructor]
         public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
         {
-            _providers = matchers.Concat(CodeActionsExtensions.GetStandardRefactoringProviders()).ToArray();
+            _providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToArray();
         }
 
         public IReadOnlyCollection<ICodeRefactoringProvider> Providers

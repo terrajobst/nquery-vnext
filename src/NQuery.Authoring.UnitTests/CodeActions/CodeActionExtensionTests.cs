@@ -19,7 +19,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions
         [TestMethod]
         public void CodeActionExtension_ReturnsAllIssueProviders()
         {
-            var providers = CodeActionsExtensions.GetStandardIssueProviders().Select(t => t.GetType()).ToArray();
+            var providers = CodeActionExtensions.GetStandardIssueProviders().Select(t => t.GetType()).ToArray();
             var actualTypes = new HashSet<Type>(providers);
             var types = GetProviderTypes<ICodeIssueProvider>();
 
@@ -32,7 +32,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions
         [TestMethod]
         public void CodeActionExtension_ReturnsAllRefactoringProviders()
         {
-            var providers = CodeActionsExtensions.GetStandardRefactoringProviders().Select(t => t.GetType()).ToArray();
+            var providers = CodeActionExtensions.GetStandardRefactoringProviders().Select(t => t.GetType()).ToArray();
             var actualTypes = new HashSet<Type>(providers);
             var types = GetProviderTypes<ICodeRefactoringProvider>();
 

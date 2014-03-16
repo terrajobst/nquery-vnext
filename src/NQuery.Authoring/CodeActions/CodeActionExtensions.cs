@@ -6,7 +6,7 @@ using NQuery.Authoring.CodeActions.Refactorings;
 
 namespace NQuery.Authoring.CodeActions
 {
-    public static class CodeActionsExtensions
+    public static class CodeActionExtensions
     {
         public static IEnumerable<ICodeIssueProvider> GetStandardIssueProviders()
         {

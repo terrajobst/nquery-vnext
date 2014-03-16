@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Composition.CodeActions
         [ImportingConstructor]
         public CodeIssueProviderService([ImportMany] IEnumerable<ICodeIssueProvider> matchers)
         {
-            _providers = matchers.Concat(CodeActionsExtensions.GetStandardIssueProviders()).ToArray();
+            _providers = matchers.Concat(CodeActionExtensions.GetStandardIssueProviders()).ToArray();
         }
 
         public IReadOnlyCollection<ICodeIssueProvider> Providers

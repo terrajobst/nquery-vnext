@@ -55,7 +55,7 @@
     <Compile Include="Classifications\ClassificationExtensions.cs" />
     <Compile Include="Classifications\SyntaxClassification.cs" />
     <Compile Include="Classifications\SyntaxClassificationWorker.cs" />
-    <Compile Include="CodeActions\CodeActionsExtensions.cs" />
+    <Compile Include="CodeActions\CodeActionExtensions.cs" />
     <Compile Include="CodeActions\CodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
