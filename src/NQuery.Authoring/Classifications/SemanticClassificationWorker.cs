@@ -77,20 +77,6 @@ namespace NQuery.Authoring.Classifications
             if (!node.FullSpan.OverlapsWith(_span))
                 return;
 
-            ClassifyNodeWithoutChildren(node);
-
-            var nodes = node.ChildNodesAndTokens()
-                            .Where(n => n.IsNode)
-                            .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
-                            .TakeWhile(n => n.FullSpan.IntersectsWith(_span))
-                            .Select(n => n.AsNode());
-
-            foreach (var childNode in nodes)
-                ClassifyNode(childNode);
-        }
-
-        private void ClassifyNodeWithoutChildren(SyntaxNode node)
-        {
             switch (node.Kind)
             {
                 case SyntaxKind.NameExpression:
@@ -123,7 +109,20 @@ namespace NQuery.Authoring.Classifications
                 case SyntaxKind.DerivedTableReference:
                     ClassifyDerivedTableReference((DerivedTableReferenceSyntax)node);
                     break;
+                default:
+                    VisitChildren(node);
+                    break;
             }
+        }
+
+        private void VisitChildren(SyntaxNode node)
+        {
+            var nodes = node.ChildNodes()
+                            .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
+                            .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
+
+            foreach (var childNode in nodes)
+                ClassifyNode(childNode);
         }
 
         private void ClassifyExpression(ExpressionSyntax node, SyntaxNodeOrToken context)
@@ -148,7 +147,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
         {
             ClassifyExpression(node, node.Name);
-            ClassifyNodeWithoutChildren(node.ArgumentList);
+            ClassifyNode(node.ArgumentList);
         }
 
         private void ClassifyCountAllExpression(CountAllExpressionSyntax node)
@@ -158,15 +157,15 @@ namespace NQuery.Authoring.Classifications
 
         private void ClassifyPropertyAccess(PropertyAccessExpressionSyntax node)
         {
-            ClassifyNodeWithoutChildren(node.Target);
+            ClassifyNode(node.Target);
             ClassifyExpression(node, node.Name);
         }
 
         private void ClassifyMethodInvocationExpression(MethodInvocationExpressionSyntax node)
         {
-            ClassifyNodeWithoutChildren(node.Target);
+            ClassifyNode(node.Target);
             ClassifyExpression(node, node.Name);
-            ClassifyNodeWithoutChildren(node.ArgumentList);
+            ClassifyNode(node.ArgumentList);
         }
 
         private void ClassifyWildcardSelectColumn(WildcardSelectColumnSyntax node)
@@ -180,6 +179,8 @@ namespace NQuery.Authoring.Classifications
 
         private void ClassifyExpressionSelectColumn(ExpressionSelectColumnSyntax node)
         {
+            ClassifyNode(node.Expression);
+
             if (node.Alias == null)
                 return;
 
@@ -201,6 +202,8 @@ namespace NQuery.Authoring.Classifications
 
         private void ClassifyDerivedTableReference(DerivedTableReferenceSyntax node)
         {
+            ClassifyNode(node.Query);
+
             var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
             if (tableInstanceSymbol != null)
                 AddClassification(node.Name, tableInstanceSymbol);
