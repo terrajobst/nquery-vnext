@@ -26,7 +26,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public string Description
             {
-                get { return string.Format("Flip '{0}' operator arguments", _node.OperatorToken.Text); }
+                get { return string.Format("Flip arguments of operator '{0}'", _node.OperatorToken.Text); }
             }
 
             public SyntaxTree GetEdit()

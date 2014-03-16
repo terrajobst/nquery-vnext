@@ -50,6 +50,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />

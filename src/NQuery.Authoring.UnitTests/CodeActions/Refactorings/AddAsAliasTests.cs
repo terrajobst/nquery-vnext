@@ -50,8 +50,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(1, actions.Length);
 
             var action = actions.Single();
-            var syntaxTree = action.GetEdit();
+            Assert.AreEqual("Add 'AS' keyword", action.Description);
 
+            var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
     }

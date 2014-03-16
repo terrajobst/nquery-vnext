@@ -32,7 +32,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public string Description
             {
-                get { return "Expand Wildcard"; }
+                get { return "Expand wildcard"; }
             }
 
             public SyntaxTree GetEdit()

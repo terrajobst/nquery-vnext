@@ -39,6 +39,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(1, actions.Length);
 
             var action = actions.Single();
+            Assert.AreEqual("Add missing 'BY' keyword", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }

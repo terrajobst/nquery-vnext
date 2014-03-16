@@ -110,6 +110,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.AreSame(codeIssues[1].Actions[0], codeIssues[2].Actions[0]);
 
             var action = codeIssues.First().Actions.First();
+            Assert.AreEqual("Remove unnecessary columns from EXISTS", action.Description);
 
             var syntaxTree = action.GetEdit();
             

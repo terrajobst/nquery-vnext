@@ -53,7 +53,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public string Description
             {
-                get { return "Remove unnecessary columns from EXIST"; }
+                get { return "Remove unnecessary columns from EXISTS"; }
             }
 
             public SyntaxTree GetEdit()

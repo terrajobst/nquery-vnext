@@ -31,6 +31,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             var issues = GetIssues(query);
             Assert.AreEqual(1, issues.Length);
             Assert.AreEqual(CodeIssueKind.Warning, issues[0].Kind);
+            Assert.AreEqual("Expression is always NULL", issues[0].Description);
             Assert.AreEqual("e.ReportsTo + NULL", query.Substring(issues[0].Span));
         }
 

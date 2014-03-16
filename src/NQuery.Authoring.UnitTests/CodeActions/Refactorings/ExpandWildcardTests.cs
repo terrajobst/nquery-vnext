@@ -70,6 +70,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(1, codeActions.Length);
 
             var action = codeActions.Single();
+            Assert.AreEqual("Expand wildcard", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
         }
@@ -94,6 +96,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(1, codeActions.Length);
 
             var action = codeActions.Single();
+            Assert.AreEqual("Expand wildcard", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
         }

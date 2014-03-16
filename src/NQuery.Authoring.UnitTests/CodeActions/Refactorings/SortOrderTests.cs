@@ -39,6 +39,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(2, actions.Length);
 
             var action = actions[0];
+            Assert.AreEqual("To explicit sort order", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
@@ -62,6 +64,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(2, actions.Length);
         
             var action = actions[1];
+            Assert.AreEqual("To descending", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
@@ -85,6 +89,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(2, actions.Length);
 
             var action = actions[0];
+            Assert.AreEqual("To implicit sort order", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
@@ -108,6 +114,8 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
             Assert.AreEqual(2, actions.Length);
         
             var action = actions[1];
+            Assert.AreEqual("To descending", action.Description);
+
             var syntaxTree = action.GetEdit();
             Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
         }
