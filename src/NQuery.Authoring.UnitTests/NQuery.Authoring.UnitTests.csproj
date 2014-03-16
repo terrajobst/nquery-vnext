@@ -59,6 +59,7 @@
     <Compile Include="BraceMatching\Matchers\ParenthesizedIdentifierBraceMatcherTests.cs" />
     <Compile Include="BraceMatching\Matchers\QuotedIdentifierBraceMatcherTests.cs" />
     <Compile Include="BraceMatching\Matchers\StringQuoteBraceMatcherTests.cs" />
+    <Compile Include="Classifications\SyntaxClassificationTests.cs" />
     <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
     <Compile Include="CodeActions\CodeIssueTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
