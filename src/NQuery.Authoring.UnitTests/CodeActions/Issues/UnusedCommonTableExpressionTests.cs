@@ -8,15 +8,11 @@ using NQuery.Authoring.CodeActions.Issues;
 namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 {
     [TestClass]
-    public class UnusedCommonTableExpressionTests
+    public class UnusedCommonTableExpressionTests : CodeIssueTests
     {
-        private static CodeIssue[] GetIssues(string query)
+        protected override ICodeIssueProvider CreateProvider()
         {
-            var compilation = CompilationFactory.CreateQuery(query);
-            var semanticModel = compilation.GetSemanticModel();
-
-            var provider = new UnusedCommonTableExpressionCodeIssueProvider();
-            return provider.GetIssues(semanticModel).ToArray();
+            return new UnusedCommonTableExpressionCodeIssueProvider();
         }
 
         [TestMethod]

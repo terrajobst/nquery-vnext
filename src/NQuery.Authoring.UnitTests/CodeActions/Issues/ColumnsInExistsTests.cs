@@ -8,15 +8,11 @@ using NQuery.Authoring.CodeActions.Issues;
 namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 {
     [TestClass]
-    public class ColumnsInExistsTests
+    public class ColumnsInExistsTests : CodeIssueTests
     {
-        private static CodeIssue[] GetCodeIssues(string query)
+        protected override ICodeIssueProvider CreateProvider()
         {
-            var compilation = CompilationFactory.CreateQuery(query);
-            var semanticModel = compilation.GetSemanticModel();
-
-            var columnsInExistsCodeIssueProvider = new ColumnsInExistsCodeIssueProvider();
-            return columnsInExistsCodeIssueProvider.GetIssues(semanticModel).ToArray();
+            return new ColumnsInExistsCodeIssueProvider();
         }
 
         [TestMethod]
@@ -32,7 +28,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
                         )            
             ";
 
-            var codeIssues = GetCodeIssues(query);
+            var codeIssues = GetIssues(query);
 
             Assert.AreEqual(0, codeIssues.Length);
         }
@@ -53,7 +49,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
                         )            
             ";
 
-            var codeIssues = GetCodeIssues(query);
+            var codeIssues = GetIssues(query);
 
             Assert.AreEqual(3, codeIssues.Length);
             
@@ -100,7 +96,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
                         )            
             ";
 
-            var codeIssues = GetCodeIssues(query);
+            var codeIssues = GetIssues(query);
 
             Assert.AreEqual(3, codeIssues.Length);           
             Assert.AreEqual(1, codeIssues[0].Actions.Count);

@@ -60,6 +60,7 @@
     <Compile Include="BraceMatching\Matchers\QuotedIdentifierBraceMatcherTests.cs" />
     <Compile Include="BraceMatching\Matchers\StringQuoteBraceMatcherTests.cs" />
     <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
+    <Compile Include="CodeActions\CodeIssueTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordTests.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
+    <Compile Include="CodeActions\RefactoringTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
     <Compile Include="CompilationFactory.cs" />
     <Compile Include="Outlining\OutliningTests.cs" />

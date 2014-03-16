@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
@@ -8,16 +6,11 @@ using NQuery.Authoring.CodeActions.Refactorings;
 namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 {
     [TestClass]
-    public class SortOrderTests
+    public class SortOrderTests : RefactoringTests
     {
-        private static ICodeAction[] GetActions(string query)
+        protected override ICodeRefactoringProvider CreateProvider()
         {
-            int position;
-            var compilation = CompilationFactory.CreateQuery(query, out position);
-            var semanticModel = compilation.GetSemanticModel();
-
-            var provider = new SortOrderCodeRefactoringProvider();
-            return provider.GetRefactorings(semanticModel, position).ToArray();
+            return new SortOrderCodeRefactoringProvider();
         }
 
         [TestMethod]

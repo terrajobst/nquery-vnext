@@ -9,15 +9,11 @@ using NQuery.Authoring.CodeActions.Issues;
 namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 {
     [TestClass]
-    public class OrderByExpressionsTests
+    public class OrderByExpressionsTests : CodeIssueTests
     {
-        private static CodeIssue[] GetIssues(string query)
+        protected override ICodeIssueProvider CreateProvider()
         {
-            var compilation = CompilationFactory.CreateQuery(query);
-            var semanticModel = compilation.GetSemanticModel();
-
-            var provider = new OrderByExpressionsCodeIssueProvider();
-            return provider.GetIssues(semanticModel).ToArray();
+            return new OrderByExpressionsCodeIssueProvider();
         }
 
         [TestMethod]
