@@ -39,8 +39,8 @@ namespace NQuery.Authoring.Classifications
                 return;
 
             var nodes = node.ChildNodesAndTokens()
-                .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
-                .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
+                            .SkipWhile(n => !n.FullSpan.IntersectsWith(_span))
+                            .TakeWhile(n => n.FullSpan.IntersectsWith(_span));
 
             foreach (var syntaxNodeOrToken in nodes)
                 ClassifyNodeOrToken(syntaxNodeOrToken);
@@ -57,12 +57,12 @@ namespace NQuery.Authoring.Classifications
 
         private void ClassifyToken(SyntaxToken token)
         {
+            foreach (var trivia in token.LeadingTrivia)
+                ClassifyTrivia(trivia);
+
             var kind = GetClassificationForToken(token);
             if (kind != null)
                 AddClassification(token, kind.Value);
-
-            foreach (var trivia in token.LeadingTrivia)
-                ClassifyTrivia(trivia);
 
             foreach (var trivia in token.TrailingTrivia)
                 ClassifyTrivia(trivia);
@@ -70,7 +70,7 @@ namespace NQuery.Authoring.Classifications
 
         private void ClassifyTrivia(SyntaxTrivia trivia)
         {
-            if (trivia.Kind == SyntaxKind.WhitespaceTrivia)
+            if (trivia.Kind == SyntaxKind.WhitespaceTrivia || trivia.Kind == SyntaxKind.EndOfLineTrivia)
                 AddClassification(trivia, SyntaxClassification.Whitespace);
             else if (trivia.Kind.IsComment())
                 AddClassification(trivia, SyntaxClassification.Comment);
