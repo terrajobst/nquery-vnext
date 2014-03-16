@@ -88,6 +88,7 @@
     <Compile Include="Highlighting\HighlighterTests.cs" />
     <Compile Include="Highlighting\HighlightingExtensionsTests.cs" />
     <Compile Include="Outlining\OutliningTests.cs" />
+    <Compile Include="Selection\SelectionExtensionsTests.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
