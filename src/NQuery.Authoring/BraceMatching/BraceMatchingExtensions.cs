@@ -52,15 +52,16 @@ namespace NQuery.Authoring.BraceMatching
             return BraceMatchingResult.None;
         }
 
-        private static BraceMatchingResult FindBrace(SyntaxToken token, int position, IEnumerable<IBraceMatcher> getDefaultBraceMatchers)
+        private static BraceMatchingResult FindBrace(SyntaxToken token, int position, IEnumerable<IBraceMatcher> braceMatchers)
         {
-            foreach (var braceMatcher in getDefaultBraceMatchers)
+            foreach (var braceMatcher in braceMatchers)
             {
                 TextSpan left;
                 TextSpan right;
                 if (braceMatcher.TryFindBrace(token, position, out left, out right))
                     return new BraceMatchingResult(left, right);
             }
+
             return BraceMatchingResult.None;
         }
     }

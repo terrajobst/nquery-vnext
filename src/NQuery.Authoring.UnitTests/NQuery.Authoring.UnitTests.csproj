@@ -50,6 +50,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
+    <Compile Include="BraceMatching\BraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\CaseBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\DateBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\IdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\ParenthesisBraceMatcher.cs" />
+    <Compile Include="BraceMatching\Matchers\ParenthesizedIdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\QuotedIdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\StringQuoteBraceMatcherTests.cs" />
     <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
