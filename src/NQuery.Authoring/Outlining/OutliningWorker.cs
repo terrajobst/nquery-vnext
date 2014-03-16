@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -83,17 +85,71 @@ namespace NQuery.Authoring.Outlining
 
         private void Visit(SyntaxToken token)
         {
-            foreach (var trivia in token.LeadingTrivia)
-                Visit(trivia);
-
-            foreach (var trivia in token.TrailingTrivia)
-                Visit(trivia);
+            VisitTriviaList(token.LeadingTrivia);
+            VisitTriviaList(token.TrailingTrivia);
         }
 
-        private void Visit(SyntaxTrivia trivia)
+        private void VisitTriviaList(IReadOnlyCollection<SyntaxTrivia> trivias)
         {
-            if (trivia.Kind == SyntaxKind.SingleLineCommentTrivia || trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
-                AddOutlineRegion(trivia.Span, "/**/");
+            FindMultilineComments(trivias);
+            FindConsecutiveSingleLineComments(trivias);
+        }
+
+        private void FindMultilineComments(IEnumerable<SyntaxTrivia> trivias)
+        {
+            foreach (var trivia in trivias)
+            {
+                if (trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
+                {
+                    var commentStart = trivia.Span.Start;
+                    var line = _textBuffer.GetLineFromPosition(commentStart);
+                    var firstLineEnd = line.Span.End;
+                    var firstLineSpan = TextSpan.FromBounds(commentStart, firstLineEnd);
+                    var text = _textBuffer.GetText(firstLineSpan) + " ...";
+
+                    AddOutlineRegion(trivia.Span, text);
+                }
+            }
+        }
+
+        private void FindConsecutiveSingleLineComments(IEnumerable<SyntaxTrivia> trivias)
+        {
+            SyntaxTrivia firstComment = null;
+            SyntaxTrivia lastComment = null;
+
+            foreach (var trivia in trivias)
+            {
+                if (trivia.Kind == SyntaxKind.SingleLineCommentTrivia)
+                {
+                    if (firstComment == null)
+                        firstComment = trivia;
+                    lastComment = trivia;
+                }
+                else if (trivia.Kind == SyntaxKind.WhitespaceTrivia || trivia.Kind == SyntaxKind.EndOfLineTrivia)
+                {
+                    // Ignore
+                }
+                else
+                {
+                    if (firstComment != null)
+                        AddConsecutiveSingleLineComments(firstComment, lastComment);
+
+                    firstComment = null;
+                    lastComment = null;
+                }
+            }
+
+            if (firstComment != null)
+                AddConsecutiveSingleLineComments(firstComment, lastComment);
+        }
+
+        private void AddConsecutiveSingleLineComments(SyntaxTrivia firstComment, SyntaxTrivia lastComment)
+        {
+            var start = firstComment.Span.Start;
+            var end = lastComment.Span.End;
+            var span = TextSpan.FromBounds(start, end);
+            var text = firstComment.Text + " ...";
+            AddOutlineRegion(span, text);
         }
     }
 }
