@@ -44,7 +44,7 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
             var position = _textView.Caret.Position.BufferPosition.Position;
             var syntaxTree = await _document.GetSyntaxTreeAsync();
             var snapshot = _document.GetTextSnapshot(syntaxTree);
-            var result = syntaxTree.FindBrace(position, _braceMatcherService.Matchers);
+            var result = syntaxTree.MatchBraces(position, _braceMatcherService.Matchers);
             if (!result.IsValid)
                 return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());
 

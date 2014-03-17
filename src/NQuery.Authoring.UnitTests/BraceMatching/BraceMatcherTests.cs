@@ -83,7 +83,7 @@ namespace NQuery.Authoring.UnitTests.BraceMatching
             var syntaxTree = compilation.SyntaxTree;
 
             var matcher = CreateMatcher();
-            return syntaxTree.FindBrace(position, new[] { matcher });
+            return syntaxTree.MatchBraces(position, new[] { matcher });
         }
     }
 }

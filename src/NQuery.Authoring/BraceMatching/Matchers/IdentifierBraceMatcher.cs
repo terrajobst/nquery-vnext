@@ -1,7 +1,5 @@
 using System;
 
-using NQuery.Text;
-
 namespace NQuery.Authoring.BraceMatching.Matchers
 {
     internal sealed class IdentifierBraceMatcher : SingleTokenBraceMatcher
@@ -11,17 +9,12 @@ namespace NQuery.Authoring.BraceMatching.Matchers
         {
         }
 
-        public override bool TryFindBrace(SyntaxToken token, int position, out TextSpan left, out TextSpan right)
+        public override BraceMatchingResult MatchBraces(SyntaxToken token, int position)
         {
             var hasBraces = token.IsQuotedIdentifier() || token.IsParenthesizedIdentifier();
-            if (!hasBraces)
-            {
-                left = default(TextSpan);
-                right = default(TextSpan);
-                return false;
-            }
-
-            return base.TryFindBrace(token, position, out left, out right);
+            return hasBraces
+                ? base.MatchBraces(token, position)
+                : BraceMatchingResult.None;
         }
     }
 }

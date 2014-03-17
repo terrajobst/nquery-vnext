@@ -29,7 +29,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
             var textBuffer = syntaxTree.TextBuffer;
             var position = snapshotOffset.ToOffset(textBuffer);
 
-            var result = syntaxTree.FindBrace(position, _matchers);
+            var result = syntaxTree.MatchBraces(position, _matchers);
             if (!result.IsValid)
                 return null;
 

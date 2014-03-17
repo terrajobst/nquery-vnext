@@ -16,7 +16,7 @@ namespace NQuery.Authoring.BraceMatching
             _rightKind = rightKind;
         }
 
-        public bool TryFindBrace(SyntaxToken token, int position, out TextSpan left, out TextSpan right)
+        public BraceMatchingResult MatchBraces(SyntaxToken token, int position)
         {
             var isLeft = token.Kind == _leftKind &&
                          position == token.Span.Start;
@@ -24,21 +24,22 @@ namespace NQuery.Authoring.BraceMatching
             var isRight = token.Kind == _rightKind &&
                           position == token.Span.End;
 
-            if (!isLeft && !isRight)
-            {
-                left = default(TextSpan);
-                right = default(TextSpan);
-                return false;
-            }
-
             if (isLeft)
             {
-                left = token.Span;
-                return FindMatchingBrace(position, 1, token.Parent, _rightKind, out right);
+                TextSpan left = token.Span;
+                TextSpan right;
+                if (FindMatchingBrace(position, 1, token.Parent, _rightKind, out right))
+                    return new BraceMatchingResult(left, right);
+            }
+            else if (isRight)
+            {
+                TextSpan left;
+                TextSpan right = token.Span;
+                if (FindMatchingBrace(position, -1, token.Parent, _leftKind, out left))
+                    return new BraceMatchingResult(left, right);
             }
 
-            right = token.Span;
-            return FindMatchingBrace(position, -1, token.Parent, _leftKind, out left);
+            return BraceMatchingResult.None;
         }
 
         private static bool FindMatchingBrace(int position, int direction, SyntaxNode parent, SyntaxKind syntaxKind, out TextSpan right)

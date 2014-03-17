@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Authoring.BraceMatching.Matchers;
-using NQuery.Text;
 
 namespace NQuery.Authoring.BraceMatching
 {
@@ -21,31 +20,19 @@ namespace NQuery.Authoring.BraceMatching
                    };
         }
 
-        public static BraceMatchingResult FindBrace(this SyntaxTree syntaxTree, int position)
+        public static BraceMatchingResult MatchBraces(this SyntaxTree syntaxTree, int position)
         {
             var braceMatchers = GetStandardBraceMatchers();
-            return syntaxTree.FindBrace(position, braceMatchers);
+            return syntaxTree.MatchBraces(position, braceMatchers);
         }
 
-        public static BraceMatchingResult FindBrace(this SyntaxTree syntaxTree, int position, IEnumerable<IBraceMatcher> braceMatchers)
+        public static BraceMatchingResult MatchBraces(this SyntaxTree syntaxTree, int position, IEnumerable<IBraceMatcher> braceMatchers)
         {
             return (from t in syntaxTree.Root.FindStartTokens(position)
-                    let r = FindBrace(t, position, braceMatchers)
+                    from m in braceMatchers
+                    let r = m.MatchBraces(t, position)
                     where r.IsValid
                     select r).DefaultIfEmpty(BraceMatchingResult.None).First();
-        }
-
-        private static BraceMatchingResult FindBrace(SyntaxToken token, int position, IEnumerable<IBraceMatcher> braceMatchers)
-        {
-            foreach (var braceMatcher in braceMatchers)
-            {
-                TextSpan left;
-                TextSpan right;
-                if (braceMatcher.TryFindBrace(token, position, out left, out right))
-                    return new BraceMatchingResult(left, right);
-            }
-
-            return BraceMatchingResult.None;
         }
     }
 }
