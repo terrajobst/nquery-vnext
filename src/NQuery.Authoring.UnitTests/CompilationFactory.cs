@@ -15,25 +15,15 @@ namespace NQuery.Authoring.UnitTests
             return new Compilation(DataContext, syntaxTree);
         }
 
-        public static Compilation CreateQuery(string query, out int position)
+        public static Compilation CreateQuery(string queryWithPipe, out int position)
         {
-            position = query.IndexOf('|');
-            if (position < 0)
-                throw new ArgumentException("The position must be marked with a pipe, such as 'SELECT e.Empl|oyeeId'");
-
-            query = query.Remove(position, 1);
+            var query = queryWithPipe.ParseSinglePosition(out position);
             return CreateQuery(query);
         }
 
-        public static Compilation CreateQuery(string query, out TextSpan span)
+        public static Compilation CreateQuery(string queryWithMarkers, out TextSpan span)
         {
-            var start = query.IndexOf('{');
-            var end = query.IndexOf('}') - 1;
-            if (start < 0 || end < 0)
-                throw new ArgumentException("The span must be marked with braces, such as 'SELECT {e.EmployeeId}'");
-
-            span = TextSpan.FromBounds(start, end);
-            query = query.Remove(start, 1).Remove(end, 1);
+            var query = queryWithMarkers.ParseSingleSpan(out span);
             return CreateQuery(query);
         }
     }
