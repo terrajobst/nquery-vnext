@@ -8,69 +8,20 @@ namespace NQuery.Authoring.UnitTests.BraceMatching.Matchers
     [TestClass]
     public class QuotedIdentifierBraceMatcherTests : BraceMatcherTests
     {
-        public QuotedIdentifierBraceMatcherTests()
-            : base("\"")
-        {
-        }
-
         protected override IBraceMatcher CreateMatcher()
         {
             return new IdentifierBraceMatcher();
         }
 
         [TestMethod]
-        public void IdentifierBraceMatcher_MatchesAtStartOfFirstQuote()
+        public void IdentifierBraceMatcher_MatchesQuotes()
         {
             var query = @"
-                SELECT  |""FirstName""
+                SELECT  {""}FirstName{""}
                 FROM    Employees
             ";
 
-            AssertIsMatchAtStart(query);
-        }
-
-        [TestMethod]
-        public void IdentifierBraceMatcher_MatchesAtEndOfSecondQuote()
-        {
-            var query = @"
-                SELECT  ""FirstName""|
-                FROM    Employees
-            ";
-
-            AssertIsMatchAtEnd(query);
-        }
-
-        [TestMethod]
-        public void IdentifierBraceMatcher_DoesNotMatchInMiddleOfQuotedIdentifier()
-        {
-            var query = @"
-                SELECT  ""First|Name""
-                FROM    Employees
-            ";
-
-            AssertIsNoMatch(query);
-        }
-
-        [TestMethod]
-        public void IdentifierBraceMatcher_DoesNotMatchAtEndOfFirstQuote()
-        {
-            var query = @"
-                SELECT  ""|FirstName""
-                FROM    Employees
-            ";
-
-            AssertIsNoMatch(query);
-        }
-
-        [TestMethod]
-        public void IdentifierBraceMatcher_DoesNotMatchAtStartOfSecondQuote()
-        {
-            var query = @"
-                SELECT  ""FirstName|""
-                FROM    Employees
-            ";
-
-            AssertIsNoMatch(query);
+            AssertIsMatch(query);
         }
     }
 }
