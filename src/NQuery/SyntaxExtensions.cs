@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -11,6 +12,16 @@ namespace NQuery
         {
             var token = root.FindToken(position, descendIntoTrivia:true);
             return token.GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(position);
+        }
+
+        public static IEnumerable<SyntaxToken> FindStartTokens(this SyntaxNode root, int position)
+        {
+            var token = root.FindToken(position);
+            yield return token;
+
+            var previousToken = token.GetPreviousToken();
+            if (previousToken != null && previousToken.Span.End == position)
+                yield return previousToken;
         }
 
         public static SyntaxToken GetPreviousTokenIfEndOfFile(this SyntaxToken token)

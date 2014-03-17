@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.Authoring.BraceMatching.Matchers;
 using NQuery.Text;
@@ -28,28 +29,10 @@ namespace NQuery.Authoring.BraceMatching
 
         public static BraceMatchingResult FindBrace(this SyntaxTree syntaxTree, int position, IEnumerable<IBraceMatcher> braceMatchers)
         {
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var result = FindBrace(token, position, braceMatchers);
-            if (result.IsValid)
-                return result;
-
-            var previousToken = token.GetPreviousToken();
-            if (previousToken != null && previousToken.Span.End == token.Span.Start)
-            {
-                result = FindBrace(previousToken, position, braceMatchers);
-                if (result.IsValid)
-                    return result;
-            }
-
-            var nextToken = token.GetPreviousToken();
-            if (nextToken != null && nextToken.Span.Start == token.Span.End)
-            {
-                result = FindBrace(nextToken, position, braceMatchers);
-                if (result.IsValid)
-                    return result;
-            }
-
-            return BraceMatchingResult.None;
+            return (from t in syntaxTree.Root.FindStartTokens(position)
+                    let r = FindBrace(t, position, braceMatchers)
+                    where r.IsValid
+                    select r).DefaultIfEmpty(BraceMatchingResult.None).First();
         }
 
         private static BraceMatchingResult FindBrace(SyntaxToken token, int position, IEnumerable<IBraceMatcher> braceMatchers)

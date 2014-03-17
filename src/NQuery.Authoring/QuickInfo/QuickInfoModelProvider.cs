@@ -8,15 +8,13 @@ namespace NQuery.Authoring.QuickInfo
     {
         public QuickInfoModel GetModel(SemanticModel semanticModel, int position)
         {
-            var token = semanticModel.Compilation.SyntaxTree.Root.FindToken(position);
-            if (token == null || !token.Span.Contains(position) || token.Parent == null)
-                return null;
-
-            var node = token.Parent.AncestorsAndSelf().OfType<T>().FirstOrDefault();
-            return node == null
-                       ? null
-                       : CreateModel(semanticModel, position, node);
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            return (from token in syntaxTree.Root.FindStartTokens(position)
+                    let node = token.Parent.AncestorsAndSelf().OfType<T>().FirstOrDefault()
+                    where node != null
+                    select CreateModel(semanticModel, position, node)).FirstOrDefault();
         }
+
 
         protected abstract QuickInfoModel CreateModel(SemanticModel semanticModel, int position, T node);
     }

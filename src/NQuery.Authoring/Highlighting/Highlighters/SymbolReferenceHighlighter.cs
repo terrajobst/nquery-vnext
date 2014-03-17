@@ -12,7 +12,7 @@ namespace NQuery.Authoring.Highlighting.Highlighters
         public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var touchedSymbol = (from s in GetStartTokens(syntaxTree, position)
+            var touchedSymbol = (from s in syntaxTree.Root.FindStartTokens(position)
                                  from p in s.Parent.AncestorsAndSelf()
                                  from t in GetSymbols(semanticModel, p)
                                  where t != null
@@ -27,16 +27,6 @@ namespace NQuery.Authoring.Highlighting.Highlighters
                    from t in GetSymbols(semanticModel, n)
                    where t != null && t.Item1 == touchedSymbol
                    select t.Item2;
-        }
-
-        private IEnumerable<SyntaxToken> GetStartTokens(SyntaxTree syntaxTree, int position)
-        {
-            var token = syntaxTree.Root.FindToken(position);
-            yield return token;
-
-            var previous = token.GetPreviousToken();
-            if (previous != null && previous.Span.End == position)
-                yield return previous;
         }
 
         private static IEnumerable<Tuple<Symbol, TextSpan>> GetSymbols(SemanticModel semanticModel, SyntaxNode node)
