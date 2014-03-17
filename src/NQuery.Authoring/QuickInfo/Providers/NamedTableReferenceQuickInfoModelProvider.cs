@@ -12,16 +12,16 @@ namespace NQuery.Authoring.QuickInfo
             if (symbol == null)
                 return null;
 
-            if (node.TableName.Span.Contains(position))
+            if (node.TableName.Span.ContainsOrTouches(position))
             {
-                SyntaxNodeOrToken nodeOrToken = node.TableName;
-                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol.Table);
+                var span = node.TableName.Span;
+                return QuickInfoModel.ForSymbol(semanticModel, span, symbol.Table);
             }
 
-            if (node.Alias != null && node.Alias.Span.Contains(position))
+            if (node.Alias != null && node.Alias.Identifier.Span.ContainsOrTouches(position))
             {
-                SyntaxNodeOrToken nodeOrToken = node.Alias;
-                return QuickInfoModel.ForSymbol(semanticModel, nodeOrToken.Span, symbol);
+                var span = node.Alias.Identifier.Span;
+                return QuickInfoModel.ForSymbol(semanticModel, span, symbol);
             }
 
             return null;

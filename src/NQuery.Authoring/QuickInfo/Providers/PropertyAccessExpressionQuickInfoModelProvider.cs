@@ -8,7 +8,7 @@ namespace NQuery.Authoring.QuickInfo
     {
         protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, PropertyAccessExpressionSyntax node)
         {
-            if (!node.Name.Span.Contains(position))
+            if (!node.Name.Span.ContainsOrTouches(position))
                 return null;
 
             var symbol = semanticModel.GetSymbol(node);

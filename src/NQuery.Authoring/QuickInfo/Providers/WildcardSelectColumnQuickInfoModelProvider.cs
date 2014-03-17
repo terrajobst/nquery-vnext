@@ -9,7 +9,7 @@ namespace NQuery.Authoring.QuickInfo
         protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, WildcardSelectColumnSyntax node)
         {
             var tableName = node.TableName;
-            if (tableName == null || !tableName.Span.Contains(position))
+            if (tableName == null || !tableName.Span.ContainsOrTouches(position))
                 return null;
             
             var tableInstanceSymbol = semanticModel.GetTableInstance(node);

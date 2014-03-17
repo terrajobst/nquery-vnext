@@ -10,7 +10,7 @@ namespace NQuery.Authoring.QuickInfo
         protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CastExpressionSyntax node)
         {
             var keywordSpan = node.CastKeyword.Span;
-            return !keywordSpan.Contains(position)
+            return !keywordSpan.ContainsOrTouches(position)
                        ? null
                        : new QuickInfoModel(semanticModel, keywordSpan, NQueryGlyph.Function, SymbolMarkup.ForCastSymbol());
         }
