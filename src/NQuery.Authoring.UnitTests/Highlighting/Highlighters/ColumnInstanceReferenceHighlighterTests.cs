@@ -10,50 +10,19 @@ namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
     [TestClass]
     public class ColumnInstanceReferenceHighlighterTests : HighlighterTests
     {
-        protected override IHighlighter CreateHighligher()
+        protected override IHighlighter CreateHighlighter()
         {
             return new SymbolReferenceHighlighter();
         }
 
-        protected override string[] GetExpectedHighlights()
-        {
-            return new[] {"FirstName", "FirstName"};
-        }
-
         [TestMethod]
-        public void ColumnInstanceReferenceHighlighter_MatchesAtStart()
+        public void ColumnInstanceReferenceHighlighter_Matches()
         {
             var query = @"
-                SELECT  e.|FirstName,
+                SELECT  e.{FirstName},
                         e.LastName
                 FROM    Employees e
-                WHERE   e.FirstName = 'Andrew'
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void ColumnInstanceReferenceHighlighter_MatchesInMiddle()
-        {
-            var query = @"
-                SELECT  e.First|Name,
-                        e.LastName
-                FROM    Employees e
-                WHERE   e.FirstName = 'Andrew'
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void ColumnInstanceReferenceHighlighter_MatchesAtEnd()
-        {
-            var query = @"
-                SELECT  e.FirstName|,
-                        e.LastName
-                FROM    Employees e
-                WHERE   e.FirstName = 'Andrew'
+                WHERE   e.{FirstName} = 'Andrew'
             ";
 
             AssertIsMatch(query);

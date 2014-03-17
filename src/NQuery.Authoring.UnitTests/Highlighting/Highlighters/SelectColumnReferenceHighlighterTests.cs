@@ -8,7 +8,7 @@ using NQuery.Authoring.Highlighting.Highlighters;
 namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
 {
     [TestClass]
-    public class AggregateReferenceHighlighterTests : HighlighterTests
+    public class SelectColumnReferenceHighlighterTests : HighlighterTests
     {
         protected override IHighlighter CreateHighlighter()
         {
@@ -16,12 +16,12 @@ namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
         }
 
         [TestMethod]
-        public void AggregateReferenceHighlighter_Matches()
+        public void SelectColumnReferenceHighlighter_Matches()
         {
             var query = @"
-                SELECT  {COUNT}(*),
-                        {COUNT}(e.ReportsTo)
+                SELECT  e.FirstName + ' ' + e.LastName {FullName}
                 FROM    Employees e
+                ORDER   BY {FullName}
             ";
 
             AssertIsMatch(query);

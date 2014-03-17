@@ -10,87 +10,18 @@ namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
     [TestClass]
     public class DerivedTableInstanceReferenceHighlighterTests : HighlighterTests
     {
-        protected override IHighlighter CreateHighligher()
+        protected override IHighlighter CreateHighlighter()
         {
             return new SymbolReferenceHighlighter();
         }
 
-        protected override string[] GetExpectedHighlights()
-        {
-            return new[] { "em", "em", "em" };
-        }
-
-        // Usage
-
         [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesAtStartOfUsage()
+        public void DerivedTableInstanceReferenceHighlighter_Matches()
         {
             var query = @"
-                SELECT  |em.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesInMiddleOfUsage()
-        {
-            var query = @"
-                SELECT  e|m.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesAtEndOfUsage()
-        {
-            var query = @"
-                SELECT  em|.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        // Definition
-
-        [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesAtStartOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) |em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesInMiddleOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) e|m
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void DerivedTableInstanceReferenceHighlighter_MatchesAtEndOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    (SELECT * FROM Employees) em|
+                SELECT  {em}.FirstName,
+                        {em}.LastName
+                FROM    (SELECT * FROM Employees) {em}
             ";
 
             AssertIsMatch(query);

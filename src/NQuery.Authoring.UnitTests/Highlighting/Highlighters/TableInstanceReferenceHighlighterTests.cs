@@ -8,87 +8,18 @@ namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
     [TestClass]
     public class TableInstanceReferenceHighlighterTests : HighlighterTests
     {
-        protected override IHighlighter CreateHighligher()
+        protected override IHighlighter CreateHighlighter()
         {
             return new SymbolReferenceHighlighter();
         }
 
-        protected override string[] GetExpectedHighlights()
-        {
-            return new[] { "em", "em", "em" };
-        }
-
-        // Usage
-
         [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesAtStartOfUsage()
+        public void TableInstanceReferenceHighlighter_Matches()
         {
             var query = @"
-                SELECT  |em.FirstName,
-                        em.LastName
-                FROM    Employees em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesInMiddleOfUsage()
-        {
-            var query = @"
-                SELECT  e|m.FirstName,
-                        em.LastName
-                FROM    Employees em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesAtEndOfUsage()
-        {
-            var query = @"
-                SELECT  em|.FirstName,
-                        em.LastName
-                FROM    Employees em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        // Definition
-
-        [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesAtStartOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    Employees |em
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesInMiddleOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    Employees e|m
-            ";
-
-            AssertIsMatch(query);
-        }
-
-        [TestMethod]
-        public void TableInstanceReferenceHighlighter_MatchesAtEndOfDefinition()
-        {
-            var query = @"
-                SELECT  em.FirstName,
-                        em.LastName
-                FROM    Employees em|
+                SELECT  {em}.FirstName,
+                        {em}.LastName
+                FROM    Employees {em}
             ";
 
             AssertIsMatch(query);
