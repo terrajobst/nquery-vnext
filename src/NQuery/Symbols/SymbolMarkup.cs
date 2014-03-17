@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NQuery.Symbols
 {
-    public sealed class SymbolMarkup
+    public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
     {
         private readonly ReadOnlyCollection<SymbolMarkupToken> _tokens;
 
@@ -17,6 +17,31 @@ namespace NQuery.Symbols
         public ReadOnlyCollection<SymbolMarkupToken> Tokens
         {
             get { return _tokens; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as SymbolMarkup;
+            return other != null && Equals(other);
+        }
+
+        public bool Equals(SymbolMarkup other)
+        {
+            if (other.Tokens.Count != _tokens.Count)
+                return false;
+
+            for (var i = 0; i < _tokens.Count; i++)
+            {
+                if (!_tokens[i].Equals(other.Tokens[i]))
+                    return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return _tokens.GetHashCode();
         }
 
         public override string ToString()
