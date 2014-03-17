@@ -126,7 +126,7 @@ namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
             var query = @"
                 SELECT  *
                 FROM    Employees e
-                            INNER| JOIN EmployeeTerritories et ON| et.EmployeeID = e.EmployeeID
+                            INNER JOIN EmployeeTerritories et ON| et.EmployeeID = e.EmployeeID
             ";
 
             AssertIsMatch(query);
