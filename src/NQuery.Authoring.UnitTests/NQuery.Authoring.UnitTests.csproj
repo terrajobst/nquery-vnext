@@ -110,6 +110,14 @@
     <Compile Include="QuickInfo\QuickInfoModelProviderTests.cs" />
     <Compile Include="QuickInfo\QuickInfoExtensionsTests.cs" />
     <Compile Include="Selection\SelectionExtensionsTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CountAllSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\FunctionSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\MethodSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\NullIfSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpExtensionsTests.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

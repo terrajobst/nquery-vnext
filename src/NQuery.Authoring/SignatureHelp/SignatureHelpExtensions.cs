@@ -137,9 +137,9 @@ namespace NQuery.Authoring.SignatureHelp
                 sb.Append(node.Text);
             }
 
-            var parameters = parameterSpans.Zip(parameterNames, (s, n) => new ParameterItem(n, string.Empty, s)).ToArray();
+            var parameters = parameterSpans.Zip(parameterNames, (s, n) => new ParameterItem(n, s)).ToArray();
             var content = sb.ToString();
-            return new SignatureItem(content, string.Empty, parameters);
+            return new SignatureItem(content, parameters);
         }
 
         internal static IEnumerable<SignatureItem> ToSignatureItems(this IEnumerable<Symbol> symbols)

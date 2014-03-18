@@ -4,16 +4,14 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    public sealed class ParameterItem
+    public sealed class ParameterItem : IEquatable<ParameterItem>
     {
         private readonly string _name;
-        private readonly string _documentation;
         private readonly TextSpan _span;
 
-        public ParameterItem(string name, string documentation, TextSpan span)
+        public ParameterItem(string name, TextSpan span)
         {
             _name = name;
-            _documentation = documentation;
             _span = span;
         }
 
@@ -22,19 +20,32 @@ namespace NQuery.Authoring.SignatureHelp
             get { return _name; }
         }
 
-        public string Documentation
-        {
-            get { return _documentation; }
-        }
-
         public TextSpan Span
         {
             get { return _span; }
         }
 
-        public override string ToString()
+        public bool Equals(ParameterItem other)
         {
-            return string.Format("{0} '{1}'", _span, _name);
+            return other != null &&
+                   _name == other.Name &&
+                   _span == other.Span;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as ParameterItem;
+            return other != null && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = (_name != null ? _name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ _span.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }

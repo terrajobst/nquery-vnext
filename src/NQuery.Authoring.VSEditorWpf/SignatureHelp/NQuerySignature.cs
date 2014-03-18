@@ -15,11 +15,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         internal NQuerySignature(ITrackingSpan applicableSpan, SignatureItem signatureItem, int selectedParameter)
         {
-            var parameters = signatureItem.Parameters.Select(p => new NQueryParameter(this, p.Name, p.Documentation, new Span(p.Span.Start, p.Span.Length))).ToArray();
+            var parameters = signatureItem.Parameters.Select(p => new NQueryParameter(this, p.Name, string.Empty, new Span(p.Span.Start, p.Span.Length))).ToArray();
 
             ApplicableToSpan = applicableSpan;
             Content = signatureItem.Content;
-            Documentation = signatureItem.Documentation;
             Parameters = new ReadOnlyCollection<IParameter>(parameters);
             CurrentParameter = selectedParameter >= 0 && selectedParameter < parameters.Length
                                    ? parameters[selectedParameter]

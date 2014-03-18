@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using NQuery.Text;
@@ -22,22 +23,19 @@ namespace NQuery.Authoring.UnitTests
         {
             var resultSpans = new List<TextSpan>();
             var sb = new StringBuilder();
-            var spanStart = (int?) null;
+            var spanStartStack = new Stack<int>();
             foreach (var c in text)
             {
                 switch (c)
                 {
                     case '{':
-                        if (spanStart != null)
-                            throw new FormatException("Nested braces are illegal");
-                        spanStart = sb.Length;
+                        spanStartStack.Push(sb.Length);
                         break;
                     case '}':
-                        if (spanStart == null)
+                        if (spanStartStack.Count == 0)
                             throw new FormatException("Missing open brace");
 
-                        resultSpans.Add(TextSpan.FromBounds(spanStart.Value, sb.Length));
-                        spanStart = null;
+                        resultSpans.Add(TextSpan.FromBounds(spanStartStack.Pop(), sb.Length));
                         break;
                     case '|':
                         resultSpans.Add(new TextSpan(sb.Length, 0));
@@ -48,7 +46,7 @@ namespace NQuery.Authoring.UnitTests
                 }
             }
 
-            spans = resultSpans.ToArray();
+            spans = resultSpans.OrderBy(s => s.Start).ThenBy(s => s.End).ToArray();
             return sb.ToString();
         }
 
