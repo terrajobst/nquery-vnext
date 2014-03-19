@@ -6,25 +6,13 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    // TODO: Could we introduce a common base class between FunctionSignatureHelpModelProvider and MethodSignatureHelpModelProvider?
-
-    internal sealed class FunctionSignatureHelpModelProvider : ISignatureHelpModelProvider
+    internal sealed class FunctionSignatureHelpModelProvider : SignatureHelpModelProvider<FunctionInvocationExpressionSyntax>
     {
-        public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
+        protected override SignatureHelpModel GetModel(SemanticModel semanticModel, FunctionInvocationExpressionSyntax node, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var functionInvocation = token.Parent
-                                          .AncestorsAndSelf()
-                                          .OfType<FunctionInvocationExpressionSyntax>()
-                                          .FirstOrDefault(f => f.IsBetweenParentheses(position));
-
-            if (functionInvocation == null)
-                return null;
-
             // TODO: We need to use the resolved symbol as the currently selected one.
 
-            var name = functionInvocation.Name;
+            var name = node.Name;
             var functionSignatures = semanticModel.LookupSymbols(name.Span.Start)
                                                   .OfType<FunctionSymbol>()
                                                   .Where(f => name.Matches(f.Name))
@@ -40,8 +28,8 @@ namespace NQuery.Authoring.SignatureHelp
             if (signatures.Length == 0)
                 return null;
 
-            var span = functionInvocation.Span;
-            var parameterIndex = functionInvocation.ArgumentList.GetParameterIndex(position);
+            var span = node.Span;
+            var parameterIndex = node.ArgumentList.GetParameterIndex(position);
             var selected = signatures.FirstOrDefault(s => s.Parameters.Count > parameterIndex);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);

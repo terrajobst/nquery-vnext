@@ -20,7 +20,7 @@ namespace NQuery.Authoring.SignatureHelp
                        new CountAllSignatureHelpModelProvider(),
                        new FunctionSignatureHelpModelProvider(),
                        new MethodSignatureHelpModelProvider(),
-                       new NullIfSignatureHelpModelProvider(),
+                       new NullIfSignatureHelpModelProvider()
                    };
         }
 
@@ -44,46 +44,22 @@ namespace NQuery.Authoring.SignatureHelp
             return separators.TakeWhile(s => !s.IsMissing && s.Span.End <= position).Count();
         }
 
-        internal static bool IsBetweenParentheses(this ArgumentListSyntax argumentList, int position)
+        internal static bool IsBetweenParentheses(this SyntaxNode node, int position)
         {
-            return IsBetweenParentheses(argumentList.FullSpan, argumentList.LeftParenthesis, argumentList.RightParenthesis, position);
-        }
+            var argumentList = node.ChildNodes().SingleOrDefault(n => n.Kind == SyntaxKind.ArgumentList);
+            if (argumentList != null)
+                return argumentList.IsBetweenParentheses(position);
 
-        internal static bool IsBetweenParentheses(this CastExpressionSyntax expression, int position)
-        {
-            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
-        }
-
-        internal static bool IsBetweenParentheses(this CountAllExpressionSyntax expression, int position)
-        {
-            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesis, expression.RightParenthesis, position);
-        }
-
-        internal static bool IsBetweenParentheses(this NullIfExpressionSyntax expression, int position)
-        {
-            return IsBetweenParentheses(expression.FullSpan, expression.LeftParenthesisToken, expression.RightParenthesisToken, position);
-        }
-
-        internal static bool IsBetweenParentheses(this CoalesceExpressionSyntax expression, int position)
-        {
-            return expression.ArgumentList.IsBetweenParentheses(position);
-        }
-
-        internal static bool IsBetweenParentheses(this MethodInvocationExpressionSyntax expression, int position)
-        {
-            return expression.ArgumentList.IsBetweenParentheses(position);
-        }
-
-        internal static bool IsBetweenParentheses(this FunctionInvocationExpressionSyntax expression, int position)
-        {
-            return expression.ArgumentList.IsBetweenParentheses(position);
-        }
-
-        private static bool IsBetweenParentheses(TextSpan parentFullSpan, SyntaxToken leftParenthesis, SyntaxToken rightParenthesis, int position)
-        {
-            var start = leftParenthesis.IsMissing ? leftParenthesis.Span.Start : leftParenthesis.Span.End;
-            var end = rightParenthesis.IsMissing ? parentFullSpan.End : rightParenthesis.Span.Start;
+            var leftParenthesisToken = node.GetSingleChildToken(SyntaxKind.LeftParenthesisToken);
+            var rightParenthesisToken = node.GetSingleChildToken(SyntaxKind.RightParenthesisToken);
+            var start = leftParenthesisToken.IsMissing ? leftParenthesisToken.Span.Start : leftParenthesisToken.Span.End;
+            var end = rightParenthesisToken.IsMissing ? node.FullSpan.End : rightParenthesisToken.Span.Start;
             return start <= position && position <= end;
+        }
+
+        private static SyntaxToken GetSingleChildToken(this SyntaxNode node, SyntaxKind tokenKind)
+        {
+            return node.ChildNodesAndTokens().Where(nt => nt.Kind == tokenKind).Select(nt => nt.AsToken()).Single();
         }
 
         private static bool IsCommaToken(SymbolMarkupToken token)

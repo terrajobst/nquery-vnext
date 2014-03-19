@@ -6,23 +6,13 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    internal sealed class CountAllSignatureHelpModelProvider : ISignatureHelpModelProvider
+    internal sealed class CountAllSignatureHelpModelProvider : SignatureHelpModelProvider<CountAllExpressionSyntax>
     {
-        public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
+        protected override SignatureHelpModel GetModel(SemanticModel semanticModel, CountAllExpressionSyntax node, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var countAllExpression = token.Parent
-                                          .AncestorsAndSelf()
-                                          .OfType<CountAllExpressionSyntax>()
-                                          .FirstOrDefault(f => f.IsBetweenParentheses(position));
-
-            if (countAllExpression == null)
-                return null;
-
             // TODO: We need to use the resolved symbol as the currently selected one.
 
-            var name = countAllExpression.Name;
+            var name = node.Name;
             var signatures = semanticModel.LookupSymbols(name.Span.Start)
                                           .OfType<AggregateSymbol>()
                                           .Where(f => name.Matches(f.Name))
@@ -32,7 +22,7 @@ namespace NQuery.Authoring.SignatureHelp
             if (signatures.Length == 0)
                 return null;
 
-            var span = countAllExpression.Span;
+            var span = node.Span;
             var selected = signatures.FirstOrDefault();
 
             return new SignatureHelpModel(span, signatures, selected, 0);

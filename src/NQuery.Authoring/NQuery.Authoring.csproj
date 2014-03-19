@@ -126,6 +126,7 @@
     <Compile Include="SignatureHelp\Providers\MethodSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\Providers\NullIfSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\ParameterItem.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\SignatureHelpExtensions.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModel.cs" />
     <Compile Include="SignatureHelp\SignatureItem.cs" />

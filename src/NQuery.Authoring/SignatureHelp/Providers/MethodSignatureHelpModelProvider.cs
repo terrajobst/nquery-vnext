@@ -5,24 +5,14 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    internal sealed class MethodSignatureHelpModelProvider : ISignatureHelpModelProvider
+    internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvider<MethodInvocationExpressionSyntax>
     {
-        public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
+        protected override SignatureHelpModel GetModel(SemanticModel semanticModel, MethodInvocationExpressionSyntax node, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var methodInvocation = token.Parent
-                                        .AncestorsAndSelf()
-                                        .OfType<MethodInvocationExpressionSyntax>()
-                                        .FirstOrDefault(m => m.IsBetweenParentheses(position));
-
-            if (methodInvocation == null)
-                return null;
-
             // TODO: We need to use the resolved symbol as the selected one.
 
-            var targetType = semanticModel.GetExpressionType(methodInvocation.Target);
-            var name = methodInvocation.Name;
+            var targetType = semanticModel.GetExpressionType(node.Target);
+            var name = node.Name;
             var signatures = semanticModel.LookupMethods(targetType)
                                           .Where(m => name.Matches(m.Name))
                                           .OrderBy(f => f.Parameters.Count)
@@ -31,8 +21,8 @@ namespace NQuery.Authoring.SignatureHelp
             if (signatures.Length == 0)
                 return null;
 
-            var span = methodInvocation.Span;
-            var parameterIndex = methodInvocation.ArgumentList.GetParameterIndex(position);
+            var span = node.Span;
+            var parameterIndex = node.ArgumentList.GetParameterIndex(position);
             var selected = signatures.FirstOrDefault(s => s.Parameters.Count > parameterIndex);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
