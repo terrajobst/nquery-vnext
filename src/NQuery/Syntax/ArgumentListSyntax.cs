@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NQuery.Syntax
 {
@@ -15,7 +14,6 @@ namespace NQuery.Syntax
         {
             _leftParenthesis = leftParenthesis;
             _arguments = arguments;
-            int logicalIndex = _arguments.GetWithSeparators().Count(t => t.IsToken) + 1;
             _rightParenthesis = rightParenthesis;
         }
 
