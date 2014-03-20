@@ -8,7 +8,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, SyntaxNode node)
         {
-            var missingKeywords = node.ChildNodesAndTokens().Where(t => t.IsMissing && t.Kind.IsKeyword()).Select(nt => nt.AsToken());
+            var missingKeywords = node.ChildTokens().Where(t => t.IsMissing && t.Kind.IsKeyword());
             return missingKeywords.Select(k => new AddMissingKeywordCodeAction(k));
         }
 

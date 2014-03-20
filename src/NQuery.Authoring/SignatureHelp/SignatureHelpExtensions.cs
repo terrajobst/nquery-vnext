@@ -59,7 +59,7 @@ namespace NQuery.Authoring.SignatureHelp
 
         private static SyntaxToken GetSingleChildToken(this SyntaxNode node, SyntaxKind tokenKind)
         {
-            return node.ChildNodesAndTokens().Where(nt => nt.Kind == tokenKind).Select(nt => nt.AsToken()).Single();
+            return node.ChildTokens().Single(nt => nt.Kind == tokenKind);
         }
 
         private static bool IsCommaToken(SymbolMarkupToken token)

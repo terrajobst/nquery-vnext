@@ -44,10 +44,7 @@ namespace NQuery.Authoring.BraceMatching
 
         private static bool FindMatchingBrace(int position, int direction, SyntaxNode parent, SyntaxKind syntaxKind, out TextSpan right)
         {
-            var tokens = from t in parent.ChildNodesAndTokens()
-                         where t.Kind == syntaxKind && t.IsToken
-                         select t.AsToken();
-
+            var tokens = parent.ChildTokens().Where(t => t.Kind == syntaxKind);
             var relevantTokens = direction < 0
                                      ? from t in tokens
                                        where t.Span.End <= position

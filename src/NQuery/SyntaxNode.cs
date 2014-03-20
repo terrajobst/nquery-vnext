@@ -63,6 +63,13 @@ namespace NQuery
                    select n.AsNode();
         }
 
+        public IEnumerable<SyntaxToken> ChildTokens()
+        {
+            return from n in ChildNodesAndTokens()
+                   where n.IsToken
+                   select n.AsToken();
+        }
+
         public IEnumerable<SyntaxNode> DescendantNodes(bool descendIntoTrivia = false)
         {
             return DescendantNodesAndSelf(descendIntoTrivia).Skip(1);
