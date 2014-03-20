@@ -56,6 +56,16 @@
   <ItemGroup>
     <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
     <Compile Include="BraceMatching\BraceMatcherTests.cs" />
+    <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\ColumnSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\EmptySymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\FunctionSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\KeywordCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\MethodSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\PropertySymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\SymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\TableSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\TypeCompletionProviderTests.cs" />
     <Compile Include="ExtensionTests.cs" />
     <Compile Include="BraceMatching\Matchers\CaseBraceMatcherTests.cs" />
     <Compile Include="BraceMatching\Matchers\DateBraceMatcherTests.cs" />
@@ -79,6 +89,8 @@
     <Compile Include="CodeActions\RefactoringTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
     <Compile Include="CompilationFactory.cs" />
+    <Compile Include="Completion\CompletionExtensionsTests.cs" />
+    <Compile Include="Completion\Providers\JoinCompletionProviderTests.cs" />
     <Compile Include="Highlighting\Highlighters\AggregateReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\CaseKeywordHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\CastKeywordHighlighterTests.cs" />
