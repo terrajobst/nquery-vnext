@@ -64,9 +64,9 @@ namespace NQuery
                 }
                 else
                 {
-                    var token = GetFirstToken(nodeOrToken.AsNode(), tokenPredicate, triviaPredicate);
-                    if (token != null)
-                        return token;
+                    var t = GetFirstToken(nodeOrToken.AsNode(), tokenPredicate, triviaPredicate);
+                    if (t != null)
+                        return t;
                 }
             }
 
@@ -116,9 +116,9 @@ namespace NQuery
                 }
                 else
                 {
-                    var token = GetLastToken(nodeOrToken.AsNode(), tokenPredicate, triviaPredicate);
-                    if (token != null)
-                        return token;
+                    var t = GetLastToken(nodeOrToken.AsNode(), tokenPredicate, triviaPredicate);
+                    if (t != null)
+                        return t;
                 }
             }
 
