@@ -90,9 +90,79 @@ namespace NQuery.Syntax
 
         private SyntaxToken Match(SyntaxKind kind)
         {
+            // Normally, our behavior is to insert missing tokens if the current token doesn't
+            // match our expected token. The root of the parser will make sure that after we've
+            // completed parsing the main element (i.e. query or expression) the only remaining
+            // token is EOF.
+            //
+            // If there are any tokens left, we report an error saying "we expected EOF but
+            // found <token>". That EOF token will contain all remaining tokens as skipped
+            // token trivia.
+            //
+            // However, there are cases where we expect an identifier but the currently typed
+            // identifier is a keyword.
+            //
+            // For example, consider this case:
+            //
+            //     SELECT  e.FirstName + ' ' + e.LastName AS Full|
+            //     FROM    Employees e
+            //
+            // The developer is typing "FullName" but as soon as he completes the second
+            // "l" the syntax is completely messed up.
+            //
+            // Here is another example:
+            //
+            //     SELECT   *
+            //     FROM     Or|
+            //
+            // In this case, the develope wants to type "Orders" but as soon as the "r" is
+            // typed the completion will stop working because the context of the "Or"
+            // keyword is no longer part of the table reference but part of the skipped
+            // token trivia contained in the EOF token.
+            //
+            // Both cases can be fixed by skipping the current token and inserting a missing
+            // token that contains the skipped token as trivia.
+            //
+            // You may wonder why we shouldn't do this for all cases where an identifier is
+            // expeted but a keyword is found.
+            //
+            // Consider this case:
+            //
+            //     SELECT   o.|
+            //     FROM     Orders
+            //
+            // If we were always eating the curent token, we would skip the FROM token which
+            // would cause the completion provider to think we've typed "o.FROM|" which is not
+            // what we want. So in essence we want to disambiguate this case:
+            //
+            //     SELECT   o.|
+            //     FROM     Orders
+            //
+            // from:
+            //
+            //     SELECT   o.From|
+            //
+            // The easiest is to use the line information -- if the current token is on the
+            // same line as the previous, then we skip (second case). Otherwise we insert
+            // a new token (frist case).
+
+            if (kind == SyntaxKind.IdentifierToken && Current.Kind.IsKeyword() && IsPreviousTokenOnSameLine())
+                return SkipAndInsertMissingToken(SyntaxKind.IdentifierToken);
+
             return Current.Kind == kind
                        ? NextToken()
-                       : CreateMissingToken(kind);
+                       : InsertMissingToken(kind);
+        }
+
+        private bool IsPreviousTokenOnSameLine()
+        {
+            var previous = Peek(-1);
+            if (previous == null)
+                return true;
+
+            var previousLine = _textBuffer.GetLineNumberFromPosition(previous.Span.Start);
+            var currentLine = _textBuffer.GetLineNumberFromPosition(Current.Span.Start);
+            return previousLine == currentLine;
         }
 
         private void SkipTokens(Func<SyntaxToken, bool> stopPredicate)
@@ -116,13 +186,26 @@ namespace NQuery.Syntax
             _tokens[_tokenIndex] = current.WithLeadingTrivia(leadingTrivia);
         }
 
-        private SyntaxToken CreateMissingToken(SyntaxKind kind)
+        private SyntaxToken InsertMissingToken(SyntaxKind kind)
         {
             var missingTokenSpan = new TextSpan(Current.FullSpan.Start, 0);
             var diagnosticSpan = GetDiagnosticSpanForMissingToken();
             var diagnostics = new List<Diagnostic>(1);
             diagnostics.ReportTokenExpected(diagnosticSpan, Current, kind);
             return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
+        }
+
+        private SyntaxToken SkipAndInsertMissingToken(SyntaxKind kind)
+        {
+            var skippedToken = Current;
+            var skippedTokensTrivia = new[] { CreateSkippedTokensTrivia(new[] { skippedToken }) };
+            NextToken();
+
+            var missingTokenSpan = new TextSpan(Current.FullSpan.Start, 0);
+            var diagnosticSpan = GetDiagnosticSpanForMissingToken();
+            var diagnostics = new List<Diagnostic>(1);
+            diagnostics.ReportTokenExpected(diagnosticSpan, skippedToken, kind);
+            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, skippedTokensTrivia, new SyntaxTrivia[0], diagnostics);
         }
 
         private TextSpan GetDiagnosticSpanForMissingToken()
