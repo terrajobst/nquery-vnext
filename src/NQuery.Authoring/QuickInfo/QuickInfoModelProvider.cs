@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace NQuery.Authoring.QuickInfo
 {
-    internal abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider
+    public abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider
         where T: SyntaxNode
     {
         public QuickInfoModel GetModel(SemanticModel semanticModel, int position)

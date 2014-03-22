@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace NQuery.Authoring.SignatureHelp
 {
-    internal abstract class SignatureHelpModelProvider<T> : ISignatureHelpModelProvider
+    public abstract class SignatureHelpModelProvider<T> : ISignatureHelpModelProvider
         where T: SyntaxNode
     {
         public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)

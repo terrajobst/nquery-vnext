@@ -4,7 +4,7 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.BraceMatching
 {
-    internal abstract class SingleTokenBraceMatcher : BraceMatcher
+    public abstract class SingleTokenBraceMatcher : BraceMatcher
     {
         private readonly SyntaxKind _tokenKind;
 
