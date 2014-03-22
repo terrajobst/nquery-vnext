@@ -42,7 +42,7 @@ namespace NQuery.Authoring.Completion.Providers
 
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var findTokenContext = syntaxTree.Root.FindTokenContext(position);
-            var isTableContext = findTokenContext.Parent is TableReferenceSyntax;
+            var isTableContext = findTokenContext.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().Any();
 
             var filteredSymbols = from s in symbols
                                   let isTable = s is TableSymbol
