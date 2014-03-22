@@ -32,10 +32,11 @@ namespace NQuery.Authoring.SignatureHelp
 
         public static SignatureHelpModel GetSignatureHelpModel(this SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers)
         {
-            return providers.Select(p => p.GetModel(semanticModel, position))
-                            .Where(m => m != null)
-                            .OrderByDescending(m => m.ApplicableSpan.Start)
-                            .FirstOrDefault();
+            return (from p in providers
+                    let m = p.GetModel(semanticModel, position)
+                    where m != null
+                    orderby m.ApplicableSpan.Start descending
+                    select m).FirstOrDefault();
         }
 
         internal static int GetParameterIndex(this ArgumentListSyntax argumentList, int position)

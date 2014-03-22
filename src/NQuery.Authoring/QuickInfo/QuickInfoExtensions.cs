@@ -34,10 +34,10 @@ namespace NQuery.Authoring.QuickInfo
 
         public static QuickInfoModel GetQuickInfoModel(this SemanticModel semanticModel, int position, IEnumerable<IQuickInfoModelProvider> providers)
         {
-            var model = providers
-                .Select(p => p.GetModel(semanticModel, position))
-                .FirstOrDefault(m => m != null);
-            return model;
+            return (from p in providers
+                    let m = p.GetModel(semanticModel, position)
+                    where m != null
+                    select m).FirstOrDefault();
         }
     }
 }
