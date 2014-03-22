@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,14 +30,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 ORDER   /* before */ BY e.FirstName
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(1, actions.Length);
+            var description = "Add missing 'BY' keyword";
 
-            var action = actions.Single();
-            Assert.AreEqual("Add missing 'BY' keyword", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
     }
 }

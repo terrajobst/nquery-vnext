@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,14 +30,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 WHERE   /* prefix */ 'Andrew' /* before */ = /* after */ e.FirstName /* suffix */
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(1, actions.Length);
+            var description = "Flip arguments of operator '='";
 
-            var action = actions.Single();
-            Assert.AreEqual("Flip arguments of operator '='", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
     }
 }

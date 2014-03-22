@@ -28,14 +28,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 ORDER   BY e.FirstName ASC /*after*/
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(2, actions.Length);
+            var description = "To explicit sort order";
 
-            var action = actions[0];
-            Assert.AreEqual("To explicit sort order", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
 
         [TestMethod]
@@ -53,14 +48,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 ORDER   BY e.FirstName DESC /*after*/
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(2, actions.Length);
-        
-            var action = actions[1];
-            Assert.AreEqual("To descending", action.Description);
+            var description = "To descending";
 
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
 
         [TestMethod]
@@ -78,14 +68,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 ORDER   BY e.FirstName /*after*/
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(2, actions.Length);
+            var description = "To implicit sort order";
 
-            var action = actions[0];
-            Assert.AreEqual("To implicit sort order", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
 
         [TestMethod]
@@ -103,14 +88,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 ORDER   BY e.FirstName DESC /*after*/
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(2, actions.Length);
-        
-            var action = actions[1];
-            Assert.AreEqual("To descending", action.Description);
+            var description = "To descending";
 
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, description);
         }
     }
 }

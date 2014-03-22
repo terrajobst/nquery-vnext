@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -9,14 +10,47 @@ namespace NQuery.Authoring.UnitTests
 {
     internal static class StringExtensions
     {
+        public static string NormalizeCode(this string text)
+        {
+            return text.Unindent().Trim();
+        }
+
+        public static string Unindent(this string text)
+        {
+            var minIndent = Int32.MaxValue;
+
+            using (var stringReader = new StringReader(text))
+            {
+                string line;
+                while ((line = stringReader.ReadLine()) != null)
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var indent = line.Length - line.TrimStart().Length;
+                    minIndent = Math.Min(minIndent, indent);
+                }
+            }
+
+            var sb = new StringBuilder();
+            using (var stringReader = new StringReader(text))
+            {
+                string line;
+                while ((line = stringReader.ReadLine()) != null)
+                {
+                    var unindentedLine = line.Length < minIndent
+                        ? line
+                        : line.Substring(minIndent);
+                    sb.AppendLine(unindentedLine);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         public static string Substring(this string text, TextSpan span)
         {
             return text.Substring(span.Start, span.Length);
-        }
-
-        public static string NormalizeLineEnding(this string text)
-        {
-            return text.Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
         public static string ParseSpans(this string text, out TextSpan[] spans)

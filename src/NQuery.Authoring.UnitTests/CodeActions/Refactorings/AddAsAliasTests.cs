@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,9 +23,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 FROM    Employees AS e|
             ";
 
-            var actions = GetActions(query);
-
-            Assert.AreEqual(0, actions.Length);
+            AssertDoesNotTrigger(query);
         }
 
         [TestMethod]
@@ -41,14 +39,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 FROM    Employees /* before */ AS e /* after */
             ";
 
-            var actions = GetActions(query);
-            Assert.AreEqual(1, actions.Length);
-
-            var action = actions.Single();
-            Assert.AreEqual("Add 'AS' keyword", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery, syntaxTree.TextBuffer.GetText());
+            AssertFixes(query, fixedQuery, "Add 'AS' keyword");
         }
     }
 }

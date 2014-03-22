@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,8 +23,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                 FROM    Xxx
             ";
 
-            var codeActions = GetActions(query);
-            Assert.AreEqual(0, codeActions.Length);
+            AssertDoesNotTrigger(query);
         }
 
         [TestMethod]
@@ -61,14 +60,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                         EmployeeTerritories et
             ";
 
-            var codeActions = GetActions(query);
-            Assert.AreEqual(1, codeActions.Length);
+            var description = "Expand wildcard";
 
-            var action = codeActions.Single();
-            Assert.AreEqual("Expand wildcard", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
+            AssertFixes(query, fixedQuery, description);
         }
 
         [TestMethod]
@@ -87,14 +81,9 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
                         EmployeeTerritories et
             ";
 
-            var codeActions = GetActions(query);
-            Assert.AreEqual(1, codeActions.Length);
+            var description = "Expand wildcard";
 
-            var action = codeActions.Single();
-            Assert.AreEqual("Expand wildcard", action.Description);
-
-            var syntaxTree = action.GetEdit();
-            Assert.AreEqual(fixedQuery.NormalizeLineEnding(), syntaxTree.TextBuffer.GetText().NormalizeLineEnding());
+            AssertFixes(query, fixedQuery, description);
         }
     }
 }
