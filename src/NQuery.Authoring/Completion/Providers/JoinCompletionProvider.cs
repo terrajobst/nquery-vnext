@@ -68,13 +68,13 @@ namespace NQuery.Authoring.Completion.Providers
                 var leftColumn = leftColumns[i];
                 var rightColumn = rightColumns[i];
 
-                sb.Append(right.Name);
+                sb.Append(SyntaxFacts.GetValidIdentifier(right.Name));
                 sb.Append(".");
-                sb.Append(rightColumn.Name);
+                sb.Append(SyntaxFacts.GetValidIdentifier(rightColumn.Name));
                 sb.Append(" = ");
-                sb.Append(left.Name);
+                sb.Append(SyntaxFacts.GetValidIdentifier(left.Name));
                 sb.Append(".");
-                sb.Append(leftColumn.Name);
+                sb.Append(SyntaxFacts.GetValidIdentifier(leftColumn.Name));
             }
 
             return sb.ToString();
