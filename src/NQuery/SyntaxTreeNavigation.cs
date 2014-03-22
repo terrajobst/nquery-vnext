@@ -77,14 +77,14 @@ namespace NQuery
         {
             var lt = GetFirstToken(token.LeadingTrivia, tokenPredicate, triviaPredicate);
             if (lt != null)
-                return null;
+                return lt;
 
             if (tokenPredicate(token))
                 return token;
 
             var tt = GetFirstToken(token.TrailingTrivia, tokenPredicate, triviaPredicate);
             if (tt != null)
-                return null;
+                return tt;
 
             return null;
         }
@@ -129,14 +129,14 @@ namespace NQuery
         {
             var tt = GetLastToken(token.TrailingTrivia, tokenPredicate, triviaPredicate);
             if (tt != null)
-                return null;
+                return tt;
 
             if (tokenPredicate(token))
                 return token;
 
             var lt = GetLastToken(token.LeadingTrivia, tokenPredicate, triviaPredicate);
             if (lt != null)
-                return null;
+                return lt;
 
             return null;
         }
