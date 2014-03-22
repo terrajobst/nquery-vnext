@@ -13,6 +13,9 @@ namespace NQuery.Binding
         private readonly DataContext _dataContext;
         private readonly SymbolTable _localSymbols;
 
+        private readonly Dictionary<Type, ImmutableArray<PropertySymbol>> _propertySymbols = new Dictionary<Type, ImmutableArray<PropertySymbol>>();
+        private readonly Dictionary<Type, ImmutableArray<MethodSymbol>> _methodSymbols = new Dictionary<Type, ImmutableArray<MethodSymbol>>();
+
         public GlobalBinder(SharedBinderState sharedBinderState, DataContext dataContext)
             : base(sharedBinderState, null)
         {
@@ -32,20 +35,34 @@ namespace NQuery.Binding
 
         public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
-            // TODO: Should we cache them to ensure object identity for property symbols?
             var propertyProvider = Lookup(_dataContext.PropertyProviders, type);
-            return propertyProvider == null
-                       ? Enumerable.Empty<PropertySymbol>()
-                       : propertyProvider.GetProperties(type);
+            if (propertyProvider == null)
+                return Enumerable.Empty<PropertySymbol>();
+
+            ImmutableArray<PropertySymbol> result;
+            if (!_propertySymbols.TryGetValue(type, out result))
+            {
+                result = propertyProvider.GetProperties(type).ToImmutableArray();
+                _propertySymbols.Add(type, result);
+            }
+
+            return result;
         }
 
         public override IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
-            // TODO: Should we cache them to ensure object identity for method symbols?
             var methodProvider = Lookup(_dataContext.MethodProviders, type);
-            return methodProvider == null
-                       ? Enumerable.Empty<MethodSymbol>()
-                       : methodProvider.GetMethods(type);
+            if (methodProvider == null)
+                return Enumerable.Empty<MethodSymbol>();
+
+            ImmutableArray<MethodSymbol> result;
+            if (!_methodSymbols.TryGetValue(type, out result))
+            {
+                result = methodProvider.GetMethods(type).ToImmutableArray();
+                _methodSymbols.Add(type, result);
+            }
+
+            return result;
         }
 
         public override IComparer LookupComparer(Type type)

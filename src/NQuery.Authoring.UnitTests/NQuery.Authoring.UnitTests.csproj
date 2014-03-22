@@ -86,8 +86,10 @@
     <Compile Include="Highlighting\Highlighters\CommonTableExpressionReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\DerivedTableInstanceReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\InnerJoinKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\MethodReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\OrderedQueryKeywordHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\OuterJoinKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\PropertyReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\SelectColumnReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\SelectQueryKeywordHighlighterTests.cs" />
     <Compile Include="Highlighting\Highlighters\TableInstanceReferenceHighlighterTests.cs" />
