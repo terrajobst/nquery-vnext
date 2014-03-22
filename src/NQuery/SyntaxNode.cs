@@ -47,10 +47,26 @@ namespace NQuery
         public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
         {
             var node = this;
-            while (node != null && (ascendOutOfTrivia || !(node is StructuredTriviaSyntax)))
+            while (node != null)
             {
                 yield return node;
-                node = node.Parent;
+
+                StructuredTriviaSyntax structuredTrivia;
+                if (!ascendOutOfTrivia || (structuredTrivia = node as StructuredTriviaSyntax) == null)
+                {
+                    node = node.Parent;
+                }
+                else
+                {
+                    // The parent of structured trivia is actually null, which is
+                    // argubaly the correct result for nodes that are trivia.
+                    // So in order to ascend out of those, we need to navgiate from
+                    // the structure to its containing token which we can then use
+                    // to return the logical parent.
+                    var parentTrivia = structuredTrivia.ParentTrivia;
+                    var parentToken = parentTrivia.Parent;
+                    node = parentToken.Parent;
+                }
             }
         }
 
