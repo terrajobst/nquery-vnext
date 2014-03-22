@@ -14,7 +14,7 @@ namespace NQuery.Authoring.Completion.Providers
             var token = syntaxTree.Root.FindTokenOnLeft(position);
             var castExpression = token.Parent.AncestorsAndSelf()
                                              .OfType<CastExpressionSyntax>()
-                                             .FirstOrDefault(c => c.AsKeyword.Span.End <= position);
+                                             .FirstOrDefault(c => !c.AsKeyword.IsMissing && c.AsKeyword.Span.End <= position);
 
             if (castExpression == null)
                 return Enumerable.Empty<CompletionItem>();
