@@ -2,7 +2,7 @@
 
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.QuickInfo
+namespace NQuery.Authoring.QuickInfo.Providers
 {
     internal sealed class ExpressionSelectColumnQuickInfoModelProvider : QuickInfoModelProvider<ExpressionSelectColumnSyntax>
     {

@@ -3,6 +3,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NQuery.Authoring.QuickInfo;
+using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 

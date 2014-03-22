@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using NQuery.Authoring.SignatureHelp.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 using NQuery.Text;

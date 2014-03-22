@@ -4,7 +4,7 @@ using System.Linq;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp.Providers
 {
     internal sealed class CountAllSignatureHelpModelProvider : SignatureHelpModelProvider<CountAllExpressionSyntax>
     {

@@ -3,7 +3,7 @@ using System.Linq;
 
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp.Providers
 {
     internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvider<MethodInvocationExpressionSyntax>
     {

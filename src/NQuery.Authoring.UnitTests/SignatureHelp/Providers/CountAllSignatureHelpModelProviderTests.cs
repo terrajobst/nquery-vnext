@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NQuery.Authoring.SignatureHelp;
+using NQuery.Authoring.SignatureHelp.Providers;
 
 namespace NQuery.Authoring.UnitTests.SignatureHelp.Providers
 {
