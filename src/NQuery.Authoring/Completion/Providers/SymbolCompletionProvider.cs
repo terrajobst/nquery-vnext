@@ -57,13 +57,18 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tableInstanceSymbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
             if (tableInstanceSymbol != null)
-                return CreateSymbolCompletions(tableInstanceSymbol.ColumnInstances);
+                return GetTableCompletions(tableInstanceSymbol);
 
             var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);
             if (targetType != null)
                 return GetTypeCompletions(semanticModel, targetType);
 
             return Enumerable.Empty<CompletionItem>();
+        }
+
+        private static IEnumerable<CompletionItem> GetTableCompletions(TableInstanceSymbol tableInstanceSymbol)
+        {
+            return CreateSymbolCompletions(tableInstanceSymbol.ColumnInstances);
         }
 
         private static IEnumerable<CompletionItem> GetTypeCompletions(SemanticModel semanticModel, Type targetType)
