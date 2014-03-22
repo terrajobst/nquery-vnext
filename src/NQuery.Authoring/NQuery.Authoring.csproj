@@ -38,6 +38,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BraceMatching\BraceMatcher.cs" />
     <Compile Include="BraceMatching\BraceMatchingExtensions.cs" />
     <Compile Include="BraceMatching\BraceMatchingResult.cs" />
     <Compile Include="BraceMatching\Matchers\CaseBraceMatcher.cs" />

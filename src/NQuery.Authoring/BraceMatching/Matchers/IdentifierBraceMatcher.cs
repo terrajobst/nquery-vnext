@@ -9,7 +9,7 @@ namespace NQuery.Authoring.BraceMatching.Matchers
         {
         }
 
-        public override BraceMatchingResult MatchBraces(SyntaxToken token, int position)
+        protected override BraceMatchingResult MatchBraces(SyntaxToken token, int position)
         {
             var hasBraces = token.IsQuotedIdentifier() || token.IsParenthesizedIdentifier();
             return hasBraces

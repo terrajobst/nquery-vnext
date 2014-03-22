@@ -4,6 +4,6 @@ namespace NQuery.Authoring.BraceMatching
 {
     public interface IBraceMatcher
     {
-        BraceMatchingResult MatchBraces(SyntaxToken token, int position);
+        BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position);
     }
 }

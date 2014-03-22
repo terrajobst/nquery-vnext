@@ -4,7 +4,7 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.BraceMatching
 {
-    internal abstract class SingleTokenBraceMatcher : IBraceMatcher
+    internal abstract class SingleTokenBraceMatcher : BraceMatcher
     {
         private readonly SyntaxKind _tokenKind;
 
@@ -13,7 +13,7 @@ namespace NQuery.Authoring.BraceMatching
             _tokenKind = tokenKind;
         }
 
-        public virtual BraceMatchingResult MatchBraces(SyntaxToken token, int position)
+        protected override BraceMatchingResult MatchBraces(SyntaxToken token, int position)
         {
             var startOrEnd = position == token.Span.Start ||
                              position == token.Span.End;

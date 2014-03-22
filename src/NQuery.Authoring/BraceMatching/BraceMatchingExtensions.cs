@@ -28,9 +28,8 @@ namespace NQuery.Authoring.BraceMatching
 
         public static BraceMatchingResult MatchBraces(this SyntaxTree syntaxTree, int position, IEnumerable<IBraceMatcher> braceMatchers)
         {
-            return (from t in syntaxTree.Root.FindStartTokens(position)
-                    from m in braceMatchers
-                    let r = m.MatchBraces(t, position)
+            return (from m in braceMatchers
+                    let r = m.MatchBraces(syntaxTree, position)
                     where r.IsValid
                     select r).DefaultIfEmpty(BraceMatchingResult.None).First();
         }
