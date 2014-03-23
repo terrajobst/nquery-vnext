@@ -78,6 +78,7 @@
     <Compile Include="Completion\CompletionItem.cs" />
     <Compile Include="Completion\CompletionModel.cs" />
     <Compile Include="Completion\ICompletionProvider.cs" />
+    <Compile Include="Completion\Providers\AliasCompletionProvider.cs" />
     <Compile Include="Completion\Providers\JoinCompletionProvider.cs" />
     <Compile Include="Completion\Providers\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\Providers\SymbolCompletionProvider.cs" />

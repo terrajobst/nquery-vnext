@@ -12,6 +12,7 @@ namespace NQuery.Authoring.Completion
         {
             return new ICompletionProvider[]
                    {
+                       new AliasCompletionProvider(),
                        new JoinCompletionProvider(),
                        new KeywordCompletionProvider(),
                        new SymbolCompletionProvider(),

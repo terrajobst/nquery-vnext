@@ -124,7 +124,10 @@ namespace NQuery.Authoring.Completion.Providers
 
             // AS
 
-            if (IsInCastAfterExpression(syntaxTree, position) ||
+            if (IsAfterExpressionSelectColumn(syntaxTree, position) ||
+                IsAfterNamedTableReference(syntaxTree, position) ||
+                IsInAliasAndNoAs(syntaxTree, position) ||
+                IsInCastAfterExpression(syntaxTree, position) ||
                 IsInCommonTableExpressionAfterNameOrColumnList(syntaxTree, position))
             {
                 yield return SyntaxKind.AsKeyword;
@@ -532,6 +535,27 @@ namespace NQuery.Authoring.Completion.Providers
         {
             return IsBeforeExpression(syntaxTree, position) ||
                    IsAfterExpression(syntaxTree, position);
+        }
+
+        private static bool IsAfterExpressionSelectColumn(SyntaxTree syntaxTree, int position)
+        {
+            var token = syntaxTree.Root.FindTokenContext(position);
+            var node = token.Parent.AncestorsAndSelf().OfType<ExpressionSelectColumnSyntax>().FirstOrDefault();
+            return node != null && node.Alias == null;
+        }
+
+        private static bool IsAfterNamedTableReference(SyntaxTree syntaxTree, int position)
+        {
+            var token = syntaxTree.Root.FindTokenContext(position);
+            var node = token.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().FirstOrDefault();
+            return node != null && node.Alias == null;
+        }
+
+        private static bool IsInAliasAndNoAs(SyntaxTree syntaxTree, int position)
+        {
+            var token = syntaxTree.Root.FindTokenContext(position);
+            var node = token.Parent as AliasSyntax;
+            return node != null && node.AsKeyword == null;
         }
 
         private static bool IsInCastAfterExpression(SyntaxTree syntaxTree, int position)
