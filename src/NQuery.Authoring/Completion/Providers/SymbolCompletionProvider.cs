@@ -60,7 +60,7 @@ namespace NQuery.Authoring.Completion.Providers
                 return GetTableCompletions(tableInstanceSymbol);
 
             var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);
-            if (targetType != null)
+            if (targetType != null && !targetType.IsUnknown() && !targetType.IsError())
                 return GetTypeCompletions(semanticModel, targetType);
 
             return Enumerable.Empty<CompletionItem>();
