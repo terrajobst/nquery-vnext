@@ -13,7 +13,7 @@ namespace NQuery.Authoring.Completion.Providers
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var root = syntaxTree.Root;
 
-            // For certain constructs we never want to show a keywod completion.
+            // For certain constructs we never want to show a keyword completion.
             if (root.InComment(position) ||
                 root.InLiteral(position) ||
                 root.InUserGivenName(position) ||
@@ -53,7 +53,6 @@ namespace NQuery.Authoring.Completion.Providers
             // AND
             // OR
             // IS
-            // LIKE
             // SOUNDS
             // SIMILAR
             // BETWEEN
@@ -64,7 +63,6 @@ namespace NQuery.Authoring.Completion.Providers
                 yield return SyntaxKind.AndKeyword;
                 yield return SyntaxKind.OrKeyword;
                 yield return SyntaxKind.IsKeyword;
-                yield return SyntaxKind.LikeKeyword;
                 yield return SyntaxKind.SoundsKeyword;
                 yield return SyntaxKind.SimilarKeyword;
                 yield return SyntaxKind.BetweenKeyword;
@@ -81,7 +79,8 @@ namespace NQuery.Authoring.Completion.Providers
 
             // LIKE
 
-            if (IsAfterSoundsKeyword(syntaxTree, position))
+            if (IsAfterExpression(syntaxTree, position) ||
+                IsAfterSoundsKeyword(syntaxTree, position))
             {
                 yield return SyntaxKind.LikeKeyword;
             }
