@@ -69,10 +69,11 @@ namespace NQuery.Authoring.ActiproWpf.Completion
 
             completionSession.Items.Clear();
 
-            foreach (var completionItem in model.Items)
+            var hasBuilders = model.Items.Any(i => i.IsBuilder);
+            if (!hasBuilders)
             {
-                var item = GetActiproCompletionItem(completionItem);
-                completionSession.Items.Add(item);
+                foreach (var item in model.Items.Select(GetActiproCompletionItem))
+                    completionSession.Items.Add(item);
             }
 
             if (completionSession.Items.Count == 0)

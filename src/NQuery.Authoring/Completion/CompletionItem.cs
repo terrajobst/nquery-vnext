@@ -9,19 +9,31 @@ namespace NQuery.Authoring.Completion
         private readonly string _description;
         private readonly NQueryGlyph? _glyph;
         private readonly Symbol _symbol;
+        private readonly bool _isBuilder;
 
         public CompletionItem(string displayText, string insertionText, string description, NQueryGlyph? glyph)
             : this(displayText, insertionText, description, glyph, null)
         {
         }
 
+        public CompletionItem(string displayText, string insertionText, string description, bool isBuilder)
+            : this(displayText, insertionText, description, null, null, isBuilder)
+        {
+        }
+
         public CompletionItem(string displayText, string insertionText, string description, NQueryGlyph? glyph, Symbol symbol)
+            : this(displayText, insertionText, description, glyph, symbol, false)
+        {
+        }
+
+        public CompletionItem(string displayText, string insertionText, string description, NQueryGlyph? glyph, Symbol symbol, bool isBuilder)
         {
             _displayText = displayText;
             _insertionText = insertionText;
             _description = description;
             _glyph = glyph;
             _symbol = symbol;
+            _isBuilder = isBuilder;
         }
 
         public string DisplayText
@@ -47,6 +59,11 @@ namespace NQuery.Authoring.Completion
         public Symbol Symbol
         {
             get { return _symbol; }
+        }
+
+        public bool IsBuilder
+        {
+            get { return _isBuilder; }
         }
     }
 }

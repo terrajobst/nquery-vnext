@@ -43,8 +43,34 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             Filter();
             SelectBestMatch();
 
-            if (CompletionBuilders.Count + Completions.Count == 0)
+            if (Completions.Count == 0)
                 _session.Dismiss();
+        }
+
+        public override void SelectBestMatch()
+        {
+            var builderResult = MatchCompletionList(CompletionBuilders, CompletionMatchType.MatchDisplayText, false);
+            var itemResult = MatchCompletionList(Completions, CompletionMatchType.MatchDisplayText, false);
+
+            if (builderResult == null || itemResult == null)
+            {
+                base.SelectBestMatch();
+            }
+            else
+            {
+                var builderWeight = GetMatchWeight(builderResult);
+                var itemWeight = GetMatchWeight(itemResult);
+                SelectionStatus = builderWeight >= itemWeight
+                    ? builderResult.SelectionStatus
+                    : itemResult.SelectionStatus;
+            }
+        }
+
+        private static int GetMatchWeight(CompletionMatchResult builderResult)
+        {
+            return (builderResult.CharsMatchedCount) +
+                   (builderResult.SelectionStatus.IsSelected ? 1 : 0) +
+                   (builderResult.SelectionStatus.IsUnique ? 1 : 0);
         }
 
         public override void Recalculate()
@@ -56,11 +82,34 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         {
             ApplicableTo = ToTrackingSpan(model.ApplicableSpan);
 
+            var builders = model.Items.Where(item => item.IsBuilder);
+            UpdateBuilders(builders);
+
+            var completions = model.Items.Where(item1 => !item1.IsBuilder);
+            UpdateCompletions(completions);
+        }
+
+        private void UpdateBuilders(IEnumerable<CompletionItem> items)
+        {
+            WritableCompletionBuilders.BeginBulkOperation();
+            try
+            {
+                WritableCompletionBuilders.Clear();
+                WritableCompletionBuilders.AddRange(ToCompletions(items));
+            }
+            finally
+            {
+                WritableCompletionBuilders.EndBulkOperation();
+            }
+        }
+
+        private void UpdateCompletions(IEnumerable<CompletionItem> items)
+        {
             WritableCompletions.BeginBulkOperation();
             try
             {
                 WritableCompletions.Clear();
-                WritableCompletions.AddRange(ToCompletions(model.Items));
+                WritableCompletions.AddRange(ToCompletions(items));
             }
             finally
             {
