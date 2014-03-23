@@ -355,20 +355,31 @@ namespace NQuery.Authoring.Completion.Providers
             if (IsBeforeQuery(syntaxTree, position))
                 return true;
 
-            var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
+            var token = syntaxTree.Root.FindTokenOnLeft(position);
             if (token == null)
                 return false;
 
             // (|
+            // (S|
+
             var parenthesizedExpression = token.Parent.AncestorsAndSelf().OfType<ParenthesizedExpressionSyntax>().FirstOrDefault();
-            if (parenthesizedExpression != null && token == parenthesizedExpression.LeftParenthesis)
-                return true;
+            if (parenthesizedExpression != null)
+            {
+                if (token == parenthesizedExpression.LeftParenthesis ||
+                    token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == parenthesizedExpression.LeftParenthesis)
+                    return true;
+            }
 
             // expression IN (|
+            // expression IN (S|
 
             var inExpression = token.Parent.AncestorsAndSelf().OfType<InExpressionSyntax>().FirstOrDefault();
-            if (inExpression != null && token == inExpression.ArgumentList.LeftParenthesis)
-                return true;
+            if (inExpression != null)
+            {
+                if (token == inExpression.ArgumentList.LeftParenthesis ||
+                    token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == inExpression.ArgumentList.LeftParenthesis)
+                    return true;
+            }
 
             return false;
         }
@@ -474,7 +485,7 @@ namespace NQuery.Authoring.Completion.Providers
 
         private static bool IsBeforeQuery(SyntaxTree syntaxTree, int position)
         {
-            var token = syntaxTree.Root.FindTokenContext(position);
+            var token = syntaxTree.Root.FindToken(position);
             if (token != null && token.Kind == SyntaxKind.EndOfFileToken && syntaxTree.Root.Root is QuerySyntax)
                 return true;
 
