@@ -289,7 +289,7 @@ namespace NQuery.Authoring.Completion.Providers
             // FROM test xx|
 
             var token = syntaxTree.Root.FindTokenOnLeft(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
@@ -311,7 +311,7 @@ namespace NQuery.Authoring.Completion.Providers
             where T: SyntaxNode
         {
             var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             return token.Parent
@@ -325,7 +325,7 @@ namespace NQuery.Authoring.Completion.Providers
             where T: SyntaxNode
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             return token.Parent
@@ -357,7 +357,7 @@ namespace NQuery.Authoring.Completion.Providers
                 return true;
 
             var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             // (|
@@ -378,7 +378,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
@@ -397,7 +397,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
@@ -419,7 +419,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
@@ -442,7 +442,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
@@ -496,7 +496,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInOrderByAfterExpression(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var orderByColumn = token.Parent.AncestorsAndSelf().OfType<OrderByColumnSyntax>().FirstOrDefault();
@@ -527,7 +527,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInCastAfterExpression(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var castExpression = token.Parent.AncestorsAndSelf().OfType<CastExpressionSyntax>().FirstOrDefault();
@@ -538,7 +538,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInCommonTableExpressionAfterNameOrColumnList(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var expression = token.Parent.AncestorsAndSelf().OfType<CommonTableExpressionSyntax>().FirstOrDefault();
@@ -553,7 +553,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             var allAny = token.Parent.AncestorsAndSelf().OfType<AllAnySubselectSyntax>().FirstOrDefault();
@@ -575,7 +575,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token == null || token.Parent == null)
+            if (token == null)
                 return false;
 
             // JOIN foo f |
