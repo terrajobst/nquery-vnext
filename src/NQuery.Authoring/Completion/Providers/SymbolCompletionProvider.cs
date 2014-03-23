@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Completion.Providers
             var root = semanticModel.Compilation.SyntaxTree.Root;
 
             // We don't want to show a completion when typing an alias name.
-            if (root.InUserGivenName(position))
+            if (root.PossiblyInUserGivenName(position))
                 return Enumerable.Empty<CompletionItem>();
 
             // Comments and literals don't get completion information

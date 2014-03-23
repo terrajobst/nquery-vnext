@@ -16,7 +16,7 @@ namespace NQuery.Authoring.Completion.Providers
             // For certain constructs we never want to show a keyword completion.
             if (root.InComment(position) ||
                 root.InLiteral(position) ||
-                root.InUserGivenName(position) ||
+                root.GuaranteedInUserGivenName(position) ||
                 IsInPropertyAccess(root, position))
             {
                 return Enumerable.Empty<CompletionItem>();

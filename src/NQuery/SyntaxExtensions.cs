@@ -89,15 +89,30 @@ namespace NQuery
             return token.Span.ContainsOrTouches(position) && token.Kind.IsLiteral();
         }
 
-        public static bool InUserGivenName(this SyntaxNode root, int position)
+        public static bool GuaranteedInUserGivenName(this SyntaxNode root, int position)
         {
-            return root.InAlias(position) ||
+            return root.GuaranteedInAlias(position) ||
                    root.InCteName(position) ||
                    root.InCteColumnList(position) ||
                    root.InDerivedTableName(position);
         }
 
-        private static bool InAlias(this SyntaxNode root, int position)
+        public static bool PossiblyInUserGivenName(this SyntaxNode root, int position)
+        {
+            return root.PossiblyInAlias(position) ||
+                   root.InCteName(position) ||
+                   root.InCteColumnList(position) ||
+                   root.InDerivedTableName(position);
+        }
+
+        private static bool GuaranteedInAlias(this SyntaxNode root, int position)
+        {
+            var token = root.FindTokenOnLeft(position);
+            var node = token.Parent as AliasSyntax;
+            return node != null && node.AsKeyword != null && node.AsKeyword.Span.End <= position;
+        }
+
+        private static bool PossiblyInAlias(this SyntaxNode root, int position)
         {
             var token = root.FindTokenOnLeft(position);
             var node = token.Parent as AliasSyntax;
