@@ -74,21 +74,22 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             return snapshot.CreateTrackingSpan(span.Start, span.Length, SpanTrackingMode.EdgeInclusive);
         }
 
-        private IEnumerable<Microsoft.VisualStudio.Language.Intellisense.Completion> ToCompletions(IEnumerable<CompletionItem> completionItems)
+        private static IEnumerable<Microsoft.VisualStudio.Language.Intellisense.Completion> ToCompletions(IEnumerable<CompletionItem> completionItems)
         {
             return completionItems.Select(ToCompletion);
         }
 
-        private Microsoft.VisualStudio.Language.Intellisense.Completion ToCompletion(CompletionItem completionItem)
+        private static Microsoft.VisualStudio.Language.Intellisense.Completion ToCompletion(CompletionItem completionItem)
         {
             var displayText = completionItem.DisplayText;
             var insertionText = completionItem.InsertionText;
             var description = completionItem.Description;
             var image = ToImage(completionItem.Glyph);
+
             return new Microsoft.VisualStudio.Language.Intellisense.Completion(displayText, insertionText, description, image, null);
         }
 
-        private ImageSource ToImage(NQueryGlyph? glyp)
+        private static ImageSource ToImage(NQueryGlyph? glyp)
         {
             return glyp == null ? null : NQueryGlyphImageSource.Get(glyp.Value);
         }
