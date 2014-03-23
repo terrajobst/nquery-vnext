@@ -66,6 +66,14 @@ namespace NQuery.Syntax
             return _tokens[i];
         }
 
+        private SyntaxToken GetPreviousToken()
+        {
+            var previousIndex = _tokenIndex - 1;
+            return previousIndex < 0
+                ? null
+                : _tokens[previousIndex];
+        }
+
         private SyntaxToken NextToken()
         {
             var result = Current;
@@ -90,6 +98,9 @@ namespace NQuery.Syntax
 
         private SyntaxToken Match(SyntaxKind kind)
         {
+            if (Current.Kind == kind)
+                return NextToken();
+
             // Normally, our behavior is to insert missing tokens if the current token doesn't
             // match our expected token. The root of the parser will make sure that after we've
             // completed parsing the main element (i.e. query or expression) the only remaining
@@ -149,14 +160,12 @@ namespace NQuery.Syntax
             if (kind == SyntaxKind.IdentifierToken && Current.Kind.IsKeyword() && IsPreviousTokenOnSameLine())
                 return SkipAndInsertMissingToken(SyntaxKind.IdentifierToken);
 
-            return Current.Kind == kind
-                       ? NextToken()
-                       : InsertMissingToken(kind);
+            return InsertMissingToken(kind);
         }
 
         private bool IsPreviousTokenOnSameLine()
         {
-            var previous = Peek(-1);
+            var previous = GetPreviousToken();
             if (previous == null)
                 return true;
 
