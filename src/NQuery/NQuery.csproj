@@ -46,6 +46,7 @@
     <Compile Include="Binding\BoundOrderByClause.cs" />
     <Compile Include="Binding\BoundOrderBySelector.cs" />
     <Compile Include="Binding\BoundQueryState.cs" />
+    <Compile Include="Binding\BoundStreamAggregatesRelation.cs" />
     <Compile Include="Binding\BoundTreeRewriter.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />
@@ -54,8 +55,10 @@
     <Compile Include="Binding\BoundTreeWalker.Expression.cs" />
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
+    <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\Condition.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
+    <Compile Include="Iterators\StreamAggregateIterator.cs" />
     <Compile Include="Optimization\JoinLinearizer.cs" />
     <Compile Include="Optimization\Optimizer.cs">
       <SubType>Code</SubType>
@@ -126,7 +129,20 @@
     <Compile Include="Binding\LocalBinder.cs" />
     <Compile Include="Binding\BoundAggregateExpression.cs" />
     <Compile Include="Binding\BoundWildcardSelectColumn.cs" />
-    <Compile Include="Symbols\BuiltInAggregates.cs" />
+    <Compile Include="Symbols\Aggregation\AvgAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\AggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\ConcatAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\CountAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\IAggregatable.cs" />
+    <Compile Include="Symbols\Aggregation\IAggregator.cs" />
+    <Compile Include="Symbols\Aggregation\MaxAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\MinAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\MinMaxAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\StdDevAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\SumAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\VarAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\VarAndStdDevAggregateDefinition.cs" />
+    <Compile Include="Symbols\Aggregation\BuiltInAggregates.cs" />
     <Compile Include="Symbols\BuiltInFunctions.cs" />
     <Compile Include="Symbols\BuiltinOperators.cs" />
     <Compile Include="Binding\FunctionSymbolSignature.cs" />
@@ -184,7 +200,7 @@
     <Compile Include="Symbols\ReflectionParameterSymbol.cs" />
     <Compile Include="Symbols\ReflectionPropertySymbol.cs" />
     <Compile Include="Hosting\ReflectionProvider.cs" />
-    <Compile Include="Symbols\AggregateSymbol.cs" />
+    <Compile Include="Symbols\Aggregation\AggregateSymbol.cs" />
     <Compile Include="Symbols\QueryColumnInstanceSymbol.cs" />
     <Compile Include="Symbols\SchemaColumnSymbol.cs" />
     <Compile Include="Symbols\SymbolMarkup.cs" />

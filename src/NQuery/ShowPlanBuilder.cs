@@ -40,6 +40,8 @@ namespace NQuery
                     return BuildCombinedQuery((BoundCombinedRelation)node);
                 case BoundNodeKind.GroupByAndAggregationRelation:
                     return BuildGroupByAndAggregation((BoundGroupByAndAggregationRelation)node);
+                case BoundNodeKind.StreamAggregatesRelation:
+                    return BuildStreamAggregatesRelation((BoundStreamAggregatesRelation)node);
                 case BoundNodeKind.ProjectRelation:
                     return BuildProject((BoundProjectRelation)node);
                 case BoundNodeKind.UnaryExpression:
@@ -178,6 +180,20 @@ namespace NQuery
             var children = input.Concat(aggregates);
             var slots = string.Join(", ", node.Groups.Select(v => v.Name));
             return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
+        }
+
+        private static ShowPlanNode BuildStreamAggregatesRelation(BoundStreamAggregatesRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var input = new[] { Build(node.Input) };
+            var aggregates = from a in node.Aggregates
+                             let aName = a.Output + " = " + a.Aggregate.Name
+                             let aProperties = Enumerable.Empty<KeyValuePair<string, string>>()
+                             let aChildren = new[] { Build(a.Argument) }
+                             select new ShowPlanNode(aName, aProperties, aChildren);
+            var children = input.Concat(aggregates);
+            var slots = string.Join(", ", node.Groups.Select(v => v.Name));
+            return new ShowPlanNode("StreamAggregates " + slots, properties, children);
         }
 
         private static ShowPlanNode BuildProject(BoundProjectRelation node)

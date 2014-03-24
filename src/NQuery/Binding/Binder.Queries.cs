@@ -794,7 +794,7 @@ namespace NQuery.Binding
 
             var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
                               let expression = (BoundAggregateExpression)t.Expression
-                              select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Argument)).ToImmutableArray();
+                              select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Aggregatable, expression.Argument)).ToImmutableArray();
 
             var groups = (from t in queryBinder.QueryState.ComputedGroupings
                           select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
@@ -835,9 +835,10 @@ namespace NQuery.Binding
                 ? fromRelation
                 : new BoundFilterRelation(fromRelation, whereClause);
 
-            var groupComputeRelation = !groups.Any()
+            var computedGroups = groups.Where(g => !(g.Expression is BoundValueSlotExpression)).ToImmutableArray();
+            var groupComputeRelation = !computedGroups.Any()
                                             ? whereRelation
-                                            : new BoundComputeRelation(whereRelation, groups);
+                                            : new BoundComputeRelation(whereRelation, computedGroups);
 
             var groupByAndAggregationRelation = !groups.Any() && !aggregates.Any()
                 ? groupComputeRelation

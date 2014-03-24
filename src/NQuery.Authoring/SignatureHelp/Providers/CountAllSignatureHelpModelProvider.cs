@@ -2,7 +2,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 
-using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp.Providers

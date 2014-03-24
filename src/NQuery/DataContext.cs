@@ -6,6 +6,7 @@ using System.Linq;
 
 using NQuery.Hosting;
 using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 
 namespace NQuery
 {

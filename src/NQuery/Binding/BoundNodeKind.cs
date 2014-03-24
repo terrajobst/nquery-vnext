@@ -31,6 +31,7 @@ namespace NQuery.Binding
         ComputeRelation,
         FilterRelation,
         GroupByAndAggregationRelation,
+        StreamAggregatesRelation,
         ConstantRelation,
         CombinedRelation,
         ProjectRelation,

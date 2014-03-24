@@ -57,8 +57,8 @@ namespace NQuery.Iterators
                     return BuildSort((BoundSortRelation)relation);
                 case BoundNodeKind.CombinedRelation:
                     return BuildCombinedQuery((BoundCombinedRelation)relation);
-                case BoundNodeKind.GroupByAndAggregationRelation:
-                    return BuildGroupByAndAggregation((BoundGroupByAndAggregationRelation)relation);
+                case BoundNodeKind.StreamAggregatesRelation:
+                    return BuildStreamAggregatesRelation((BoundStreamAggregatesRelation)relation);
                 case BoundNodeKind.ProjectRelation:
                     return BuildProject((BoundProjectRelation)relation);
                 default:
@@ -187,9 +187,25 @@ namespace NQuery.Iterators
             return new IteratorResult(outputIterator, outputValueSlotMapping);
         }
 
-        private IteratorResult BuildGroupByAndAggregation(BoundGroupByAndAggregationRelation relation)
+        private IteratorResult BuildStreamAggregatesRelation(BoundStreamAggregatesRelation relation)
         {
-            throw new NotImplementedException();
+            var inputResult = BuildRelation(relation.Input);
+            var input = inputResult.Iterator;
+            var inputValueSlotMapping = inputResult.ValueSlotMapping;
+            var aggregators = relation.Aggregates
+                                      .Select(a => a.Aggregatable.CreateAggregator())
+                                      .ToArray();
+            var argumentFunctions = relation.Aggregates
+                                            .Select(a => BuildValue(a.Argument, input.RowBuffer, inputValueSlotMapping))
+                                            .ToArray();
+            var groupEntries = relation.Groups
+                                       .Select(v => inputValueSlotMapping[v])
+                                       .ToArray();
+            var outputValueSlotMapping = relation.Groups.Select((v, i) => Tuple.Create(v, i))
+                                                        .Concat(relation.Aggregates.Select((a, i) => Tuple.Create(a.Output, relation.Groups.Length + i)))
+                                                        .ToImmutableDictionary(t => t.Item1, t => t.Item2);
+            var outputIterator = new StreamAggregateIterator(input, groupEntries, aggregators, argumentFunctions);
+            return new IteratorResult(outputIterator, outputValueSlotMapping);
         }
 
         private IteratorResult BuildProject(BoundProjectRelation relation)

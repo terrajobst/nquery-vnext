@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
 namespace NQuery.UnitTests.Binding
@@ -12,10 +13,46 @@ namespace NQuery.UnitTests.Binding
     [TestClass]
     public class AggregateTests
     {
+        private sealed class FakeAggregateDefinition : AggregateDefinition
+        {
+            private readonly string _name;
+
+            public FakeAggregateDefinition(string name)
+            {
+                _name = name;
+            }
+
+            public override string Name
+            {
+                get { return _name; }
+            }
+
+            public override IAggregatable CreateAggregatable(Type argumentType)
+            {
+                return new FakeAggregatable();
+            }
+
+            private sealed class FakeAggregatable : IAggregatable
+            {
+                public IAggregator CreateAggregator()
+                {
+                    throw new NotImplementedException();
+                }
+
+                public Type ReturnType { get { return typeof (object); } }
+            }
+        }
+
+        private static AggregateSymbol CreateAggregate(string name)
+        {
+            var definition = new FakeAggregateDefinition(name);
+            return new AggregateSymbol(definition);
+        }
+
         [TestMethod]
         public void Aggregate_DetectsAmbiguityBetweenAggregates()
         {
-            var dataContext = DataContext.Default.AddAggregates(new AggregateSymbol("Agg"), new AggregateSymbol("AGG"));
+            var dataContext = DataContext.Default.AddAggregates(CreateAggregate("Agg"), CreateAggregate("AGG"));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
@@ -30,7 +67,7 @@ namespace NQuery.UnitTests.Binding
         public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction()
         {
             var dataContext = DataContext.Default
-                                         .AddAggregates(new AggregateSymbol("AGG"))
+                                         .AddAggregates(CreateAggregate("AGG"))
                                          .AddFunctions(new FunctionSymbol<string, string>("AGG", x => x));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
@@ -46,7 +83,7 @@ namespace NQuery.UnitTests.Binding
         public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction_UnlessWrongArgumentCount()
         {
             var dataContext = DataContext.Default
-                                         .AddAggregates(new AggregateSymbol("AGG"))
+                                         .AddAggregates(CreateAggregate("AGG"))
                                          .AddFunctions(new FunctionSymbol<string, string, string>("AGG", (x, y) => x));
 
             var aggregate = dataContext.Aggregates.Last();
@@ -99,7 +136,7 @@ namespace NQuery.UnitTests.Binding
         [TestMethod]
         public void Aggregate_DetectsAmbiguityBetweenCountAggregates()
         {
-            var dataContext = DataContext.Default.AddAggregates(new AggregateSymbol("Count"));
+            var dataContext = DataContext.Default.AddAggregates(CreateAggregate("Count"));
 
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);

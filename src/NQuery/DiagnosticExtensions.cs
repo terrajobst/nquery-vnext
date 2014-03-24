@@ -5,6 +5,7 @@ using System.Linq;
 
 using NQuery.Binding;
 using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 using NQuery.Text;
 
@@ -506,12 +507,10 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.GroupByCannotContainSubquery);
         }
 
-        //public static void ReportAggregateDoesNotSupportType(this ICollection<Diagnostic> diagnostics, AggregateBinding aggregateBinding, Type argumentType)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AggregateDoesNotSupportType, aggregateBinding.Name, FormattingHelpers.FormatType(argumentType));
-        //    var diagnostic = new Diagnostic(DiagnosticId.AggregateDoesNotSupportType, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportAggregateDoesNotSupportType(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, AggregateSymbol aggregate, Type argumentType)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.AggregateDoesNotSupportType, aggregate.Name, argumentType.ToDisplayName());
+        }
 
         public static void ReportAggregateInWhere(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {

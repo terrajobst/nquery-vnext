@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Binding
 {

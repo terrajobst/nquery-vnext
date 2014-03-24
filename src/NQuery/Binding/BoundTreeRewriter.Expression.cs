@@ -92,6 +92,7 @@ namespace NQuery.Binding
         protected virtual BoundExpression RewriteAggregateExpression(BoundAggregateExpression node)
         {
             return node.Update(node.Aggregate,
+                               node.Aggregatable,
                                RewriteExpression(node.Argument));
         }
 

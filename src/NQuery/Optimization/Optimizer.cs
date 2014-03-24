@@ -25,9 +25,9 @@ namespace NQuery.Optimization
             // TODO: This shouldn't be necessary
             yield return new DerivedTableRemover();
 
-            // semi join simplification
-            // decorrelation
-            // outer join removal
+            // TODO: semi join simplification
+            // TODO: decorrelation
+            // TODO: outer join removal
 
             // selection pushing
             yield return new SelectionPusher();
@@ -35,13 +35,16 @@ namespace NQuery.Optimization
             // join linearization
             yield return new JoinLinearizer();
 
-            // outer join reordering
-            // join order optimization
-            // at most one row reordering
-            // push computations
+            // TODO: outer join reordering
+            // TODO: join order optimization
+            // TODO: at most one row reordering
+            // TODO: push computations
+            
             // physical join op choosing
-            // null scan optimization
-            // full outer join expansion
+            yield return new AggregationPhysicalOperatorChooser();
+
+            // TODO: null scan optimization
+            // TODO: full outer join expansion
         }
     }
 }

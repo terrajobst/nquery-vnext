@@ -340,10 +340,10 @@
     <value>IAggregator.Accumulate() threw an exception.</value>
   </data>
   <data name="IAggregatorInitFailed" xml:space="preserve">
-    <value>IAggregator.Init() threw an exception.</value>
+    <value>IAggregator.Initialize() threw an exception.</value>
   </data>
   <data name="IAggregatorTerminateFailed" xml:space="preserve">
-    <value>IAggregator.Terminate() threw an exception.</value>
+    <value>IAggregator.GetResult() threw an exception.</value>
   </data>
   <data name="IllegalInputCharacter" xml:space="preserve">
     <value>Invalid character in input '{0}'.</value>

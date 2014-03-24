@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 using NQuery.Text;
 
@@ -768,8 +769,9 @@ namespace NQuery.Binding
                 Diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
 
             var aggregate = aggregates[0];
-            var argument = new BoundLiteralExpression(0);
-            var boundAggregate = new BoundAggregateExpression(aggregate, argument);
+            var boundArgument = new BoundLiteralExpression(0);
+            var boundAggregatable = BindAggregatable(node.Span, aggregate, boundArgument);
+            var boundAggregate = new BoundAggregateExpression(aggregate, boundAggregatable, boundArgument);
             return BindAggregate(node, boundAggregate);
         }
 
@@ -838,9 +840,21 @@ namespace NQuery.Binding
             var argument = node.ArgumentList.Arguments[0];
             var argumentBinder = CreateAggregateArgumentBinder();
             var boundArgument = argumentBinder.BindExpression(argument);
-
-            var boundAggregate = new BoundAggregateExpression(aggregate, boundArgument);
+            var boundAggregatable = BindAggregatable(node.Span, aggregate, boundArgument);
+            var boundAggregate = new BoundAggregateExpression(aggregate, boundAggregatable, boundArgument);
             return BindAggregate(node, boundAggregate);
+        }
+
+        private IAggregatable BindAggregatable(TextSpan errorSpan, AggregateSymbol aggregate, BoundExpression boundArgument)
+        {
+            var aggregatable = boundArgument.Type.IsError()
+                ? null
+                : aggregate.Definition.CreateAggregatable(boundArgument.Type);
+
+            if (!boundArgument.Type.IsError() && aggregatable == null)
+                Diagnostics.ReportAggregateDoesNotSupportType(errorSpan, aggregate, boundArgument.Type);
+
+            return aggregatable;
         }
 
         private BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)

@@ -66,6 +66,7 @@ namespace NQuery.Binding
         {
             return node.Update(RewriteValueSlot(node.Output),
                                node.Aggregate,
+                               node.Aggregatable,
                                RewriteExpression(node.Argument));
         }
 

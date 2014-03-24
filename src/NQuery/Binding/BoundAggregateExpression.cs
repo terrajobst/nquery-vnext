@@ -1,17 +1,19 @@
 using System;
 
-using NQuery.Symbols;
+using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundAggregateExpression : BoundExpression
     {
         private readonly AggregateSymbol _aggregate;
+        private readonly IAggregatable _aggregatable;
         private readonly BoundExpression _argument;
 
-        public BoundAggregateExpression(AggregateSymbol aggregate, BoundExpression argument)
+        public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
             _aggregate = aggregate;
+            _aggregatable = aggregatable;
             _argument = argument;
         }
 
@@ -22,8 +24,12 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            // TODO: That's not correct. The aggregate symbol needs to create an aggregator that has a type.
-            get { return _argument.Type; }
+            get
+            {
+                return _aggregatable == null
+                    ? TypeFacts.Unknown
+                    : _aggregatable.ReturnType;
+            }
         }
 
         public AggregateSymbol Symbol
@@ -36,17 +42,22 @@ namespace NQuery.Binding
             get { return _aggregate; }
         }
 
+        public IAggregatable Aggregatable
+        {
+            get { return _aggregatable; }
+        }
+
         public BoundExpression Argument
         {
             get { return _argument; }
         }
 
-        public BoundAggregateExpression Update(AggregateSymbol aggregate, BoundExpression argument)
+        public BoundAggregateExpression Update(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
-            if (aggregate == _aggregate && argument == _argument)
+            if (aggregate == _aggregate && aggregatable == _aggregatable && argument == _argument)
                 return this;
 
-            return new BoundAggregateExpression(aggregate, argument);
+            return new BoundAggregateExpression(aggregate, aggregatable, argument);
         }
 
         public override string ToString()

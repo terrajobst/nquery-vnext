@@ -20,6 +20,8 @@ namespace NQuery.Binding
                     return RewriteFilterRelation((BoundFilterRelation)node);
                 case BoundNodeKind.GroupByAndAggregationRelation:
                     return RewriteGroupByAndAggregationRelation((BoundGroupByAndAggregationRelation)node);
+                case BoundNodeKind.StreamAggregatesRelation:
+                    return RewriteStreamAggregatesRelation((BoundStreamAggregatesRelation)node);
                 case BoundNodeKind.ConstantRelation:
                     return RewriteConstantRelation((BoundConstantRelation)node);
                 case BoundNodeKind.CombinedRelation:
@@ -67,6 +69,13 @@ namespace NQuery.Binding
         }
 
         protected virtual BoundRelation RewriteGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
+        {
+            return node.Update(RewriteRelation(node.Input),
+                               RewriteValueSlots(node.Groups),
+                               RewriteAggregatedValues(node.Aggregates));
+        }
+
+        protected virtual BoundRelation RewriteStreamAggregatesRelation(BoundStreamAggregatesRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
                                RewriteValueSlots(node.Groups),
