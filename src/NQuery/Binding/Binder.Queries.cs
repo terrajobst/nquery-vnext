@@ -217,7 +217,7 @@ namespace NQuery.Binding
             return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
         }
 
-        private IComparer BindComparer(Type type, TextSpan errorSpan, DiagnosticId errorId)
+        private IComparer BindComparer(TextSpan diagnosticSpan, Type type, DiagnosticId errorId)
         {
             var missingComparer = Comparer.Default;
 
@@ -228,7 +228,7 @@ namespace NQuery.Binding
             if (comparer == null)
             {
                 comparer = missingComparer;
-                Diagnostics.Report(errorSpan, errorId, type.ToDisplayName());
+                Diagnostics.Report(diagnosticSpan, errorId, type.ToDisplayName());
             }
 
             return comparer;
@@ -300,7 +300,7 @@ namespace NQuery.Binding
             var outputColumns = BindOutputColumns(columns, outputValues);
 
             foreach (var column in outputColumns)
-                BindComparer(column.Type, node.ExceptKeyword.Span, DiagnosticId.InvalidDataTypeInExcept);
+                BindComparer(node.ExceptKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInExcept);
 
             var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, leftInput, rightInput, outputValues);
             return new BoundQuery(relation, outputColumns);
@@ -327,7 +327,7 @@ namespace NQuery.Binding
             if (combinator == BoundQueryCombinator.Union)
             {
                 foreach (var column in outputColumns)
-                    BindComparer(column.Type, node.UnionKeyword.Span, DiagnosticId.InvalidDataTypeInUnion);
+                    BindComparer(node.UnionKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInUnion);
             }
 
             var relation = new BoundCombinedRelation(combinator, leftInput, rightInput, outputValues);
@@ -351,13 +351,13 @@ namespace NQuery.Binding
             var outputColumns = BindOutputColumns(columns, outputValues);
 
             foreach (var column in outputColumns)
-                BindComparer(column.Type, node.IntersectKeyword.Span, DiagnosticId.InvalidDataTypeInIntersect);
+                BindComparer(node.IntersectKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInIntersect);
 
             var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, leftInput, rightInput, outputValues);
             return new BoundQuery(relation, outputColumns);
         }
 
-        private ImmutableArray<ValueSlot> BindToCommonTypes(TextSpan errorSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
+        private ImmutableArray<ValueSlot> BindToCommonTypes(TextSpan diagnosticSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
         {
             var columnCount = Math.Min(left.OutputColumns.Length, right.OutputColumns.Length);
 
@@ -374,7 +374,7 @@ namespace NQuery.Binding
 
                 BoundExpression convertedLeft;
                 BoundExpression convertedRight;
-                BindToCommonType(errorSpan, leftValue, rightValue, out convertedLeft, out convertedRight);
+                BindToCommonType(diagnosticSpan, leftValue, rightValue, out convertedLeft, out convertedRight);
 
                 if (convertedLeft == null)
                 {
@@ -809,7 +809,7 @@ namespace NQuery.Binding
             if (isDistinct)
             {
                 foreach (var column in outputColumns)
-                    BindComparer(column.Type, distinctKeyword.Span, DiagnosticId.InvalidDataTypeInSelectDistinct);
+                    BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct);
             }
 
             // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
@@ -1055,7 +1055,7 @@ namespace NQuery.Binding
 
                 // TODO: We need to very expression references at least one column that is not an outer reference.
 
-                BindComparer(expressionType, expression.Span, DiagnosticId.InvalidDataTypeInGroupBy);
+                BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
@@ -1160,7 +1160,7 @@ namespace NQuery.Binding
                 // Almost there. Now the only thing left for us to do is getting
                 // the associated comparer.
 
-                var baseComparer = BindComparer(valueSlot.Type, selector.Span, DiagnosticId.InvalidDataTypeInOrderBy);
+                var baseComparer = BindComparer(selector.Span, valueSlot.Type, DiagnosticId.InvalidDataTypeInOrderBy);
                 var comparer = isAscending || baseComparer == null
                                    ? baseComparer
                                    : new NegatedComparer(baseComparer);

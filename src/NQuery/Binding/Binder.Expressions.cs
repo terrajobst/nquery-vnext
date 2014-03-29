@@ -125,7 +125,7 @@ namespace NQuery.Binding
             return boundExpressions.Select((e, i) => BindConversion(expressions[i].Span, e, commonType)).ToImmutableArray();
         }
 
-        private void BindToCommonType(TextSpan errorSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
+        private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
         {
             newLeft = null;
             newRight = null;
@@ -143,15 +143,15 @@ namespace NQuery.Binding
             
             if (conversionLeftToRight.IsImplicit)
             {
-                newLeft = BindConversion(errorSpan, new BoundValueSlotExpression(left), right.Type);
+                newLeft = BindConversion(diagnosticSpan, new BoundValueSlotExpression(left), right.Type);
             }
             else
             {
-                newRight = BindConversion(errorSpan, new BoundValueSlotExpression(right), left.Type);
+                newRight = BindConversion(diagnosticSpan, new BoundValueSlotExpression(right), left.Type);
             }
         }
 
-        private BoundExpression BindConversion(TextSpan errorSpan, BoundExpression expression, Type targetType)
+        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, Type targetType)
         {
             var sourceType = expression.Type;
             var conversion = Conversion.Classify(sourceType, targetType);
@@ -165,9 +165,9 @@ namespace NQuery.Binding
             if (!sourceType.IsError() && !targetType.IsError())
             {
                 if (!conversion.Exists)
-                    Diagnostics.ReportCannotConvert(errorSpan, sourceType, targetType);
+                    Diagnostics.ReportCannotConvert(diagnosticSpan, sourceType, targetType);
                 else if (conversion.ConversionMethods.Length > 1)
-                    Diagnostics.ReportAmbiguousConversion(errorSpan, sourceType, targetType);
+                    Diagnostics.ReportAmbiguousConversion(diagnosticSpan, sourceType, targetType);
             }
 
             return new BoundConversionExpression(expression, targetType, conversion);
@@ -297,13 +297,13 @@ namespace NQuery.Binding
             return BindUnaryExpression(node.Span, operatorKind, node.Expression);
         }
 
-        private BoundExpression BindUnaryExpression(TextSpan errorSpan, UnaryOperatorKind operatorKind, ExpressionSyntax expression)
+        private BoundExpression BindUnaryExpression(TextSpan diagnosticSpan, UnaryOperatorKind operatorKind, ExpressionSyntax expression)
         {
             var boundExpression = BindExpression(expression);
-            return BindUnaryExpression(errorSpan, operatorKind, boundExpression);
+            return BindUnaryExpression(diagnosticSpan, operatorKind, boundExpression);
         }
 
-        private BoundExpression BindUnaryExpression(TextSpan errorSpan, UnaryOperatorKind operatorKind, BoundExpression expression)
+        private BoundExpression BindUnaryExpression(TextSpan diagnosticSpan, UnaryOperatorKind operatorKind, BoundExpression expression)
         {
             // To avoid cascading errors, we'll return a unary expression that isn't bound to
             // an operator if the expression couldn't be resolved.
@@ -316,11 +316,11 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    Diagnostics.ReportCannotApplyUnaryOperator(errorSpan, operatorKind, expression.Type);
+                    Diagnostics.ReportCannotApplyUnaryOperator(diagnosticSpan, operatorKind, expression.Type);
                 }
                 else
                 {
-                    Diagnostics.ReportAmbiguousUnaryOperator(errorSpan, operatorKind, expression.Type);
+                    Diagnostics.ReportAmbiguousUnaryOperator(diagnosticSpan, operatorKind, expression.Type);
                 }
             }
 
@@ -331,11 +331,11 @@ namespace NQuery.Binding
             return new BoundUnaryExpression(convertedArgument, result);
         }
 
-        private BoundExpression BindOptionalNegation(TextSpan errorSpan, SyntaxToken notKeyword, BoundExpression expression)
+        private BoundExpression BindOptionalNegation(TextSpan diagnosticSpan, SyntaxToken notKeyword, BoundExpression expression)
         {
             return notKeyword == null
                        ? expression
-                       : BindUnaryExpression(errorSpan, UnaryOperatorKind.LogicalNot, expression);
+                       : BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, expression);
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax node)
@@ -344,14 +344,14 @@ namespace NQuery.Binding
             return BindBinaryExpression(node.Span, operatorKind, node.Left, node.Right);
         }
 
-        private BoundExpression BindBinaryExpression(TextSpan errorSpan, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
         {
             var boundLeft = BindExpression(left);
             var boundRight = BindExpression(right);
-            return BindBinaryExpression(errorSpan, operatorKind, boundLeft, boundRight);
+            return BindBinaryExpression(diagnosticSpan, operatorKind, boundLeft, boundRight);
         }
 
-        private BoundExpression BindBinaryExpression(TextSpan errorSpan, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
+        private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, BinaryOperatorKind operatorKind, BoundExpression left, BoundExpression right)
         {
             // In order to avoid cascading errors, we'll return a binary expression without an operator
             // if either side couldn't be resolved.
@@ -371,11 +371,11 @@ namespace NQuery.Binding
             {
                 if (result.Selected == null)
                 {
-                    Diagnostics.ReportCannotApplyBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportCannotApplyBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
                 }
                 else
                 {
-                    Diagnostics.ReportAmbiguousBinaryOperator(errorSpan, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportAmbiguousBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
                 }
             }
 
@@ -387,10 +387,10 @@ namespace NQuery.Binding
             return new BoundBinaryExpression(convertedLeft, result, convertedRight);
         }
 
-        private BoundExpression BindBinaryExpression(TextSpan errorSpan, SyntaxToken notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+        private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, SyntaxToken notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
         {
-            var expression = BindBinaryExpression(errorSpan, operatorKind, left, right);
-            return BindOptionalNegation(errorSpan, notKeyword, expression);
+            var expression = BindBinaryExpression(diagnosticSpan, operatorKind, left, right);
+            return BindOptionalNegation(diagnosticSpan, notKeyword, expression);
         }
 
         private BoundExpression BindLikeExpression(LikeExpressionSyntax node)
