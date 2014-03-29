@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{89DB7FD2-FF8C-411C-BD2B-460712D0D09E}</ProjectGuid>
+    <ProjectGuid>{ED8507F9-D6C1-4FB4-8793-1AC707369AEF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.UnitTests</RootNamespace>
-    <AssemblyName>NQuery.UnitTests</AssemblyName>
+    <RootNamespace>NQuery.Dynamic.UnitTests</RootNamespace>
+    <AssemblyName>NQuery.Dynamic.UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -37,12 +37,6 @@
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.12-beta\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -57,59 +51,16 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Binding\AggregateTests.cs" />
-    <Compile Include="Binding\AllAnySubselectExressionTests.cs" />
-    <Compile Include="Binding\BetweenExpressionTests.cs" />
-    <Compile Include="Binding\BinaryOperatorExpressionTests.cs" />
-    <Compile Include="Binding\CoalesceExpressionTests.cs" />
-    <Compile Include="Syntax\BinaryOperatorExpressionTests.cs" />
-    <Compile Include="Binding\CombinedQueryTest.cs" />
-    <Compile Include="Binding\ComparerTests.cs" />
-    <Compile Include="CompilationFactory.cs" />
-    <Compile Include="ExpressionTests.cs" />
-    <Compile Include="Binding\GroupByAndAggregationTests.cs" />
-    <Compile Include="Binding\CaseExpressionTests.cs" />
-    <Compile Include="Binding\CastExpressionTests.cs" />
-    <Compile Include="Syntax\CoalesceExpressionTests.cs" />
-    <Compile Include="Binding\CommonTableExpressions.cs" />
-    <Compile Include="Syntax\ContextualLeftAndRightKeywordTests.cs" />
-    <Compile Include="ConversionTests.cs" />
-    <Compile Include="DataContextTests.cs" />
-    <Compile Include="CompilationExtensions.cs" />
-    <Compile Include="Binding\DerivedTableTests.cs" />
-    <Compile Include="Binding\FunctionInvocationExressionTests.cs" />
-    <Compile Include="Binding\InExpressionTests.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.UnaryTestCases.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="Syntax\IdentifierTests.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.BinaryTestCases.cs" />
-    <Compile Include="Syntax\LexerTests.cs" />
-    <Compile Include="Binding\MethodInvocationExressionTests.cs" />
-    <Compile Include="Binding\NameExpressionTests.cs" />
-    <Compile Include="Binding\NullIfExpressionTests.cs" />
-    <Compile Include="Binding\NullTests.cs" />
-    <Compile Include="Binding\OrderByTests.cs" />
-    <Compile Include="Syntax\ParserTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Binding\PropertyAccessExressionTests.cs" />
-    <Compile Include="QueryTests.cs" />
-    <Compile Include="Binding\SelectStarTests.cs" />
-    <Compile Include="Syntax\SeparatedSyntaxListTests.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.cs" />
-    <Compile Include="Syntax\InExpressionTests.cs" />
-    <Compile Include="TestData.cs" />
-    <Compile Include="Text\TextBufferTests.cs" />
-    <Compile Include="Syntax\TopTests.cs" />
-    <Compile Include="Binding\UnaryOperatorExpressionTests.cs" />
+    <Compile Include="DynamicTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>
+      </SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
       <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
       <Name>NQuery.Data.Samples</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
-      <Project>{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}</Project>
-      <Name>NQuery.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery.Dynamic\NQuery.Dynamic.csproj">
       <Project>{AE03CBAD-43E7-4ED4-83EF-E0826ECA344F}</Project>
@@ -119,9 +70,6 @@
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
