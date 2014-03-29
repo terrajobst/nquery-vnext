@@ -3,8 +3,6 @@ using System.Collections.Immutable;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using System.Linq;
-
 namespace NQuery.UnitTests.Binding
 {
     [TestClass]

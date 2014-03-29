@@ -6,7 +6,6 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery;
 using NQuery.Authoring.VSEditorWpf.Document;
 using NQuery.Authoring.VSEditorWpf.Selection;
 using NQuery.Text;

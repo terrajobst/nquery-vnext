@@ -2,8 +2,6 @@ using System;
 using System.Data;
 using System.IO;
 
-using NQuery.Hosting;
-
 namespace NQuery.Data.Samples
 {
     public static class DataContextFactory

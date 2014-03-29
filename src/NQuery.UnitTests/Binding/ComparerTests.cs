@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
