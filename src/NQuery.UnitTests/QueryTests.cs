@@ -153,5 +153,56 @@ namespace NQuery.UnitTests
                 Assert.IsFalse(reader.Read());
             }
         }
+
+        [TestMethod]
+        public void Query_SelectNullLiteralReturnsObjectNull()
+        {
+            var text = "SELECT NULL";
+            var query = new Query(DataContext.Default, text);
+
+            using (var queryReader = query.ExecuteReader())
+            {
+                Assert.AreEqual(1, queryReader.ColumnCount);
+                Assert.AreEqual(typeof(object), queryReader.GetColumnType(0));
+
+                Assert.IsTrue(queryReader.Read());
+                Assert.AreEqual(null, queryReader[0]);
+                Assert.IsFalse(queryReader.Read());
+            }
+        }
+
+        [TestMethod]
+        public void Query_SelectNullExpressionReturnsTypedNull()
+        {
+            var text = "SELECT 1.0 + NULL";
+            var query = new Query(DataContext.Default, text);
+
+            using (var queryReader = query.ExecuteReader())
+            {
+                Assert.AreEqual(1, queryReader.ColumnCount);
+                Assert.AreEqual(typeof(double), queryReader.GetColumnType(0));
+
+                Assert.IsTrue(queryReader.Read());
+                Assert.AreEqual(null, queryReader[0]);
+                Assert.IsFalse(queryReader.Read());
+            }
+        }
+
+        [TestMethod]
+        public void Query_SelectIsNullReturnsBooleanTrue()
+        {
+            var text = "SELECT NULL IS NULL";
+            var query = new Query(DataContext.Default, text);
+
+            using (var queryReader = query.ExecuteReader())
+            {
+                Assert.AreEqual(1, queryReader.ColumnCount);
+                Assert.AreEqual(typeof(bool), queryReader.GetColumnType(0));
+
+                Assert.IsTrue(queryReader.Read());
+                Assert.AreEqual(true, queryReader[0]);
+                Assert.IsFalse(queryReader.Read());
+            }
+        }
     }
 }
