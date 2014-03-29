@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Authoring.Wpf
@@ -15,7 +16,7 @@ namespace NQuery.Authoring.Wpf
             var nodeChildren = model.Children.Select(c => new ShowPlanNodeViewModel(c));
 
             _model = model;
-            _children = propertyChildren.Concat<ShowPlanItemViewModel>(nodeChildren).ToArray();
+            _children = propertyChildren.Concat<ShowPlanItemViewModel>(nodeChildren).ToImmutableArray();
 
         }
 

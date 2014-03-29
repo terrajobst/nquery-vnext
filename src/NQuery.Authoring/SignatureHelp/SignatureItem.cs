@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Authoring.SignatureHelp
@@ -8,12 +8,12 @@ namespace NQuery.Authoring.SignatureHelp
     public sealed class SignatureItem : IEquatable<SignatureItem>
     {
         private readonly string _content;
-        private readonly ReadOnlyCollection<ParameterItem> _parameters;
+        private readonly ImmutableArray<ParameterItem> _parameters;
 
-        public SignatureItem(string content, IList<ParameterItem> parameters)
+        public SignatureItem(string content, IEnumerable<ParameterItem> parameters)
         {
             _content = content;
-            _parameters = new ReadOnlyCollection<ParameterItem>(parameters);
+            _parameters = parameters.ToImmutableArray();
         }
 
         public string Content
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.SignatureHelp
             get { return _content; }
         }
 
-        public ReadOnlyCollection<ParameterItem> Parameters
+        public ImmutableArray<ParameterItem> Parameters
         {
             get { return _parameters; }
         }

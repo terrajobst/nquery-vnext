@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Linq;
 
@@ -10,15 +11,15 @@ namespace NQuery.Authoring.Composition.QuickInfo
     [Export(typeof(IQuickInfoModelProviderService))]
     internal sealed class QuickInfoModelProviderService : IQuickInfoModelProviderService
     {
-        private readonly IReadOnlyCollection<IQuickInfoModelProvider> _providers;
+        private readonly ImmutableArray<IQuickInfoModelProvider> _providers;
 
         [ImportingConstructor]
         public QuickInfoModelProviderService([ImportMany] IEnumerable<IQuickInfoModelProvider> providers)
         {
-            _providers = providers.Concat(QuickInfoExtensions.GetStandardQuickInfoModelProviders()).ToArray();
+            _providers = providers.Concat(QuickInfoExtensions.GetStandardQuickInfoModelProviders()).ToImmutableArray();
         }
 
-        public IReadOnlyCollection<IQuickInfoModelProvider> Providers
+        public ImmutableArray<IQuickInfoModelProvider> Providers
         {
             get { return _providers; }
         }

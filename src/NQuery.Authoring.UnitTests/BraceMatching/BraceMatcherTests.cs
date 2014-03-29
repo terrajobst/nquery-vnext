@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -66,7 +67,7 @@ namespace NQuery.Authoring.UnitTests.BraceMatching
 
         private static string ParseExpectedLeftAndRight(string queryWithMarkers, out TextSpan expectedLeft, out TextSpan expectedRight)
         {
-            TextSpan[] spans;
+            ImmutableArray<TextSpan> spans;
             var query = queryWithMarkers.ParseSpans(out spans);
 
             if (spans.Length != 2)

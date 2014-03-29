@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Text;
 
@@ -10,13 +10,13 @@ namespace NQuery.Authoring.Completion
     {
         private readonly SemanticModel _semanticModel;
         private readonly TextSpan _applicableSpan;
-        private readonly ReadOnlyCollection<CompletionItem> _items;
+        private readonly ImmutableArray<CompletionItem> _items;
 
-        public CompletionModel(SemanticModel semanticModel, TextSpan applicableSpan, IList<CompletionItem> items)
+        public CompletionModel(SemanticModel semanticModel, TextSpan applicableSpan, IEnumerable<CompletionItem> items)
         {
             _semanticModel = semanticModel;
             _applicableSpan = applicableSpan;
-            _items = new ReadOnlyCollection<CompletionItem>(items);
+            _items = items.ToImmutableArray();
         }
 
         public SemanticModel SemanticModel
@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Completion
             get { return _applicableSpan; }
         }
 
-        public ReadOnlyCollection<CompletionItem> Items
+        public ImmutableArray<CompletionItem> Items
         {
             get { return _items; }
         }

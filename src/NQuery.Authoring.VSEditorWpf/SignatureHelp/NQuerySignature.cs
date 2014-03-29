@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -15,7 +16,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         internal NQuerySignature(ITrackingSpan applicableSpan, SignatureItem signatureItem, int selectedParameter)
         {
-            var parameters = signatureItem.Parameters.Select(p => new NQueryParameter(this, p.Name, string.Empty, new Span(p.Span.Start, p.Span.Length))).ToArray();
+            var parameters = signatureItem.Parameters.Select(CreateParameter).OfType<IParameter>().ToImmutableArray();
 
             ApplicableToSpan = applicableSpan;
             Content = signatureItem.Content;
@@ -23,6 +24,11 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             CurrentParameter = selectedParameter >= 0 && selectedParameter < parameters.Length
                                    ? parameters[selectedParameter]
                                    : null;
+        }
+
+        private NQueryParameter CreateParameter(ParameterItem p)
+        {
+            return new NQueryParameter(this, p.Name, string.Empty, new Span(p.Span.Start, p.Span.Length));
         }
 
         public IParameter CurrentParameter

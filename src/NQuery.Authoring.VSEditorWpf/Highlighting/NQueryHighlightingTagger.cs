@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,9 +17,9 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
     {
         private readonly ITextView _textView;
         private readonly INQueryDocument _document;
-        private readonly IReadOnlyCollection<IHighlighter> _highlighters;
+        private readonly ImmutableArray<IHighlighter> _highlighters;
 
-        public NQueryHighlightingTagger(ITextView textView, INQueryDocument document, IReadOnlyCollection<IHighlighter> highlighters)
+        public NQueryHighlightingTagger(ITextView textView, INQueryDocument document, ImmutableArray<IHighlighter> highlighters)
         {
             _textView = textView;
             _document = document;

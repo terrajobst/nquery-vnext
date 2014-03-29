@@ -19,7 +19,7 @@ namespace NQuery.Authoring.UnitTests.SignatureHelp.Providers
         protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
         {
             var dataContext = semanticModel.Compilation.DataContext;
-            var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING").OrderBy(f => f.Parameters.Count);
+            var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING").OrderBy(f => f.Parameters.Length);
             return symbols.ToSignatureItems();
         }
 

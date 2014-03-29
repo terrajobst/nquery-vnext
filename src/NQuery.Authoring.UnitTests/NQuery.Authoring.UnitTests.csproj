@@ -36,9 +36,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+    <Reference Include="System.Collections.Immutable, Version=1.1.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.0.12-beta\lib\portable-net45+win8+wp8\System.Collections.Immutable.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -137,9 +137,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
       <Name>NQuery.Authoring</Name>
@@ -152,6 +149,9 @@
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
       <Name>NQuery</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

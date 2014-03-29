@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
@@ -17,7 +17,7 @@ namespace NQuery
         private const bool N = false;
         private const bool Y = true;
 
-        private static readonly bool[,] ImplicitNumericConversions = new[,]
+        private static readonly bool[,] ImplicitNumericConversions =
         {
             /*                SByte     Byte     Short     UShort     Int     UInt     Long     ULong     Char     Float     Double*/
             /* SByte   */  {  N,        N,       Y,        N,         Y,      N,       Y,       N,        N,       Y,        Y},
@@ -38,16 +38,18 @@ namespace NQuery
         private readonly bool _isImplicit;
         private readonly bool _isBoxingOrUnboxing;
         private readonly bool _isReference;
-        private readonly ReadOnlyCollection<MethodInfo> _conversionMethods;
+        private readonly ImmutableArray<MethodInfo> _conversionMethods;
 
-        private Conversion(bool exists, bool isIdentity, bool isImplicit, bool isBoxingOrUnboxing, bool isReference, IList<MethodInfo> conversionMethods)
+        private Conversion(bool exists, bool isIdentity, bool isImplicit, bool isBoxingOrUnboxing, bool isReference, IEnumerable<MethodInfo> conversionMethods)
         {
             _exists = exists;
             _isIdentity = isIdentity;
             _isImplicit = isImplicit;
             _isBoxingOrUnboxing = isBoxingOrUnboxing;
             _isReference = isReference;
-            _conversionMethods = new ReadOnlyCollection<MethodInfo>(conversionMethods ?? new MethodInfo[0]);
+            _conversionMethods = conversionMethods == null
+                ? ImmutableArray<MethodInfo>.Empty
+                : conversionMethods.ToImmutableArray();
         }
 
         private static readonly Conversion None = new Conversion(false, false, false, false, false, null);
@@ -95,7 +97,7 @@ namespace NQuery
             get { return _isReference; }
         }
 
-        public ReadOnlyCollection<MethodInfo> ConversionMethods
+        public ImmutableArray<MethodInfo> ConversionMethods
         {
             get { return _conversionMethods; }
         }
@@ -158,12 +160,12 @@ namespace NQuery
             return None;
         }
 
-        private static Conversion ImplicitViaConversionMethod(MethodInfo[] implicitConversions)
+        private static Conversion ImplicitViaConversionMethod(IEnumerable<MethodInfo> implicitConversions)
         {
             return new Conversion(true, false, true, false, false, implicitConversions);
         }
 
-        private static Conversion ExplicitViaConversionMethod(MethodInfo[] implicitConversions)
+        private static Conversion ExplicitViaConversionMethod(IEnumerable<MethodInfo> implicitConversions)
         {
             return new Conversion(true, false, false, false, false, implicitConversions);
         }
@@ -188,7 +190,7 @@ namespace NQuery
             return false;
         }
 
-        private static MethodInfo[] GetConversionMethods(Type sourceType, Type targetType, bool isImplicit)
+        private static ImmutableArray<MethodInfo> GetConversionMethods(Type sourceType, Type targetType, bool isImplicit)
         {
             var methodName = isImplicit ? ImplicitMethodName : ExplicitMethodName;
             var sourceMethods = sourceType.GetMethods(ConversionMethodBindingFlags);
@@ -198,7 +200,7 @@ namespace NQuery
             return (from m in methods
                     where m.Name.Equals(methodName, StringComparison.Ordinal) &&
                           IsConversionMethods(m, sourceType, targetType)
-                    select m).ToArray();
+                    select m).ToImmutableArray();
         }
 
         private static bool IsConversionMethods(MethodInfo methodInfo, Type sourceType, Type targetType)

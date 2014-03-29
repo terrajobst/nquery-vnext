@@ -8,7 +8,7 @@ namespace NQuery.Iterators
         private readonly Iterator _input;
         private readonly ProjectedRowBuffer _rowBuffer;
 
-        public ProjectionIterator(Iterator input, IList<int> projectedIndices)
+        public ProjectionIterator(Iterator input, IEnumerable<int> projectedIndices)
         {
             _input = input;
             _rowBuffer = new ProjectedRowBuffer(input.RowBuffer, projectedIndices);

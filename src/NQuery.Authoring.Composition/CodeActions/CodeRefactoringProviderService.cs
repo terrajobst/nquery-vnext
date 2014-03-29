@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Linq;
 
@@ -10,15 +11,15 @@ namespace NQuery.Authoring.Composition.CodeActions
     [Export(typeof(ICodeRefactoringProviderService))]
     internal sealed class CodeRefactoringProviderService : ICodeRefactoringProviderService
     {
-        private readonly IReadOnlyCollection<ICodeRefactoringProvider> _providers;
+        private readonly ImmutableArray<ICodeRefactoringProvider> _providers;
 
         [ImportingConstructor]
         public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
         {
-            _providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToArray();
+            _providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
         }
 
-        public IReadOnlyCollection<ICodeRefactoringProvider> Providers
+        public ImmutableArray<ICodeRefactoringProvider> Providers
         {
             get { return _providers; }
         }

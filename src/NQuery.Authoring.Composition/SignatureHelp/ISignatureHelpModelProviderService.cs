@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Authoring.SignatureHelp;
 
@@ -7,6 +7,6 @@ namespace NQuery.Authoring.Composition.SignatureHelp
 {
     public interface ISignatureHelpModelProviderService
     {
-        IReadOnlyCollection<ISignatureHelpModelProvider> Providers { get; }
+        ImmutableArray<ISignatureHelpModelProvider> Providers { get; }
     }
 }

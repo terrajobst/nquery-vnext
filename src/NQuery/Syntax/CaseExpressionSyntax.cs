@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Syntax
 {
@@ -8,16 +8,16 @@ namespace NQuery.Syntax
     {
         private readonly SyntaxToken _caseKeyword;
         private readonly ExpressionSyntax _inputExpression;
-        private readonly ReadOnlyCollection<CaseLabelSyntax> _caseLabels;
+        private readonly ImmutableArray<CaseLabelSyntax> _caseLabels;
         private readonly CaseElseLabelSyntax _elseLabel;
         private readonly SyntaxToken _endKeyword;
 
-        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IList<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
+        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
             : base(syntaxTree)
         {
             _caseKeyword = caseKeyword;
             _inputExpression = inputExpression;
-            _caseLabels = new ReadOnlyCollection<CaseLabelSyntax>(caseLabels);
+            _caseLabels = caseLabels.ToImmutableArray();
             _elseLabel = elseLabel;
             _endKeyword = endKeyword;
         }
@@ -53,7 +53,7 @@ namespace NQuery.Syntax
             get { return _inputExpression; }
         }
 
-        public ReadOnlyCollection<CaseLabelSyntax> CaseLabels
+        public ImmutableArray<CaseLabelSyntax> CaseLabels
         {
             get { return _caseLabels; }
         }

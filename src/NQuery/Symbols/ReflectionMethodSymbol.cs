@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,11 +23,11 @@ namespace NQuery.Symbols
             MethodInfo = methodInfo;
         }
 
-        private static IList<ParameterSymbol> ConvertParameters(MethodInfo methodInfo)
+        private static IEnumerable<ParameterSymbol> ConvertParameters(MethodInfo methodInfo)
         {
             return (methodInfo == null
                         ? Enumerable.Empty<ParameterSymbol>()
-                        : methodInfo.GetParameters().Select(p => new ReflectionParameterSymbol(p))).ToList();
+                        : methodInfo.GetParameters().Select(p => new ReflectionParameterSymbol(p))).ToImmutableArray();
         }
 
         public override Expression CreateInvocation(Expression instance, IEnumerable<Expression> arguments)

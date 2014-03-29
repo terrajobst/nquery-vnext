@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,7 @@ namespace NQuery.UnitTests.Syntax
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'First' + !'Last' AS Name");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var query = (SelectQuerySyntax) syntaxTree.Root.Root;
             var column = (ExpressionSelectColumnSyntax) query.SelectClause.Columns.Single();
@@ -43,7 +44,7 @@ namespace NQuery.UnitTests.Syntax
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'foo' WITH");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);

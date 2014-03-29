@@ -16,7 +16,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -30,7 +30,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -44,7 +44,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -58,7 +58,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -72,7 +72,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -86,7 +86,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.IdentifierToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -100,7 +100,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
             Assert.AreEqual(0, token.Diagnostics[0].Span.Start);
@@ -116,7 +116,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
             Assert.AreEqual(0, token.Diagnostics[0].Span.Start);
@@ -132,7 +132,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("String is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -146,7 +146,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Date is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -160,7 +160,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, token.Text);
             Assert.AreEqual(SyntaxKind.DateLiteralToken, token.Kind);
             Assert.AreEqual(false, token.IsTerminated());
-            Assert.AreEqual(2, token.Diagnostics.Count);
+            Assert.AreEqual(2, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Date is not properly terminated.", token.Diagnostics[0].Message);
         }
@@ -174,7 +174,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, trivia.Text);
             Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
             Assert.AreEqual(false, trivia.IsTerminated());
-            Assert.AreEqual(1, trivia.Diagnostics.Count);
+            Assert.AreEqual(1, trivia.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
         }
@@ -188,7 +188,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(text, trivia.Text);
             Assert.AreEqual(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
             Assert.AreEqual(false, trivia.IsTerminated());
-            Assert.AreEqual(1, trivia.Diagnostics.Count);
+            Assert.AreEqual(1, trivia.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
             Assert.AreEqual("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
         }
@@ -292,7 +292,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(typeof(int), token.Value.GetType());
             Assert.AreEqual(value, token.Value);
         }
@@ -306,7 +306,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(typeof(long), token.Value.GetType());
             Assert.AreEqual(value, token.Value);
         }
@@ -322,7 +322,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
             Assert.AreEqual(typeof(int), token.Value.GetType());
-            Assert.AreEqual(1, diagnostics.Count);
+            Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.NumberTooLarge, diagnostics[0].DiagnosticId);
         }
 
@@ -334,7 +334,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(1.0, token.Value);
             Assert.AreEqual(typeof(double), token.Value.GetType());
         }
@@ -347,7 +347,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(0.0, token.Value);
             Assert.AreEqual(typeof(double), token.Value.GetType());
         }
@@ -360,7 +360,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(1e4, token.Value);
             Assert.AreEqual(typeof(double), token.Value.GetType());
         }
@@ -373,7 +373,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(1e-4, token.Value);
             Assert.AreEqual(typeof(double), token.Value.GetType());
         }
@@ -386,7 +386,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(1e+4, token.Value);
             Assert.AreEqual(typeof(double), token.Value.GetType());
         }
@@ -401,7 +401,7 @@ namespace NQuery.UnitTests.Syntax
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
             Assert.AreEqual(typeof(double), token.Value.GetType());
-            Assert.AreEqual(1, diagnostics.Count);
+            Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidReal, diagnostics[0].DiagnosticId);
         }
 
@@ -413,7 +413,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(10, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());
         }
@@ -426,7 +426,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(2863311530L, token.Value);
             Assert.AreEqual(typeof(long), token.Value.GetType());
         }
@@ -439,7 +439,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidBinary, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual(0, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());
@@ -453,7 +453,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(5349, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());
         }
@@ -466,7 +466,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(718046312823L, token.Value);
             Assert.AreEqual(typeof(long), token.Value.GetType());
         }
@@ -479,7 +479,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidOctal, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual(0, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());
@@ -493,7 +493,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(2748, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());
         }
@@ -506,7 +506,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(0, token.Diagnostics.Count);
+            Assert.AreEqual(0, token.Diagnostics.Length);
             Assert.AreEqual(68719476735L, token.Value);
             Assert.AreEqual(typeof(long), token.Value.GetType());
         }
@@ -519,7 +519,7 @@ namespace NQuery.UnitTests.Syntax
 
             Assert.AreEqual(input, token.Text);
             Assert.AreEqual(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.AreEqual(1, token.Diagnostics.Count);
+            Assert.AreEqual(1, token.Diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidHex, token.Diagnostics[0].DiagnosticId);
             Assert.AreEqual(0, token.Value);
             Assert.AreEqual(typeof(int), token.Value.GetType());

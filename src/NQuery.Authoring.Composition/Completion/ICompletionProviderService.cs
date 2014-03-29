@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Authoring.Completion;
 
@@ -7,6 +7,6 @@ namespace NQuery.Authoring.Composition.Completion
 {
     public interface ICompletionProviderService
     {
-        IReadOnlyCollection<ICompletionProvider> Providers { get; }
+        ImmutableArray<ICompletionProvider> Providers { get; }
     }
 }

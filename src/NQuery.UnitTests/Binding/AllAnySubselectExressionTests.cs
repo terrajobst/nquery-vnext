@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +18,7 @@ namespace NQuery.UnitTests.Binding
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticMoel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -30,7 +31,7 @@ namespace NQuery.UnitTests.Binding
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticMoel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -40,7 +41,7 @@ namespace NQuery.UnitTests.Binding
         public void AllAnySubselect_DetectsInvalidOperator()
         {
             var syntaxTree = SyntaxTree.ParseExpression("'value' + ALL (SELECT foo)");
-            var diagnostics = syntaxTree.GetDiagnostics().ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidOperatorForAllAny, diagnostics[0].DiagnosticId);
@@ -53,7 +54,7 @@ namespace NQuery.UnitTests.Binding
             var expresion = (ExpressionSyntax) compilation.SyntaxTree.Root.Root;
             var semanticModel = compilation.GetSemanticModel();
             var resultType = semanticModel.GetExpressionType(expresion);
-            var diagnostics = semanticModel .GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(typeof(bool), resultType);
             Assert.AreEqual(0, diagnostics.Length);
@@ -66,7 +67,7 @@ namespace NQuery.UnitTests.Binding
             var expresion = (ExpressionSyntax) compilation.SyntaxTree.Root.Root;
             var semanticModel = compilation.GetSemanticModel();
             var resultType = semanticModel.GetExpressionType(expresion);
-            var diagnostics = semanticModel .GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(typeof(bool), resultType);
             Assert.AreEqual(0, diagnostics.Length);

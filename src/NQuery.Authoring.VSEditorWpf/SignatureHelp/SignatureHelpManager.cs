@@ -109,10 +109,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             // If we previously recorded a selected item and the index is still valid,
             // let's restore it.
 
-            if (model != null && selectedIndex != null && selectedIndex < model.Signatures.Count)
+            if (model != null && selectedIndex != null && selectedIndex < model.Signatures.Length)
             {
                 var selectedItem = model.Signatures[selectedIndex.Value];
-                if (selectedItem.Parameters.Count > model.SelectedParameter)
+                if (selectedItem.Parameters.Length > model.SelectedParameter)
                     model = model.WithSignature(selectedItem);
             }
 
@@ -146,7 +146,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 _model = value;
                 OnModelChanged(EventArgs.Empty);
 
-                var hasData = _model != null && _model.Signatures.Count > 0;
+                var hasData = _model != null && _model.Signatures.Length > 0;
                 var showSession = _session == null && hasData;
                 var hideSession = _session != null && !hasData;
 

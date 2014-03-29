@@ -18,7 +18,7 @@ namespace NQuery.Authoring.UnitTests.SignatureHelp.Providers
 
         protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
         {
-            var methods = semanticModel.LookupMethods(typeof(string)).Where(m => m.Name == "Substring").OrderBy(m => m.Parameters.Count);
+            var methods = semanticModel.LookupMethods(typeof(string)).Where(m => m.Name == "Substring").OrderBy(m => m.Parameters.Length);
             return methods.ToSignatureItems();
         }
 

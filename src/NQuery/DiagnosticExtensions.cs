@@ -364,21 +364,21 @@ namespace NQuery
             diagnostics.Report(name.Span, DiagnosticId.ColumnTableOrVariableNotDeclared, name.ValueText);
         }
 
-        public static void ReportAmbiguousName(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<Symbol> candidates)
+        public static void ReportAmbiguousName(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IReadOnlyList<Symbol> candidates)
         {
             var symbol1 = candidates[0];
             var symbol2 = candidates[1];
             diagnostics.Report(name.Span, DiagnosticId.AmbiguousReference, name.ValueText, symbol1, symbol2);
         }
 
-        public static void ReportAmbiguousColumnInstance(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<ColumnInstanceSymbol> candidates)
+        public static void ReportAmbiguousColumnInstance(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IReadOnlyList<ColumnInstanceSymbol> candidates)
         {
             var symbol1 = candidates[0];
             var symbol2 = candidates[1];
             diagnostics.Report(name.Span, DiagnosticId.AmbiguousColumnRef, name.ValueText, symbol1, symbol2);
         }
 
-        public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<TableSymbol> candidates)
+        public static void ReportAmbiguousTable(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IReadOnlyList<TableSymbol> candidates)
         {
             var symbol1 = candidates[0];
             var symbol2 = candidates[1];
@@ -390,7 +390,7 @@ namespace NQuery
             diagnostics.Report(name.Span, DiagnosticId.AmbiguousVariable, name.ValueText);
         }
 
-        public static void ReportAmbiguousAggregate(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IList<AggregateSymbol> symbols)
+        public static void ReportAmbiguousAggregate(this ICollection<Diagnostic> diagnostics, SyntaxToken name, IReadOnlyList<AggregateSymbol> symbols)
         {
             var symbol1 = symbols[0];
             var symbol2 = symbols[1];
@@ -409,7 +409,7 @@ namespace NQuery
         //    diagnostics.Add(diagnostic);
         //}
 
-        public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, InvocableSymbol symbol1, InvocableSymbol symbol2, IList<Type> argumentTypes)
+        public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, InvocableSymbol symbol1, InvocableSymbol symbol2, IReadOnlyList<Type> argumentTypes)
         {
             if (argumentTypes.Count > 0)
             {

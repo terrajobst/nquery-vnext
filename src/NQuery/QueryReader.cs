@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Iterators;
@@ -9,19 +8,19 @@ namespace NQuery
 {
     public sealed class QueryReader : IDisposable
     {
-        private readonly ReadOnlyCollection<string> _columnNames;
-        private readonly ReadOnlyCollection<Type> _columnTypes;
+        private readonly ImmutableArray<string> _columnNames;
+        private readonly ImmutableArray<Type> _columnTypes;
         private readonly bool _schemaOnly;
 
         private Iterator _iterator;
         private bool _isBof;
 
-        internal QueryReader(Iterator iterator, IReadOnlyCollection<Tuple<string, Type>> columnNamesAndTypes, bool schemaOnly)
+        internal QueryReader(Iterator iterator, ImmutableArray<Tuple<string, Type>> columnNamesAndTypes, bool schemaOnly)
         {
             _iterator = iterator;
             _schemaOnly = schemaOnly;
-            _columnNames = new ReadOnlyCollection<string>(columnNamesAndTypes.Select(t => t.Item1).ToArray());
-            _columnTypes = new ReadOnlyCollection<Type>(columnNamesAndTypes.Select(t => t.Item2).ToArray());
+            _columnNames = columnNamesAndTypes.Select(t => t.Item1).ToImmutableArray();
+            _columnTypes = columnNamesAndTypes.Select(t => t.Item2).ToImmutableArray();
 
             if (!_schemaOnly)
             {

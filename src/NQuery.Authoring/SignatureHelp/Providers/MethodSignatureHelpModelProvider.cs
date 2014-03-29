@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -15,15 +16,15 @@ namespace NQuery.Authoring.SignatureHelp.Providers
             var name = node.Name;
             var signatures = semanticModel.LookupMethods(targetType)
                                           .Where(m => name.Matches(m.Name))
-                                          .OrderBy(f => f.Parameters.Count)
+                                          .OrderBy(f => f.Parameters.Length)
                                           .ToSignatureItems()
-                                          .ToArray();
+                                          .ToImmutableArray();
             if (signatures.Length == 0)
                 return null;
 
             var span = node.Span;
             var parameterIndex = node.ArgumentList.GetParameterIndex(position);
-            var selected = signatures.FirstOrDefault(s => s.Parameters.Count > parameterIndex);
+            var selected = signatures.FirstOrDefault(s => s.Parameters.Length > parameterIndex);
 
             return new SignatureHelpModel(span, signatures, selected, parameterIndex);
         }

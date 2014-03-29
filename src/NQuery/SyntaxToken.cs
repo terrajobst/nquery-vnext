@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.IO;
 
 using NQuery.Text;
@@ -16,11 +16,11 @@ namespace NQuery
         private readonly TextSpan _span;
         private readonly string _text;
         private readonly object _value;
-        private readonly ReadOnlyCollection<SyntaxTrivia> _leadingTrivia;
-        private readonly ReadOnlyCollection<SyntaxTrivia> _trailingTrivia;
-        private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
+        private readonly ImmutableArray<SyntaxTrivia> _leadingTrivia;
+        private readonly ImmutableArray<SyntaxTrivia> _trailingTrivia;
+        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
-        internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IList<SyntaxTrivia> leadingTrivia, IList<SyntaxTrivia> trailingTrivia, IList<Diagnostic> diagnostics)
+        internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
         {
             _syntaxTree = syntaxTree;
             _kind = kind;
@@ -29,9 +29,9 @@ namespace NQuery
             _span = span;
             _text = text;
             _value = value;
-            _leadingTrivia = new ReadOnlyCollection<SyntaxTrivia>(leadingTrivia);
-            _trailingTrivia = new ReadOnlyCollection<SyntaxTrivia>(trailingTrivia);
-            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
+            _leadingTrivia = leadingTrivia.ToImmutableArray();
+            _trailingTrivia = trailingTrivia.ToImmutableArray();
+            _diagnostics = diagnostics.ToImmutableArray();
         }
 
         public SyntaxNode Parent
@@ -56,7 +56,7 @@ namespace NQuery
 
         public string Text
         {
-            get { return _text ?? SyntaxFacts.GetText(_kind); }
+            get { return _text ?? _kind.GetText(); }
         }
 
         public object Value
@@ -78,27 +78,27 @@ namespace NQuery
         {
             get
             {
-                var start = _leadingTrivia.Count == 0
+                var start = _leadingTrivia.Length == 0
                                 ? _span.Start
                                 : _leadingTrivia[0].Span.Start;
-                var end = _trailingTrivia.Count == 0
+                var end = _trailingTrivia.Length == 0
                               ? _span.End
-                              : _trailingTrivia[_trailingTrivia.Count - 1].Span.End;
+                              : _trailingTrivia[_trailingTrivia.Length - 1].Span.End;
                 return TextSpan.FromBounds(start, end);
             }
         }
 
-        public ReadOnlyCollection<SyntaxTrivia> LeadingTrivia
+        public ImmutableArray<SyntaxTrivia> LeadingTrivia
         {
             get { return _leadingTrivia; }
         }
 
-        public ReadOnlyCollection<SyntaxTrivia> TrailingTrivia
+        public ImmutableArray<SyntaxTrivia> TrailingTrivia
         {
             get { return _trailingTrivia; }
         }
 
-        public ReadOnlyCollection<Diagnostic> Diagnostics
+        public ImmutableArray<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }
         }
@@ -129,7 +129,7 @@ namespace NQuery
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
 
-        public SyntaxToken WithDiagnotics(IList<Diagnostic> diagnostics)
+        public SyntaxToken WithDiagnotics(IEnumerable<Diagnostic> diagnostics)
         {
             return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, diagnostics);
         }
@@ -139,12 +139,12 @@ namespace NQuery
             return new SyntaxToken(_syntaxTree, kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, _trailingTrivia, _diagnostics);
         }
 
-        public SyntaxToken WithLeadingTrivia(IList<SyntaxTrivia> trivia)
+        public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
             return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, trivia, _trailingTrivia, _diagnostics);
         }
 
-        public SyntaxToken WithTrailingTrivia(IList<SyntaxTrivia> trivia)
+        public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
             return new SyntaxToken(_syntaxTree, _kind, _contextualKind, _isMissing, _span, _text, _value, _leadingTrivia, trivia, _diagnostics);
         }

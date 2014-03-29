@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.IO;
 
 using NQuery.Syntax;
@@ -15,16 +15,16 @@ namespace NQuery
         private readonly string _text;
         private readonly TextSpan _span;
         private readonly StructuredTriviaSyntax _structure;
-        private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
+        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
-        internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IList<Diagnostic> diagnostics)
+        internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IEnumerable<Diagnostic> diagnostics)
         {
             _syntaxTree = syntaxTree;
             _kind = kind;
             _text = text;
             _span = span;
             _structure = structure;
-            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
+            _diagnostics = diagnostics.ToImmutableArray();
         }
 
         public SyntaxToken Parent
@@ -52,7 +52,7 @@ namespace NQuery
             get { return _structure; }
         }
 
-        public ReadOnlyCollection<Diagnostic> Diagnostics
+        public ImmutableArray<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }
         }

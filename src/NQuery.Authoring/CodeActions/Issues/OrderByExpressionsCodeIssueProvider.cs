@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 
@@ -33,7 +34,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 // is bound to.
 
                 var boundSymbol = semanticModel.GetSymbol(orderByColumn);
-                var expressionColumns = semanticModel.GetOutputColumns(node.Query).ToList();
+                var expressionColumns = semanticModel.GetOutputColumns(node.Query).ToImmutableArray();
                 var index = expressionColumns.IndexOf(boundSymbol);
                 if (index < 0)
                     continue;

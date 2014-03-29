@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
     internal sealed class ComputeScalarIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly ReadOnlyCollection<Func<object>> _definedValues;
+        private readonly ImmutableArray<Func<object>> _definedValues;
         private readonly ArrayRowBuffer _rowBuffer;
         private readonly CombinedRowBuffer _combinedRowBuffer;
 
-        public ComputeScalarIterator(Iterator input, IList<Func<object>> definedValues)
+        public ComputeScalarIterator(Iterator input, IEnumerable<Func<object>> definedValues)
         {
             _input = input;
-            _definedValues = new ReadOnlyCollection<Func<object>>(definedValues);
-            _rowBuffer = new ArrayRowBuffer(definedValues.Count);
+            _definedValues = definedValues.ToImmutableArray();
+            _rowBuffer = new ArrayRowBuffer(_definedValues.Length);
             _combinedRowBuffer = new CombinedRowBuffer(input.RowBuffer, _rowBuffer);
         }
 
@@ -34,7 +34,7 @@ namespace NQuery.Iterators
             if (!_input.Read())
                 return false;
 
-            for (var i = 0; i < _definedValues.Count; i++)
+            for (var i = 0; i < _definedValues.Length; i++)
                 _rowBuffer.Array[i] = _definedValues[i]();
 
             return true;

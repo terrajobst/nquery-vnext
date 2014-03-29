@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -115,7 +116,7 @@ namespace NQuery.Authoring.SignatureHelp
                 sb.Append(node.Text);
             }
 
-            var parameters = parameterSpans.Zip(parameterNames, (s, n) => new ParameterItem(n, s)).ToArray();
+            var parameters = parameterSpans.Zip(parameterNames, (s, n) => new ParameterItem(n, s)).ToImmutableArray();
             var content = sb.ToString();
             return new SignatureItem(content, parameters);
         }

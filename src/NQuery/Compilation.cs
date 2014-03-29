@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Binding;
@@ -39,11 +40,11 @@ namespace NQuery
             return new CompiledQuery(optimizedQuery);
         }
 
-        private List<Diagnostic> GetDiagnostics(BindingResult bindingResult)
+        private ImmutableArray<Diagnostic> GetDiagnostics(BindingResult bindingResult)
         {
             var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
             var semanticDiagnostics = bindingResult.Diagnostics;
-            return syntaxDiagnostics.Concat(semanticDiagnostics).ToList();
+            return syntaxDiagnostics.Concat(semanticDiagnostics).ToImmutableArray();
         }
 
         public ShowPlan GetShowPlan()

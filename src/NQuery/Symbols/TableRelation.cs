@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Symbols
@@ -8,11 +8,11 @@ namespace NQuery.Symbols
     public sealed class TableRelation
     {
         private readonly TableSymbol _parentTable;
-        private readonly ReadOnlyCollection<ColumnSymbol> _parentColumns;
+        private readonly ImmutableArray<ColumnSymbol> _parentColumns;
         private readonly TableSymbol _childTable;
-        private readonly ReadOnlyCollection<ColumnSymbol> _childColumns;
+        private readonly ImmutableArray<ColumnSymbol> _childColumns;
 
-        public TableRelation(TableSymbol parentTable, IList<ColumnSymbol> parentColumns, TableSymbol childTable, IList<ColumnSymbol> childColumns)
+        public TableRelation(TableSymbol parentTable, IReadOnlyCollection<ColumnSymbol> parentColumns, TableSymbol childTable, IReadOnlyCollection<ColumnSymbol> childColumns)
         {
             if (parentColumns == null)
                 throw new ArgumentNullException("parentColumns");
@@ -33,14 +33,14 @@ namespace NQuery.Symbols
                 throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, "childColumns");
 
             _parentTable = parentTable;
-            _parentColumns = new ReadOnlyCollection<ColumnSymbol>(parentColumns);
+            _parentColumns = parentColumns.ToImmutableArray();
             _childTable = childTable;
-            _childColumns = new ReadOnlyCollection<ColumnSymbol>(childColumns);
+            _childColumns = childColumns.ToImmutableArray();
         }
 
         public int ColumnCount
         {
-            get { return _parentColumns.Count; }
+            get { return _parentColumns.Length; }
         }
 
         public TableSymbol ParentTable
@@ -48,7 +48,7 @@ namespace NQuery.Symbols
             get { return _parentTable; }
         }
 
-        public ReadOnlyCollection<ColumnSymbol> ParentColumns
+        public ImmutableArray<ColumnSymbol> ParentColumns
         {
             get { return _parentColumns; }
         }
@@ -58,7 +58,7 @@ namespace NQuery.Symbols
             get { return _childTable; }
         }
 
-        public ReadOnlyCollection<ColumnSymbol> ChildColumns
+        public ImmutableArray<ColumnSymbol> ChildColumns
         {
             get { return _childColumns; }
         }

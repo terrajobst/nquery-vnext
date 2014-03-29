@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,7 +11,7 @@ namespace NQuery.Authoring.Wpf
     {
         private sealed class Expander
         {
-            private readonly object[] _items;
+            private readonly ImmutableArray<object> _items;
             private readonly bool _expandLastItem;
 
             private ItemContainerGenerator _parentGenerator;
@@ -19,7 +20,7 @@ namespace NQuery.Authoring.Wpf
 
             public Expander(TreeView treeView, IEnumerable<object> items, bool expandLastItem)
             {
-                _items = items.ToArray();
+                _items = items.ToImmutableArray();
                 _expandLastItem = expandLastItem;
                 _parentGenerator = treeView.ItemContainerGenerator;
             }
@@ -90,7 +91,7 @@ namespace NQuery.Authoring.Wpf
                 node = getParentNode(node);
             }
 
-            var nodesToExpand = nodeStack.ToList();
+            var nodesToExpand = nodeStack.ToImmutableArray();
             treeView.ExpandNodes(nodesToExpand, expandNode);
         }
     }

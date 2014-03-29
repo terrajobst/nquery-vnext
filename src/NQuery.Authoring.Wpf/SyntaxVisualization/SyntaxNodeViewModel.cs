@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Text;
 
@@ -8,7 +8,7 @@ namespace NQuery.Authoring.Wpf
 {
     internal sealed class SyntaxNodeViewModel
     {
-        public SyntaxNodeViewModel(SyntaxToken data, IList<SyntaxNodeViewModel> children)
+        public SyntaxNodeViewModel(SyntaxToken data, IEnumerable<SyntaxNodeViewModel> children)
         {
             Data = data;
             Title = data.Kind.ToString();
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.Wpf
             UpdateChildren(children);
         }
 
-        public SyntaxNodeViewModel(SyntaxTrivia data, bool isLeading, IList<SyntaxNodeViewModel> children)
+        public SyntaxNodeViewModel(SyntaxTrivia data, bool isLeading, IEnumerable<SyntaxNodeViewModel> children)
         {
             Data = data;
             Title = string.Format("{0}:{1}", isLeading ? "L" : "T", data.Kind);
@@ -34,7 +34,7 @@ namespace NQuery.Authoring.Wpf
             UpdateChildren(children);
         }
 
-        public SyntaxNodeViewModel(SyntaxNode data, IList<SyntaxNodeViewModel> children)
+        public SyntaxNodeViewModel(SyntaxNode data, IEnumerable<SyntaxNodeViewModel> children)
         {
             Data = data;
             Title = data.Kind.ToString();
@@ -47,11 +47,11 @@ namespace NQuery.Authoring.Wpf
             UpdateChildren(children);
         }
 
-        private void UpdateChildren(IList<SyntaxNodeViewModel> children)
+        private void UpdateChildren(IEnumerable<SyntaxNodeViewModel> children)
         {
-            Children = new ReadOnlyCollection<SyntaxNodeViewModel>(children);
+            Children = children.ToImmutableArray();
 
-            foreach (var nodeViewModel in children)
+            foreach (var nodeViewModel in Children)
                 nodeViewModel.Parent = this;
         }
 
@@ -73,7 +73,7 @@ namespace NQuery.Authoring.Wpf
 
         public bool IsMissing { get; set; }
 
-        public ReadOnlyCollection<SyntaxNodeViewModel> Children { get; private set; }
+        public ImmutableArray<SyntaxNodeViewModel> Children { get; private set; }
 
         public override string ToString()
         {

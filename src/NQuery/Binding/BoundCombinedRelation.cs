@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
@@ -9,14 +9,14 @@ namespace NQuery.Binding
         private readonly BoundQueryCombinator _combinator;
         private readonly BoundRelation _left;
         private readonly BoundRelation _right;
-        private readonly ReadOnlyCollection<ValueSlot> _outputs;
+        private readonly ImmutableArray<ValueSlot> _outputs;
 
-        public BoundCombinedRelation(BoundQueryCombinator combinator, BoundRelation left, BoundRelation right, IList<ValueSlot> outputs)
+        public BoundCombinedRelation(BoundQueryCombinator combinator, BoundRelation left, BoundRelation right, IEnumerable<ValueSlot> outputs)
         {
             _combinator = combinator;
             _left = left;
             _right = right;
-            _outputs = new ReadOnlyCollection<ValueSlot>(outputs);
+            _outputs = outputs.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -39,7 +39,7 @@ namespace NQuery.Binding
             get { return _right; }
         }
 
-        public ReadOnlyCollection<ValueSlot> Outputs
+        public ImmutableArray<ValueSlot> Outputs
         {
             get { return _outputs; }
         }
@@ -54,12 +54,14 @@ namespace NQuery.Binding
             return _outputs;
         }
 
-        public BoundCombinedRelation Update(BoundQueryCombinator combinator, BoundRelation left, BoundRelation right, IList<ValueSlot> outputs)
+        public BoundCombinedRelation Update(BoundQueryCombinator combinator, BoundRelation left, BoundRelation right, IEnumerable<ValueSlot> outputs)
         {
-            if (combinator == _combinator && left == _left && right == _right && outputs == _outputs)
+            var newOutputs = outputs.ToImmutableArray();
+
+            if (combinator == _combinator && left == _left && right == _right && newOutputs == _outputs)
                 return this;
 
-            return new BoundCombinedRelation(combinator, left, right, outputs);
+            return new BoundCombinedRelation(combinator, left, right, newOutputs);
         }
     }
 }

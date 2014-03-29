@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +16,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInSelectDistinct, diagnostics[0].DiagnosticId);
@@ -28,7 +29,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
         }
@@ -40,7 +41,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInGroupBy, diagnostics[0].DiagnosticId);
@@ -53,7 +54,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInOrderBy, diagnostics[0].DiagnosticId);
@@ -71,7 +72,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInUnion, diagnostics[0].DiagnosticId);
@@ -89,7 +90,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
         }
@@ -106,7 +107,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInExcept, diagnostics[0].DiagnosticId);
@@ -124,7 +125,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery(source);
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvalidDataTypeInIntersect, diagnostics[0].DiagnosticId);

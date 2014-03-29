@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,14 +12,14 @@ namespace NQuery.Authoring.VSEditorWpf
     public abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
         where TTag: ITag
     {
-        private List<TRawTag> _rawTags = new List<TRawTag>();
+        private ImmutableArray<TRawTag> _rawTags = ImmutableArray<TRawTag>.Empty;
         private ITextSnapshot _rawTagsSnapshot;
 
         protected async void InvalidateTags()
         {
             var rawTagsResult = await GetRawTagsAsync();
             _rawTagsSnapshot = rawTagsResult.Item1;
-            _rawTags = rawTagsResult.Item2.ToList();
+            _rawTags = rawTagsResult.Item2.ToImmutableArray();
             var snapshotSpan = new SnapshotSpan(_rawTagsSnapshot, 0, _rawTagsSnapshot.Length);
             OnTagsChanged(new SnapshotSpanEventArgs(snapshotSpan));
         }

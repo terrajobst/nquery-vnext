@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Immutable;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -63,7 +63,7 @@ namespace NQuery.Authoring.UnitTests.Classifications
 
             var syntaxTree = compilation.SyntaxTree;
             var semanticModel = compilation.GetSemanticModel();
-            var classificationSpans = syntaxTree.Root.ClassifySemantics(semanticModel).ToArray();
+            var classificationSpans = syntaxTree.Root.ClassifySemantics(semanticModel).ToImmutableArray();
 
             Assert.AreEqual(pieces.Length, classificationSpans.Length);
 

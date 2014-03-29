@@ -25,7 +25,7 @@ namespace NQuery.Binding
 
         public override int ParameterCount
         {
-            get { return _symbol.Parameters.Count; }
+            get { return _symbol.Parameters.Length; }
         }
 
         public FunctionSymbol Symbol

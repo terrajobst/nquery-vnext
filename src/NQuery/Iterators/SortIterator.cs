@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
     internal sealed class SortIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly ReadOnlyCollection<int> _sortEntries;
-        private readonly ReadOnlyCollection<IComparer> _comparers;
+        private readonly ImmutableArray<int> _sortEntries;
+        private readonly ImmutableArray<IComparer> _comparers;
 
         private readonly SpooledRowBuffer _spooledRowBuffer;
 
-        public SortIterator(Iterator input, IList<int> sortEntries, IList<IComparer> comparers)
+        public SortIterator(Iterator input, IEnumerable<int> sortEntries, IEnumerable<IComparer> comparers)
         {
             _input = input;
-            _sortEntries = new ReadOnlyCollection<int>(sortEntries);
-            _comparers = new ReadOnlyCollection<IComparer>(comparers);
+            _sortEntries = sortEntries.ToImmutableArray();
+            _comparers = comparers.ToImmutableArray();
             _spooledRowBuffer = new SpooledRowBuffer(_input.RowBuffer.Count);
         }
 
@@ -91,10 +91,10 @@ namespace NQuery.Iterators
 
         private sealed class RowComparer : IComparer<object[]>
         {
-            private readonly ReadOnlyCollection<int> _sortEntries;
-            private readonly ReadOnlyCollection<IComparer> _comparers;
+            private readonly ImmutableArray<int> _sortEntries;
+            private readonly ImmutableArray<IComparer> _comparers;
 
-            public RowComparer(ReadOnlyCollection<int> sortEntries, ReadOnlyCollection<IComparer> comparers)
+            public RowComparer(ImmutableArray<int> sortEntries, ImmutableArray<IComparer> comparers)
             {
                 _sortEntries = sortEntries;
                 _comparers = comparers;
@@ -115,7 +115,7 @@ namespace NQuery.Iterators
 
                 var result = 0;
                 var index = 0;
-                while (index < _sortEntries.Count && result == 0)
+                while (index < _sortEntries.Length && result == 0)
                 {
                     var valueIndex = _sortEntries[index];
 

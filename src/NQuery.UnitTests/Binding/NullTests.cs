@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +19,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = compilation.SyntaxTree;
             var semanticModel = compilation.GetSemanticModel();
             var query = (SelectQuerySyntax) syntaxTree.Root.Root;
-            var columns = semanticModel.GetOutputColumns(query).ToArray();
+            var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
             Assert.AreEqual(1, columns.Length);
             Assert.IsTrue(columns[0].Type.IsNull());
@@ -33,7 +34,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = compilation.SyntaxTree;
             var semanticModel = compilation.GetSemanticModel();
             var query = (SelectQuerySyntax)syntaxTree.Root.Root;
-            var columns = semanticModel.GetOutputColumns(query).ToArray();
+            var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
             Assert.AreEqual(1, columns.Length);
             Assert.AreEqual(typeof(double), columns[0].Type);
@@ -46,7 +47,7 @@ namespace NQuery.UnitTests.Binding
             var compilation = CompilationFactory.CreateQuery("SELECT ROUND(NULL)");
             var syntaxTree = compilation.SyntaxTree;
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AmbiguousInvocation, diagnostics[0].DiagnosticId);

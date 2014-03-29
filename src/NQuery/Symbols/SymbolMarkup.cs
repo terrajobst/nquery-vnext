@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Symbols
 {
     public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
     {
-        private readonly ReadOnlyCollection<SymbolMarkupToken> _tokens;
+        private readonly ImmutableArray<SymbolMarkupToken> _tokens;
 
-        public SymbolMarkup(IList<SymbolMarkupToken> tokens)
+        public SymbolMarkup(IEnumerable<SymbolMarkupToken> tokens)
         {
-            _tokens = new ReadOnlyCollection<SymbolMarkupToken>(tokens);
+            _tokens = tokens.ToImmutableArray();
         }
 
-        public ReadOnlyCollection<SymbolMarkupToken> Tokens
+        public ImmutableArray<SymbolMarkupToken> Tokens
         {
             get { return _tokens; }
         }
@@ -27,10 +27,10 @@ namespace NQuery.Symbols
 
         public bool Equals(SymbolMarkup other)
         {
-            if (other.Tokens.Count != _tokens.Count)
+            if (other.Tokens.Length != _tokens.Length)
                 return false;
 
-            for (var i = 0; i < _tokens.Count; i++)
+            for (var i = 0; i < _tokens.Length; i++)
             {
                 if (!_tokens[i].Equals(other.Tokens[i]))
                     return false;

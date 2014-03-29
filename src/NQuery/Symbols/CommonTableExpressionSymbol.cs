@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Binding;
 
@@ -9,18 +9,18 @@ namespace NQuery.Symbols
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
         private readonly BoundQuery _query;
-        private readonly ReadOnlyCollection<BoundQuery> _recursiveMembers;
+        private readonly ImmutableArray<BoundQuery> _recursiveMembers;
 
-        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQuery query)
-            : this(name, columns, query, s => new BoundQuery[0])
+        internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query)
+            : this(name, columns, query, s => ImmutableArray<BoundQuery>.Empty)
         {
         }
 
-        internal CommonTableExpressionSymbol(string name, IList<ColumnSymbol> columns, BoundQuery query, Func<CommonTableExpressionSymbol, IList<BoundQuery>> lazyBoundRecursiveMembers)
+        internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query, Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> lazyBoundRecursiveMembers)
             : base(name, columns)
         {
             _query = query;
-            _recursiveMembers = new ReadOnlyCollection<BoundQuery>(lazyBoundRecursiveMembers(this));
+            _recursiveMembers = lazyBoundRecursiveMembers(this);
         }
 
         public override SymbolKind Kind
@@ -38,7 +38,7 @@ namespace NQuery.Symbols
             get { return _query; }
         }
 
-        internal ReadOnlyCollection<BoundQuery> RecursiveMembers
+        internal ImmutableArray<BoundQuery> RecursiveMembers
         {
             get { return _recursiveMembers; }
         }

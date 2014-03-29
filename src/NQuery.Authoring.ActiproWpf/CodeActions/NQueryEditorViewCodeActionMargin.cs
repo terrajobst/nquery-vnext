@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,7 +14,6 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
-using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.CodeActions
 {
@@ -54,16 +54,16 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             }
         }
 
-        private static Task<IReadOnlyCollection<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static Task<ImmutableArray<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position, ITextDocument textDocument)
         {
             return Task.Run(() => GetActionModels(semanticModel, position, textDocument));
         }
 
-        private static IReadOnlyCollection<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextDocument textDocument)
         {
             var issues = GetCodeIssues(semanticModel, position, textDocument);
             var refactorings = GetRefactorings(semanticModel, position, textDocument);
-            return issues.Concat(refactorings).ToArray();
+            return issues.Concat(refactorings).ToImmutableArray();
         }
 
         private static IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position, ITextDocument textDocument)
@@ -104,7 +104,7 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             var position = _view.Selection.StartSnapshotOffset.ToOffset(textBuffer);
             var actionModels = await GetActionModelsAsync(semanticModel, position, document);
 
-            if (actionModels.Count == 0)
+            if (actionModels.Length == 0)
             {
                 _glyphPopup.Visibility = Visibility.Collapsed;
             }

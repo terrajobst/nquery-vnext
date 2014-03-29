@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Text;
@@ -12,7 +12,7 @@ namespace NQuery.Authoring.CodeActions
         private readonly CodeIssueKind _kind;
         private readonly TextSpan _span;
         private readonly string _description;
-        private readonly ReadOnlyCollection<ICodeAction> _actions;
+        private readonly ImmutableArray<ICodeAction> _actions;
 
         public CodeIssue(CodeIssueKind kind, TextSpan span, string description)
             : this(kind, span, description, Enumerable.Empty<ICodeAction>())
@@ -29,7 +29,7 @@ namespace NQuery.Authoring.CodeActions
             _kind = kind;
             _span = span;
             _description = description;
-            _actions = new ReadOnlyCollection<ICodeAction>(actions.ToArray());
+            _actions = actions.ToImmutableArray();
         }
 
         public CodeIssueKind Kind
@@ -47,7 +47,7 @@ namespace NQuery.Authoring.CodeActions
             get { return _description; }
         }
 
-        public ReadOnlyCollection<ICodeAction> Actions
+        public ImmutableArray<ICodeAction> Actions
         {
             get { return _actions; }
         }

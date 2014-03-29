@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,14 +16,14 @@ namespace NQuery.Authoring.UnitTests.Highlighting
 
         protected void AssertIsMatch(string queryWithMarkers)
         {
-            TextSpan[] expectedSpans;
+            ImmutableArray<TextSpan> expectedSpans;
             var query = queryWithMarkers.ParseSpans(out expectedSpans);
 
             var compilation = CompilationFactory.CreateQuery(query);
             var semanticModel = compilation.GetSemanticModel();
 
             var highlighter = CreateHighlighter();
-            var highlighters = new[] { highlighter };
+            var highlighters = ImmutableArray.Create(highlighter);
 
             Assert.IsTrue(expectedSpans.Length > 0);
 
@@ -30,7 +31,7 @@ namespace NQuery.Authoring.UnitTests.Highlighting
                 AssertIsMatch(semanticModel, span, highlighters, expectedSpans);
         }
 
-        private static void AssertIsMatch(SemanticModel semanticModel, TextSpan span, IHighlighter[] highlighters, TextSpan[] expectedSpans)
+        private static void AssertIsMatch(SemanticModel semanticModel, TextSpan span, ImmutableArray<IHighlighter> highlighters, ImmutableArray<TextSpan> expectedSpans)
         {
             var start = span.Start;
             var middle = span.Start + span.Length/2;
@@ -41,9 +42,9 @@ namespace NQuery.Authoring.UnitTests.Highlighting
             AssertMatches(semanticModel, end, highlighters, expectedSpans);
         }
 
-        private static void AssertMatches(SemanticModel semanticModel, int position, IEnumerable<IHighlighter> highlighters, TextSpan[] expectedMatches)
+        private static void AssertMatches(SemanticModel semanticModel, int position, IEnumerable<IHighlighter> highlighters, ImmutableArray<TextSpan> expectedMatches)
         {
-            var actualHighlights = semanticModel.GetHighlights(position, highlighters).ToArray();
+            var actualHighlights = semanticModel.GetHighlights(position, highlighters).ToImmutableArray();
             CollectionAssert.AreEqual(expectedMatches, actualHighlights);
         }
     }

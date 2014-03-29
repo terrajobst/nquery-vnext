@@ -17,7 +17,7 @@ namespace NQuery.Authoring.UnitTests.Completion.Providers
 
             var method = semanticModel.LookupMethods(type)
                                       .Where(m => m.Name == methodName)
-                                      .OrderBy(m => m.Parameters.Count)
+                                      .OrderBy(m => m.Parameters.Length)
                                       .First();
             var methodItem = completionModel.Items.Single(i => i.InsertionText == method.Name);
             var methodMarkup = SymbolMarkup.ForSymbol(method);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace NQuery.UnitTests.Syntax
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT LEFT, RIGHT");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -32,7 +33,7 @@ namespace NQuery.UnitTests.Syntax
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsFunctionName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT  LEFT(), RIGHT('test',2)");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -52,7 +53,7 @@ namespace NQuery.UnitTests.Syntax
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsPropertyName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT Foo.LEFT, Bar.RIGHT");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -72,7 +73,7 @@ namespace NQuery.UnitTests.Syntax
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsMethodName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT Foo.LEFT(), Bar.RIGHT('test', 2)");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -92,7 +93,7 @@ namespace NQuery.UnitTests.Syntax
         public void ContextualLeftAndRightKeywords_TreatedAsIdentifier_IfUsedAsVariableName()
         {
             var syntaxTree = SyntaxTree.ParseQuery(@"SELECT @LEFT, @RIGHT");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -117,7 +118,7 @@ namespace NQuery.UnitTests.Syntax
                             LEFT JOIN T2 t2 ON t2.T1Id = t1.Id
                             RIGHT JOIN T3 t3 ON t3.Id = t2.T3Id
             ");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.
@@ -142,7 +143,7 @@ namespace NQuery.UnitTests.Syntax
                             LEFT OUTER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID
                             RIGHT OUTER JOIN Territories t ON t.TerritoryId = et.TerritoryID
             ");
-            var tokens = syntaxTree.Root.DescendantTokens().ToArray();
+            var tokens = syntaxTree.Root.DescendantTokens().ToImmutableArray();
 
             // First's let's make sure we got the right amount of tokens.
             // If those don't line up, something else is broken.

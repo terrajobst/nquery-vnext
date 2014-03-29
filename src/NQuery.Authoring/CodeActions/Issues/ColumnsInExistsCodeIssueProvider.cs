@@ -31,7 +31,7 @@ namespace NQuery.Authoring.CodeActions.Issues
             return selectClause.Columns.GetWithSeparators().Select(c => new CodeIssue(CodeIssueKind.Unnecessary, c.Span, action));
         }
 
-        private static bool IsSingleSelectStar(ICollection<SelectColumnSyntax> selectColumns)
+        private static bool IsSingleSelectStar(IReadOnlyCollection<SelectColumnSyntax> selectColumns)
         {
             if (selectColumns.Count != 1)
                 return false;

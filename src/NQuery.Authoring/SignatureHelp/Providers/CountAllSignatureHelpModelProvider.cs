@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
@@ -17,7 +18,7 @@ namespace NQuery.Authoring.SignatureHelp.Providers
                                           .OfType<AggregateSymbol>()
                                           .Where(f => name.Matches(f.Name))
                                           .ToSignatureItems()
-                                          .ToArray();
+                                          .ToImmutableArray();
 
             if (signatures.Length == 0)
                 return null;

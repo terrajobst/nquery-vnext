@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,7 +15,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("1 BETWEEN '1' AND 2.0");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
@@ -26,7 +27,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("1 BETWEEN 1 AND 2.0");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
         }

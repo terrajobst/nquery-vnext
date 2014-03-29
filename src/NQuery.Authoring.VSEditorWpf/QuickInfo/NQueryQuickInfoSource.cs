@@ -58,7 +58,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 
         private FrameworkElement GetContent(QuickInfoModel model)
         {
-            if (model.Markup.Tokens.Count == 0)
+            if (model.Markup.Tokens.Length == 0)
                 return null;
 
             var glyph = GetGlyph(model.Glyph);

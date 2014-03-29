@@ -1,5 +1,5 @@
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Binding;
@@ -9,7 +9,7 @@ namespace NQuery.Symbols
     public sealed class TableInstanceSymbol : Symbol
     {
         private readonly TableSymbol _table;
-        private readonly ReadOnlyCollection<TableColumnInstanceSymbol> _columnInstances;
+        private readonly ImmutableArray<TableColumnInstanceSymbol> _columnInstances;
 
         internal TableInstanceSymbol(string name, TableSymbol table, ValueSlotFactory valueFactory)
             : this(name, table, (ti, c) => valueFactory.CreateValueSlot(ti.Name + "." + c.Name, c.Type))
@@ -20,9 +20,7 @@ namespace NQuery.Symbols
             : base(name)
         {
             _table = table;
-
-            var columns = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToArray();
-            _columnInstances = new ReadOnlyCollection<TableColumnInstanceSymbol>(columns);
+            _columnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToImmutableArray();
         }
 
         public override SymbolKind Kind
@@ -35,7 +33,7 @@ namespace NQuery.Symbols
             get { return _table; }
         }
 
-        public ReadOnlyCollection<TableColumnInstanceSymbol> ColumnInstances
+        public ImmutableArray<TableColumnInstanceSymbol> ColumnInstances
         {
             get { return _columnInstances; }
         }

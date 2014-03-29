@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundGroupByClause
     {
-        private readonly ReadOnlyCollection<ValueSlot> _columns;
+        private readonly ImmutableArray<ValueSlot> _columns;
 
-        public BoundGroupByClause(IList<ValueSlot> columns)
+        public BoundGroupByClause(IEnumerable<ValueSlot> columns)
         {
-            _columns = new ReadOnlyCollection<ValueSlot>(columns);
+            _columns = columns.ToImmutableArray();
         }
 
-        public ReadOnlyCollection<ValueSlot> Columns
+        public ImmutableArray<ValueSlot> Columns
         {
             get { return _columns; }
         }

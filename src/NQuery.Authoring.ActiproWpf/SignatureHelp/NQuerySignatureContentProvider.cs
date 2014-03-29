@@ -24,7 +24,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
         private IContentProvider GetHtmlContent()
         {
-            var parameter = _parameterIndex < _signatureItem.Parameters.Count
+            var parameter = _parameterIndex < _signatureItem.Parameters.Length
                                 ? _signatureItem.Parameters[_parameterIndex]
                                 : null;
 

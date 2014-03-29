@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Symbols
 {
     public abstract class TableSymbol : Symbol
     {
-        private readonly ReadOnlyCollection<ColumnSymbol> _columns;
+        private readonly ImmutableArray<ColumnSymbol> _columns;
 
-        protected TableSymbol(string name, IList<ColumnSymbol> columns)
+        protected TableSymbol(string name, IEnumerable<ColumnSymbol> columns)
             : base(name)
         {
-            _columns = new ReadOnlyCollection<ColumnSymbol>(columns);
+            _columns = columns.ToImmutableArray();
         }
 
-        public ReadOnlyCollection<ColumnSymbol> Columns
+        public ImmutableArray<ColumnSymbol> Columns
         {
             get { return _columns; }
         }

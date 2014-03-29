@@ -20,7 +20,7 @@ namespace NQuery.UnitTests
             Assert.IsFalse(conversion.IsBoxing);
             Assert.IsFalse(conversion.IsUnboxing);
             Assert.IsFalse(conversion.IsReference);
-            Assert.AreEqual(expectedMethodCount, conversion.ConversionMethods.Count);
+            Assert.AreEqual(expectedMethodCount, conversion.ConversionMethods.Length);
         }
 
         private static void AssertIdentityConversion(Type type)
@@ -34,7 +34,7 @@ namespace NQuery.UnitTests
             Assert.IsFalse(conversion.IsBoxing);
             Assert.IsFalse(conversion.IsUnboxing);
             Assert.IsFalse(conversion.IsReference);
-            Assert.AreEqual(0, conversion.ConversionMethods.Count);
+            Assert.AreEqual(0, conversion.ConversionMethods.Length);
         }
 
         private static void AssertHasImplicitIntrinsicConversion(Type souceType, Type targetType)
@@ -276,7 +276,7 @@ namespace NQuery.UnitTests
             Assert.IsTrue(conversion.IsBoxing);
             Assert.IsFalse(conversion.IsUnboxing);
             Assert.IsFalse(conversion.IsReference);
-            Assert.AreEqual(0, conversion.ConversionMethods.Count);
+            Assert.AreEqual(0, conversion.ConversionMethods.Length);
         }
 
         [TestMethod]
@@ -291,7 +291,7 @@ namespace NQuery.UnitTests
             Assert.IsFalse(conversion.IsBoxing);
             Assert.IsTrue(conversion.IsUnboxing);
             Assert.IsFalse(conversion.IsReference);
-            Assert.AreEqual(0, conversion.ConversionMethods.Count);
+            Assert.AreEqual(0, conversion.ConversionMethods.Length);
         }
 
         [TestMethod]
@@ -306,7 +306,7 @@ namespace NQuery.UnitTests
             Assert.IsFalse(conversion.IsBoxing);
             Assert.IsFalse(conversion.IsUnboxing);
             Assert.IsTrue(conversion.IsReference);
-            Assert.AreEqual(0, conversion.ConversionMethods.Count);
+            Assert.AreEqual(0, conversion.ConversionMethods.Length);
         }
 
         [TestMethod]
@@ -321,7 +321,7 @@ namespace NQuery.UnitTests
             Assert.IsFalse(conversion.IsBoxing);
             Assert.IsFalse(conversion.IsUnboxing);
             Assert.IsTrue(conversion.IsReference);
-            Assert.AreEqual(0, conversion.ConversionMethods.Count);
+            Assert.AreEqual(0, conversion.ConversionMethods.Length);
         }
     }
 }

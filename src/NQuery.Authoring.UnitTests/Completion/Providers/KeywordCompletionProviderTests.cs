@@ -64,7 +64,7 @@ namespace NQuery.Authoring.UnitTests.Completion.Providers
         private static void AssertIsEmpty(string query)
         {
             var completionModel = GetCompletionModel(query);
-            Assert.AreEqual(0, completionModel.Items.Count);
+            Assert.AreEqual(0, completionModel.Items.Length);
         }
 
         [TestMethod]

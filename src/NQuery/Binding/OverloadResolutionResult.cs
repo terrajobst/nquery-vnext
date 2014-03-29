@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
@@ -8,14 +8,14 @@ namespace NQuery.Binding
         where T: Signature
     {
         private readonly OverloadResolutionCandidate<T> _best;
-        private readonly ReadOnlyCollection<OverloadResolutionCandidate<T>> _candidates;
+        private readonly ImmutableArray<OverloadResolutionCandidate<T>> _candidates;
         private readonly OverloadResolutionCandidate<T> _selected;
 
-        public OverloadResolutionResult(OverloadResolutionCandidate<T> best, OverloadResolutionCandidate<T> selected, IList<OverloadResolutionCandidate<T>> candidates)
+        public OverloadResolutionResult(OverloadResolutionCandidate<T> best, OverloadResolutionCandidate<T> selected, IEnumerable<OverloadResolutionCandidate<T>> candidates)
         {
             _best = best;
             _selected = selected;
-            _candidates = new ReadOnlyCollection<OverloadResolutionCandidate<T>>(candidates);
+            _candidates = candidates.ToImmutableArray();
         }
 
         public static readonly OverloadResolutionResult<T> None = new OverloadResolutionResult<T>(null, null, new OverloadResolutionCandidate<T>[0]);
@@ -30,7 +30,7 @@ namespace NQuery.Binding
             get { return _selected; }
         }
 
-        public ReadOnlyCollection<OverloadResolutionCandidate<T>> Candidates
+        public ImmutableArray<OverloadResolutionCandidate<T>> Candidates
         {
             get { return _candidates; }
         }

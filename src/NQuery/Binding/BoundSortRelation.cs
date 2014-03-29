@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -7,12 +8,12 @@ namespace NQuery.Binding
     internal sealed class BoundSortRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly IList<BoundSortedValue> _sortedValues;
+        private readonly ImmutableArray<BoundSortedValue> _sortedValues;
 
-        public BoundSortRelation(BoundRelation input, IList<BoundSortedValue> sortedValues)
+        public BoundSortRelation(BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
             _input = input;
-            _sortedValues = sortedValues;
+            _sortedValues = sortedValues.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -25,17 +26,19 @@ namespace NQuery.Binding
             get { return _input; }
         }
 
-        public IList<BoundSortedValue> SortedValues
+        public ImmutableArray<BoundSortedValue> SortedValues
         {
             get { return _sortedValues; }
         }
 
-        public BoundSortRelation Update(BoundRelation input, IList<BoundSortedValue> sortedValues)
+        public BoundSortRelation Update(BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
-            if (input == _input && sortedValues == _sortedValues)
+            var newSortedValues = sortedValues.ToImmutableArray();
+
+            if (input == _input && newSortedValues == _sortedValues)
                 return this;
 
-            return new BoundSortRelation(input, sortedValues);
+            return new BoundSortRelation(input, newSortedValues);
         }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()

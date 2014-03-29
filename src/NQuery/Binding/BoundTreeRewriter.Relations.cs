@@ -57,7 +57,7 @@ namespace NQuery.Binding
         protected virtual BoundRelation RewriteComputeRelation(BoundComputeRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteComputedValueList(node.DefinedValues));
+                               RewriteComputedValues(node.DefinedValues));
         }
 
         protected virtual BoundRelation RewriteFilterRelation(BoundFilterRelation node)
@@ -69,8 +69,8 @@ namespace NQuery.Binding
         protected virtual BoundRelation RewriteGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteValueSlotList(node.Groups),
-                               RewriteAggregatedValueList(node.Aggregates));
+                               RewriteValueSlots(node.Groups),
+                               RewriteAggregatedValues(node.Aggregates));
         }
 
         protected virtual BoundRelation RewriteConstantRelation(BoundConstantRelation node)
@@ -83,26 +83,26 @@ namespace NQuery.Binding
             return node.Update(node.Combinator,
                                RewriteRelation(node.Left),
                                RewriteRelation(node.Right),
-                               RewriteValueSlotList(node.Outputs));
+                               RewriteValueSlots(node.Outputs));
         }
 
         protected virtual BoundRelation RewriteProjectRelation(BoundProjectRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteValueSlotList(node.Outputs));
+                               RewriteValueSlots(node.Outputs));
         }
 
         protected virtual BoundRelation RewriteSortRelation(BoundSortRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteSortedValueList(node.SortedValues));
+                               RewriteSortedValues(node.SortedValues));
         }
 
         protected virtual BoundRelation RewriteTopRelation(BoundTopRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
                                node.Limit,
-                               RewriteSortedValueList(node.TieEntries));
+                               RewriteSortedValues(node.TieEntries));
         }
    }
 }

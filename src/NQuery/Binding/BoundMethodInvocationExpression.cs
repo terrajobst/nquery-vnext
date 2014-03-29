@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
@@ -10,13 +9,13 @@ namespace NQuery.Binding
     internal sealed class BoundMethodInvocationExpression : BoundExpression
     {
         private readonly BoundExpression _target;
-        private readonly ReadOnlyCollection<BoundExpression> _arguments;
+        private readonly ImmutableArray<BoundExpression> _arguments;
         private readonly OverloadResolutionResult<MethodSymbolSignature> _result;
 
-        public BoundMethodInvocationExpression(BoundExpression target, IList<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
+        public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
             _target = target;
-            _arguments = new ReadOnlyCollection<BoundExpression>(arguments);
+            _arguments = arguments.ToImmutableArray();
             _result = result;
         }
 
@@ -40,7 +39,7 @@ namespace NQuery.Binding
             get { return _target; }
         }
 
-        public ReadOnlyCollection<BoundExpression> Arguments
+        public ImmutableArray<BoundExpression> Arguments
         {
             get { return _arguments; }
         }
@@ -50,12 +49,14 @@ namespace NQuery.Binding
             get { return _result; }
         }
 
-        public BoundMethodInvocationExpression Update(BoundExpression target, IList<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
+        public BoundMethodInvocationExpression Update(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
-            if (target == _target && arguments == _arguments && result == _result)
+            var newArguments = arguments.ToImmutableArray();
+
+            if (target == _target && newArguments == _arguments && result == _result)
                 return this;
 
-            return new BoundMethodInvocationExpression(target, arguments, result);
+            return new BoundMethodInvocationExpression(target, newArguments, result);
         }
 
         public override string ToString()

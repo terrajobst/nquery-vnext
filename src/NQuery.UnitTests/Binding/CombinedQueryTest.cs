@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +34,7 @@ namespace NQuery.UnitTests.Binding
             var combinedQuery = compilation.SyntaxTree.Root.DescendantNodes().OfType<T>().Single();
             var semanticModel = compilation.GetSemanticModel();
 
-            var columns = semanticModel.GetOutputColumns(combinedQuery).ToArray();
+            var columns = semanticModel.GetOutputColumns(combinedQuery).ToImmutableArray();
 
             Assert.AreEqual(4, columns.Length);
             Assert.AreEqual(typeof (double), columns[0].Type);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
@@ -156,7 +157,7 @@ namespace NQuery.Binding
             return LookupMethods(type).Where(m => name.Matches(m.Name));
         }
 
-        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, IList<Type> argumentTypes)
+        private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, ImmutableArray<Type> argumentTypes)
         {
             if (name == null) throw new ArgumentNullException("name");
             var signatures = from m in LookupMethod(type, name)
@@ -164,7 +165,7 @@ namespace NQuery.Binding
             return OverloadResolution.Perform(signatures, argumentTypes);
         }
 
-        private OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, IList<Type> argumentTypes)
+        private OverloadResolutionResult<FunctionSymbolSignature> LookupFunction(SyntaxToken name, ImmutableArray<Type> argumentTypes)
         {
             var signatures = from f in LookupSymbols<FunctionSymbol>(name)
                              where name.Matches(f.Name)
@@ -175,7 +176,7 @@ namespace NQuery.Binding
         private IEnumerable<FunctionSymbol> LookupFunctionWithSingleParameter(SyntaxToken name)
         {
             return from f in LookupSymbols<FunctionSymbol>(name)
-                   where f.Parameters.Count == 1
+                   where f.Parameters.Length == 1
                    select f;
         }
 

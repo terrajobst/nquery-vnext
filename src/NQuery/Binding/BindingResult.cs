@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
@@ -10,7 +10,7 @@ namespace NQuery.Binding
         private readonly BoundNode _boundRoot;
         private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
         private readonly IDictionary<BoundNode, Binder> _binderFromBoundNode;
-        private readonly ReadOnlyCollection<Diagnostic> _diagnostics;
+        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
         public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
         {
@@ -18,7 +18,7 @@ namespace NQuery.Binding
             _boundRoot = boundRoot;
             _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
             _binderFromBoundNode = binderFromBoundNode;
-            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
+            _diagnostics = diagnostics.ToImmutableArray();
         }
 
         public SyntaxNode Root
@@ -36,7 +36,7 @@ namespace NQuery.Binding
             get { return _binderFromBoundNode[_boundRoot]; }
         }
 
-        public ReadOnlyCollection<Diagnostic> Diagnostics
+        public ImmutableArray<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }
         }

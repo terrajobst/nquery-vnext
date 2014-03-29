@@ -6,7 +6,7 @@ namespace NQuery.Symbols
 {
     public abstract class MethodSymbol : InvocableSymbol
     {
-        public MethodSymbol(string name, Type type, IList<ParameterSymbol> parameters)
+        public MethodSymbol(string name, Type type, IEnumerable<ParameterSymbol> parameters)
             : base(name, type, parameters)
         {
         }

@@ -1,18 +1,23 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace NQuery.Symbols
 {
     public abstract class TableDefinition
     {
-        private ReadOnlyCollection<ColumnDefinition> _columns;
+        private ImmutableArray<ColumnDefinition> _columns;
 
-        public ReadOnlyCollection<ColumnDefinition> Columns
+        public ImmutableArray<ColumnDefinition> Columns
         {
-            get { return _columns ?? (_columns = new ReadOnlyCollection<ColumnDefinition>(GetColumns().ToArray())); }
+            get
+            {
+                if (_columns.IsDefault)
+                    _columns = GetColumns().ToImmutableArray();
+                
+                return _columns;
+            }
         }
 
         public abstract string Name { get; }

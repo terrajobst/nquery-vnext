@@ -137,7 +137,7 @@ namespace NQuery
         public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
         {
             var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
-            return result == null ? null : result.GetDeclaredTableInstances();
+            return result == null ? null : result.GetDeclaredTableInstances().AsEnumerable();
         }
 
         public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)

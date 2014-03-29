@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
@@ -48,7 +49,7 @@ namespace NQuery.Binding
 
         private BoundRelation BindNamedTableReference(NamedTableReferenceSyntax node)
         {
-            var symbols = LookupTable(node.TableName).ToArray();
+            var symbols = LookupTable(node.TableName).ToImmutableArray();
 
             if (symbols.Length == 0)
             {

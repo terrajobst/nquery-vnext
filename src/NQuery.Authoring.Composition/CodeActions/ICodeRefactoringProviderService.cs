@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
 
@@ -7,6 +7,6 @@ namespace NQuery.Authoring.Composition.CodeActions
 {
     public interface ICodeRefactoringProviderService
     {
-        IReadOnlyCollection<ICodeRefactoringProvider> Providers { get; }
+        ImmutableArray<ICodeRefactoringProvider> Providers { get; }
     }
 }

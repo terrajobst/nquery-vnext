@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace NQuery
 {
@@ -8,15 +8,15 @@ namespace NQuery
     {
         private readonly bool _isScalar;
         private readonly string _operatorName;
-        private readonly ReadOnlyCollection<KeyValuePair<string, string>> _properties;
-        private readonly ReadOnlyCollection<ShowPlanNode> _children;
+        private readonly ImmutableArray<KeyValuePair<string, string>> _properties;
+        private readonly ImmutableArray<ShowPlanNode> _children;
 
         internal ShowPlanNode(string operatorName, IEnumerable<KeyValuePair<string,string>> properties, IEnumerable<ShowPlanNode> children, bool isScalar = false)
         {
             _isScalar = isScalar;
             _operatorName = operatorName;
-            _properties = new ReadOnlyCollection<KeyValuePair<string, string>>(properties.ToArray());
-            _children = new ReadOnlyCollection<ShowPlanNode>(children.ToArray());
+            _properties = properties.ToImmutableArray();
+            _children = children.ToImmutableArray();
         }
 
         public bool IsScalar
@@ -29,12 +29,12 @@ namespace NQuery
             get { return _operatorName; }
         }
 
-        public ReadOnlyCollection<KeyValuePair<string, string>> Properties
+        public ImmutableArray<KeyValuePair<string, string>> Properties
         {
             get { return _properties; }
         }
 
-        public ReadOnlyCollection<ShowPlanNode> Children
+        public ImmutableArray<ShowPlanNode> Children
         {
             get { return _children; }
         }

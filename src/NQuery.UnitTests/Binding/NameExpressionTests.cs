@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,7 +18,7 @@ namespace NQuery.UnitTests.Binding
                 .WithSyntaxTree(syntaxTree);
 
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvocationRequiresParenthesis, diagnostics[0].DiagnosticId);
@@ -32,7 +33,7 @@ namespace NQuery.UnitTests.Binding
                 .WithSyntaxTree(syntaxTree);
 
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.InvocationRequiresParenthesis, diagnostics[0].DiagnosticId);

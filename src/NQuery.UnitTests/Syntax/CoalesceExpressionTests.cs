@@ -1,5 +1,5 @@
 using System;
-using System.Linq;
+using System.Collections.Immutable;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -12,7 +12,7 @@ namespace NQuery.UnitTests.Syntax
         public void Coalesce_DetectsTooFewArguments_WhenNoArgumentIsProvided()
         {
             var syntaxTree = SyntaxTree.ParseExpression("COALESCE()");
-            var diagnostics = syntaxTree.GetDiagnostics().ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().ToImmutableArray();
             Assert.AreEqual(3, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[1].DiagnosticId);
@@ -23,7 +23,7 @@ namespace NQuery.UnitTests.Syntax
         public void Coalesce_DetectsTooFewArguments_WhenSingleArgumentIsProvided()
         {
             var syntaxTree = SyntaxTree.ParseExpression("COALESCE(1)");
-            var diagnostics = syntaxTree.GetDiagnostics().ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().ToImmutableArray();
             Assert.AreEqual(2, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
             Assert.AreEqual(DiagnosticId.TokenExpected, diagnostics[1].DiagnosticId);

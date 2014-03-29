@@ -61,11 +61,11 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 
             Assert.AreEqual(CodeIssueKind.Unnecessary, codeIssues[2].Kind);
             Assert.AreEqual("et.TerritoryID", query.Substring(codeIssues[2].Span));
-            Assert.AreEqual(1, codeIssues[2].Actions.Count);
+            Assert.AreEqual(1, codeIssues[2].Actions.Length);
 
-            Assert.AreEqual(1, codeIssues[0].Actions.Count);
-            Assert.AreEqual(1, codeIssues[1].Actions.Count);
-            Assert.AreEqual(1, codeIssues[2].Actions.Count);
+            Assert.AreEqual(1, codeIssues[0].Actions.Length);
+            Assert.AreEqual(1, codeIssues[1].Actions.Length);
+            Assert.AreEqual(1, codeIssues[2].Actions.Length);
         }
 
         [TestMethod]
@@ -98,10 +98,10 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 
             var codeIssues = GetIssues(query);
 
-            Assert.AreEqual(3, codeIssues.Length);           
-            Assert.AreEqual(1, codeIssues[0].Actions.Count);
-            Assert.AreEqual(1, codeIssues[1].Actions.Count);
-            Assert.AreEqual(1, codeIssues[2].Actions.Count);
+            Assert.AreEqual(3, codeIssues.Length);
+            Assert.AreEqual(1, codeIssues[0].Actions.Length);
+            Assert.AreEqual(1, codeIssues[1].Actions.Length);
+            Assert.AreEqual(1, codeIssues[2].Actions.Length);
             Assert.AreSame(codeIssues[0].Actions[0], codeIssues[1].Actions[0]);
             Assert.AreSame(codeIssues[1].Actions[0], codeIssues[2].Actions[0]);
 

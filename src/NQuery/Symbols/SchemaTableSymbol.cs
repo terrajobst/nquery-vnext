@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Symbols
@@ -22,12 +22,12 @@ namespace NQuery.Symbols
             return tableDefinition.Name;
         }
 
-        private static IList<ColumnSymbol> GetColumns(TableDefinition tableDefinition)
+        private static ImmutableArray<SchemaColumnSymbol> GetColumns(TableDefinition tableDefinition)
         {
             if (tableDefinition == null)
                 throw new ArgumentNullException("tableDefinition");
 
-            return tableDefinition.Columns.Select(c => new SchemaColumnSymbol(c)).ToArray();
+            return tableDefinition.Columns.Select(c => new SchemaColumnSymbol(c)).ToImmutableArray();
         }
 
         public TableDefinition Definition

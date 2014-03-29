@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -87,7 +88,7 @@ namespace NQuery.Authoring.Outlining
             VisitTriviaList(token.TrailingTrivia);
         }
 
-        private void VisitTriviaList(IReadOnlyCollection<SyntaxTrivia> trivias)
+        private void VisitTriviaList(ImmutableArray<SyntaxTrivia> trivias)
         {
             FindMultilineComments(trivias);
             FindConsecutiveSingleLineComments(trivias);

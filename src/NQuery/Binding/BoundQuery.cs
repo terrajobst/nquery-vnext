@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
@@ -9,12 +9,12 @@ namespace NQuery.Binding
     internal sealed class BoundQuery : BoundNode
     {
         private readonly BoundRelation _relation;
-        private readonly ReadOnlyCollection<QueryColumnInstanceSymbol> _output;
+        private readonly ImmutableArray<QueryColumnInstanceSymbol> _output;
 
-        public BoundQuery(BoundRelation relation, IList<QueryColumnInstanceSymbol> output)
+        public BoundQuery(BoundRelation relation, IEnumerable<QueryColumnInstanceSymbol> output)
         {
             _relation = relation;
-            _output = new ReadOnlyCollection<QueryColumnInstanceSymbol>(output);
+            _output = output.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -22,7 +22,7 @@ namespace NQuery.Binding
             get { return BoundNodeKind.Query; }
         }
 
-        public ReadOnlyCollection<QueryColumnInstanceSymbol> OutputColumns
+        public ImmutableArray<QueryColumnInstanceSymbol> OutputColumns
         {
             get { return _output; }
         }

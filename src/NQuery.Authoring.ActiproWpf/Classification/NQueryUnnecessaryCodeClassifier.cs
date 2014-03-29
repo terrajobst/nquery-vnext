@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,7 +65,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             return Task.Run<IEnumerable<TextSpan>>(() => semanticData.SemanticModel.GetIssues()
                                                                                    .Where(i => i.Kind == CodeIssueKind.Unnecessary)
                                                                                    .Select(i => i.Span)
-                                                                                   .ToArray());
+                                                                                   .ToImmutableArray());
         }
     }
 }

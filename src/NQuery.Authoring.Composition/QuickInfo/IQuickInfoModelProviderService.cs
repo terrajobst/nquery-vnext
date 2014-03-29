@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Authoring.QuickInfo;
 
@@ -7,6 +7,6 @@ namespace NQuery.Authoring.Composition.QuickInfo
 {
     public interface IQuickInfoModelProviderService
     {
-        IReadOnlyCollection<IQuickInfoModelProvider> Providers { get; }
+        ImmutableArray<IQuickInfoModelProvider> Providers { get; }
     }
 }

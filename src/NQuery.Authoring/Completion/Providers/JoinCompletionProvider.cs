@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -21,8 +22,8 @@ namespace NQuery.Authoring.Completion.Providers
             if (conditionedJoin == null)
                 return Enumerable.Empty<CompletionItem>();
 
-            var leftInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Left).ToArray();
-            var rightInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Right).ToArray();
+            var leftInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Left).ToImmutableArray();
+            var rightInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Right).ToImmutableArray();
             var relations = semanticModel.Compilation.DataContext.Relations;
 
             return from left in leftInstances

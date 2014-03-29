@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,7 +20,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
@@ -35,7 +36,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AmbiguousReference, diagnostics[0].DiagnosticId);
@@ -53,7 +54,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var invocation = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Single();
             var symbol = semanticModel.GetSymbol(invocation);
@@ -71,7 +72,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var invocation = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
             var symbol = semanticModel.GetSymbol(invocation);
@@ -89,7 +90,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UndeclaredAggregate, diagnostics[0].DiagnosticId);
@@ -103,7 +104,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
             var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
@@ -115,7 +116,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("COUNT(4)");
             var compilation = Compilation.Empty.WithDataContext(DataContext.Default).WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.AggregateInvalidInCurrentContext, diagnostics[0].DiagnosticId);

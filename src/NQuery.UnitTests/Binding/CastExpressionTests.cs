@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +19,7 @@ namespace NQuery.UnitTests.Binding
             var semanticMoel = compilation.GetSemanticModel();
 
             var returnType = semanticMoel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(typeof(string), returnType);
             Assert.AreEqual(1, diagnostics.Length);
@@ -32,7 +33,7 @@ namespace NQuery.UnitTests.Binding
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticMoel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.UndeclaredType, diagnostics[0].DiagnosticId);

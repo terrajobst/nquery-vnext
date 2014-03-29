@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,7 +29,7 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            Assert.AreEqual(2, cteSymbol.Columns.Count);
+            Assert.AreEqual(2, cteSymbol.Columns.Length);
             Assert.AreEqual("A", cteSymbol.Columns[0].Name);
             Assert.AreEqual("B", cteSymbol.Columns[1].Name);
         }
@@ -51,7 +52,7 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            Assert.AreEqual(2, cteSymbol.Columns.Count);
+            Assert.AreEqual(2, cteSymbol.Columns.Length);
             Assert.AreEqual("C1", cteSymbol.Columns[0].Name);
             Assert.AreEqual("C2", cteSymbol.Columns[1].Name);
         }
@@ -80,13 +81,13 @@ namespace NQuery.UnitTests.Binding
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
 
-            var cteNodes = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().ToArray();
-            var cteSymbols = cteNodes.Select(semanticModel.GetDeclaredSymbol).ToArray();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var cteNodes = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().ToImmutableArray();
+            var cteSymbols = cteNodes.Select(semanticModel.GetDeclaredSymbol).ToImmutableArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableInstances = (from n in cteNodes
                                   from tr in n.DescendantNodes().OfType<NamedTableReferenceSyntax>()
-                                  select semanticModel.GetDeclaredSymbol(tr)).ToArray();
+                                  select semanticModel.GetDeclaredSymbol(tr)).ToImmutableArray();
 
             Assert.AreEqual(3, cteSymbols.Length);
             Assert.AreEqual("MyCte1", cteSymbols[0].Name);
@@ -128,7 +129,7 @@ namespace NQuery.UnitTests.Binding
 
             var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
 
@@ -169,7 +170,7 @@ namespace NQuery.UnitTests.Binding
 
             var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
 
@@ -196,10 +197,10 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.NoColumnAliasSpecified);
 
-            Assert.AreEqual(1, cteSymbol.Columns.Count);
+            Assert.AreEqual(1, cteSymbol.Columns.Length);
             Assert.AreEqual("C2", cteSymbol.Columns[0].Name);
 
             Assert.AreEqual(1, diagnostics.Length);
@@ -224,10 +225,10 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
 
-            Assert.AreEqual(2, cteSymbol.Columns.Count);
+            Assert.AreEqual(2, cteSymbol.Columns.Length);
             Assert.AreEqual("A", cteSymbol.Columns[0].Name);
             Assert.AreEqual(typeof(int), cteSymbol.Columns[0].Type);
             Assert.AreEqual("A", cteSymbol.Columns[1].Name);
@@ -255,10 +256,10 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
 
-            Assert.AreEqual(2, cteSymbol.Columns.Count);
+            Assert.AreEqual(2, cteSymbol.Columns.Length);
             Assert.AreEqual("A", cteSymbol.Columns[0].Name);
             Assert.AreEqual(typeof(int), cteSymbol.Columns[0].Type);
             Assert.AreEqual("A", cteSymbol.Columns[1].Name);
@@ -287,9 +288,9 @@ namespace NQuery.UnitTests.Binding
             var semanticModel = compilation.GetSemanticModel();
 
             var cteSymbols = (from n in syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>()
-                              select semanticModel.GetDeclaredSymbol(n)).ToArray();
+                              select semanticModel.GetDeclaredSymbol(n)).ToImmutableArray();
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateTableName);
 
             Assert.AreEqual(2, cteSymbols.Length);
@@ -319,10 +320,10 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasFewerColumnsThanSpecified);
 
-            Assert.AreEqual(1, cteSymbol.Columns.Count);
+            Assert.AreEqual(1, cteSymbol.Columns.Length);
             Assert.AreEqual("A", cteSymbol.Columns[0].Name);
 
             Assert.AreEqual(1, diagnostics.Length);
@@ -347,10 +348,10 @@ namespace NQuery.UnitTests.Binding
             var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
             var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasMoreColumnsThanSpecified);
 
-            Assert.AreEqual(1, cteSymbol.Columns.Count);
+            Assert.AreEqual(1, cteSymbol.Columns.Length);
             Assert.AreEqual("A", cteSymbol.Columns[0].Name);
 
             Assert.AreEqual(1, diagnostics.Length);

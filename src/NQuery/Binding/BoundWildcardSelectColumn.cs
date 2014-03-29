@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Symbols;
@@ -10,16 +10,14 @@ namespace NQuery.Binding
     internal sealed class BoundWildcardSelectColumn : BoundNode
     {
         private readonly TableInstanceSymbol _table;
-        private readonly ReadOnlyCollection<TableColumnInstanceSymbol> _tableColumns;
-        private readonly ReadOnlyCollection<QueryColumnInstanceSymbol> _queryColumns;
+        private readonly ImmutableArray<TableColumnInstanceSymbol> _tableColumns;
+        private readonly ImmutableArray<QueryColumnInstanceSymbol> _queryColumns;
 
-        public BoundWildcardSelectColumn(TableInstanceSymbol table, IList<TableColumnInstanceSymbol> columns)
+        public BoundWildcardSelectColumn(TableInstanceSymbol table, IEnumerable<TableColumnInstanceSymbol> columns)
         {
-            var queryColumns = columns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlot)).ToArray();
-
             _table = table;
-            _tableColumns = new ReadOnlyCollection<TableColumnInstanceSymbol>(columns);
-            _queryColumns =new ReadOnlyCollection<QueryColumnInstanceSymbol>(queryColumns);
+            _tableColumns = columns.ToImmutableArray();
+            _queryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlot)).ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -32,12 +30,12 @@ namespace NQuery.Binding
             get { return _table; }
         }
 
-        public ReadOnlyCollection<TableColumnInstanceSymbol> TableColumns
+        public ImmutableArray<TableColumnInstanceSymbol> TableColumns
         {
             get { return _tableColumns; }
         }
 
-        public ReadOnlyCollection<QueryColumnInstanceSymbol> QueryColumns
+        public ImmutableArray<QueryColumnInstanceSymbol> QueryColumns
         {
             get { return _queryColumns; }
         }

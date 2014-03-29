@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Data;
 using System.Linq;
 
@@ -107,8 +108,8 @@ namespace NQuery.Data
             var parentColumns = ResolveColumns(parentTable.Columns, dataRelation.ParentColumns);
             var childColumns = ResolveColumns(childTable.Columns, dataRelation.ChildColumns);
 
-            if (parentColumns.Count != dataRelation.ParentColumns.Length ||
-                childColumns.Count != dataRelation.ChildColumns.Length)
+            if (parentColumns.Length != dataRelation.ParentColumns.Length ||
+                childColumns.Length != dataRelation.ChildColumns.Length)
                 return null;
 
             return new TableRelation(parentTable, parentColumns, childTable, childColumns);
@@ -119,13 +120,13 @@ namespace NQuery.Data
             return tables.FirstOrDefault(t => string.Equals(t.Name, tableName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private static IList<ColumnSymbol> ResolveColumns(IEnumerable<ColumnSymbol> columns, IEnumerable<DataColumn> dataColumns)
+        private static ImmutableArray<ColumnSymbol> ResolveColumns(IEnumerable<ColumnSymbol> columns, IEnumerable<DataColumn> dataColumns)
         {
             var columnByName = columns.ToLookup(c => c.Name, StringComparer.OrdinalIgnoreCase);
             return (from dc in dataColumns
                     let c = columnByName[dc.ColumnName].FirstOrDefault()
                     where c != null
-                    select c).ToArray();
+                    select c).ToImmutableArray();
         }
     }
 }

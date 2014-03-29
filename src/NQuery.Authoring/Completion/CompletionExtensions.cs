@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Authoring.Completion.Providers;
@@ -33,7 +34,7 @@ namespace NQuery.Authoring.Completion
             var applicableSpan = token == null ? new TextSpan(position, 0) : token.Span;
 
             var items = providers.SelectMany(p => p.GetItems(semanticModel, position));
-            var sortedItems = items.OrderBy(c => c.DisplayText).ToArray();
+            var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
 
             return new CompletionModel(semanticModel, applicableSpan, sortedItems);
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -9,13 +9,13 @@ namespace NQuery.Binding
     {
         private readonly BoundRelation _input;
         private readonly int _limit;
-        private readonly ReadOnlyCollection<BoundSortedValue> _tieEntries;
+        private readonly ImmutableArray<BoundSortedValue> _tieEntries;
 
-        public BoundTopRelation(BoundRelation input, int limit, IList<BoundSortedValue> tieEntries)
+        public BoundTopRelation(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
         {
             _input = input;
             _limit = limit;
-            _tieEntries = new ReadOnlyCollection<BoundSortedValue>(tieEntries);
+            _tieEntries = tieEntries.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -33,17 +33,19 @@ namespace NQuery.Binding
             get { return _limit; }
         }
 
-        public ReadOnlyCollection<BoundSortedValue> TieEntries
+        public ImmutableArray<BoundSortedValue> TieEntries
         {
             get { return _tieEntries; }
         }
 
-        public BoundTopRelation Update(BoundRelation input, int limit, IList<BoundSortedValue> tieEntries)
+        public BoundTopRelation Update(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
         {
-            if (input == _input && limit == _limit && tieEntries == _tieEntries)
+            var newTieEntries = tieEntries.ToImmutableArray();
+
+            if (input == _input && limit == _limit && newTieEntries == _tieEntries)
                 return this;
 
-            return new BoundTopRelation(input, limit, tieEntries);
+            return new BoundTopRelation(input, limit, newTieEntries);
         }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()

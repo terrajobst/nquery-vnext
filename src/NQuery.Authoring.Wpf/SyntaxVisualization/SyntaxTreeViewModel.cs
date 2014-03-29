@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Authoring.Wpf
@@ -8,12 +8,12 @@ namespace NQuery.Authoring.Wpf
     internal sealed class SyntaxTreeViewModel
     {
         private readonly SyntaxTree _model;
-        private readonly ReadOnlyCollection<SyntaxNodeViewModel> _root;
+        private readonly ImmutableArray<SyntaxNodeViewModel> _root;
 
         public SyntaxTreeViewModel(SyntaxTree model, SyntaxNodeViewModel root)
         {
             _model = model;
-            _root = new ReadOnlyCollection<SyntaxNodeViewModel>(new[] { root });
+            _root = ImmutableArray.Create(root);
         }
 
         public SyntaxTree Model
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.Wpf
             get { return _model; }
         }
 
-        public ReadOnlyCollection<SyntaxNodeViewModel> Root
+        public ImmutableArray<SyntaxNodeViewModel> Root
         {
             get { return _root; }
         }

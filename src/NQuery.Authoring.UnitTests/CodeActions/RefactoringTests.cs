@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,7 +10,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions
 {
     public abstract class RefactoringTests
     {
-        protected ICodeAction[] GetActions(string query)
+        protected ImmutableArray<ICodeAction> GetActions(string query)
         {
             int position;
             var compilation = CompilationFactory.CreateQuery(query, out position);
@@ -17,7 +18,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions
 
             var provider = CreateProvider();
             var providers = new[] {provider};
-            return semanticModel.GetRefactorings(position, providers).ToArray();
+            return semanticModel.GetRefactorings(position, providers).ToImmutableArray();
         }
 
         protected abstract ICodeRefactoringProvider CreateProvider();

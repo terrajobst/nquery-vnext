@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Text;
@@ -51,8 +52,8 @@ namespace NQuery.Syntax
 
                 if (badTokens.Count > 0)
                 {
-                    var trivia = new[] { CreateSkippedTokensTrivia(badTokens) }
-                                 .Concat(token.LeadingTrivia).ToArray();
+                    var trivia = ImmutableArray.Create(CreateSkippedTokensTrivia(badTokens))
+                                 .Concat(token.LeadingTrivia).ToImmutableArray();
                     token = token.WithLeadingTrivia(trivia);
                 }
 
@@ -188,7 +189,7 @@ namespace NQuery.Syntax
             var current = _tokens[_tokenIndex];
             var skippedTokensTrivia = CreateSkippedTokensTrivia(tokens);
 
-            var leadingTrivia = new List<SyntaxTrivia>(current.LeadingTrivia.Count + 1);
+            var leadingTrivia = new List<SyntaxTrivia>(current.LeadingTrivia.Length + 1);
             leadingTrivia.Add(skippedTokensTrivia);
             leadingTrivia.AddRange(current.LeadingTrivia);
 
@@ -231,7 +232,7 @@ namespace NQuery.Syntax
             return Current.Span;
         }
 
-        private SyntaxTrivia CreateSkippedTokensTrivia(IList<SyntaxToken> tokens)
+        private SyntaxTrivia CreateSkippedTokensTrivia(IReadOnlyCollection<SyntaxToken> tokens)
         {
             var start = tokens.First().FullSpan.Start;
             var end = tokens.Last().FullSpan.End;

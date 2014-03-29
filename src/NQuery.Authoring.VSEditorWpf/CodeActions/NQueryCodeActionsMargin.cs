@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,12 +19,12 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
     {
         private readonly IWpfTextViewHost _textViewHost;
         private readonly INQueryDocument _document;
-        private readonly IReadOnlyCollection<ICodeIssueProvider> _issueProviders;
-        private readonly IReadOnlyCollection<ICodeRefactoringProvider> _refactoringProviders;
+        private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
+        private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
         private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
 
-        public NQueryCodeActionsMargin(IWpfTextViewHost textViewHost, INQueryDocument document, IReadOnlyCollection<ICodeIssueProvider> issueProviders, IReadOnlyCollection<ICodeRefactoringProvider> refactoringProviders)
+        public NQueryCodeActionsMargin(IWpfTextViewHost textViewHost, INQueryDocument document, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {
             _textViewHost = textViewHost;
             _document = document;
@@ -38,16 +39,16 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             Children.Add(_glyphPopup);
         }
 
-        private Task<IReadOnlyCollection<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
+        private Task<ImmutableArray<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
         {
             return Task.Run(() => GetActionModels(semanticModel, position, textBuffer));
         }
 
-        private IReadOnlyCollection<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
+        private ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
         {
             var issues = GetCodeIssues(semanticModel, position, textBuffer);
             var refactorings = GetRefactorings(semanticModel, position, textBuffer);
-            return issues.Concat(refactorings).ToArray();
+            return issues.Concat(refactorings).ToImmutableArray();
         }
 
         private IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
@@ -89,7 +90,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             var semanticModel = await _document.GetSemanticModelAsync();
             var actionModels = await GetActionModelsAsync(semanticModel, position, textBuffer);
 
-            if (actionModels.Count == 0)
+            if (actionModels.Length == 0)
             {
                 _glyphPopup.Visibility = Visibility.Collapsed;
             }

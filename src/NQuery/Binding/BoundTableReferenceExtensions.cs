@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
@@ -7,11 +8,11 @@ namespace NQuery.Binding
 {
     internal static class BoundTableReferenceExtensions
     {
-        public static IReadOnlyCollection<TableInstanceSymbol> GetDeclaredTableInstances(this BoundRelation node)
+        public static ImmutableArray<TableInstanceSymbol> GetDeclaredTableInstances(this BoundRelation node)
         {
             var result = new List<TableInstanceSymbol>();
             GetDeclaredTableInstances(result, node);
-            return result;
+            return result.ToImmutableArray();
         }
 
         private static void GetDeclaredTableInstances(List<TableInstanceSymbol> receiver, BoundRelation node)

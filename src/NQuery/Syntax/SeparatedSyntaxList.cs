@@ -1,18 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Syntax
 {
-    public sealed class SeparatedSyntaxList<TNode> : IList<TNode>
+    public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNode>
         where TNode: SyntaxNode
     {
-        private readonly Entry[] _entries;
+        private readonly ImmutableArray<Entry> _entries;
 
         public static readonly SeparatedSyntaxList<TNode> Empty = new SeparatedSyntaxList<TNode>(new SyntaxNodeOrToken[0]);
 
-        public SeparatedSyntaxList(ICollection<SyntaxNodeOrToken> nodeOrTokens)
+        public SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
         {
             ValidateEntries(nodeOrTokens);
             _entries = ReadEntries(nodeOrTokens);
@@ -44,7 +45,7 @@ namespace NQuery.Syntax
             }
         }
 
-        private static Entry[] ReadEntries(ICollection<SyntaxNodeOrToken> nodeOrTokens)
+        private static ImmutableArray<Entry> ReadEntries(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
         {
             var entryCount = (nodeOrTokens.Count + 1)/2;
             var entries = new Entry[entryCount];
@@ -67,7 +68,7 @@ namespace NQuery.Syntax
                     entryIndex++;
                 }
             }
-            return entries;
+            return entries.ToImmutableArray();
         }
 
         public IEnumerator<TNode> GetEnumerator()

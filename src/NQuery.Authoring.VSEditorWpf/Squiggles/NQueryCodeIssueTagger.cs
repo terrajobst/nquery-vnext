@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
             var semanticModel = await _document.GetSemanticModelAsync();
             var snapshot = _document.GetTextSnapshot(semanticModel.Compilation.SyntaxTree);
             var providers = _codeIssueProviderService.Providers;
-            var issues = await Task.Run(() => semanticModel.GetIssues(providers).Where(IsWarningOrError).ToArray());
+            var issues = await Task.Run(() => semanticModel.GetIssues(providers).Where(IsWarningOrError).ToImmutableArray());
             return Tuple.Create(snapshot, issues.AsEnumerable());
         }
 

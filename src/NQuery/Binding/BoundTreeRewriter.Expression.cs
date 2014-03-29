@@ -85,7 +85,7 @@ namespace NQuery.Binding
 
         protected virtual BoundExpression RewriteFunctionInvocationExpression(BoundFunctionInvocationExpression node)
         {
-            return node.Update(RewriteExpressionList(node.Arguments),
+            return node.Update(RewriteExpressions(node.Arguments),
                                node.Result);
         }
 
@@ -104,7 +104,7 @@ namespace NQuery.Binding
         protected virtual BoundExpression RewriteMethodInvocationExpression(BoundMethodInvocationExpression node)
         {
             return node.Update(RewriteExpression(node.Target),
-                               RewriteExpressionList(node.Arguments),
+                               RewriteExpressions(node.Arguments),
                                node.Result);
         }
 
@@ -122,7 +122,7 @@ namespace NQuery.Binding
 
         protected virtual BoundExpression RewriteCaseExpression(BoundCaseExpression node)
         {
-            return node.Update(RewriteCaseLabelList(node.CaseLabels),
+            return node.Update(RewriteCaseLabels(node.CaseLabels),
                                RewriteExpression(node.ElseExpression));
         }
 

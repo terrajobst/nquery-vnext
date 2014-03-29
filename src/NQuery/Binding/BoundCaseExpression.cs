@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundCaseExpression : BoundExpression
     {
-        private readonly ReadOnlyCollection<BoundCaseLabel> _caseLabels;
+        private readonly ImmutableArray<BoundCaseLabel> _caseLabels;
         private readonly BoundExpression _elseExpression;
 
-        public BoundCaseExpression(IList<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
+        public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
         {
-            _caseLabels = new ReadOnlyCollection<BoundCaseLabel>(caseLabels);
+            _caseLabels = caseLabels.ToImmutableArray();
             _elseExpression = elseExpression;
         }
 
@@ -27,7 +26,7 @@ namespace NQuery.Binding
             get { return _caseLabels.First().ThenExpression.Type; }
         }
 
-        public ReadOnlyCollection<BoundCaseLabel> CaseLabels
+        public ImmutableArray<BoundCaseLabel> CaseLabels
         {
             get { return _caseLabels; }
         }
@@ -37,12 +36,14 @@ namespace NQuery.Binding
             get { return _elseExpression; }
         }
 
-        public BoundCaseExpression Update(IList<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
+        public BoundCaseExpression Update(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
         {
-            if (caseLabels == _caseLabels && elseExpression == _elseExpression)
+            var newCaseLabels = caseLabels.ToImmutableArray();
+
+            if (newCaseLabels == _caseLabels && elseExpression == _elseExpression)
                 return this;
 
-            return new BoundCaseExpression(caseLabels, elseExpression);
+            return new BoundCaseExpression(newCaseLabels, elseExpression);
         }
     }
 }

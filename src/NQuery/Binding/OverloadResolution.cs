@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -9,14 +10,14 @@ namespace NQuery.Binding
         public static OverloadResolutionResult<T> Perform<T>(IEnumerable<T> signatures, params Type[] argumentTypes)
             where T : Signature
         {
-            return Perform(signatures, (IList<Type>)argumentTypes);
+            return Perform(signatures, (IReadOnlyCollection<Type>)argumentTypes);
         }
 
-        public static OverloadResolutionResult<T> Perform<T>(IEnumerable<T> signatures, IList<Type> argumentTypes)
+        public static OverloadResolutionResult<T> Perform<T>(IEnumerable<T> signatures, IReadOnlyCollection<Type> argumentTypes)
             where T : Signature
         {
             var candidates = (from s in signatures
-                              let conversions = argumentTypes.Zip(s.GetParameterTypes(), Conversion.Classify).ToArray()
+                              let conversions = argumentTypes.Zip(s.GetParameterTypes(), Conversion.Classify).ToImmutableArray()
                               select new OverloadResolutionCandidate<T>(s, conversions)).ToArray();
 
             MarkApplicableCandidates(candidates, argumentTypes.Count);

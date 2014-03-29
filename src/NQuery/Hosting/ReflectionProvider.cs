@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
@@ -238,7 +239,7 @@ namespace NQuery.Hosting
                     AddProperty(propertyTable, propertyList, type, property, currentFieldInfo);
             }
 
-            return propertyList.ToArray();
+            return propertyList.ToImmutableArray();
         }
 
         /// <summary>
@@ -301,7 +302,7 @@ namespace NQuery.Hosting
                     AddMethod(methodTable, methodList, type, methodSymbol, currentMethodInfo);
             }
 
-            return methodList.ToArray();
+            return methodList.ToImmutableArray();
         }
 
         /// <summary>

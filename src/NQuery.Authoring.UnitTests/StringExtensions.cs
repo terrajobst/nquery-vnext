@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -53,7 +54,7 @@ namespace NQuery.Authoring.UnitTests
             return text.Substring(span.Start, span.Length);
         }
 
-        public static string ParseSpans(this string text, out TextSpan[] spans)
+        public static string ParseSpans(this string text, out ImmutableArray<TextSpan> spans)
         {
             var resultSpans = new List<TextSpan>();
             var sb = new StringBuilder();
@@ -80,13 +81,13 @@ namespace NQuery.Authoring.UnitTests
                 }
             }
 
-            spans = resultSpans.OrderBy(s => s.Start).ThenBy(s => s.End).ToArray();
+            spans = resultSpans.OrderBy(s => s.Start).ThenBy(s => s.End).ToImmutableArray();
             return sb.ToString();
         }
 
         public static string ParseSinglePosition(this string text, out int position)
         {
-            TextSpan[] spans;
+            ImmutableArray<TextSpan> spans;
             var result = text.ParseSpans(out spans);
 
             if (spans.Length != 1 || spans[0].Length != 0)
@@ -98,7 +99,7 @@ namespace NQuery.Authoring.UnitTests
 
         public static string ParseSingleSpan(this string text, out TextSpan span)
         {
-            TextSpan[] spans;
+            ImmutableArray<TextSpan> spans;
             var result = text.ParseSpans(out spans);
 
             if (spans.Length != 1)

@@ -5,7 +5,7 @@ namespace NQuery.Symbols
 {
     public sealed class DerivedTableSymbol : TableSymbol
     {
-        public DerivedTableSymbol(IList<ColumnSymbol> columns)
+        public DerivedTableSymbol(IEnumerable<ColumnSymbol> columns)
             : base(string.Empty, columns)
         {
         }

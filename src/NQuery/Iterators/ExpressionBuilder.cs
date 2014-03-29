@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -80,7 +81,7 @@ namespace NQuery.Iterators
                 .Aggregate<Expression, Expression>(null, (current, nullCheck) => current == null ? nullCheck : Expression.OrElse(current, nullCheck));
         }
 
-        private static Expression BuildNullCheck(Expression instance, ICollection<Expression> arguments)
+        private static Expression BuildNullCheck(Expression instance, IReadOnlyCollection<Expression> arguments)
         {
             if (arguments.Count == 0)
                 return BuildNullCheck(instance);
@@ -362,7 +363,7 @@ namespace NQuery.Iterators
 
         private Expression BuildFunctionInvocationExpression(BoundFunctionInvocationExpression expression)
         {
-            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
+            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToImmutableArray();
             if (liftedArguments.Length == 0)
                 return BuildInvocation(expression.Symbol, liftedArguments);
 
@@ -391,7 +392,7 @@ namespace NQuery.Iterators
         private Expression BuildMethodInvocationExpression(BoundMethodInvocationExpression expression)
         {
             var liftedInstance = BuildCachedExpression(expression.Target);
-            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToArray();
+            var liftedArguments = expression.Arguments.Select(BuildCachedExpression).ToImmutableArray();
             var nullableResultType = expression.Type.GetNullableType();
 
             return
@@ -436,7 +437,7 @@ namespace NQuery.Iterators
 
         private Expression BuildCaseLabel(BoundCaseExpression caseExpression, int caseLabelIndex)
         {
-            if (caseLabelIndex == caseExpression.CaseLabels.Count)
+            if (caseLabelIndex == caseExpression.CaseLabels.Length)
                 return caseExpression.ElseExpression == null
                            ? BuildNullValue(caseExpression.Type)
                            : BuildLiftedExpression(caseExpression.ElseExpression);

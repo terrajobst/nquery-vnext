@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
     internal sealed class TopWithTiesIterator : TopIterator
     {
-        private readonly ReadOnlyCollection<int> _tieEntries;
-        private readonly ReadOnlyCollection<IComparer> _tieComparers;
+        private readonly ImmutableArray<int> _tieEntries;
+        private readonly ImmutableArray<IComparer> _tieComparers;
 
         private readonly object[] _lastTieEntryValues;
         private bool _limitReached;
 
-        public TopWithTiesIterator(Iterator input, int limit, IList<int> tieEntries, IList<IComparer> tieComparers)
+        public TopWithTiesIterator(Iterator input, int limit, IEnumerable<int> tieEntries, IEnumerable<IComparer> tieComparers)
             : base(input, limit)
         {
-            _tieEntries = new ReadOnlyCollection<int>(tieEntries);
-            _tieComparers = new ReadOnlyCollection<IComparer>(tieComparers);
-            _lastTieEntryValues = new object[_tieEntries.Count];
+            _tieEntries = tieEntries.ToImmutableArray();
+            _tieComparers = tieComparers.ToImmutableArray();
+            _lastTieEntryValues = new object[_tieEntries.Length];
         }
 
         public override void Open()
@@ -42,7 +42,7 @@ namespace NQuery.Iterators
                 }
                 else
                 {
-                    for (var i = 0; i < _tieEntries.Count; i++)
+                    for (var i = 0; i < _tieEntries.Length; i++)
                         _lastTieEntryValues[i] = Input.RowBuffer[_tieEntries[i]];
 
                     return true;
@@ -53,7 +53,7 @@ namespace NQuery.Iterators
 
             var allTieValuesAreEqual = true;
 
-            for (var i = 0; i < _tieEntries.Count; i++)
+            for (var i = 0; i < _tieEntries.Length; i++)
             {
                 var lastTieValue = _lastTieEntryValues[i];
                 var thisTieValue = Input.RowBuffer[_tieEntries[i]];

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT *");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(1, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.MustSpecifyTableToSelectFrom, diagnostics[0].DiagnosticId);
@@ -28,7 +29,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'Test' WHERE EXISTS (SELECT *)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
         }
@@ -47,7 +48,7 @@ namespace NQuery.UnitTests.Binding
                                            .OfType<NamedTableReferenceSyntax>()
                                            .Single();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableReferenceSymbol = semanticModel.GetDeclaredSymbol(tableInstance);
             var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
@@ -66,7 +67,7 @@ namespace NQuery.UnitTests.Binding
                                         .OfType<WildcardSelectColumnSyntax>()
                                         .Single();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
 
@@ -88,10 +89,10 @@ namespace NQuery.UnitTests.Binding
                                            .OfType<NamedTableReferenceSyntax>()
                                            .Single();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableSymbols = semanticModel.GetDeclaredSymbol(tableInstance).ColumnInstances;
-            var selectStartSymbols = semanticModel.GetColumnInstances(selectStar).ToArray();
+            var selectStartSymbols = semanticModel.GetColumnInstances(selectStar).ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
             CollectionAssert.AreEqual(tableSymbols, selectStartSymbols);
@@ -111,15 +112,15 @@ namespace NQuery.UnitTests.Binding
                                            .OfType<NamedTableReferenceSyntax>()
                                            .Single();
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = semanticModel.GetDiagnostics().ToArray();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)
                                                 .ColumnInstances
                                                 .Select(c => c.Name)
-                                                .ToArray();
+                                                .ToImmutableArray();
             var selectStarColumnNames = semanticModel.GetDeclaredSymbols(selectStar)
                                                      .Select(qc => qc.Name)
-                                                     .ToArray();
+                                                     .ToImmutableArray();
 
             Assert.AreEqual(0, diagnostics.Length);
             CollectionAssert.AreEqual(tableColumnNames, selectStarColumnNames);

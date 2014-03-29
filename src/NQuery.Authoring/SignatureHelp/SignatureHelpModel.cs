@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Text;
 
@@ -9,13 +9,13 @@ namespace NQuery.Authoring.SignatureHelp
     public sealed class SignatureHelpModel
     {
         private readonly TextSpan _applicableSpan;
-        private readonly ReadOnlyCollection<SignatureItem> _signatures;
+        private readonly ImmutableArray<SignatureItem> _signatures;
         private readonly SignatureItem _signature;
         private readonly int _selectedParameter;
 
-        public SignatureHelpModel(TextSpan applicableSpan, IList<SignatureItem> signatures, SignatureItem signature, int selectedParameter)
+        public SignatureHelpModel(TextSpan applicableSpan, IEnumerable<SignatureItem> signatures, SignatureItem signature, int selectedParameter)
         {
-            _signatures = new ReadOnlyCollection<SignatureItem>(signatures);
+            _signatures = signatures.ToImmutableArray();
             _applicableSpan = applicableSpan;
             _signature = signature;
             _selectedParameter = selectedParameter;
@@ -26,7 +26,7 @@ namespace NQuery.Authoring.SignatureHelp
             get { return _applicableSpan; }
         }
 
-        public ReadOnlyCollection<SignatureItem> Signatures
+        public ImmutableArray<SignatureItem> Signatures
         {
             get { return _signatures; }
         }

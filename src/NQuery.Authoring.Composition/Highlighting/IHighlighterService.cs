@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using NQuery.Authoring.Highlighting;
 
@@ -7,6 +7,6 @@ namespace NQuery.Authoring.Composition.Highlighting
 {
     public interface IHighlighterService
     {
-        IReadOnlyCollection<IHighlighter> Highlighters { get; }
+        ImmutableArray<IHighlighter> Highlighters { get; }
     }
 }

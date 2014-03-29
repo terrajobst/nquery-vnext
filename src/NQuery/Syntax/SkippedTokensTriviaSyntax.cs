@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Syntax
 {
     public sealed class SkippedTokensTriviaSyntax : StructuredTriviaSyntax
     {
-        private readonly ReadOnlyCollection<SyntaxToken> _tokens;
+        private readonly ImmutableArray<SyntaxToken> _tokens;
 
         public SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
             : base(syntaxTree)
         {
-            _tokens = new ReadOnlyCollection<SyntaxToken>(tokens.ToArray());
+            _tokens = tokens.ToImmutableArray();
         }
 
         public override SyntaxKind Kind
@@ -25,7 +25,7 @@ namespace NQuery.Syntax
             return _tokens.Select(token => (SyntaxNodeOrToken)token);
         }
 
-        public ReadOnlyCollection<SyntaxToken> Tokens
+        public ImmutableArray<SyntaxToken> Tokens
         {
             get { return _tokens; }
         }

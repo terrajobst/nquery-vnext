@@ -43,7 +43,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
 
-            if (model == null || model.Signatures.Count == 0)
+            if (model == null || model.Signatures.Length == 0)
             {
                 if (existingSession != null)
                     existingSession.Close(true);
@@ -67,12 +67,12 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
                 session.Items.Add(item);
             }
 
-            var selectedSignature = previousSelectedItem >= 0 && previousSelectedItem < model.Signatures.Count
+            var selectedSignature = previousSelectedItem >= 0 && previousSelectedItem < model.Signatures.Length
                                         ? model.Signatures[previousSelectedItem]
                                         : null;
 
-            var bestSignature = selectedSignature == null || parameterIndex >= selectedSignature.Parameters.Count
-                                    ? model.Signatures.FirstOrDefault(s => parameterIndex < s.Parameters.Count)
+            var bestSignature = selectedSignature == null || parameterIndex >= selectedSignature.Parameters.Length
+                                    ? model.Signatures.FirstOrDefault(s => parameterIndex < s.Parameters.Length)
                                     : selectedSignature;
 
             session.Selection = session.Items.FirstOrDefault(i => i.Tag == bestSignature);

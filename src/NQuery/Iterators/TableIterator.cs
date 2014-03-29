@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
@@ -10,16 +10,16 @@ namespace NQuery.Iterators
     internal sealed class TableIterator : Iterator
     {
         private readonly TableDefinition _table;
-        private readonly ReadOnlyCollection<ColumnDefinition> _definedValues;
+        private readonly ImmutableArray<ColumnDefinition> _definedValues;
         private readonly ArrayRowBuffer _rowBuffer;
 
         private IEnumerator _rows;
 
-        public TableIterator(TableDefinition table, IList<ColumnDefinition> definedValues)
+        public TableIterator(TableDefinition table, IEnumerable<ColumnDefinition> definedValues)
         {
             _table = table;
-            _definedValues = new ReadOnlyCollection<ColumnDefinition>(definedValues);
-            _rowBuffer = new ArrayRowBuffer(definedValues.Count);
+            _definedValues = definedValues.ToImmutableArray();
+            _rowBuffer = new ArrayRowBuffer(_definedValues.Length);
         }
 
         public override RowBuffer RowBuffer
@@ -40,7 +40,7 @@ namespace NQuery.Iterators
             if (!_rows.MoveNext())
                 return false;
 
-            for (var i = 0; i < _definedValues.Count; i++)
+            for (var i = 0; i < _definedValues.Length; i++)
                 _rowBuffer.Array[i] = _definedValues[i].GetValue(_rows.Current);
 
             return true;

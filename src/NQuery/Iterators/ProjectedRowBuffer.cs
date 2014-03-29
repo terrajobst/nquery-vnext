@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
     internal sealed class ProjectedRowBuffer : RowBuffer
     {
         private readonly RowBuffer _source;
-        private readonly ReadOnlyCollection<int> _projectedIndices;
+        private readonly ImmutableArray<int> _projectedIndices;
 
-        public ProjectedRowBuffer(RowBuffer source, IList<int> projectedIndices)
+        public ProjectedRowBuffer(RowBuffer source, IEnumerable<int> projectedIndices)
         {
             _source = source;
-            _projectedIndices = new ReadOnlyCollection<int>(projectedIndices);
+            _projectedIndices = projectedIndices.ToImmutableArray();
         }
 
         public override int Count
         {
-            get { return _projectedIndices.Count; }
+            get { return _projectedIndices.Length; }
         }
 
         public override object this[int index]

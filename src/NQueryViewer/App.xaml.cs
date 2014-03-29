@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.IO;
@@ -53,7 +54,7 @@ namespace NQueryViewer
                                            into g
                                            let p = g.First().Item2
                                            orderby p
-                                           select p).ToArray();
+                                           select p).ToImmutableArray();
 
             var assemblyCatalogs = from a in uniqueAssemblyPaths
                                    select new AssemblyCatalog(a);

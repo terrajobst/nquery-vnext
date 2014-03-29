@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Text;
@@ -19,7 +20,7 @@ namespace NQuery.Authoring.Highlighting
                 var node = current as T;
                 if (node != null)
                 {
-                    var textSpans = GetHighlights(semanticModel, node, position).ToArray();
+                    var textSpans = GetHighlights(semanticModel, node, position).ToImmutableArray();
                     if (textSpans.Any(s => s.ContainsOrTouches(position)))
                         return textSpans;
                 }

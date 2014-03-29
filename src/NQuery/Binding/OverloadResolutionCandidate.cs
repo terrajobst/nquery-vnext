@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
@@ -8,19 +8,19 @@ namespace NQuery.Binding
         where T: Signature
     {
         private readonly T _signature;
-        private readonly ReadOnlyCollection<Conversion> _argumentConversions;
+        private readonly ImmutableArray<Conversion> _argumentConversions;
         private readonly bool _isApplicable;
         private readonly bool _hasBetterAlternative;
 
-        internal OverloadResolutionCandidate(T signature, IList<Conversion> argumentConversions)
+        internal OverloadResolutionCandidate(T signature, IEnumerable<Conversion> argumentConversions)
             : this(signature, argumentConversions, false, false)
         {
         }
 
-        private OverloadResolutionCandidate(T signature, IList<Conversion> argumentConversions, bool isApplicable, bool hasBetterAlternative)
+        private OverloadResolutionCandidate(T signature, IEnumerable<Conversion> argumentConversions, bool isApplicable, bool hasBetterAlternative)
         {
             _signature = signature;
-            _argumentConversions = new ReadOnlyCollection<Conversion>(argumentConversions);
+            _argumentConversions = argumentConversions.ToImmutableArray();
             _isApplicable = isApplicable;
             _hasBetterAlternative = hasBetterAlternative;
         }
@@ -45,7 +45,7 @@ namespace NQuery.Binding
             get { return _signature; }
         }
 
-        public ReadOnlyCollection<Conversion> ArgumentConversions
+        public ImmutableArray<Conversion> ArgumentConversions
         {
             get { return _argumentConversions; }
         }

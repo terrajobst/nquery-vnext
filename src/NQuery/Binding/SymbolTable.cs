@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
 {
     internal sealed class SymbolTable : IEnumerable<Symbol>
     {
-        public static readonly SymbolTable Empty = new SymbolTable(new Symbol[0]);
+        public static readonly SymbolTable Empty = new SymbolTable(Enumerable.Empty<Symbol>());
 
-        private readonly Symbol[] _symbols;
+        private readonly ImmutableArray<Symbol> _symbols;
         private readonly ILookup<string, Symbol> _lookup;
 
-        private SymbolTable(Symbol[] symbols)
+        private SymbolTable(IEnumerable<Symbol> symbols)
         {
-            _symbols = symbols;
-            _lookup = symbols.ToLookup(s => s.Name, StringComparer.OrdinalIgnoreCase);
+            _symbols = symbols.ToImmutableArray();
+            _lookup = _symbols.ToLookup(s => s.Name, StringComparer.OrdinalIgnoreCase);
         }
 
         public static SymbolTable Create(IEnumerable<Symbol> symbols)
         {
-            return new SymbolTable(symbols.ToArray());
+            return new SymbolTable(symbols);
         }
 
         public IEnumerable<Symbol> Lookup(string name, bool caseSensitive)

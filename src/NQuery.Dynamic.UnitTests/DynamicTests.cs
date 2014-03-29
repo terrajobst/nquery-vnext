@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.Collections.Immutable;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,7 +24,7 @@ namespace NQuery.Dynamic.UnitTests
             var dataContext = DataContextFactory.CreateNorthwind();
             var query = new Query(dataContext, text);
 
-            var rows = query.ExecuteDynamicSequence().ToArray();
+            var rows = query.ExecuteDynamicSequence().ToImmutableArray();
 
             Assert.AreEqual(1, rows[0].CategoryID);
             Assert.AreEqual("Beverages", rows[0].CategoryName);

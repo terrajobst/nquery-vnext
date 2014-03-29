@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Immutable;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -9,10 +10,10 @@ namespace NQuery.Authoring.UnitTests.Outlining
     [TestClass]
     public class OutliningCommentTests
     {
-        private static OutliningRegionSpan[] GetCommentRegions(string query)
+        private static ImmutableArray<OutliningRegionSpan> GetCommentRegions(string query)
         {
             var syntaxTree = SyntaxTree.ParseQuery(query);
-            var commentRegions = syntaxTree.Root.FindRegions().Where(r => r.Text != "SELECT").ToArray();
+            var commentRegions = syntaxTree.Root.FindRegions().Where(r => r.Text != "SELECT").ToImmutableArray();
             return commentRegions;
         }
 

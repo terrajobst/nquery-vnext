@@ -82,9 +82,9 @@ namespace NQuery.Iterators
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
                                                .Select(c => c.Definition)
-                                               .ToArray();
+                                               .ToImmutableArray();
             var result = new TableIterator(tableDefinition, definedValues);
-            var mapping = ImmutableDictionary.Create(columnInstances.Select((c, i) => new KeyValuePair<ValueSlot, int>(c.ValueSlot, i)));
+            var mapping = ImmutableDictionary.CreateRange(columnInstances.Select((c, i) => new KeyValuePair<ValueSlot, int>(c.ValueSlot, i)));
             return new IteratorResult(result, mapping);
         }
 
@@ -122,7 +122,7 @@ namespace NQuery.Iterators
             var inputCount = inputValueSlotMapping.Count;
             var definedValue = relation.DefinedValues
                                        .Select(dv => BuildValue(dv.Expression, inputRowBuffer, inputValueSlotMapping))
-                                       .ToArray();
+                                       .ToImmutableArray();
             var additionalValueSlotMappings = relation.DefinedValues.Select((dv, i) => new KeyValuePair<ValueSlot, int>(dv.ValueSlot, i + inputCount));
             var outputValueSlotMapping = inputValueSlotMapping.AddRange(additionalValueSlotMappings);
             var outputItererator = new ComputeScalarIterator(input, definedValue);
@@ -141,8 +141,8 @@ namespace NQuery.Iterators
             var inputResult = BuildRelation(relation.Input);
             var input = inputResult.Iterator;
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
-            var tieEntries = relation.TieEntries.Select(t => inputValueSlotMapping[t.ValueSlot]).ToArray();
-            var tieComparers = relation.TieEntries.Select(t => t.Comparer).ToArray();
+            var tieEntries = relation.TieEntries.Select(t => inputValueSlotMapping[t.ValueSlot]).ToImmutableArray();
+            var tieComparers = relation.TieEntries.Select(t => t.Comparer).ToImmutableArray();
             var outputIterator = new TopWithTiesIterator(input, relation.Limit, tieEntries, tieComparers);
             return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
@@ -163,8 +163,8 @@ namespace NQuery.Iterators
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
             var sortEntries = relation.SortedValues
                                       .Select(v => inputValueSlotMapping[v.ValueSlot])
-                                      .ToArray();
-            var comparers = relation.SortedValues.Select(v => v.Comparer).ToArray();
+                                      .ToImmutableArray();
+            var comparers = relation.SortedValues.Select(v => v.Comparer).ToImmutableArray();
             var outputIterator = new SortIterator(input, sortEntries, comparers);
             return new IteratorResult(outputIterator, inputValueSlotMapping);
         }
@@ -179,7 +179,7 @@ namespace NQuery.Iterators
                                  BuildRelation(relation.Right).Iterator
                              };
 
-            var outputValueSlotCount = relation.Outputs.Count;
+            var outputValueSlotCount = relation.Outputs.Length;
             var outputValueSlotMapping = relation.Outputs
                                                  .Select((v, i) => new KeyValuePair<ValueSlot, int>(v, i))
                                                  .ToImmutableDictionary();
@@ -196,7 +196,7 @@ namespace NQuery.Iterators
         {
             var inputResult = BuildRelation(relation.Input);
             var inputValueSlotMapping = inputResult.ValueSlotMapping;
-            var outputIndices  = relation.Outputs.Select(vs => inputValueSlotMapping[vs]).ToArray();
+            var outputIndices = relation.Outputs.Select(vs => inputValueSlotMapping[vs]).ToImmutableArray();
             var outputIterator = new ProjectionIterator(inputResult.Iterator, outputIndices);
             var outputValueMapping = relation.Outputs
                                              .Select((vs, i) => new KeyValuePair<ValueSlot, int>(vs, i))

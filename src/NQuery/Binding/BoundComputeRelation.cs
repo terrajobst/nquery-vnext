@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -8,12 +8,12 @@ namespace NQuery.Binding
     internal sealed class BoundComputeRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly ReadOnlyCollection<BoundComputedValue> _definedValues;
+        private readonly ImmutableArray<BoundComputedValue> _definedValues;
 
-        public BoundComputeRelation(BoundRelation input, IList<BoundComputedValue> definedValues)
+        public BoundComputeRelation(BoundRelation input, IEnumerable<BoundComputedValue> definedValues)
         {
             _input = input;
-            _definedValues = new ReadOnlyCollection<BoundComputedValue>(definedValues);
+            _definedValues = definedValues.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -26,7 +26,7 @@ namespace NQuery.Binding
             get { return _input; }
         }
 
-        public ReadOnlyCollection<BoundComputedValue> DefinedValues
+        public ImmutableArray<BoundComputedValue> DefinedValues
         {
             get { return _definedValues; }
         }
@@ -41,12 +41,14 @@ namespace NQuery.Binding
             return _input.GetOutputValues().Concat(GetDefinedValues());
         }
 
-        public BoundComputeRelation Update(BoundRelation input, IList<BoundComputedValue> definedValues)
+        public BoundComputeRelation Update(BoundRelation input, IEnumerable<BoundComputedValue> definedValues)
         {
-            if (input == _input && definedValues == _definedValues)
+            var newDefinedValues = definedValues.ToImmutableArray();
+
+            if (input == _input && newDefinedValues == _definedValues)
                 return this;
 
-            return new BoundComputeRelation(input, definedValues);
+            return new BoundComputeRelation(input, newDefinedValues);
         }
     }
 }

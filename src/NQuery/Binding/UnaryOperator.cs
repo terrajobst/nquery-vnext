@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
@@ -47,7 +48,7 @@ namespace NQuery.Binding
             var methodName = GetMethodName(kind);
             var signatures = (from m in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
                               where IsValidOperator(m, methodName)
-                              select new UnaryOperatorSignature(kind, m)).ToArray();
+                              select new UnaryOperatorSignature(kind, m)).ToImmutableArray();
 
             if (signatures.Length > 0)
                 return GetOperator(signatures, type);

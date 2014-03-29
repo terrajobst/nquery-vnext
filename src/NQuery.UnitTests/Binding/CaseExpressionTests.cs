@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE '1' WHEN 1.0 THEN 1 WHEN 2 THEN 2 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(2, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
@@ -29,7 +30,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN '1' WHEN 2 THEN 2.0 ELSE 3 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(2, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.CannotConvert, diagnostics[0].DiagnosticId);
@@ -42,7 +43,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN 1 WHEN 2.0 THEN 2 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax) syntaxTree.Root.Root);
 
@@ -56,7 +57,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE 1 WHEN 1 THEN 1 WHEN 2.0 THEN 2.0 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 
@@ -70,7 +71,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1.0 = '1' THEN 1 WHEN TRUE = 2.0 THEN 2 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(2, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
@@ -83,7 +84,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1 THEN '1' WHEN 2 = 2 THEN 2.0 ELSE 3 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.AreEqual(2, diagnostics.Length);
             Assert.AreEqual(DiagnosticId.CannotConvert, diagnostics[0].DiagnosticId);
@@ -96,7 +97,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1.0 THEN 1 WHEN 2.0 = 2 THEN 2 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 
@@ -110,7 +111,7 @@ namespace NQuery.UnitTests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("CASE WHEN 1 = 1 THEN 1 WHEN 2 = 2 THEN 2.0 END");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 

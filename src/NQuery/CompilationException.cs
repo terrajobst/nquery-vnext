@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace NQuery
 {
     public sealed class CompilationException : Exception
     {
-        private readonly IReadOnlyCollection<Diagnostic> _diagnostics;
+        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
-        public CompilationException(IList<Diagnostic> diagnostics)
+        public CompilationException(IReadOnlyCollection<Diagnostic> diagnostics)
             : base(FormatMessage(diagnostics))
         {
-            _diagnostics = new ReadOnlyCollection<Diagnostic>(diagnostics);
+            _diagnostics = diagnostics.ToImmutableArray();
         }
 
         private static string FormatMessage(IEnumerable<Diagnostic> diagnostics)
@@ -25,7 +25,7 @@ namespace NQuery
             return sb.ToString();
         }
 
-        public IReadOnlyCollection<Diagnostic> Diagnostics
+        public ImmutableArray<Diagnostic> Diagnostics
         {
             get { return _diagnostics; }
         }

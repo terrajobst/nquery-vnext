@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Iterators;
@@ -288,7 +289,7 @@ namespace NQuery.Binding
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
 
-            if (left.OutputColumns.Count != right.OutputColumns.Count)
+            if (left.OutputColumns.Length != right.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
 
             BoundRelation leftInput;
@@ -313,14 +314,14 @@ namespace NQuery.Binding
                                  ? BoundQueryCombinator.Union
                                  : BoundQueryCombinator.UnionAll;
 
-            if (left.OutputColumns.Count != right.OutputColumns.Count)
+            if (left.OutputColumns.Length != right.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
 
             BoundRelation leftInput;
             BoundRelation rightInput;
             var leftOutputValues = BindToCommonTypes(node.UnionKeyword.Span, left, right, out leftInput, out rightInput);
 
-            var outputValues = leftOutputValues.Select(c => ValueSlotFactory.CreateTemporaryValueSlot(c.Type)).ToArray();
+            var outputValues = leftOutputValues.Select(c => ValueSlotFactory.CreateTemporaryValueSlot(c.Type)).ToImmutableArray();
             var outputColumns = BindOutputColumns(left.OutputColumns, outputValues);
 
             if (combinator == BoundQueryCombinator.Union)
@@ -339,7 +340,7 @@ namespace NQuery.Binding
             var right = BindQuery(node.RightQuery);
             var columns = left.OutputColumns;
 
-            if (left.OutputColumns.Count != right.OutputColumns.Count)
+            if (left.OutputColumns.Length != right.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.IntersectKeyword.Span);
 
             BoundRelation leftInput;
@@ -356,9 +357,9 @@ namespace NQuery.Binding
             return new BoundQuery(relation, outputColumns);
         }
 
-        private IList<ValueSlot> BindToCommonTypes(TextSpan errorSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
+        private ImmutableArray<ValueSlot> BindToCommonTypes(TextSpan errorSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
         {
-            var columnCount = Math.Min(left.OutputColumns.Count, right.OutputColumns.Count);
+            var columnCount = Math.Min(left.OutputColumns.Length, right.OutputColumns.Length);
 
             var leftComputedValues = new List<BoundComputedValue>(columnCount);
             var leftOutputs = new List<ValueSlot>(columnCount);
@@ -408,16 +409,16 @@ namespace NQuery.Binding
                 ? right.Relation
                 : new BoundProjectRelation(new BoundComputeRelation(right.Relation, rightComputedValues), rightOutputs);
 
-            return leftOutputs;
+            return leftOutputs.ToImmutableArray();
         }
 
-        private static IList<QueryColumnInstanceSymbol> BindOutputColumns(IList<QueryColumnInstanceSymbol> inputColumns, IList<ValueSlot> outputValues)
+        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<ValueSlot> outputValues)
         {
-            var result = new List<QueryColumnInstanceSymbol>(inputColumns.Count);
+            var result = new List<QueryColumnInstanceSymbol>(inputColumns.Length);
 
-            for (var i = 0; i < inputColumns.Count; i++)
+            for (var i = 0; i < inputColumns.Length; i++)
             {
-                if (i >= outputValues.Count)
+                if (i >= outputValues.Length)
                     break;
 
                 var queryColum = inputColumns[i];
@@ -430,7 +431,7 @@ namespace NQuery.Binding
                 result.Add(resultColumn);
             }
 
-            return result;
+            return result.ToImmutableArray();
         }
 
         private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)
@@ -500,7 +501,7 @@ namespace NQuery.Binding
             var outputQueryCoumns = query.OutputColumns;
             var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
 
-            var relation = new BoundSortRelation(query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToArray());
+            var relation = new BoundSortRelation(query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray());
             return new BoundQuery(relation, outputQueryCoumns);
         }
 
@@ -571,7 +572,7 @@ namespace NQuery.Binding
             {
                 // If the CTE doesn't have a column list, the query must have names for all columns.
 
-                for (var i = 0; i < queryColumns.Count; i++)
+                for (var i = 0; i < queryColumns.Length; i++)
                 {
                     if (string.IsNullOrEmpty(queryColumns[i].Name))
                         Diagnostics.ReportNoColumnAliasSpecified(commonTableExpression.Name, i);
@@ -583,7 +584,7 @@ namespace NQuery.Binding
                 // names matches the number of columns in the underlying query.
 
                 var specifiedCount = specifiedColumnNames.Count;
-                var actualCount = queryColumns.Count;
+                var actualCount = queryColumns.Length;
 
                 if (actualCount > specifiedCount)
                 {
@@ -608,8 +609,8 @@ namespace NQuery.Binding
             // (3) The column list shouldn't contain duplicate names.
 
             var columnCount = specifiedColumnNames == null
-                                  ? queryColumns.Count
-                                  : Math.Min(specifiedColumnNames.Count, queryColumns.Count);
+                                  ? queryColumns.Length
+                                  : Math.Min(specifiedColumnNames.Count, queryColumns.Length);
 
             var columnNames = specifiedColumnNames == null
                                   ? queryColumns.Select(c => c.Name)
@@ -618,7 +619,7 @@ namespace NQuery.Binding
             var columns = queryColumns.Take(columnCount)
                                       .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
                                       .Where(c => !string.IsNullOrEmpty(c.Name))
-                                      .ToArray();
+                                      .ToImmutableArray();
 
             var uniqueColumnNames = new HashSet<string>();
             foreach (var column in columns.Where(c => !uniqueColumnNames.Add(c.Name)))
@@ -627,7 +628,7 @@ namespace NQuery.Binding
             // Given the bound query and the column list, we can now produce a CTE table symbol.
 
             var name = commonTableExpression.Name.ValueText;
-            var tableSymbol = new CommonTableExpressionSymbol(name, columns.ToArray(), boundQuery);
+            var tableSymbol = new CommonTableExpressionSymbol(name, columns.ToImmutableArray(), boundQuery);
 
             return new BoundCommonTableExpression(tableSymbol);
         }
@@ -703,9 +704,9 @@ namespace NQuery.Binding
                     // TODO: Check that all data types match exactly -- implicit conversions ARE supported here
                     var outputColumns = boundAnchorQuery.OutputColumns
                                                   .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
-                                                  .ToArray();
+                                                  .ToImmutableArray();
 
-                    var combinedRelation = new BoundCombinedRelation(BoundQueryCombinator.UnionAll, boundAnchorQuery.Relation, boundAnchorMember.Relation, outputColumns.Select(c => c.ValueSlot).ToArray());
+                    var combinedRelation = new BoundCombinedRelation(BoundQueryCombinator.UnionAll, boundAnchorQuery.Relation, boundAnchorMember.Relation, outputColumns.Select(c => c.ValueSlot).ToImmutableArray());
                     boundAnchorQuery = new BoundQuery(combinedRelation, outputColumns);
                 }
             }
@@ -713,14 +714,14 @@ namespace NQuery.Binding
             // TODO: We should respect the CTE's column list, if present
             var columns = (boundAnchorQuery == null
                                ? Enumerable.Empty<ColumnSymbol>()
-                               : boundAnchorQuery.OutputColumns.Select(c => new ColumnSymbol(c.Name, c.Type))).ToArray();
+                               : boundAnchorQuery.OutputColumns.Select(c => new ColumnSymbol(c.Name, c.Type))).ToImmutableArray();
 
             var name = commonTableExpression.Name.ValueText;
 
-            Func<CommonTableExpressionSymbol, IList<BoundQuery>> lazyBoundRecursiveMembers = s =>
+            Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> lazyBoundRecursiveMembers = s =>
             {
                 var binder = CreateLocalBinder(s);
-                var boundRecursiveMembers = recursiveMembers.Select(binder.BindQuery).ToArray();
+                var boundRecursiveMembers = recursiveMembers.Select(binder.BindQuery).ToImmutableArray();
 
                 foreach (var boundRecursiveMember in boundRecursiveMembers)
                 {
@@ -751,7 +752,7 @@ namespace NQuery.Binding
                     //    _errorReporter.CteContainsGroupByHavingOrAggregate(commonTableExpression.TableName);
                 }
 
-                return boundRecursiveMembers;
+                return boundRecursiveMembers.ToImmutableArray();
             };
 
             var commonTableExpressionSymbol = new CommonTableExpressionSymbol(name, columns, boundAnchorQuery, lazyBoundRecursiveMembers);
@@ -769,11 +770,9 @@ namespace NQuery.Binding
 
             var fromClause = queryBinder.BindFromClause(node.FromClause);
             var declaredTableInstances = fromClause == null
-                                             ? null
+                                             ? ImmutableArray<TableInstanceSymbol>.Empty
                                              : fromClause.GetDeclaredTableInstances();
-
-            if (declaredTableInstances != null)
-                queryBinder.QueryState.IntroducedTables.UnionWith(declaredTableInstances);
+            queryBinder.QueryState.IntroducedTables.UnionWith(declaredTableInstances);
 
             var fromAwareBinder = fromClause == null
                                       ? queryBinder
@@ -787,7 +786,7 @@ namespace NQuery.Binding
 
             var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns);
 
-            var outputColumns = selectColumns.Select(s => s.Column).ToArray();
+            var outputColumns = selectColumns.Select(s => s.Column).ToImmutableArray();
 
             var orderByClause = fromAwareBinder.BindOrderByClause(orderedQueryNode, outputColumns, outputColumns);
 
@@ -795,13 +794,13 @@ namespace NQuery.Binding
 
             var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
                               let expression = (BoundAggregateExpression)t.Expression
-                              select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Argument)).ToArray();
+                              select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Argument)).ToImmutableArray();
 
             var groups = (from t in queryBinder.QueryState.ComputedGroupings
-                          select new BoundComputedValue(t.Expression, t.Result)).ToArray();
+                          select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
 
             var projections = (from t in queryBinder.QueryState.ComputedProjections
-                               select new BoundComputedValue(t.Expression, t.Result)).ToArray();
+                               select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
 
             var distinctKeyword = node.SelectClause.DistinctAllKeyword;
             var isDistinct = distinctKeyword != null &&
@@ -842,7 +841,7 @@ namespace NQuery.Binding
 
             var groupByAndAggregationRelation = !groups.Any() && !aggregates.Any()
                 ? groupComputeRelation
-                : new BoundGroupByAndAggregationRelation(groupComputeRelation, groups.Select(g => g.ValueSlot).ToArray(), aggregates);
+                : new BoundGroupByAndAggregationRelation(groupComputeRelation, groups.Select(g => g.ValueSlot).ToImmutableArray(), aggregates);
 
             var havingRelation = havingClause == null
                 ? groupByAndAggregationRelation
@@ -853,22 +852,22 @@ namespace NQuery.Binding
                 : new BoundComputeRelation(havingRelation, projections);
 
             var sortedValues = orderByClause == null
-                ? null
-                : orderByClause.Columns.Select(c => c.SortedValue).ToArray();
+                ? ImmutableArray<BoundSortedValue>.Empty
+                : orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray();
 
-            var sortRelation = sortedValues == null
+            var sortRelation = sortedValues.IsEmpty
                 ? selectComputeRelation
                 : new BoundSortRelation(selectComputeRelation, sortedValues);
 
-            var tieEntries = top == null || sortedValues == null || !withTies
-                ? new BoundSortedValue[0]
+            var tieEntries = top == null || sortedValues.IsEmpty || !withTies
+                ? ImmutableArray<BoundSortedValue>.Empty
                 : sortedValues;
 
             var topRelation = top == null
                 ? sortRelation
                 : new BoundTopRelation(sortRelation, top.Value, tieEntries);
 
-            var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToArray());
+            var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToImmutableArray());
 
             return new BoundQuery(projectRelation, outputColumns);
         }
@@ -937,7 +936,7 @@ namespace NQuery.Binding
 
         private BoundWildcardSelectColumn BindWildcardSelectColumnForTable(SyntaxToken tableName)
         {
-            var symbols = LookupTableInstance(tableName).ToArray();
+            var symbols = LookupTableInstance(tableName).ToImmutableArray();
 
             if (symbols.Length == 0)
             {
@@ -955,7 +954,7 @@ namespace NQuery.Binding
 
         private BoundWildcardSelectColumn BindWildcardSelectColumnForAllTables(SyntaxToken asteriskToken)
         {
-            var tableInstances = LookupTableInstances().ToArray();
+            var tableInstances = LookupTableInstances().ToImmutableArray();
 
             if (tableInstances.Length == 0)
             {
@@ -981,7 +980,7 @@ namespace NQuery.Binding
                     Diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
             }
 
-            var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToArray();
+            var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToImmutableArray();
             return new BoundWildcardSelectColumn(null, columnInstances);
         }
 
@@ -1069,7 +1068,7 @@ namespace NQuery.Binding
                 boundColumns.Add(valueSlot);
             }
 
-            return new BoundGroupByClause(boundColumns.ToArray());
+            return new BoundGroupByClause(boundColumns.ToImmutableArray());
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)
@@ -1085,7 +1084,7 @@ namespace NQuery.Binding
             return predicate;
         }
 
-        private BoundOrderByClause BindOrderByClause(OrderedQuerySyntax node, IList<QueryColumnInstanceSymbol> selectorQueryColumns, IList<QueryColumnInstanceSymbol> resultQueryColumns)
+        private BoundOrderByClause BindOrderByClause(OrderedQuerySyntax node, ImmutableArray<QueryColumnInstanceSymbol> selectorQueryColumns, ImmutableArray<QueryColumnInstanceSymbol> resultQueryColumns)
         {
             if (node == null)
                 return null;
@@ -1105,7 +1104,7 @@ namespace NQuery.Binding
             // actual query.In order map from the selectors to the result query columns
             // we will use their ordinals.
 
-            var selectorsMustBeInInput = !ReferenceEquals(selectorQueryColumns, resultQueryColumns);
+            var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
             var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => Tuple.Create(c.ValueSlot, i))
                                                                       .GroupBy(t => t.Item1, t => t.Item2)
                                                                       .ToDictionary(g => g.Key, g => g.First());
@@ -1175,7 +1174,7 @@ namespace NQuery.Binding
             return new BoundOrderByClause(boundColumns);
         }
 
-        private BoundOrderBySelector BindOrderBySelector(IList<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
+        private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
         {
             // Although ORDER BY can contain abitrary expression, there are special rules to how those
             // expressions relate to the SELECT list of a query:
@@ -1203,12 +1202,12 @@ namespace NQuery.Binding
                 if (position != null)
                 {
                     var index = position.Value - 1;
-                    var indexValid = 0 <= index && index < queryColumns.Count;
+                    var indexValid = 0 <= index && index < queryColumns.Length;
                     if (indexValid)
                         return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
 
                     // Report that the given position isn't valid.
-                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Count);
+                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Length);
 
                     // And to avoid cascading errors, we'll fake up an invalid slot.
                     var errorSlot = ValueSlotFactory.CreateTemporaryValueSlot(TypeFacts.Missing);
@@ -1221,7 +1220,7 @@ namespace NQuery.Binding
             var selectorAsName = selector as NameExpressionSyntax;
             if (selectorAsName != null)
             {
-                var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToArray();
+                var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToImmutableArray();
                 if (columnSymbols.Length > 0)
                 {
                     if (columnSymbols.Length > 1)

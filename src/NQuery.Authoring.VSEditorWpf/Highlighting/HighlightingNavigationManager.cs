@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Microsoft.VisualStudio.Text;
@@ -85,7 +86,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
         {
             return _tagAggregator.GetTags(snapshotSpan)
                                  .SelectMany(m => m.Span.GetSpans(snapshotSpan.Snapshot))
-                                 .ToArray();
+                                 .ToImmutableArray();
         }
     }
 }

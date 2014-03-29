@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -12,7 +13,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, WildcardSelectColumnSyntax node)
         {
-            var columnInstances = semanticModel.GetColumnInstances(node).ToArray();
+            var columnInstances = semanticModel.GetColumnInstances(node).ToImmutableArray();
             if (!columnInstances.Any())
                 return Enumerable.Empty<ICodeAction>();
 
@@ -22,9 +23,9 @@ namespace NQuery.Authoring.CodeActions.Refactorings
         private sealed class ExpandWildcardCodeAction : ICodeAction
         {
             private readonly WildcardSelectColumnSyntax _node;
-            private readonly IReadOnlyCollection<TableColumnInstanceSymbol> _columnInstances;
+            private readonly ImmutableArray<TableColumnInstanceSymbol> _columnInstances;
 
-            public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, IReadOnlyCollection<TableColumnInstanceSymbol> columnInstances)
+            public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, ImmutableArray<TableColumnInstanceSymbol> columnInstances)
             {
                 _node = node;
                 _columnInstances = columnInstances;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -8,12 +8,12 @@ namespace NQuery.Binding
     internal sealed class BoundProjectRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly ReadOnlyCollection<ValueSlot> _outputs;
+        private readonly ImmutableArray<ValueSlot> _outputs;
 
-        public BoundProjectRelation(BoundRelation input, IList<ValueSlot> outputs)
+        public BoundProjectRelation(BoundRelation input, IEnumerable<ValueSlot> outputs)
         {
             _input = input;
-            _outputs = new ReadOnlyCollection<ValueSlot>(outputs);
+            _outputs = outputs.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -26,17 +26,19 @@ namespace NQuery.Binding
             get { return _input; }
         }
 
-        public ReadOnlyCollection<ValueSlot> Outputs
+        public ImmutableArray<ValueSlot> Outputs
         {
             get { return _outputs; }
         }
 
-        public BoundProjectRelation Update(BoundRelation input, IList<ValueSlot> outputs)
+        public BoundProjectRelation Update(BoundRelation input, IEnumerable<ValueSlot> outputs)
         {
-            if (input == _input && outputs == _outputs)
+            var newOutputs = outputs.ToImmutableArray();
+
+            if (input == _input && newOutputs == _outputs)
                 return this;
 
-            return new BoundProjectRelation(input, outputs);
+            return new BoundProjectRelation(input, newOutputs);
         }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()

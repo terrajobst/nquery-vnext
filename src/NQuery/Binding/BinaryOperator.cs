@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 
@@ -251,7 +252,7 @@ namespace NQuery.Binding
                 var methodName = GetMethodName(kind);
                 var signatures = (from m in GetMethods(leftOperandType, rightOperandType)
                                   where IsValidOperator(m, methodName)
-                                  select new BinaryOperatorSignature(kind, m)).ToArray();
+                                  select new BinaryOperatorSignature(kind, m)).ToImmutableArray();
 
                 if (signatures.Length > 0)
                     return OverloadResolution.Perform(signatures, leftOperandType, rightOperandType);

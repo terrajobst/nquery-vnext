@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace NQuery.Binding
@@ -8,14 +8,14 @@ namespace NQuery.Binding
     internal sealed class BoundGroupByAndAggregationRelation : BoundRelation
     {
         private readonly BoundRelation _input;
-        private readonly ReadOnlyCollection<ValueSlot> _groups;
-        private readonly ReadOnlyCollection<BoundAggregatedValue> _aggregates;
+        private readonly ImmutableArray<ValueSlot> _groups;
+        private readonly ImmutableArray<BoundAggregatedValue> _aggregates;
 
-        public BoundGroupByAndAggregationRelation(BoundRelation input, IList<ValueSlot> groups, IList<BoundAggregatedValue> aggregates)
+        public BoundGroupByAndAggregationRelation(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
             _input = input;
-            _groups = new ReadOnlyCollection<ValueSlot>(groups);
-            _aggregates = new ReadOnlyCollection<BoundAggregatedValue>(aggregates);
+            _groups = groups.ToImmutableArray();
+            _aggregates = aggregates.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -28,22 +28,25 @@ namespace NQuery.Binding
             get { return _input; }
         }
 
-        public ReadOnlyCollection<ValueSlot> Groups
+        public ImmutableArray<ValueSlot> Groups
         {
             get { return _groups; }
         }
 
-        public ReadOnlyCollection<BoundAggregatedValue> Aggregates
+        public ImmutableArray<BoundAggregatedValue> Aggregates
         {
             get { return _aggregates; }
         }
 
-        public BoundGroupByAndAggregationRelation Update(BoundRelation input, IList<ValueSlot> groups, IList<BoundAggregatedValue> aggregates)
+        public BoundGroupByAndAggregationRelation Update(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
-            if (input == _input && groups == _groups && aggregates == _aggregates)
+            var newGroups = groups.ToImmutableArray();
+            var newAggregates = aggregates.ToImmutableArray();
+
+            if (input == _input && newGroups == _groups && newAggregates == _aggregates)
                 return this;
 
-            return new BoundGroupByAndAggregationRelation(input, groups, aggregates);
+            return new BoundGroupByAndAggregationRelation(input, newGroups, newAggregates);
         }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()

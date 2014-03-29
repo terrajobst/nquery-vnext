@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Data;
 using System.Diagnostics;
@@ -226,7 +227,7 @@ namespace NQueryViewer
             else
             {
                 var semanticModel = CurrentEditorView.SemanticModel;
-                var optimizationSteps = semanticModel.Compilation.GetShowPlanSteps().ToArray();
+                var optimizationSteps = semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
                 ShowPlanComboBox.ItemsSource = optimizationSteps;
                 ShowPlanComboBox.SelectedItem = optimizationSteps.LastOrDefault();
             }

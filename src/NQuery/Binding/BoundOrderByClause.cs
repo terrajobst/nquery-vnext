@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundOrderByClause
     {
-        private readonly ReadOnlyCollection<BoundOrderByColumn> _columns;
+        private readonly ImmutableArray<BoundOrderByColumn> _columns;
 
-        public BoundOrderByClause(IList<BoundOrderByColumn> columns)
+        public BoundOrderByClause(IEnumerable<BoundOrderByColumn> columns)
         {
-            _columns = new ReadOnlyCollection<BoundOrderByColumn>(columns);
+            _columns = columns.ToImmutableArray();
         }
 
-        public ReadOnlyCollection<BoundOrderByColumn> Columns
+        public ImmutableArray<BoundOrderByColumn> Columns
         {
             get { return _columns; }
         }

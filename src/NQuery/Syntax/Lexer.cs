@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Text;
 
@@ -34,7 +35,7 @@ namespace NQuery.Syntax
             _diagnostics.Clear();
             _start = _charReader.Position;
             ReadTrivia(_leadingTrivia, isLeading: false);
-            var leadingTrivia = _leadingTrivia.ToArray();
+            var leadingTrivia = _leadingTrivia.ToImmutableArray();
 
             _kind = SyntaxKind.BadToken;
             _contextualKind = SyntaxKind.BadToken;
@@ -46,13 +47,13 @@ namespace NQuery.Syntax
             var kind = _kind;
             var span = TextSpan.FromBounds(_start, end);
             var text = _textBuffer.GetText(span);
-            var diagnostics = _diagnostics.ToArray();
+            var diagnostics = _diagnostics.ToImmutableArray();
 
             _trailingTrivia.Clear();
             _diagnostics.Clear();
             _start = _charReader.Position;
             ReadTrivia(_trailingTrivia, isLeading: true);
-            var trailingTrivia = _trailingTrivia.ToArray();
+            var trailingTrivia = _trailingTrivia.ToImmutableArray();
 
             return new SyntaxToken(_syntaxTree, kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
         }
@@ -207,7 +208,7 @@ namespace NQuery.Syntax
             var end = _charReader.Position;
             var span = TextSpan.FromBounds(start, end);
             var text = _textBuffer.GetText(span);
-            var diagnostics = _diagnostics.ToArray();
+            var diagnostics = _diagnostics.ToImmutableArray();
             var trivia = new SyntaxTrivia(_syntaxTree, kind, text, span, null, diagnostics);
             target.Add(trivia);
 

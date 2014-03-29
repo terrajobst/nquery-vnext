@@ -122,7 +122,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 _model = value;
                 OnModelChanged(EventArgs.Empty);
 
-                var hasData = _model != null && _model.Items.Count > 0;
+                var hasData = _model != null && _model.Items.Length > 0;
                 var showSession = _session == null && hasData;
                 var hideSession = _session != null && !hasData;
 
