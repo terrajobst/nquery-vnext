@@ -13,5 +13,9 @@ namespace NQuery.Iterators
         {
             get { throw new ArgumentOutOfRangeException(); }
         }
+
+        public override void CopyTo(object[] array, int destinationIndex)
+        {
+        }
     }
 }

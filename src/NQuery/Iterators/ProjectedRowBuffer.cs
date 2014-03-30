@@ -24,5 +24,11 @@ namespace NQuery.Iterators
         {
             get { return _source[_projectedIndices[index]]; }
         }
+
+        public override void CopyTo(object[] array, int destinationIndex)
+        {
+            for (var i = 0; i < _projectedIndices.Length; i++)
+                array[i] = _source[_projectedIndices[i]];
+        }
     }
 }

@@ -33,9 +33,7 @@ namespace NQuery.Iterators
             while (_input.Read())
             {
                 var rowValues = new object[_input.RowBuffer.Count];
-                for (var i = 0; i < rowValues.Length; i++)
-                    rowValues[i] = _input.RowBuffer[i];
-
+                _input.RowBuffer.CopyTo(rowValues, 0);
                 result.Add(rowValues);
             }
 
@@ -86,6 +84,12 @@ namespace NQuery.Iterators
             public override object this[int index]
             {
                 get { return Rows[RowIndex][index]; }
+            }
+
+            public override void CopyTo(object[] array, int destinationIndex)
+            {
+                var source = Rows[RowIndex];
+                Array.Copy(source, 0, array, destinationIndex, source.Length);
             }
         }
 

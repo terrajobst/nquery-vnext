@@ -51,27 +51,5 @@ namespace NQuery.Iterators
 
             return false;
         }
-
-        private sealed class IndirectedRowBuffer : RowBuffer
-        {
-            private readonly int _count;
-
-            public IndirectedRowBuffer(int count)
-            {
-                _count = count;
-            }
-
-            public RowBuffer ActiveRowBuffer { get; set; }
-
-            public override int Count
-            {
-                get { return _count; }
-            }
-
-            public override object this[int index]
-            {
-                get { return ActiveRowBuffer[index]; }
-            }
-        }
     }
 }

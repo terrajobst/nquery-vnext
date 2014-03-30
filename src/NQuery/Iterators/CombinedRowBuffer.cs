@@ -27,5 +27,11 @@ namespace NQuery.Iterators
                            : _right[index - _left.Count];
             }
         }
+
+        public override void CopyTo(object[] array, int destinationIndex)
+        {
+            _left.CopyTo(array, destinationIndex);
+            _right.CopyTo(array, _left.Count + destinationIndex);
+        }
     }
 }
