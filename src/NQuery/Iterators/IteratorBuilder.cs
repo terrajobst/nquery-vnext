@@ -50,6 +50,8 @@ namespace NQuery.Iterators
                     return BuildTable((BoundTableRelation)relation);
                 case BoundNodeKind.JoinRelation:
                     return BuildJoin((BoundJoinRelation)relation);
+                case BoundNodeKind.HashMatchRelation:
+                    return BuildHashMatch((BoundHashMatchRelation)relation);
                 case BoundNodeKind.FilterRelation:
                     return BuildFilter((BoundFilterRelation)relation);
                 case BoundNodeKind.ComputeRelation:
@@ -94,6 +96,17 @@ namespace NQuery.Iterators
             var valueSlotMapping = BuildValueSlotMapping(relation);
             var predicate = BuildPredicate(relation.Condition, valueSlotMapping);
             return new InnerNestedLoopsIterator(left, right, predicate);
+        }
+
+        private Iterator BuildHashMatch(BoundHashMatchRelation relation)
+        {
+            var build = BuildRelation(relation.Build);
+            var buildIndex = BuildValueSlotMapping(relation.Build)[relation.BuildKey];
+            var probe = BuildRelation(relation.Probe);
+            var probeIndex = BuildValueSlotMapping(relation.Probe)[relation.ProbeKey];
+            var valueSlotMapping = BuildValueSlotMapping(relation);
+            var predicate = BuildPredicate(relation.Remainder, valueSlotMapping);
+            return new HashMatchIterator(relation.LogicalOperator, build, probe, buildIndex, probeIndex, predicate);
         }
 
         private Iterator BuildFilter(BoundFilterRelation relation)

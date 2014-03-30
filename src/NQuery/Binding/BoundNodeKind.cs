@@ -28,6 +28,7 @@ namespace NQuery.Binding
         TableRelation,
         DerivedTableRelation,
         JoinRelation,
+        HashMatchRelation,
         ComputeRelation,
         FilterRelation,
         GroupByAndAggregationRelation,

@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Binding\BoundComputedValueWithSyntax.cs" />
     <Compile Include="Binding\BoundGroupByClause.cs" />
+    <Compile Include="Binding\BoundHashMatchOperator.cs" />
     <Compile Include="Binding\BoundOrderByClause.cs" />
     <Compile Include="Binding\BoundOrderBySelector.cs" />
     <Compile Include="Binding\BoundQueryState.cs" />
@@ -59,10 +60,13 @@
     <Compile Include="Iterators\IteratorFunction.cs" />
     <Compile Include="Iterators\IteratorPredicate.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
+    <Compile Include="Iterators\HashMatchIterator.cs" />
     <Compile Include="Iterators\IndirectedRowBuffer.cs" />
+    <Compile Include="Binding\BoundHashMatchRelation.cs" />
     <Compile Include="Optimization\Condition.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
     <Compile Include="Iterators\StreamAggregateIterator.cs" />
+    <Compile Include="Optimization\HashMatchPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\JoinLinearizer.cs" />
     <Compile Include="Optimization\Optimizer.cs">
       <SubType>Code</SubType>

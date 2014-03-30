@@ -41,6 +41,7 @@ namespace NQuery.Optimization
             // TODO: push computations
             
             // physical join op choosing
+            yield return new HashMatchPhysicalOperatorChooser(); ;
             yield return new AggregationPhysicalOperatorChooser();
 
             // TODO: null scan optimization

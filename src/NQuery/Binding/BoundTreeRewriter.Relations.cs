@@ -14,6 +14,8 @@ namespace NQuery.Binding
                     return RewriteDerivedTableRelation((BoundDerivedTableRelation)node);
                 case BoundNodeKind.JoinRelation:
                     return RewriteJoinRelation((BoundJoinRelation)node);
+                case BoundNodeKind.HashMatchRelation:
+                    return RewriteHashMatchRelation((BoundHashMatchRelation)node);
                 case BoundNodeKind.ComputeRelation:
                     return RewriteComputeRelation((BoundComputeRelation)node);
                 case BoundNodeKind.FilterRelation:
@@ -54,6 +56,16 @@ namespace NQuery.Binding
                                RewriteRelation(node.Left),
                                RewriteRelation(node.Right),
                                RewriteExpression(node.Condition));
+        }
+
+        private BoundRelation RewriteHashMatchRelation(BoundHashMatchRelation node)
+        {
+            return node.Update(node.LogicalOperator,
+                               RewriteRelation(node.Build),
+                               RewriteRelation(node.Probe),
+                               RewriteValueSlot(node.BuildKey),
+                               RewriteValueSlot(node.ProbeKey),
+                               RewriteExpression(node.Remainder));
         }
 
         protected virtual BoundRelation RewriteComputeRelation(BoundComputeRelation node)

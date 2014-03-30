@@ -32,6 +32,8 @@ namespace NQuery
                     return BuildCompute((BoundComputeRelation)node);
                 case BoundNodeKind.JoinRelation:
                     return BuildJoin((BoundJoinRelation)node);
+                case BoundNodeKind.HashMatchRelation:
+                    return BuildHashMatch((BoundHashMatchRelation)node);
                 case BoundNodeKind.TopRelation:
                     return BuildTop((BoundTopRelation)node);
                 case BoundNodeKind.SortRelation:
@@ -140,6 +142,22 @@ namespace NQuery
                                : leftAndRight.Concat(new[] {Build(node.Condition)});
 
             return new ShowPlanNode(node.JoinType + "Join", properties, children);
+        }
+
+        private static ShowPlanNode BuildHashMatch(BoundHashMatchRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var leftAndRight = new[]
+                               {
+                                   Build(node.Build),
+                                   Build(node.Probe)
+                               };
+
+            var children = node.Remainder == null
+                               ? leftAndRight
+                               : leftAndRight.Concat(new[] { Build(node.Remainder) });
+
+            return new ShowPlanNode(string.Format("Hash Match ({0}) [{1} = {2}]", node.LogicalOperator, node.BuildKey, node.ProbeKey), properties, children);
         }
 
         private static ShowPlanNode BuildTop(BoundTopRelation node)
