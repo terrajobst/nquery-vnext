@@ -56,6 +56,7 @@
   <ItemGroup>
     <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
     <Compile Include="BraceMatching\BraceMatcherTests.cs" />
+    <Compile Include="CodeActions\Issues\OrderByOrdinalTests.cs" />
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\ColumnSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\EmptySymbolCompletionProviderTests.cs" />
