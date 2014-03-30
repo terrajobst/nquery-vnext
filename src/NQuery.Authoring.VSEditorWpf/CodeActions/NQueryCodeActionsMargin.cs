@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -31,6 +32,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.LayoutChanged += TextViewOnLayoutChanged;
+            _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
             _issueProviders = issueProviders;
             _refactoringProviders = refactoringProviders;
 
@@ -80,6 +82,11 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             UpdateGlyph();
         }
 
+        private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
+        {
+            LayoutTransform = e.ZoomTransform;
+        }
+
         private async void UpdateGlyph()
         {
             var textView = _textViewHost.TextView;
@@ -97,7 +104,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             else
             {
                 var viewportTop = textView.ViewportTop;
-                var top = textViewLine.TextTop - viewportTop;
+                var top = textViewLine.Top - viewportTop;
                 SetTop(_glyphPopup, top);
                 _glyphPopup.UpdateModels(actionModels);
                 _glyphPopup.Visibility = Visibility.Visible;
