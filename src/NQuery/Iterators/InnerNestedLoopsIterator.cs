@@ -6,18 +6,18 @@ namespace NQuery.Iterators
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
-        private readonly Func<bool> _predicate;
+        private readonly IteratorPredicate _predicate;
         private readonly RowBuffer _rowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public InnerNestedLoopsIterator(Iterator left, Iterator right, Func<bool> predicate, RowBuffer rowBuffer)
+        public InnerNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
-            _rowBuffer = rowBuffer;
+            _rowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
         }
 
         public override RowBuffer RowBuffer
@@ -58,7 +58,7 @@ namespace NQuery.Iterators
                 }
 
                 // Check predicate.
-                matchingRowFound = _predicate == null || _predicate();
+                matchingRowFound = _predicate(_rowBuffer);
             }
 
             return true;

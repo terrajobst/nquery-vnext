@@ -5,9 +5,9 @@ namespace NQuery.Iterators
     internal sealed class FilterIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly Func<bool> _predicate;
+        private readonly IteratorPredicate _predicate;
 
-        public FilterIterator(Iterator input, Func<bool> predicate)
+        public FilterIterator(Iterator input, IteratorPredicate predicate)
         {
             _input = input;
             _predicate = predicate;
@@ -31,7 +31,7 @@ namespace NQuery.Iterators
                 if (!_input.Read())
                     break;
 
-                predicateIsTrue = _predicate();
+                predicateIsTrue = _predicate(_input.RowBuffer);
             }
 
             return predicateIsTrue;

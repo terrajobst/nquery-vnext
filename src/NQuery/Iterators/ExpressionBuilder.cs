@@ -15,19 +15,41 @@ namespace NQuery.Iterators
         private readonly static PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) });
         private readonly static PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
-        private readonly ValueSlotSettings _valueSlotSettings;
+        private readonly IReadOnlyDictionary<ValueSlot, int> _valueSlotMapping;
+        private readonly ParameterExpression _rowBufferParameter;
         private readonly List<ParameterExpression> _locals = new List<ParameterExpression>();
         private readonly List<Expression> _assignments = new List<Expression>();
 
-        private ExpressionBuilder(ValueSlotSettings valueSlotSettings)
+        private ExpressionBuilder(IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
         {
-            _valueSlotSettings = valueSlotSettings;
+            _valueSlotMapping = valueSlotMapping;
+            _rowBufferParameter = Expression.Parameter(typeof (RowBuffer), "rowBuffer");
         }
 
-        public static Func<T> BuildExpression<T>(BoundExpression expression, ValueSlotSettings valueSlotSettings)
+        public static Func<object> BuildFunction(BoundExpression expression)
         {
-            var builder = new ExpressionBuilder(valueSlotSettings);
-            return builder.BuildExpression<T>(expression);
+            var valueSlotMapping = new Dictionary<ValueSlot, int>();
+            var func = BuildExpression<Func<RowBuffer, object>>(expression, typeof(object), valueSlotMapping);
+            return () => func(null);
+        }
+
+        public static IteratorFunction BuildIteratorFunction(BoundExpression expression, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        {
+            return BuildExpression<IteratorFunction>(expression, typeof(object), valueSlotMapping);
+        }
+
+        public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        {
+            if (predicate == null)
+                return r => true;
+
+            return BuildExpression<IteratorPredicate>(predicate, typeof(bool), valueSlotMapping);
+        }
+
+        private static TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        {
+            var builder = new ExpressionBuilder(valueSlotMapping);
+            return builder.BuildExpression<TDelegate>(expression, targetType);
         }
 
         private ParameterExpression BuildCachedExpression(BoundExpression expression)
@@ -129,9 +151,8 @@ namespace NQuery.Iterators
             return Expression.Convert(Expression.Constant(true), typeof(bool?));
         }
 
-        private Func<T> BuildExpression<T>(BoundExpression expression)
+        private TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType)
         {
-            var targetType = typeof (T);
             var actualExpression = BuildCachedExpression(expression);
             var coalescedExpression = targetType.CanBeNull()
                                           ? (Expression) actualExpression
@@ -139,7 +160,7 @@ namespace NQuery.Iterators
             var resultExpression = Expression.Convert(coalescedExpression, targetType);
             var expressions = _assignments.Concat(new[] { resultExpression });
             var body = Expression.Block(_locals, expressions);
-            var lambda = Expression.Lambda<Func<T>>(body);
+            var lambda = Expression.Lambda<TDelegate>(body, _rowBufferParameter);
             return lambda.Compile();
         }
 
@@ -334,14 +355,11 @@ namespace NQuery.Iterators
 
         private Expression BuildValueSlotExpression(BoundValueSlotExpression expression)
         {
-            var rowBufferIndex = _valueSlotSettings.GetRowBufferIndex(expression.ValueSlot);
-            var rowBufferFunc = _valueSlotSettings.RowBufferProvider;
+            var rowBufferIndex = _valueSlotMapping[expression.ValueSlot];
             return
                 Expression.Convert(
                     Expression.MakeIndex(
-                        Expression.Invoke(
-                            Expression.Constant(rowBufferFunc)
-                        ),
+                        _rowBufferParameter,
                         RowBufferIndexer,
                         new[] { Expression.Constant(rowBufferIndex) }
                     ),

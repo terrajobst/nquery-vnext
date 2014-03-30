@@ -7,11 +7,11 @@ namespace NQuery.Iterators
     internal sealed class ComputeScalarIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly ImmutableArray<Func<object>> _definedValues;
+        private readonly ImmutableArray<IteratorFunction> _definedValues;
         private readonly ArrayRowBuffer _rowBuffer;
         private readonly CombinedRowBuffer _combinedRowBuffer;
 
-        public ComputeScalarIterator(Iterator input, IEnumerable<Func<object>> definedValues)
+        public ComputeScalarIterator(Iterator input, IEnumerable<IteratorFunction> definedValues)
         {
             _input = input;
             _definedValues = definedValues.ToImmutableArray();
@@ -35,7 +35,7 @@ namespace NQuery.Iterators
                 return false;
 
             for (var i = 0; i < _definedValues.Length; i++)
-                _rowBuffer.Array[i] = _definedValues[i]();
+                _rowBuffer.Array[i] = _definedValues[i](_input.RowBuffer);
 
             return true;
         }

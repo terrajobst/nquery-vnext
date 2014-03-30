@@ -11,13 +11,13 @@ namespace NQuery.Iterators
         private readonly Iterator _input;
         private readonly ImmutableArray<int> _groupEntries;
         private readonly ImmutableArray<IAggregator> _aggregators;
-        private readonly ImmutableArray<Func<object>> _argumentFunctions;
+        private readonly ImmutableArray<IteratorFunction> _argumentFunctions;
         private readonly ArrayRowBuffer _rowBuffer;
 
         private bool _eof;
         private bool _isFirstRecord;
 
-        public StreamAggregateIterator(Iterator input, IEnumerable<int> groupEntries, IEnumerable<IAggregator> aggregators, IEnumerable<Func<object>> argumentFunctions)
+        public StreamAggregateIterator(Iterator input, IEnumerable<int> groupEntries, IEnumerable<IAggregator> aggregators, IEnumerable<IteratorFunction> argumentFunctions)
         {
             _input = input;
             _groupEntries = groupEntries.ToImmutableArray();
@@ -42,7 +42,7 @@ namespace NQuery.Iterators
             for (var i = 0; i < _aggregators.Length; i++)
             {
                 var aggregator = _aggregators[i];
-                var argument = _argumentFunctions[i]();
+                var argument = _argumentFunctions[i](_input.RowBuffer);
                 aggregator.Accumulate(argument);
             }
         }

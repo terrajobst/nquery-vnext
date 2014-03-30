@@ -68,8 +68,7 @@ namespace NQuery
         private static Func<object> CreateTrivialExpression(BoundComputeRelation computeRelation)
         {
             var computedValue = computeRelation.DefinedValues.First();
-            var valueSlotSettings = new ValueSlotSettings(new Dictionary<ValueSlot, int>(), () => null);
-            return ExpressionBuilder.BuildExpression<object>(computedValue.Expression, valueSlotSettings);
+            return ExpressionBuilder.BuildFunction(computedValue.Expression);
         }
 
         private object EvaluteQueryAsExpression()

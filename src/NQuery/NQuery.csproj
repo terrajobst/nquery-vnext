@@ -56,6 +56,8 @@
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
+    <Compile Include="Iterators\IteratorFunction.cs" />
+    <Compile Include="Iterators\IteratorPredicate.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\Condition.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="Iterators\TableIterator.cs" />
     <Compile Include="Iterators\TopIterator.cs" />
     <Compile Include="Iterators\TopWithTiesIterator.cs" />
-    <Compile Include="Iterators\ValueSlotSettings.cs" />
     <Compile Include="Query.cs" />
     <Compile Include="QueryReader.cs" />
     <Compile Include="ShowPlanNode.cs" />
