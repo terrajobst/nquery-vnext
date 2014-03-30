@@ -56,7 +56,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues().Concat(GetDefinedValues());
+            return _groups.Concat(GetDefinedValues());
         }
     }
 }
