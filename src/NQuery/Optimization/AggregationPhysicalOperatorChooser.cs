@@ -13,7 +13,9 @@ namespace NQuery.Optimization
         {
             var input = RewriteRelation(node.Input);
             var sortedValues = node.Groups.Select(g => new BoundSortedValue(g, Comparer.Default)).ToImmutableArray();
-            var sortedInput = new BoundSortRelation(input, sortedValues);
+            var sortedInput = sortedValues.Any()
+                ? new BoundSortRelation(input, sortedValues)
+                : input;
             return new BoundStreamAggregatesRelation(sortedInput, node.Groups, node.Aggregates);
         }
     }
