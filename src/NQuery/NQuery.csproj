@@ -55,6 +55,7 @@
     <Compile Include="Binding\BoundTreeWalker.Expression.cs" />
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
+    <Compile Include="ExpressionEvaluator.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\Condition.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
