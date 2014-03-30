@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.Binding;
 
@@ -17,6 +18,11 @@ namespace NQuery.Optimization
 
             var result = BinaryOperator.Resolve(BinaryOperatorKind.LogicalAnd, left.Type, right.Type);
             return new BoundBinaryExpression(left, result, right);
+        }
+
+        public static BoundExpression And(IEnumerable<BoundExpression> conditions)
+        {
+            return conditions.Aggregate<BoundExpression, BoundExpression>(null, (c, n) => c == null ? n : And(c, n));
         }
 
         public static IEnumerable<BoundExpression> SplitConjunctions(BoundExpression expression)
