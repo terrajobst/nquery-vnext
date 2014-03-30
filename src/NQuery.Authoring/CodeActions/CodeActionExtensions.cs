@@ -38,6 +38,7 @@ namespace NQuery.Authoring.CodeActions
                        new FlipBinaryOperatorSidesCodeRefactoringProvider(),
                        new SortOrderCodeRefactoringProvider(),
                        new AddAsAliasCodeRefactoringProvider(),
+                       new AddAsDerivedTableCodeRefactoringProvider(),
                        new AddMissingKeywordCodeRefactoringProvider(),
                        new ExpandWildcardCodeRefactoringProvider()
                    };

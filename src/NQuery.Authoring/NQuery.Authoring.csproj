@@ -66,6 +66,7 @@
     <Compile Include="CodeActions\Refactorings\AddAsAliasCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\CodeIssue.cs" />
     <Compile Include="CodeActions\CodeIssueKind.cs" />
+    <Compile Include="CodeActions\Refactorings\AddAsDerivedTableCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesCodeRefactoringProvider.cs" />
