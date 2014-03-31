@@ -25,6 +25,9 @@ namespace NQuery.Optimization
             // TODO: This shouldn't be necessary
             yield return new DerivedTableRemover();
 
+            // Instantiate CTEs
+            yield return new CommonTableExpressionInstantiator();
+
             // TODO: semi join simplification
             // TODO: decorrelation
             // TODO: outer join removal
