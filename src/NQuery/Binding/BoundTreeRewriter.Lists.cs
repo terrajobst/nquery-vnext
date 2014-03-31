@@ -16,7 +16,7 @@ namespace NQuery.Binding
             {
                 var element = array[i];
                 var rewrittenElement = rewriter(element);
-                if (element == rewrittenElement)
+                if (element == rewrittenElement && result == null)
                     continue;
 
                 if (result == null)
