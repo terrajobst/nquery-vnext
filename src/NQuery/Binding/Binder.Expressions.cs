@@ -608,7 +608,8 @@ namespace NQuery.Binding
             //
             // left = ANY (SELECT right FROM ...)
 
-            return BindAllAnySubselect(node.Span, node.Expression, node.Query, BinaryOperatorKind.Equal);
+            var allAnySubselect = BindAllAnySubselect(node.Span, node.Expression, false, node.Query, BinaryOperatorKind.Equal);
+            return BindOptionalNegation(node.Span, node.NotKeyword, allAnySubselect);
         }
 
         private static BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
@@ -993,15 +994,20 @@ namespace NQuery.Binding
         {
             var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
             var operatorKind = expressionKind.ToBinaryOperatorKind();
-            return BindAllAnySubselect(node.Span, node.Left, node.Query, operatorKind);
+            var isAll = node.Keyword.Kind == SyntaxKind.AllKeyword;
+            return BindAllAnySubselect(node.Span, node.Left, isAll, node.Query, operatorKind);
         }
 
-        private BoundExpression BindAllAnySubselect(TextSpan span, ExpressionSyntax leftNode, QuerySyntax queryNode, BinaryOperatorKind operatorKind)
+        private BoundExpression BindAllAnySubselect(TextSpan diagnosticSpan, ExpressionSyntax leftNode, bool isAll, QuerySyntax queryNode, BinaryOperatorKind operatorKind)
         {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
+            // First, let's bind the expression and the query
+
             var left = BindExpression(leftNode);
             var boundQuery = BindSubquery(queryNode);
+
+            // The right hand side of the binary expression is the first column of the query.
 
             if (boundQuery.OutputColumns.Length == 0)
             {
@@ -1017,23 +1023,31 @@ namespace NQuery.Binding
             var rightColumn = boundQuery.OutputColumns[0];
             var right = new BoundValueSlotExpression(rightColumn.ValueSlot);
 
+            // Now we need to bind the binary operator.
+            //
             // To avoid cascading errors, we'll only validate the operator
             // if we could resolve both sides.
 
             if (left.Type.IsError() || right.Type.IsError())
-                return new BoundAllAnySubselect(left, boundQuery.Relation, OverloadResolutionResult<BinaryOperatorSignature>.None);
+                return new BoundErrorExpression();
 
             var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
             if (result.Best == null)
             {
                 if (result.Selected == null)
-                    Diagnostics.ReportCannotApplyBinaryOperator(span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportCannotApplyBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
                 else
-                    Diagnostics.ReportAmbiguousBinaryOperator(span, operatorKind, left.Type, right.Type);
+                    Diagnostics.ReportAmbiguousBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
             }
+
+            // We may need to convert the arguments to the binary operator, so let's
+            // bind them as arguments to the resolved operator.
 
             var convertedLeft = BindArgument(left, result, 0);
             var convertedRight = BindArgument(right, result, 1);
+
+            // If we need to convert the right side, then we musy insert a BoundComputeRelation
+            // that produces a derived value.
 
             BoundRelation relation;
 
@@ -1049,9 +1063,45 @@ namespace NQuery.Binding
                 var computedValues = new[] {computedValue};
                 var computeRelation = new BoundComputeRelation(boundQuery.Relation, computedValues);
                 relation = new BoundProjectRelation(computeRelation, outputValues);
+                convertedRight = new BoundValueSlotExpression(outputValue);
             }
 
-            return new BoundAllAnySubselect(convertedLeft, relation, result);
+            // In order to simplify later phases, we'll rewrite the the ALL/ANY subselect into
+            // a regular EXISTS subselect. ANY is fairly straight forward:
+            //
+            //      left op ANY (SELECT right FROM ...)
+            //
+            //      ===>
+            //
+            //      EXISTS (SELECT * FROM ... WHERE left op right)
+            //
+            // ALL requires a bit more trickery as we need to handle NULL values in the negated
+            // predicate correctly:
+            //
+            //      left op ALL (SELECT Column FROM ...)
+            //
+            //      ===>
+            //
+            //      NOT EXISTS (SELECT * FROM ... WHERE NOT (left op right) OR (left IS NULL) OR (right IS NULL))
+
+            if (!isAll)
+            {
+                var condition = new BoundBinaryExpression(convertedLeft, result, convertedRight);
+                var filter = new BoundFilterRelation(relation, condition);
+                return new BoundExistsSubselect(filter);
+            }
+            else
+            {
+                var comparison = new BoundBinaryExpression(convertedLeft, result, right);
+                var negatedComparison = BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, comparison);
+                var leftIsNull = new BoundIsNullExpression(convertedLeft);
+                var rightisNull = new BoundIsNullExpression(right);
+                var eitherSideIsNull = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, leftIsNull, rightisNull);
+                var condition = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, negatedComparison, eitherSideIsNull);
+                var filter = new BoundFilterRelation(relation, condition);
+                var existsSubselect = new BoundExistsSubselect(filter);
+                return BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, existsSubselect);
+            }
         }
     }
 }

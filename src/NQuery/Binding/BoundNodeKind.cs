@@ -21,7 +21,6 @@ namespace NQuery.Binding
         CaseExpression,
         SingleRowSubselect,
         ExistsSubselect,
-        AllAnySubselect,
         ValueSlotExpression,
 
         // Relations

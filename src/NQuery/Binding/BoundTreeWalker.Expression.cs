@@ -53,9 +53,6 @@ namespace NQuery.Binding
                 case BoundNodeKind.ExistsSubselect:
                     VisitExistsSubselect((BoundExistsSubselect)node);
                     break;
-                case BoundNodeKind.AllAnySubselect:
-                    VisitAllAnySubselect((BoundAllAnySubselect)node);
-                    break;
                 case BoundNodeKind.ValueSlotExpression:
                     VisitValueSlotExpression((BoundValueSlotExpression)node);
                     break;
@@ -143,12 +140,6 @@ namespace NQuery.Binding
 
         protected virtual void VisitExistsSubselect(BoundExistsSubselect node)
         {
-            VisitRelation(node.Relation);
-        }
-
-        protected virtual void VisitAllAnySubselect(BoundAllAnySubselect node)
-        {
-            VisitExpression(node.Left);
             VisitRelation(node.Relation);
         }
 

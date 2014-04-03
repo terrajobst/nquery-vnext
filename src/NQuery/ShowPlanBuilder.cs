@@ -76,8 +76,6 @@ namespace NQuery
                     return BuildSingleRowSubselect((BoundSingleRowSubselect)node);
                 case BoundNodeKind.ExistsSubselect:
                     return BuildExistsSubselect((BoundExistsSubselect)node);
-                case BoundNodeKind.AllAnySubselect:
-                    return BuildAllAnySubselect((BoundAllAnySubselect)node);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -355,14 +353,6 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Relation) };
             return new ShowPlanNode("Exists", properties, children, true);
-        }
-
-        private static ShowPlanNode BuildAllAnySubselect(BoundAllAnySubselect node)
-        {
-            // TODO: Extract actual kind (ALL or ANY)
-            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Left), Build(node.Relation) };
-            return new ShowPlanNode("AllAny (" + node.Result.Selected.Signature.Kind + ")", properties, children, true);
         }
     }
 }

@@ -172,7 +172,6 @@
     <Compile Include="Binding\UnaryOperatorSignature.cs" />
     <Compile Include="Conversion.cs" />
     <Compile Include="Binding\BoundConversionExpression.cs" />
-    <Compile Include="Binding\BoundAllAnySubselect.cs" />
     <Compile Include="Binding\BoundCommonTableExpression.cs" />
     <Compile Include="Binding\BoundExistsSubselect.cs" />
     <Compile Include="Binding\BoundFunctionInvocationExpression.cs" />

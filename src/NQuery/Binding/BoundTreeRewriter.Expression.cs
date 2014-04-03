@@ -41,8 +41,6 @@ namespace NQuery.Binding
                     return RewriteSingleRowSubselect((BoundSingleRowSubselect)node);
                 case BoundNodeKind.ExistsSubselect:
                     return RewriteExistsSubselect((BoundExistsSubselect)node);
-                case BoundNodeKind.AllAnySubselect:
-                    return RewriteAllAnySubselect((BoundAllAnySubselect)node);
                 case BoundNodeKind.ValueSlotExpression:
                     return RewriteValueSlotExpression((BoundValueSlotExpression)node);
                 default:
@@ -136,13 +134,6 @@ namespace NQuery.Binding
         protected virtual BoundExpression RewriteExistsSubselect(BoundExistsSubselect node)
         {
             return node.Update(RewriteRelation(node.Relation));
-        }
-
-        protected virtual BoundExpression RewriteAllAnySubselect(BoundAllAnySubselect node)
-        {
-            return node.Update(RewriteExpression(node.Left),
-                               RewriteRelation(node.Relation),
-                               node.Result);
         }
 
         protected virtual BoundExpression RewriteValueSlotExpression(BoundValueSlotExpression node)
