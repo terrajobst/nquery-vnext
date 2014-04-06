@@ -257,14 +257,14 @@ namespace NQuery.Binding
         {
             switch (node.Kind)
             {
-                case SyntaxKind.ExceptQuery:
-                    return BindExceptQuery((ExceptQuerySyntax)node);
-
                 case SyntaxKind.UnionQuery:
                     return BindUnionQuery((UnionQuerySyntax)node);
 
                 case SyntaxKind.IntersectQuery:
                     return BindIntersectQuery((IntersectQuerySyntax)node);
+
+                case SyntaxKind.ExceptQuery:
+                    return BindExceptQuery((ExceptQuerySyntax)node);
 
                 case SyntaxKind.OrderedQuery:
                     return BindOrderedQuery((OrderedQuerySyntax)node);
@@ -283,36 +283,13 @@ namespace NQuery.Binding
             }
         }
 
-        private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
-        {
-            var left = BindQuery(node.LeftQuery);
-            var right = BindQuery(node.RightQuery);
-            var columns = left.OutputColumns;
-
-            if (left.OutputColumns.Length != right.OutputColumns.Length)
-                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
-
-            BoundRelation leftInput;
-            BoundRelation rightInput;
-            var leftOutputValues = BindToCommonTypes(node.ExceptKeyword.Span, left, right, out leftInput, out rightInput);
-
-            var outputValues = leftOutputValues;
-            var outputColumns = BindOutputColumns(columns, outputValues);
-
-            foreach (var column in outputColumns)
-                BindComparer(node.ExceptKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInExcept);
-
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, leftInput, rightInput, outputValues);
-            return new BoundQuery(relation, outputColumns);
-        }
-
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
         {
             var left = BindQuery(node.LeftQuery);
             var right = BindQuery(node.RightQuery);
             var combinator = node.AllKeyword == null
-                                 ? BoundQueryCombinator.Union
-                                 : BoundQueryCombinator.UnionAll;
+                ? BoundQueryCombinator.Union
+                : BoundQueryCombinator.UnionAll;
 
             if (left.OutputColumns.Length != right.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
@@ -354,6 +331,29 @@ namespace NQuery.Binding
                 BindComparer(node.IntersectKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInIntersect);
 
             var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, leftInput, rightInput, outputValues);
+            return new BoundQuery(relation, outputColumns);
+        }
+
+        private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
+        {
+            var left = BindQuery(node.LeftQuery);
+            var right = BindQuery(node.RightQuery);
+            var columns = left.OutputColumns;
+
+            if (left.OutputColumns.Length != right.OutputColumns.Length)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
+
+            BoundRelation leftInput;
+            BoundRelation rightInput;
+            var leftOutputValues = BindToCommonTypes(node.ExceptKeyword.Span, left, right, out leftInput, out rightInput);
+
+            var outputValues = leftOutputValues;
+            var outputColumns = BindOutputColumns(columns, outputValues);
+
+            foreach (var column in outputColumns)
+                BindComparer(node.ExceptKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInExcept);
+
+            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, leftInput, rightInput, outputValues);
             return new BoundQuery(relation, outputColumns);
         }
 
