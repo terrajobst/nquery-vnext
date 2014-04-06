@@ -115,7 +115,8 @@ namespace NQuery.Binding
 
         protected virtual BoundRelation RewriteSortRelation(BoundSortRelation node)
         {
-            return node.Update(RewriteRelation(node.Input),
+            return node.Update(node.IsDistinct,
+                               RewriteRelation(node.Input),
                                RewriteSortedValues(node.SortedValues));
         }
 

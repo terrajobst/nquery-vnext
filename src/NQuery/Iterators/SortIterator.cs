@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
-    internal sealed class SortIterator : Iterator
+    internal class SortIterator : Iterator
     {
         private readonly Iterator _input;
         private readonly ImmutableArray<int> _sortEntries;
@@ -24,6 +24,24 @@ namespace NQuery.Iterators
         public override RowBuffer RowBuffer
         {
             get { return _spooledRowBuffer; }
+        }
+
+        public ImmutableArray<int> SortEntries
+        {
+            get { return _sortEntries; }
+        }
+
+        public ImmutableArray<IComparer> Comparers
+        {
+            get { return _comparers; }
+        }
+
+        protected object[] GetCurrentRow()
+        {
+            if (_spooledRowBuffer.Rows == null)
+                return null;
+
+            return _spooledRowBuffer.Rows[_spooledRowBuffer.RowIndex];
         }
 
         private IReadOnlyList<object[]> SortInput()

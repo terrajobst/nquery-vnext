@@ -501,7 +501,7 @@ namespace NQuery.Binding
             var outputQueryCoumns = query.OutputColumns;
             var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
 
-            var relation = new BoundSortRelation(query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray());
+            var relation = new BoundSortRelation(false, query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray());
             return new BoundQuery(relation, outputQueryCoumns);
         }
 
@@ -806,18 +806,41 @@ namespace NQuery.Binding
             var isDistinct = distinctKeyword != null &&
                              distinctKeyword.Kind == SyntaxKind.DistinctKeyword;
 
-            if (isDistinct)
-            {
-                foreach (var column in outputColumns)
-                    BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct);
-            }
+            var distinctComparer = isDistinct
+                ? BindDistinctComparers(node.SelectClause.Columns, outputColumns)
+                : ImmutableArray<IComparer>.Empty;
 
-            // TODO: If DISTINCT is specified, ensure that all ORDER BY expressions are contained in SELECT
+            ImmutableArray<BoundSortedValue> distincSortValues;
+
+            if (!isDistinct || orderByClause == null)
+            {
+                distincSortValues = ImmutableArray<BoundSortedValue>.Empty;
+            }
+            else
+            {
+                var outputValueSet = new HashSet<ValueSlot>(outputColumns.Select(c => c.ValueSlot));
+
+                for (var i = 0; i < orderByClause.Columns.Length; i++)
+                {
+                    var column = orderedQueryNode.Columns[i];
+                    var boundColumn = orderByClause.Columns[i];
+                    var orderedValue = boundColumn.SortedValue.ValueSlot;
+
+                    if (!outputValueSet.Contains(orderedValue))
+                        Diagnostics.ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(column.Span);
+                }
+
+                var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.SortedValue.ValueSlot));
+                distincSortValues = outputColumns.Select((c, i) => new BoundSortedValue(c.ValueSlot, distinctComparer[i]))
+                                                 .Where(s => !orderByValueSet.Contains(s.ValueSlot))
+                                                 .ToImmutableArray();
+            }
 
             // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
             //       literal. Thuse, we can simply ignore the case where topClause.Value.Value cannot be casted
             //       to an int -- the parser added the diagnostics already. However, we cannot perform a hard
             //       cast because we also bind input the parser reported errors for.
+
             var topClause = node.SelectClause.TopClause;
             var top = topClause == null ? null : topClause.Value.Value as int?;
             var withTies = topClause != null && topClause.WithKeyword != null;
@@ -852,11 +875,11 @@ namespace NQuery.Binding
 
             var sortedValues = orderByClause == null
                 ? ImmutableArray<BoundSortedValue>.Empty
-                : orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray();
+                : orderByClause.Columns.Select(c => c.SortedValue).Concat(distincSortValues).ToImmutableArray();
 
             var sortRelation = sortedValues.IsEmpty
                 ? selectComputeRelation
-                : new BoundSortRelation(selectComputeRelation, sortedValues);
+                : new BoundSortRelation(isDistinct, selectComputeRelation, sortedValues);
 
             var tieEntries = top == null || sortedValues.IsEmpty || !withTies
                 ? ImmutableArray<BoundSortedValue>.Empty
@@ -868,7 +891,24 @@ namespace NQuery.Binding
 
             var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToImmutableArray());
 
-            return new BoundQuery(projectRelation, outputColumns);
+            BoundRelation distinctRelation;
+
+            if (!isDistinct || orderByClause != null)
+            {
+                distinctRelation = projectRelation;
+            }
+            else
+            {
+                // TODO: It seems BoundGroupByAndAggregationRelation should also use the comparers.
+
+                foreach (var column in outputColumns)
+                    BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct);
+
+                var distinctValueSlots = outputColumns.Select(c => c.ValueSlot);
+                distinctRelation = new BoundGroupByAndAggregationRelation(projectRelation, distinctValueSlots, Enumerable.Empty<BoundAggregatedValue>());
+            }
+
+            return new BoundQuery(distinctRelation, outputColumns);
         }
 
         private IEnumerable<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
@@ -986,6 +1026,21 @@ namespace NQuery.Binding
         private static IEnumerable<BoundSelectColumn> BindSelectColumns(BoundWildcardSelectColumn selectColumn)
         {
             return selectColumn.QueryColumns.Select(c => new BoundSelectColumn(c));
+        }
+
+        private ImmutableArray<IComparer> BindDistinctComparers(IReadOnlyList<SelectColumnSyntax> columns, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
+        {
+            var comparers = new List<IComparer>();
+
+            for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
+            {
+                var column = columns[columnIndex];
+                var columnType = outputColumns[columnIndex].ValueSlot.Type;
+                var comparer = BindComparer(column.Span, columnType, DiagnosticId.InvalidDataTypeInSelectDistinct);
+                comparers.Add(comparer);
+            }
+
+            return comparers.ToImmutableArray();
         }
 
         private BoundRelation BindFromClause(FromClauseSyntax node)

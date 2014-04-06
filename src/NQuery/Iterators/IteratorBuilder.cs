@@ -157,7 +157,9 @@ namespace NQuery.Iterators
                                       .Select(v => inputValueSlotMapping[v.ValueSlot])
                                       .ToImmutableArray();
             var comparers = relation.SortedValues.Select(v => v.Comparer).ToImmutableArray();
-            return new SortIterator(input, sortEntries, comparers);
+            return relation.IsDistinct
+                ? new DistinctSortIterator(input, sortEntries, comparers)
+                : new SortIterator(input, sortEntries, comparers);
         }
 
         private Iterator BuildCombinedQuery(BoundCombinedRelation relation)

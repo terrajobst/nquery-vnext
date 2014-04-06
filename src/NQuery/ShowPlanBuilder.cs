@@ -174,7 +174,9 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
             var slots = string.Join(", ", node.SortedValues.Select(v => v.ValueSlot.Name));
-            return new ShowPlanNode("Sort " + slots, properties, children);
+            var op = node.IsDistinct ? "DistinctSort" : "Sort";
+            var name = string.Format("{0} {1}", op, slots);
+            return new ShowPlanNode(name, properties, children);
         }
 
         private static ShowPlanNode BuildCombinedQuery(BoundCombinedRelation node)

@@ -135,7 +135,7 @@ namespace NQuery.Optimization
         private BoundRelation PushOverSort(BoundFilterRelation node, BoundSortRelation input)
         {
             var newFilter = RewriteRelation(node.Update(input.Input, node.Condition));
-            var newInput = input.Update(newFilter, input.SortedValues);
+            var newInput = input.Update(input.IsDistinct, newFilter, input.SortedValues);
             return newInput;
         }
 

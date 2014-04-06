@@ -57,6 +57,7 @@
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
+    <Compile Include="Iterators\DistinctSortIterator.cs" />
     <Compile Include="Iterators\IteratorFunction.cs" />
     <Compile Include="Iterators\IteratorPredicate.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />

@@ -7,13 +7,15 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSortRelation : BoundRelation
     {
+        private readonly bool _isDistinct;
         private readonly BoundRelation _input;
         private readonly ImmutableArray<BoundSortedValue> _sortedValues;
 
-        public BoundSortRelation(BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
+        public BoundSortRelation(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
             _input = input;
             _sortedValues = sortedValues.ToImmutableArray();
+            _isDistinct = isDistinct;
         }
 
         public override BoundNodeKind Kind
@@ -31,14 +33,19 @@ namespace NQuery.Binding
             get { return _sortedValues; }
         }
 
-        public BoundSortRelation Update(BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
+        public bool IsDistinct
+        {
+            get { return _isDistinct; }
+        }
+
+        public BoundSortRelation Update(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
             var newSortedValues = sortedValues.ToImmutableArray();
 
-            if (input == _input && newSortedValues == _sortedValues)
+            if (isDistinct == _isDistinct && input == _input && newSortedValues == _sortedValues)
                 return this;
 
-            return new BoundSortRelation(input, newSortedValues);
+            return new BoundSortRelation(isDistinct, input, newSortedValues);
         }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()

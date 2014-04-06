@@ -585,11 +585,10 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified);
         }
 
-        //public static void ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    var diagnostic = new Diagnostic(DiagnosticId.OrderByItemsMustBeInSelectListIfDistinctSpecified, Resources.OrderByItemsMustBeInSelectListIfDistinctSpecified);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.OrderByItemsMustBeInSelectListIfDistinctSpecified);
+        }
 
         //public static void ReportGroupByItemDoesNotReferenceAnyColumns(this ICollection<Diagnostic> diagnostics)
         //{
