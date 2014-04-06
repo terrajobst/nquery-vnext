@@ -112,17 +112,14 @@ namespace NQueryViewer
                 return;
 
             var query = semanticModel.Compilation.Compile();
-            var queryReader = query.CreateReader();
-            if (queryReader == null)
-                return;
 
             ExecutionTimeTextBlock.Text = "Running query...";
 
             var stopwatch = Stopwatch.StartNew();
             var dataTable = await Task.Run(() =>
             {
-                using (queryReader)
-                    return queryReader.ExecuteDataTable();
+                using (var reader = query.CreateReader())
+                    return reader.ExecuteDataTable();
             });
             var elapsed = stopwatch.Elapsed;
 
