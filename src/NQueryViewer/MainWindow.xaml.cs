@@ -227,7 +227,9 @@ namespace NQueryViewer
             else
             {
                 var semanticModel = CurrentEditorView.SemanticModel;
-                var optimizationSteps = semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
+                var optimizationSteps = semanticModel == null
+                    ? ImmutableArray<ShowPlan>.Empty
+                    : semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
                 ShowPlanComboBox.ItemsSource = optimizationSteps;
                 ShowPlanComboBox.SelectedItem = optimizationSteps.LastOrDefault();
             }
@@ -239,6 +241,7 @@ namespace NQueryViewer
             {
                 UpdateTree();
                 UpdateDiagnostics();
+                UpdateShowPlan();
 
                 if (CurrentEditorView != null)
                     CurrentEditorView.Focus();
