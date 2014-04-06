@@ -60,8 +60,8 @@ namespace NQuery.Iterators
                     return BuildTop((BoundTopRelation)relation);
                 case BoundNodeKind.SortRelation:
                     return BuildSort((BoundSortRelation)relation);
-                case BoundNodeKind.CombinedRelation:
-                    return BuildCombinedQuery((BoundCombinedRelation)relation);
+                case BoundNodeKind.ConcatenationRelation:
+                    return BuildConcatenationRelation((BoundConcatenationRelation)relation);
                 case BoundNodeKind.StreamAggregatesRelation:
                     return BuildStreamAggregatesRelation((BoundStreamAggregatesRelation)relation);
                 case BoundNodeKind.ProjectRelation:
@@ -162,17 +162,10 @@ namespace NQuery.Iterators
                 : new SortIterator(input, sortEntries, comparers);
         }
 
-        private Iterator BuildCombinedQuery(BoundCombinedRelation relation)
+        private Iterator BuildConcatenationRelation(BoundConcatenationRelation relation)
         {
-            // TODO: We should handle UNION ALL, EXCEPT and INTERSECT differently
-
-            var inputs = new[]
-                             {
-                                 BuildRelation(relation.Left),
-                                 BuildRelation(relation.Right)
-                             };
-
-            var outputValueSlotCount = relation.Outputs.Length;
+            var inputs = relation.Inputs.Select(BuildRelation);
+            var outputValueSlotCount = relation.DefinedValues.Length;
             return new ConcatenationIterator(inputs, outputValueSlotCount);
         }
 

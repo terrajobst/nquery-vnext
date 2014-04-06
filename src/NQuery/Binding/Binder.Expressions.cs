@@ -106,6 +106,11 @@ namespace NQuery.Binding
             return BindToCommonType(boundExpressions, i => expressions[i].Span);
         }
 
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, TextSpan dianosticSpan)
+        {
+            return BindToCommonType(boundExpressions, i => dianosticSpan);
+        }
+
         private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> dianosticSpanProvider)
         {
             // To avoid cascading errors as let's first see whether we couldn't resolve

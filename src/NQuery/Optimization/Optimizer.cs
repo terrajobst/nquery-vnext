@@ -43,9 +43,10 @@ namespace NQuery.Optimization
             // TODO: at most one row reordering
             // TODO: push computations
             
-            // physical join op choosing
-            yield return new HashMatchPhysicalOperatorChooser(); ;
+            // physical op choosing
+            yield return new HashMatchPhysicalOperatorChooser();
             yield return new AggregationPhysicalOperatorChooser();
+            yield return new ConcatenationPhysicalOperatorChooser();
 
             // TODO: null scan optimization
             // TODO: full outer join expansion

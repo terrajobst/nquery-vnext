@@ -38,8 +38,12 @@ namespace NQuery
                     return BuildTop((BoundTopRelation)node);
                 case BoundNodeKind.SortRelation:
                     return BuildSort((BoundSortRelation)node);
-                case BoundNodeKind.CombinedRelation:
-                    return BuildCombinedQuery((BoundCombinedRelation)node);
+                case BoundNodeKind.UnionRelation:
+                    return BuildUnionRelation((BoundUnionRelation)node);
+                case BoundNodeKind.ConcatenationRelation:
+                    return BuildConcatenationRelation((BoundConcatenationRelation)node);
+                case BoundNodeKind.IntersectOrExceptRelation:
+                    return BuildIntersectOrExceptRelation((BoundIntersectOrExceptRelation)node);
                 case BoundNodeKind.GroupByAndAggregationRelation:
                     return BuildGroupByAndAggregation((BoundGroupByAndAggregationRelation)node);
                 case BoundNodeKind.StreamAggregatesRelation:
@@ -179,12 +183,30 @@ namespace NQuery
             return new ShowPlanNode(name, properties, children);
         }
 
-        private static ShowPlanNode BuildCombinedQuery(BoundCombinedRelation node)
+        private static ShowPlanNode BuildUnionRelation(BoundUnionRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = node.Inputs.Select(Build);
+            var kind = node.IsUnionAll ? "UnionAll" : "Union";
+            var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
+            var name = string.Format("{0} {1}", kind, ouputs);
+            return new ShowPlanNode(name, properties, children);
+        }
+
+        private static ShowPlanNode BuildConcatenationRelation(BoundConcatenationRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = node.Inputs.Select(Build);
+            var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
+            var name = string.Format("Concatenation {0}", ouputs);
+            return new ShowPlanNode(name, properties, children);
+        }
+
+        private static ShowPlanNode BuildIntersectOrExceptRelation(BoundIntersectOrExceptRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
-            var slots = string.Join(", ", node.Outputs.Select(v => v.Name));
-            var name = string.Format("{0} {1}", node.Combinator, slots);
+            var name = node.IsIntersect ? "Intersect" : "Except";
             return new ShowPlanNode(name, properties, children);
         }
 

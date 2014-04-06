@@ -32,34 +32,44 @@ namespace NQuery.Binding
             return (IEnumerable<T>) result ?? array;
         }
 
-        private IEnumerable<BoundAggregatedValue> RewriteAggregatedValues(ImmutableArray<BoundAggregatedValue> list)
+        protected IEnumerable<BoundAggregatedValue> RewriteAggregatedValues(ImmutableArray<BoundAggregatedValue> list)
         {
             return RewriteArray(list, RewriteAggregatedValue);
         }
 
-        private IEnumerable<ValueSlot> RewriteValueSlots(ImmutableArray<ValueSlot> list)
+        protected IEnumerable<ValueSlot> RewriteValueSlots(ImmutableArray<ValueSlot> list)
         {
             return RewriteArray(list, RewriteValueSlot);
         }
 
-        private IEnumerable<BoundComputedValue> RewriteComputedValues(ImmutableArray<BoundComputedValue> list)
+        protected IEnumerable<BoundComputedValue> RewriteComputedValues(ImmutableArray<BoundComputedValue> list)
         {
             return RewriteArray(list, RewriteComputedValue);
         }
 
-        private IEnumerable<BoundSortedValue> RewriteSortedValues(ImmutableArray<BoundSortedValue> list)
+        protected IEnumerable<BoundUnifiedValue> RewriteUnifiedValues(ImmutableArray<BoundUnifiedValue> list)
+        {
+            return RewriteArray(list, RewriteUnifiedValue);
+        }
+
+        protected IEnumerable<BoundSortedValue> RewriteSortedValues(ImmutableArray<BoundSortedValue> list)
         {
             return RewriteArray(list, RewriteSortedValue);
         }
 
-        private IEnumerable<BoundExpression> RewriteExpressions(ImmutableArray<BoundExpression> list)
+        protected IEnumerable<BoundExpression> RewriteExpressions(ImmutableArray<BoundExpression> list)
         {
             return RewriteArray(list, RewriteExpression);
         }
 
-        private IEnumerable<BoundCaseLabel> RewriteCaseLabels(ImmutableArray<BoundCaseLabel> list)
+        protected IEnumerable<BoundCaseLabel> RewriteCaseLabels(ImmutableArray<BoundCaseLabel> list)
         {
             return RewriteArray(list, RewriteCaseLabel);
+        }
+
+        protected IEnumerable<BoundRelation> RewriteRelations(ImmutableArray<BoundRelation> list)
+        {
+            return RewriteArray(list, RewriteRelation);
         }
 
         protected virtual BoundAggregatedValue RewriteAggregatedValue(BoundAggregatedValue node)
@@ -74,6 +84,12 @@ namespace NQuery.Binding
         {
             return node.Update(RewriteExpression(node.Expression),
                                RewriteValueSlot(node.ValueSlot));
+        }
+
+        protected virtual BoundUnifiedValue RewriteUnifiedValue(BoundUnifiedValue node)
+        {
+            return node.Update(RewriteValueSlot(node.ValueSlot),
+                               RewriteValueSlots(node.InputValueSlots));
         }
 
         protected virtual ValueSlot RewriteValueSlot(ValueSlot node)

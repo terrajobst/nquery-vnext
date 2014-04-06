@@ -26,8 +26,12 @@ namespace NQuery.Binding
                     return RewriteStreamAggregatesRelation((BoundStreamAggregatesRelation)node);
                 case BoundNodeKind.ConstantRelation:
                     return RewriteConstantRelation((BoundConstantRelation)node);
-                case BoundNodeKind.CombinedRelation:
-                    return RewriteCombinedRelation((BoundCombinedRelation)node);
+                case BoundNodeKind.UnionRelation:
+                    return RewriteUnionRelation((BoundUnionRelation)node);
+                case BoundNodeKind.ConcatenationRelation:
+                    return RewriteConcatenationRelation((BoundConcatenationRelation)node);
+                case BoundNodeKind.IntersectOrExceptRelation:
+                    return RewriteIntersectOrExceptRelation((BoundIntersectOrExceptRelation)node);
                 case BoundNodeKind.ProjectRelation:
                     return RewriteProjectRelation((BoundProjectRelation)node);
                 case BoundNodeKind.SortRelation:
@@ -99,12 +103,24 @@ namespace NQuery.Binding
             return node;
         }
 
-        protected virtual BoundRelation RewriteCombinedRelation(BoundCombinedRelation node)
+        protected virtual BoundRelation RewriteUnionRelation(BoundUnionRelation node)
         {
-            return node.Update(node.Combinator,
+            return node.Update(node.IsUnionAll,
+                               RewriteRelations(node.Inputs),
+                               RewriteUnifiedValues(node.DefinedValues));
+        }
+
+        protected virtual BoundRelation RewriteConcatenationRelation(BoundConcatenationRelation node)
+        {
+            return node.Update(RewriteRelations(node.Inputs),
+                               RewriteUnifiedValues(node.DefinedValues));
+        }
+
+        protected virtual BoundRelation RewriteIntersectOrExceptRelation(BoundIntersectOrExceptRelation node)
+        {
+            return node.Update(node.IsIntersect,
                                RewriteRelation(node.Left),
-                               RewriteRelation(node.Right),
-                               RewriteValueSlots(node.Outputs));
+                               RewriteRelation(node.Right));
         }
 
         protected virtual BoundRelation RewriteProjectRelation(BoundProjectRelation node)

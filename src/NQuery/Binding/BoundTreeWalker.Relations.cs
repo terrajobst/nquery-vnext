@@ -29,8 +29,14 @@ namespace NQuery.Binding
                 case BoundNodeKind.ConstantRelation:
                     VisitConstantRelation((BoundConstantRelation)node);
                     break;
-                case BoundNodeKind.CombinedRelation:
-                    VisitCombinedRelation((BoundCombinedRelation)node);
+                case BoundNodeKind.UnionRelation:
+                    VisitUnionRelation((BoundUnionRelation)node);
+                    break;
+                case BoundNodeKind.ConcatenationRelation:
+                    VisitConcatenationRelation((BoundConcatenationRelation)node);
+                    break;
+                case BoundNodeKind.IntersectOrExceptRelation:
+                    VisitIntersectOrExceptRelation((BoundIntersectOrExceptRelation)node);
                     break;
                 case BoundNodeKind.ProjectRelation:
                     VisitProjectRelation((BoundProjectRelation)node);
@@ -87,7 +93,19 @@ namespace NQuery.Binding
         {
         }
 
-        protected virtual void VisitCombinedRelation(BoundCombinedRelation node)
+        protected virtual void VisitUnionRelation(BoundUnionRelation node)
+        {
+            foreach (var input in node.Inputs)
+                VisitRelation(input);
+        }
+
+        protected virtual void VisitConcatenationRelation(BoundConcatenationRelation node)
+        {
+            foreach (var input in node.Inputs)
+                VisitRelation(input);
+        }
+
+        protected virtual void VisitIntersectOrExceptRelation(BoundIntersectOrExceptRelation node)
         {
             VisitRelation(node.Left);
             VisitRelation(node.Right);

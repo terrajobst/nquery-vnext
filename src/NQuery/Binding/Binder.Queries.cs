@@ -285,79 +285,120 @@ namespace NQuery.Binding
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
         {
-            var left = BindQuery(node.LeftQuery);
-            var right = BindQuery(node.RightQuery);
-            var combinator = node.AllKeyword == null
-                ? BoundQueryCombinator.Union
-                : BoundQueryCombinator.UnionAll;
+            var diagnosticSpan = node.UnionKeyword.Span;
+            var isUnionAll = node.AllKeyword != null;
+            var queries = BindUnionInputs(node);
+            return BindUnionOrUnionAllQuery(diagnosticSpan, isUnionAll, queries);
+        }
 
-            if (left.OutputColumns.Length != right.OutputColumns.Length)
-                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.UnionKeyword.Span);
+        private BoundQuery BindUnionOrUnionAllQuery(TextSpan diagnosticSpan, bool isUnionAll, ImmutableArray<BoundQuery> queries)
+        {
+            var firstQuery = queries.First();
 
-            BoundRelation leftInput;
-            BoundRelation rightInput;
-            var leftOutputValues = BindToCommonTypes(node.UnionKeyword.Span, left, right, out leftInput, out rightInput);
+            if (queries.Length == 1 && isUnionAll)
+                return firstQuery;
 
-            var outputValues = leftOutputValues.Select(c => ValueSlotFactory.CreateTemporaryValueSlot(c.Type)).ToImmutableArray();
-            var outputColumns = BindOutputColumns(left.OutputColumns, outputValues);
-
-            if (combinator == BoundQueryCombinator.Union)
+            foreach (var otherQuery in queries.Skip(1))
             {
-                foreach (var column in outputColumns)
-                    BindComparer(node.UnionKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInUnion);
+                if (otherQuery.OutputColumns.Length != firstQuery.OutputColumns.Length)
+                    Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
             }
 
-            var relation = new BoundCombinedRelation(combinator, leftInput, rightInput, outputValues);
+            var inputs = BindToCommonTypes(diagnosticSpan, queries);
+            var columnCount = queries.Select(q => q.OutputColumns.Length).Min();
+            var outputValues = inputs.First()
+                .GetOutputValues()
+                .Take(columnCount)
+                .Select(v => ValueSlotFactory.CreateTemporaryValueSlot(v.Type))
+                .ToImmutableArray();
+            var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.GetOutputValues().ElementAt(columnIndex))));
+            var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
+
+            if (!isUnionAll)
+            {
+                foreach (var column in outputColumns)
+                    BindComparer(diagnosticSpan, column.Type, DiagnosticId.InvalidDataTypeInUnion);
+            }
+
+            var relation = new BoundUnionRelation(isUnionAll, inputs, definedValues);
             return new BoundQuery(relation, outputColumns);
+        }
+
+        private ImmutableArray<BoundQuery> BindUnionInputs(UnionQuerySyntax node)
+        {
+            var queries = new List<QuerySyntax>();
+            FlattenUnionQueries(queries, node);
+
+            return queries.Select(BindQuery).ToImmutableArray();
+        }
+
+        private static void FlattenUnionQueries(ICollection<QuerySyntax> receiver, UnionQuerySyntax node)
+        {
+            var leftAsUnion = node.LeftQuery as UnionQuerySyntax;
+            if (leftAsUnion != null && HasSameUnionKind(node, leftAsUnion))
+                FlattenUnionQueries(receiver, leftAsUnion);
+            else
+                receiver.Add(node.LeftQuery);
+
+            var rigthAsUnion = node.RightQuery as UnionQuerySyntax;
+            if (rigthAsUnion != null && HasSameUnionKind(node, rigthAsUnion))
+                FlattenUnionQueries(receiver, rigthAsUnion);
+            else
+                receiver.Add(node.RightQuery);
+        }
+
+        private static bool HasSameUnionKind(UnionQuerySyntax left, UnionQuerySyntax right)
+        {
+            return (left.AllKeyword == null) == (right.AllKeyword == null);
         }
 
         private BoundQuery BindIntersectQuery(IntersectQuerySyntax node)
         {
-            var left = BindQuery(node.LeftQuery);
-            var right = BindQuery(node.RightQuery);
-            var columns = left.OutputColumns;
-
-            if (left.OutputColumns.Length != right.OutputColumns.Length)
-                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.IntersectKeyword.Span);
-
-            BoundRelation leftInput;
-            BoundRelation rightInput;
-            var leftOutputValues = BindToCommonTypes(node.IntersectKeyword.Span, left, right, out leftInput, out rightInput);
-
-            var outputValues = leftOutputValues;
-            var outputColumns = BindOutputColumns(columns, outputValues);
-
-            foreach (var column in outputColumns)
-                BindComparer(node.IntersectKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInIntersect);
-
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Intersect, leftInput, rightInput, outputValues);
-            return new BoundQuery(relation, outputColumns);
+            var diagnosticSpan = node.IntersectKeyword.Span;
+            var left = node.LeftQuery;
+            var right = node.RightQuery;
+            return BindIntersectOrExceptQuery(diagnosticSpan, true, left, right);
         }
 
         private BoundQuery BindExceptQuery(ExceptQuerySyntax node)
         {
-            var left = BindQuery(node.LeftQuery);
-            var right = BindQuery(node.RightQuery);
-            var columns = left.OutputColumns;
+            var diagnosticSpan = node.ExceptKeyword.Span;
+            var left = node.LeftQuery;
+            var right = node.RightQuery;
+            return BindIntersectOrExceptQuery(diagnosticSpan, false, left, right);
+        }
 
-            if (left.OutputColumns.Length != right.OutputColumns.Length)
-                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(node.ExceptKeyword.Span);
+        private BoundQuery BindIntersectOrExceptQuery(TextSpan diagnosticSpan, bool isIntersect, QuerySyntax left, QuerySyntax right)
+        {
+            var boundLeft = BindQuery(left);
+            var boundRight = BindQuery(right);
+            var columns = boundLeft.OutputColumns;
+
+            if (boundLeft.OutputColumns.Length != boundRight.OutputColumns.Length)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
 
             BoundRelation leftInput;
             BoundRelation rightInput;
-            var leftOutputValues = BindToCommonTypes(node.ExceptKeyword.Span, left, right, out leftInput, out rightInput);
+            ImmutableArray<ValueSlot> leftValues;
+            ImmutableArray<ValueSlot> rightValues;
+            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out leftInput, out rightInput, out leftValues,
+                out rightValues);
 
-            var outputValues = leftOutputValues;
+            var outputValues = leftValues;
             var outputColumns = BindOutputColumns(columns, outputValues);
 
-            foreach (var column in outputColumns)
-                BindComparer(node.ExceptKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInExcept);
+            var diagnosticId = isIntersect
+                ? DiagnosticId.InvalidDataTypeInIntersect
+                : DiagnosticId.InvalidDataTypeInExcept;
 
-            var relation = new BoundCombinedRelation(BoundQueryCombinator.Except, leftInput, rightInput, outputValues);
+            foreach (var column in outputColumns)
+                BindComparer(diagnosticSpan, column.Type, diagnosticId);
+
+            var relation = new BoundIntersectOrExceptRelation(isIntersect, leftInput, rightInput);
             return new BoundQuery(relation, outputColumns);
         }
 
-        private ImmutableArray<ValueSlot> BindToCommonTypes(TextSpan diagnosticSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight)
+        private void BindToCommonTypes(TextSpan diagnosticSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight, out ImmutableArray<ValueSlot> leftValues, out ImmutableArray<ValueSlot> rightValues)
         {
             var columnCount = Math.Min(left.OutputColumns.Length, right.OutputColumns.Length);
 
@@ -409,7 +450,70 @@ namespace NQuery.Binding
                 ? right.Relation
                 : new BoundProjectRelation(new BoundComputeRelation(right.Relation, rightComputedValues), rightOutputs);
 
-            return leftOutputs.ToImmutableArray();
+            leftValues = leftOutputs.ToImmutableArray();
+            rightValues = rightOutputs.ToImmutableArray();
+        }
+
+        private ImmutableArray<BoundRelation> BindToCommonTypes(TextSpan diagnosticSpan, ImmutableArray<BoundQuery> queries)
+        {
+            var columnCount = queries.Select(q => q.OutputColumns.Length).Min();
+            var computations = new List<BoundComputedValue>[queries.Length];
+
+            var outputs = new List<ValueSlot>[queries.Length];
+            for (var i = 0; i < outputs.Length; i++)
+                outputs[i] = new List<ValueSlot>();
+
+            for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
+            {
+                var expressions = queries.Select(q => new BoundValueSlotExpression(q.OutputColumns[columnIndex].ValueSlot)).OfType<BoundExpression>().ToImmutableArray();
+                var convertedExpressions = BindToCommonType(expressions, diagnosticSpan);
+
+                for (var queryIndex = 0; queryIndex < expressions.Length; queryIndex++)
+                {
+                    var input = expressions[queryIndex];
+                    var converted = convertedExpressions[queryIndex];
+
+                    if (input == converted)
+                    {
+                        // Nothing to do.
+
+                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].ValueSlot;
+                        outputs[queryIndex].Add(originalValueSlot);
+                    }
+                    else
+                    {
+                        if (computations[queryIndex] == null)
+                            computations[queryIndex] = new List<BoundComputedValue>();
+
+                        var computedValueSlot = ValueSlotFactory.CreateTemporaryValueSlot(converted.Type);
+                        var computedValue = new BoundComputedValue(converted, computedValueSlot);
+                        computations[queryIndex].Add(computedValue);
+
+                        outputs[queryIndex].Add(computedValueSlot);
+                    }
+                }
+            }
+
+            var result = new List<BoundRelation>();
+
+            for (var queryIndex = 0; queryIndex < queries.Length; queryIndex++)
+            {
+                var computedValues = computations[queryIndex];
+                var queryRelation = queries[queryIndex].Relation;
+                if (computedValues == null)
+                {
+                    result.Add(queryRelation);
+                }
+                else
+                {
+                    var computeRelation = new BoundComputeRelation(queryRelation, computedValues);
+                    var projectedOutputs = outputs[queryIndex];
+                    var projectRelation = new BoundProjectRelation(computeRelation, projectedOutputs);
+                    result.Add(projectRelation);
+                }
+            }
+
+            return result.ToImmutableArray();
         }
 
         private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<ValueSlot> outputValues)
@@ -688,28 +792,9 @@ namespace NQuery.Binding
                 return BindCommonTableExpressionNonRecursive(commonTableExpression);
             }
 
-            BoundQuery boundAnchorQuery = null;
-
-            foreach (var anchorMember in anchorMembers)
-            {
-                var boundAnchorMember = BindQuery(anchorMember);
-
-                if (boundAnchorQuery == null)
-                {
-                    boundAnchorQuery = boundAnchorMember;
-                }
-                else
-                {
-                    // TODO: Ensure number of columns are identical
-                    // TODO: Check that all data types match exactly -- implicit conversions ARE supported here
-                    var outputColumns = boundAnchorQuery.OutputColumns
-                                                  .Select(c => new QueryColumnInstanceSymbol(c.Name, ValueSlotFactory.CreateTemporaryValueSlot(c.Type)))
-                                                  .ToImmutableArray();
-
-                    var combinedRelation = new BoundCombinedRelation(BoundQueryCombinator.UnionAll, boundAnchorQuery.Relation, boundAnchorMember.Relation, outputColumns.Select(c => c.ValueSlot).ToImmutableArray());
-                    boundAnchorQuery = new BoundQuery(combinedRelation, outputColumns);
-                }
-            }
+            var diagnosticSpan = commonTableExpression.Name.Span;
+            var boundAnchorMembers = anchorMembers.Select(BindQuery).ToImmutableArray();
+            var boundAnchorQuery = BindUnionOrUnionAllQuery(diagnosticSpan, true, boundAnchorMembers);
 
             // TODO: We should respect the CTE's column list, if present
             var columns = (boundAnchorQuery == null
