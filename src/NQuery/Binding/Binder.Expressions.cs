@@ -22,53 +22,8 @@ namespace NQuery.Binding
             }
         }
 
-        private Type BindType(SyntaxToken typeName)
+        private static Type FindCommonType(ImmutableArray<BoundExpression> boundExpressions)
         {
-            var type = LookupType(typeName);
-            if (type != null)
-                return type;
-
-            Diagnostics.ReportUndeclaredType(typeName);
-            return TypeFacts.Unknown;
-        }
-
-        private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
-        {
-            var selected = result.Selected;
-            if (selected == null)
-                return expression;
-
-            var targetType = selected.Signature.GetParameterType(argumentIndex);
-            var conversion = selected.ArgumentConversions[argumentIndex];
-
-            // TODO: We need check for ambiguous conversions here as well.
-
-            return conversion.IsIdentity
-                       ? expression
-                       : new BoundConversionExpression(expression, targetType, conversion);
-        }
-
-        private ImmutableArray<BoundExpression> BindToCommonType(IReadOnlyList<ExpressionSyntax> expressions)
-        {
-            var boundExpressions = expressions.Select(BindExpression).ToImmutableArray();
-
-            // To avoid cascading errors as let's first see whether we couldn't resolve
-            // any of the expressions. If that's the case, we'll simply return them as-is.
-
-            var hasAnyErrors = boundExpressions.Any(e => e.Type.IsError());
-            if (hasAnyErrors)
-                return boundExpressions;
-
-            // Now let's see whether all expression already have the same type.
-            // In that case we can simply return the input as-is.
-
-            var firstType = boundExpressions.Select(e => e.Type).First();
-            var allAreSameType = boundExpressions.All(e => e.Type == firstType);
-            if (allAreSameType)
-                return boundExpressions;
-
-            // Not all expressions have the same type. Let's try to find a common type.
-            //
             // The common type C among a type set T1..TN is defined as follows:
             //
             // (1) C has to be in the set T1..TN. In other words we don't consider
@@ -116,14 +71,69 @@ namespace NQuery.Binding
                 }
             }
 
-            if (commonType == null)
-            {
-                // If we couldn't find a common type, we'll just use the first expression's
-                // type -- this will cause BindConversion below to to report errors.
-                commonType = boundExpressions.First().Type;
-            }
+            return commonType;
+        }
 
-            return boundExpressions.Select((e, i) => BindConversion(expressions[i].Span, e, commonType)).ToImmutableArray();
+        private Type BindType(SyntaxToken typeName)
+        {
+            var type = LookupType(typeName);
+            if (type != null)
+                return type;
+
+            Diagnostics.ReportUndeclaredType(typeName);
+            return TypeFacts.Unknown;
+        }
+
+        private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
+        {
+            var selected = result.Selected;
+            if (selected == null)
+                return expression;
+
+            var targetType = selected.Signature.GetParameterType(argumentIndex);
+            var conversion = selected.ArgumentConversions[argumentIndex];
+
+            // TODO: We need check for ambiguous conversions here as well.
+
+            return conversion.IsIdentity
+                       ? expression
+                       : new BoundConversionExpression(expression, targetType, conversion);
+        }
+
+        private ImmutableArray<BoundExpression> BindToCommonType(IReadOnlyList<ExpressionSyntax> expressions)
+        {
+            var boundExpressions = expressions.Select(BindExpression).ToImmutableArray();
+            return BindToCommonType(boundExpressions, i => expressions[i].Span);
+        }
+
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> dianosticSpanProvider)
+        {
+            // To avoid cascading errors as let's first see whether we couldn't resolve
+            // any of the expressions. If that's the case, we'll simply return them as-is.
+
+            var hasAnyErrors = boundExpressions.Any(e => e.Type.IsError());
+            if (hasAnyErrors)
+                return boundExpressions;
+
+            // Now let's see whether all expression already have the same type.
+            // In that case we can simply return the input as-is.
+
+            var firstType = boundExpressions.Select(e => e.Type).First();
+            var allAreSameType = boundExpressions.All(e => e.Type == firstType);
+            if (allAreSameType)
+                return boundExpressions;
+
+            // Not all expressions have the same type. Let's try to find a common type.
+
+            var commonType = FindCommonType(boundExpressions);
+
+            // If we couldn't find a common type, we'll just use the first expression's
+            // type -- this will cause BindConversion below to to report errors.
+
+            if (commonType == null)
+                commonType = boundExpressions.First().Type;
+
+            return boundExpressions.Select((e, i) => BindConversion(dianosticSpanProvider(i), e, commonType)).ToImmutableArray();
         }
 
         private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
