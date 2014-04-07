@@ -13,5 +13,10 @@ namespace NQuery.Binding
         {
             get { return TypeFacts.Unknown; }
         }
+
+        public override string ToString()
+        {
+            return "?";
+        }
     }
 }

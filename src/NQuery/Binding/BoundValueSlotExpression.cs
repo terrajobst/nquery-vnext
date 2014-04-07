@@ -33,5 +33,10 @@ namespace NQuery.Binding
 
             return new BoundValueSlotExpression(valueSlot);
         }
+
+        public override string ToString()
+        {
+            return _valueSlot.Name;
+        }
     }
 }

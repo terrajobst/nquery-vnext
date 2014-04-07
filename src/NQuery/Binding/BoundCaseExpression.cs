@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 
 namespace NQuery.Binding
 {
@@ -44,6 +45,30 @@ namespace NQuery.Binding
                 return this;
 
             return new BoundCaseExpression(newCaseLabels, elseExpression);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.Append("CASE ");
+
+            foreach (var boundCaseLabel in _caseLabels)
+            {
+                sb.Append("WHEN ");
+                sb.Append(boundCaseLabel.Condition);
+                sb.Append(" THEN ");
+                sb.Append(boundCaseLabel.ThenExpression);
+            }
+
+            if (_elseExpression != null)
+            {
+                sb.Append(" ELSE ");
+                sb.Append(_elseExpression);
+            }
+
+            sb.Append(" END");
+
+            return sb.ToString();
         }
     }
 }

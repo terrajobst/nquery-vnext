@@ -40,5 +40,10 @@ namespace NQuery.Binding
 
             return new BoundSingleRowSubselect(value, relation);
         }
-   }
+
+        public override string ToString()
+        {
+            return string.Format("({0})", _relation);
+        }
+    }
 }

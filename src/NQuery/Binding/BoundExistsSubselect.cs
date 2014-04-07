@@ -33,5 +33,10 @@ namespace NQuery.Binding
 
             return new BoundExistsSubselect(relation);
         }
+
+        public override string ToString()
+        {
+            return string.Format("EXISTS ({0})", _relation);
+        }
     }
 }
