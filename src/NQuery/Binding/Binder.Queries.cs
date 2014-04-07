@@ -172,6 +172,69 @@ namespace NQuery.Binding
 
         private void EnsureAllColumnReferencesAreAggregatedOrGrouped(SyntaxNode node, DiagnosticId diagnosticId)
         {
+            // TODO: This is not entirely true. EXISTS (SELECT * FROM GROUP BY ...) is considered valid.
+            //
+            // For example, the following query is valid:
+            //   
+            //      SELECT  *
+            //      FROM    Employees e
+            //      WHERE   EXISTS (
+            //                  SELECT  *
+            //                  FROM    Orders o
+            //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
+            //                  WHERE   o.EmployeeID = e.EmployeeID
+            //                  GROUP   BY o.OrderID
+            //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
+            //              )
+            //
+            // Please note that explicitly expanding the * is not valid though. For example the
+            // following query should generate an error:
+            //
+            //      SELECT  *
+            //      FROM    Employees e
+            //      WHERE   EXISTS (
+            //                  SELECT  od.UnitPrice,
+            //                          od.Quantity
+            //                  FROM    Orders o
+            //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
+            //                  WHERE   o.EmployeeID = e.EmployeeID
+            //                  GROUP   BY o.OrderID
+            //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
+            //              )
+            //
+            // This also includes the a qualified asterisk. For example, this query is also invalid:
+            //
+            //      SELECT  *
+            //      FROM    Employees e
+            //      WHERE   EXISTS (
+            //                  SELECT  o.*
+            //                  FROM    Orders o
+            //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
+            //                  WHERE   o.EmployeeID = e.EmployeeID
+            //                  GROUP   BY o.OrderID
+            //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
+            //              )
+            //
+            // Also SELECT * is only considered valid if the direct parent is EXISTS. For example,
+            // the following query is invalid:
+            //
+            //      SELECT  *
+            //      FROM    Employees e
+            //      WHERE   EXISTS (
+            //                  SELECT  *
+            //                  FROM    Orders o
+            //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
+            //                  WHERE   o.EmployeeID = e.EmployeeID
+            //                  GROUP   BY o.OrderID
+            //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
+            //      
+            //                  UNION ALL
+            //      
+            //                  SELECT  *
+            //                  FROM    Orders o
+            //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
+            //              )
+
             var wildcardReferences = from n in node.DescendantNodes().OfType<WildcardSelectColumnSyntax>()
                                      let bw = GetBoundNode<BoundWildcardSelectColumn>(n)
                                      where bw != null
