@@ -49,7 +49,7 @@ namespace NQuery.Symbols.Aggregation
         {
             private readonly bool _isMin;
 
-            private IComparable _currentMaxValue;
+            private IComparable _result;
 
             public MinMaxAggregator(bool isMin)
             {
@@ -58,7 +58,7 @@ namespace NQuery.Symbols.Aggregation
 
             public void Initialize()
             {
-                _currentMaxValue = null;
+                _result = null;
             }
 
             public void Accumulate(object value)
@@ -67,30 +67,30 @@ namespace NQuery.Symbols.Aggregation
                 if (comparable == null)
                     return;
 
-                if (_currentMaxValue == null)
+                if (_result == null)
                 {
-                    _currentMaxValue = comparable;
+                    _result = comparable;
                 }
                 else
                 {
-                    var result = _currentMaxValue.CompareTo(comparable);
+                    var comparison = _result.CompareTo(comparable);
 
                     if (_isMin)
                     {
-                        if (result > 0)
-                            _currentMaxValue = comparable;
+                        if (comparison > 0)
+                            _result = comparable;
                     }
                     else
                     {
-                        if (result < 0)
-                            _currentMaxValue = comparable;
+                        if (comparison < 0)
+                            _result = comparable;
                     }
                 }
             }
 
             public object GetResult()
             {
-                return _currentMaxValue;
+                return _result;
             }
         }
     }
