@@ -42,7 +42,7 @@ namespace NQuery.Iterators
             for (var i = 0; i < _aggregators.Length; i++)
             {
                 var aggregator = _aggregators[i];
-                var argument = _argumentFunctions[i](_input.RowBuffer);
+                var argument = _argumentFunctions[i]();
                 aggregator.Accumulate(argument);
             }
         }

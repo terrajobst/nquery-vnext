@@ -143,7 +143,7 @@ namespace NQuery.Iterators
                         {
                             _rowBuffer.SetBuild(_entry);
 
-                            if (_remainder(_rowBuffer))
+                            if (_remainder())
                             {
                                 _entry.Matched = true;
                                 matchFound = true;

@@ -31,7 +31,7 @@ namespace NQuery.Iterators
                 if (!_input.Read())
                     break;
 
-                predicateIsTrue = _predicate(_input.RowBuffer);
+                predicateIsTrue = _predicate();
             }
 
             return predicateIsTrue;

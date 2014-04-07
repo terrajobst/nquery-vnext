@@ -35,7 +35,7 @@ namespace NQuery.Iterators
                 return false;
 
             for (var i = 0; i < _definedValues.Length; i++)
-                _rowBuffer.Array[i] = _definedValues[i](_input.RowBuffer);
+                _rowBuffer.Array[i] = _definedValues[i]();
 
             return true;
         }

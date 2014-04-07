@@ -2,5 +2,5 @@ using System;
 
 namespace NQuery.Iterators
 {
-    internal delegate object IteratorFunction(RowBuffer rowBuffer);
+    internal delegate object IteratorFunction();
 }

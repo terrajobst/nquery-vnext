@@ -58,7 +58,7 @@ namespace NQuery.Iterators
                 }
 
                 // Check predicate.
-                matchingRowFound = _predicate(_rowBuffer);
+                matchingRowFound = _predicate();
             }
 
             return true;

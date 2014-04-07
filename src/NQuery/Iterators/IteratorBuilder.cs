@@ -10,34 +10,43 @@ namespace NQuery.Iterators
 {
     internal sealed class IteratorBuilder
     {
+        private readonly Stack<RowBufferAllocation> _outerRowBufferAllocations = new Stack<RowBufferAllocation>(); 
+
         public static Iterator Build(BoundRelation relation)
         {
             var builder = new IteratorBuilder();
             return builder.BuildRelation(relation);
         }
 
-        private static IteratorFunction BuildFunction(BoundExpression expression, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(BoundRelation input, RowBuffer inputRowBuffer)
         {
-            return ExpressionBuilder.BuildIteratorFunction(expression, valueSlotMapping);
+            var inputAllocation = BuildRowBufferAllocation(input, inputRowBuffer);
+            return BuildRowBufferAllocations(inputAllocation);
         }
 
-        private static IteratorPredicate BuildPredicate(BoundExpression predicate, IReadOnlyDictionary<ValueSlot, int> valueSlotMapping)
+        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation input)
         {
-            return ExpressionBuilder.BuildIteratorPredicate(predicate, valueSlotMapping);
+            return ImmutableArray.Create(input).Concat(_outerRowBufferAllocations);
         }
 
-        private static IReadOnlyDictionary<ValueSlot, int> BuildValueSlotMapping(BoundRelation relation)
+        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation left, RowBufferAllocation right)
         {
-            var outputValues = relation.GetOutputValues().ToImmutableArray();
-            var dictionary = new Dictionary<ValueSlot, int>(outputValues.Length);
-            for (var i = 0; i < outputValues.Length; i++)
-            {
-                var outputValue = outputValues[i];
-                if (!dictionary.ContainsKey(outputValue))
-                    dictionary[outputValue] = i;
-            }
+            return ImmutableArray.Create(left, right).Concat(_outerRowBufferAllocations);
+        }
 
-            return dictionary;
+        private static RowBufferAllocation BuildRowBufferAllocation(BoundRelation input, RowBuffer rowBuffer)
+        {
+            return new RowBufferAllocation(rowBuffer, input.GetOutputValues());
+        }
+
+        private static IteratorFunction BuildFunction(BoundExpression expression, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        {
+            return ExpressionBuilder.BuildIteratorFunction(expression, rowBufferAllocations);
+        }
+
+        private static IteratorPredicate BuildPredicate(BoundExpression predicate, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        {
+            return ExpressionBuilder.BuildIteratorPredicate(predicate, rowBufferAllocations);
         }
 
         private Iterator BuildRelation(BoundRelation relation)
@@ -92,37 +101,47 @@ namespace NQuery.Iterators
         private Iterator BuildJoin(BoundJoinRelation relation)
         {
             var left = BuildRelation(relation.Left);
+            var leftAllocation = BuildRowBufferAllocation(relation.Left, left.RowBuffer);
+
             var right = BuildRelation(relation.Right);
-            var valueSlotMapping = BuildValueSlotMapping(relation);
-            var predicate = BuildPredicate(relation.Condition, valueSlotMapping);
+            var rightAllocation = BuildRowBufferAllocation(relation.Right, right.RowBuffer);
+
+            var rowBufferAllocations = BuildRowBufferAllocations(leftAllocation, rightAllocation);
+            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
+
             return new InnerNestedLoopsIterator(left, right, predicate);
         }
 
         private Iterator BuildHashMatch(BoundHashMatchRelation relation)
         {
             var build = BuildRelation(relation.Build);
-            var buildIndex = BuildValueSlotMapping(relation.Build)[relation.BuildKey];
+            var buildAllocation = BuildRowBufferAllocation(relation.Build, build.RowBuffer);
+            var buildIndex = buildAllocation[relation.BuildKey];
+
             var probe = BuildRelation(relation.Probe);
-            var probeIndex = BuildValueSlotMapping(relation.Probe)[relation.ProbeKey];
-            var valueSlotMapping = BuildValueSlotMapping(relation);
-            var predicate = BuildPredicate(relation.Remainder, valueSlotMapping);
+            var probeAllocation = BuildRowBufferAllocation(relation.Probe, probe.RowBuffer);
+            var probeIndex = probeAllocation[relation.ProbeKey];
+
+            var rowBufferAllocations = BuildRowBufferAllocations(buildAllocation, probeAllocation);
+            var predicate = BuildPredicate(relation.Remainder, rowBufferAllocations);
+
             return new HashMatchIterator(relation.LogicalOperator, build, probe, buildIndex, probeIndex, predicate);
         }
 
         private Iterator BuildFilter(BoundFilterRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var valueSlotMapping = BuildValueSlotMapping(relation.Input);
-            var predicate = BuildPredicate(relation.Condition, valueSlotMapping);
+            var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
+            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
             return new FilterIterator(input, predicate);
         }
 
         private Iterator BuildCompute(BoundComputeRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var inputValueSlotMapping = BuildValueSlotMapping(relation.Input);
+            var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
             var definedValue = relation.DefinedValues
-                                       .Select(dv => BuildFunction(dv.Expression, inputValueSlotMapping))
+                                       .Select(dv => BuildFunction(dv.Expression, rowBufferAllocations))
                                        .ToImmutableArray();
             return new ComputeScalarIterator(input, definedValue);
         }
@@ -137,8 +156,8 @@ namespace NQuery.Iterators
         private Iterator BuildTopWithTies(BoundTopRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var inputValueSlotMapping = BuildValueSlotMapping(relation);
-            var tieEntries = relation.TieEntries.Select(t => inputValueSlotMapping[t.ValueSlot]).ToImmutableArray();
+            var rowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
+            var tieEntries = relation.TieEntries.Select(t => rowBufferAllocation[t.ValueSlot]).ToImmutableArray();
             var tieComparers = relation.TieEntries.Select(t => t.Comparer).ToImmutableArray();
             return new TopWithTiesIterator(input, relation.Limit, tieEntries, tieComparers);
         }
@@ -152,9 +171,9 @@ namespace NQuery.Iterators
         private Iterator BuildSort(BoundSortRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var inputValueSlotMapping = BuildValueSlotMapping(relation);
+            var inputRowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
             var sortEntries = relation.SortedValues
-                                      .Select(v => inputValueSlotMapping[v.ValueSlot])
+                                      .Select(v => inputRowBufferAllocation[v.ValueSlot])
                                       .ToImmutableArray();
             var comparers = relation.SortedValues.Select(v => v.Comparer).ToImmutableArray();
             return relation.IsDistinct
@@ -172,15 +191,16 @@ namespace NQuery.Iterators
         private Iterator BuildStreamAggregatesRelation(BoundStreamAggregatesRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var inputValueSlotMapping = BuildValueSlotMapping(relation.Input);
+            var inputRowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
+            var rowBufferAllocations = BuildRowBufferAllocations(inputRowBufferAllocation);
             var aggregators = relation.Aggregates
                                       .Select(a => a.Aggregatable.CreateAggregator())
                                       .ToImmutableArray();
             var argumentFunctions = relation.Aggregates
-                                            .Select(a => BuildFunction(a.Argument, inputValueSlotMapping))
+                                            .Select(a => BuildFunction(a.Argument, rowBufferAllocations))
                                             .ToImmutableArray();
             var groupEntries = relation.Groups
-                                       .Select(v => inputValueSlotMapping[v])
+                                       .Select(v => inputRowBufferAllocation[v])
                                        .ToImmutableArray();
             return new StreamAggregateIterator(input, groupEntries, aggregators, argumentFunctions);
         }
@@ -188,8 +208,8 @@ namespace NQuery.Iterators
         private Iterator BuildProject(BoundProjectRelation relation)
         {
             var input = BuildRelation(relation.Input);
-            var inputValueSlotMapping = BuildValueSlotMapping(relation.Input);
-            var projectedIndices = relation.Outputs.Select(vs => inputValueSlotMapping[vs]).ToImmutableArray();
+            var inputRowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
+            var projectedIndices = relation.Outputs.Select(vs => inputRowBufferAllocation[vs]).ToImmutableArray();
             return new ProjectionIterator(input, projectedIndices);
         }
     }
