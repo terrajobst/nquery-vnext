@@ -19,7 +19,7 @@ namespace NQuery.Symbols.Aggregation
         public override IAggregatable CreateAggregatable(Type argumentType)
         {
             return typeof(IComparable).IsAssignableFrom(argumentType)
-                ? new MinMaxAggregatable(argumentType, false)
+                ? new MinMaxAggregatable(argumentType, _isMin)
                 : null;
         }
 
