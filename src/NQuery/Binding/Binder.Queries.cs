@@ -820,12 +820,10 @@ namespace NQuery.Binding
             //       cast because we also bind input the parser reported errors for.
             var topClause = node.SelectClause.TopClause;
             var top = topClause == null ? null : topClause.Value.Value as int?;
-            var withTies = topClause != null && (topClause.TiesKeyword != null || topClause.WithKeyword != null);
+            var withTies = topClause != null && topClause.WithKeyword != null;
 
             if (withTies && orderedQueryNode == null)
-            {
-                // TODO: ERROR - we require an ORDER BY
-            }
+                Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause.Span);
 
             // Putting it together
 

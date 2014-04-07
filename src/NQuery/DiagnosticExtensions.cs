@@ -544,11 +544,10 @@ namespace NQuery
         //    diagnostics.Add(diagnostic);
         //}
 
-        //public static void ReportTopWithTiesRequiresOrderBy(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    var diagnostic = new Diagnostic(DiagnosticId.TopWithTiesRequiresOrderBy, Resources.TopWithTiesRequiresOrderBy);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportTopWithTiesRequiresOrderBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.TopWithTiesRequiresOrderBy);
+        }
 
         public static void ReportOrderByColumnPositionIsOutOfRange(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, int position, int numberOfColumns)
         {
