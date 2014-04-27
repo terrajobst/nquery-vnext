@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.QuickInfo;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.VSEditorWpf.Document;
 
@@ -13,14 +14,14 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
     internal sealed class QuickInfoManager : IQuickInfoManager
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly IQuickInfoBroker _quickInfoBroker;
         private readonly IQuickInfoModelProviderService _quickInfoModelProviderService;
 
         private QuickInfoModel _model;
         private IQuickInfoSession _session;
 
-        public QuickInfoManager(ITextView textView, INQueryDocument document, IQuickInfoBroker quickInfoBroker, IQuickInfoModelProviderService quickInfoModelProviderService)
+        public QuickInfoManager(ITextView textView, NQueryDocument document, IQuickInfoBroker quickInfoBroker, IQuickInfoModelProviderService quickInfoModelProviderService)
         {
             _textView = textView;
             _document = document;
@@ -62,7 +63,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                     else if (showSession)
                     {
                         var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
-                        var snapshot = _document.GetTextSnapshot(syntaxTree);
+                        var snapshot = syntaxTree.GetTextSnapshot();
                         var triggerPosition = _model.Span.Start;
                         var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 

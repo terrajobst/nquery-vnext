@@ -1,30 +1,35 @@
 using System;
+
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
+
 using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.Document;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
     {
+        private readonly NQueryDocument _queryDocument;
+
         public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
             : base(typeof(NQuerySemanticIssueSquiggleClassifier).Name, null, document, true)
         {
-            var nqueryDocument = document as NQueryDocument;
-            if (nqueryDocument == null)
+            _queryDocument = document.GetNQueryDocument();
+            if (_queryDocument == null)
                 return;
 
-            nqueryDocument.SemanticDataChanged += NqueryDocumentOnSemanticDataChanged;
+            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             UpdateTags();
         }
 
         private async void UpdateTags()
         {
-            var semanticData = await Document.GetSemanticDataAsync();
-            var codeIssues = semanticData.SemanticModel.GetIssues();
-            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var semanticModel = await _queryDocument.GetSemanticModelAsync();
+            var codeIssues = semanticModel.GetIssues();
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
 
@@ -51,7 +56,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             }
         }
 
-        private void NqueryDocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }

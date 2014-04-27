@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 using NQuery;
-using NQuery.Authoring;
+using NQuery.Authoring.Document;
 using NQuery.Text;
 
 namespace NQueryViewer.Editor

@@ -35,15 +35,19 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
         public override object GetContext(IEditorView view, int offset)
         {
             var snapshot = view.CurrentSnapshot;
-            var semanticData = snapshot.GetSemanticData();
-            if (semanticData == null)
+            var document = snapshot.Document.GetNQueryDocument();
+            if (document == null)
                 return null;
 
-            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            SemanticModel semanticModel;
+            if (!document.TryGetSemanticModel(out semanticModel))
+                return null;
+
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = semanticData.SemanticModel.GetQuickInfoModel(position, _providers);
+            var model = semanticModel.GetQuickInfoModel(position, _providers);
             return model;
         }
 

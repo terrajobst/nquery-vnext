@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.Classifications;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
@@ -15,9 +16,9 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
     internal sealed class NQuerySyntaxClassifier : AsyncTagger<IClassificationTag, SyntaxClassificationSpan>
     {
         private readonly INQueryClassificationService _classificationService;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
 
-        public NQuerySyntaxClassifier(INQueryClassificationService classificationService, INQueryDocument document)
+        public NQuerySyntaxClassifier(INQueryClassificationService classificationService, NQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;
@@ -33,7 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SyntaxClassificationSpan>>> GetRawTagsAsync()
         {
             var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var snapshot = syntaxTree.GetTextSnapshot();
             var classificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySyntax());
             return Tuple.Create(snapshot, classificationSpans.AsEnumerable());
         }

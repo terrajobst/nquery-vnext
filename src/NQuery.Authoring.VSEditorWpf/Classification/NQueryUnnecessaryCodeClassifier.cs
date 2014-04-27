@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 using NQuery.Text;
 
@@ -15,9 +16,9 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
     internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag,TextSpan>
     {
         private readonly INQueryClassificationService _classificationService;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
 
-        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, INQueryDocument document)
+        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, NQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;
@@ -33,8 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<TextSpan>>> GetRawTagsAsync()
         {
             var semanticModel = await _document.GetSemanticModelAsync();
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var snapshot = semanticModel.GetTextSnapshot();
             var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
             return Tuple.Create(snapshot, unnecessarySpans);
         }

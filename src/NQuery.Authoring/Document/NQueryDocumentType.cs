@@ -1,6 +1,6 @@
 using System;
 
-namespace NQuery.Authoring
+namespace NQuery.Authoring.Document
 {
     public enum NQueryDocumentType
     {

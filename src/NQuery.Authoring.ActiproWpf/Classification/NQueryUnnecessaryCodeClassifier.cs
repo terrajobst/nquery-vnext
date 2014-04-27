@@ -9,6 +9,7 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.Document;
 using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Classification
@@ -16,36 +17,37 @@ namespace NQuery.Authoring.ActiproWpf.Classification
     internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassificationTag>
     {
         private readonly INQueryClassificationTypes _classificationTypes;
+        private readonly NQueryDocument _queryDocument;
 
         public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
             : base(typeof(NQueryUnnecessaryCodeClassifier).Name, null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
-            var queryDocument = document as NQueryDocument;
-            if (queryDocument == null)
+            _queryDocument = document.GetNQueryDocument();
+            if (_queryDocument == null)
                 return;
 
-            queryDocument.SemanticDataChanged += DocumentOnSemanticDataChanged;
+            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             UpdateTags();
         }
 
-        private void DocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }
 
         private async void UpdateTags()
         {
-            var semanticData = await Document.GetSemanticDataAsync();
-            if (semanticData == null)
+            var semanticModel = await _queryDocument.GetSemanticModelAsync();
+            if (semanticModel == null)
                 return;
 
-            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
 
-            var unnecessaryCodeSpans = await GetUnnecessaryCodeSpansAsync(semanticData);
+            var unnecessaryCodeSpans = await GetUnnecessaryCodeSpansAsync(semanticModel);
             var tags = from cs in unnecessaryCodeSpans
                        let textRange = textBuffer.ToSnapshotRange(snapshot, cs)
                        let classificationType = _classificationTypes.Unnecessary
@@ -60,12 +62,12 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             }
         }
 
-        private static Task<IEnumerable<TextSpan>> GetUnnecessaryCodeSpansAsync(NQuerySemanticData semanticData)
+        private static Task<IEnumerable<TextSpan>> GetUnnecessaryCodeSpansAsync(SemanticModel semanticModel)
         {
-            return Task.Run<IEnumerable<TextSpan>>(() => semanticData.SemanticModel.GetIssues()
-                                                                                   .Where(i => i.Kind == CodeIssueKind.Unnecessary)
-                                                                                   .Select(i => i.Span)
-                                                                                   .ToImmutableArray());
+            return Task.Run<IEnumerable<TextSpan>>(() => semanticModel.GetIssues()
+                                                                      .Where(i => i.Kind == CodeIssueKind.Unnecessary)
+                                                                      .Select(i => i.Span)
+                                                                      .ToImmutableArray());
         }
     }
 }

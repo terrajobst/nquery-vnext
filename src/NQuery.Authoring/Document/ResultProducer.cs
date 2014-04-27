@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NQuery.Authoring
+namespace NQuery.Authoring.Document
 {
-    public sealed class ResultProducer<TInput, TResult>
+    internal sealed class ResultProducer<TInput, TResult>
         where TInput : class
         where TResult : class
     {
@@ -81,6 +81,12 @@ namespace NQuery.Authoring
             var source = new TaskCompletionSource<TResult>();
             _sources.Add(source);
             return source.Task;
+        }
+
+        public bool TryGetResult(out TResult result)
+        {
+            result = _lastResult;
+            return result != null;
         }
     }
 }

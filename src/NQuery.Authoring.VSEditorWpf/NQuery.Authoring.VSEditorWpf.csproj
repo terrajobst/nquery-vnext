@@ -102,10 +102,10 @@
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
+    <Compile Include="Document\TextBufferExensions.cs" />
     <Compile Include="Document\NQueryDocumentManager.cs" />
-    <Compile Include="Document\INQueryDocument.cs" />
     <Compile Include="Document\INQueryDocumentManager.cs" />
-    <Compile Include="Document\NQueryDocument.cs" />
+    <Compile Include="Text\SnapshotTextBufferPovider.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManager.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManagerProvider.cs" />
     <Compile Include="Highlighting\HighlightTag.cs" />

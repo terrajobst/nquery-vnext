@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 using NQuery.Authoring.Wpf.CodeActions;
 
@@ -19,13 +19,13 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
     internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICodeActionGlyphController
     {
         private readonly IWpfTextViewHost _textViewHost;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
         private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
         private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
 
-        public NQueryCodeActionsMargin(IWpfTextViewHost textViewHost, INQueryDocument document, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
+        public NQueryCodeActionsMargin(IWpfTextViewHost textViewHost, NQueryDocument document, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {
             _textViewHost = textViewHost;
             _document = document;
@@ -91,10 +91,11 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
         {
             var textView = _textViewHost.TextView;
             var textBuffer = textView.TextBuffer;
-            var bufferPosition = textView.Caret.Position.BufferPosition;
-            var position = bufferPosition.Position;
-            var textViewLine = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
             var semanticModel = await _document.GetSemanticModelAsync();
+            var snapshot = semanticModel.GetTextSnapshot();
+            var position = textView.GetCaretPosition(snapshot);
+            var bufferPosition = new SnapshotPoint(snapshot, position).TranslateTo(textBuffer.CurrentSnapshot, PointTrackingMode.Negative);
+            var textViewLine = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
             var actionModels = await GetActionModelsAsync(semanticModel, position, textBuffer);
 
             if (actionModels.Length == 0)

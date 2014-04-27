@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.Composition.BraceMatching;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.BraceMatching
@@ -16,10 +17,10 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
     internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSpan>
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly IBraceMatcherService _braceMatcherService;
 
-        public NQueryBraceTagger(ITextView textView, INQueryDocument document, IBraceMatcherService braceMatcherService)
+        public NQueryBraceTagger(ITextView textView, NQueryDocument document, IBraceMatcherService braceMatcherService)
         {
             _textView = textView;
             _document = document;
@@ -41,9 +42,9 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
         {
-            var position = _textView.Caret.Position.BufferPosition.Position;
             var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var position = _textView.GetCaretPosition(snapshot);
             var result = syntaxTree.MatchBraces(position, _braceMatcherService.Matchers);
             if (!result.IsValid)
                 return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());

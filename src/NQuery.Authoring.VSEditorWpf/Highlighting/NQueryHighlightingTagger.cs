@@ -8,18 +8,19 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.Highlighting;
+using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
     internal sealed class NQueryHighlightingTagger : AsyncTagger<HighlightTag, SnapshotSpan>
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly ImmutableArray<IHighlighter> _highlighters;
 
-        public NQueryHighlightingTagger(ITextView textView, INQueryDocument document, ImmutableArray<IHighlighter> highlighters)
+        public NQueryHighlightingTagger(ITextView textView, NQueryDocument document, ImmutableArray<IHighlighter> highlighters)
         {
             _textView = textView;
             _document = document;
@@ -41,10 +42,9 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
         {
-            var position = _textView.Caret.Position.BufferPosition.Position;
             var semanticModel = await _document.GetSemanticModelAsync();
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var snapshot = semanticModel.GetTextSnapshot();
+            var position = _textView.GetCaretPosition(snapshot);
 
             var spans = semanticModel.GetHighlights(position, _highlighters)
                                      .Select(span => new SnapshotSpan(snapshot, span.Start, span.Length));

@@ -21,11 +21,14 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
         {
             var snapshot = snapshotOffset.Snapshot;
-            var parseData = snapshot.GetParseData();
-            if (parseData == null)
+            var document = snapshot.Document.GetNQueryDocument();
+            if (document == null)
                 return null;
 
-            var syntaxTree = parseData.SyntaxTree;
+            SyntaxTree syntaxTree;
+            if (!document.TryGetSyntaxTree(out syntaxTree))
+                return null;
+
             var textBuffer = syntaxTree.TextBuffer;
             var position = snapshotOffset.ToOffset(textBuffer);
 

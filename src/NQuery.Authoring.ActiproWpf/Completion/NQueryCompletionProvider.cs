@@ -44,12 +44,11 @@ namespace NQuery.Authoring.ActiproWpf.Completion
 
         private async void RequestSessionAsync(IEditorView view, bool canCommitWithoutPopup)
         {
-            var semanticData = await view.CurrentSnapshot.Document.GetSemanticDataAsync();
-            if (semanticData == null)
+            var semanticModel = await view.CurrentSnapshot.Document.GetSemanticModelAsync();
+            if (semanticModel == null)
                 return;
 
-            var snapshot = semanticData.SemanticModel.Compilation.SyntaxTree.GetTextSnapshot();
-            var semanticModel = semanticData.SemanticModel;
+            var snapshot = semanticModel.Compilation.SyntaxTree.GetTextSnapshot();
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;
@@ -59,13 +58,13 @@ namespace NQuery.Authoring.ActiproWpf.Completion
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
             var completionSession = existingSession ?? new NQueryCompletionSession
-                                                           {
-                                                               MatchOptions = CompletionMatchOptions.TargetsDisplayText |
-                                                                              CompletionMatchOptions.IsCaseInsensitive |
-                                                                              CompletionMatchOptions.UseAcronyms,
-                                                               CanFilterUnmatchedItems = true,
-                                                               CanCommitWithoutPopup = canCommitWithoutPopup
-                                                           };
+            {
+                MatchOptions = CompletionMatchOptions.TargetsDisplayText |
+                               CompletionMatchOptions.IsCaseInsensitive |
+                               CompletionMatchOptions.UseAcronyms,
+                CanFilterUnmatchedItems = true,
+                CanCommitWithoutPopup = canCommitWithoutPopup
+            };
 
             completionSession.Items.Clear();
 

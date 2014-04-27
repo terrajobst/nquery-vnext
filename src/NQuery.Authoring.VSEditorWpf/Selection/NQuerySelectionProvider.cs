@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.Document;
 using NQuery.Authoring.Selection;
-using NQuery.Authoring.VSEditorWpf.Document;
 using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection
@@ -13,10 +13,10 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
 
-        public NQuerySelectionProvider(ITextView textView, INQueryDocument document)
+        public NQuerySelectionProvider(ITextView textView, NQueryDocument document)
         {
             _textView = textView;
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;

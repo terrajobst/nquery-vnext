@@ -10,16 +10,17 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Composition.CodeActions;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     internal sealed class NQueryCodeIssueTagger : AsyncTagger<IErrorTag, CodeIssue>
     {
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly ICodeIssueProviderService _codeIssueProviderService;
 
-        public NQueryCodeIssueTagger(INQueryDocument document, ICodeIssueProviderService codeIssueProviderService)
+        public NQueryCodeIssueTagger(NQueryDocument document, ICodeIssueProviderService codeIssueProviderService)
         {
             _document = document;
             _codeIssueProviderService = codeIssueProviderService;
@@ -35,7 +36,7 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<CodeIssue>>> GetRawTagsAsync()
         {
             var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = _document.GetTextSnapshot(semanticModel.Compilation.SyntaxTree);
+            var snapshot = semanticModel.GetTextSnapshot();
             var providers = _codeIssueProviderService.Providers;
             var issues = await Task.Run(() => semanticModel.GetIssues(providers).Where(IsWarningOrError).ToImmutableArray());
             return Tuple.Create(snapshot, issues.AsEnumerable());

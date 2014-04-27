@@ -3,69 +3,43 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
+using NQuery.Authoring.ActiproWpf.Text;
+using NQuery.Authoring.Document;
 using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf
 {
     public static class NQueryExtensions
     {
-        public static NQueryParseData GetParseData(this ITextDocument document)
+        private static readonly object NQueryDocumentKey = new object();
+
+        public static NQueryDocument GetNQueryDocument(this ICodeDocument codeDocument)
         {
-            return document.CurrentSnapshot.GetParseData();
+            return codeDocument.Properties.GetOrCreateSingleton(NQueryDocumentKey, () =>
+            {
+                var provider = new SnapshotTextBufferPovider(codeDocument);
+                var document = new NQueryDocument(provider);
+                new NQueryParseDataSynchronizer(codeDocument, document);
+                return document;
+            });
         }
 
-        public static NQueryParseData GetParseData(this ITextSnapshot snapshot)
+        public static NQueryDocument GetNQueryDocument(this ITextDocument textDocument)
         {
-            var document = snapshot.Document as ICodeDocument;
-            if (document == null)
-                return null;
-
-            var parseData = document.ParseData as NQueryParseData;
-            if (parseData == null)
-                return null;
-
-            if (parseData.SyntaxTree.GetTextSnapshot() != snapshot)
-                return null;
-
-            return parseData;
+            var codeDocument = textDocument as ICodeDocument;
+            return codeDocument == null ? null : codeDocument.GetNQueryDocument();
         }
 
-        public static NQuerySemanticData GetSemanticData(this ITextDocument document)
+        public static Task<SyntaxTree> GetSyntaxTreeAsync(this ITextDocument textDocument)
         {
-            return document.CurrentSnapshot.GetSemanticData();
+            var document = textDocument.GetNQueryDocument();
+            return document == null ? Task.FromResult<SyntaxTree>(null) : document.GetSyntaxTreeAsync();
         }
 
-        public static NQuerySemanticData GetSemanticData(this ITextSnapshot snapshot)
+        public static Task<SemanticModel> GetSemanticModelAsync(this ITextDocument textDocument)
         {
-            var document = snapshot.Document as NQueryDocument;
-            if (document == null)
-                return null;
-
-            var semanticData = document.SemanticData;
-            if (semanticData == null)
-                return null;
-
-            var semanticSnapshot = semanticData.SemanticModel.Compilation.SyntaxTree.GetTextSnapshot();
-            if (semanticSnapshot != snapshot)
-                return null;
-
-            return semanticData;
-        }
-
-        public static Task<NQueryParseData> GetParseDataAsync(this ITextDocument document)
-        {
-            var queryDocument = document as NQueryDocument;
-            return queryDocument == null
-                       ? Task.FromResult<NQueryParseData>(null)
-                       : queryDocument.GetParseDataAsync();
-        }
-
-        public static Task<NQuerySemanticData> GetSemanticDataAsync(this ITextDocument document)
-        {
-            var queryDocument = document as NQueryDocument;
-            return queryDocument == null
-                       ? Task.FromResult<NQuerySemanticData>(null)
-                       : queryDocument.GetSemanticDataAsync();
+            var document = textDocument.GetNQueryDocument();
+            return document == null ? Task.FromResult<SemanticModel>(null) : document.GetSemanticModelAsync();
         }
 
         public static TextSnapshotOffset ToSnapshotOffset(this TextBuffer textBuffer, ITextSnapshot snapshot, int position)
@@ -100,6 +74,12 @@ namespace NQuery.Authoring.ActiproWpf
             var start = startOffset.ToOffset(textBuffer);
             var end = endOffset.ToOffset(textBuffer);
             return TextSpan.FromBounds(start, end);
+        }
+
+        public static ITextSnapshot GetTextSnapshot(this SyntaxTree syntaxTree)
+        {
+            var textBuffer = syntaxTree.TextBuffer as SnapshotTextBuffer;
+            return textBuffer == null ? null : textBuffer.Snapshot;
         }
     }
 }

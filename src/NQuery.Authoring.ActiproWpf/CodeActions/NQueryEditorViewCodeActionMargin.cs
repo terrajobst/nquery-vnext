@@ -27,9 +27,9 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             _view = view;
             _view.SelectionChanged += ViewOnSelectionChanged;
             _view.TextAreaLayout += ViewOnTextAreaLayout;
-            var document = _view.SyntaxEditor.Document as NQueryDocument;
+            var document = _view.SyntaxEditor.Document.GetNQueryDocument();
             if (document != null)
-                document.SemanticDataChanged += DocumentOnSemanticDataChanged;
+                document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             _view.SyntaxEditor.Document.Language.RegisterService(typeof(ICodeActionGlyphController), this);
 
             Width = 19;
@@ -80,7 +80,7 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
                                 .Select(a => new TextDocumentCodeActionModel(CodeActionKind.Refactoring, a, textDocument));
         }
 
-        private void DocumentOnSemanticDataChanged(object sender, EventArgs e)
+        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
         {
             UpdateGlyph();
         }
@@ -97,12 +97,11 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
 
         private async void UpdateGlyph()
         {
-            var document = _view.SyntaxEditor.Document;
-            var semanticData = await document.GetSemanticDataAsync();
-            var semanticModel = semanticData.SemanticModel;
+            var textDocument = _view.SyntaxEditor.Document;
+            var semanticModel = await textDocument.GetSemanticModelAsync();
             var textBuffer = semanticModel.Compilation.SyntaxTree.TextBuffer;
             var position = _view.Selection.StartSnapshotOffset.ToOffset(textBuffer);
-            var actionModels = await GetActionModelsAsync(semanticModel, position, document);
+            var actionModels = await GetActionModelsAsync(semanticModel, position, textDocument);
 
             if (actionModels.Length == 0)
             {

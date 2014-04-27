@@ -29,17 +29,17 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
         private async void RequestSessionAsync(IEditorView view)
         {
-            var semanticData = await view.CurrentSnapshot.Document.GetSemanticDataAsync();
-            if (semanticData == null)
+            var semanticModel = await view.CurrentSnapshot.Document.GetSemanticModelAsync();
+            if (semanticModel == null)
                 return;
 
-            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
             var offset = view.SyntaxEditor.Caret.Offset;
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
 
-            var model = semanticData.SemanticModel.GetSignatureHelpModel(position, _providers);
+            var model = semanticModel.GetSignatureHelpModel(position, _providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
 

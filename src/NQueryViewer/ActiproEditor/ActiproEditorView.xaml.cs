@@ -3,7 +3,6 @@ using System.Windows;
 using System.Windows.Media;
 
 using ActiproSoftware.Text;
-using ActiproSoftware.Text.Parsing;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
@@ -19,7 +18,7 @@ namespace NQueryViewer.ActiproEditor
     internal sealed partial class ActiproEditorView : IActiproEditorView
     {
         private readonly SyntaxEditor _syntaxEditor;
-        private readonly NQueryDocument _document;
+        private readonly NQuery.Authoring.Document.NQueryDocument _document;
 
         public ActiproEditorView()
         {
@@ -31,19 +30,19 @@ namespace NQueryViewer.ActiproEditor
 
             AmbientHighlightingStyleRegistry.Instance.Register(ClassificationTypes.CompilerError, new HighlightingStyle(Brushes.Blue));
 
-            _document = new NQueryDocument();
-            _document.ParseDataChanged += DocumentOnParseDataChanged;
-            _document.SemanticDataChanged += DocumentOnSemanticDataChanged;
-
             _syntaxEditor = new SyntaxEditor();
             _syntaxEditor.IsIndicatorMarginVisible = true;
             _syntaxEditor.IsSelectionMarginVisible = false;
             _syntaxEditor.BorderThickness = new Thickness(0);
-            _syntaxEditor.Document = _document;
+            _syntaxEditor.Document.Language = language;
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
             _syntaxEditor.RegisterCodeActionCommands();
             _syntaxEditor.RegisterSelectionCommands();
             _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
+
+            _document = _syntaxEditor.Document.GetNQueryDocument();
+            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
 
             EditorHost.Content = _syntaxEditor;
             DocumentType = _document.DocumentType;
@@ -58,9 +57,9 @@ namespace NQueryViewer.ActiproEditor
 
         private async void UpdateCaretAndSelection()
         {
-            var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
-            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var textBuffer = syntaxTree.TextBuffer;
 
             var snapshotRange = _syntaxEditor.ActiveView.Selection.SnapshotRange;
             var translatedRange = snapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default);
@@ -70,21 +69,21 @@ namespace NQueryViewer.ActiproEditor
             Selection = span;
         }
 
-        private void DocumentOnParseDataChanged(object sender, ParseDataPropertyChangedEventArgs e)
+        private async void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
         {
-            SyntaxTree = _document.ParseData.SyntaxTree;
+            SyntaxTree = await _document.GetSyntaxTreeAsync();
         }
 
-        private void DocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
+        private async void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
         {
-            SemanticModel = _document.SemanticData.SemanticModel;
+            SemanticModel = await _document.GetSemanticModelAsync();
         }
 
         protected override async void OnCaretPositionChanged()
         {
-            var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
-            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var textBuffer = syntaxTree.TextBuffer;
             var snapshotOffset = textBuffer.ToSnapshotOffset(snapshot, CaretPosition);
             _syntaxEditor.Caret.Position = snapshotOffset.Position;
             base.OnCaretPositionChanged();
@@ -92,9 +91,9 @@ namespace NQueryViewer.ActiproEditor
 
         protected override async void OnSelectionChanged()
         {
-            var parseData = await _document.GetParseDataAsync();
-            var snapshot = parseData.SyntaxTree.GetTextSnapshot();
-            var textBuffer = parseData.SyntaxTree.TextBuffer;
+            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var snapshot = syntaxTree.GetTextSnapshot();
+            var textBuffer = syntaxTree.TextBuffer;
             var snapshotRange = textBuffer.ToSnapshotRange(snapshot, Selection);
             _syntaxEditor.ActiveView.Selection.SelectRange(snapshotRange);
             base.OnSelectionChanged();

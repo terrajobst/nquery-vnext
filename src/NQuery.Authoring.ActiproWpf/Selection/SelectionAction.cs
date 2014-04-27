@@ -40,11 +40,10 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 
             public async void ExtendSelection()
             {
-                var parseData = await _editorView.SyntaxEditor.Document.GetParseDataAsync();
-                if (parseData == null)
+                var syntaxTree = await _editorView.SyntaxEditor.Document.GetSyntaxTreeAsync();
+                if (syntaxTree == null)
                     return;
 
-                var syntaxTree = parseData.SyntaxTree;
                 var currentSelection = _editorView.Selection.SnapshotRange.ToTextSpan(syntaxTree.TextBuffer);
                 var extendedSelection = syntaxTree.ExtendSelection(currentSelection);
 
@@ -52,26 +51,26 @@ namespace NQuery.Authoring.ActiproWpf.Selection
                     return;
 
                 _selectionStack.Push(currentSelection);
-                Select(extendedSelection, parseData);
+                Select(extendedSelection, syntaxTree);
             }
 
             public async void ShrinkSelection()
             {
-                var parseData = await _editorView.SyntaxEditor.Document.GetParseDataAsync();
-                if (parseData == null)
+                var syntaxTree = await _editorView.SyntaxEditor.Document.GetSyntaxTreeAsync();
+                if (syntaxTree == null)
                     return;
 
                 if (_selectionStack.Count == 0)
                     return;
 
                 var newSelection = _selectionStack.Pop();
-                Select(newSelection, parseData);
+                Select(newSelection, syntaxTree);
             }
 
-            private void Select(TextSpan selection, NQueryParseData parseData)
+            private void Select(TextSpan selection, SyntaxTree syntaxTree)
             {
-                var textBuffer = parseData.SyntaxTree.TextBuffer;
-                var snapshot = parseData.SyntaxTree.GetTextSnapshot();
+                var textBuffer = syntaxTree.TextBuffer;
+                var snapshot = syntaxTree.GetTextSnapshot();
                 var snapshotRange = textBuffer.ToSnapshotRange(snapshot, selection);
 
                 UnsubscribeToSelectionChanged();

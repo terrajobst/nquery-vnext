@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Composition.Completion;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion
@@ -14,14 +15,14 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
     internal sealed class CompletionModelManager : ICompletionModelManager
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly ICompletionBroker _completionBroker;
         private readonly ICompletionProviderService _completionProviderService;
 
         private ICompletionSession _session;
         private CompletionModel _model;
 
-        public CompletionModelManager(ITextView textView, INQueryDocument document, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
+        public CompletionModelManager(ITextView textView, NQueryDocument document, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
         {
             _completionBroker = completionBroker;
             _completionProviderService = completionProviderService;
@@ -82,8 +83,9 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         private async void UpdateModel()
         {
             var textView = _textView;
-            var triggerPosition = textView.Caret.Position.BufferPosition;
             var semanticModel = await _document.GetSemanticModelAsync();
+            var snapshot = semanticModel.GetTextSnapshot();
+            var triggerPosition = textView.GetCaretPosition(snapshot);
             var model = semanticModel.GetCompletionModel(triggerPosition, _completionProviderService.Providers);
 
             // Let observers know that we've a new model.
@@ -133,7 +135,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 else if (showSession)
                 {
                     var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
-                    var snapshot = _document.GetTextSnapshot(syntaxTree);
+                    var snapshot = syntaxTree.GetTextSnapshot();
                     var triggerPosition = _model.ApplicableSpan.Start;
                     var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 

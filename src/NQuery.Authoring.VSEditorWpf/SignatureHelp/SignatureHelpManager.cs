@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.SignatureHelp;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.VSEditorWpf.Document;
 
@@ -14,7 +15,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
     internal sealed class SignatureHelpManager : ISignatureHelpManager
     {
         private readonly ITextView _textView;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly ISignatureHelpBroker _signatureHelpBroker;
         private readonly ISignatureHelpModelProviderService _signatureHelpModelProviderService;
         private readonly object _selectedItemIndexKey = new object();
@@ -22,7 +23,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private ISignatureHelpSession _session;
         private SignatureHelpModel _model;
 
-        public SignatureHelpManager(ITextView textView, INQueryDocument document, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
+        public SignatureHelpManager(ITextView textView, NQueryDocument document, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
         {
             _textView = textView;
             _document = document;
@@ -100,9 +101,9 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private async void UpdateModel()
         {
             var selectedIndex = GetSelectedItemIndex();
-            var textView = _textView;
-            var triggerPosition = textView.Caret.Position.BufferPosition.Position;
             var semanticModel = await _document.GetSemanticModelAsync();
+            var snapshot = semanticModel.GetTextSnapshot();
+            var triggerPosition = _textView.GetCaretPosition(snapshot);
 
             var model = semanticModel.GetSignatureHelpModel(triggerPosition, _signatureHelpModelProviderService.Providers);
 

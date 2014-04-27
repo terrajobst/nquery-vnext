@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Selection;
 using NQuery.Text;
 
@@ -15,10 +15,10 @@ namespace NQueryViewer.VSEditor
     internal sealed partial class VSEditorView : IVSEditorView
     {
         private readonly IWpfTextViewHost _textViewHost;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
         private readonly INQuerySelectionProvider _selectionProvider;
 
-        public VSEditorView(IWpfTextViewHost textViewHost, INQueryDocument document, INQuerySelectionProvider selectionProvider)
+        public VSEditorView(IWpfTextViewHost textViewHost, NQueryDocument document, INQuerySelectionProvider selectionProvider)
         {
             _textViewHost = textViewHost;
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;

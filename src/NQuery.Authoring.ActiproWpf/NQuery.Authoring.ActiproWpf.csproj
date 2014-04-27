@@ -64,6 +64,7 @@
     <Compile Include="Completion\INQueryCompletionProvider.cs" />
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
+    <Compile Include="NQueryParseDataSynchronizer.cs" />
     <Compile Include="QuickInfo\INQueryQuickInfoProvider.cs" />
     <Compile Include="Selection\ExtendSelectionAction.cs" />
     <Compile Include="Selection\SelectionAction.cs" />
@@ -82,8 +83,6 @@
     <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
     <Compile Include="SymbolContent\INQuerySymbolContentProvider.cs" />
     <Compile Include="SymbolContent\GlyphImageProvider.cs" />
-    <Compile Include="NQueryDocument.cs" />
-    <Compile Include="NQuerySemanticData.cs" />
     <Compile Include="Classification\INQueryClassificationTypes.cs" />
     <Compile Include="BraceMatching\NQueryBraceMatcher.cs" />
     <Compile Include="Classification\NQueryClassificationTypes.cs" />
@@ -103,8 +102,8 @@
     <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
     <Compile Include="SymbolContent\NQuerySymbolContentProvider.cs" />
-    <Compile Include="SyntaxTreeExtensions.cs" />
     <Compile Include="Text\SnapshotTextBuffer.cs" />
+    <Compile Include="Text\SnapshotTextBufferPovider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">

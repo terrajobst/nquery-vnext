@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.Classifications;
+using NQuery.Authoring.Document;
 using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
@@ -15,9 +16,9 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
     internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,SemanticClassificationSpan>
     {
         private readonly INQueryClassificationService _classificationService;
-        private readonly INQueryDocument _document;
+        private readonly NQueryDocument _document;
 
-        public NQuerySemanticClassifier(INQueryClassificationService classificationService, INQueryDocument document)
+        public NQuerySemanticClassifier(INQueryClassificationService classificationService, NQueryDocument document)
         {
             _classificationService = classificationService;
             _document = document;
@@ -34,7 +35,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             var semanticModel = await _document.GetSemanticModelAsync();
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = _document.GetTextSnapshot(syntaxTree);
+            var snapshot = syntaxTree.GetTextSnapshot();
             var semanticClassificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySemantics(semanticModel));
             return Tuple.Create(snapshot, semanticClassificationSpans.AsEnumerable());
         }

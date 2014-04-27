@@ -2,39 +2,37 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.VisualStudio.Text;
+using NQuery.Text;
 
-using NQuery.Authoring.VSEditorWpf.Text;
-
-namespace NQuery.Authoring.VSEditorWpf.Document
+namespace NQuery.Authoring.Document
 {
-    internal sealed class NQueryDocument : INQueryDocument
+    public sealed class NQueryDocument
     {
-        private readonly ITextBuffer _textBuffer;
-        private readonly ResultProducer<ITextSnapshot, SyntaxTree> _syntaxTreeProducer;
+        private readonly TextBufferProvider _textBufferProvider;
+        private readonly ResultProducer<TextBuffer, SyntaxTree> _syntaxTreeProducer;
         private readonly ResultProducer<Compilation, SemanticModel> _semanticModelProducer;
 
         private NQueryDocumentType _documentType;
         private Compilation _compilation;
 
-        public NQueryDocument(ITextBuffer textBuffer)
+        public NQueryDocument(TextBufferProvider textBufferProvider)
         {
-            _textBuffer = textBuffer;
-            _textBuffer.PostChanged += TextBufferOnPostChanged;
-            _syntaxTreeProducer = new ResultProducer<ITextSnapshot, SyntaxTree>(ParseSyntaxTree);
+            _textBufferProvider = textBufferProvider;
+            _textBufferProvider.CurrentChanged += TextBufferProviderOnCurrentChanged;
+            _syntaxTreeProducer = new ResultProducer<TextBuffer, SyntaxTree>(ParseSyntaxTree);
             _semanticModelProducer = new ResultProducer<Compilation, SemanticModel>(GetSemanticModel);
             _compilation = Compilation.Empty.WithDataContext(DataContext.Default);
             UpdateSyntaxTree();
         }
 
-        private void TextBufferOnPostChanged(object sender, EventArgs e)
+        private void TextBufferProviderOnCurrentChanged(object sender, EventArgs e)
         {
             UpdateSyntaxTree();
         }
 
         private void UpdateSyntaxTree()
         {
-            if (!_syntaxTreeProducer.Update(_textBuffer.CurrentSnapshot))
+            if (!_syntaxTreeProducer.Update(_textBufferProvider.Current))
                 return;
 
             UpdateSemanticModel();
@@ -55,9 +53,8 @@ namespace NQuery.Authoring.VSEditorWpf.Document
                 OnSemanticModelInvalidated(EventArgs.Empty);
         }
 
-        private static SyntaxTree ParseSyntaxTree(ITextSnapshot snapshot, CancellationToken cancellationToken)
+        private static SyntaxTree ParseSyntaxTree(TextBuffer textBuffer, CancellationToken cancellationToken)
         {
-            var textBuffer = new SnapshotTextBuffer(snapshot);
             return SyntaxTree.ParseQuery(textBuffer);
         }
 
@@ -92,16 +89,15 @@ namespace NQuery.Authoring.VSEditorWpf.Document
             }
         }
 
-        public ITextSnapshot GetTextSnapshot(SyntaxTree syntaxTree)
-        {
-            var textBuffer = syntaxTree.TextBuffer as SnapshotTextBuffer;
-            return textBuffer == null ? null : textBuffer.Snapshot;
-        }
-
         public Task<SyntaxTree> GetSyntaxTreeAsync()
         {
             UpdateSyntaxTree();
             return _syntaxTreeProducer.GetResultAsync();
+        }
+
+        public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
+        {
+            return _syntaxTreeProducer.TryGetResult(out syntaxTree);
         }
 
         public async Task<SemanticModel> GetSemanticModelAsync()
@@ -109,6 +105,11 @@ namespace NQuery.Authoring.VSEditorWpf.Document
             var syntaxTree = await GetSyntaxTreeAsync();
             UpdateSemanticModel(syntaxTree);
             return await _semanticModelProducer.GetResultAsync();
+        }
+
+        public bool TryGetSemanticModel(out SemanticModel semanticModel)
+        {
+            return _semanticModelProducer.TryGetResult(out semanticModel);
         }
 
         private void OnSyntaxTreeInvalidated(EventArgs e)

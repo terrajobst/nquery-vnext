@@ -8,41 +8,43 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.Classifications;
+using NQuery.Authoring.Document;
 
 namespace NQuery.Authoring.ActiproWpf.Classification
 {
     internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificationTag>
     {
         private readonly INQueryClassificationTypes _classificationTypes;
+        private readonly NQueryDocument _queryDocument;
 
         public NQuerySemanticClassifier(ICodeDocument document)
             : base(typeof(NQuerySemanticClassifier).Name, null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
-            var queryDocument = document as NQueryDocument;
-            if (queryDocument == null)
+            _queryDocument = document.GetNQueryDocument();
+            if (_queryDocument == null)
                 return;
 
-            queryDocument.SemanticDataChanged += DocumentOnSemanticDataChanged;
+            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelChanged;
             UpdateTags();
         }
 
-        private void DocumentOnSemanticDataChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
         {
             UpdateTags();
         }
 
         private async void UpdateTags()
         {
-            var semanticData = await Document.GetSemanticDataAsync();
-            if (semanticData == null)
+            var semanticModel = await _queryDocument.GetSemanticModelAsync();
+            if (semanticModel == null)
                 return;
 
-            var syntaxTree = semanticData.SemanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var snapshot = syntaxTree.GetTextSnapshot();
             var textBuffer = syntaxTree.TextBuffer;
-            var classificationSpans = await ClassifyAsync(semanticData.SemanticModel);
+            var classificationSpans = await ClassifyAsync(semanticModel);
 
             var tags = from cs in classificationSpans
                        let textRange = textBuffer.ToSnapshotRange(snapshot, cs.Span)

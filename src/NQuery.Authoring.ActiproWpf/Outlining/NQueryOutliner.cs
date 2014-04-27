@@ -9,11 +9,15 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
     {
         public IOutliningSource GetOutliningSource(ITextSnapshot snapshot)
         {
-            var parseData = snapshot.GetParseData();
-            if (parseData == null)
+            var document = snapshot.Document.GetNQueryDocument();
+            if (document == null)
                 return null;
 
-            return new NQueryOutliningSource(snapshot, parseData.SyntaxTree);
+            SyntaxTree syntaxTree;
+            if (!document.TryGetSyntaxTree(out syntaxTree))
+                return null;
+
+            return new NQueryOutliningSource(snapshot, syntaxTree);
         }
 
         public AutomaticOutliningUpdateTrigger UpdateTrigger
