@@ -64,10 +64,10 @@ namespace NQueryViewer
             if (editorView == null)
                 return;
 
-            editorView.DataContext = DataContextFactory.CreateNorthwind();
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
-            editorView.SyntaxTreeChanged += EditorViewOnSyntaxTreeChanged;
-            editorView.SemanticModelChanged += EditorViewOnSemanticModelChanged;
+            editorView.Document.DataContext = DataContextFactory.CreateNorthwind();
+            editorView.Document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            editorView.Document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
 
             var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
             var tabItem = new TabItem
@@ -88,8 +88,8 @@ namespace NQueryViewer
                 return;
 
             editorView.CaretPositionChanged -= EditorViewOnCaretPositionChanged;
-            editorView.SyntaxTreeChanged -= EditorViewOnSyntaxTreeChanged;
-            editorView.SemanticModelChanged -= EditorViewOnSemanticModelChanged;
+            editorView.Document.SyntaxTreeInvalidated -= DocumentOnSyntaxTreeInvalidated;
+            editorView.Document.SemanticModelInvalidated -= DocumentOnSemanticModelInvalidated;
 
             DocumentTabControl.Items.RemoveAt(DocumentTabControl.SelectedIndex);
         }
@@ -100,7 +100,7 @@ namespace NQueryViewer
             if (editorView == null)
                 return;
 
-            var semanticModel = editorView.SemanticModel;
+            var semanticModel = await editorView.Document.GetSemanticModelAsync();
             if (semanticModel == null)
                 return;
 
@@ -128,9 +128,11 @@ namespace NQueryViewer
             ExecutionTimeTextBlock.Text = string.Format("Completed in {0}", elapsed);
         }
 
-        private void UpdateTree()
+        private async void UpdateTree()
         {
-            SyntaxTreeVisualizer.SyntaxTree = CurrentEditorView == null ? null : CurrentEditorView.SyntaxTree;
+            SyntaxTreeVisualizer.SyntaxTree = CurrentEditorView == null
+                ? null
+                : await CurrentEditorView.Document.GetSyntaxTreeAsync();
             UpdateTreeExpansion();
         }
 
@@ -178,18 +180,18 @@ namespace NQueryViewer
             UpdateSelectedText();
         }
 
-        private void EditorViewOnSyntaxTreeChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)
         {
             UpdateTree();
         }
 
-        private void EditorViewOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
         {
             UpdateDiagnostics();
             UpdateShowPlan();
         }
 
-        private void UpdateDiagnostics()
+        private async void UpdateDiagnostics()
         {
             if (CurrentEditorView == null)
             {
@@ -197,9 +199,9 @@ namespace NQueryViewer
             }
             else
             {
-                var semanticModel = CurrentEditorView.SemanticModel;
+                var semanticModel = await CurrentEditorView.Document.GetSemanticModelAsync();
                 var syntaxTree = semanticModel == null
-                                     ? CurrentEditorView.SyntaxTree
+                                     ? await CurrentEditorView.Document.GetSyntaxTreeAsync()
                                      : semanticModel.Compilation.SyntaxTree;
                 var syntaxTreeDiagnostics = syntaxTree == null
                                                 ? Enumerable.Empty<Diagnostic>()
@@ -215,7 +217,7 @@ namespace NQueryViewer
             }
         }
 
-        private void UpdateShowPlan()
+        private async void UpdateShowPlan()
         {
             if (CurrentEditorView == null)
             {
@@ -223,7 +225,7 @@ namespace NQueryViewer
             }
             else
             {
-                var semanticModel = CurrentEditorView.SemanticModel;
+                var semanticModel = await CurrentEditorView.Document.GetSemanticModelAsync();
                 var optimizationSteps = semanticModel == null
                     ? ImmutableArray<ShowPlan>.Empty
                     : semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();

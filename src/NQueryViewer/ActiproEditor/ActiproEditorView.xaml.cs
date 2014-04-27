@@ -12,13 +12,14 @@ using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
+using NQuery.Authoring.Document;
 
 namespace NQueryViewer.ActiproEditor
 {
     internal sealed partial class ActiproEditorView : IActiproEditorView
     {
         private readonly SyntaxEditor _syntaxEditor;
-        private readonly NQuery.Authoring.Document.NQueryDocument _document;
+        private readonly NQueryDocument _document;
 
         public ActiproEditorView()
         {
@@ -41,12 +42,8 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
 
             _document = _syntaxEditor.Document.GetNQueryDocument();
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
 
             EditorHost.Content = _syntaxEditor;
-            DocumentType = _document.DocumentType;
-            DataContext = _document.DataContext;
             UpdateCaretAndSelection();
         }
 
@@ -69,14 +66,9 @@ namespace NQueryViewer.ActiproEditor
             Selection = span;
         }
 
-        private async void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        public override NQueryDocument Document
         {
-            SyntaxTree = await _document.GetSyntaxTreeAsync();
-        }
-
-        private async void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
-        {
-            SemanticModel = await _document.GetSemanticModelAsync();
+            get { return _document; }
         }
 
         protected override async void OnCaretPositionChanged()
@@ -97,18 +89,6 @@ namespace NQueryViewer.ActiproEditor
             var snapshotRange = textBuffer.ToSnapshotRange(snapshot, Selection);
             _syntaxEditor.ActiveView.Selection.SelectRange(snapshotRange);
             base.OnSelectionChanged();
-        }
-
-        protected override void OnDocumentTypeChanged()
-        {
-            _document.DocumentType = DocumentType;
-            base.OnDocumentTypeChanged();
-        }
-
-        protected override void OnDataContextChanged()
-        {
-            _document.DataContext = DataContext;
-            base.OnDataContextChanged();
         }
 
         public override void Focus()

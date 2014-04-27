@@ -25,8 +25,6 @@ namespace NQueryViewer.VSEditor
             _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
 
             _document = document;
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
 
             _selectionProvider = selectionProvider;
 
@@ -35,10 +33,6 @@ namespace NQueryViewer.VSEditor
             EditorHost.Content = _textViewHost.HostControl;
             CaretPosition = GetEditorCaretPosition();
             Selection = GetEditorSelection();
-            DocumentType = _document.DocumentType;
-            DataContext = _document.DataContext;
-            UpdateSyntaxTree();
-            UpdateSemantiModel();
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -109,38 +103,9 @@ namespace NQueryViewer.VSEditor
             return new TextSpan(span.Start, span.Length);
         }
 
-        protected override void OnDocumentTypeChanged()
+        public override NQueryDocument Document
         {
-            _document.DocumentType = DocumentType;
-            base.OnDocumentTypeChanged();
-        }
-
-        protected override void OnDataContextChanged()
-        {
-            _document.DataContext = DataContext;
-            base.OnDataContextChanged();
-        }
-
-        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
-        {
-            DocumentType = _document.DocumentType;
-            UpdateSyntaxTree();
-        }
-
-        private async void UpdateSyntaxTree()
-        {
-            SyntaxTree = await _document.GetSyntaxTreeAsync();
-        }
-
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
-        {
-            DataContext = _document.DataContext;
-            UpdateSemantiModel();
-        }
-
-        private async void UpdateSemantiModel()
-        {
-            SemanticModel = await _document.GetSemanticModelAsync();
+            get { return _document; }
         }
     }
 }

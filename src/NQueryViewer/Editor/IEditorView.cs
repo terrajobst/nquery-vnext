@@ -12,18 +12,11 @@ namespace NQueryViewer.Editor
         UIElement Element { get; }
         int CaretPosition { get; set; }
         TextSpan Selection { get; set; }
-        NQueryDocumentType DocumentType { get; set; }
-        DataContext DataContext { get; set; }
-        SyntaxTree SyntaxTree { get; }
-        SemanticModel SemanticModel { get; }
+        NQueryDocument Document { get; }
 
         void Focus();
 
         event EventHandler CaretPositionChanged;
         event EventHandler SelectionChanged;
-        event EventHandler DocumentTypeChanged;
-        event EventHandler DataContextChanged;
-        event EventHandler SyntaxTreeChanged;
-        event EventHandler SemanticModelChanged;
     }
 }
