@@ -17,6 +17,9 @@ namespace NQuery.Binding
                 case BoundNodeKind.JoinRelation:
                     VisitJoinRelation((BoundJoinRelation)node);
                     break;
+                case BoundNodeKind.HashMatchRelation:
+                    VisitHashMatchRelation((BoundHashMatchRelation)node);
+                    break;
                 case BoundNodeKind.ComputeRelation:
                     VisitComputeRelation((BoundComputeRelation)node);
                     break;
@@ -25,6 +28,9 @@ namespace NQuery.Binding
                     break;
                 case BoundNodeKind.GroupByAndAggregationRelation:
                     VisitGroupByAndAggregationRelation((BoundGroupByAndAggregationRelation)node);
+                    break;
+                case BoundNodeKind.StreamAggregatesRelation:
+                    VisitStreamAggregatesRelation((BoundStreamAggregatesRelation)node);
                     break;
                 case BoundNodeKind.ConstantRelation:
                     VisitConstantRelation((BoundConstantRelation)node);
@@ -70,6 +76,15 @@ namespace NQuery.Binding
                 VisitExpression(node.Condition);
         }
 
+        protected virtual void VisitHashMatchRelation(BoundHashMatchRelation node)
+        {
+            VisitRelation(node.Build);
+            VisitRelation(node.Probe);
+
+            if (node.Remainder != null)
+                VisitExpression(node.Remainder);
+        }
+
         protected virtual void VisitComputeRelation(BoundComputeRelation node)
         {
             VisitRelation(node.Input);
@@ -85,6 +100,11 @@ namespace NQuery.Binding
         }
 
         protected virtual void VisitGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
+        {
+            VisitRelation(node.Input);
+        }
+
+        protected virtual void VisitStreamAggregatesRelation(BoundStreamAggregatesRelation node)
         {
             VisitRelation(node.Input);
         }
