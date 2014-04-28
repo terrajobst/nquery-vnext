@@ -62,7 +62,7 @@ namespace NQuery.Binding
                                RewriteExpression(node.Condition));
         }
 
-        private BoundRelation RewriteHashMatchRelation(BoundHashMatchRelation node)
+        protected virtual BoundRelation RewriteHashMatchRelation(BoundHashMatchRelation node)
         {
             return node.Update(node.LogicalOperator,
                                RewriteRelation(node.Build),
