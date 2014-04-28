@@ -15,6 +15,9 @@ namespace NQuery.Optimization
 
         protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
         {
+            if (valueSlot == null)
+                return null;
+
             ValueSlot newSlot;
             return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
         }
@@ -90,6 +93,9 @@ namespace NQuery.Optimization
 
             protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
             {
+                if (valueSlot == null)
+                    return null;
+
                 ValueSlot newSlot;
                 return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
             }
