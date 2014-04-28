@@ -98,10 +98,20 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             if (_session == null)
                 return false;
 
+            var isBuilder = _session.SelectedCompletionSet != null &&
+                            _session.SelectedCompletionSet.SelectionStatus != null &&
+                            _session.SelectedCompletionSet.SelectionStatus.Completion != null &&
+                            _session.SelectedCompletionSet.CompletionBuilders != null &&
+                            _session.SelectedCompletionSet.CompletionBuilders.Contains(_session.SelectedCompletionSet.SelectionStatus.Completion);
+
+            // If it's a builder, we don't want to eat the enter key.
+            var sendThrough = isBuilder;
+
             _textView.TextBuffer.PostChanged -= TextBufferOnPostChanged;
             _session.Commit();
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
-            return true;
+
+            return !sendThrough;
         }
 
         private void SessionOnDismissed(object sender, EventArgs e)
