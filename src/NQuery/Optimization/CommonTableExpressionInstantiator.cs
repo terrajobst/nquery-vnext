@@ -13,10 +13,10 @@ namespace NQuery.Optimization
         private readonly Dictionary<ValueSlot, ValueSlot> _valueSlotMapping = new Dictionary<ValueSlot, ValueSlot>();
         private int _cteCount;
 
-        protected override ValueSlot RewriteValueSlot(ValueSlot node)
+        protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
         {
             ValueSlot newSlot;
-            return _valueSlotMapping.TryGetValue(node, out newSlot) ? newSlot : node;
+            return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
         }
 
         protected override BoundRelation RewriteTableRelation(BoundTableRelation node)
@@ -88,10 +88,10 @@ namespace NQuery.Optimization
                 }
             }
 
-            protected override ValueSlot RewriteValueSlot(ValueSlot node)
+            protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
             {
                 ValueSlot newSlot;
-                return _valueSlotMapping.TryGetValue(node, out newSlot) ? newSlot : node;
+                return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
             }
 
             public override BoundRelation RewriteRelation(BoundRelation node)

@@ -72,35 +72,35 @@ namespace NQuery.Binding
             return RewriteArray(list, RewriteRelation);
         }
 
-        protected virtual BoundAggregatedValue RewriteAggregatedValue(BoundAggregatedValue node)
+        protected virtual BoundAggregatedValue RewriteAggregatedValue(BoundAggregatedValue value)
         {
-            return node.Update(RewriteValueSlot(node.Output),
-                               node.Aggregate,
-                               node.Aggregatable,
-                               RewriteExpression(node.Argument));
+            return value.Update(RewriteValueSlot(value.Output),
+                               value.Aggregate,
+                               value.Aggregatable,
+                               RewriteExpression(value.Argument));
         }
 
-        protected virtual BoundComputedValue RewriteComputedValue(BoundComputedValue node)
+        protected virtual BoundComputedValue RewriteComputedValue(BoundComputedValue value)
         {
-            return node.Update(RewriteExpression(node.Expression),
-                               RewriteValueSlot(node.ValueSlot));
+            return value.Update(RewriteExpression(value.Expression),
+                               RewriteValueSlot(value.ValueSlot));
         }
 
-        protected virtual BoundUnifiedValue RewriteUnifiedValue(BoundUnifiedValue node)
+        protected virtual BoundUnifiedValue RewriteUnifiedValue(BoundUnifiedValue value)
         {
-            return node.Update(RewriteValueSlot(node.ValueSlot),
-                               RewriteValueSlots(node.InputValueSlots));
+            return value.Update(RewriteValueSlot(value.ValueSlot),
+                               RewriteValueSlots(value.InputValueSlots));
         }
 
-        protected virtual ValueSlot RewriteValueSlot(ValueSlot node)
+        protected virtual BoundSortedValue RewriteSortedValue(BoundSortedValue value)
         {
-            return node;
+            return value.Update(RewriteValueSlot(value.ValueSlot),
+                value.Comparer);
         }
 
-        protected virtual BoundSortedValue RewriteSortedValue(BoundSortedValue node)
+        protected virtual ValueSlot RewriteValueSlot(ValueSlot valueSlot)
         {
-            return node.Update(RewriteValueSlot(node.ValueSlot),
-                               node.Comparer);
+            return valueSlot;
         }
 
         protected virtual BoundCaseLabel RewriteCaseLabel(BoundCaseLabel node)
