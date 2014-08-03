@@ -4,3 +4,5 @@ syntax: glob
 bin
 obj
 msbuild.log
+packages
+nuget.exe
