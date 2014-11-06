@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\xunit.core.2.0.0-beta4-build2738\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid\xunit.core.props" Condition="Exists('..\packages\xunit.core.2.0.0-beta4-build2738\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid\xunit.core.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{51636E36-613A-46A4-BD49-8FBCE543F0F8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>NQuery.Authoring.Tests</RootNamespace>
+    <AssemblyName>NQuery.Authoring.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>54af2639</NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable">
+      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="xunit.abstractions">
+      <HintPath>..\packages\xunit.abstractions.2.0.0-beta4-build2738\lib\net35\xunit.abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.assert">
+      <HintPath>..\packages\xunit.assert.2.0.0-beta4-build2738\lib\portable-net45+win+wpa81+wp80+monoandroid+monotouch10\xunit.assert.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.core">
+      <HintPath>..\packages\xunit.core.2.0.0-beta4-build2738\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid\xunit.core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BraceMatching\BraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
+    <Compile Include="BraceMatching\Matchers\CaseBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\DateBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\IdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\ParenthesisBraceMatcher.cs" />
+    <Compile Include="BraceMatching\Matchers\ParenthesizedIdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\QuotedIdentifierBraceMatcherTests.cs" />
+    <Compile Include="BraceMatching\Matchers\StringQuoteBraceMatcherTests.cs" />
+    <Compile Include="Classifications\SemanticClassificationTests.cs" />
+    <Compile Include="Classifications\SyntaxClassificationTests.cs" />
+    <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
+    <Compile Include="CodeActions\CodeIssueTests.cs" />
+    <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
+    <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
+    <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />
+    <Compile Include="CodeActions\Issues\OrderByOrdinalTests.cs" />
+    <Compile Include="CodeActions\Issues\UnusedCommonTableExpressionTests.cs" />
+    <Compile Include="CodeActions\Refactorings\AddAsAliasTests.cs" />
+    <Compile Include="CodeActions\Refactorings\AddAsDerivedTableTests.cs" />
+    <Compile Include="CodeActions\Refactorings\AddMissingKeywordTests.cs" />
+    <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
+    <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
+    <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
+    <Compile Include="CodeActions\RefactoringTests.cs" />
+    <Compile Include="CompilationFactory.cs" />
+    <Compile Include="Completion\CompletionExtensionsTests.cs" />
+    <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\ColumnSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\EmptySymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\FunctionSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\JoinCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\KeywordCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\MethodSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\PropertySymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\TableSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\TypeCompletionProviderTests.cs" />
+    <Compile Include="Completion\SymbolCompletionProviderTests.cs" />
+    <Compile Include="ExtensionTests.cs" />
+    <Compile Include="Highlighting\Highlighters\AggregateReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\CaseKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\CastKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\ColumnInstanceReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\CommonTableExpressionReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\DerivedTableInstanceReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\InnerJoinKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\MethodReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\OrderedQueryKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\OuterJoinKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\PropertyReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\SelectColumnReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\SelectQueryKeywordHighlighterTests.cs" />
+    <Compile Include="Highlighting\Highlighters\TableInstanceReferenceHighlighterTests.cs" />
+    <Compile Include="Highlighting\HighlighterTests.cs" />
+    <Compile Include="Highlighting\HighlightingExtensionsTests.cs" />
+    <Compile Include="Outlining\OutliningTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuickInfo\Providers\CastExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\CoalesceExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\CountAllExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\DerivedTableReferenceQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\ExpressionSelectColumnQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\FunctionInvocationExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\MethodInvocationExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\NamedTableReferenceQuickInfoModelProviderAliasTests.cs" />
+    <Compile Include="QuickInfo\Providers\NamedTableReferenceQuickInfoModelProviderTableTests.cs" />
+    <Compile Include="QuickInfo\Providers\NameExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\NullIfQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\PropertyAccessExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\VariableExpressionQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\Providers\WildcardSelectColumnQuickInfoModelProviderTests.cs" />
+    <Compile Include="QuickInfo\QuickInfoExtensionsTests.cs" />
+    <Compile Include="QuickInfo\QuickInfoModelProviderTests.cs" />
+    <Compile Include="Selection\SelectionExtensionsTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\CountAllSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\FunctionSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\MethodSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\Providers\NullIfSignatureHelpModelProviderTests.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpExtensionsTests.cs" />
+    <Compile Include="SignatureHelp\SignatureHelpModelProviderTests.cs" />
+    <Compile Include="StringExtensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
+      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
+      <Name>NQuery.Authoring</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
+      <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
+      <Name>NQuery.Data.Samples</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NQuery\NQuery.csproj">
+      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
+      <Name>NQuery</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\xunit.core.2.0.0-beta4-build2738\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.0.0-beta4-build2738\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid\xunit.core.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
