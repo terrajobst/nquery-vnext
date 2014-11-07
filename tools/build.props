@@ -5,6 +5,7 @@
     <ProjectDir>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\'))</ProjectDir>
     <SourceDir>$(ProjectDir)src\</SourceDir>
     <ToolsDir>$(ProjectDir)tools\</ToolsDir>
+    <PackagesDir>$(SourceDir)packages\</PackagesDir>
   </PropertyGroup>
  
 </Project>
