@@ -40,7 +40,7 @@
     <DownloadFile Condition="!Exists($(NuGetToolPath))"
                   Address="http://nuget.org/nuget.exe"
                   FileName="$(NuGetToolPath)" />
-    <Exec Command="$(NuGetToolPath) install &quot;%(Package.FullPath)&quot; -o &quot;$(PackagesDir)\&quot;" />
+    <Exec Command="$(NuGetToolPath) restore &quot;%(Package.FullPath)&quot; -o &quot;$(PackagesDir)\&quot; -c &quot;$(SourceDir)\.nuget\nuget.config&quot;" />
   </Target>
 
   <Target Name="Rebuild"

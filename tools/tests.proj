@@ -6,7 +6,7 @@
   <UsingTask TaskName="xunit" AssemblyFile="$(PackagesDir)xunit.runners.2.0.0-beta4-build2738\tools\xunit.runner.msbuild.dll" />
 
   <ItemGroup>
-    <TestAssembly Include="$(OutDir)**\*test*.dll" />
+    <TestAssembly Include="$(OutDir)**\*.Tests.dll" />
   </ItemGroup>
 
   <Target Name="Clean" />
