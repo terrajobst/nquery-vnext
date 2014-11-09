@@ -34,7 +34,8 @@
   <ItemGroup>
     <BuildStep Include="$(ToolsDir)restore.proj" />
     <BuildStep Include="$(ToolsDir)compile.proj" />
-    <BuildStep Include="$(ToolsDir)tests.proj" />
+    <BuildStep Include="$(ToolsDir)tests.proj"
+               Condition="'$(SkipTests)' != 'True'" />
     <BuildStep Include="$(ToolsDir)package.proj" />
   </ItemGroup>
 
