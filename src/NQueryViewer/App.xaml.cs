@@ -48,7 +48,7 @@ namespace NQueryViewer
 
             var uniqueAssemblyPaths = (from p in pathSet
                                        let a = TryGetAssemblyName(p)
-                                       where a != null
+                                       where a != null && !a.Name.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
                                        let t = Tuple.Create(a.FullName, p)
                                        group t by t.Item1
                                            into g
