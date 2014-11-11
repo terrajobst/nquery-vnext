@@ -22,7 +22,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
             var snapshot = _textBuffer.CurrentSnapshot;
             var fullSpan = new Span(0, snapshot.Length);
             var syntaxTree = action.GetEdit();
-            var newText = syntaxTree.TextBuffer.GetText();
+            var newText = syntaxTree.Text.GetText();
             _textBuffer.Replace(fullSpan, newText);
         }
     }

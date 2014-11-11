@@ -6,16 +6,13 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.SignatureHelp;
-using NQuery.Authoring.Document;
 using NQuery.Authoring.SignatureHelp;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     internal sealed class SignatureHelpManager : ISignatureHelpManager
     {
         private readonly ITextView _textView;
-        private readonly NQueryDocument _document;
         private readonly ISignatureHelpBroker _signatureHelpBroker;
         private readonly ISignatureHelpModelProviderService _signatureHelpModelProviderService;
         private readonly object _selectedItemIndexKey = new object();
@@ -23,10 +20,9 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private ISignatureHelpSession _session;
         private SignatureHelpModel _model;
 
-        public SignatureHelpManager(ITextView textView, NQueryDocument document, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
+        public SignatureHelpManager(ITextView textView, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
         {
             _textView = textView;
-            _document = document;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
             _signatureHelpBroker = signatureHelpBroker;
@@ -101,9 +97,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private async void UpdateModel()
         {
             var selectedIndex = GetSelectedItemIndex();
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
-            var triggerPosition = _textView.GetCaretPosition(snapshot);
+            var documentView = _textView.GetDocumentView();
+            var document = documentView.Document;
+            var triggerPosition = documentView.Position;
+            var semanticModel = await document.GetSemanticModelAsync();
 
             var model = semanticModel.GetSignatureHelpModel(triggerPosition, _signatureHelpModelProviderService.Providers);
 

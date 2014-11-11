@@ -3,18 +3,18 @@ using System.Collections.Generic;
 
 namespace NQuery.Text
 {
-    internal sealed class StringBuffer : TextBuffer
+    internal sealed class StringText : SourceText
     {
         private readonly string _text;
         private readonly TextLineCollection _lines;
 
-        public StringBuffer(string text)
+        public StringText(string text)
         {
             _text = text;
             _lines = Parse(this, text);
         }
 
-        private static StringTextLineCollection Parse(TextBuffer textBuffer, string text)
+        private static StringTextLineCollection Parse(SourceText sourceText, string text)
         {
             var textLines = new List<TextLine>();
             var position = 0;
@@ -30,7 +30,7 @@ namespace NQuery.Text
                 }
                 else
                 {
-                    AddLine(textBuffer, textLines, lineStart, position);
+                    AddLine(sourceText, textLines, lineStart, position);
 
                     position += lineBreakWidth;
                     lineStart = position;
@@ -38,15 +38,15 @@ namespace NQuery.Text
             }
 
             if (lineStart <= position)
-                AddLine(textBuffer, textLines, lineStart, text.Length);
+                AddLine(sourceText, textLines, lineStart, text.Length);
 
             return new StringTextLineCollection(textLines);
         }
 
-        private static void AddLine(TextBuffer textBuffer, List<TextLine> textLines, int lineStart, int lineEnd)
+        private static void AddLine(SourceText sourceText, List<TextLine> textLines, int lineStart, int lineEnd)
         {
             var lineLength = lineEnd - lineStart;
-            var textLine = new TextLine(textBuffer, lineStart, lineLength);
+            var textLine = new TextLine(sourceText, lineStart, lineLength);
             textLines.Add(textLine);
         }
 

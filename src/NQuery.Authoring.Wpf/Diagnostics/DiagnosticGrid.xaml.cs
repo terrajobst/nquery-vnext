@@ -12,11 +12,11 @@ namespace NQuery.Authoring.Wpf
             InitializeComponent();
         }
 
-        public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, TextBuffer textBuffer)
+        public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
         {
-            DataContext = diagnostics == null || textBuffer == null
+            DataContext = diagnostics == null || sourceText == null
                               ? null
-                              : new DiagnosticsViewModel(diagnostics, textBuffer);
+                              : new DiagnosticsViewModel(diagnostics, sourceText);
         }
 
         public Diagnostic SelectedDiagnostic

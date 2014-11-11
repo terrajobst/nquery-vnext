@@ -1,12 +1,38 @@
 using System;
+using System.Threading;
 
 namespace NQuery.Text
 {
-    public abstract class TextBuffer
+    public abstract class SourceText
     {
-        public static TextBuffer From(string text)
+        private SourceTextContainer _container;
+
+        protected SourceText()
+            : this(null)
         {
-            return new StringBuffer(text);
+        }
+
+        protected SourceText(SourceTextContainer container)
+        {
+            _container = container;
+        }
+
+        public static SourceText From(string text)
+        {
+            return new StringText(text);
+        }
+
+        public SourceTextContainer Container
+        {
+            get
+            {
+                if (_container == null)
+                {
+                    var container = new StaticSourceTextContainer(this);
+                    Interlocked.CompareExchange(ref _container, container, null);
+                }
+                return _container;
+            }
         }
 
         public TextLine GetLineFromPosition(int position)
@@ -23,7 +49,7 @@ namespace NQuery.Text
         public TextLocation GetTextLocation(int position)
         {
             var line = GetLineFromPosition(position);
-            var lineNumber = line.Index;
+            var lineNumber = line.LineNumber;
             var column = position - line.Span.Start;
             return new TextLocation(lineNumber, column);
         }

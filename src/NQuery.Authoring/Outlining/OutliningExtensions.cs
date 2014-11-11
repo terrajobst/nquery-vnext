@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Outlining
         public static IReadOnlyList<OutliningRegionSpan> FindRegions(this SyntaxNode root, TextSpan span)
         {
             var result = new List<OutliningRegionSpan>();
-            var worker = new OutliningWorker(root.SyntaxTree.TextBuffer, result, span);
+            var worker = new OutliningWorker(root.SyntaxTree.Text, result, span);
             worker.Visit(root);
             return result;
         }

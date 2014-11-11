@@ -10,38 +10,38 @@ namespace NQuery
 {
     public sealed class SyntaxTree
     {
+        private readonly SourceText _text;
         private readonly CompilationUnitSyntax _root;
-        private readonly TextBuffer _textBuffer;
 
         private Dictionary<object, object> _parentFromChild;
 
-        private SyntaxTree(TextBuffer textBuffer, Func<Parser, CompilationUnitSyntax> parseMethod)
+        private SyntaxTree(SourceText text, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
-            var parser = new Parser(textBuffer, this);
+            var parser = new Parser(text, this);
+            _text = text;
             _root = parseMethod(parser);
-            _textBuffer = textBuffer;
         }
 
-        public static SyntaxTree ParseQuery(string source)
+        public static SyntaxTree ParseQuery(string text)
         {
-            var textBuffer = TextBuffer.From(source);
-            return ParseQuery(textBuffer);
+            var sourceText = SourceText.From(text);
+            return ParseQuery(sourceText);
         }
 
-        public static SyntaxTree ParseQuery(TextBuffer textBuffer)
+        public static SyntaxTree ParseQuery(SourceText text)
         {
-            return new SyntaxTree(textBuffer, p => p.ParseRootQuery());
+            return new SyntaxTree(text, p => p.ParseRootQuery());
         }
 
         public static SyntaxTree ParseExpression(string source)
         {
-            var textBuffer = TextBuffer.From(source);
+            var textBuffer = SourceText.From(source);
             return ParseExpression(textBuffer);
         }
 
-        public static SyntaxTree ParseExpression(TextBuffer textBuffer)
+        public static SyntaxTree ParseExpression(SourceText sourceText)
         {
-            return new SyntaxTree(textBuffer, p => p.ParseRootExpression());
+            return new SyntaxTree(sourceText, p => p.ParseRootExpression());
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics()
@@ -128,9 +128,9 @@ namespace NQuery
             get { return _root; }
         }
 
-        public TextBuffer TextBuffer
+        public SourceText Text
         {
-            get { return _textBuffer; }
+            get { return _text; }
         }
     }
 }

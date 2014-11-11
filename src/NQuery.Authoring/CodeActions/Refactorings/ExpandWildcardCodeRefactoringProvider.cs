@@ -38,7 +38,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public SyntaxTree GetEdit()
             {
-                var location = _node.SyntaxTree.TextBuffer.GetTextLocation(_node.Span.Start);
+                var location = _node.SyntaxTree.Text.GetTextLocation(_node.Span.Start);
                 var indent = location.Column;
                 var columnString = BuildColumns(indent, _columnInstances);
                 return _node.SyntaxTree.ReplaceText(_node.Span, columnString);

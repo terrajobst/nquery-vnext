@@ -5,32 +5,30 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
 
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
-
 namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     internal sealed class NQuerySemanticErrorTagger : NQueryErrorTagger
     {
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
-        public NQuerySemanticErrorTagger(NQueryDocument document)
+        public NQuerySemanticErrorTagger(Workspace workspace)
             : base(PredefinedErrorTypeNames.CompilerError)
         {
-            _document = document;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<Diagnostic>>> GetRawTagsAsync()
         {
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
+            var snapshot = document.GetTextSnapshot();
             return Tuple.Create(snapshot, semanticModel.GetDiagnostics());
         }
     }

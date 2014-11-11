@@ -40,38 +40,32 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 
             public async void ExtendSelection()
             {
-                var syntaxTree = await _editorView.SyntaxEditor.Document.GetSyntaxTreeAsync();
-                if (syntaxTree == null)
-                    return;
-
-                var currentSelection = _editorView.Selection.SnapshotRange.ToTextSpan(syntaxTree.TextBuffer);
+                var snapshot = _editorView.SyntaxEditor.GetDocumentView();
+                var syntaxTree = await snapshot.Document.GetSyntaxTreeAsync();
+                var currentSelection = snapshot.Selection;
                 var extendedSelection = syntaxTree.ExtendSelection(currentSelection);
 
                 if (currentSelection == extendedSelection)
                     return;
 
                 _selectionStack.Push(currentSelection);
-                Select(extendedSelection, syntaxTree);
+                Select(extendedSelection, snapshot.Text);
             }
 
-            public async void ShrinkSelection()
+            public void ShrinkSelection()
             {
-                var syntaxTree = await _editorView.SyntaxEditor.Document.GetSyntaxTreeAsync();
-                if (syntaxTree == null)
-                    return;
+                var snapshot = _editorView.SyntaxEditor.GetDocumentView();
 
                 if (_selectionStack.Count == 0)
                     return;
 
                 var newSelection = _selectionStack.Pop();
-                Select(newSelection, syntaxTree);
+                Select(newSelection, snapshot.Text);
             }
 
-            private void Select(TextSpan selection, SyntaxTree syntaxTree)
+            private void Select(TextSpan selection, SourceText text)
             {
-                var textBuffer = syntaxTree.TextBuffer;
-                var snapshot = syntaxTree.GetTextSnapshot();
-                var snapshotRange = textBuffer.ToSnapshotRange(snapshot, selection);
+                var snapshotRange = text.ToSnapshotRange(selection);
 
                 UnsubscribeToSelectionChanged();
                 _editorView.Selection.SelectRange(snapshotRange);

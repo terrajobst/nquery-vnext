@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.VSEditorWpf;
 using NQuery.Authoring.VSEditorWpf.Selection;
 
 using NQueryViewer.Editor;
@@ -34,9 +34,6 @@ namespace NQueryViewer.VSEditor
         public IEditorFormatMapService EditorFormatMapService { get; set; }
 
         [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
-        [Import]
         public INQuerySelectionProviderService SelectionProviderService { get; set; }
 
         public void OnImportsSatisfied()
@@ -53,9 +50,9 @@ namespace NQueryViewer.VSEditor
         {
             var textViewHost = CreateTextViewHost();
             var textView = textViewHost.TextView;
-            var document = DocumentManager.GetDocument(textView.TextBuffer);
+            var workspace = textView.TextBuffer.GetWorkspace();
             var selectionProvider = SelectionProviderService.GetSelectionProvider(textView);
-            return new VSEditorView(textViewHost, document, selectionProvider);
+            return new VSEditorView(workspace, textViewHost, selectionProvider);
         }
 
         IEditorView IEditorViewFactory.CreateEditorView()

@@ -5,16 +5,12 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.QuickInfo;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     [Export(typeof(IQuickInfoManagerProvider))]
     internal sealed class QuickInfoManagerProvider : IQuickInfoManagerProvider
     {
-        [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
         [Import]
         public IQuickInfoBroker QuickInfoBroker { get; set; }
 
@@ -25,8 +21,8 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
-                var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new QuickInfoManager(textView, document, QuickInfoBroker, QuickInfoModelProviderService);
+                var workspace = textView.TextBuffer.GetWorkspace();
+                return new QuickInfoManager(workspace, textView, QuickInfoBroker, QuickInfoModelProviderService);
             });
         }
     }

@@ -9,22 +9,23 @@ namespace NQuery.Authoring.ActiproWpf.Text
     // I've considered implementing this text buffer directly against
     // the ITextSnapshot instead of parsing the text.
     //
-    // The problem is tha that the ITextSnapshot doesn't counts line
-    // breaks as zero.
+    // The problem is that the ITextSnapshot doesn't counts line
+    // breaks.
     //
     // This results in a lot of funky behavior as this means that
     // NQuery's offset doesn't align with the offset that the Actipro's
     // editor would accept.
 
-    internal sealed class SnapshotTextBuffer : TextBuffer
+    internal sealed class ActiproSourceText : SourceText
     {
         private readonly ITextSnapshot _snapshot;
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _sourceText;
 
-        public SnapshotTextBuffer(ITextSnapshot snapshot)
+        public ActiproSourceText(ActiproSourceTextContainer container, ITextSnapshot snapshot)
+            : base(container)
         {
             _snapshot = snapshot;
-            _textBuffer = From(snapshot.Text);
+            _sourceText = From(snapshot.Text);
         }
 
         public ITextSnapshot Snapshot
@@ -34,27 +35,32 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public override int GetLineNumberFromPosition(int position)
         {
-            return _textBuffer.GetLineNumberFromPosition(position);
+            return _sourceText.GetLineNumberFromPosition(position);
         }
 
         public override string GetText(TextSpan textSpan)
         {
-            return _textBuffer.GetText(textSpan);
+            return _sourceText.GetText(textSpan);
         }
 
         public override char this[int index]
         {
-            get { return _textBuffer[index]; }
+            get { return _sourceText[index]; }
         }
 
         public override int Length
         {
-            get { return _textBuffer.Length; }
+            get { return _sourceText.Length; }
         }
 
         public override TextLineCollection Lines
         {
-            get { return _textBuffer.Lines; }
+            get { return _sourceText.Lines; }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Version={0}, Length={1}", _snapshot.Version.Number, _snapshot.Length);
         }
     }
 }

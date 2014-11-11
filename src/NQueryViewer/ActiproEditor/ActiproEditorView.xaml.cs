@@ -7,19 +7,20 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting.Implementation;
 
+using NQuery.Authoring;
 using NQuery.Authoring.ActiproWpf;
 using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
-using NQuery.Authoring.Document;
+using NQuery.Authoring.ActiproWpf.Text;
 
 namespace NQueryViewer.ActiproEditor
 {
     internal sealed partial class ActiproEditorView : IActiproEditorView
     {
         private readonly SyntaxEditor _syntaxEditor;
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
         public ActiproEditorView()
         {
@@ -42,52 +43,51 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.RegisterSelectionCommands();
             _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
 
-            _document = _syntaxEditor.Document.GetNQueryDocument();
+            _workspace = _syntaxEditor.Document.GetWorkspace();
 
             EditorHost.Content = _syntaxEditor;
             UpdateCaretAndSelection();
         }
 
-        private void SyntaxEditorOnViewSelectionChanged(object sender, EditorViewSelectionEventArgs editorViewSelectionEventArgs)
+        private void SyntaxEditorOnViewSelectionChanged(object sender, EditorViewSelectionEventArgs e)
         {
             UpdateCaretAndSelection();
         }
 
-        private async void UpdateCaretAndSelection()
+        private void UpdateCaretAndSelection()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
+            var document = _workspace.CurrentDocument;
+            var snapshot = document.Text.ToTextSnapshot();
 
             var snapshotRange = _syntaxEditor.ActiveView.Selection.SnapshotRange;
             var translatedRange = snapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default);
-            var span = translatedRange.ToTextSpan(textBuffer);
+            var span = translatedRange.ToTextSpan();
 
             CaretPosition = span.Start;
             Selection = span;
         }
 
-        public override NQueryDocument Document
+        public override Workspace Workspace
         {
-            get { return _document; }
+            get { return _workspace; }
         }
 
         protected override async void OnCaretPositionChanged()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
-            var snapshotOffset = textBuffer.ToSnapshotOffset(snapshot, CaretPosition);
+            var document = _workspace.CurrentDocument;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
+            var textBuffer = syntaxTree.Text;
+            var snapshotOffset = textBuffer.ToSnapshotOffset(CaretPosition);
             _syntaxEditor.Caret.Position = snapshotOffset.Position;
             base.OnCaretPositionChanged();
         }
 
         protected override async void OnSelectionChanged()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
-            var snapshotRange = textBuffer.ToSnapshotRange(snapshot, Selection);
+            var document = _workspace.CurrentDocument;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
+            var textBuffer = syntaxTree.Text;
+            var snapshotRange = textBuffer.ToSnapshotRange(Selection);
             _syntaxEditor.ActiveView.Selection.SelectRange(snapshotRange);
             base.OnSelectionChanged();
         }

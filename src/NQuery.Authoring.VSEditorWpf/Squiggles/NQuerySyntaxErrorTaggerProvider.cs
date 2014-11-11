@@ -6,8 +6,6 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.VSEditorWpf.Document;
-
 namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     [Export(typeof(IViewTaggerProvider))]
@@ -15,13 +13,10 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
     [ContentType("NQuery")]
     internal sealed class NQuerySyntaxErrorTaggerProvider : IViewTaggerProvider
     {
-        [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            var document = DocumentManager.GetDocument(buffer);
-            return new NQuerySyntaxErrorTagger(document) as ITagger<T>;
+            var workspace = buffer.GetWorkspace();
+            return new NQuerySyntaxErrorTagger(workspace) as ITagger<T>;
         }
     }
 }

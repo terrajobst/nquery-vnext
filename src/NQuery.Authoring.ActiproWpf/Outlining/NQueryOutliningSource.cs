@@ -13,12 +13,12 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
         public NQueryOutliningSource(ITextSnapshot snapshot, SyntaxTree syntaxTree)
             : base(snapshot)
         {
-            var textBuffer = syntaxTree.TextBuffer;
+            var text = syntaxTree.Text;
             var result = syntaxTree.Root.FindRegions();
 
             foreach (var regionSpan in result)
             {
-                var range = textBuffer.ToSnapshotRange(snapshot, regionSpan.Span);
+                var range = text.ToSnapshotRange(regionSpan.Span);
 
                 IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition("NQueryNode")
                 {

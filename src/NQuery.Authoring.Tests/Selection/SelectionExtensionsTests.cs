@@ -18,23 +18,23 @@ namespace NQuery.Authoring.UnitTests.Selection
             int position;
             var compilation = CompilationFactory.CreateQuery(query, out position);
             var syntaxTree = compilation.SyntaxTree;
-            var textBuffer = syntaxTree.TextBuffer;
+            var text = syntaxTree.Text;
             var start = new TextSpan(position, 0);
 
             var firstTime = syntaxTree.ExtendSelection(start);
-            Assert.Equal("FirstName", textBuffer.GetText(firstTime));
+            Assert.Equal("FirstName", text.GetText(firstTime));
 
             var secondTime = syntaxTree.ExtendSelection(firstTime);
-            Assert.Equal("e.FirstName", textBuffer.GetText(secondTime));
+            Assert.Equal("e.FirstName", text.GetText(secondTime));
 
             var thirdTime = syntaxTree.ExtendSelection(secondTime);
-            Assert.Equal("SELECT  e.FirstName", textBuffer.GetText(thirdTime));
+            Assert.Equal("SELECT  e.FirstName", text.GetText(thirdTime));
 
             var fourthTime = syntaxTree.ExtendSelection(thirdTime);
-            Assert.Equal(textBuffer.GetText().Trim(), textBuffer.GetText(fourthTime));
+            Assert.Equal(text.GetText().Trim(), text.GetText(fourthTime));
 
             var fifthTime = syntaxTree.ExtendSelection(fourthTime);
-            Assert.Equal(textBuffer.GetText().TrimStart(), textBuffer.GetText(fifthTime));
+            Assert.Equal(text.GetText().TrimStart(), text.GetText(fifthTime));
 
             var sixthTime = syntaxTree.ExtendSelection(fifthTime);
             Assert.Equal(fifthTime, sixthTime);

@@ -6,7 +6,7 @@ using System.Linq;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Authoring.Document;
+using NQuery.Authoring;
 using NQuery.Authoring.VSEditorWpf.Selection;
 using NQuery.Text;
 
@@ -14,17 +14,16 @@ namespace NQueryViewer.VSEditor
 {
     internal sealed partial class VSEditorView : IVSEditorView
     {
+        private readonly Workspace _workspace;
         private readonly IWpfTextViewHost _textViewHost;
-        private readonly NQueryDocument _document;
         private readonly INQuerySelectionProvider _selectionProvider;
 
-        public VSEditorView(IWpfTextViewHost textViewHost, NQueryDocument document, INQuerySelectionProvider selectionProvider)
+        public VSEditorView(Workspace workspace, IWpfTextViewHost textViewHost, INQuerySelectionProvider selectionProvider)
         {
+            _workspace = workspace;
             _textViewHost = textViewHost;
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
-
-            _document = document;
 
             _selectionProvider = selectionProvider;
 
@@ -103,9 +102,9 @@ namespace NQueryViewer.VSEditor
             return new TextSpan(span.Start, span.Length);
         }
 
-        public override NQueryDocument Document
+        public override Workspace Workspace
         {
-            get { return _document; }
+            get { return _workspace; }
         }
     }
 }

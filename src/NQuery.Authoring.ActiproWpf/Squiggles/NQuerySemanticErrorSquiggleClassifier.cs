@@ -4,36 +4,36 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
-using NQuery.Authoring.Document;
+using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClassifier
     {
-        private readonly NQueryDocument _queryDocument;
+        private readonly Workspace _workspace;
 
         public NQuerySemanticErrorSquiggleClassifier(ICodeDocument document)
             : base(ClassificationTypes.CompilerError, typeof(NQuerySemanticErrorSquiggleClassifier).Name, null, document, true)
         {
-            _queryDocument = document.GetNQueryDocument();
-            if (_queryDocument == null)
+            _workspace = document.GetWorkspace();
+            if (_workspace == null)
                 return;
 
-            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             UpdateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             UpdateTags();
         }
 
-        protected override async Task<Tuple<SyntaxTree, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
+        protected override async Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
         {
-            var semanticModel = await _queryDocument.GetSemanticModelAsync();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
             var diagnostics = await Task.Run(() => semanticModel.GetDiagnostics());
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            return Tuple.Create(syntaxTree, diagnostics);
+            return Tuple.Create(document.Text, diagnostics);
         }
     }
 }

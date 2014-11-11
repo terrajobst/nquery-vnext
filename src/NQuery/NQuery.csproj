@@ -227,7 +227,9 @@
     <Compile Include="SyntaxExtensions.cs" />
     <Compile Include="SyntaxTreeEquivalence.cs" />
     <Compile Include="SyntaxTreeNavigation.cs" />
-    <Compile Include="Text\StringBuffer.cs" />
+    <Compile Include="Text\SourceTextContainer.cs" />
+    <Compile Include="Text\StaticSourceTextContainer.cs" />
+    <Compile Include="Text\StringText.cs" />
     <Compile Include="Text\StringTextLineCollection.cs" />
     <Compile Include="Text\TextLineCollection.cs" />
     <Compile Include="Text\TextLocation.cs" />
@@ -324,7 +326,7 @@
     <Compile Include="SyntaxVisitorOfTResult.cs" />
     <Compile Include="SyntaxWalker.cs" />
     <Compile Include="Syntax\TableReferenceSyntax.cs" />
-    <Compile Include="Text\TextBuffer.cs" />
+    <Compile Include="Text\SourceText.cs" />
     <Compile Include="Text\TextLine.cs" />
     <Compile Include="Text\TextSpan.cs" />
     <Compile Include="Syntax\TopClauseSyntax.cs" />

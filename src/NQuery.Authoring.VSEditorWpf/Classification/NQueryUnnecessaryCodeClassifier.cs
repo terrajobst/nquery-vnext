@@ -7,8 +7,6 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.CodeActions;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
 using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
@@ -16,25 +14,26 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
     internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag,TextSpan>
     {
         private readonly INQueryClassificationService _classificationService;
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
-        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, NQueryDocument document)
+        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, Workspace workspace)
         {
             _classificationService = classificationService;
-            _document = document;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<TextSpan>>> GetRawTagsAsync()
         {
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
+            var snapshot = document.GetTextSnapshot();
             var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
             return Tuple.Create(snapshot, unnecessarySpans);
         }

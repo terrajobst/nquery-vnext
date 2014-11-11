@@ -35,13 +35,13 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 var rightSpan = _node.Right.Span;
                 var secondLength = rightSpan.Start - leftSpan.End;
 
-                var textBuffer = _node.SyntaxTree.TextBuffer;
-                var left = textBuffer.GetText(leftSpan);
-                var right = textBuffer.GetText(rightSpan);
+                var text = _node.SyntaxTree.Text;
+                var left = text.GetText(leftSpan);
+                var right = text.GetText(rightSpan);
                 
-                var first = textBuffer.GetText(0, leftSpan.Start);
-                var second = textBuffer.GetText(leftSpan.End, secondLength);
-                var third = textBuffer.GetText(rightSpan.End);
+                var first = text.GetText(0, leftSpan.Start);
+                var second = text.GetText(leftSpan.End, secondLength);
+                var third = text.GetText(rightSpan.End);
 
                 var newSource = first + right + second + left + third;
                 return SyntaxTree.ParseQuery(newSource);

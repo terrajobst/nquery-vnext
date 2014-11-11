@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.Highlighting;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
@@ -17,15 +16,12 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
     internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
     {
         [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
-        [Import]
         public IHighlighterService HighlighterService { get; set; }
 
         public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
         {
-            var document = DocumentManager.GetDocument(buffer);
-            return new NQueryHighlightingTagger(textView, document, HighlighterService.Highlighters) as ITagger<T>;
+            var workspace = buffer.GetWorkspace();
+            return new NQueryHighlightingTagger(workspace, textView, HighlighterService.Highlighters) as ITagger<T>;
         }
     }
 }

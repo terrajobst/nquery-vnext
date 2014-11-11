@@ -1,51 +1,98 @@
 using System;
-using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
+using ActiproSoftware.Windows.Controls.SyntaxEditor;
 
 using NQuery.Authoring.ActiproWpf.Text;
-using NQuery.Authoring.Document;
 using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf
 {
     public static class NQueryExtensions
     {
-        private static readonly object NQueryDocumentKey = new object();
+        private static readonly object WorkspaceKey = new object();
 
-        public static NQueryDocument GetNQueryDocument(this ICodeDocument codeDocument)
+        public static Workspace GetWorkspace(this ICodeDocument codeDocument)
         {
-            return codeDocument.Properties.GetOrCreateSingleton(NQueryDocumentKey, () =>
+            return codeDocument.Properties.GetOrCreateSingleton(WorkspaceKey, () =>
             {
-                var provider = new SnapshotTextBufferPovider(codeDocument);
-                var document = new NQueryDocument(provider);
-                new NQueryParseDataSynchronizer(codeDocument, document);
-                return document;
+                var textContainer = new ActiproSourceTextContainer(codeDocument);
+                var workspace = new Workspace(textContainer);
+                new NQueryParseDataSynchronizer(codeDocument, workspace);
+                return workspace;
             });
         }
 
-        public static NQueryDocument GetNQueryDocument(this ITextDocument textDocument)
+        public static Document GetDocument(this ITextDocument textDocument)
         {
             var codeDocument = textDocument as ICodeDocument;
-            return codeDocument == null ? null : codeDocument.GetNQueryDocument();
+            if (codeDocument == null)
+                return null;
+
+            var workspace = codeDocument.GetWorkspace();
+            return workspace.CurrentDocument;
         }
 
-        public static Task<SyntaxTree> GetSyntaxTreeAsync(this ITextDocument textDocument)
+        public static DocumentView GetDocumentView(this SyntaxEditor syntaxEditor)
         {
-            var document = textDocument.GetNQueryDocument();
-            return document == null ? Task.FromResult<SyntaxTree>(null) : document.GetSyntaxTreeAsync();
+            var document = syntaxEditor.Document.GetDocument();
+            var snapshot = document.Text.ToTextSnapshot();
+            var offset = syntaxEditor.Caret.Offset;
+            var selection = syntaxEditor.ActiveView.Selection.SnapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default).ToTextSpan();
+            var position = new TextSnapshotOffset(snapshot, offset).ToOffset();
+            return new DocumentView(document, position, selection);
         }
 
-        public static Task<SemanticModel> GetSemanticModelAsync(this ITextDocument textDocument)
+        public static DocumentView GetDocumentView(this TextSnapshotOffset offset)
         {
-            var document = textDocument.GetNQueryDocument();
-            return document == null ? Task.FromResult<SemanticModel>(null) : document.GetSemanticModelAsync();
+            var position = offset.ToOffset();
+            var document = offset.Snapshot.ToDocument();
+            return new DocumentView(document, position);
         }
 
-        public static TextSnapshotOffset ToSnapshotOffset(this TextBuffer textBuffer, ITextSnapshot snapshot, int position)
+        public static Document ToDocument(this ITextSnapshot snapshot)
         {
-            var textLine = textBuffer.GetLineFromPosition(position);
-            var line = textLine.Index;
+            var sourceText = snapshot.ToSourceText();
+            var document = snapshot.Document.GetDocument();
+            if (document.Text != snapshot.ToSourceText())
+                document = document.WithText(sourceText);
+
+            return document;
+        }
+
+        public static int ToOffset(this TextSnapshotOffset offset)
+        {
+            var sourceText = offset.Snapshot.ToSourceText();
+            var textPosition = offset.Position;
+            var line = sourceText.Lines[textPosition.Line];
+            return line.Span.Start + textPosition.Character;
+        }
+
+        public static TextSpan ToTextSpan(this TextSnapshotRange range)
+        {
+            var startOffset = new TextSnapshotOffset(range.Snapshot, range.StartOffset);
+            var endOffset = new TextSnapshotOffset(range.Snapshot, range.EndOffset);
+            var start = startOffset.ToOffset();
+            var end = endOffset.ToOffset();
+            return TextSpan.FromBounds(start, end);
+        }
+
+        public static TextSnapshotOffset ToSnapshotOffset(this DocumentView snapshot, int position)
+        {
+            return snapshot.Text.ToSnapshotOffset(position);
+        }
+
+        public static TextSnapshotRange ToSnapshotRange(this DocumentView snapshot, TextSpan span)
+        {
+            return snapshot.Text.ToSnapshotRange(span);
+        }
+
+        public static TextSnapshotOffset ToSnapshotOffset(this SourceText text, int position)
+        {
+            var snapshot = text.ToTextSnapshot();
+
+            var textLine = text.GetLineFromPosition(position);
+            var line = textLine.LineNumber;
             var character = position - textLine.Span.Start;
 
             var textPosition = new TextPosition(line, character);
@@ -53,33 +100,12 @@ namespace NQuery.Authoring.ActiproWpf
             return new TextSnapshotOffset(snapshot, offset);
         }
 
-        public static TextSnapshotRange ToSnapshotRange(this TextBuffer textBuffer, ITextSnapshot snapshot, TextSpan span)
+        public static TextSnapshotRange ToSnapshotRange(this SourceText text, TextSpan span)
         {
-            var start = textBuffer.ToSnapshotOffset(snapshot, span.Start);
-            var end = textBuffer.ToSnapshotOffset(snapshot, span.End);
+            var snapshot = text.ToTextSnapshot();
+            var start = text.ToSnapshotOffset(span.Start);
+            var end = text.ToSnapshotOffset(span.End);
             return new TextSnapshotRange(snapshot, start.Offset, end.Offset);
-        }
-
-        public static int ToOffset(this TextSnapshotOffset offset, TextBuffer textBuffer)
-        {
-            var textPosition = offset.Position;
-            var line = textBuffer.Lines[textPosition.Line];
-            return line.Span.Start + textPosition.Character;
-        }
-
-        public static TextSpan ToTextSpan(this TextSnapshotRange range, TextBuffer textBuffer)
-        {
-            var startOffset = new TextSnapshotOffset(range.Snapshot, range.StartOffset);
-            var endOffset = new TextSnapshotOffset(range.Snapshot, range.EndOffset);
-            var start = startOffset.ToOffset(textBuffer);
-            var end = endOffset.ToOffset(textBuffer);
-            return TextSpan.FromBounds(start, end);
-        }
-
-        public static ITextSnapshot GetTextSnapshot(this SyntaxTree syntaxTree)
-        {
-            var textBuffer = syntaxTree.TextBuffer as SnapshotTextBuffer;
-            return textBuffer == null ? null : textBuffer.Snapshot;
         }
     }
 }

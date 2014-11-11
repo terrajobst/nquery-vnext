@@ -9,9 +9,9 @@ namespace NQuery.Authoring.CodeActions
     {
         public static SyntaxTree ReplaceText(this SyntaxTree syntaxTree, TextSpan span, string text)
         {
-            var textBuffer = syntaxTree.TextBuffer;
-            var prefix = textBuffer.GetText(0, span.Start);
-            var suffix = textBuffer.GetText(span.End);
+            var sourceText = syntaxTree.Text;
+            var prefix = sourceText.GetText(0, span.Start);
+            var suffix = sourceText.GetText(span.End);
             var newText = prefix + text + suffix;
 
             var isQuery = syntaxTree.Root.Root is QuerySyntax;

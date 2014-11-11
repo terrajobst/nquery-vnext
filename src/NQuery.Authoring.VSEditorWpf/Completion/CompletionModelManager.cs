@@ -7,28 +7,27 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Composition.Completion;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.VSEditorWpf.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     internal sealed class CompletionModelManager : ICompletionModelManager
     {
+        private readonly Workspace _workspace;
         private readonly ITextView _textView;
-        private readonly NQueryDocument _document;
         private readonly ICompletionBroker _completionBroker;
         private readonly ICompletionProviderService _completionProviderService;
 
         private ICompletionSession _session;
         private CompletionModel _model;
 
-        public CompletionModelManager(ITextView textView, NQueryDocument document, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
+        public CompletionModelManager(Workspace workspace, ITextView textView, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
         {
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+            _textView = textView;
             _completionBroker = completionBroker;
             _completionProviderService = completionProviderService;
-            _textView = textView;
-            _document = document;
-            _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
         }
 
         private static bool IsTriggerChar(char c)
@@ -66,7 +65,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 Commit();
         }
 
-        private void TextBufferOnPostChanged(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             if (_session != null)
                 UpdateModel();
@@ -82,11 +81,11 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         private async void UpdateModel()
         {
-            var textView = _textView;
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
-            var triggerPosition = textView.GetCaretPosition(snapshot);
-            var model = semanticModel.GetCompletionModel(triggerPosition, _completionProviderService.Providers);
+            var documentView = _textView.GetDocumentView();
+            var position = documentView.Position;
+            var document = documentView.Document;
+            var semanticModel = await document.GetSemanticModelAsync();
+            var model = semanticModel.GetCompletionModel(position, _completionProviderService.Providers);
 
             // Let observers know that we've a new model.
 
@@ -107,9 +106,9 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             // If it's a builder, we don't want to eat the enter key.
             var sendThrough = isBuilder;
 
-            _textView.TextBuffer.PostChanged -= TextBufferOnPostChanged;
+            _workspace.CurrentDocumentChanged -= WorkspaceOnCurrentDocumentChanged;
             _session.Commit();
-            _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
 
             return !sendThrough;
         }
@@ -145,7 +144,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 else if (showSession)
                 {
                     var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
-                    var snapshot = syntaxTree.GetTextSnapshot();
+                    var snapshot = syntaxTree.Text.ToTextSnapshot();
                     var triggerPosition = _model.ApplicableSpan.Start;
                     var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 

@@ -11,9 +11,9 @@ namespace NQuery.Authoring.Wpf
         private readonly int _line;
         private readonly int _column;
 
-        public DiagnosticViewModel(Diagnostic diagnostic, TextBuffer textBuffer)
+        public DiagnosticViewModel(Diagnostic diagnostic, SourceText sourceText)
         {
-            var textLocation = textBuffer.GetTextLocation(diagnostic.Span.Start);
+            var textLocation = sourceText.GetTextLocation(diagnostic.Span.Start);
             _diagnostic = diagnostic;
             _description = diagnostic.Message;
             _column = textLocation.Column + 1;

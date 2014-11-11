@@ -5,16 +5,12 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.SignatureHelp;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     [Export(typeof(ISignatureHelpManagerProvider))]
     internal sealed class SignatureHelpManagerProvider : ISignatureHelpManagerProvider
     {
-        [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
         [Import]
         public ISignatureHelpBroker SignatureHelpBroker { get; set; }
 
@@ -25,8 +21,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         {
             return textView.Properties.GetOrCreateSingletonProperty(() =>
             {
-                var document = DocumentManager.GetDocument(textView.TextBuffer);
-                return new SignatureHelpManager(textView, document, SignatureHelpBroker, SignatureHelpModelProviderService);
+                return new SignatureHelpManager(textView, SignatureHelpBroker, SignatureHelpModelProviderService);
             });
         }
     }

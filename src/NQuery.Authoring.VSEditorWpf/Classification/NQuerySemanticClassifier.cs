@@ -8,34 +8,33 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.Classifications;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,SemanticClassificationSpan>
     {
         private readonly INQueryClassificationService _classificationService;
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
-        public NQuerySemanticClassifier(INQueryClassificationService classificationService, NQueryDocument document)
+        public NQuerySemanticClassifier(INQueryClassificationService classificationService, Workspace workspace)
         {
             _classificationService = classificationService;
-            _document = document;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SemanticClassificationSpan>>> GetRawTagsAsync()
         {
-            var semanticModel = await _document.GetSemanticModelAsync();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = syntaxTree.GetTextSnapshot();
+            var snapshot = document.GetTextSnapshot();
             var semanticClassificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySemantics(semanticModel));
             return Tuple.Create(snapshot, semanticClassificationSpans.AsEnumerable());
         }

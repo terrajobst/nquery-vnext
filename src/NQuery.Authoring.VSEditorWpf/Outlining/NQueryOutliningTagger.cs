@@ -6,32 +6,31 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Authoring.Document;
 using NQuery.Authoring.Outlining;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Outlining
 {
     internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, OutliningRegionSpan>
     {
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
-        public NQueryOutliningTagger(NQueryDocument document)
+        public NQueryOutliningTagger(Workspace workspace)
         {
-            _document = document;
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<OutliningRegionSpan>>> GetRawTagsAsync()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = syntaxTree.GetTextSnapshot();
+            var document = _workspace.CurrentDocument;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
+            var snapshot = document.GetTextSnapshot();
             var result = syntaxTree.Root.FindRegions();
             return Tuple.Create(snapshot, result.AsEnumerable());
         }

@@ -6,32 +6,35 @@ using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.CodeActions;
-using NQuery.Authoring.Document;
+using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
     {
-        private readonly NQueryDocument _queryDocument;
+        private readonly Workspace _workspace;
 
         public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
             : base(typeof(NQuerySemanticIssueSquiggleClassifier).Name, null, document, true)
         {
-            _queryDocument = document.GetNQueryDocument();
-            if (_queryDocument == null)
+            _workspace = document.GetWorkspace();
+            if (_workspace == null)
                 return;
 
-            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+            UpdateTags();
+        }
+
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+        {
             UpdateTags();
         }
 
         private async void UpdateTags()
         {
-            var semanticModel = await _queryDocument.GetSemanticModelAsync();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
             var codeIssues = semanticModel.GetIssues();
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
 
             using (CreateBatch())
             {
@@ -48,17 +51,12 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
                     if (classificationType == null)
                         continue;
 
-                    var snapshotRange = textBuffer.ToSnapshotRange(snapshot, codeIssue.Span);
+                    var snapshotRange = document.Text.ToSnapshotRange(codeIssue.Span);
                     var tag = new SquiggleTag(classificationType, new DirectContentProvider(codeIssue.Description));
                     var tagRange = new TagVersionRange<ISquiggleTag>(snapshotRange, TextRangeTrackingModes.Default, tag);
                     Add(tagRange);
                 }
             }
-        }
-
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
-        {
-            UpdateTags();
         }
     }
 }

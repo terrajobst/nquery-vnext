@@ -5,9 +5,8 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.CodeActions;
-using NQuery.Authoring.VSEditorWpf.Document;
 
-namespace NQuery.Authoring.VSEditorWpf.CodeActions
+namespace NQuery.Authoring.VSEditorWpf.Margins
 {
     [Export(typeof(IWpfTextViewMarginProvider))]
     [Name("NQueryCodeActionsMarginProvider")]
@@ -18,9 +17,6 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
     internal sealed class NQueryCodeActionsMarginProvider : IWpfTextViewMarginProvider
     {
         [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
-        [Import]
         public ICodeIssueProviderService CodeIssueProviderService { get; set; }
 
         [Import]
@@ -28,10 +24,10 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
 
         public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
         {
-            var document = DocumentManager.GetDocument(wpfTextViewHost.TextView.TextBuffer);
+            var workspace = wpfTextViewHost.TextView.TextBuffer.GetWorkspace();
             var issueProviders = CodeIssueProviderService.Providers;
             var refactoringProviders = CodeRefactoringProviderService.Providers;
-            var margin = new NQueryCodeActionsMargin(wpfTextViewHost, document, issueProviders, refactoringProviders);
+            var margin = new NQueryCodeActionsMargin(workspace, wpfTextViewHost, issueProviders, refactoringProviders);
             wpfTextViewHost.TextView.Properties.AddProperty(margin.GetType(), margin);
             return margin;
         }

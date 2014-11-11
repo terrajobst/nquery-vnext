@@ -8,46 +8,40 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.Classifications;
-using NQuery.Authoring.Document;
 
 namespace NQuery.Authoring.ActiproWpf.Classification
 {
     internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificationTag>
     {
         private readonly INQueryClassificationTypes _classificationTypes;
-        private readonly NQueryDocument _queryDocument;
+        private readonly Workspace _workspace;
 
         public NQuerySemanticClassifier(ICodeDocument document)
             : base(typeof(NQuerySemanticClassifier).Name, null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
-            _queryDocument = document.GetNQueryDocument();
-            if (_queryDocument == null)
+            _workspace = document.GetWorkspace();
+            if (_workspace == null)
                 return;
 
-            _queryDocument.SemanticModelInvalidated += DocumentOnSemanticModelChanged;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             UpdateTags();
         }
 
-        private void DocumentOnSemanticModelChanged(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             UpdateTags();
         }
 
         private async void UpdateTags()
         {
-            var semanticModel = await _queryDocument.GetSemanticModelAsync();
-            if (semanticModel == null)
-                return;
-
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
             var classificationSpans = await ClassifyAsync(semanticModel);
 
             var tags = from cs in classificationSpans
-                       let textRange = textBuffer.ToSnapshotRange(snapshot, cs.Span)
+                       let textRange = document.Text.ToSnapshotRange(cs.Span)
                        let classificationType = GetClassification(cs.Classification)
                        let tag = new ClassificationTag(classificationType)
                        select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);

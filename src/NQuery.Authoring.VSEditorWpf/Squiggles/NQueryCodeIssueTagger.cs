@@ -10,33 +10,32 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Composition.CodeActions;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     internal sealed class NQueryCodeIssueTagger : AsyncTagger<IErrorTag, CodeIssue>
     {
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
         private readonly ICodeIssueProviderService _codeIssueProviderService;
 
-        public NQueryCodeIssueTagger(NQueryDocument document, ICodeIssueProviderService codeIssueProviderService)
+        public NQueryCodeIssueTagger(Workspace workspace, ICodeIssueProviderService codeIssueProviderService)
         {
-            _document = document;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _codeIssueProviderService = codeIssueProviderService;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             InvalidateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs eventArgs)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<CodeIssue>>> GetRawTagsAsync()
         {
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
+            var document = _workspace.CurrentDocument;
+            var semanticModel = await document.GetSemanticModelAsync();
+            var snapshot = document.GetTextSnapshot();
             var providers = _codeIssueProviderService.Providers;
             var issues = await Task.Run(() => semanticModel.GetIssues(providers).Where(IsWarningOrError).ToImmutableArray());
             return Tuple.Create(snapshot, issues.AsEnumerable());

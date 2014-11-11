@@ -9,9 +9,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
     {
         public IOutliningSource GetOutliningSource(ITextSnapshot snapshot)
         {
-            var document = snapshot.Document.GetNQueryDocument();
-            if (document == null)
-                return null;
+            var document = snapshot.ToDocument();
 
             SyntaxTree syntaxTree;
             if (!document.TryGetSyntaxTree(out syntaxTree))

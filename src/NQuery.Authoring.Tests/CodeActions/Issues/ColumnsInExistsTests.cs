@@ -109,7 +109,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
 
             var syntaxTree = action.GetEdit();
             
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
     }
 }

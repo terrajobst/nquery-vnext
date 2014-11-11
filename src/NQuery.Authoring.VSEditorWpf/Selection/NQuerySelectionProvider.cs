@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
-using NQuery.Authoring.Document;
 using NQuery.Authoring.Selection;
 using NQuery.Text;
 
@@ -13,21 +12,23 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {
         private readonly ITextView _textView;
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
         private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
 
-        public NQuerySelectionProvider(ITextView textView, NQueryDocument document)
+        public NQuerySelectionProvider(ITextView textView)
         {
             _textView = textView;
+            _workspace = textView.TextBuffer.GetWorkspace();
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;
-            _document = document;
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
         }
 
         public async void ExtendSelection()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var currentSelection = GetCurrentSelection();
+            var documentView = _textView.GetDocumentView();
+            var document = documentView.Document;
+            var currentSelection = documentView.Selection;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
             var extendedSelection = syntaxTree.ExtendSelection(currentSelection);
 
             if (currentSelection == extendedSelection)
@@ -46,14 +47,6 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
             Select(selection);
         }
 
-        private TextSpan GetCurrentSelection()
-        {
-            var textSelection = _textView.Selection;
-            var selectionStart = textSelection.Start.Position.Position;
-            var selectionEnd = textSelection.End.Position;
-            var currentSelection = TextSpan.FromBounds(selectionStart, selectionEnd);
-            return currentSelection;
-        }
 
         private void Select(TextSpan textSpan)
         {
@@ -75,7 +68,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
             ClearStack();
         }
 
-        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             ClearStack();
         }

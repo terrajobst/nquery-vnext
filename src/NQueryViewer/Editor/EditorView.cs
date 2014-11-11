@@ -2,8 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-using NQuery;
-using NQuery.Authoring.Document;
+using NQuery.Authoring;
 using NQuery.Text;
 
 namespace NQueryViewer.Editor
@@ -44,7 +43,7 @@ namespace NQueryViewer.Editor
             }
         }
 
-        public virtual NQueryDocument Document
+        public virtual Workspace Workspace
         {
             get { return null; }
         }

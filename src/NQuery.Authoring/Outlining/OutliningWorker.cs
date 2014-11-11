@@ -10,13 +10,13 @@ namespace NQuery.Authoring.Outlining
 {
     internal sealed class OutliningWorker
     {
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _sourceText;
         private readonly List<OutliningRegionSpan> _outlineRegions;
         private readonly TextSpan _span;
 
-        public OutliningWorker(TextBuffer textBuffer, List<OutliningRegionSpan> outlineRegions, TextSpan span)
+        public OutliningWorker(SourceText sourceText, List<OutliningRegionSpan> outlineRegions, TextSpan span)
         {
-            _textBuffer = textBuffer;
+            _sourceText = sourceText;
             _outlineRegions = outlineRegions;
             _span = span;
         }
@@ -32,9 +32,9 @@ namespace NQuery.Authoring.Outlining
 
         private bool IsMultipleLines(TextSpan textSpan)
         {
-            var start = _textBuffer.GetLineFromPosition(textSpan.Start);
-            var end = _textBuffer.GetLineFromPosition(textSpan.End);
-            return start.Index != end.Index;
+            var start = _sourceText.GetLineFromPosition(textSpan.Start);
+            var end = _sourceText.GetLineFromPosition(textSpan.End);
+            return start.LineNumber != end.LineNumber;
         }
 
         public void Visit(SyntaxNode node)
@@ -101,10 +101,10 @@ namespace NQuery.Authoring.Outlining
                 if (trivia.Kind == SyntaxKind.MultiLineCommentTrivia)
                 {
                     var commentStart = trivia.Span.Start;
-                    var line = _textBuffer.GetLineFromPosition(commentStart);
+                    var line = _sourceText.GetLineFromPosition(commentStart);
                     var firstLineEnd = line.Span.End;
                     var firstLineSpan = TextSpan.FromBounds(commentStart, firstLineEnd);
-                    var text = _textBuffer.GetText(firstLineSpan) + " ...";
+                    var text = _sourceText.GetText(firstLineSpan) + " ...";
 
                     AddOutlineRegion(trivia.Span, text);
                 }

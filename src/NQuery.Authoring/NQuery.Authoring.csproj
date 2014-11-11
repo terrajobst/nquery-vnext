@@ -85,8 +85,8 @@
     <Compile Include="Completion\Providers\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\Providers\SymbolCompletionProvider.cs" />
     <Compile Include="Completion\Providers\TypeCompletionProvider.cs" />
-    <Compile Include="Document\TextBufferProvider.cs" />
-    <Compile Include="Document\NQueryDocument.cs" />
+    <Compile Include="Document.cs" />
+    <Compile Include="DocumentView.cs" />
     <Compile Include="Highlighting\Highlighters\CaseKeywordHighlighter.cs" />
     <Compile Include="Highlighting\Highlighters\CastKeywordHighlighter.cs" />
     <Compile Include="Highlighting\HighlightingExtensions.cs" />
@@ -98,7 +98,7 @@
     <Compile Include="Highlighting\Highlighters\SelectQueryKeywordHighlighter.cs" />
     <Compile Include="Highlighting\SelectQueryKeywordHighlighterBase.cs" />
     <Compile Include="Highlighting\Highlighters\SymbolReferenceHighlighter.cs" />
-    <Compile Include="Document\NQueryDocumentType.cs" />
+    <Compile Include="DocumentKind.cs" />
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphExtensions.cs" />
     <Compile Include="Outlining\OutliningRegionSpan.cs" />
@@ -122,7 +122,6 @@
     <Compile Include="QuickInfo\QuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\VariableExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\WildcardSelectColumnQuickInfoModelProvider.cs" />
-    <Compile Include="Document\ResultProducer.cs" />
     <Compile Include="Selection\SelectionExtensions.cs" />
     <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProvider.cs" />
@@ -136,6 +135,7 @@
     <Compile Include="SignatureHelp\SignatureHelpExtensions.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModel.cs" />
     <Compile Include="SignatureHelp\SignatureItem.cs" />
+    <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery\NQuery.csproj">

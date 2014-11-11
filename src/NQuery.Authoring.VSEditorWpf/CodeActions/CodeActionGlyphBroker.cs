@@ -3,6 +3,8 @@ using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text.Editor;
 
+using NQuery.Authoring.VSEditorWpf.Margins;
+
 namespace NQuery.Authoring.VSEditorWpf.CodeActions
 {
     [Export(typeof(ICodeActionGlyphBroker))]

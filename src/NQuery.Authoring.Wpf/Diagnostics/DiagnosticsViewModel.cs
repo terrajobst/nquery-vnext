@@ -11,11 +11,11 @@ namespace NQuery.Authoring.Wpf
     {
         private readonly ImmutableArray<DiagnosticViewModel> _diagnostics;
 
-        public DiagnosticsViewModel(IEnumerable<Diagnostic> diagnostics, TextBuffer textBuffer)
+        public DiagnosticsViewModel(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
         {
             _diagnostics = (from d in diagnostics
                             orderby d.Span.Start, d.Span.End
-                            select new DiagnosticViewModel(d, textBuffer)).ToImmutableArray();
+                            select new DiagnosticViewModel(d, sourceText)).ToImmutableArray();
         }
 
         public ImmutableArray<DiagnosticViewModel> Diagnostics

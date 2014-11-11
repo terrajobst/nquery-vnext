@@ -7,14 +7,14 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Text
 {
-    internal sealed class SnapshotTextLineCollection : TextLineCollection
+    internal sealed class VisualStudioTextLineCollection : TextLineCollection
     {
         private readonly ITextSnapshot _snapshot;
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _sourceText;
 
-        public SnapshotTextLineCollection(TextBuffer textBuffer, ITextSnapshot snapshot)
+        public VisualStudioTextLineCollection(SourceText sourceText, ITextSnapshot snapshot)
         {
-            _textBuffer = textBuffer;
+            _sourceText = sourceText;
             _snapshot = snapshot;
         }
 
@@ -34,7 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
             get
             {
                 var line = _snapshot.GetLineFromLineNumber(index);
-                return new TextLine(_textBuffer, line.Start, line.Length);
+                return new TextLine(_sourceText, line.Start, line.Length);
             }
         }
     }

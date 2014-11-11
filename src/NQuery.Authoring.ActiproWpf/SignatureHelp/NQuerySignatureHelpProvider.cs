@@ -29,15 +29,10 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
         private async void RequestSessionAsync(IEditorView view)
         {
-            var semanticModel = await view.CurrentSnapshot.Document.GetSemanticModelAsync();
-            if (semanticModel == null)
-                return;
-
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
-            var offset = view.SyntaxEditor.Caret.Offset;
-            var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
+            var snapshot = view.SyntaxEditor.GetDocumentView();
+            var semanticModel = await snapshot.Document.GetSemanticModelAsync();
+            var text = snapshot.Text;
+            var position = snapshot.Position;
 
             var model = semanticModel.GetSignatureHelpModel(position, _providers);
 
@@ -79,7 +74,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
             if (existingSession == null)
             {
-                var span = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.ApplicableSpan);
+                var span = text.ToSnapshotRange(model.ApplicableSpan);
                 session.Open(view, span);
             }
         }

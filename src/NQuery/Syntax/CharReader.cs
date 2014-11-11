@@ -6,12 +6,12 @@ namespace NQuery.Syntax
 {
     internal sealed class CharReader
     {
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _text;
         private int _position;
 
-        public CharReader(TextBuffer textBuffer)
+        public CharReader(SourceText text)
         {
-            _textBuffer = textBuffer;
+            _text = text;
         }
 
         public void NextChar()
@@ -40,8 +40,8 @@ namespace NQuery.Syntax
         private char Peek(int offset)
         {
             var index = _position + offset;
-            return index < _textBuffer.Length
-                       ? _textBuffer[index]
+            return index < _text.Length
+                       ? _text[index]
                        : '\0';
         }
     }

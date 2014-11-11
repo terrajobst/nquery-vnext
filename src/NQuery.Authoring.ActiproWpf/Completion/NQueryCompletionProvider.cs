@@ -44,16 +44,10 @@ namespace NQuery.Authoring.ActiproWpf.Completion
 
         private async void RequestSessionAsync(IEditorView view, bool canCommitWithoutPopup)
         {
-            var semanticModel = await view.CurrentSnapshot.Document.GetSemanticModelAsync();
-            if (semanticModel == null)
-                return;
-
-            var snapshot = semanticModel.Compilation.SyntaxTree.GetTextSnapshot();
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var textBuffer = syntaxTree.TextBuffer;
-            var offset = view.SyntaxEditor.Caret.Offset;
-            var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
-
+            var viewSnapshot = view.SyntaxEditor.GetDocumentView();
+            var document = viewSnapshot.Document;
+            var position = viewSnapshot.Position;
+            var semanticModel = await document.GetSemanticModelAsync();
             var model = semanticModel.GetCompletionModel(position, _providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();

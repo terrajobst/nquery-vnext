@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-using ActiproSoftware.Text;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
@@ -34,19 +33,14 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
 
         public override object GetContext(IEditorView view, int offset)
         {
-            var snapshot = view.CurrentSnapshot;
-            var document = snapshot.Document.GetNQueryDocument();
-            if (document == null)
-                return null;
+            var snapshot = view.SyntaxEditor.GetDocumentView();
+            var document = snapshot.Document;
 
             SemanticModel semanticModel;
             if (!document.TryGetSemanticModel(out semanticModel))
                 return null;
 
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var textBuffer = syntaxTree.TextBuffer;
-            var position = new TextSnapshotOffset(snapshot, offset).ToOffset(textBuffer);
-
+            var position = snapshot.ToSnapshotOffset(offset).ToOffset();
             var model = semanticModel.GetQuickInfoModel(position, _providers);
             return model;
         }
@@ -57,11 +51,11 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             if (model == null)
                 return false;
 
-            var textBuffer = model.SemanticModel.Compilation.SyntaxTree.TextBuffer;
-            var textSnapshotRange = textBuffer.ToSnapshotRange(view.CurrentSnapshot, model.Span);
+            var text = model.SemanticModel.Compilation.SyntaxTree.Text;
+            var textSnapshotRange = text.ToSnapshotRange(model.Span);
             var textRange = textSnapshotRange.TextRange;
             var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();
-
+                
             var quickInfoSession = new QuickInfoSession();
             quickInfoSession.Context = context;
             quickInfoSession.Content = content;

@@ -11,7 +11,7 @@ namespace NQuery.Syntax
     internal sealed class Lexer
     {
         private readonly SyntaxTree _syntaxTree;
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _text;
         private readonly CharReader _charReader;
         private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
         private readonly List<SyntaxTrivia> _trailingTrivia = new List<SyntaxTrivia>();
@@ -22,11 +22,11 @@ namespace NQuery.Syntax
         private object _value;
         private int _start;
 
-        public Lexer(SyntaxTree syntaxTree, TextBuffer textBuffer)
+        public Lexer(SyntaxTree syntaxTree, SourceText text)
         {
             _syntaxTree = syntaxTree;
-            _textBuffer = textBuffer;
-            _charReader = new CharReader(textBuffer);
+            _text = text;
+            _charReader = new CharReader(text);
         }
 
         public SyntaxToken Lex()
@@ -46,7 +46,7 @@ namespace NQuery.Syntax
             var end = _charReader.Position;
             var kind = _kind;
             var span = TextSpan.FromBounds(_start, end);
-            var text = _textBuffer.GetText(span);
+            var text = _text.GetText(span);
             var diagnostics = _diagnostics.ToImmutableArray();
 
             _trailingTrivia.Clear();
@@ -65,7 +65,7 @@ namespace NQuery.Syntax
 
         private TextSpan CurrentSpanStart
         {
-            get { return TextSpan.FromBounds(_start, Math.Min(_start + 2, _textBuffer.Length)); }
+            get { return TextSpan.FromBounds(_start, Math.Min(_start + 2, _text.Length)); }
         }
 
         private void ReadTrivia(List<SyntaxTrivia> target, bool isLeading)
@@ -207,7 +207,7 @@ namespace NQuery.Syntax
             var start = _start;
             var end = _charReader.Position;
             var span = TextSpan.FromBounds(start, end);
-            var text = _textBuffer.GetText(span);
+            var text = _text.GetText(span);
             var diagnostics = _diagnostics.ToImmutableArray();
             var trivia = new SyntaxTrivia(_syntaxTree, kind, text, span, null, diagnostics);
             target.Add(trivia);
@@ -741,7 +741,7 @@ namespace NQuery.Syntax
 
             var end = _charReader.Position;
             var span = TextSpan.FromBounds(start, end);
-            var text = _textBuffer.GetText(span);
+            var text = _text.GetText(span);
 
             _kind = SyntaxFacts.GetKeywordKind(text);
             _contextualKind = SyntaxFacts.GetContextualKeywordKind(text);

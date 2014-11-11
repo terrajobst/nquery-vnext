@@ -1,8 +1,7 @@
 using System;
 using System.Windows;
 
-using NQuery;
-using NQuery.Authoring.Document;
+using NQuery.Authoring;
 using NQuery.Text;
 
 namespace NQueryViewer.Editor
@@ -12,7 +11,7 @@ namespace NQueryViewer.Editor
         UIElement Element { get; }
         int CaretPosition { get; set; }
         TextSpan Selection { get; set; }
-        NQueryDocument Document { get; }
+        Workspace Workspace { get; }
 
         void Focus();
 

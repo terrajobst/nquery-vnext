@@ -10,26 +10,25 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.CodeActions;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
+using NQuery.Authoring.VSEditorWpf.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
 
-namespace NQuery.Authoring.VSEditorWpf.CodeActions
+namespace NQuery.Authoring.VSEditorWpf.Margins
 {
     internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICodeActionGlyphController
     {
+        private readonly Workspace _workspace;
         private readonly IWpfTextViewHost _textViewHost;
-        private readonly NQueryDocument _document;
         private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
         private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
         private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
 
-        public NQueryCodeActionsMargin(IWpfTextViewHost textViewHost, NQueryDocument document, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
+        public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textViewHost = textViewHost;
-            _document = document;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.LayoutChanged += TextViewOnLayoutChanged;
             _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
@@ -67,7 +66,7 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
                                 .Select(a => new TextBufferCodeActionModel(CodeActionKind.Refactoring, a, textBuffer));
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             UpdateGlyph();
         }
@@ -90,13 +89,18 @@ namespace NQuery.Authoring.VSEditorWpf.CodeActions
         private async void UpdateGlyph()
         {
             var textView = _textViewHost.TextView;
-            var textBuffer = textView.TextBuffer;
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
-            var position = textView.GetCaretPosition(snapshot);
-            var bufferPosition = new SnapshotPoint(snapshot, position).TranslateTo(textBuffer.CurrentSnapshot, PointTrackingMode.Negative);
+            var documentView = textView.GetDocumentView();
+            var position = documentView.Position;
+            var document = documentView.Document;
+            var snapshot = document.GetTextSnapshot();
+            var semanticModel = await document.GetSemanticModelAsync();
+            var currentSnapshot = textView.TextBuffer.CurrentSnapshot;
+            if (snapshot != currentSnapshot)
+                return;
+
+            var bufferPosition = new SnapshotPoint(snapshot, position);
             var textViewLine = textView.GetTextViewLineContainingBufferPosition(bufferPosition);
-            var actionModels = await GetActionModelsAsync(semanticModel, position, textBuffer);
+            var actionModels = await GetActionModelsAsync(semanticModel, position, snapshot.TextBuffer);
 
             if (actionModels.Length == 0)
             {

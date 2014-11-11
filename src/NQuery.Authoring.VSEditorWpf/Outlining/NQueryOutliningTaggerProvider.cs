@@ -5,8 +5,6 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 using Microsoft.VisualStudio.Utilities;
 
-using NQuery.Authoring.VSEditorWpf.Document;
-
 namespace NQuery.Authoring.VSEditorWpf.Outlining
 {
     [Export(typeof(ITaggerProvider))]
@@ -14,13 +12,10 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
     [ContentType("NQuery")]
     internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
     {
-        [Import]
-        public INQueryDocumentManager DocumentManager { get; set; }
-
         public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
         {
-            var document = DocumentManager.GetDocument(buffer);
-            return new NQueryOutliningTagger(document) as ITagger<T>;
+            var workspace = buffer.GetWorkspace();
+            return new NQueryOutliningTagger(workspace) as ITagger<T>;
         }
     }
 }

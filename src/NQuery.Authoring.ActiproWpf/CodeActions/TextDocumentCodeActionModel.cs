@@ -22,7 +22,7 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             var snapshot = _document.CurrentSnapshot;
             var fullSpan = new TextRange(0, snapshot.Length);
             var syntaxTree = action.GetEdit();
-            var newText = syntaxTree.TextBuffer.GetText();
+            var newText = syntaxTree.Text.GetText();
             _document.ReplaceText(TextChangeTypes.Custom, fullSpan, newText);
         }
     }

@@ -20,24 +20,22 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
 
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
         {
-            var snapshot = snapshotOffset.Snapshot;
-            var document = snapshot.Document.GetNQueryDocument();
-            if (document == null)
+            var snapshot = snapshotOffset.GetDocumentView();
+            if (snapshot == null)
                 return null;
 
             SyntaxTree syntaxTree;
-            if (!document.TryGetSyntaxTree(out syntaxTree))
+            if (!snapshot.Document.TryGetSyntaxTree(out syntaxTree))
                 return null;
 
-            var textBuffer = syntaxTree.TextBuffer;
-            var position = snapshotOffset.ToOffset(textBuffer);
+            var position = snapshot.Position;
 
             var result = syntaxTree.MatchBraces(position, _matchers);
             if (!result.IsValid)
                 return null;
 
-            var leftRange = textBuffer.ToSnapshotRange(snapshot, result.Left);
-            var rightRange = textBuffer.ToSnapshotRange(snapshot, result.Right);
+            var leftRange = snapshot.ToSnapshotRange(result.Left);
+            var rightRange = snapshot.ToSnapshotRange(result.Right);
             var results = new StructureMatchResultCollection
                               {
                                   new StructureMatchResult(leftRange),

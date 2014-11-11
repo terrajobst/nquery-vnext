@@ -30,13 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ActiproSoftware.Shared.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+    <Reference Include="ActiproSoftware.Shared.Wpf">
       <HintPath>..\packages\ActiproSoftware.Shared.Wpf.12.2.570\lib\net40\ActiproSoftware.Shared.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="ActiproSoftware.SyntaxEditor.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+    <Reference Include="ActiproSoftware.SyntaxEditor.Wpf">
       <HintPath>..\packages\ActiproSoftware.SyntaxEditor.Wpf.12.2.570\lib\net40\ActiproSoftware.SyntaxEditor.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="ActiproSoftware.Text.Wpf, Version=12.2.570.0, Culture=neutral, PublicKeyToken=36ff2196ab5654b9, processorArchitecture=MSIL">
+    <Reference Include="ActiproSoftware.Text.Wpf">
       <HintPath>..\packages\ActiproSoftware.Text.Wpf.12.2.570\lib\net40\ActiproSoftware.Text.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -102,8 +102,9 @@
     <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
     <Compile Include="SymbolContent\NQuerySymbolContentProvider.cs" />
-    <Compile Include="Text\SnapshotTextBuffer.cs" />
-    <Compile Include="Text\SnapshotTextBufferPovider.cs" />
+    <Compile Include="Text\ActiproSourceText.cs" />
+    <Compile Include="Text\ActiproSourceTextContainer.cs" />
+    <Compile Include="Text\ActiproTextExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
@@ -123,7 +124,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

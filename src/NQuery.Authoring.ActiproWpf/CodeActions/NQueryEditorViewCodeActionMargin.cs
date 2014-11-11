@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-using ActiproSoftware.Text;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
 
 using NQuery.Authoring.ActiproWpf.Margins;
+using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
 
@@ -27,9 +27,9 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             _view = view;
             _view.SelectionChanged += ViewOnSelectionChanged;
             _view.TextAreaLayout += ViewOnTextAreaLayout;
-            var document = _view.SyntaxEditor.Document.GetNQueryDocument();
-            if (document != null)
-                document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
+            var workspace = _view.SyntaxEditor.Document.GetWorkspace();
+            if (workspace != null)
+                workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _view.SyntaxEditor.Document.Language.RegisterService(typeof(ICodeActionGlyphController), this);
 
             Width = 19;
@@ -54,33 +54,37 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
             }
         }
 
-        private static Task<ImmutableArray<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static Task<ImmutableArray<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position)
         {
-            return Task.Run(() => GetActionModels(semanticModel, position, textDocument));
+            return Task.Run(() => GetActionModels(semanticModel, position));
         }
 
-        private static ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position)
         {
-            var issues = GetCodeIssues(semanticModel, position, textDocument);
-            var refactorings = GetRefactorings(semanticModel, position, textDocument);
+            var issues = GetCodeIssues(semanticModel, position);
+            var refactorings = GetRefactorings(semanticModel, position);
             return issues.Concat(refactorings).ToImmutableArray();
         }
 
-        private static IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position)
         {
+            var textDocument = semanticModel.Compilation.SyntaxTree.Text.Container.ToTextDocument();
+
             return semanticModel.GetIssues()
                                 .Where(i => i.Span.ContainsOrTouches(position))
                                 .SelectMany(i => i.Actions)
                                 .Select(a => new TextDocumentCodeActionModel(CodeActionKind.IssueFix, a, textDocument));
         }
 
-        private static IEnumerable<CodeActionModel> GetRefactorings(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        private static IEnumerable<CodeActionModel> GetRefactorings(SemanticModel semanticModel, int position)
         {
+            var textDocument = semanticModel.Compilation.SyntaxTree.Text.Container.ToTextDocument();
+
             return semanticModel.GetRefactorings(position)
                                 .Select(a => new TextDocumentCodeActionModel(CodeActionKind.Refactoring, a, textDocument));
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             UpdateGlyph();
         }
@@ -97,11 +101,11 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
 
         private async void UpdateGlyph()
         {
-            var textDocument = _view.SyntaxEditor.Document;
-            var semanticModel = await textDocument.GetSemanticModelAsync();
-            var textBuffer = semanticModel.Compilation.SyntaxTree.TextBuffer;
-            var position = _view.Selection.StartSnapshotOffset.ToOffset(textBuffer);
-            var actionModels = await GetActionModelsAsync(semanticModel, position, textDocument);
+            var snapshot = _view.SyntaxEditor.GetDocumentView();
+            var document = snapshot.Document;
+            var position = snapshot.Position;
+            var semanticModel = await document.GetSemanticModelAsync();
+            var actionModels = await GetActionModelsAsync(semanticModel, position);
 
             if (actionModels.Length == 0)
             {

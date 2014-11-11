@@ -9,16 +9,16 @@ namespace NQuery.Syntax
 {
     internal sealed class Parser
     {
-        private readonly TextBuffer _textBuffer;
+        private readonly SourceText _text;
         private readonly SyntaxTree _syntaxTree;
         private readonly List<SyntaxToken> _tokens = new List<SyntaxToken>();
         private int _tokenIndex;
 
-        public Parser(TextBuffer textBuffer, SyntaxTree syntaxTree)
+        public Parser(SourceText text, SyntaxTree syntaxTree)
         {
-            _textBuffer = textBuffer;
+            _text = text;
             _syntaxTree = syntaxTree;
-            LexAllTokens(textBuffer);
+            LexAllTokens(text);
         }
 
         private SyntaxToken Current
@@ -31,9 +31,9 @@ namespace NQuery.Syntax
             get { return Peek(1); }
         }
 
-        private void LexAllTokens(TextBuffer textBuffer)
+        private void LexAllTokens(SourceText sourceText)
         {
-            var lexer = new Lexer(_syntaxTree, textBuffer);
+            var lexer = new Lexer(_syntaxTree, sourceText);
             var badTokens = new List<SyntaxToken>();
 
             SyntaxToken token;
@@ -170,8 +170,8 @@ namespace NQuery.Syntax
             if (previous == null)
                 return true;
 
-            var previousLine = _textBuffer.GetLineNumberFromPosition(previous.Span.Start);
-            var currentLine = _textBuffer.GetLineNumberFromPosition(Current.Span.Start);
+            var previousLine = _text.GetLineNumberFromPosition(previous.Span.Start);
+            var currentLine = _text.GetLineNumberFromPosition(Current.Span.Start);
             return previousLine == currentLine;
         }
 
@@ -223,8 +223,8 @@ namespace NQuery.Syntax
             if (_tokenIndex > 0)
             {
                 var previousToken = _tokens[_tokenIndex - 1];
-                var previousTokenLine = _textBuffer.GetLineFromPosition(previousToken.Span.End);
-                var currentTokenLine = _textBuffer.GetLineFromPosition(Current.Span.Start);
+                var previousTokenLine = _text.GetLineFromPosition(previousToken.Span.End);
+                var currentTokenLine = _text.GetLineFromPosition(Current.Span.Start);
                 if (currentTokenLine != previousTokenLine)
                     return new TextSpan(previousToken.Span.End, 2);
             }

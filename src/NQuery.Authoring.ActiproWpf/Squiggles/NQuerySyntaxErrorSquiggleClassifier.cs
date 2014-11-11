@@ -4,35 +4,36 @@ using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 
-using NQuery.Authoring.Document;
+using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal sealed class NQuerySyntaxErrorSquiggleClassifier : NQuerySquiggleClassifier
     {
-        private readonly NQueryDocument _queryDocument;
+        private readonly Workspace _workspace;
 
         public NQuerySyntaxErrorSquiggleClassifier(ICodeDocument document)
             : base(ClassificationTypes.SyntaxError, typeof(NQuerySemanticErrorSquiggleClassifier).Name, null, document, true)
         {
-            _queryDocument = document.GetNQueryDocument();
-            if (_queryDocument == null)
+            _workspace = document.GetWorkspace();
+            if (_workspace == null)
                 return;
 
-            _queryDocument.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             UpdateTags();
         }
 
-        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             UpdateTags();
         }
 
-        protected override async Task<Tuple<SyntaxTree, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
+        protected override async Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
         {
-            var syntaxTree = await _queryDocument.GetSyntaxTreeAsync();
+            var document = _workspace.CurrentDocument;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
             var diagnostics = await Task.Run(() => syntaxTree.GetDiagnostics());
-            return Tuple.Create(syntaxTree, diagnostics);
+            return Tuple.Create(document.Text, diagnostics);
         }
     }
 }

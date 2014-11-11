@@ -79,7 +79,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
 
         [Fact]
@@ -272,7 +272,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
 
         [Fact]
@@ -333,7 +333,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
     }
 }

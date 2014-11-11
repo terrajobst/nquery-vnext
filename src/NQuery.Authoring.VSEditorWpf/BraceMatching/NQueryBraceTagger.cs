@@ -9,28 +9,26 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.Composition.BraceMatching;
-using NQuery.Authoring.Document;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 {
     internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSpan>
     {
+        private readonly Workspace _workspace;
         private readonly ITextView _textView;
-        private readonly NQueryDocument _document;
         private readonly IBraceMatcherService _braceMatcherService;
 
-        public NQueryBraceTagger(ITextView textView, NQueryDocument document, IBraceMatcherService braceMatcherService)
+        public NQueryBraceTagger(Workspace workspace, ITextView textView, IBraceMatcherService braceMatcherService)
         {
+            _workspace = workspace;
             _textView = textView;
-            _document = document;
             _braceMatcherService = braceMatcherService;
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
@@ -42,9 +40,11 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var position = _textView.GetCaretPosition(snapshot);
+            var documentView = _textView.GetDocumentView();
+            var position = documentView.Position;
+            var document = documentView.Document;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
+            var snapshot = document.GetTextSnapshot();
             var result = syntaxTree.MatchBraces(position, _braceMatcherService.Matchers);
             if (!result.IsValid)
                 return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());

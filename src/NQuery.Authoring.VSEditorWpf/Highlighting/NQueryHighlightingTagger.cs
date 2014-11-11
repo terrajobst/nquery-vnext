@@ -8,29 +8,27 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Text.Tagging;
 
-using NQuery.Authoring.Document;
 using NQuery.Authoring.Highlighting;
-using NQuery.Authoring.VSEditorWpf.Document;
 
 namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
     internal sealed class NQueryHighlightingTagger : AsyncTagger<HighlightTag, SnapshotSpan>
     {
+        private readonly Workspace _workspace;
         private readonly ITextView _textView;
-        private readonly NQueryDocument _document;
         private readonly ImmutableArray<IHighlighter> _highlighters;
 
-        public NQueryHighlightingTagger(ITextView textView, NQueryDocument document, ImmutableArray<IHighlighter> highlighters)
+        public NQueryHighlightingTagger(Workspace workspace, ITextView textView, ImmutableArray<IHighlighter> highlighters)
         {
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textView = textView;
-            _document = document;
             _highlighters = highlighters;
-            _document.SemanticModelInvalidated += DocumentOnSemanticModelInvalidated;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
             InvalidateTags();
         }
 
-        private void DocumentOnSemanticModelInvalidated(object sender, EventArgs e)
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             InvalidateTags();
         }
@@ -42,9 +40,11 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
         {
-            var semanticModel = await _document.GetSemanticModelAsync();
-            var snapshot = semanticModel.GetTextSnapshot();
-            var position = _textView.GetCaretPosition(snapshot);
+            var documentView = _textView.GetDocumentView();
+            var position = documentView.Position;
+            var document = documentView.Document;
+            var snapshot = document.GetTextSnapshot();
+            var semanticModel = await document.GetSemanticModelAsync();
 
             var spans = semanticModel.GetHighlights(position, _highlighters)
                                      .Select(span => new SnapshotSpan(snapshot, span.Start, span.Length));

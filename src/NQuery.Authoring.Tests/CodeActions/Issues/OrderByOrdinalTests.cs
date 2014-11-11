@@ -82,7 +82,7 @@ namespace NQuery.Authoring.UnitTests.CodeActions.Issues
             Assert.Equal("Replace ordinal by named column reference", action.Description);
 
             var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.TextBuffer.GetText());
+            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
     }
 }

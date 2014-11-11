@@ -2,25 +2,24 @@ using System;
 
 using ActiproSoftware.Text;
 
-using NQuery.Authoring.Document;
-
 namespace NQuery.Authoring.ActiproWpf
 {
     internal sealed class NQueryParseDataSynchronizer
     {
         private readonly ICodeDocument _codeDocument;
-        private readonly NQueryDocument _document;
+        private readonly Workspace _workspace;
 
-        public NQueryParseDataSynchronizer(ICodeDocument codeDocument, NQueryDocument document)
+        public NQueryParseDataSynchronizer(ICodeDocument codeDocument, Workspace workspace)
         {
             _codeDocument = codeDocument;
-            _document = document;
-            _document.SyntaxTreeInvalidated += DocumentOnSyntaxTreeInvalidated;
+            _workspace = workspace;
+            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         }
 
-        private async void DocumentOnSyntaxTreeInvalidated(object sender, EventArgs e)
+        private async void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            var syntaxTree = await _document.GetSyntaxTreeAsync();
+            var document = _workspace.CurrentDocument;
+            var syntaxTree = await document.GetSyntaxTreeAsync();
             _codeDocument.ParseData = new NQueryParseData(syntaxTree);
         }
     }

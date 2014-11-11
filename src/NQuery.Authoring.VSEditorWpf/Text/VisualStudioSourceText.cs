@@ -6,15 +6,16 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Text
 {
-    internal sealed class SnapshotTextBuffer : TextBuffer
+    internal sealed class VisualStudioSourceText : SourceText
     {
         private readonly ITextSnapshot _snapshot;
-        private readonly SnapshotTextLineCollection _lines;
+        private readonly VisualStudioTextLineCollection _lines;
 
-        public SnapshotTextBuffer(ITextSnapshot snapshot)
+        public VisualStudioSourceText(VisualStudioSourceTextContainer container, ITextSnapshot snapshot)
+            : base(container)
         {
             _snapshot = snapshot;
-            _lines = new SnapshotTextLineCollection(this, snapshot);
+            _lines = new VisualStudioTextLineCollection(this, snapshot);
         }
 
         public override int GetLineNumberFromPosition(int position)

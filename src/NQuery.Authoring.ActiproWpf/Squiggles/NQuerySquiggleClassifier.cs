@@ -8,6 +8,8 @@ using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {
     internal abstract class NQuerySquiggleClassifier : CollectionTagger<ISquiggleTag>
@@ -23,9 +25,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
         protected async void UpdateTags()
         {
             var versionAndDiagnostics = await GetDiagnosticsAync();
-            var syntaxTree = versionAndDiagnostics.Item1;
-            var snapshot = syntaxTree.GetTextSnapshot();
-            var textBuffer = syntaxTree.TextBuffer;
+            var text = versionAndDiagnostics.Item1;
             var diagnostics = versionAndDiagnostics.Item2;
 
             using (CreateBatch())
@@ -34,7 +34,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
 
                 foreach (var diagnostic in diagnostics)
                 {
-                    var snapshotRange = textBuffer.ToSnapshotRange(snapshot, diagnostic.Span);
+                    var snapshotRange = text.ToSnapshotRange(diagnostic.Span);
                     var tag = new SquiggleTag(_classificationType, new DirectContentProvider(diagnostic.Message));
                     var tagRange = new TagVersionRange<ISquiggleTag>(snapshotRange, TextRangeTrackingModes.Default, tag);
                     Add(tagRange);
@@ -42,6 +42,6 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             }
         }
 
-        protected abstract Task<Tuple<SyntaxTree, IEnumerable<Diagnostic>>> GetDiagnosticsAync();
+        protected abstract Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAync();
     }
 }

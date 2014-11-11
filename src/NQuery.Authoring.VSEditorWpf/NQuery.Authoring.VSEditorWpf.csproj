@@ -102,10 +102,9 @@
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />
     <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
-    <Compile Include="Document\TextBufferExensions.cs" />
-    <Compile Include="Document\NQueryDocumentManager.cs" />
-    <Compile Include="Document\INQueryDocumentManager.cs" />
-    <Compile Include="Text\SnapshotTextBufferPovider.cs" />
+    <Compile Include="NQueryExensions.cs" />
+    <Compile Include="Text\VisualStudioTextExtensions.cs" />
+    <Compile Include="Text\VisualStudioSourceTextContainer.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManager.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManagerProvider.cs" />
     <Compile Include="Highlighting\HighlightTag.cs" />
@@ -116,8 +115,8 @@
     <Compile Include="CodeActions\CodeActionGlyphBroker.cs" />
     <Compile Include="CodeActions\ICodeActionGlyphBroker.cs" />
     <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
-    <Compile Include="CodeActions\NQueryCodeActionsMargin.cs" />
-    <Compile Include="CodeActions\NQueryCodeActionsMarginProvider.cs" />
+    <Compile Include="Margins\NQueryCodeActionsMargin.cs" />
+    <Compile Include="Margins\NQueryCodeActionsMarginProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProvider.cs" />
     <Compile Include="Selection\INQuerySelectionProviderService.cs" />
     <Compile Include="Classification\INQueryClassificationService.cs" />
@@ -161,8 +160,8 @@
     <Compile Include="SignatureHelp\NQuerySignature.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSource.cs" />
     <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
-    <Compile Include="Text\SnapshotTextBuffer.cs" />
-    <Compile Include="Text\SnapshotTextLineCollection.cs" />
+    <Compile Include="Text\VisualStudioSourceText.cs" />
+    <Compile Include="Text\VisualStudioTextLineCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj">
@@ -185,6 +184,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
