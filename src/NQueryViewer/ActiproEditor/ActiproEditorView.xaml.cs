@@ -13,7 +13,7 @@ using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
-using NQuery.Authoring.ActiproWpf.Text;
+using NQuery.Text;
 
 namespace NQueryViewer.ActiproEditor
 {
@@ -46,25 +46,37 @@ namespace NQueryViewer.ActiproEditor
             _workspace = _syntaxEditor.Document.GetWorkspace();
 
             EditorHost.Content = _syntaxEditor;
-            UpdateCaretAndSelection();
         }
 
         private void SyntaxEditorOnViewSelectionChanged(object sender, EditorViewSelectionEventArgs e)
         {
-            UpdateCaretAndSelection();
+            OnCaretPositionChanged();
+            OnSelectionChanged();
         }
 
-        private void UpdateCaretAndSelection()
+        private int GetCaretPosition()
         {
-            var document = _workspace.CurrentDocument;
-            var snapshot = document.Text.ToTextSnapshot();
+            return _syntaxEditor.Caret.Offset;
+        }
 
-            var snapshotRange = _syntaxEditor.ActiveView.Selection.SnapshotRange;
-            var translatedRange = snapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default);
-            var span = translatedRange.ToTextSpan();
+        private void SetCaretPosition(int caretPosition)
+        {
+            _syntaxEditor.Caret.Offset = caretPosition;
+        }
 
-            CaretPosition = span.Start;
-            Selection = span;
+        private TextSpan GetSelection()
+        {
+            return TextSpan.FromBounds(_syntaxEditor.ActiveView.Selection.StartOffset, _syntaxEditor.ActiveView.Selection.EndOffset);
+        }
+
+        private void SetSelection(TextSpan selection)
+        {
+            _syntaxEditor.ActiveView.Selection.SelectRange(selection.Start, selection.Length);
+        }
+
+        public override void Focus()
+        {
+            _syntaxEditor.ActiveView.Focus();
         }
 
         public override Workspace Workspace
@@ -72,29 +84,16 @@ namespace NQueryViewer.ActiproEditor
             get { return _workspace; }
         }
 
-        protected override async void OnCaretPositionChanged()
+        public override int CaretPosition
         {
-            var document = _workspace.CurrentDocument;
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var textBuffer = syntaxTree.Text;
-            var snapshotOffset = textBuffer.ToSnapshotOffset(CaretPosition);
-            _syntaxEditor.Caret.Position = snapshotOffset.Position;
-            base.OnCaretPositionChanged();
+            get { return GetCaretPosition(); }
+            set {  SetCaretPosition(value); }
         }
 
-        protected override async void OnSelectionChanged()
+        public override TextSpan Selection
         {
-            var document = _workspace.CurrentDocument;
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var textBuffer = syntaxTree.Text;
-            var snapshotRange = textBuffer.ToSnapshotRange(Selection);
-            _syntaxEditor.ActiveView.Selection.SelectRange(snapshotRange);
-            base.OnSelectionChanged();
-        }
-
-        public override void Focus()
-        {
-            _syntaxEditor.ActiveView.Focus();
+            get { return GetSelection(); }
+            set { SetSelection(value); }
         }
     }
 }

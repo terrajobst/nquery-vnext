@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Windows.Threading;
-using System.Linq;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
@@ -22,7 +21,6 @@ namespace NQueryViewer.VSEditor
         {
             _workspace = workspace;
             _textViewHost = textViewHost;
-            _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
 
             _selectionProvider = selectionProvider;
@@ -30,8 +28,12 @@ namespace NQueryViewer.VSEditor
             InitializeComponent();
 
             EditorHost.Content = _textViewHost.HostControl;
-            CaretPosition = GetEditorCaretPosition();
-            Selection = GetEditorSelection();
+        }
+
+        private void SelectionOnSelectionChanged(object sender, EventArgs e)
+        {
+            OnCaretPositionChanged();
+            OnSelectionChanged();
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -59,52 +61,49 @@ namespace NQueryViewer.VSEditor
             element.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => element.Focus()));
         }
 
-        protected override void OnCaretPositionChanged()
-        {
-            var snapshot = _textViewHost.TextView.TextSnapshot;
-            var position = new SnapshotPoint(snapshot, CaretPosition);
-            _textViewHost.TextView.Caret.MoveTo(position);
-            _textViewHost.TextView.ViewScroller.EnsureSpanVisible(new SnapshotSpan(position, position));
-            base.OnCaretPositionChanged();
-        }
-
-        private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
-        {
-            CaretPosition = GetEditorCaretPosition();
-        }
-
-        private int GetEditorCaretPosition()
+        private int GetCaretPosition()
         {
             return _textViewHost.TextView.Caret.Position.BufferPosition.Position;
         }
 
-        protected override void OnSelectionChanged()
+        private void SetCaretPosition(int caretPosition)
         {
             var snapshot = _textViewHost.TextView.TextSnapshot;
-            var snapshotSpan = new SnapshotSpan(snapshot, Selection.Start, Selection.Length);
+            var position = new SnapshotPoint(snapshot, caretPosition);
+            _textViewHost.TextView.Caret.MoveTo(position);
+            _textViewHost.TextView.ViewScroller.EnsureSpanVisible(new SnapshotSpan(position, position));
+        }
+
+        private void SetSelection(TextSpan selection)
+        {
+            var snapshot = _textViewHost.TextView.TextSnapshot;
+            var snapshotSpan = new SnapshotSpan(snapshot, selection.Start, selection.Length);
             _textViewHost.TextView.Selection.Select(snapshotSpan, false);
             _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
-            base.OnSelectionChanged();
         }
 
-        private void SelectionOnSelectionChanged(object sender, EventArgs e)
+        private TextSpan GetSelection()
         {
-            Selection = GetEditorSelection();
-        }
-
-        private TextSpan GetEditorSelection()
-        {
-            var selectedSpans = _textViewHost.TextView.Selection.SelectedSpans;
-            if (!selectedSpans.Any())
-                return new TextSpan(CaretPosition, 0);
-
-            var span = selectedSpans.First();
-            return new TextSpan(span.Start, span.Length);
+            var start = _textViewHost.TextView.Selection.Start.Position.Position;
+            var end = _textViewHost.TextView.Selection.End.Position.Position;
+            return TextSpan.FromBounds(start, end);
         }
 
         public override Workspace Workspace
         {
             get { return _workspace; }
+        }
+
+        public override int CaretPosition
+        {
+            get { return GetCaretPosition(); }
+            set {  SetCaretPosition(value); }
+        }
+
+        public override TextSpan Selection
+        {
+            get { return GetSelection(); }
+            set { SetSelection(value); }
         }
     }
 }
