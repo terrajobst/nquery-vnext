@@ -36,6 +36,7 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.IsSelectionMarginVisible = false;
             _syntaxEditor.BorderThickness = new Thickness(0);
             _syntaxEditor.Document.Language = language;
+            _syntaxEditor.Document.AutoConvertTabsToSpaces = true;
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
             _syntaxEditor.RegisterCodeActionCommands();
             _syntaxEditor.RegisterSelectionCommands();
