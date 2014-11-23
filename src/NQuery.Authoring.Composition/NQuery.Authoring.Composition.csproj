@@ -41,8 +41,10 @@
   <ItemGroup>
     <Compile Include="BraceMatching\BraceMatcherService.cs" />
     <Compile Include="BraceMatching\IBraceMatcherService.cs" />
+    <Compile Include="CodeActions\CodeFixProviderService.cs" />
     <Compile Include="CodeActions\CodeIssueProviderService.cs" />
     <Compile Include="CodeActions\CodeRefactoringProviderService.cs" />
+    <Compile Include="CodeActions\ICodeFixProviderService.cs" />
     <Compile Include="CodeActions\ICodeIssueProviderService.cs" />
     <Compile Include="CodeActions\ICodeRefactoringProviderService.cs" />
     <Compile Include="Completion\CompletionProviderService.cs" />

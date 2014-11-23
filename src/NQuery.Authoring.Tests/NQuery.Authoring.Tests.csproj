@@ -66,6 +66,8 @@
     <Compile Include="Classifications\SemanticClassificationTests.cs" />
     <Compile Include="Classifications\SyntaxClassificationTests.cs" />
     <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
+    <Compile Include="CodeActions\CodeActionTest.cs" />
+    <Compile Include="CodeActions\CodeFixTests.cs" />
     <Compile Include="CodeActions\CodeIssueTests.cs" />
     <Compile Include="CodeActions\Fixes\AddToGroupByTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />

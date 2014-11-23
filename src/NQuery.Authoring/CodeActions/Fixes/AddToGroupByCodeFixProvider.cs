@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -9,16 +8,16 @@ namespace NQuery.Authoring.CodeActions.Fixes
 {
     internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
     {
-        public override ImmutableArray<DiagnosticId> FixableDiagnosticIds
+        public override IEnumerable<DiagnosticId> GetFixableDiagnosticIds()
         {
-            get
+            return new[]
             {
-                return ImmutableArray.Create(DiagnosticId.SelectExpressionNotAggregatedOrGrouped,
-                                             DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy,
-                                             DiagnosticId.HavingExpressionNotAggregatedOrGrouped,
-                                             DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy,
-                                             DiagnosticId.OrderByExpressionNotAggregatedOrGrouped);
-            }
+                DiagnosticId.SelectExpressionNotAggregatedOrGrouped,
+                DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy,
+                DiagnosticId.HavingExpressionNotAggregatedOrGrouped,
+                DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy,
+                DiagnosticId.OrderByExpressionNotAggregatedOrGrouped
+            };
         }
 
         protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, IEnumerable<Diagnostic> diagnostics)

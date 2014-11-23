@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
 
 namespace NQuery.Authoring.UnitTests.CodeActions
 {
-    public abstract class RefactoringTests : CodeActionTest
+    public abstract class CodeFixTests : CodeActionTest
     {
         protected override ImmutableArray<ICodeAction> GetActions(string query)
         {
@@ -14,10 +14,10 @@ namespace NQuery.Authoring.UnitTests.CodeActions
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = CreateProvider();
-            var providers = new[] {provider};
-            return semanticModel.GetRefactorings(position, providers).ToImmutableArray();
+            var providers = new[] { provider };
+            return semanticModel.GetFixes(position, providers).ToImmutableArray();
         }
 
-        protected abstract ICodeRefactoringProvider CreateProvider();
+        protected abstract ICodeFixProvider CreateProvider();
     }
 }

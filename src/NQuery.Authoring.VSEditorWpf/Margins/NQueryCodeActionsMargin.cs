@@ -19,12 +19,13 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
     {
         private readonly Workspace _workspace;
         private readonly IWpfTextViewHost _textViewHost;
+        private readonly ImmutableArray<ICodeFixProvider> _fixProviders;
         private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
         private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
         private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
 
-        public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
+        public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ImmutableArray<ICodeFixProvider> fixProviders, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {
             _workspace = workspace;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
@@ -32,6 +33,7 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.LayoutChanged += TextViewOnLayoutChanged;
             _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
+            _fixProviders = fixProviders;
             _issueProviders = issueProviders;
             _refactoringProviders = refactoringProviders;
 
@@ -47,9 +49,16 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
 
         private ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
         {
+            var fixes = GetCodeFixes(semanticModel, position, textBuffer);
             var issues = GetCodeIssues(semanticModel, position, textBuffer);
             var refactorings = GetRefactorings(semanticModel, position, textBuffer);
-            return issues.Concat(refactorings).ToImmutableArray();
+            return fixes.Concat(issues).Concat(refactorings).ToImmutableArray();
+        }
+
+        private IEnumerable<CodeActionModel> GetCodeFixes(SemanticModel semanticModel, int position, ITextBuffer textBuffer)
+        {
+            return semanticModel.GetFixes(position, _fixProviders)
+                                .Select(a => new TextBufferCodeActionModel(CodeActionKind.IssueFix, a, textBuffer));
         }
 
         private IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position, ITextBuffer textBuffer)

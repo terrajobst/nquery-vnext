@@ -8,9 +8,9 @@ using Xunit;
 
 namespace NQuery.Authoring.Tests.CodeActions.Fixes
 {
-    public class AddToGroupByTests : RefactoringTests
+    public class AddToGroupByTests : CodeFixTests
     {
-        protected override ICodeRefactoringProvider CreateProvider()
+        protected override ICodeFixProvider CreateProvider()
         {
             return new AddToGroupByCodeFixProvider();
         }

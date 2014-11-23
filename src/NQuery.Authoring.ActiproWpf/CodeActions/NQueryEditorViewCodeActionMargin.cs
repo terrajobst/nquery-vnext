@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
+using ActiproSoftware.Text;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
@@ -61,25 +62,30 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
 
         private static ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position)
         {
-            var issues = GetCodeIssues(semanticModel, position);
-            var refactorings = GetRefactorings(semanticModel, position);
-            return issues.Concat(refactorings).ToImmutableArray();
-        }
-
-        private static IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position)
-        {
             var textDocument = semanticModel.Compilation.SyntaxTree.Text.Container.ToTextDocument();
 
+            var fixes = GetCodeFixes(semanticModel, position, textDocument);
+            var issues = GetCodeIssues(semanticModel, position, textDocument);
+            var refactorings = GetRefactorings(semanticModel, position, textDocument);
+            return fixes.Concat(issues).Concat(refactorings).ToImmutableArray();
+        }
+
+        private static IEnumerable<CodeActionModel> GetCodeFixes(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        {
+            return semanticModel.GetFixes(position)
+                                .Select(a => new TextDocumentCodeActionModel(CodeActionKind.IssueFix, a, textDocument));
+        }
+
+        private static IEnumerable<CodeActionModel> GetCodeIssues(SemanticModel semanticModel, int position, ITextDocument textDocument)
+        {
             return semanticModel.GetIssues()
                                 .Where(i => i.Span.ContainsOrTouches(position))
                                 .SelectMany(i => i.Actions)
                                 .Select(a => new TextDocumentCodeActionModel(CodeActionKind.IssueFix, a, textDocument));
         }
 
-        private static IEnumerable<CodeActionModel> GetRefactorings(SemanticModel semanticModel, int position)
+        private static IEnumerable<CodeActionModel> GetRefactorings(SemanticModel semanticModel, int position, ITextDocument textDocument)
         {
-            var textDocument = semanticModel.Compilation.SyntaxTree.Text.Container.ToTextDocument();
-
             return semanticModel.GetRefactorings(position)
                                 .Select(a => new TextDocumentCodeActionModel(CodeActionKind.Refactoring, a, textDocument));
         }

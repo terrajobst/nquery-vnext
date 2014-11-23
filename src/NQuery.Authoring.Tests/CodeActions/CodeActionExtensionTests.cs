@@ -9,6 +9,12 @@ namespace NQuery.Authoring.UnitTests.CodeActions
     public class CodeActionExtensionTests : ExtensionTests
     {
         [Fact]
+        public void CodeActionExtension_ReturnsAllFixProviders()
+        {
+            AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardFixProviders);
+        }
+
+        [Fact]
         public void CodeActionExtension_ReturnsAllIssueProviders()
         {
             AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardIssueProviders);

@@ -9,6 +9,25 @@ namespace NQuery.Authoring.CodeActions
 {
     public static class CodeActionExtensions
     {
+        public static IEnumerable<ICodeFixProvider> GetStandardFixProviders()
+        {
+            return new ICodeFixProvider[]
+                   {
+                       new AddToGroupByCodeFixProvider()
+                   };
+        }
+
+        public static IEnumerable<ICodeAction> GetFixes(this SemanticModel semanticModel, int position)
+        {
+            var providers = GetStandardFixProviders();
+            return semanticModel.GetFixes(position, providers);
+        }
+
+        public static IEnumerable<ICodeAction> GetFixes(this SemanticModel semanticModel, int position, IEnumerable<ICodeFixProvider> providers)
+        {
+            return providers.SelectMany(p => p.GetFixes(semanticModel, position));
+        }
+
         public static IEnumerable<ICodeIssueProvider> GetStandardIssueProviders()
         {
             return new ICodeIssueProvider[]
@@ -41,8 +60,7 @@ namespace NQuery.Authoring.CodeActions
                        new AddAsAliasCodeRefactoringProvider(),
                        new AddAsDerivedTableCodeRefactoringProvider(),
                        new AddMissingKeywordCodeRefactoringProvider(),
-                       new ExpandWildcardCodeRefactoringProvider(),
-                       new AddToGroupByCodeFixProvider()
+                       new ExpandWildcardCodeRefactoringProvider()
                    };
         }
 

@@ -59,6 +59,7 @@
     <Compile Include="CodeActions\CodeActionExtensions.cs" />
     <Compile Include="CodeActions\CodeIssueProvider.cs" />
     <Compile Include="CodeActions\Fixes\AddToGroupByCodeFixProvider.cs" />
+    <Compile Include="CodeActions\ICodeFixProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsCodeIssueProvider.cs" />
