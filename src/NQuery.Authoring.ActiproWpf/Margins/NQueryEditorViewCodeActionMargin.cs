@@ -35,24 +35,6 @@ namespace NQuery.Authoring.ActiproWpf.Margins
 
             Width = 19;
             Children.Add(_glyphPopup);
-
-            _glyphPopup.UpdateModels(new List<CodeActionModel>
-                                     {
-                                         new TextDocumentCodeActionModel(CodeActionKind.IssueFix, new FakeAction(), view.SyntaxEditor.Document)
-                                     });
-        }
-
-        private sealed class FakeAction : ICodeAction
-        {
-            public string Description
-            {
-                get { return "Convert to empty"; }
-            }
-
-            public SyntaxTree GetEdit()
-            {
-                return SyntaxTree.Empty;
-            }
         }
 
         private static Task<ImmutableArray<CodeActionModel>> GetActionModelsAsync(SemanticModel semanticModel, int position)
