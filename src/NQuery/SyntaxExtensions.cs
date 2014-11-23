@@ -141,5 +141,17 @@ namespace NQuery
             return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
+        public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)
+        {
+            var node = query.Query;
+
+            while (node is ParenthesizedQuerySyntax)
+            {
+                var parenthesizedQuery = (ParenthesizedQuerySyntax)node;
+                node = parenthesizedQuery.Query;
+            }
+
+            return node as SelectQuerySyntax;
+        }
     }
 }

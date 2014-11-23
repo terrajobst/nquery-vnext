@@ -18,17 +18,6 @@ namespace NQuery.Binding
             get { return _parent == null ? null : _parent.QueryState; }
         }
 
-        private static SelectQuerySyntax GetAppliedSelectQuery(QuerySyntax node)
-        {
-            while (node is ParenthesizedQuerySyntax)
-            {
-                var parenthesizedQuery = (ParenthesizedQuerySyntax)node;
-                node = parenthesizedQuery.Query;
-            }
-
-            return node as SelectQuerySyntax;
-        }
-
         private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
         {
             var p = node as ParenthesizedQuerySyntax;
@@ -619,7 +608,7 @@ namespace NQuery.Binding
             //
             // However, both cases eventually call into BindOrderByClause.
 
-            var selectQuery = GetAppliedSelectQuery(node.Query);
+            var selectQuery = node.GetAppliedSelectQuery();
             if (selectQuery != null)
             {
                 // This is case (1). We bind the select query and pass in ourselves.
