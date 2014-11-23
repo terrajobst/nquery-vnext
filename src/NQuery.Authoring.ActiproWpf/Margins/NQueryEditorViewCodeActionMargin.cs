@@ -11,12 +11,12 @@ using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
 
-using NQuery.Authoring.ActiproWpf.Margins;
+using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
 
-namespace NQuery.Authoring.ActiproWpf.CodeActions
+namespace NQuery.Authoring.ActiproWpf.Margins
 {
     internal sealed class NQueryEditorViewCodeActionMargin : Canvas, IEditorViewMargin, ICodeActionGlyphController
     {
