@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.SignatureHelp
+using Xunit;
+
+namespace NQuery.Authoring.Tests.SignatureHelp
 {
     public abstract class SignatureHelpModelProviderTests
     {

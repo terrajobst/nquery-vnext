@@ -2,7 +2,7 @@
 
 using Xunit;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     public class ConversionTests
     {

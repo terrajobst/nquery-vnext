@@ -2,7 +2,7 @@ using System;
 
 using Xunit;
 
-namespace NQuery.Authoring.UnitTests.Completion.Providers
+namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class EmptySymbolCompletionProviderTests : SymbolCompletionProviderTests
     {

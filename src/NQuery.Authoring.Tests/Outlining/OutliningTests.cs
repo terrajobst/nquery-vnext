@@ -1,11 +1,12 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Immutable;
 using System.Linq;
-
-using Xunit;
 
 using NQuery.Authoring.Outlining;
 
-namespace NQuery.Authoring.UnitTests.Outlining
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Outlining
 {
     public class OutliningCommentTests
     {

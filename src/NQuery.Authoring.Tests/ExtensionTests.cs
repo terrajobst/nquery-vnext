@@ -5,7 +5,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace NQuery.Authoring.UnitTests
+namespace NQuery.Authoring.Tests
 {
     public abstract class ExtensionTests
     {

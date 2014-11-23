@@ -1,11 +1,12 @@
-﻿using System.Linq;
-
-using Xunit;
+﻿using System;
+using System.Linq;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
-namespace NQuery.Authoring.UnitTests.CodeActions.Issues
+using Xunit;
+
+namespace NQuery.Authoring.Tests.CodeActions.Issues
 {
     public class UnusedCommonTableExpressionTests : CodeIssueTests
     {

@@ -1,11 +1,11 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
 
-namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Highlighting.Highlighters
 {
     public class ColumnInstanceReferenceHighlighterTests : HighlighterTests
     {

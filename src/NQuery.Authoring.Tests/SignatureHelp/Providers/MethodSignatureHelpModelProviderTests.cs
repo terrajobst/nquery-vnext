@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-
-using Xunit;
 
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
 
-namespace NQuery.Authoring.UnitTests.SignatureHelp.Providers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.SignatureHelp.Providers
 {
     public class MethodSignatureHelpModelProviderTests : SignatureHelpModelProviderTests
     {

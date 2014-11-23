@@ -2,7 +2,6 @@
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Fixes;
-using NQuery.Authoring.UnitTests.CodeActions;
 
 using Xunit;
 

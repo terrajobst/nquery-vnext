@@ -3,7 +3,7 @@
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
 
-namespace NQuery.Authoring.UnitTests.Completion
+namespace NQuery.Authoring.Tests.Completion
 {
     public abstract class SymbolCompletionProviderTests
     {

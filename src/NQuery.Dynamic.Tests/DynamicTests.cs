@@ -5,7 +5,7 @@ using NQuery.Data.Samples;
 
 using Xunit;
 
-namespace NQuery.Dynamic.UnitTests
+namespace NQuery.Dynamic.Tests
 {
     public class DynamicTests
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.UnitTests.CodeActions
+using Xunit;
+
+namespace NQuery.Authoring.Tests.CodeActions
 {
     public class CodeActionExtensionTests : ExtensionTests
     {

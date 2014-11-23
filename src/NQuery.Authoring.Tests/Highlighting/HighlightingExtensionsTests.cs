@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.Highlighting;
 
-namespace NQuery.Authoring.UnitTests.Highlighting
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Highlighting
 {
     public class HighlightingExtensionsTests : ExtensionTests
     {

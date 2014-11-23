@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.UnitTests.QuickInfo.Providers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.QuickInfo.Providers
 {
     public class NamedTableReferenceQuickInfoModelProviderTableTests : QuickInfoModelProviderTests
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.Completion;
 
-namespace NQuery.Authoring.UnitTests.Completion
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Completion
 {
     public class CompletionExtensionsTests : ExtensionTests
     {

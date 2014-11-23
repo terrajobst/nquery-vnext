@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
 
-namespace NQuery.Authoring.UnitTests.Completion.Providers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class TypeCompletionProviderTests
     {

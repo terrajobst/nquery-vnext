@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Authoring.UnitTests.QuickInfo
+using Xunit;
+
+namespace NQuery.Authoring.Tests.QuickInfo
 {
     public class QuickInfoExtensionsTests : ExtensionTests
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     public static class TestData
     {

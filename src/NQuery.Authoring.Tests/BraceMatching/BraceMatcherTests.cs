@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-using Xunit;
-
 using NQuery.Authoring.BraceMatching;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.BraceMatching
+using Xunit;
+
+namespace NQuery.Authoring.Tests.BraceMatching
 {
     public abstract class BraceMatcherTests
     {

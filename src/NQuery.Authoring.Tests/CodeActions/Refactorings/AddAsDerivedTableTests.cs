@@ -1,9 +1,11 @@
-﻿using Xunit;
+﻿using System;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
+using Xunit;
+
+namespace NQuery.Authoring.Tests.CodeActions.Refactorings
 {
     public class AddAsDerivedTableTests : CodeRefactoringTests
     {

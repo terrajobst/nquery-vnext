@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NQuery.UnitTests.Binding
+namespace NQuery.Tests.Binding
 {
     partial class IntrinsicOperatorTests
     {

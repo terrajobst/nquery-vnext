@@ -4,7 +4,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace NQuery.UnitTests.Binding
+namespace NQuery.Tests.Binding
 {
     public class DerivedTableTests
     {

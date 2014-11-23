@@ -3,7 +3,7 @@ using System;
 using NQuery.Data.Samples;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests
+namespace NQuery.Authoring.Tests
 {
     internal static class CompilationFactory
     {

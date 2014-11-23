@@ -1,11 +1,11 @@
 using System;
 
-using Xunit;
-
 using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.BraceMatching.Matchers;
 
-namespace NQuery.Authoring.UnitTests.BraceMatching.Matchers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.BraceMatching.Matchers
 {
     public class IdentifierBraceMatcherTests : BraceMatcherTests
     {

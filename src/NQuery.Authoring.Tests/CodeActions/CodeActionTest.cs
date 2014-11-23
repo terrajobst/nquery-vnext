@@ -6,7 +6,7 @@ using NQuery.Authoring.CodeActions;
 
 using Xunit;
 
-namespace NQuery.Authoring.UnitTests.CodeActions
+namespace NQuery.Authoring.Tests.CodeActions
 {
     public abstract class CodeActionTest
     {

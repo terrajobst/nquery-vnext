@@ -4,7 +4,7 @@ using NQuery.Text;
 
 using Xunit;
 
-namespace NQuery.UnitTests.Text
+namespace NQuery.Tests.Text
 {
     public sealed class TextBufferTests
     {

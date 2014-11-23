@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Immutable;
 
-using Xunit;
-
 using NQuery.Authoring.Classifications;
 using NQuery.Symbols;
 
-namespace NQuery.Authoring.UnitTests.Classifications
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Classifications
 {
     public class SemanticClassificationTests
     {

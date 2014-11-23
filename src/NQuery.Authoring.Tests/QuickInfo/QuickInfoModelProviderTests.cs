@@ -1,11 +1,11 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.QuickInfo;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.QuickInfo
+using Xunit;
+
+namespace NQuery.Authoring.Tests.QuickInfo
 {
     public abstract class QuickInfoModelProviderTests
     {

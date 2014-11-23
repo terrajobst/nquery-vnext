@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Authoring.Classifications;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.Classifications
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Classifications
 {
     public class SyntaxClassificationTests
     {

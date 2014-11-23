@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Authoring.UnitTests.SignatureHelp
+using Xunit;
+
+namespace NQuery.Authoring.Tests.SignatureHelp
 {
     public class SignatureHelpExtensionsTests : ExtensionTests
     {

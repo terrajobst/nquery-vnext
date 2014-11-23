@@ -5,9 +5,10 @@ using System.Linq;
 using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
+
 using Xunit;
 
-namespace NQuery.UnitTests.Binding
+namespace NQuery.Tests.Binding
 {
     public class AggregateTests
     {

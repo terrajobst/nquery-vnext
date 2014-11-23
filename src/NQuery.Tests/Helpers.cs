@@ -3,7 +3,7 @@ using System.Linq;
 
 using NQuery.Syntax;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     internal static class Helpers
     {

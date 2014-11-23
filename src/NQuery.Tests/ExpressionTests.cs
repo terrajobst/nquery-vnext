@@ -3,7 +3,7 @@ using System.Linq;
 
 using Xunit;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     public class ExpressionTests
     {

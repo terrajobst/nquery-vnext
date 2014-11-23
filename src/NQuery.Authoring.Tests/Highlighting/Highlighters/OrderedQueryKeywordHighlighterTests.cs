@@ -1,9 +1,11 @@
-﻿using Xunit;
+﻿using System;
 
 using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
 
-namespace NQuery.Authoring.UnitTests.Highlighting.Highlighters
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Highlighting.Highlighters
 {
     public class OrderedQueryKeywordHighlighterTests : HighlighterTests
     {

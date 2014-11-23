@@ -2,7 +2,7 @@
 
 using NQuery.Data;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     public static class CompilationExtensions
     {

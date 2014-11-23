@@ -3,9 +3,10 @@ using System.Data;
 using System.Linq;
 
 using NQuery.Data;
+
 using Xunit;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     public class QueryTests
     {

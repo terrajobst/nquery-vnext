@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Authoring.Highlighting;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.Highlighting
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Highlighting
 {
     public abstract class HighlighterTests
     {

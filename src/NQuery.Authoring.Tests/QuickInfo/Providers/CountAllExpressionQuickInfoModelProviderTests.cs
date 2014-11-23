@@ -1,6 +1,5 @@
-﻿using System.Linq;
-
-using Xunit;
+﻿using System;
+using System.Linq;
 
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
@@ -8,7 +7,9 @@ using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.UnitTests.QuickInfo.Providers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.QuickInfo.Providers
 {
     public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
     {

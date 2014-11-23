@@ -1,11 +1,11 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
+using Xunit;
+
+namespace NQuery.Authoring.Tests.CodeActions.Refactorings
 {
     public class AddMissingKeywordTests : CodeRefactoringTests
     {

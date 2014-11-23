@@ -2,7 +2,7 @@
 
 using NQuery.Data.Samples;
 
-namespace NQuery.UnitTests
+namespace NQuery.Tests
 {
     internal static class CompilationFactory
     {

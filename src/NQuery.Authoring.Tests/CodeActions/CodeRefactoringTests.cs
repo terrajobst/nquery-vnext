@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.UnitTests.CodeActions
+namespace NQuery.Authoring.Tests.CodeActions
 {
     public abstract class CodeRefactoringTests : CodeActionTest
     {

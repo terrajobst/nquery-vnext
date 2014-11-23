@@ -2,7 +2,7 @@ using System;
 
 using Xunit;
 
-namespace NQuery.UnitTests.Syntax
+namespace NQuery.Tests.Syntax
 {
     public class IdentifierTests
     {

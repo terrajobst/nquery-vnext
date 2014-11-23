@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 
-using Xunit;
-
 using NQuery.Symbols;
 
-namespace NQuery.Authoring.UnitTests.Completion.Providers
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTests
     {

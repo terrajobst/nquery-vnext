@@ -1,10 +1,10 @@
 ﻿using System;
 
-using Xunit;
-
 using NQuery.Authoring.BraceMatching;
 
-namespace NQuery.Authoring.UnitTests.BraceMatching
+using Xunit;
+
+namespace NQuery.Authoring.Tests.BraceMatching
 {
     public class BraceMatchingExtensionsTests : ExtensionTests
     {

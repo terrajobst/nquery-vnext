@@ -1,9 +1,11 @@
-﻿using Xunit;
+﻿using System;
 
 using NQuery.Authoring.Selection;
 using NQuery.Text;
 
-namespace NQuery.Authoring.UnitTests.Selection
+using Xunit;
+
+namespace NQuery.Authoring.Tests.Selection
 {
     public class SelectionExtensionsTests
     {
