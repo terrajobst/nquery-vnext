@@ -6,7 +6,6 @@ using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.CodeActions;
-using NQuery.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles
 {

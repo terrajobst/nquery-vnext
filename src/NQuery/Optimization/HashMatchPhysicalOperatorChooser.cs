@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Binding;
-using NQuery.Iterators;
 
 namespace NQuery.Optimization
 {

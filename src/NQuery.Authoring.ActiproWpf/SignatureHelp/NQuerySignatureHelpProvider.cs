@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
