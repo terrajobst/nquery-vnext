@@ -7,7 +7,7 @@ using NQuery.Authoring.CodeActions.Refactorings;
 
 namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 {
-    public class FlipBinaryOperatorSidesTests : RefactoringTests
+    public class FlipBinaryOperatorSidesTests : CodeRefactoringTests
     {
         protected override ICodeRefactoringProvider CreateProvider()
         {

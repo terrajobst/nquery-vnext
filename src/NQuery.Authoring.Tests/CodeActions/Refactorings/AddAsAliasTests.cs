@@ -7,7 +7,7 @@ using NQuery.Authoring.CodeActions.Refactorings;
 
 namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 {
-    public class AddAsAliasTests : RefactoringTests
+    public class AddAsAliasTests : CodeRefactoringTests
     {
         protected override ICodeRefactoringProvider CreateProvider()
         {

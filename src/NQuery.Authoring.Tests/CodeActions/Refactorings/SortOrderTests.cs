@@ -5,7 +5,7 @@ using NQuery.Authoring.CodeActions.Refactorings;
 
 namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 {
-    public class SortOrderTests : RefactoringTests
+    public class SortOrderTests : CodeRefactoringTests
     {
         protected override ICodeRefactoringProvider CreateProvider()
         {

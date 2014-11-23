@@ -5,7 +5,7 @@ using NQuery.Authoring.CodeActions;
 
 namespace NQuery.Authoring.UnitTests.CodeActions
 {
-    public abstract class RefactoringTests : CodeActionTest
+    public abstract class CodeRefactoringTests : CodeActionTest
     {
         protected override ImmutableArray<ICodeAction> GetActions(string query)
         {

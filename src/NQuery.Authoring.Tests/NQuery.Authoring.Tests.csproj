@@ -81,7 +81,7 @@
     <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
-    <Compile Include="CodeActions\RefactoringTests.cs" />
+    <Compile Include="CodeActions\CodeRefactoringTests.cs" />
     <Compile Include="CompilationFactory.cs" />
     <Compile Include="Completion\CompletionExtensionsTests.cs" />
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />

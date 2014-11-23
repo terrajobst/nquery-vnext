@@ -7,7 +7,7 @@ using NQuery.Authoring.CodeActions.Refactorings;
 
 namespace NQuery.Authoring.UnitTests.CodeActions.Refactorings
 {
-    public class AddMissingKeywordTests : RefactoringTests
+    public class AddMissingKeywordTests : CodeRefactoringTests
     {
         protected override ICodeRefactoringProvider CreateProvider()
         {
