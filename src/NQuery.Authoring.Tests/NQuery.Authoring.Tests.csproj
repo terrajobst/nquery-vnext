@@ -67,6 +67,7 @@
     <Compile Include="Classifications\SyntaxClassificationTests.cs" />
     <Compile Include="CodeActions\CodeActionExtensionTests.cs" />
     <Compile Include="CodeActions\CodeIssueTests.cs" />
+    <Compile Include="CodeActions\Fixes\AddToGroupByTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />

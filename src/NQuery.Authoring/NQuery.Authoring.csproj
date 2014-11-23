@@ -58,6 +58,7 @@
     <Compile Include="Classifications\SyntaxClassificationWorker.cs" />
     <Compile Include="CodeActions\CodeActionExtensions.cs" />
     <Compile Include="CodeActions\CodeIssueProvider.cs" />
+    <Compile Include="CodeActions\Fixes\AddToGroupByCodeFixProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsCodeIssueProvider.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="CodeActions\CodeIssueKind.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsDerivedTableCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordCodeRefactoringProvider.cs" />
+    <Compile Include="CodeActions\CodeFixProvider.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\ICodeAction.cs" />

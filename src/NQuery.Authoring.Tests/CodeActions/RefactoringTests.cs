@@ -30,6 +30,13 @@ namespace NQuery.Authoring.UnitTests.CodeActions
             Assert.Equal(0, actions.Length);
         }
 
+        protected void AssertDoesNotTrigger(string query, string expectedActionDescription)
+        {
+            var actions = GetActions(query).Where(a => a.Description == expectedActionDescription).ToImmutableArray();
+
+            Assert.Equal(0, actions.Length);
+        }
+
         protected void AssertFixes(string query, string expectedFixedQuery, string expectedActionDescription)
         {
             var trimmedQuery = query.NormalizeCode();
