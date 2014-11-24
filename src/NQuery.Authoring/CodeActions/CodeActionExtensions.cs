@@ -13,6 +13,7 @@ namespace NQuery.Authoring.CodeActions
         {
             return new ICodeFixProvider[]
                    {
+                       new AddParenthesesCodeFixProvider(),
                        new AddToGroupByCodeFixProvider()
                    };
         }

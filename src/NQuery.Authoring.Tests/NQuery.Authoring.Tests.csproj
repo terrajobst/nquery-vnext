@@ -69,6 +69,7 @@
     <Compile Include="CodeActions\CodeActionTest.cs" />
     <Compile Include="CodeActions\CodeFixTests.cs" />
     <Compile Include="CodeActions\CodeIssueTests.cs" />
+    <Compile Include="CodeActions\Fixes\AddParenthesesTests.cs" />
     <Compile Include="CodeActions\Fixes\AddToGroupByTests.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsTests.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
