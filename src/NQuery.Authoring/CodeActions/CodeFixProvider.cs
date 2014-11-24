@@ -15,9 +15,10 @@ namespace NQuery.Authoring.CodeActions
             var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics);
             var applicableDiagnostics = diagnostics.Where(d => d.Span.ContainsOrTouches(position))
                                                    .Where(d => GetFixableDiagnosticIds().Contains(d.DiagnosticId));
-            return GetFixes(semanticModel, position, applicableDiagnostics);
+
+            return applicableDiagnostics.SelectMany(d => GetFixes(semanticModel, position, d));
         }
 
-        protected abstract IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, IEnumerable<Diagnostic> diagnostics);
+        protected abstract IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic);
     }
 }

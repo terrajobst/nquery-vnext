@@ -20,12 +20,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
             };
         }
 
-        protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, IEnumerable<Diagnostic> diagnostics)
-        {
-            return diagnostics.SelectMany(d => GetFixes(semanticModel, d));
-        }
-
-        private static IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, Diagnostic diagnostic)
+        protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
             var expression = syntaxTree.Root.DescendantNodes().OfType<ExpressionSyntax>().FirstOrDefault(e => e.Span == diagnostic.Span);
