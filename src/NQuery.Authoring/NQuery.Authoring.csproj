@@ -58,6 +58,7 @@
     <Compile Include="Classifications\SyntaxClassificationWorker.cs" />
     <Compile Include="CodeActions\CodeActionExtensions.cs" />
     <Compile Include="CodeActions\CodeIssueProvider.cs" />
+    <Compile Include="CodeActions\Fixes\AddOrderByToSelectDistinctCodeFixProvider.cs" />
     <Compile Include="CodeActions\Fixes\AddParenthesesCodeFixProvider.cs" />
     <Compile Include="CodeActions\Fixes\AddToGroupByCodeFixProvider.cs" />
     <Compile Include="CodeActions\ICodeFixProvider.cs" />

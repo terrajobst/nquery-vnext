@@ -13,6 +13,7 @@ namespace NQuery.Authoring.CodeActions
         {
             return new ICodeFixProvider[]
                    {
+                       new AddOrderByToSelectDistinctCodeFixProvider(),
                        new AddParenthesesCodeFixProvider(),
                        new AddToGroupByCodeFixProvider()
                    };
