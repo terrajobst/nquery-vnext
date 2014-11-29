@@ -95,6 +95,7 @@
     <Compile Include="Syntax\TopTests.cs" />
     <Compile Include="TestData.cs" />
     <Compile Include="Text\SourceTextTests.cs" />
+    <Compile Include="Text\TextSpanTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
