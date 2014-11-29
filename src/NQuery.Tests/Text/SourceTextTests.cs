@@ -9,6 +9,13 @@ namespace NQuery.Tests.Text
     public sealed class SourceTextTests
     {
         [Fact]
+        public void SourceText_FromStringHasStaticContainer()
+        {
+            var sourceText = SourceText.From("String");
+            Assert.IsType<StaticSourceTextContainer>(sourceText.Container);
+        }
+
+        [Fact]
         public void SourceText_EmptyHasALineWithoutLineBreak()
         {
             var sourceText = SourceText.From(string.Empty);
