@@ -55,10 +55,18 @@ namespace NQuery.Authoring.CodeActions.Fixes
                 return _expression.ToString().Trim();
             }
 
+            private string GetInsertionText()
+            {
+                if (_selectQuery.SelectClause.Columns.Last().IsMissing)
+                    return " " + GetExpressionText();
+
+                return ", " + GetExpressionText();
+            }
+
             public SyntaxTree GetEdit()
             {
-                var insertPosition = _selectQuery.SelectClause.Span.End;
-                var text = ", " + GetExpressionText();
+                var insertPosition = _selectQuery.SelectClause.LastToken().Span.End;
+                var text = GetInsertionText();
                 var syntaxTree = _selectQuery.SyntaxTree;
                 return syntaxTree.InsertText(insertPosition, text);
             }
