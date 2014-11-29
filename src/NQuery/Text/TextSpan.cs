@@ -53,7 +53,7 @@ namespace NQuery.Text
         {
             var maxStart = Math.Max(Start, span.Start);
             var minEnd = Math.Min(End, span.End);
-            return (maxStart < minEnd);
+            return maxStart < minEnd;
         }
 
         public bool IntersectsWith(TextSpan span)
