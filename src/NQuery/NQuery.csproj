@@ -227,10 +227,12 @@
     <Compile Include="SyntaxExtensions.cs" />
     <Compile Include="SyntaxTreeEquivalence.cs" />
     <Compile Include="SyntaxTreeNavigation.cs" />
+    <Compile Include="Text\ChangedSourceText.cs" />
     <Compile Include="Text\SourceTextContainer.cs" />
     <Compile Include="Text\StaticSourceTextContainer.cs" />
     <Compile Include="Text\StringText.cs" />
     <Compile Include="Text\StringTextLineCollection.cs" />
+    <Compile Include="Text\TextChange.cs" />
     <Compile Include="Text\TextLineCollection.cs" />
     <Compile Include="Text\TextLocation.cs" />
     <Compile Include="SemanticModel.cs" />

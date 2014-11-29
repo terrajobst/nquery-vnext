@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
@@ -90,22 +91,31 @@ namespace NQuery.Authoring.ActiproWpf
         public static TextSnapshotOffset ToSnapshotOffset(this SourceText text, int position)
         {
             var snapshot = text.ToTextSnapshot();
+            var offset = text.ToOffset(position);
+            return new TextSnapshotOffset(snapshot, offset);
+        }
 
+        public static int ToOffset(this SourceText text, int position)
+        {
             var textLine = text.GetLineFromPosition(position);
             var line = textLine.LineNumber;
-            var character = position - textLine.Span.Start;
-
-            var textPosition = new TextPosition(line, character);
-            var offset = snapshot.PositionToOffset(textPosition);
-            return new TextSnapshotOffset(snapshot, offset);
+            var delta = Enumerable.Range(0, line).Select(i => text.Lines[i].LineBreakLength - 1).Sum();
+            var offset = position - delta;
+            return offset;
         }
 
         public static TextSnapshotRange ToSnapshotRange(this SourceText text, TextSpan span)
         {
             var snapshot = text.ToTextSnapshot();
-            var start = text.ToSnapshotOffset(span.Start);
-            var end = text.ToSnapshotOffset(span.End);
-            return new TextSnapshotRange(snapshot, start.Offset, end.Offset);
+            var range = text.ToRange(span);
+            return new TextSnapshotRange(snapshot, range);
+        }
+
+        public static TextRange ToRange(this SourceText text, TextSpan span)
+        {
+            var start = text.ToOffset(span.Start);
+            var end = text.ToOffset(span.End);
+            return new TextRange(start, end);
         }
     }
 }

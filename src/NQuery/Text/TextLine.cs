@@ -42,6 +42,11 @@ namespace NQuery.Text
             }
         }
 
+        public int LineBreakLength
+        {
+            get { return SpanIncludingLineBreak.Length - Span.Length; }
+        }
+
         public int LineNumber
         {
             get { return _text.GetLineNumberFromPosition(_start); }

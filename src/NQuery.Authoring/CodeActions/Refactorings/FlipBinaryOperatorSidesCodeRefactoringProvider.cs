@@ -33,18 +33,15 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             {
                 var leftSpan = _node.Left.Span;
                 var rightSpan = _node.Right.Span;
-                var secondLength = rightSpan.Start - leftSpan.End;
 
                 var text = _node.SyntaxTree.Text;
                 var left = text.GetText(leftSpan);
                 var right = text.GetText(rightSpan);
-                
-                var first = text.GetText(0, leftSpan.Start);
-                var second = text.GetText(leftSpan.End, secondLength);
-                var third = text.GetText(rightSpan.End);
 
-                var newSource = first + right + second + left + third;
-                return SyntaxTree.ParseQuery(newSource);
+                text = text.Replace(rightSpan, left);
+                text = text.Replace(leftSpan, right);
+                
+                return SyntaxTree.ParseQuery(text);
             }
         }
     }

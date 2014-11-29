@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 
 using NQuery.Text;
 
@@ -85,6 +86,61 @@ namespace NQuery.Tests.Text
             Assert.Equal(new TextSpan(text.Length, 0), sourceText.Lines[3].Span);
             Assert.Equal(new TextSpan(text.Length, 0), sourceText.Lines[3].SpanIncludingLineBreak);
             Assert.Equal(string.Empty, sourceText.Lines[3].GetText());
+        }
+
+        [Fact]
+        public void SourceText_ReturnsAllChanges()
+        {
+            var original = SourceText.From("ABCDEFGH");
+            var modified1 = original.Replace(1, 2, "XY");
+            var modified2 = modified1.Replace(7, 1, "Z");
+
+            var allChanges = modified2.GetChanges(original).ToImmutableArray();
+            Assert.Equal(2, allChanges.Length);
+            Assert.Equal(1, allChanges[0].Span.Start);
+            Assert.Equal(2, allChanges[0].Span.Length);
+            Assert.Equal("XY", allChanges[0].NewText);
+            Assert.Equal(7, allChanges[1].Span.Start);
+            Assert.Equal(1, allChanges[1].Span.Length);
+            Assert.Equal("Z", allChanges[1].NewText);
+        }
+
+        [Fact]
+        public void SourceText_ReturnsLastChange()
+        {
+            var original = SourceText.From("ABCDEFGH");
+            var modified1 = original.Replace(1, 2, "XY");
+            var modified2 = modified1.Replace(7, 1, "Z");
+
+            var lastChanges = modified2.GetChanges(modified1).ToImmutableArray();
+            Assert.Equal(1, lastChanges.Length);
+            Assert.Equal(7, lastChanges[0].Span.Start);
+            Assert.Equal(1, lastChanges[0].Span.Length);
+            Assert.Equal("Z", lastChanges[0].NewText);
+        }
+
+        [Fact]
+        public void SourceText_ReturnsNoChanges_ForSelf()
+        {
+            var original = SourceText.From("ABCDEFGH");
+            var modified1 = original.Replace(1, 2, "XY");
+            var modified2 = modified1.Replace(7, 1, "Z");
+
+            var noChanges = modified2.GetChanges(modified2).ToImmutableArray();
+            Assert.Empty(noChanges);
+        }
+
+        [Fact]
+        public void SourceText_ReturnsChanges_ForDifferentSourceTexts()
+        {
+            var sourceText1 = SourceText.From("ABCDEFGH");
+            var sourceText2 = SourceText.From("XYZ");
+
+            var allChanges = sourceText2.GetChanges(sourceText1).ToImmutableArray();
+            Assert.Equal(1, allChanges.Length);
+            Assert.Equal(0, allChanges[0].Span.Start);
+            Assert.Equal(sourceText1.Length, allChanges[0].Span.Length);
+            Assert.Equal(sourceText2.GetText(), allChanges[0].NewText);
         }
     }
 }

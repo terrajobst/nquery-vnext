@@ -13,6 +13,7 @@ using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
+using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Text;
 
 namespace NQueryViewer.ActiproEditor
@@ -71,7 +72,9 @@ namespace NQueryViewer.ActiproEditor
 
         private void SetSelection(TextSpan selection)
         {
-            _syntaxEditor.ActiveView.Selection.SelectRange(selection.Start, selection.Length);
+            var sourceText = _syntaxEditor.Document.CurrentSnapshot.ToSourceText();
+            var range = sourceText.ToSnapshotRange(selection);
+            _syntaxEditor.ActiveView.Selection.SelectRange(range);
         }
 
         public override void Focus()
