@@ -6,10 +6,10 @@ using Xunit;
 
 namespace NQuery.Tests.Text
 {
-    public sealed class TextBufferTests
+    public sealed class SourceTextTests
     {
         [Fact]
-        public void TextBuffer_EmptyHasALineWithoutLineBreak()
+        public void SourceText_EmptyHasALineWithoutLineBreak()
         {
             var sourceText = SourceText.From(string.Empty);
             Assert.Equal(0, sourceText.Length);
@@ -19,7 +19,7 @@ namespace NQuery.Tests.Text
         }
 
         [Fact]
-        public void TextBuffer_SingleLineIsWithoutLineBreak()
+        public void SourceText_SingleLineIsWithoutLineBreak()
         {
             const string text = "text";
             var sourceText = SourceText.From(text);
@@ -33,7 +33,7 @@ namespace NQuery.Tests.Text
         }
 
         [Fact]
-        public void TextBuffer_SingleWithLineBreakResultsInTwoLines()
+        public void SourceText_SingleWithLineBreakResultsInTwoLines()
         {
             const string first = "test";
             const string text = first + "\n";
@@ -52,7 +52,7 @@ namespace NQuery.Tests.Text
         }
 
         [Fact]
-        public void TextBuffer_DifferentLineBreaksAreRecordedProperly()
+        public void SourceText_DifferentLineBreaksAreRecordedProperly()
         {
             const string first = "first";
             const string second = "second";
