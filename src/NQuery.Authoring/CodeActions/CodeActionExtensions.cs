@@ -67,7 +67,8 @@ namespace NQuery.Authoring.CodeActions
                        new QualifyColumnCodeRefactoringProvider(),
                        new BetweenCodeRefactoringProvider(),
                        new RemoveRedundantBracketsCodeRefactoringProvider(),
-                       new RemoveRedundantParenthesisCodeRefactoringProvider()
+                       new RemoveRedundantParenthesisCodeRefactoringProvider(),
+                       new ExplicitJoinCodeRefactoringProvider()
                    };
         }
 
