@@ -149,6 +149,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Rearrangement\ArrangementOperation.cs" />
+    <Compile Include="Rearrangement\Arrangement.cs" />
+    <Compile Include="Rearrangement\IArrangementAction.cs" />
+    <Compile Include="Rearrangement\IRearranger.cs" />
+    <Compile Include="Rearrangement\RearrangementExtensions.cs" />
+    <Compile Include="Rearrangement\Rearranger.cs" />
+    <Compile Include="Rearrangement\Rearrangers\CommonTableExpressionRearranger.cs" />
+    <Compile Include="Rearrangement\Rearrangers\SelectColumnRearranger.cs" />
+    <Compile Include="Rearrangement\SeparatedSyntaxListRearranger.cs" />
+    <Compile Include="Rearrangement\SwappingRearranger.cs" />
     <Compile Include="Selection\ISelectionSpanProvider.cs" />
     <Compile Include="Selection\Providers\ArgumentListSelectionSpanProvider.cs" />
     <Compile Include="Selection\Providers\CommonTableExpressionColumnNameListSelectionSpanProvider.cs" />

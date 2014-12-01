@@ -23,5 +23,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         IClassificationType Aggregate { get; }
         IClassificationType Variable { get; }
         IClassificationType Unnecessary { get; }
+        IClassificationType RearrangeVertically { get; }
+        IClassificationType RearrangeHorizontally { get; }
     }
 }

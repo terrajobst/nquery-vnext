@@ -8,7 +8,6 @@ using System.Windows.Controls;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.VSEditorWpf.CodeActions;
@@ -20,19 +19,19 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
     {
         private readonly Workspace _workspace;
         private readonly IWpfTextViewHost _textViewHost;
-        private readonly ITextBufferUndoManager _textBufferUndoManager;
+        private readonly ISyntaxTreeApplier _syntaxTreeApplier;
         private readonly ImmutableArray<ICodeFixProvider> _fixProviders;
         private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
         private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
         private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
 
-        public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ITextBufferUndoManager textBufferUndoManager, ImmutableArray<ICodeFixProvider> fixProviders, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
+        public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ISyntaxTreeApplier syntaxTreeApplier, ImmutableArray<ICodeFixProvider> fixProviders, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {
             _workspace = workspace;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textViewHost = textViewHost;
-            _textBufferUndoManager = textBufferUndoManager;
+            _syntaxTreeApplier = syntaxTreeApplier;
             _textViewHost.TextView.Caret.PositionChanged += CaretOnPositionChanged;
             _textViewHost.TextView.LayoutChanged += TextViewOnLayoutChanged;
             _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
@@ -80,7 +79,7 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
 
         private TextBufferCodeActionModel CreateCodeActionModel(CodeActionKind kind, ICodeAction a)
         {
-            return new TextBufferCodeActionModel(kind, a, _textViewHost.TextView.TextBuffer, _textBufferUndoManager);
+            return new TextBufferCodeActionModel(kind, a, _syntaxTreeApplier);
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)

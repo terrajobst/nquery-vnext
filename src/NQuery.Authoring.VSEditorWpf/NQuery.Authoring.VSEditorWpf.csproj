@@ -97,6 +97,10 @@
     <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
+    <Compile Include="CodeActions\ISyntaxTreeApplier.cs" />
+    <Compile Include="CodeActions\ISyntaxTreeApplierProvider.cs" />
+    <Compile Include="CodeActions\SyntaxTreeApplier.cs" />
+    <Compile Include="CodeActions\SyntaxTreeApplierProvider.cs" />
     <Compile Include="CodeActions\TextBufferCodeActionModel.cs" />
     <Compile Include="Commenting\CommentOperations.cs" />
     <Compile Include="Commenting\CommentOperationsProvider.cs" />
@@ -112,6 +116,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Rearrangement\NQueryKeyProcessor.cs" />
+    <Compile Include="Rearrangement\NQueryKeyProcessorProvider.cs" />
+    <Compile Include="Rearrangement\NQueryRearrangementViewTaggerProvider.cs" />
+    <Compile Include="Rearrangement\IRearrangeModelManager.cs" />
+    <Compile Include="Rearrangement\IRearrangeModelManagerProvider.cs" />
+    <Compile Include="Rearrangement\NQueryRearrangementViewTagger.cs" />
+    <Compile Include="Rearrangement\RearrangeModel.cs" />
+    <Compile Include="Rearrangement\RearrangeModelManager.cs" />
+    <Compile Include="Rearrangement\RearrangeModelManagerProvider.cs" />
     <Compile Include="Text\VisualStudioTextExtensions.cs" />
     <Compile Include="Text\VisualStudioSourceTextContainer.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManager.cs" />

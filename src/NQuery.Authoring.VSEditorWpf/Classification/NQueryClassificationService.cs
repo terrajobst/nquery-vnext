@@ -19,6 +19,8 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         private IClassificationType _function;
         private IClassificationType _aggregate;
         private IClassificationType _variable;
+        private IClassificationType _rearrangeVertically;
+        private IClassificationType _rearrangeHorizontally;
 
         [Import]
         public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; }
@@ -114,6 +116,16 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         public IClassificationType Unnecessary
         {
             get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.UnnecessaryClassificationTypeName); }
+        }
+
+        public IClassificationType RearrangeVertically
+        {
+            get { return GetOrRetreiveClassification(ref _rearrangeVertically, NQuerySemanticClassificationMetadata.RearrangeVerticallyClassificationTypeName); }
+        }
+
+        public IClassificationType RearrangeHorizontally
+        {
+            get { return GetOrRetreiveClassification(ref _rearrangeHorizontally, NQuerySemanticClassificationMetadata.RearrangeHorizontallyClassificationTypeName); }
         }
     }
 }

@@ -43,6 +43,12 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         public const string UnnecessaryClassificationFormatName = "NQuery.Unnecessary.Format";
         public const string UnnecessaryClassificationTypeName = "NQuery.Unnecessary";
 
+        public const string RearrangeVerticallyClassificationFormatName = "NQuery.RearrangeVertically.Format";
+        public const string RearrangeVerticallyClassificationTypeName = "NQuery.RearrangeVertically";
+
+        public const string RearrangeHorizontallyClassificationFormatName = "NQuery.RearrangeHorizontally.Format";
+        public const string RearrangeHorizontallyClassificationTypeName = "NQuery.RearrangeHorizontally";
+
         // Types ------------------
 
 #pragma warning disable 649
@@ -101,6 +107,16 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         [Name(UnnecessaryClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition UnnecessaryType;
+
+        [Export]
+        [Name(RearrangeVerticallyClassificationTypeName)]
+        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+        public ClassificationTypeDefinition RearrangeVerticallyType;
+
+        [Export]
+        [Name(RearrangeHorizontallyClassificationTypeName)]
+        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+        public ClassificationTypeDefinition RearrangeHorizontallyType;
 
 #pragma warning restore 649
 
@@ -266,6 +282,34 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             {
                 DisplayName = Resources.ClassificationFormatUnnecessary;
                 ForegroundOpacity = 0.6;
+            }
+        }
+
+        [Export(typeof(EditorFormatDefinition))]
+        [Name(RearrangeVerticallyClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = RearrangeVerticallyClassificationTypeName)]
+        [UserVisible(true)]
+        [Order(Before = Priority.Default)]
+        public sealed class RearrangeVerticallyFormat : ClassificationFormatDefinition
+        {
+            public RearrangeVerticallyFormat()
+            {
+                DisplayName = "Rearrange Vertically";
+                BackgroundColor = Colors.SkyBlue;
+            }
+        }
+
+        [Export(typeof(EditorFormatDefinition))]
+        [Name(RearrangeHorizontallyClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = RearrangeHorizontallyClassificationTypeName)]
+        [UserVisible(true)]
+        [Order(Before = Priority.Default)]
+        public sealed class RearrangeHorizontallyFormat : ClassificationFormatDefinition
+        {
+            public RearrangeHorizontallyFormat()
+            {
+                DisplayName = "Rearrange Horizontally";
+                BackgroundColor = Colors.Yellow;
             }
         }
     }

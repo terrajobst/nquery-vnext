@@ -2,10 +2,10 @@
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text.Editor;
-using Microsoft.VisualStudio.Text.Operations;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.CodeActions;
+using NQuery.Authoring.VSEditorWpf.CodeActions;
 
 namespace NQuery.Authoring.VSEditorWpf.Margins
 {
@@ -27,17 +27,17 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
         public ICodeRefactoringProviderService CodeRefactoringProviderService { get; set; }
 
         [Import]
-        public ITextBufferUndoManagerProvider TextBufferUndoManagerProvider { get; set; }
+        public ISyntaxTreeApplierProvider SyntaxTreeApplierProvider { get; set; }
 
         public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
         {
             var textBuffer = wpfTextViewHost.TextView.TextBuffer;
-            var textBufferUndoManager = TextBufferUndoManagerProvider.GetTextBufferUndoManager(textBuffer);
+            var syntaxTreeApplier = SyntaxTreeApplierProvider.GetSyntaxTreeApplier(textBuffer);
             var workspace = textBuffer.GetWorkspace();
             var fixProviders = CodeFixProviderService.Providers;
             var issueProviders = CodeIssueProviderService.Providers;
             var refactoringProviders = CodeRefactoringProviderService.Providers;
-            var margin = new NQueryCodeActionsMargin(workspace, wpfTextViewHost, textBufferUndoManager, fixProviders, issueProviders, refactoringProviders);
+            var margin = new NQueryCodeActionsMargin(workspace, wpfTextViewHost, syntaxTreeApplier, fixProviders, issueProviders, refactoringProviders);
             wpfTextViewHost.TextView.Properties.AddProperty(margin.GetType(), margin);
             return margin;
         }
