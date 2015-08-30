@@ -114,7 +114,12 @@
     <Compile Include="Highlighting\Highlighters\TableInstanceReferenceHighlighterTests.cs" />
     <Compile Include="Highlighting\HighlighterTests.cs" />
     <Compile Include="Highlighting\HighlightingExtensionsTests.cs" />
-    <Compile Include="Outlining\OutliningTests.cs" />
+    <Compile Include="Outlining\Outliners\OrderedQueryOutlinerTests.cs" />
+    <Compile Include="Outlining\Outliners\SelectQueryOutlinerTests.cs" />
+    <Compile Include="Outlining\OutliningExtensionsTests.cs" />
+    <Compile Include="Outlining\Outliners\MultiLineCommentOutlinerTests.cs" />
+    <Compile Include="Outlining\OutlinerTests.cs" />
+    <Compile Include="Outlining\Outliners\SingleLineCommentOutlinerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\Providers\CastExpressionQuickInfoModelProviderTests.cs" />
     <Compile Include="QuickInfo\Providers\CoalesceExpressionQuickInfoModelProviderTests.cs" />

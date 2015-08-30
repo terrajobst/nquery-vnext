@@ -106,9 +106,16 @@
     <Compile Include="DocumentKind.cs" />
     <Compile Include="NQueryGlyph.cs" />
     <Compile Include="NQueryGlyphExtensions.cs" />
+    <Compile Include="Outlining\IOutliner.cs" />
+    <Compile Include="Outlining\Outliners\MultiLineCommentOutliner.cs" />
+    <Compile Include="Outlining\Outliners\OrderedQueryOutliner.cs" />
     <Compile Include="Outlining\OutliningRegionSpan.cs" />
     <Compile Include="Outlining\OutliningExtensions.cs" />
+    <Compile Include="Outlining\SyntaxNodeOutliner.cs" />
     <Compile Include="Outlining\OutliningWorker.cs" />
+    <Compile Include="Outlining\Outliners\SelectQueryOutliner.cs" />
+    <Compile Include="Outlining\Outliners\SingleLineCommentOutliner.cs" />
+    <Compile Include="Outlining\SyntaxTokenOutliner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\Providers\CastExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\CoalesceExpressionQuickInfoModelProvider.cs" />

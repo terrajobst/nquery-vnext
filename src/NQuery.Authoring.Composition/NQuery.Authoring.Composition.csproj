@@ -39,6 +39,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Outlining\OutliningService.cs" />
+    <Compile Include="Outlining\IOutliningService.cs" />
     <Compile Include="BraceMatching\BraceMatcherService.cs" />
     <Compile Include="BraceMatching\IBraceMatcherService.cs" />
     <Compile Include="CodeActions\CodeFixProviderService.cs" />

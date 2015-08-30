@@ -65,6 +65,7 @@
     <Compile Include="Completion\NQueryCompletionController.cs" />
     <Compile Include="Completion\NQueryCompletionSession.cs" />
     <Compile Include="NQueryParseDataSynchronizer.cs" />
+    <Compile Include="Outlining\INQueryOutliner.cs" />
     <Compile Include="QuickInfo\INQueryQuickInfoProvider.cs" />
     <Compile Include="Selection\ExtendSelectionAction.cs" />
     <Compile Include="Selection\SelectionAction.cs" />

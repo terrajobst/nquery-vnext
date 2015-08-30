@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Tagging;
 
+using NQuery.Authoring.Composition.Outlining;
 using NQuery.Authoring.Outlining;
 
 namespace NQuery.Authoring.VSEditorWpf.Outlining
@@ -13,10 +14,12 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
     internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, OutliningRegionSpan>
     {
         private readonly Workspace _workspace;
+        private readonly IOutliningService _outliningService;
 
-        public NQueryOutliningTagger(Workspace workspace)
+        public NQueryOutliningTagger(Workspace workspace, IOutliningService outliningService)
         {
             _workspace = workspace;
+            _outliningService = outliningService;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             InvalidateTags();
         }
@@ -31,7 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
             var document = _workspace.CurrentDocument;
             var syntaxTree = await document.GetSyntaxTreeAsync();
             var snapshot = document.GetTextSnapshot();
-            var result = syntaxTree.Root.FindRegions();
+            var result = syntaxTree.Root.FindRegions(_outliningService.Outliners);
             return Tuple.Create(snapshot, result.AsEnumerable());
         }
 

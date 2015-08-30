@@ -5,7 +5,6 @@ using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
-using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 using ActiproSoftware.Windows.Extensions;
 
 using NQuery.Authoring.ActiproWpf.BraceMatching;
@@ -18,10 +17,12 @@ using NQuery.Authoring.ActiproWpf.Squiggles;
 using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.Completion;
+using NQuery.Authoring.Outlining;
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.SignatureHelp;
 
 using ICompletionProvider = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.ICompletionProvider;
+using IOutliner = ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining.IOutliner;
 
 namespace NQuery.Authoring.ActiproWpf
 {
@@ -85,6 +86,9 @@ namespace NQuery.Authoring.ActiproWpf
             RegisterService(provider);
 
             var outliner = new NQueryOutliner();
+            outliner.Outliners.AddRange(OutliningExtensions.GetStandardOutliners());
+
+            RegisterService<INQueryOutliner>(outliner);
             RegisterService<IOutliner>(outliner);
         }
 
