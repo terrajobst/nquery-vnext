@@ -34,7 +34,8 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         {
             return char.IsLetter(c) ||
                    c == '_' ||
-                   c == '.';
+                   c == '.' ||
+                   c == '\'';
         }
 
         private static bool IsCommitChar(char c)

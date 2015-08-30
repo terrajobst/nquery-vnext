@@ -18,7 +18,8 @@ namespace NQuery.Authoring.Completion
                        new KeywordCompletionProvider(),
                        new SymbolCompletionProvider(),
                        new TypeCompletionProvider(),
-                       new CommonTableExpressionCompletionProvider()
+                       new CommonTableExpressionCompletionProvider(),
+                       new DataCompletionProvider()
                    };
         }
 
@@ -42,6 +43,12 @@ namespace NQuery.Authoring.Completion
 
         private static SyntaxToken GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
         {
+            var tokenAtPosition = root.FindTokenContext(position);
+            if (tokenAtPosition.Kind == SyntaxKind.DateLiteralToken ||
+                tokenAtPosition.Kind == SyntaxKind.NumericLiteralToken ||
+                tokenAtPosition.Kind == SyntaxKind.StringLiteralToken)
+                return tokenAtPosition;
+
             var syntaxToken = root.FindTokenOnLeft(position);
             return syntaxToken.Kind.IsIdentifierOrKeyword() && syntaxToken.Span.ContainsOrTouches(position)
                        ? syntaxToken

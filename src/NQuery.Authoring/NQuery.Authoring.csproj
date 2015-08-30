@@ -94,6 +94,7 @@
     <Compile Include="Completion\ICompletionProvider.cs" />
     <Compile Include="Completion\Providers\AliasCompletionProvider.cs" />
     <Compile Include="Completion\Providers\CommonTableExpressionCompletionProvider.cs" />
+    <Compile Include="Completion\Providers\DataCompletionProvider.cs" />
     <Compile Include="Completion\Providers\JoinCompletionProvider.cs" />
     <Compile Include="Completion\Providers\KeywordCompletionProvider.cs" />
     <Compile Include="Completion\Providers\SymbolCompletionProvider.cs" />
