@@ -46,6 +46,12 @@ namespace NQuery.Authoring.Classifications
                 ClassifyNodeOrToken(syntaxNodeOrToken);
         }
 
+        public void ClassifyTokens(IEnumerable<SyntaxToken> tokens)
+        {
+            foreach (var token in tokens)
+                ClassifyToken(token);
+        }
+
         private void ClassifyNodeOrToken(SyntaxNodeOrToken nodeOrToken)
         {
             var asNode = nodeOrToken.AsNode();

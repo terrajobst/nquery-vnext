@@ -7,6 +7,22 @@ namespace NQuery.Authoring.Classifications
 {
     public static class ClassificationExtensions
     {
+        public static IReadOnlyList<SyntaxClassificationSpan> ClassifyTokens(this SourceText sourceText)
+        {
+            var span = new TextSpan(0, sourceText.Length);
+            return sourceText.ClassifyTokens(span);
+        }
+
+        public static IReadOnlyList<SyntaxClassificationSpan> ClassifyTokens(this SourceText sourceText, TextSpan span)
+        {
+            var tokens = SyntaxFacts.ParseTokens(sourceText);
+
+            var result = new List<SyntaxClassificationSpan>();
+            var worker = new SyntaxClassificationWorker(result, span);
+            worker.ClassifyTokens(tokens);
+            return result;
+        }
+
         public static IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax(this SyntaxNode root)
         {
             return root.ClassifySyntax(root.FullSpan);

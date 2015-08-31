@@ -21,6 +21,23 @@ namespace NQuery
             return lexer.Lex();
         }
 
+        public static IEnumerable<SyntaxToken> ParseTokens(string text)
+        {
+            var sourceText = SourceText.From(text);
+            return ParseTokens(sourceText);
+        }
+
+        public static IEnumerable<SyntaxToken> ParseTokens(SourceText text)
+        {
+            var lexer = new Lexer(null, text);
+            SyntaxToken token;
+            do
+            {
+                token = lexer.Lex();
+                yield return token;
+            } while (token.Kind != SyntaxKind.EndOfFileToken);
+        }
+
         public static ExpressionSyntax ParseExpression(string text)
         {
             if (text == null)

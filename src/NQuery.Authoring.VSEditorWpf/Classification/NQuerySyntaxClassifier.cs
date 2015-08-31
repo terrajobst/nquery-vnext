@@ -16,25 +16,45 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         private readonly INQueryClassificationService _classificationService;
         private readonly Workspace _workspace;
 
+        private ClassificationProducer _producer;
+
         public NQuerySyntaxClassifier(INQueryClassificationService classificationService, Workspace workspace)
         {
             _classificationService = classificationService;
             _workspace = workspace;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+            UpdateClassifications();
+        }
+
+        private async void UpdateClassifications()
+        {
+            var producer = new ClassificationProducer(_workspace.CurrentDocument);
+            _producer = producer;
+
+            await producer.ClassifyFastAsync();
+            if (_producer != producer)
+                return;
+
+            InvalidateTags();
+
+            await producer.ClassifyFullAsync();
+            if (_producer != producer)
+                return;
+
             InvalidateTags();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            InvalidateTags();
+            UpdateClassifications();
         }
 
         protected override async Task<Tuple<ITextSnapshot, IEnumerable<SyntaxClassificationSpan>>> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
-            var syntaxTree = await document.GetSyntaxTreeAsync();
             var snapshot = document.GetTextSnapshot();
-            var classificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySyntax());
+
+            var classificationSpans = await _producer.ClassifyFastAsync();
             return Tuple.Create(snapshot, classificationSpans.AsEnumerable());
         }
 
@@ -67,6 +87,42 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
                     return _classificationService.NumberLiteral;
                 default:
                     throw ExceptionBuilder.UnexpectedValue(classification);
+            }
+        }
+
+        private sealed class ClassificationProducer
+        {
+            private readonly Task<IReadOnlyList<SyntaxClassificationSpan>> _tokenClassificationTask;
+            private readonly Task<IReadOnlyList<SyntaxClassificationSpan>> _syntaxClassificationTask;
+
+            public ClassificationProducer(Document document)
+            {
+                _tokenClassificationTask = ClassifyTokens(document);
+                _syntaxClassificationTask = ClassifySyntax(document);
+            }
+
+            public async Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifyFastAsync()
+            {
+                await Task.WhenAny(_tokenClassificationTask, _syntaxClassificationTask);
+                return _syntaxClassificationTask.IsCompleted
+                        ? _syntaxClassificationTask.Result
+                        : _tokenClassificationTask.Result;
+            }
+
+            public Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifyFullAsync()
+            {
+                return _syntaxClassificationTask;
+            }
+
+            private static Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifyTokens(Document document)
+            {
+                return Task.Run(() => document.Text.ClassifyTokens());
+            }
+
+            private static async Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifySyntax(Document document)
+            {
+                var syntaxTree = await document.GetSyntaxTreeAsync();
+                return await Task.Run(() => syntaxTree.Root.ClassifySyntax());
             }
         }
     }
