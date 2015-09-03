@@ -138,7 +138,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             return new Microsoft.VisualStudio.Language.Intellisense.Completion(displayText, insertionText, description, image, null);
         }
 
-        private static ImageSource ToImage(NQueryGlyph? glyp)
+        private static ImageSource ToImage(Glyph? glyp)
         {
             return glyp == null ? null : NQueryGlyphImageSource.Get(glyp.Value);
         }

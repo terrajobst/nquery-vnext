@@ -55,7 +55,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         {
             var item = completionModel.Items.Single(i => i.InsertionText == keyword);
 
-            Assert.Equal(NQueryGlyph.Keyword, item.Glyph);
+            Assert.Equal(Glyph.Keyword, item.Glyph);
             Assert.Equal(keyword, item.DisplayText);
             Assert.Equal(null, item.Description);
             Assert.Equal(null, item.Symbol);

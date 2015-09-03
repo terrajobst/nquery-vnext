@@ -24,7 +24,7 @@ namespace NQuery.Authoring.Completion.Providers
 
             return from k in GetAvailableKeywords(syntaxTree, position)
                    let text = k.GetText()
-                   select new CompletionItem(text, text, null, NQueryGlyph.Keyword);
+                   select new CompletionItem(text, text, null, Glyph.Keyword);
         }
 
         private static IEnumerable<SyntaxKind> GetAvailableKeywords(SyntaxTree syntaxTree, int position)

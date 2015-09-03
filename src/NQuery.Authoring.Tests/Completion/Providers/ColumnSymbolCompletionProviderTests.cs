@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             SymbolMarkup columnMarkup;
             GetCompletionData(query, tableInstanceName, columnName, out column, out columnItem, out columnMarkup);
 
-            Assert.Equal(NQueryGlyph.Column, columnItem.Glyph);
+            Assert.Equal(Glyph.Column, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);
             Assert.Equal(columnMarkup.ToString(), columnItem.Description);
             Assert.Equal(column, columnItem.Symbol);
@@ -31,7 +31,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             SymbolMarkup columnMarkup;
             GetCompletionData(query, tableInstanceName, columnName, out column, out columnItem, out columnMarkup);
 
-            Assert.Equal(NQueryGlyph.AmbiguousName, columnItem.Glyph);
+            Assert.Equal(Glyph.AmbiguousName, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);
             Assert.True(columnItem.Description.StartsWith("Ambiguous Name:"));
             Assert.Equal(null, columnItem.Symbol);

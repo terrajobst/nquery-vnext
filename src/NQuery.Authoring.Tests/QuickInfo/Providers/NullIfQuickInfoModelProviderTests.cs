@@ -23,7 +23,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
             var syntax = syntaxTree.Root.DescendantNodes().OfType<NullIfExpressionSyntax>().Single();
             var span = syntax.NullIfKeyword.Span;
             var markup = SymbolMarkup.ForNullIfSymbol();
-            return new QuickInfoModel(semanticModel, span, NQueryGlyph.Function, markup);
+            return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
         }
 
         [Fact]

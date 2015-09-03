@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var propertyItem = completionModel.Items.Single(i => i.InsertionText == property.Name);
             var propertyMarkup = SymbolMarkup.ForSymbol(property);
 
-            Assert.Equal(NQueryGlyph.Property, propertyItem.Glyph);
+            Assert.Equal(Glyph.Property, propertyItem.Glyph);
             Assert.Equal(property.Name, propertyItem.DisplayText);
             Assert.Equal(propertyMarkup.ToString(), propertyItem.Description);
             Assert.Equal(property, propertyItem.Symbol);
@@ -27,7 +27,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertIsNoMatch(string query)
         {
             var completionModel = GetCompletionModel(query);
-            var hasTables = completionModel.Items.Any(i => i.Symbol is PropertySymbol || i.Glyph == NQueryGlyph.Property);
+            var hasTables = completionModel.Items.Any(i => i.Symbol is PropertySymbol || i.Glyph == Glyph.Property);
             Assert.False(hasTables);
         }
 

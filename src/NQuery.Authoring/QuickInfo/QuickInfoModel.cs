@@ -9,10 +9,10 @@ namespace NQuery.Authoring.QuickInfo
     {
         private readonly SemanticModel _semanticModel;
         private readonly TextSpan _span;
-        private readonly NQueryGlyph _glyph;
+        private readonly Glyph _glyph;
         private readonly SymbolMarkup _markup;
 
-        public QuickInfoModel(SemanticModel semanticModel, TextSpan span, NQueryGlyph glyph, SymbolMarkup markup)
+        public QuickInfoModel(SemanticModel semanticModel, TextSpan span, Glyph glyph, SymbolMarkup markup)
         {
             _semanticModel = semanticModel;
             _span = span;
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.QuickInfo
             get { return _span; }
         }
 
-        public NQueryGlyph Glyph
+        public Glyph Glyph
         {
             get { return _glyph; }
         }

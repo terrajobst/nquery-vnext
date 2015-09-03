@@ -16,40 +16,40 @@ namespace NQuery.Authoring.Wpf
             return uri;
         }
 
-        private static string FromGlyph(NQueryGlyph glyph)
+        private static string FromGlyph(Glyph glyph)
         {
             switch (glyph)
             {
-                case NQueryGlyph.AmbiguousName:
+                case Glyph.AmbiguousName:
                     return FromName("AmbiguousName");
-                case NQueryGlyph.Keyword:
+                case Glyph.Keyword:
                     return FromName("Keyword");
-                case NQueryGlyph.Variable:
+                case Glyph.Variable:
                     return FromName("Variable");
-                case NQueryGlyph.Relation:
+                case Glyph.Relation:
                     return FromName("Relation");
-                case NQueryGlyph.Table:
+                case Glyph.Table:
                     return FromName("Table");
-                case NQueryGlyph.TableInstance:
+                case Glyph.TableInstance:
                     return FromName("TableInstance");
-                case NQueryGlyph.Aggregate:
+                case Glyph.Aggregate:
                     return FromName("Aggregate");
-                case NQueryGlyph.Column:
+                case Glyph.Column:
                     return FromName("Column");
-                case NQueryGlyph.Function:
+                case Glyph.Function:
                     return FromName("Function");
-                case NQueryGlyph.Method:
+                case Glyph.Method:
                     return FromName("Method");
-                case NQueryGlyph.Property:
+                case Glyph.Property:
                     return FromName("Property");
-                case NQueryGlyph.Type:
+                case Glyph.Type:
                     return FromName("Type");
                 default:
                     throw new ArgumentOutOfRangeException("glyph");
             }
         }
 
-        public static ImageSource Get(NQueryGlyph glyph)
+        public static ImageSource Get(Glyph glyph)
         {
             var imageUri = FromGlyph(glyph);
             if (imageUri == null)

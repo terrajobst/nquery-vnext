@@ -105,8 +105,8 @@
     <Compile Include="Highlighting\SelectQueryKeywordHighlighterBase.cs" />
     <Compile Include="Highlighting\Highlighters\SymbolReferenceHighlighter.cs" />
     <Compile Include="DocumentKind.cs" />
-    <Compile Include="NQueryGlyph.cs" />
-    <Compile Include="NQueryGlyphExtensions.cs" />
+    <Compile Include="Glyph.cs" />
+    <Compile Include="GlyphExtensions.cs" />
     <Compile Include="Outlining\IOutliner.cs" />
     <Compile Include="Outlining\Outliners\MultiLineCommentOutliner.cs" />
     <Compile Include="Outlining\Outliners\OrderedQueryOutliner.cs" />

@@ -24,7 +24,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
             var span = syntax.Name.Span;
             var symbol = semanticModel.GetSymbol(syntax);
             var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, NQueryGlyph.Method, markup);
+            return new QuickInfoModel(semanticModel, span, Glyph.Method, markup);
         }
 
         [Fact]

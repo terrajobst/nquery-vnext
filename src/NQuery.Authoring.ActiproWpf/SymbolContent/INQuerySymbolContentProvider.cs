@@ -8,8 +8,8 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     public interface INQuerySymbolContentProvider
     {
-        IContentProvider GetContentProvider(NQueryGlyph glyph, SymbolMarkup symbolMarkup);
+        IContentProvider GetContentProvider(Glyph glyph, SymbolMarkup symbolMarkup);
         IContentProvider GetContentProvider(Symbol symbol);
-        IImageSourceProvider GetImageSourceProvider(NQueryGlyph glyph);
+        IImageSourceProvider GetImageSourceProvider(Glyph glyph);
     }
 }

@@ -25,7 +25,7 @@ namespace NQuery.Authoring.Completion.Providers
 
         private static CompletionItem GetCompletionItem(string typeName)
         {
-            return new CompletionItem(typeName, typeName, typeName, NQueryGlyph.Type);
+            return new CompletionItem(typeName, typeName, typeName, Glyph.Type);
         }
     }
 }

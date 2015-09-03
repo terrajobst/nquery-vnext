@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var tableItem = completionModel.Items.Single(i => i.InsertionText == table.Name);
             var tableMarkup = SymbolMarkup.ForSymbol(table);
 
-            Assert.Equal(NQueryGlyph.Table, tableItem.Glyph);
+            Assert.Equal(Glyph.Table, tableItem.Glyph);
             Assert.Equal(table.Name, tableItem.DisplayText);
             Assert.Equal(tableMarkup.ToString(), tableItem.Description);
             Assert.Equal(table, tableItem.Symbol);
@@ -27,14 +27,14 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertIsNoMatch(string query)
         {
             var completionModel = GetCompletionModel(query);
-            var hasTables = completionModel.Items.Any(i => i.Symbol is TableSymbol || i.Glyph == NQueryGlyph.Table);
+            var hasTables = completionModel.Items.Any(i => i.Symbol is TableSymbol || i.Glyph == Glyph.Table);
             Assert.False(hasTables);
         }
 
         private static void AssertReturnsOnlyTables(string query)
         {
             var completionModel = GetCompletionModel(query);
-            var hasNonTables = completionModel.Items.Any(i => !(i.Symbol is TableSymbol) || i.Glyph != NQueryGlyph.Table);
+            var hasNonTables = completionModel.Items.Any(i => !(i.Symbol is TableSymbol) || i.Glyph != Glyph.Table);
             Assert.False(hasNonTables);
         }
 

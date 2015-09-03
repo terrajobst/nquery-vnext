@@ -13,7 +13,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 {
     internal static class HtmlMarkupEmitter
     {
-        public static string GetHtml(NQueryGlyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+        public static string GetHtml(Glyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
         {
             var sb = new StringBuilder();
             sb.AppendGlyph(glyph);
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             return sb.ToString();
         }
 
-        private static void AppendGlyph(this StringBuilder sb, NQueryGlyph glyph)
+        private static void AppendGlyph(this StringBuilder sb, Glyph glyph)
         {
             sb.Append("<img src=\"");
             sb.Append(glyph);

@@ -2,33 +2,33 @@ using System;
 
 namespace NQuery.Authoring
 {
-    public static class NQueryGlyphExtensions
+    public static class GlyphExtensions
     {
-        public static NQueryGlyph GetGlyph(this Symbol symbol)
+        public static Glyph GetGlyph(this Symbol symbol)
         {
             switch (symbol.Kind)
             {
                 case SymbolKind.Column:
-                    return NQueryGlyph.Column;
+                    return Glyph.Column;
                 case SymbolKind.SchemaTable:
                 case SymbolKind.DerivedTable:
                 case SymbolKind.CommonTableExpression:
-                    return NQueryGlyph.Table;
+                    return Glyph.Table;
                 case SymbolKind.TableInstance:
-                    return NQueryGlyph.TableInstance;
+                    return Glyph.TableInstance;
                 case SymbolKind.TableColumnInstance:
                 case SymbolKind.QueryColumnInstance:
-                    return NQueryGlyph.Column;
+                    return Glyph.Column;
                 case SymbolKind.Variable:
-                    return NQueryGlyph.Variable;
+                    return Glyph.Variable;
                 case SymbolKind.Function:
-                    return NQueryGlyph.Function;
+                    return Glyph.Function;
                 case SymbolKind.Aggregate:
-                    return NQueryGlyph.Aggregate;
+                    return Glyph.Aggregate;
                 case SymbolKind.Property:
-                    return NQueryGlyph.Property;
+                    return Glyph.Property;
                 case SymbolKind.Method:
-                    return NQueryGlyph.Method;
+                    return Glyph.Method;
                 default:
                     throw new NotImplementedException(string.Format("Unknown symbol kind: {0}", symbol.Kind));
             }

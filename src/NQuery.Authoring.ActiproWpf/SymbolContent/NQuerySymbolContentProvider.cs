@@ -23,7 +23,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             get { return _serviceLocator.GetService<INQueryClassificationTypes>(); }
         }
 
-        public IContentProvider GetContentProvider(NQueryGlyph glyph, SymbolMarkup symbolMarkup)
+        public IContentProvider GetContentProvider(Glyph glyph, SymbolMarkup symbolMarkup)
         {
             var classificationTypes = ClassificationTypes;
             var registry = AmbientHighlightingStyleRegistry.Instance;
@@ -35,7 +35,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             return GetContentProvider(symbol.GetGlyph(), SymbolMarkup.ForSymbol(symbol));
         }
 
-        public IImageSourceProvider GetImageSourceProvider(NQueryGlyph glyph)
+        public IImageSourceProvider GetImageSourceProvider(Glyph glyph)
         {
             return new GlyphImageProvider(glyph);
         }

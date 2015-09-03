@@ -27,7 +27,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 ? methodMarkup.ToString()
                 : string.Format("{0} (+ {1} overload(s))", methodMarkup, overloadCount);
 
-            Assert.Equal(NQueryGlyph.Method, methodItem.Glyph);
+            Assert.Equal(Glyph.Method, methodItem.Glyph);
             Assert.Equal(method.Name, methodItem.DisplayText);
             Assert.Equal(expectedDescription, methodItem.Description);
         }
@@ -35,7 +35,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertIsNoMatch(string query)
         {
             var completionModel = GetCompletionModel(query);
-            var hasTables = completionModel.Items.Any(i => i.Symbol is MethodSymbol || i.Glyph == NQueryGlyph.Method);
+            var hasTables = completionModel.Items.Any(i => i.Symbol is MethodSymbol || i.Glyph == Glyph.Method);
             Assert.False(hasTables);
         }
 

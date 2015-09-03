@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Authoring
 {
-    public enum NQueryGlyph
+    public enum Glyph
     {
         AmbiguousName,
         Keyword,

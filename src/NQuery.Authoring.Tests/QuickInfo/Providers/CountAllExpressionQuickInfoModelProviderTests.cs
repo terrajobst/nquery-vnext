@@ -25,7 +25,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
             var span = syntax.Name.Span;
             var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);
             var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, NQueryGlyph.Aggregate, markup);
+            return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
         }
 
         private static AggregateSymbol GetCountAggregate(DataContext dataContext)

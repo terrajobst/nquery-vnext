@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var functionItem = completionModel.Items.Single(i => i.InsertionText == function.Name);
             var functionMarkup = SymbolMarkup.ForSymbol(function);
 
-            Assert.Equal(NQueryGlyph.Function, functionItem.Glyph);
+            Assert.Equal(Glyph.Function, functionItem.Glyph);
             Assert.Equal(function.Name, functionItem.DisplayText);
             Assert.Equal(functionMarkup.ToString(), functionItem.Description);
             Assert.Equal(function, functionItem.Symbol);

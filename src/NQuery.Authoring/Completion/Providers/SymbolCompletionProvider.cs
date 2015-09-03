@@ -130,7 +130,7 @@ namespace NQuery.Authoring.Completion.Providers
             }
 
             var description = sb.ToString();
-            return new CompletionItem(displayText, insertionText, description, NQueryGlyph.AmbiguousName);
+            return new CompletionItem(displayText, insertionText, description, Glyph.AmbiguousName);
         }
 
         private static CompletionItem CreateInvocableCompletionGroup(IEnumerable<Symbol> symbols)

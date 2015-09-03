@@ -30,7 +30,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var completionModel = semanticModel.GetCompletionModel(position, providers);
             var item = completionModel.Items.Single(i => i.InsertionText == condition);
 
-            Assert.Equal(NQueryGlyph.Relation, item.Glyph);
+            Assert.Equal(Glyph.Relation, item.Glyph);
             Assert.Equal(condition, item.Description);
             Assert.Equal(condition, item.DisplayText);
             Assert.Equal(condition, item.InsertionText);

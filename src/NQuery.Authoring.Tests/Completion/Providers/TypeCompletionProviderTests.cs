@@ -33,7 +33,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             foreach (var typeName in typeNames)
             {
                 var item = items[typeName];
-                Assert.Equal(NQueryGlyph.Type, item.Glyph);
+                Assert.Equal(Glyph.Type, item.Glyph);
                 Assert.Equal(typeName, item.Description);
                 Assert.Equal(typeName, item.DisplayText);
                 Assert.Equal(typeName, item.InsertionText);

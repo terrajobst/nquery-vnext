@@ -23,7 +23,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
             var syntax = syntaxTree.Root.DescendantNodes().OfType<CoalesceExpressionSyntax>().Single();
             var span = syntax.CoalesceKeyword.Span;
             var markup = SymbolMarkup.ForCoalesceSymbol();
-            return new QuickInfoModel(semanticModel, span, NQueryGlyph.Function, markup);
+            return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
         }
 
         [Fact]

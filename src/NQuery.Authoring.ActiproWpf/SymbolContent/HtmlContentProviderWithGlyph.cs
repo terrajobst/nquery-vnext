@@ -21,7 +21,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         protected override Image GetImage(string source)
         {
-            NQueryGlyph glyph;
+            Glyph glyph;
             if (!Enum.TryParse(source, out glyph))
                 return null;
 
@@ -35,7 +35,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
                        };
         }
 
-        public static HtmlContentProvider Create(NQueryGlyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+        public static HtmlContentProvider Create(Glyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
         {
             var htmlSnippet = HtmlMarkupEmitter.GetHtml(glyph, symbolMarkup, classificationTypes, highlightingStyleRegistry);
             return new HtmlContentProviderWithGlyph(htmlSnippet);

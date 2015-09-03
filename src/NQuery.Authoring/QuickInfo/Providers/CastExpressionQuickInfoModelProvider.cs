@@ -12,7 +12,7 @@ namespace NQuery.Authoring.QuickInfo.Providers
             var keywordSpan = node.CastKeyword.Span;
             return !keywordSpan.ContainsOrTouches(position)
                        ? null
-                       : new QuickInfoModel(semanticModel, keywordSpan, NQueryGlyph.Function, SymbolMarkup.ForCastSymbol());
+                       : new QuickInfoModel(semanticModel, keywordSpan, Glyph.Function, SymbolMarkup.ForCastSymbol());
         }
     }
 }

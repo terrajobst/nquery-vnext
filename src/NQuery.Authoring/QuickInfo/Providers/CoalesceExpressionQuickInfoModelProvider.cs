@@ -12,7 +12,7 @@ namespace NQuery.Authoring.QuickInfo.Providers
             var keywordSpan = node.CoalesceKeyword.Span;
             return !keywordSpan.ContainsOrTouches(position)
                        ? null
-                       : new QuickInfoModel(semanticModel, keywordSpan, NQueryGlyph.Function, SymbolMarkup.ForCoalesceSymbol());
+                       : new QuickInfoModel(semanticModel, keywordSpan, Glyph.Function, SymbolMarkup.ForCoalesceSymbol());
         }
     }
 }

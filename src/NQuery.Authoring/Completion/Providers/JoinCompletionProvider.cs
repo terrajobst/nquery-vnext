@@ -54,7 +54,7 @@ namespace NQuery.Authoring.Completion.Providers
             var displayText = condition;
             var insertionText = condition;
             var description = condition;
-            return new CompletionItem(displayText, insertionText, description, NQueryGlyph.Relation);
+            return new CompletionItem(displayText, insertionText, description, Glyph.Relation);
         }
 
         private static string CreateCondition(TableInstanceSymbol left, IReadOnlyList<ColumnSymbol> leftColumns, TableInstanceSymbol right, IReadOnlyList<ColumnSymbol> rightColumns)
