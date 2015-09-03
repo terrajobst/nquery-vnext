@@ -26,7 +26,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public string Description
             {
-                get { return string.Format("Add 'AS' keyword"); }
+                get { return "Add 'AS' keyword"; }
             }
 
             public SyntaxTree GetEdit()

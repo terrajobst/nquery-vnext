@@ -34,7 +34,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public string Description
             {
-                get { return string.Format("Qualify column"); }
+                get { return "Qualify column"; }
             }
 
             public SyntaxTree GetEdit()
