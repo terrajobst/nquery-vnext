@@ -79,6 +79,7 @@
     <Compile Include="CodeActions\ICodeIssueProvider.cs" />
     <Compile Include="CodeActions\ICodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\CodeRefactoringProvider.cs" />
+    <Compile Include="CodeActions\Refactorings\QualifyColumnCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\SyntaxTreeExtensions.cs" />
     <Compile Include="Completion\CompletionExtensions.cs" />

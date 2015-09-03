@@ -62,7 +62,8 @@ namespace NQuery.Authoring.CodeActions
                        new AddAsAliasCodeRefactoringProvider(),
                        new AddAsDerivedTableCodeRefactoringProvider(),
                        new AddMissingKeywordCodeRefactoringProvider(),
-                       new ExpandWildcardCodeRefactoringProvider()
+                       new ExpandWildcardCodeRefactoringProvider(),
+                       new QualifyColumnCodeRefactoringProvider()
                    };
         }
 

@@ -86,6 +86,7 @@
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordTests.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
+    <Compile Include="CodeActions\Refactorings\QualifyColumnTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
     <Compile Include="CodeActions\CodeRefactoringTests.cs" />
     <Compile Include="CompilationFactory.cs" />
