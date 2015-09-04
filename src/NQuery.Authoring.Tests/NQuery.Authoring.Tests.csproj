@@ -152,6 +152,7 @@
     <Compile Include="SignatureHelp\SignatureHelpExtensionsTests.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModelProviderTests.cs" />
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="SymbolSearch\SymbolSearcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

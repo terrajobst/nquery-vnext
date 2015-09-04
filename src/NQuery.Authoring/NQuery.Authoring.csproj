@@ -148,6 +148,9 @@
     <Compile Include="SignatureHelp\SignatureHelpExtensions.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModel.cs" />
     <Compile Include="SignatureHelp\SignatureItem.cs" />
+    <Compile Include="SymbolSearch\SymbolSearcher.cs" />
+    <Compile Include="SymbolSearch\SymbolSpan.cs" />
+    <Compile Include="SymbolSearch\SymbolSpanKind.cs" />
     <Compile Include="Workspace.cs" />
   </ItemGroup>
   <ItemGroup>
