@@ -5,6 +5,7 @@ using System.Globalization;
 
 using NQuery.Symbols;
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Issues
 {
@@ -78,26 +79,26 @@ namespace NQuery.Authoring.CodeActions.Issues
             return ordinal.ToString(CultureInfo.InvariantCulture);
         }
 
-        private sealed class ReplaceSelectorCodeAction : ICodeAction
+        private sealed class ReplaceSelectorCodeAction : CodeAction
         {
             private readonly ExpressionSyntax _selector;
             private readonly string _columnReference;
 
             public ReplaceSelectorCodeAction(ExpressionSyntax selector, string columnReference)
+                : base(selector.SyntaxTree)
             {
                 _selector = selector;
                 _columnReference = columnReference;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Replace expression by SELECT column reference"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                var syntaxTree = _selector.SyntaxTree;
-                return syntaxTree.ReplaceText(_selector.Span, _columnReference);
+                changeSet.ReplaceText(_selector.Span, _columnReference);
             }
         }
     }

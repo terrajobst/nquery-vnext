@@ -40,25 +40,24 @@ namespace NQuery.Authoring.CodeActions.Issues
             return column is WildcardSelectColumnSyntax;
         }
 
-        private sealed class RemoveUnnecessaryColumnsFromExistsCodeAction : ICodeAction
+        private sealed class RemoveUnnecessaryColumnsFromExistsCodeAction : CodeAction
         {
-            private readonly SyntaxTree _syntaxTree;
             private readonly TextSpan _columnListSpan;
 
             public RemoveUnnecessaryColumnsFromExistsCodeAction(SyntaxTree syntaxTree, TextSpan columnListSpan)
+                : base(syntaxTree)
             {
-                _syntaxTree = syntaxTree;
                 _columnListSpan = columnListSpan;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Remove unnecessary columns from EXISTS"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                return _syntaxTree.ReplaceText(_columnListSpan, "*");
+                changeSet.ReplaceText(_columnListSpan, "*");
             }
         }
     }

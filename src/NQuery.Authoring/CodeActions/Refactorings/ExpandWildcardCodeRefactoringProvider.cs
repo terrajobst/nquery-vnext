@@ -6,6 +6,7 @@ using System.Text;
 
 using NQuery.Symbols;
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Refactorings
 {
@@ -20,28 +21,29 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             return new[] {new ExpandWildcardCodeAction(node, columnInstances)};
         }
 
-        private sealed class ExpandWildcardCodeAction : ICodeAction
+        private sealed class ExpandWildcardCodeAction : CodeAction
         {
             private readonly WildcardSelectColumnSyntax _node;
             private readonly ImmutableArray<TableColumnInstanceSymbol> _columnInstances;
 
             public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, ImmutableArray<TableColumnInstanceSymbol> columnInstances)
+                : base(node.SyntaxTree)
             {
                 _node = node;
                 _columnInstances = columnInstances;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Expand wildcard"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var location = _node.SyntaxTree.Text.GetTextLocation(_node.Span.Start);
                 var indent = location.Column;
                 var columnString = BuildColumns(indent, _columnInstances);
-                return _node.SyntaxTree.ReplaceText(_node.Span, columnString);
+                changeSet.ReplaceText(_node.Span, columnString);
             }
 
             private static string BuildColumns(int indent, IEnumerable<TableColumnInstanceSymbol> symbols)

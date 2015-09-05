@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Fixes
 {
@@ -31,21 +32,22 @@ namespace NQuery.Authoring.CodeActions.Fixes
             if (selectQuery == null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new CodeAction(selectQuery, column.ColumnSelector)};
+            return new[] {new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector)};
         }
 
-        private sealed class CodeAction : ICodeAction
+        private sealed class AddOrderByToSelectDistinctCodeAction : CodeAction
         {
             private readonly SelectQuerySyntax _selectQuery;
             private readonly ExpressionSyntax _expression;
 
-            public CodeAction(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
+            public AddOrderByToSelectDistinctCodeAction(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
+                : base(selectQuery.SyntaxTree)
             {
                 _selectQuery = selectQuery;
                 _expression = expression;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return string.Format("Add {0} to SELECT list", GetExpressionText()); }
             }
@@ -63,12 +65,11 @@ namespace NQuery.Authoring.CodeActions.Fixes
                 return ", " + GetExpressionText();
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var insertPosition = _selectQuery.SelectClause.LastToken().Span.End;
                 var text = GetInsertionText();
-                var syntaxTree = _selectQuery.SyntaxTree;
-                return syntaxTree.InsertText(insertPosition, text);
+                changeSet.InsertText(insertPosition, text);
             }
         }
     }

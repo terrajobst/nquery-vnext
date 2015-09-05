@@ -4,6 +4,7 @@ using System.Linq;
 
 using NQuery.Syntax;
 using NQuery.Symbols;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Refactorings
 {
@@ -21,26 +22,27 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };
         }
 
-        private sealed class QualifyColumnCodeAction : ICodeAction
+        private sealed class QualifyColumnCodeAction : CodeAction
         {
             private readonly NameExpressionSyntax _node;
             private readonly TableColumnInstanceSymbol _symbol;
 
             public QualifyColumnCodeAction(NameExpressionSyntax node, TableColumnInstanceSymbol symbol)
+                : base(node.SyntaxTree)
             {
                 _node = node;
                 _symbol = symbol;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Qualify column"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance.Name);
-                return _node.SyntaxTree.InsertText(_node.Span.Start, name + ".");
+                changeSet.InsertText(_node.Span.Start, name + ".");
             }
         }
     }

@@ -233,6 +233,7 @@
     <Compile Include="Text\StringText.cs" />
     <Compile Include="Text\StringTextLineCollection.cs" />
     <Compile Include="Text\TextChange.cs" />
+    <Compile Include="Text\TextChangeSet.cs" />
     <Compile Include="Text\TextLineCollection.cs" />
     <Compile Include="Text\TextLocation.cs" />
     <Compile Include="SemanticModel.cs" />

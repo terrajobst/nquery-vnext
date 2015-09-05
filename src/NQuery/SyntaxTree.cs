@@ -121,6 +121,23 @@ namespace NQuery
             }
         }
 
+        public SyntaxTree WithChanges(params TextChange[] textChanges)
+        {
+            if (textChanges == null)
+                return this;
+
+            return WithChanges(textChanges.AsEnumerable());
+        }
+
+        public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
+        {
+            var newText = _text.WithChanges(textChanges);
+            var isQuery = _root.Root is QuerySyntax;
+            return isQuery
+                ? ParseQuery(newText)
+                : ParseExpression(newText);
+        }
+
         public static SyntaxTree Empty = ParseQuery(string.Empty);
 
         public CompilationUnitSyntax Root

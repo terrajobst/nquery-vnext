@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Refactorings
 {
@@ -15,23 +16,24 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 : Enumerable.Empty<ICodeAction>();
         }
 
-        private sealed class AddAsToAliasCodeAction : ICodeAction
+        private sealed class AddAsToAliasCodeAction : CodeAction
         {
             private readonly AliasSyntax _node;
 
             public AddAsToAliasCodeAction(AliasSyntax node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Add 'AS' keyword"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                return _node.SyntaxTree.InsertText(_node.Span.Start, "AS ");
+                changeSet.InsertText(_node.Span.Start, "AS ");
             }
         }
     }

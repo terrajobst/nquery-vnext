@@ -37,37 +37,39 @@ namespace NQuery.Authoring.CodeActions.Issues
             return literal != null && literal.Token.Kind == SyntaxKind.NullKeyword;
         }
 
-        private sealed class ConvertToIsNullCodeAction : ICodeAction
+        private sealed class ConvertToIsNullCodeAction : CodeAction
         {
             private readonly BinaryExpressionSyntax _node;
             private readonly bool _isEquals;
 
             public ConvertToIsNullCodeAction(BinaryExpressionSyntax node, bool isEquals)
+                : base(node.SyntaxTree)
             {
                 _node = node;
                 _isEquals = isEquals;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return _isEquals ? "Convert to IS NULL" : "Convert to IS NOT NULL"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var newText = _isEquals ? " IS NULL" : " IS NOT NULL";
-                var syntaxTree = _node.SyntaxTree;
 
                 var useLeft = IsNullLiteral(_node.Right);
                 if (useLeft)
                 {
                     var replacementSpan = TextSpan.FromBounds(_node.Left.Span.End, _node.Span.End);
-                    return syntaxTree.ReplaceText(replacementSpan, newText);
+                    changeSet.ReplaceText(replacementSpan, newText);
                 }
-                
-                var removalSpan = TextSpan.FromBounds(_node.Span.Start, _node.Right.Span.Start);
-                var insertionPoint = _node.Right.Span.End - removalSpan.Length;
-                return syntaxTree.RemoveText(removalSpan).InsertText(insertionPoint, newText);
+                else
+                {
+                    var removalSpan = TextSpan.FromBounds(_node.Span.Start, _node.Right.Span.Start);
+                    changeSet.DeleteText(removalSpan);
+                    changeSet.InsertText(_node.Right.Span.End, newText);
+                }
             }
         }
     }

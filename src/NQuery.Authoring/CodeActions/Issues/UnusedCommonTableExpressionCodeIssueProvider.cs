@@ -36,21 +36,22 @@ namespace NQuery.Authoring.CodeActions.Issues
             return tableReference.Ancestors().OfType<CommonTableExpressionSyntax>().Any(c => semanticModel.GetDeclaredSymbol(c) == table);
         }
 
-        private sealed class RemoveCommonTableExpressionCodeAction : ICodeAction
+        private sealed class RemoveCommonTableExpressionCodeAction : CodeAction
         {
             private readonly CommonTableExpressionSyntax _node;
 
             public RemoveCommonTableExpressionCodeAction(CommonTableExpressionSyntax node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Remove unused common table expression"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var previousToken = _node.FirstToken().GetPreviousToken();
                 var nextToken = _node.LastToken().GetNextToken();
@@ -70,8 +71,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                         : _node.Span.End;
                 var span = TextSpan.FromBounds(start, end);
 
-                var syntaxTree = _node.SyntaxTree;
-                return syntaxTree.RemoveText(span);
+                changeSet.DeleteText(span);
             }
         }
     }

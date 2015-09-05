@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using NQuery.Text;
+
 namespace NQuery.Authoring.CodeActions.Refactorings
 {
     internal sealed class AddMissingKeywordCodeRefactoringProvider : CodeRefactoringProvider<SyntaxNode>
@@ -12,16 +14,17 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             return missingKeywords.Select(k => new AddMissingKeywordCodeAction(k));
         }
 
-        private sealed class AddMissingKeywordCodeAction : ICodeAction
+        private sealed class AddMissingKeywordCodeAction : CodeAction
         {
             private readonly SyntaxToken _keyword;
 
             public AddMissingKeywordCodeAction(SyntaxToken keyword)
+                : base(keyword.Parent.SyntaxTree)
             {
                 _keyword = keyword;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return string.Format("Add missing '{0}' keyword", GetKeywordText()); }
             }
@@ -31,10 +34,9 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 return _keyword.Kind.GetText();
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                var syntaxTree = _keyword.Parent.SyntaxTree;
-                return syntaxTree.InsertText(_keyword.Span.Start, GetKeywordText() + " ");
+                changeSet.InsertText(_keyword.Span.Start, GetKeywordText() + " ");
             }
         }
     }

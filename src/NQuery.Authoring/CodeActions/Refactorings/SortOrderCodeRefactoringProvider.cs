@@ -18,57 +18,60 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             yield return new ToSortOrderCodeAction(node);
         }
 
-        private sealed class ToExplicitSortOrderCodeAction : ICodeAction
+        private sealed class ToExplicitSortOrderCodeAction : CodeAction
         {
             private readonly OrderByColumnSyntax _node;
 
             public ToExplicitSortOrderCodeAction(OrderByColumnSyntax node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "To explicit sort order"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                return _node.SyntaxTree.InsertText(_node.Span.End, " ASC");
+                changeSet.InsertText(_node.Span.End, " ASC");
             }
         }
 
-        private sealed class ToImplicitSortOrderCodeAction : ICodeAction
+        private sealed class ToImplicitSortOrderCodeAction : CodeAction
         {
             private readonly OrderByColumnSyntax _node;
 
             public ToImplicitSortOrderCodeAction(OrderByColumnSyntax node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "To implicit sort order"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var span = TextSpan.FromBounds(_node.ColumnSelector.Span.End, _node.Modifier.Span.End);
-                return _node.SyntaxTree.RemoveText(span);
+                changeSet.DeleteText(span);
             }
         }
 
-        private sealed class ToSortOrderCodeAction : ICodeAction
+        private sealed class ToSortOrderCodeAction : CodeAction
         {
             private readonly OrderByColumnSyntax _node;
 
             public ToSortOrderCodeAction(OrderByColumnSyntax node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get
                 {
@@ -78,16 +81,19 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                var syntaxTree = _node.SyntaxTree;
                 var modifier = _node.Modifier;
 
                 if (modifier == null)
-                    return syntaxTree.InsertText(_node.Span.End, " DESC");
-
-                var newKeyword = modifier.Kind == SyntaxKind.AscKeyword ? "DESC" : "ASC";
-                return syntaxTree.ReplaceText(modifier.Span, newKeyword);
+                {
+                    changeSet.InsertText(_node.Span.End, " DESC");
+                }
+                else
+                {
+                    var newKeyword = modifier.Kind == SyntaxKind.AscKeyword ? "DESC" : "ASC";
+                    changeSet.ReplaceText(modifier.Span, newKeyword);
+                }
             }
         }
     }

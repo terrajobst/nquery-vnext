@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Fixes
 {
@@ -93,27 +94,28 @@ namespace NQuery.Authoring.CodeActions.Fixes
                 yield return new AddToGroupByCodeAction(selectQuery, containingExpression);
         }
 
-        private sealed class AddToGroupByCodeAction : ICodeAction
+        private sealed class AddToGroupByCodeAction : CodeAction
         {
             private readonly SelectQuerySyntax _selectQuery;
             private readonly ExpressionSyntax _expression;
 
             public AddToGroupByCodeAction(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
+                : base(selectQuery.SyntaxTree)
             {
                 _selectQuery = selectQuery;
                 _expression = expression;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return string.Format("Add '{0}' to GROUP BY", GetExpressionText()); }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
                 var position = GetInsertPosition();
                 var text = GetTextToInsert();
-                return _selectQuery.SyntaxTree.InsertText(position, text);
+                changeSet.InsertText(position, text);
             }
 
             private int GetInsertPosition()

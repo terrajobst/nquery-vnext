@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Issues
 {
@@ -20,26 +21,26 @@ namespace NQuery.Authoring.CodeActions.Issues
                    select new CodeIssue(CodeIssueKind.Warning, selector.Span, action);
         }
 
-        private sealed class ReplaceOrdingalByNamedReferenceCodeAction : ICodeAction
+        private sealed class ReplaceOrdingalByNamedReferenceCodeAction : CodeAction
         {
             private readonly ExpressionSyntax _selector;
             private readonly string _columnReference;
 
             public ReplaceOrdingalByNamedReferenceCodeAction(ExpressionSyntax selector, string columnReference)
+                : base(selector.SyntaxTree)
             {
                 _selector = selector;
                 _columnReference = columnReference;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Replace ordinal by named column reference"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                var syntaxTree = _selector.SyntaxTree;
-                return syntaxTree.ReplaceText(_selector.Span, _columnReference);
+                changeSet.ReplaceText(_selector.Span, _columnReference);
             }
         }
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Fixes
 {
@@ -26,28 +27,28 @@ namespace NQuery.Authoring.CodeActions.Fixes
             if (expression == null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new CodeAction(expression)};
+            return new[] {new AddParenthesesCodeAction(expression)};
         }
 
-        private sealed class CodeAction : ICodeAction
+        private sealed class AddParenthesesCodeAction : CodeAction
         {
             private readonly SyntaxNode _node;
 
-            public CodeAction(SyntaxNode node)
+            public AddParenthesesCodeAction(SyntaxNode node)
+                : base(node.SyntaxTree)
             {
                 _node = node;
             }
 
-            public string Description
+            public override string Description
             {
                 get { return "Add parentheses"; }
             }
 
-            public SyntaxTree GetEdit()
+            protected override void GetChanges(TextChangeSet changeSet)
             {
-                var syntaxTree = _node.SyntaxTree;
                 var position = _node.Span.End;
-                return syntaxTree.InsertText(position, "()");
+                changeSet.InsertText(position, "()");
             }
         }
     }
