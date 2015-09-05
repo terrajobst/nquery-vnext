@@ -89,6 +89,9 @@
     <Compile Include="CodeActions\Refactorings\QualifyColumnTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
     <Compile Include="CodeActions\CodeRefactoringTests.cs" />
+    <Compile Include="Commenting\CommenterTests.cs" />
+    <Compile Include="Commenting\ToggleMultiLineCommentCommenterTest.cs" />
+    <Compile Include="Commenting\ToggleSingleLineCommentCommenterTest.cs" />
     <Compile Include="CompilationFactory.cs" />
     <Compile Include="Completion\CompletionExtensionsTests.cs" />
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />

@@ -11,6 +11,7 @@ using NQuery.Authoring;
 using NQuery.Authoring.ActiproWpf;
 using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.ActiproWpf.CodeActions;
+using NQuery.Authoring.ActiproWpf.Commenting;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
 using NQuery.Authoring.ActiproWpf.Text;
@@ -42,6 +43,7 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
             _syntaxEditor.RegisterCodeActionCommands();
             _syntaxEditor.RegisterSelectionCommands();
+            _syntaxEditor.RegisterCommentingCommands();
             _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
 
             _workspace = _syntaxEditor.Document.GetWorkspace();

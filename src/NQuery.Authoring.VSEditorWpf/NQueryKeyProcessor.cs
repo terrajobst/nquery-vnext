@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.VSEditorWpf.CodeActions;
+using NQuery.Authoring.VSEditorWpf.Commenting;
 using NQuery.Authoring.VSEditorWpf.Completion;
 using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
@@ -19,8 +20,9 @@ namespace NQuery.Authoring.VSEditorWpf
         private readonly ISignatureHelpManager _signatureHelpManager;
         private readonly IHighlightingNavigationManager _highlightingNavigationManager;
         private readonly ICodeActionGlyphBroker _codeActionGlyphBroker;
+        private readonly ICommentOperations _commentOperations;
 
-        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ICodeActionGlyphBroker codeActionGlyphBroker)
+        public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ICodeActionGlyphBroker codeActionGlyphBroker, ICommentOperations commentOperations)
         {
             _textView = textView;
             _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
@@ -28,6 +30,7 @@ namespace NQuery.Authoring.VSEditorWpf
             _signatureHelpManager = signatureHelpManager;
             _highlightingNavigationManager = highlightingNavigationManager;
             _codeActionGlyphBroker = codeActionGlyphBroker;
+            _commentOperations = commentOperations;
         }
 
         public override bool IsInterestedInHandledEvents
@@ -82,6 +85,16 @@ namespace NQuery.Authoring.VSEditorWpf
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Down)
             {
                 NavigateToNextHighlight();
+                args.Handled = true;
+            }
+            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && key == Key.Oem2)
+            {
+                _commentOperations.ToogleSingleLineComment();
+                args.Handled = true;
+            }
+            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Oem2)
+            {
+                _commentOperations.ToogleMultiLineComment();
                 args.Handled = true;
             }
             else if (modifiers == ModifierKeys.None)

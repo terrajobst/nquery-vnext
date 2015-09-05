@@ -57,6 +57,10 @@
     <Compile Include="CodeActions\CodeActionExtensions.cs" />
     <Compile Include="CodeActions\ExpandCodeActionListEditAction.cs" />
     <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
+    <Compile Include="Commenting\CommentingExtensions.cs" />
+    <Compile Include="Commenting\ToggleCommentAction.cs" />
+    <Compile Include="Commenting\ToggleMultiLineCommentAction.cs" />
+    <Compile Include="Commenting\ToggleSingleLineCommentAction.cs" />
     <Compile Include="Margins\NQueryEditorViewCodeActionMargin.cs" />
     <Compile Include="Margins\NQueryEditorViewMarginKeys.cs" />
     <Compile Include="CodeActions\TextDocumentCodeActionModel.cs" />

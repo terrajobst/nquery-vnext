@@ -98,6 +98,10 @@
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
     <Compile Include="CodeActions\TextBufferCodeActionModel.cs" />
+    <Compile Include="Commenting\CommentOperations.cs" />
+    <Compile Include="Commenting\CommentOperationsProvider.cs" />
+    <Compile Include="Commenting\ICommentOperations.cs" />
+    <Compile Include="Commenting\ICommentOperationsProvider.cs" />
     <Compile Include="Completion\CompletionModelManager.cs" />
     <Compile Include="Completion\CompletionModelManagerProvider.cs" />
     <Compile Include="Completion\ICompletionModelManager.cs" />

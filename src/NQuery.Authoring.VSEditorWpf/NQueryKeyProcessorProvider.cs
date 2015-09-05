@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.VSEditorWpf.CodeActions;
+using NQuery.Authoring.VSEditorWpf.Commenting;
 using NQuery.Authoring.VSEditorWpf.Completion;
 using NQuery.Authoring.VSEditorWpf.Highlighting;
 using NQuery.Authoring.VSEditorWpf.SignatureHelp;
@@ -33,6 +34,9 @@ namespace NQuery.Authoring.VSEditorWpf
         [Import]
         public ICodeActionGlyphBroker CodeActionGlyphBroker { get; set; }
 
+        [Import]
+        public ICommentOperationsProvider CommentOperationsProvider { get; set; }
+
         public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
         {
             return wpfTextView.Properties.GetOrCreateSingletonProperty(() =>
@@ -40,7 +44,8 @@ namespace NQuery.Authoring.VSEditorWpf
                 var completionModelManager = CompletionModelManagerProvider.GetCompletionModel(wpfTextView);
                 var signatureHelpManager = SignatureHelpManagerProvider.GetSignatureHelpManager(wpfTextView);
                 var highlightingNavigationManager = HighlightingNavigationManagerProvider.GetHighlightingNavigationManager(wpfTextView);
-                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager, CodeActionGlyphBroker);
+                var commentOperations = CommentOperationsProvider.GetCommentOperations(wpfTextView);
+                return new NQueryKeyProcessor(wpfTextView, IntellisenseSessionStackMapService, completionModelManager, signatureHelpManager, highlightingNavigationManager, CodeActionGlyphBroker, commentOperations);
             });
         }
     }

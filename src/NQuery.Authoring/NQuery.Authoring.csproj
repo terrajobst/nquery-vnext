@@ -82,6 +82,7 @@
     <Compile Include="CodeActions\CodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\QualifyColumnCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderCodeRefactoringProvider.cs" />
+    <Compile Include="Commenting\Commenter.cs" />
     <Compile Include="Completion\CompletionExtensions.cs" />
     <Compile Include="Completion\CompletionItem.cs" />
     <Compile Include="Completion\CompletionModel.cs" />
@@ -163,7 +164,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
