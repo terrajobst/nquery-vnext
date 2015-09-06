@@ -807,6 +807,18 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         }
 
         [Fact]
+        public void KeywordCompletionProvider_ReturnsJoin_IfAfterCross()
+        {
+            var query = @"
+                SELECT  *
+                FROM    Employees e
+                            CROSS |
+            ";
+
+            AssertIsMatch(query, "JOIN");
+        }
+
+        [Fact]
         public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
         {
             var query = @"

@@ -244,7 +244,8 @@ namespace NQuery.Authoring.Completion.Providers
                 IsAfterOuterKeyword(syntaxTree, position) ||
                 IsAfterLeftKeyword(syntaxTree, position) ||
                 IsAfterRightKeyword(syntaxTree, position) ||
-                IsAfterFullKeyword(syntaxTree, position))
+                IsAfterFullKeyword(syntaxTree, position) ||
+                IsAfterCrossKeyword(syntaxTree, position))
             {
                 yield return SyntaxKind.JoinKeyword;
             }
@@ -691,6 +692,11 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsAfterFullKeyword(SyntaxTree syntaxTree, int position)
         {
             return IsAfterToken(syntaxTree, position, SyntaxKind.FullKeyword);
+        }
+
+        private static bool IsAfterCrossKeyword(SyntaxTree syntaxTree, int position)
+        {
+            return IsAfterToken(syntaxTree, position, SyntaxKind.CrossKeyword);
         }
     }
 }
