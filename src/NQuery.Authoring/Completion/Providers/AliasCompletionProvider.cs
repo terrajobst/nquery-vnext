@@ -5,8 +5,6 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers
 {
-    // TODO: Add test coverage
-
     internal sealed class AliasCompletionProvider : ICompletionProvider
     {
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)

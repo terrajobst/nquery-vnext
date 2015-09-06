@@ -95,6 +95,7 @@
     <Compile Include="CompilationFactory.cs" />
     <Compile Include="Completion\CompletionExtensionsTests.cs" />
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\AliasCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\ColumnSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\EmptySymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\FunctionSymbolCompletionProviderTests.cs" />
