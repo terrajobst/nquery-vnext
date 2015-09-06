@@ -6,17 +6,11 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers
 {
-    internal sealed class TypeCompletionProvider : ICompletionProvider
+    internal sealed class TypeCompletionProvider : CompletionProvider<CastExpressionSyntax>
     {
-        public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+        protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, CastExpressionSyntax node)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var castExpression = token.Parent.AncestorsAndSelf()
-                                             .OfType<CastExpressionSyntax>()
-                                             .FirstOrDefault(c => !c.AsKeyword.IsMissing && c.AsKeyword.Span.End <= position);
-
-            if (castExpression == null)
+            if (node.AsKeyword.IsMissing || position < node.AsKeyword.Span.End)
                 return Enumerable.Empty<CompletionItem>();
 
             return from typeName in SyntaxFacts.GetTypeNames()

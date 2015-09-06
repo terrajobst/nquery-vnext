@@ -5,15 +5,11 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers
 {
-    internal sealed class AliasCompletionProvider : ICompletionProvider
+    internal sealed class AliasCompletionProvider : CompletionProvider<AliasSyntax>
     {
-        public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+        protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, AliasSyntax node)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenOnLeft(position);
-            var node = token.Parent as AliasSyntax;
-            if (node == null ||
-                node.AsKeyword != null ||
+            if (node.AsKeyword != null ||
                 node.Identifier.IsMissing ||
                 !node.Span.ContainsOrTouches(position))
             {

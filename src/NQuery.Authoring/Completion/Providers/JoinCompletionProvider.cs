@@ -9,21 +9,15 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers
 {
-    internal sealed class JoinCompletionProvider : ICompletionProvider
+    internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoinedTableReferenceSyntax>
     {
-        public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
+        protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, ConditionedJoinedTableReferenceSyntax node)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            var token = syntaxTree.Root.FindTokenContext(position);
-            var conditionedJoin = token.Parent.AncestorsAndSelf()
-                                              .OfType<ConditionedJoinedTableReferenceSyntax>()
-                                              .FirstOrDefault(c => !c.OnKeyword.IsMissing && c.OnKeyword.Span.End <= position);
-
-            if (conditionedJoin == null)
+            if (node.OnKeyword.IsMissing || position < node.OnKeyword.Span.End)
                 return Enumerable.Empty<CompletionItem>();
 
-            var leftInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Left).ToImmutableArray();
-            var rightInstances = semanticModel.GetDeclaredSymbols(conditionedJoin.Right).ToImmutableArray();
+            var leftInstances = semanticModel.GetDeclaredSymbols(node.Left).ToImmutableArray();
+            var rightInstances = semanticModel.GetDeclaredSymbols(node.Right).ToImmutableArray();
             var relations = semanticModel.Compilation.DataContext.Relations;
 
             return from left in leftInstances

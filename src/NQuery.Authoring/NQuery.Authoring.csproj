@@ -86,6 +86,7 @@
     <Compile Include="Completion\CompletionExtensions.cs" />
     <Compile Include="Completion\CompletionItem.cs" />
     <Compile Include="Completion\CompletionModel.cs" />
+    <Compile Include="Completion\CompletionProvider.cs" />
     <Compile Include="Completion\ICompletionProvider.cs" />
     <Compile Include="Completion\Providers\AliasCompletionProvider.cs" />
     <Compile Include="Completion\Providers\JoinCompletionProvider.cs" />
