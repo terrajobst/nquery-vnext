@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
+        public void AddAsDerivedTable_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
         {
             var query = @"
                 SELECT  *
@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_InsertsAs()
+        public void AddAsDerivedTable_InsertsAs()
         {
             var query = @"
                 SELECT  *

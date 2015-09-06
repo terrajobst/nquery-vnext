@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_DoesNotTrigger_WhenColumnIsQualified()
+        public void QualifyColumn_DoesNotTrigger_WhenColumnIsQualified()
         {
             var query = @"
                 SELECT  e.EmployeeID|
@@ -26,7 +26,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_DoesNotTrigger_WhenColumnCannotBeResolved()
+        public void QualifyColumn_DoesNotTrigger_WhenColumnCannotBeResolved()
         {
             var query = @"
                 SELECT  NotFirstName|
@@ -37,7 +37,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_InsertsQualifier()
+        public void QualifyColumn_InsertsQualifier()
         {
             var query = @"
                 SELECT  EmployeeID|
@@ -53,7 +53,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Fact]
-        public void AddAsAlias_InsertsQualifierAndEscapes()
+        public void QualifyColumn_InsertsQualifierAndEscapes()
         {
             var query = @"
                 SELECT  EmployeeID|
