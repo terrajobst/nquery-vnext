@@ -1,6 +1,7 @@
 syntax: glob
 *.user
 *.suo
+*.DotSettings
 bin
 obj
 packages
