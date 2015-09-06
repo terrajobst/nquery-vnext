@@ -3,7 +3,6 @@ syntax: glob
 *.suo
 bin
 obj
-msbuild.log
 packages
 nuget.exe
 TestResults
