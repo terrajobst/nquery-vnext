@@ -92,18 +92,57 @@ namespace NQuery.Text
 
         public SourceText WithChanges(IEnumerable<TextChange> changes)
         {
-            var persistedChanges = changes.ToImmutableArray();
+            var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
+                                          .ToImmutableArray();
+
 
             var sb = new StringBuilder(GetText());
+            var hasChanges = false;
+            var previousStart = int.MaxValue;
+
             foreach (var textChange in persistedChanges)
             {
+                if (textChange.Span.End > previousStart)
+                    throw new InvalidOperationException("Applying overlapping changes is not supported.");
+
+                previousStart = textChange.Span.Start;
+
+                if (!HasDifference(sb, textChange))
+                    continue;
+
+                hasChanges = true;
                 sb.Remove(textChange.Span.Start, textChange.Span.Length);
                 sb.Insert(textChange.Span.Start, textChange.NewText);
             }
 
+            if (!hasChanges)
+                return this;
+
             var newText = From(sb.ToString());
 
             return new ChangedSourceText(this, newText, persistedChanges);
+        }
+
+        private static bool HasDifference(StringBuilder sb, TextChange textChange)
+        {
+            var newText = textChange.NewText ?? string.Empty;
+            var newLength = newText.Length;
+            var oldLength = textChange.Span.Length;
+
+            if (oldLength != newLength)
+                return true;
+
+            var bufferStart = textChange.Span.Start;
+            var bufferEnd = textChange.Span.End;
+
+            for (var bufferIndex = bufferStart; bufferIndex < bufferEnd; bufferIndex++)
+            {
+                var newTextIndex = bufferIndex - bufferStart;
+                if (sb[bufferIndex] != newText[newTextIndex])
+                    return true;
+            }
+
+            return false;
         }
 
         public IEnumerable<TextChange> GetChanges(SourceText oldText)

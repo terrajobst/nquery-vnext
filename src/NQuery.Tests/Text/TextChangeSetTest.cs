@@ -42,16 +42,18 @@ namespace NQuery.Tests.Text
         }
 
         [Fact]
-        public void TextChangeSet_ReturnsChangesInReverseOrder()
+        public void TextChangeSet_ReturnsChangesInExecutionOrder()
         {
             var changeSet = new TextChangeSet();
 
-            changeSet.DeleteText(new TextSpan(4, 2));
             changeSet.ReplaceText(new TextSpan(10, 2), "xyz");
+            changeSet.InsertText(1, "ab");
+            changeSet.DeleteText(new TextSpan(4, 2));
 
             var expectedChanges = new[]
             {
                 new TextChange(new TextSpan(10, 2), "xyz"),
+                new TextChange(new TextSpan(1, 0), "ab"),
                 new TextChange(new TextSpan(4, 2), string.Empty),
             };
 

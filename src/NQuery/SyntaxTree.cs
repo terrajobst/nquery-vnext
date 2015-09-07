@@ -132,6 +132,9 @@ namespace NQuery
         public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
         {
             var newText = _text.WithChanges(textChanges);
+            if (newText == _text)
+                return this;
+
             var isQuery = _root.Root is QuerySyntax;
             return isQuery
                 ? ParseQuery(newText)

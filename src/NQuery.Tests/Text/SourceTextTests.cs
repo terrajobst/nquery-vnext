@@ -142,5 +142,49 @@ namespace NQuery.Tests.Text
             Assert.Equal(sourceText1.Length, allChanges[0].Span.Length);
             Assert.Equal(sourceText2.GetText(), allChanges[0].NewText);
         }
+
+        [Fact]
+        public void SourceText_WithChanges_AppliedInReverseOrder()
+        {
+            var sourceText = SourceText.From("ABCDEFGH");
+            var changes = new[]
+            {
+                new TextChange(new TextSpan(0, 4), ""),
+                new TextChange(new TextSpan(6, 2), "xy"),
+            };
+
+            var resultSourceText = sourceText.WithChanges(changes).GetText();
+            Assert.Equal("EFxy", resultSourceText);
+        }
+
+        [Fact]
+        public void SourceText_WithChanges_DetectsOverlappingChanges()
+        {
+            var sourceText = SourceText.From("acbdEFGH");
+
+            var changes = new[]
+            {
+                new TextChange(new TextSpan(3, 2), "XYZ"),
+                new TextChange(new TextSpan(4, 4), ""),
+            };
+
+            var exception = Assert.Throws<InvalidOperationException>(() => sourceText.WithChanges(changes));
+            Assert.Equal("Applying overlapping changes is not supported.", exception.Message);
+        }
+
+        [Fact]
+        public void SourceText_WithChanges_ReturnsSelfIfNoChanges()
+        {
+            var sourceText = SourceText.From("ABCDEFGH");
+            var changes = new[]
+            {
+                new TextChange(new TextSpan(1, 3), "BCD"),
+                new TextChange(new TextSpan(6, 2), "GH"),
+            };
+
+            var resultSourceText = sourceText.WithChanges(changes);
+
+            Assert.Same(sourceText, resultSourceText);
+        }
     }
 }

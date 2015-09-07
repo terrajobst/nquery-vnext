@@ -41,7 +41,7 @@ namespace NQuery.Text
 
         public IEnumerator<TextChange> GetEnumerator()
         {
-            return _changes.OrderByDescending(c => c.Span.Start).GetEnumerator();
+            return _changes.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
