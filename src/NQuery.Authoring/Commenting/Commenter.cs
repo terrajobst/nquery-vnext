@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
-using NQuery.Authoring.CodeActions;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Commenting
@@ -15,13 +14,13 @@ namespace NQuery.Authoring.Commenting
             if (syntaxTree == null)
                 throw new ArgumentNullException("syntaxTree");
 
-            var comments = syntaxTree.GetConsecutiveSingleComments(textSpan);
+            var comments = syntaxTree.GetConsecutiveSingleLineComments(textSpan);
             return comments.IsDefaultOrEmpty
                     ? syntaxTree.CommentSingleLineComment(textSpan)
                     : syntaxTree.UncommentSingleLineComment(comments);
         }
 
-        private static ImmutableArray<SyntaxTrivia> GetConsecutiveSingleComments(this SyntaxTree syntaxTree, TextSpan textSpan)
+        private static ImmutableArray<SyntaxTrivia> GetConsecutiveSingleLineComments(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
             ImmutableArray<SyntaxTrivia> trivias;
             int startIndex;
@@ -65,17 +64,14 @@ namespace NQuery.Authoring.Commenting
 
             var changes = Enumerable.Range(startLine, lineCount)
                                     .Select(i => text.Lines[i])
-                                    .Select(l => TextChange.ForInsertion(l.Span.Start, "--"))
-                                    .Reverse();
+                                    .Select(l => TextChange.ForInsertion(l.Span.Start, "--"));
 
             return syntaxTree.WithChanges(changes);
         }
 
         private static SyntaxTree UncommentSingleLineComment(this SyntaxTree syntaxTree, ImmutableArray<SyntaxTrivia> textSpan)
         {
-            var changes = textSpan.Select(t => TextChange.ForDeletion(new TextSpan(t.Span.Start, 2)))
-                                  .Reverse();
-
+            var changes = textSpan.Select(t => TextChange.ForDeletion(new TextSpan(t.Span.Start, 2)));
             return syntaxTree.WithChanges(changes);
         }
 
@@ -116,11 +112,18 @@ namespace NQuery.Authoring.Commenting
 
         private static SyntaxTree CommentMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
-            var changes = new[]
+            var empty = new[]
             {
-                TextChange.ForInsertion(textSpan.End, "*/"),
-                TextChange.ForInsertion(textSpan.Start, "/*")
+                TextChange.ForInsertion(textSpan.Start, "/**/"),
             };
+
+            var surround = new[]
+            {
+                TextChange.ForInsertion(textSpan.Start, "/*"),
+                TextChange.ForInsertion(textSpan.End, "*/")
+            };
+
+            var changes = textSpan.Length == 0 ? empty : surround;
 
             return syntaxTree.WithChanges(changes);
         }
@@ -129,10 +132,10 @@ namespace NQuery.Authoring.Commenting
         {
             var changes = new List<TextChange>(2);
 
+            changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.Start, 2)));
+
             if (comment.IsTerminated())
                 changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.End - 2, 2)));
-
-            changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.Start, 2)));
 
             return syntaxTree.WithChanges(changes);
         }
