@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -18,7 +17,7 @@ namespace NQuery.Authoring.Tests
 
         public static string Unindent(this string text)
         {
-            var minIndent = Int32.MaxValue;
+            var minIndent = int.MaxValue;
 
             using (var stringReader = new StringReader(text))
             {
@@ -56,45 +55,19 @@ namespace NQuery.Authoring.Tests
 
         public static string ParseSpans(this string text, out ImmutableArray<TextSpan> spans)
         {
-            var resultSpans = new List<TextSpan>();
-            var sb = new StringBuilder();
-            var spanStartStack = new Stack<int>();
-            foreach (var c in text)
-            {
-                switch (c)
-                {
-                    case '{':
-                        spanStartStack.Push(sb.Length);
-                        break;
-                    case '}':
-                        if (spanStartStack.Count == 0)
-                            throw new FormatException("Missing open brace");
-
-                        resultSpans.Add(TextSpan.FromBounds(spanStartStack.Pop(), sb.Length));
-                        break;
-                    case '|':
-                        resultSpans.Add(new TextSpan(sb.Length, 0));
-                        break;
-                    default:
-                        sb.Append(c);
-                        break;
-                }
-            }
-
-            spans = resultSpans.OrderBy(s => s.Start).ThenBy(s => s.End).ToImmutableArray();
-            return sb.ToString();
+            var annotatedText = AnnotatedText.Parse(text);
+            spans = annotatedText.Spans;
+            return annotatedText.Text;
         }
 
         public static string ParseSinglePosition(this string text, out int position)
         {
-            ImmutableArray<TextSpan> spans;
-            var result = text.ParseSpans(out spans);
-
-            if (spans.Length != 1 || spans[0].Length != 0)
+            var annotatedText = AnnotatedText.Parse(text);
+            if (annotatedText.Spans.Length != 1 || annotatedText.Spans[0].Length != 0)
                 throw new ArgumentException("The position must be marked with a single pipe, such as 'SELECT e.Empl|oyeeId'");
 
-            position = spans[0].Start;
-            return result;
+            position = annotatedText.Spans.Single().Start;
+            return annotatedText.Text;
         }
 
         public static string ParseSingleSpan(this string text, out TextSpan span)

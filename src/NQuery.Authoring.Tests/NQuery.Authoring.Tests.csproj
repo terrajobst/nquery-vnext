@@ -58,6 +58,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnnotatedText.Parser.cs" />
+    <Compile Include="AnnotatedText.cs" />
+    <Compile Include="AnnotatedTextTests.cs" />
     <Compile Include="BraceMatching\BraceMatcherTests.cs" />
     <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
     <Compile Include="BraceMatching\Matchers\CaseBraceMatcherTests.cs" />
