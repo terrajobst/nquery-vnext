@@ -79,6 +79,30 @@ namespace NQuery.Authoring.Tests.Commenting
         }
 
         [Fact]
+        public void ToggleSingleLineComment_CommentsMultipleLines_WhenLeadingAndTrailingIsMixed()
+        {
+            var query = @"
+                SELECT  e.FirstName,
+                        e.City, -- {City
+                        -- Country}
+                        e.Country,
+                        e.LastName
+                FROM    Employees e
+            ";
+
+            var expectedQuery = @"
+                SELECT  e.FirstName,
+                --        e.City, -- City
+                --        -- Country
+                        e.Country,
+                        e.LastName
+                FROM    Employees e
+            ";
+
+            AssertIsMatch(query, expectedQuery);
+        }
+
+        [Fact]
         public void ToggleSingleLineComment_UncommentsMultipleLines_WhenSelected()
         {
             var query = @"
