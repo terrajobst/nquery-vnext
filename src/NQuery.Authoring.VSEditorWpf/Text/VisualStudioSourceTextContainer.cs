@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Microsoft.VisualStudio.Text;
 
@@ -32,6 +34,41 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         }
 
         public ITextBuffer TextBuffer { get; }
+
+        public override IEnumerable<TextChange> GetChanges(SourceText newText, SourceText oldText)
+        {
+            var newTextVs = newText as VisualStudioSourceText;
+            var oldTextVs = oldText as VisualStudioSourceText;
+
+            if (newTextVs != null &&
+                oldTextVs != null &&
+                newTextVs.Snapshot.TextBuffer == oldTextVs.Snapshot.TextBuffer &&
+                newTextVs.Snapshot.Version.VersionNumber > oldTextVs.Snapshot.Version.VersionNumber)
+            {
+                return GetChanges(oldTextVs, newTextVs);
+            }
+
+            return base.GetChanges(newText, oldText);
+        }
+
+        private static IEnumerable<TextChange> GetChanges(VisualStudioSourceText oldTextVs, VisualStudioSourceText newTextVs)
+        {
+            var oldVersion = oldTextVs.Snapshot.Version;
+            var newVersion = newTextVs.Snapshot.Version;
+
+            var current = oldVersion;
+
+            while (current != newVersion)
+            {
+                foreach (var change in current.Changes.Reverse())
+                {
+                    var changeSpan = new TextSpan(change.OldSpan.Start, change.OldSpan.Length);
+                    var changeText = change.NewText;
+                    yield return new TextChange(changeSpan, changeText);
+                }
+                current = current.Next;
+            }
+        }
 
         public override event EventHandler<EventArgs> CurrentChanged;
     }

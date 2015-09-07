@@ -150,6 +150,7 @@
     <Compile Include="QuickInfo\Providers\WildcardSelectColumnQuickInfoModelProviderTests.cs" />
     <Compile Include="QuickInfo\QuickInfoExtensionsTests.cs" />
     <Compile Include="QuickInfo\QuickInfoModelProviderTests.cs" />
+    <Compile Include="Renaming\RenameModelTests.cs" />
     <Compile Include="Selection\Providers\ArgumentListSelectionSpanProviderTests.cs" />
     <Compile Include="Selection\Providers\CommonTableExpressionColumnNameListSelectionSpanProviderTests.cs" />
     <Compile Include="Selection\Providers\CommonTableExpressionQuerySelectionSpanProviderTests.cs" />

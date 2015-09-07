@@ -43,6 +43,12 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         public const string UnnecessaryClassificationFormatName = "NQuery.Unnecessary.Format";
         public const string UnnecessaryClassificationTypeName = "NQuery.Unnecessary";
 
+        // Rename
+
+        public const string RenameLocationClassificationFormatName = "NQuery.RenameLocation.Format";
+        public const string RenameLocationClassificationTypeName = "NQuery.RenameLocation";
+
+
         // Types ------------------
 
 #pragma warning disable 649
@@ -101,6 +107,11 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         [Name(UnnecessaryClassificationTypeName)]
         [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
         public ClassificationTypeDefinition UnnecessaryType;
+
+        [Export]
+        [Name(RenameLocationClassificationTypeName)]
+        [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
+        public ClassificationTypeDefinition RenameLocationType;
 
 #pragma warning restore 649
 
@@ -266,6 +277,32 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             {
                 DisplayName = Resources.ClassificationFormatUnnecessary;
                 ForegroundOpacity = 0.6;
+            }
+        }
+
+        [Export(typeof(EditorFormatDefinition))]
+        [Name(RenameLocationClassificationFormatName)]
+        [ClassificationType(ClassificationTypeNames = RenameLocationClassificationTypeName)]
+        [UserVisible(true)]
+        [Order(After = PredefinedClassificationTypeNames.Identifier)]
+        [Order(After = PredefinedClassificationTypeNames.Keyword)]
+        [Order(After = SchemaTableClassificationTypeName)]
+        [Order(After = DerivedTableClassificationTypeName)]
+        [Order(After = CommonTableExpressionClassificationTypeName)]
+        [Order(After = ColumnClassificationTypeName)]
+        [Order(After = MethodClassificationTypeName)]
+        [Order(After = PropertyClassificationTypeName)]
+        [Order(After = FunctionClassificationTypeName)]
+        [Order(After = AggregateClassificationTypeName)]
+        [Order(After = VariableClassificationTypeName)]
+        [Order(After = UnnecessaryClassificationTypeName)]
+        public sealed class RenameLocationFormat : ClassificationFormatDefinition
+        {
+            public RenameLocationFormat()
+            {
+                DisplayName = "Rename Location";
+                ForegroundColor = Colors.DarkGreen;
+                BackgroundColor = Colors.LightGreen;
             }
         }
     }

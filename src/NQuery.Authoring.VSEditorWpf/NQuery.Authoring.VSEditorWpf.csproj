@@ -95,6 +95,11 @@
     <Compile Include="AsyncTagger.cs" />
     <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
     <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
+    <Compile Include="Renaming\IRenameService.cs" />
+    <Compile Include="Renaming\IRenameServiceProvider.cs" />
+    <Compile Include="Renaming\IRenameSession.cs" />
+    <Compile Include="Renaming\RenameMarkerClassifier.cs" />
+    <Compile Include="Renaming\RenameMarkerClassifierProvider.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
     <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
     <Compile Include="CodeActions\TextBufferCodeActionModel.cs" />
@@ -112,6 +117,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Renaming\RenameService.RenameSession.cs" />
+    <Compile Include="Renaming\RenameServiceProvider.cs" />
+    <Compile Include="Renaming\RenameKeyProcessor.cs" />
+    <Compile Include="Renaming\RenameKeyProcessorProvider.cs" />
+    <Compile Include="Renaming\RenameService.cs" />
     <Compile Include="Text\VisualStudioTextExtensions.cs" />
     <Compile Include="Text\VisualStudioSourceTextContainer.cs" />
     <Compile Include="Highlighting\HighlightingNavigationManager.cs" />

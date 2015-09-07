@@ -149,6 +149,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Renaming\RenamedDocument.cs" />
+    <Compile Include="Renaming\RenameModel.cs" />
+    <Compile Include="Renaming\Renamer.cs" />
     <Compile Include="Selection\ISelectionSpanProvider.cs" />
     <Compile Include="Selection\Providers\ArgumentListSelectionSpanProvider.cs" />
     <Compile Include="Selection\Providers\CommonTableExpressionColumnNameListSelectionSpanProvider.cs" />
