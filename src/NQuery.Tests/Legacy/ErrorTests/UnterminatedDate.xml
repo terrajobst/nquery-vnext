@@ -1,8 +1,6 @@
 <test>
   <sql>SELECT #10/19/1981</sql>
   <expectedErrors>
-    <expectedError id="UnterminatedDate" text="Date '10/19/1981' is not properly terminated." />
-    <expectedError id="UnterminatedDate" text="Date '10/19/1981' is not properly terminated." />
-    <expectedError id="InvalidDate" text="'#10/19/1981' is not a valid date." />
+    <expectedError id="UnterminatedDate" text="Date is not properly terminated." />
   </expectedErrors>
 </test>

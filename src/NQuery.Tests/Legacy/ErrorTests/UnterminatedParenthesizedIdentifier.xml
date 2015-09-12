@@ -1,7 +1,6 @@
 <test>
-  <sql>SELECT [Test</sql>
+  <sql>SELECT 1 [Test</sql>
   <expectedErrors>
-    <expectedError id="UnterminatedParenthesizedIdentifier" text="Parenthesized identifier 'Test' is not properly terminated." />
-    <expectedError id="UnterminatedParenthesizedIdentifier" text="Parenthesized identifier 'Test' is not properly terminated." />
+    <expectedError id="UnterminatedParenthesizedIdentifier" text="Parenthesized identifier is not properly terminated." />
   </expectedErrors>
 </test>

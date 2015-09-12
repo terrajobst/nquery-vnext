@@ -1,7 +1,6 @@
 <test>
   <sql>SELECT 'Test</sql>
   <expectedErrors>
-    <expectedError id="UnterminatedString" text="String 'Test' is not properly terminated." />
-    <expectedError id="UnterminatedString" text="String 'Test' is not properly terminated." />
+    <expectedError id="UnterminatedString" text="String is not properly terminated." />
   </expectedErrors>
 </test>

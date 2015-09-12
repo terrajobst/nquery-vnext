@@ -1,7 +1,6 @@
 <test>
-  <sql>SELECT "Test</sql>
+  <sql>SELECT 1 "Test</sql>
   <expectedErrors>
-    <expectedError id="UnterminatedQuotedIdentifier" text="Quoted identifier 'Test' is not properly terminated." />
-    <expectedError id="UnterminatedQuotedIdentifier" text="Quoted identifier 'Test' is not properly terminated." />
+    <expectedError id="UnterminatedQuotedIdentifier" text="Quoted identifier is not properly terminated." />
   </expectedErrors>
 </test>
