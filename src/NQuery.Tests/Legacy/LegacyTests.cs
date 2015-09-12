@@ -17,7 +17,7 @@ namespace NQuery.Tests.Legacy
         public void LegacyTest_Passes(string name)
         {
             var testDefinition = TestDefinition.FromResource(name);
-            var dataContext = NorthwindDataContext.Instance;
+            var dataContext = NorthwindDataContext.Instance.WithJoinTables();
             var query = Query.Create(dataContext, testDefinition.CommandText);
 
             if (testDefinition.ExpectedResults != null)

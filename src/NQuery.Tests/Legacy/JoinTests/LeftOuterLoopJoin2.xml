@@ -11,9 +11,9 @@ FROM	JoinTable1 t1
           <xs:element name="Table1">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ID" type="xs:int" minOccurs="0" />
                 <xs:element name="Value" type="xs:string" minOccurs="0" />
-                <xs:element name="ID1" msdata:Caption="ID" type="xs:string" minOccurs="0" />
+                <xs:element name="ID1" msdata:Caption="ID" type="xs:int" minOccurs="0" />
                 <xs:element name="Value1" msdata:Caption="Value" type="xs:string" minOccurs="0" />
               </xs:sequence>
             </xs:complexType>
