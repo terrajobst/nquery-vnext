@@ -62,13 +62,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
-      <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
-      <Name>NQuery.Data.Samples</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NQuery.Dynamic\NQuery.Dynamic.csproj">
       <Project>{ae03cbad-43e7-4ed4-83ef-e0826eca344f}</Project>
       <Name>NQuery.Dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj">
+      <Project>{6BAA666C-D4F5-47C6-A942-276A18BB9A41}</Project>
+      <Name>NQuery.Testing</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>

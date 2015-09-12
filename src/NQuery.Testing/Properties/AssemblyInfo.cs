@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("NQuery.Data.Samples")]
+[assembly: AssemblyTitle("NQuery.Testing")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyTrademark("")]

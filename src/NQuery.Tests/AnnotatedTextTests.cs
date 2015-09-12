@@ -4,7 +4,7 @@ using NQuery.Text;
 
 using Xunit;
 
-namespace NQuery.Authoring.Tests
+namespace NQuery.Tests
 {
     public class AnnotatedTextTests
     {

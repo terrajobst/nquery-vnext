@@ -1,13 +1,12 @@
 using System;
 
-using NQuery.Data.Samples;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests
+namespace NQuery
 {
-    internal static class CompilationFactory
+    public static class CompilationFactory
     {
-        private static readonly DataContext DataContext = DataContextFactory.CreateNorthwind();
+        private static readonly DataContext DataContext = NorthwindDataContext.Instance;
 
         public static Compilation CreateQuery(string query)
         {
@@ -25,6 +24,12 @@ namespace NQuery.Authoring.Tests
         {
             var query = queryWithMarkers.ParseSingleSpan(out span);
             return CreateQuery(query);
+        }
+
+        public static Compilation CreateExpression(string query)
+        {
+            var syntaxTree = SyntaxTree.ParseExpression(query);
+            return new Compilation(DataContext, syntaxTree);
         }
     }
 }

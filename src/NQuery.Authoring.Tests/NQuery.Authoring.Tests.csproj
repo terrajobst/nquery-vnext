@@ -58,9 +58,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnotatedText.Parser.cs" />
-    <Compile Include="AnnotatedText.cs" />
-    <Compile Include="AnnotatedTextTests.cs" />
     <Compile Include="BraceMatching\BraceMatcherTests.cs" />
     <Compile Include="BraceMatching\BraceMatchingExtensionsTests.cs" />
     <Compile Include="BraceMatching\Matchers\CaseBraceMatcherTests.cs" />
@@ -95,7 +92,6 @@
     <Compile Include="Commenting\CommenterTests.cs" />
     <Compile Include="Commenting\ToggleMultiLineCommentCommenterTest.cs" />
     <Compile Include="Commenting\ToggleSingleLineCommentCommenterTest.cs" />
-    <Compile Include="CompilationFactory.cs" />
     <Compile Include="Completion\CompletionExtensionsTests.cs" />
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\AliasCompletionProviderTests.cs" />
@@ -158,7 +154,6 @@
     <Compile Include="SignatureHelp\Providers\NullIfSignatureHelpModelProviderTests.cs" />
     <Compile Include="SignatureHelp\SignatureHelpExtensionsTests.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModelProviderTests.cs" />
-    <Compile Include="StringExtensions.cs" />
     <Compile Include="SymbolSearch\SymbolSearcherTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -170,9 +165,9 @@
       <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
       <Name>NQuery.Authoring</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NQuery.Data.Samples\NQuery.Data.Samples.csproj">
-      <Project>{CE411DA9-038B-47E8-8540-A539C146B0EE}</Project>
-      <Name>NQuery.Data.Samples</Name>
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj">
+      <Project>{6baa666c-d4f5-47c6-a942-276a18bb9a41}</Project>
+      <Name>NQuery.Testing</Name>
     </ProjectReference>
     <ProjectReference Include="..\NQuery\NQuery.csproj">
       <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>

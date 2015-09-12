@@ -3,9 +3,9 @@ using System.Collections.Immutable;
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests
+namespace NQuery
 {
-    internal sealed partial class AnnotatedText
+    public sealed partial class AnnotatedText
     {
         private readonly string _text;
         private readonly ImmutableArray<TextSpan> _spans;

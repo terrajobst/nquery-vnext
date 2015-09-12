@@ -5,9 +5,9 @@ using System.Text;
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests
+namespace NQuery
 {
-    partial class AnnotatedText
+    public partial class AnnotatedText
     {
         private static readonly IComparer<TextSpan> SpanComparer = Comparer<TextSpan>.Create((x, y) => x.Start.CompareTo(y.Start));
         private static readonly IComparer<TextChange> ChangeComparer = Comparer<TextChange>.Create((x, y) => x.Span.Start.CompareTo(y.Span.Start));

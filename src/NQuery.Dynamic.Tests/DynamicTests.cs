@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-using NQuery.Data.Samples;
-
 using Xunit;
 
 namespace NQuery.Dynamic.Tests
@@ -20,7 +18,7 @@ namespace NQuery.Dynamic.Tests
                 ORDER   BY 1
             ";
 
-            var dataContext = DataContextFactory.CreateNorthwind();
+            var dataContext = NorthwindDataContext.Instance;
             var query = new Query(dataContext, text);
 
             var rows = query.ExecuteDynamicSequence().ToImmutableArray();

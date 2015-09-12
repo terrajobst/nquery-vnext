@@ -15,7 +15,6 @@ using System.Windows.Threading;
 
 using NQuery;
 using NQuery.Data;
-using NQuery.Data.Samples;
 
 using NQueryViewer.Editor;
 
@@ -65,7 +64,7 @@ namespace NQueryViewer
                 return;
 
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
-            editorView.Workspace.DataContext = DataContextFactory.CreateNorthwind();
+            editorView.Workspace.DataContext = NorthwindDataContext.Instance;
             editorView.Workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
 
             var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;

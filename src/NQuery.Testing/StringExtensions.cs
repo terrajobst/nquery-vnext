@@ -6,9 +6,9 @@ using System.Text;
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests
+namespace NQuery
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         public static string NormalizeCode(this string text)
         {
