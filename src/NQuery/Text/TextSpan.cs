@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace NQuery.Text
 {
@@ -56,6 +58,48 @@ namespace NQuery.Text
         public bool IntersectsWith(TextSpan span)
         {
             return span.Start <= End && span.End >= Start;
+        }
+
+        public TextSpan ApplyChanges(IEnumerable<TextChange> changes)
+        {
+            if (changes == null)
+                throw new ArgumentNullException("changes");
+
+            return changes.Aggregate(this, ApplyChange);
+        }
+
+        public TextSpan ApplyChange(TextChange textChange)
+        {
+            return ApplyChange(this, textChange);
+        }
+
+        private static TextSpan ApplyChange(TextSpan textSpan, TextChange textChange)
+        {
+            // NOTE: Other frameworks allow the consumer to specify whether changes
+            //       at the edges should be merged with the span or not.
+            //       Should we do the same?
+
+            var delta = textChange.NewText.Length - textChange.Span.Length;
+
+            if (!textSpan.IntersectsWith(textChange.Span))
+            {
+                // No overlap -- if the change happened after the given span,
+                // we don't have to anything.
+
+                if (textChange.Span.End >= textSpan.Start)
+                    return textSpan;
+
+                // Otherwise, we simply need to offset the start.
+
+                return new TextSpan(textSpan.Start + delta, textSpan.Length);
+            }
+
+            var mergedStart = Math.Min(textSpan.Start, textChange.Span.Start);
+            var mergedEnd = Math.Max(textSpan.End, textChange.Span.End);
+            var mergedSpan = FromBounds(mergedStart, mergedEnd);
+            var resultStart = mergedSpan.Start;
+            var resultLength = mergedSpan.Length + delta;
+            return new TextSpan(resultStart, resultLength);
         }
 
         public bool Equals(TextSpan other)

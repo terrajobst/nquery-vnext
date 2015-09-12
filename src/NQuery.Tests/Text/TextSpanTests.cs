@@ -167,5 +167,93 @@ namespace NQuery.Tests.Text
             var textSpan = TextSpan.FromBounds(1, 3);
             Assert.Equal("[1,3)", textSpan.ToString());
         }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_Repositions_IfInsertionIsAfterBefore()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForInsertion(5, "test");
+
+            var expectedSpan = new TextSpan(originalSpan.Start + change.NewText.Length, originalSpan.Length);
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsNoOp_IfInsertionIsAfter()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForInsertion(20, "test");
+
+            var expectedSpan = originalSpan;
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsNoOp_IfReplacementIsContained()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForReplacement(TextSpan.FromBounds(11, 14), "abc");
+
+            var expectedSpan = originalSpan;
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsNoOp_IfReplacingWithSame()
+        {
+            var originalSpan = TextSpan.FromBounds(5, 9);
+            var change = TextChange.ForReplacement(TextSpan.FromBounds(5, 9), "test");
+
+            var expectedSpan = originalSpan;
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsMerged_IfInsertionAtStart()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForInsertion(10, "test");
+
+            var expectedSpan = TextSpan.FromBounds(10, 19);
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsMerged_IfInsertionAtEnd()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForInsertion(15, "test");
+
+            var expectedSpan = TextSpan.FromBounds(10, 19);
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsMerged_IfReplacementAtStart()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForReplacement(new TextSpan(8, 4), "ab");
+
+            var expectedSpan = TextSpan.FromBounds(8, 13);
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
+
+        [Fact]
+        public void TextSpan_ApplyChanges_IsMerged_IfReplacementAtEnd()
+        {
+            var originalSpan = TextSpan.FromBounds(10, 15);
+            var change = TextChange.ForReplacement(new TextSpan(13, 4), "ab");
+
+            var expectedSpan = TextSpan.FromBounds(10, 15);
+            var actualSpan = originalSpan.ApplyChange(change);
+            Assert.Equal(expectedSpan, actualSpan);
+        }
     }
 }

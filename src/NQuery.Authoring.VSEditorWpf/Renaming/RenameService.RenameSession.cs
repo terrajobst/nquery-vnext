@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Operations;
 
 using NQuery.Authoring.Renaming;
 using NQuery.Text;
@@ -14,18 +15,51 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
     {
         private sealed class RenameSession : IRenameSession
         {
+            private sealed class RenameStartMarker : ITextUndoPrimitive
+            {
+                public static readonly RenameStartMarker Instance = new RenameStartMarker();
+
+                private RenameStartMarker()
+                {
+                }
+
+                public void Do()
+                {
+                }
+
+                public void Undo()
+                {
+                }
+
+                public bool CanMerge(ITextUndoPrimitive older)
+                {
+                    return false;
+                }
+
+                public ITextUndoPrimitive Merge(ITextUndoPrimitive older)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                public ITextUndoTransaction Parent { get; set; }
+                public bool CanRedo { get { return true; } }
+                public bool CanUndo { get { return true; } }
+            }
+
             private readonly RenameService _renameService;
             private readonly ITextBuffer _textBuffer;
+            private readonly ITextBufferUndoManager _textBufferUndoManager;
             private readonly RenameModel _renameModel;
 
             private ITextSnapshot _renamedDocumentSnapshot;
             private ImmutableArray<SnapshotSpan> _locations; 
             private RenamedDocument _renamedDocument;
 
-            public RenameSession(RenameService renameService, ITextBuffer textBuffer, RenameModel renameModel, RenamedDocument renamedDocument)
+            public RenameSession(RenameService renameService, ITextBuffer textBuffer, ITextBufferUndoManager textBufferUndoManager, RenameModel renameModel, RenamedDocument renamedDocument)
             {
                 _renameService = renameService;
                 _textBuffer = textBuffer;
+                _textBufferUndoManager = textBufferUndoManager;
                 _renameModel = renameModel;
                 _renamedDocument = renamedDocument;
                 _renamedDocumentSnapshot = _textBuffer.CurrentSnapshot;
@@ -33,21 +67,25 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
                 _locations = ComputeLocations();
 
                 Connect();
+                MarkBeginningOfUndo();
             }
 
             private void Connect()
             {
-                _textBuffer.Changed += TextBufferOnChanged;
+                _textBuffer.PostChanged += TextBufferOnChanged;
             }
 
             private void Disconnect()
             {
-                _textBuffer.Changed -= TextBufferOnChanged;
+                _textBuffer.PostChanged -= TextBufferOnChanged;
                 _renameService.ActiveSession = null;
             }
 
-            private async void TextBufferOnChanged(object sender, TextContentChangedEventArgs e)
+            private async void TextBufferOnChanged(object sender, EventArgs eventArgs)
             {
+                if (_textBufferUndoManager.TextBufferUndoHistory.State != TextUndoHistoryState.Idle)
+                    return;
+
                 if (_textBuffer.CurrentSnapshot == _renamedDocumentSnapshot)
                     return;
 
@@ -57,16 +95,17 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
                 // 2. Otherwise, get the text at the merged location and use it to refresh
                 //    the list of locations.
 
-                if (e.Changes.Count == 0)
+                var changes = _renamedDocumentSnapshot.Version.Changes;
+                if (changes.Count == 0)
                     return;
 
-                if (e.Changes.Count > 1)
+                if (changes.Count > 1)
                 {
                     Commit();
                     return;
                 }
 
-                var change = e.Changes.Single();
+                var change = changes.Single();
                 await ApplyChange(change);
             }
 
@@ -85,12 +124,9 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
                 if (_textBuffer.CurrentSnapshot != snapshot)
                     return;
 
-                var newText = renamedDocument.Document.Text;
-                var oldText = _renamedDocument.Document.Text;
-                if (newText == oldText)
-                    return;
+                UndoLastRename();
 
-                var changes = newText.GetChanges(oldText);
+                var changes = renamedDocument.Changes;
 
                 using (var textEdit = _textBuffer.CreateEdit())
                 {
@@ -119,8 +155,8 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
                     if (location.IntersectsWith(oldSpan))
                     {
                         var newStart = Math.Min(oldSpan.Start, location.Start);
-                        var newEnd = Math.Max(oldSpan.End, location.End) + change.Delta;
-                        var newLength = newEnd - newStart;
+                        var newEnd = Math.Max(oldSpan.End, location.End);
+                        var newLength = newEnd - newStart + change.Delta;
                         return _textBuffer.CurrentSnapshot.GetText(newStart, newLength);
                     }
                 }
@@ -135,15 +171,59 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
                                                  .ToImmutableArray();
             }
 
+            private void MarkBeginningOfUndo()
+            {
+                using (var textUndoTransaction = _textBufferUndoManager.TextBufferUndoHistory.CreateTransaction("Rename start"))
+                {
+                    textUndoTransaction.AddUndo(RenameStartMarker.Instance);
+                    textUndoTransaction.Complete();
+                }
+            }
+
+            private void UndoEntireSession()
+            {
+                PerformUndo(true);
+            }
+
+            private void UndoLastRename()
+            {
+                PerformUndo(false);
+            }
+
+            private void PerformUndo(bool undoStart)
+            {
+                if (!_textBufferUndoManager.TextBufferUndoHistory.UndoStack.Any(IsRenameStart))
+                    return;
+
+                while (true)
+                {
+                    if (IsRenameStart(_textBufferUndoManager.TextBufferUndoHistory.UndoStack.FirstOrDefault()))
+                        break;
+
+                    _textBufferUndoManager.TextBufferUndoHistory.Undo(1);
+                }
+
+                if (undoStart)
+                    _textBufferUndoManager.TextBufferUndoHistory.Undo(1);
+            }
+
+            private static bool IsRenameStart(ITextUndoTransaction textUndoTransaction)
+            {
+                return textUndoTransaction != null &&
+                       textUndoTransaction.UndoPrimitives.Count == 1 &&
+                       textUndoTransaction.UndoPrimitives[0] == RenameStartMarker.Instance;
+            }
+
             public void Commit()
             {
-                // TODO: Cleanup undo stack
+                // TODO: Replace current undo stack with "Rename"
+                UndoEntireSession();
                 Disconnect();
             }
 
             public void Cancel()
             {
-                // TODO: Perform undo
+                UndoEntireSession();
                 Disconnect();
             }
 

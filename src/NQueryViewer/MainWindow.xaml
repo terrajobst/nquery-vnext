@@ -132,6 +132,18 @@
                                   AutoGeneratingColumn="DataGridAutoGeneratingColumn"
                                   IsReadOnly="True" />
                     </TabItem>
+                    <TabItem Header="Undo/Redo History">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ListBox x:Name="undoList"
+                                     Grid.Column="0" />
+                            <ListBox x:Name="redoList"
+                                     Grid.Column="1" />
+                        </Grid>
+                    </TabItem>
                 </TabControl>
             </Grid>
         </Grid>

@@ -73,8 +73,7 @@ namespace NQuery.Authoring.Tests.Renaming
         public Task RenameModel_CanRename_TableInstance()
         {
             var query = @"
-                SELECT  {e}.FirstName,
-                        {e}.LastName
+                SELECT  {e}.FirstName
                 FROM    Employees {e:emp}
             ";
 

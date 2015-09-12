@@ -67,6 +67,33 @@ namespace NQueryViewer.VSEditor
             var contentType = ContentTypeRegistryService.GetContentType("NQuery");
             var textBuffer = TextBufferFactoryService.CreateTextBuffer(contentType);
 
+//            textBuffer.Insert(0, "hello");
+//
+//            var previous = textBuffer.CurrentSnapshot;
+//
+//            using (var textEdit = textBuffer.CreateEdit())
+//            {
+//                // hlxo
+//                // textEdit.Delete(1, 1);
+//                // textEdit.Replace(3, 1, "x");
+//
+//                // hlxo
+//                // textEdit.Replace(3, 1, "x");
+//                // textEdit.Delete(1, 1);
+//
+//                // helxo
+//                // textEdit.Replace(3, 1, "x");
+//
+//                // he/**/
+//                // textEdit.Replace(2, 2, "/*");
+//                // textEdit.Replace(3, 2, "*/");
+//
+//                textEdit.Apply();
+//            }
+//
+//            var text = textBuffer.CurrentSnapshot.GetText();
+//            var changes = previous.Version.Changes;
+
             var textView = TextEditorFactoryService.CreateTextView(textBuffer);
             var textViewHost = TextEditorFactoryService.CreateTextViewHost(textView, false);
 
