@@ -29,60 +29,60 @@ namespace NQuery
 
         public static IEnumerable<SyntaxKind> GetReservedKeywordKinds()
         {
+            yield return SyntaxKind.AllKeyword;
             yield return SyntaxKind.AndKeyword;
-            yield return SyntaxKind.OrKeyword;
-            yield return SyntaxKind.IsKeyword;
-            yield return SyntaxKind.NullKeyword;
-            yield return SyntaxKind.NotKeyword;
-            yield return SyntaxKind.LikeKeyword;
-            yield return SyntaxKind.SoundsKeyword;
-            yield return SyntaxKind.SimilarKeyword;
-            yield return SyntaxKind.BetweenKeyword;
-            yield return SyntaxKind.InKeyword;
-            yield return SyntaxKind.CastKeyword;
+            yield return SyntaxKind.AnyKeyword;
+            yield return SyntaxKind.AscKeyword;
             yield return SyntaxKind.AsKeyword;
-            yield return SyntaxKind.CoalesceKeyword;
-            yield return SyntaxKind.NullIfKeyword;
+            yield return SyntaxKind.BetweenKeyword;
+            yield return SyntaxKind.ByKeyword;
             yield return SyntaxKind.CaseKeyword;
-            yield return SyntaxKind.WhenKeyword;
-            yield return SyntaxKind.ThenKeyword;
+            yield return SyntaxKind.CastKeyword;
+            yield return SyntaxKind.CoalesceKeyword;
+            yield return SyntaxKind.CrossKeyword;
+            yield return SyntaxKind.DescKeyword;
+            yield return SyntaxKind.DistinctKeyword;
             yield return SyntaxKind.ElseKeyword;
             yield return SyntaxKind.EndKeyword;
-            yield return SyntaxKind.TrueKeyword;
+            yield return SyntaxKind.ExceptKeyword;
+            yield return SyntaxKind.ExistsKeyword;
             yield return SyntaxKind.FalseKeyword;
+            yield return SyntaxKind.FromKeyword;
+            yield return SyntaxKind.FullKeyword;
+            yield return SyntaxKind.GroupKeyword;
+            yield return SyntaxKind.HavingKeyword;
+            yield return SyntaxKind.InKeyword;
+            yield return SyntaxKind.InnerKeyword;
+            yield return SyntaxKind.IntersectKeyword;
+            yield return SyntaxKind.IsKeyword;
+            yield return SyntaxKind.JoinKeyword;
+            yield return SyntaxKind.LikeKeyword;
+            yield return SyntaxKind.NotKeyword;
+            yield return SyntaxKind.NullIfKeyword;
+            yield return SyntaxKind.NullKeyword;
+            yield return SyntaxKind.OnKeyword;
+            yield return SyntaxKind.OrderKeyword;
+            yield return SyntaxKind.OrKeyword;
+            yield return SyntaxKind.OuterKeyword;
+            yield return SyntaxKind.SelectKeyword;
+            yield return SyntaxKind.SimilarKeyword;
+            yield return SyntaxKind.SomeKeyword;
+            yield return SyntaxKind.SoundsKeyword;
+            yield return SyntaxKind.ThenKeyword;
+            yield return SyntaxKind.TiesKeyword;
             yield return SyntaxKind.ToKeyword;
+            yield return SyntaxKind.TopKeyword;
+            yield return SyntaxKind.TrueKeyword;
+            yield return SyntaxKind.UnionKeyword;
+            yield return SyntaxKind.WhenKeyword;
+            yield return SyntaxKind.WhereKeyword;
+            yield return SyntaxKind.WithKeyword;
         }
 
         public static IEnumerable<SyntaxKind> GetContextualKeywordKinds()
         {
-            yield return SyntaxKind.SelectKeyword;
-            yield return SyntaxKind.TopKeyword;
-            yield return SyntaxKind.DistinctKeyword;
-            yield return SyntaxKind.FromKeyword;
-            yield return SyntaxKind.WhereKeyword;
-            yield return SyntaxKind.GroupKeyword;
-            yield return SyntaxKind.ByKeyword;
-            yield return SyntaxKind.HavingKeyword;
-            yield return SyntaxKind.OrderKeyword;
-            yield return SyntaxKind.AscKeyword;
-            yield return SyntaxKind.DescKeyword;
-            yield return SyntaxKind.UnionKeyword;
-            yield return SyntaxKind.AllKeyword;
-            yield return SyntaxKind.IntersectKeyword;
-            yield return SyntaxKind.ExceptKeyword;
-            yield return SyntaxKind.ExistsKeyword;
-            yield return SyntaxKind.AnyKeyword;
-            yield return SyntaxKind.SomeKeyword;
-            yield return SyntaxKind.JoinKeyword;
-            yield return SyntaxKind.InnerKeyword;
-            yield return SyntaxKind.CrossKeyword;
             yield return SyntaxKind.LeftKeyword;
             yield return SyntaxKind.RightKeyword;
-            yield return SyntaxKind.OuterKeyword;
-            yield return SyntaxKind.FullKeyword;
-            yield return SyntaxKind.OnKeyword;
-            yield return SyntaxKind.WithKeyword;
-            yield return SyntaxKind.TiesKeyword;
         }
 
         public static string GetText(this SyntaxKind kind)
@@ -97,6 +97,8 @@ namespace NQuery
                     return "|";
                 case SyntaxKind.CaretToken:
                     return "^";
+                case SyntaxKind.AtToken:
+                    return "@";
                 case SyntaxKind.LeftParenthesisToken:
                     return "(";
                 case SyntaxKind.RightParenthesisToken:
@@ -120,6 +122,8 @@ namespace NQuery
                 case SyntaxKind.EqualsToken:
                     return "=";
                 case SyntaxKind.ExclamationEqualsToken:
+                    return "!=";
+                case SyntaxKind.LessGreaterToken:
                     return "<>";
                 case SyntaxKind.LessToken:
                     return "<";
@@ -674,6 +678,14 @@ namespace NQuery
             return numberOfChars % 2 != 0;
         }
 
+        public static IEnumerable<SyntaxKind> GetUnaryExpressionTokenKinds()
+        {
+            yield return SyntaxKind.BitwiseNotToken;
+            yield return SyntaxKind.PlusToken;
+            yield return SyntaxKind.MinusToken;
+            yield return SyntaxKind.NotKeyword;
+        }
+
         internal static SyntaxKind GetUnaryOperatorExpression(SyntaxKind token)
         {
             switch (token)
@@ -714,6 +726,32 @@ namespace NQuery
                 default:
                     return 0;
             }
+        }
+
+        public static IEnumerable<SyntaxKind> GetBinaryExpressionTokenKinds()
+        {
+            yield return SyntaxKind.AmpersandToken;
+            yield return SyntaxKind.BarToken;
+            yield return SyntaxKind.CaretToken;
+            yield return SyntaxKind.PlusToken;
+            yield return SyntaxKind.MinusToken;
+            yield return SyntaxKind.AsteriskToken;
+            yield return SyntaxKind.SlashToken;
+            yield return SyntaxKind.PercentToken;
+            yield return SyntaxKind.AsteriskAsteriskToken;
+            yield return SyntaxKind.EqualsToken;
+            yield return SyntaxKind.LessGreaterToken;
+            yield return SyntaxKind.ExclamationEqualsToken;
+            yield return SyntaxKind.LessToken;
+            yield return SyntaxKind.LessEqualToken;
+            yield return SyntaxKind.GreaterToken;
+            yield return SyntaxKind.GreaterEqualToken;
+            yield return SyntaxKind.ExclamationLessToken;
+            yield return SyntaxKind.ExclamationGreaterToken;
+            yield return SyntaxKind.LessLessToken;
+            yield return SyntaxKind.GreaterGreaterToken;
+            yield return SyntaxKind.AndKeyword;
+            yield return SyntaxKind.OrKeyword;
         }
 
         internal static SyntaxKind GetBinaryOperatorExpression(SyntaxKind token)

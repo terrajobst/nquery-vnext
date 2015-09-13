@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Syntax;
@@ -10,8 +11,16 @@ namespace NQuery.Tests
         public static SyntaxToken LexSingleToken(string text)
         {
             var tree = SyntaxTree.ParseExpression(text);
-            var token = tree.Root.FirstToken(true, true);
-            return token;
+            var token = tree.Root.DescendantTokens(true)
+                                 .Where(t => !t.IsMissing)
+                                 .ToImmutableArray();
+
+            if (token.Length == 1)
+                return token.Single();
+
+            return token.First().Kind == SyntaxKind.EndOfFileToken
+                ? token.Last()
+                : token.First();
         }
 
         public static SyntaxTrivia LexSingleTrivia(string text)
