@@ -4,11 +4,26 @@ using System.Linq;
 using System.Text;
 
 using NQuery.Binding;
+using NQuery.Syntax;
+using NQuery.Text;
 
 namespace NQuery
 {
     public static class SyntaxFacts
     {
+        public static SyntaxToken ParseToken(string text)
+        {
+            var sourceText = SourceText.From(text);
+            var lexer = new Lexer(null, sourceText);
+            return lexer.Lex();
+        }
+
+        public static ExpressionSyntax ParseExpression(string text)
+        {
+            var tree = SyntaxTree.ParseExpression(text);
+            return (ExpressionSyntax)tree.Root.Root;
+        }
+
         public static bool IsLiteral(this SyntaxKind kind)
         {
             return kind == SyntaxKind.DateLiteralToken ||

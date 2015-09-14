@@ -9,7 +9,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Identifiers_MatchingPlainIdentifiersIgnoresCase()
         {
-            var token = Helpers.LexSingleToken("Test");
+            var token = SyntaxFacts.ParseToken("Test");
 
             Assert.False(token.IsQuotedIdentifier());
             Assert.False(token.IsQuotedIdentifier());
@@ -21,7 +21,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Identifiers_MatchingParenthesizedIdentifiersIgnoresCase()
         {
-            var token = Helpers.LexSingleToken("[Test 123]");
+            var token = SyntaxFacts.ParseToken("[Test 123]");
 
             Assert.True(token.IsParenthesizedIdentifier());
             Assert.False(token.IsQuotedIdentifier());
@@ -33,7 +33,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Identifiers_MatchingParenthesizedIdentifiersIgnoresCase_EvenIfNotTerminated()
         {
-            var token = Helpers.LexSingleToken("[Test 123");
+            var token = SyntaxFacts.ParseToken("[Test 123");
 
             Assert.True(token.IsParenthesizedIdentifier());
             Assert.False(token.IsQuotedIdentifier());
@@ -45,7 +45,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Identifiers_MatchingQuotedIdentifiersRespectsCase()
         {
-            var token = Helpers.LexSingleToken("\"Test 123\"");
+            var token = SyntaxFacts.ParseToken("\"Test 123\"");
 
             Assert.False(token.IsParenthesizedIdentifier());
             Assert.True(token.IsQuotedIdentifier());
@@ -57,7 +57,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Identifiers_MatchingQuotedIdentifiersRespectsCase_EvenIfNotTerminated()
         {
-            var token = Helpers.LexSingleToken("\"Test 123");
+            var token = SyntaxFacts.ParseToken("\"Test 123");
 
             Assert.False(token.IsParenthesizedIdentifier());
             Assert.True(token.IsQuotedIdentifier());

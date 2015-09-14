@@ -161,7 +161,7 @@ namespace NQuery.Tests.Syntax
             foreach (var tokenKind in GetAllKindsNamedToken().Where(t => !IsDynamicToken(t)))
             {
                 var text = tokenKind.GetText();
-                var token = Helpers.LexSingleToken(text);
+                var token = SyntaxFacts.ParseToken(text);
 
                 Assert.Equal(tokenKind, token.Kind);
             }

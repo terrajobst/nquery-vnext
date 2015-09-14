@@ -21,7 +21,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void SeparatedSyntaxList_CanBeConstructedFromSingleItem()
         {
-            var expression = Helpers.ParseExpression("test");
+            var expression = SyntaxFacts.ParseExpression("test");
             var nodeOrTokens = new SyntaxNodeOrToken[] { expression };
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 
@@ -33,8 +33,8 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void SeparatedSyntaxList_CanBeConstructedFromSingleItem_WithComma()
         {
-            var expression = Helpers.ParseExpression("test");
-            var comma = Helpers.CreateToken(SyntaxKind.CommaToken);
+            var expression = SyntaxFacts.ParseExpression("test");
+            var comma = SyntaxFacts.ParseToken(SyntaxKind.CommaToken.GetText());
             var nodeOrTokens = new SyntaxNodeOrToken[] { expression, comma };
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 

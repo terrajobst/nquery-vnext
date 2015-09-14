@@ -11,7 +11,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Lexer_Lex_Special_EndOfFile()
         {
-            var token = Helpers.LexSingleToken(string.Empty);
+            var token = SyntaxFacts.ParseToken(String.Empty);
 
             Assert.Equal(SyntaxKind.EndOfFileToken, token.Kind);
             Assert.True(token.IsTerminated());
@@ -23,7 +23,7 @@ namespace NQuery.Tests.Syntax
         [InlineData("?")]
         public void Lexer_Lex_Special_BadToken(string text)
         {
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.BadToken, token.Kind);
@@ -37,7 +37,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Whitespace()
         {
             const string text = "\t ";
-            var trivia = Helpers.LexSingleTrivia(text);
+            var trivia = LexSingleTrivia(text);
 
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, trivia.Kind);
@@ -51,7 +51,7 @@ namespace NQuery.Tests.Syntax
         [InlineData("\r")]
         public void Lexer_Lex_Trivia_EndOfLine(string text)
         {
-            var trivia = Helpers.LexSingleTrivia(text);
+            var trivia = LexSingleTrivia(text);
 
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.EndOfLineTrivia, trivia.Kind);
@@ -63,7 +63,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_SingleLine_WithSlashes()
         {
             var text = "// test" + Environment.NewLine + "abc";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(2, token.LeadingTrivia.Length);
 
@@ -84,7 +84,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_SingleLine_WithDashes()
         {
             var text = "-- test" + Environment.NewLine + "abc";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(2, token.LeadingTrivia.Length);
 
@@ -105,7 +105,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_SingleLine_WithoutEndOfLine()
         {
             var text = "-- test";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.EndOfFileToken, token.Kind);
 
@@ -120,7 +120,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_MultiLine()
         {
             const string text = "/* test * */";
-            var trivia = Helpers.LexSingleTrivia(text);
+            var trivia = LexSingleTrivia(text);
 
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
@@ -132,7 +132,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_MultiLine_IfUnterminated()
         {
             const string text = "/* test";
-            var trivia = Helpers.LexSingleTrivia(text);
+            var trivia = LexSingleTrivia(text);
 
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
@@ -146,7 +146,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Trivia_Comment_MultiLine_IfUnterminatedAndEmpty()
         {
             const string text = "/*";
-            var trivia = Helpers.LexSingleTrivia(text);
+            var trivia = LexSingleTrivia(text);
 
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
@@ -163,7 +163,7 @@ namespace NQuery.Tests.Syntax
                                 "-- Leading 2\n" +
                                 "identifier\t-- trailing\n" +
                                 "-- unrelated";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(5, token.LeadingTrivia.Length);
 
@@ -222,7 +222,7 @@ namespace NQuery.Tests.Syntax
         private static void LexBracketedIdentifier(string identifierText)
         {
             var text = "[" + identifierText + "]";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -236,7 +236,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfEscapedBracketAtStart()
         {
             const string text = "[]]test]";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -250,7 +250,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfEscapedBracketInTheMiddle()
         {
             const string text = "[te]]st]";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -264,7 +264,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfEscapedBracketAtEnd()
         {
             const string text = "[test]]]";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -278,7 +278,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfUnterminated()
         {
             const string text = "[aaa";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -292,7 +292,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfUnterminatedAndEmpty()
         {
             const string text = "[";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -306,7 +306,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Bracketed_IfUnterminatedAndClosingBracketIsEscaped()
         {
             const string text = "[aaa[[";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -333,7 +333,7 @@ namespace NQuery.Tests.Syntax
         private static void LexQuotedIdentifier(string identifierText)
         {
             var text = "\"" + identifierText + "\"";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -347,7 +347,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfEscapedBracketAtStart()
         {
             const string text = @"""""""test""";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -361,7 +361,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfEscapedBracketInTheMiddle()
         {
             const string text = @"""te""""st""";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -375,7 +375,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfEscapedBracketAtEnd()
         {
             const string text = @"""test""""""";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -389,7 +389,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfUnterminated()
         {
             const string text = "\"aaa";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -403,7 +403,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfUnterminatedAndEmpty()
         {
             const string text = "\"";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -417,7 +417,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Identifier_Quoted_IfUnterminatedAndClosingQuoteIsEscaped()
         {
             const string text = "\"aaa\"\"";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
@@ -431,7 +431,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String()
         {
             const string text = "'lorem ipsum'";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -445,7 +445,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfEscapedQuoteAtStart()
         {
             const string text = "'''test'";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -459,7 +459,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfEscapedQuoteInTheMiddle()
         {
             const string text = "'te''st'";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -473,7 +473,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfEscapedQuoteAtEnd()
         {
             const string text = "'test'''";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
             Assert.Equal(text, token.Text);
@@ -487,7 +487,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfUnterminated()
         {
             const string text = "'aaa";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
@@ -505,7 +505,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfUnterminatedAndEmpty()
         {
             const string text = "'";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
@@ -521,7 +521,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_String_IfUnterminatedAndClosingQuoteIsEscaped()
         {
             const string text = "'aaa''";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
@@ -537,7 +537,7 @@ namespace NQuery.Tests.Syntax
             const string dateSource = "#03.14.1987#";
             var date = new DateTime(1987, 3, 14);
 
-            var token = Helpers.LexSingleToken(dateSource);
+            var token = SyntaxFacts.ParseToken(dateSource);
 
             Assert.Equal(dateSource, token.Text);
             Assert.True(token.IsTerminated());
@@ -548,7 +548,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_DateTime_IfInvalid()
         {
             const string invalidDate = "#13.13.1212#";
-            var token = Helpers.LexSingleToken(invalidDate);
+            var token = SyntaxFacts.ParseToken(invalidDate);
 
             Assert.Equal(invalidDate, token.Text);
             Assert.True(token.IsTerminated());
@@ -559,7 +559,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_DateTime_IfUnterminated()
         {
             const string text = "#12-04-1900";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.DateLiteralToken, token.Kind);
@@ -574,7 +574,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_DateTime_IfUnterminatedAndEmpty()
         {
             const string text = "#";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.DateLiteralToken, token.Kind);
@@ -589,7 +589,7 @@ namespace NQuery.Tests.Syntax
         {
             const int value = int.MaxValue;
             var text = value.ToString();
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -602,7 +602,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInBinary()
         {
             const string text = "1010b";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -615,7 +615,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInBinaryAndInvalid()
         {
             const string text = "1234b";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -629,7 +629,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInOctal()
         {
             const string text = "12345o";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -642,7 +642,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInOctalAndInvalid()
         {
             const string text = "78o";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -656,7 +656,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInHex()
         {
             const string text = "0ABCh";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -669,7 +669,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int32_WhenInHexAndInvalid()
         {
             const string text = "0FGh";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -684,7 +684,7 @@ namespace NQuery.Tests.Syntax
         {
             const ulong value = ulong.MaxValue;
             var text = value.ToString();
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
             var diagnostics = token.Diagnostics;
 
             Assert.Equal(text, token.Text);
@@ -699,7 +699,7 @@ namespace NQuery.Tests.Syntax
         {
             var value = (long)int.MaxValue + 1;
             var text = value.ToString();
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -712,7 +712,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int64_WhenInBinary()
         {
             const string text = "10101010101010101010101010101010b";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -725,7 +725,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int64_WhenInOctal()
         {
             const string text = "12345671234567o";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -738,7 +738,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Int64_WhenInHex()
         {
             const string text = "0FFFFFFFFFh";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -751,7 +751,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double()
         {
             const string text = "1.0";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -764,7 +764,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double_WithLeadingPeriod()
         {
             const string text = ".0";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -777,7 +777,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double_WithExponentialSuffix()
         {
             const string text = "1e4";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -790,7 +790,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double_WithExponentialSuffixWithNegativeSign()
         {
             const string text = "1e-4";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -803,7 +803,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double_WithExponentialSuffixWithPositiveSign()
         {
             const string text = "1e+4";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
@@ -816,7 +816,7 @@ namespace NQuery.Tests.Syntax
         public void Lexer_Lex_Literal_Double_WhenInvalid()
         {
             const string text = "123e123e";
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
             var diagnostics = token.Diagnostics;
 
             Assert.Equal(text, token.Text);
@@ -850,7 +850,7 @@ namespace NQuery.Tests.Syntax
         private static void LexPunctuationOrOperator(SyntaxKind kind)
         {
             var text = kind.GetText();
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             var expectedContextualKind = kind.IsKeyword()
                 ? SyntaxKind.IdentifierToken
@@ -880,7 +880,7 @@ namespace NQuery.Tests.Syntax
         private static void LexKeyword(SyntaxKind kind, bool isReserved)
         {
             var text = kind.GetText();
-            var token = Helpers.LexSingleToken(text);
+            var token = SyntaxFacts.ParseToken(text);
 
             var expectedKind = isReserved
                 ? kind
@@ -895,6 +895,12 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal(true, token.IsTerminated());
             Assert.Equal(0, token.Diagnostics.Length);
+        }
+
+        private static SyntaxTrivia LexSingleTrivia(string text)
+        {
+            var token = SyntaxFacts.ParseToken(text);
+            return token.LeadingTrivia.Single();
         }
 
         public static IEnumerable<object[]> GetPunctuationTokenKinds()

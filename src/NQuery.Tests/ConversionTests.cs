@@ -6,9 +6,16 @@ namespace NQuery.Tests
 {
     public class ConversionTests
     {
+        private static Conversion ClassifyConversion(Type souceType, Type targetType)
+        {
+            var semanticModel = Compilation.Empty.GetSemanticModel();
+            var conversion = semanticModel.ClassifyConversion(souceType, targetType);
+            return conversion;
+        }
+
         private static void HasConversion(Type souceType, Type targetType, bool isImplicit, bool viaMethod)
         {
-            var conversion = Helpers.ClassifyConversion(souceType, targetType);
+            var conversion = ClassifyConversion(souceType, targetType);
             var isExplicit = !isImplicit;
             var expectedMethodCount = viaMethod ? 1 : 0;
 
@@ -24,7 +31,7 @@ namespace NQuery.Tests
 
         private static void AssertIdentityConversion(Type type)
         {
-            var conversion = Helpers.ClassifyConversion(type, type);
+            var conversion = ClassifyConversion(type, type);
 
             Assert.True(conversion.Exists);
             Assert.True(conversion.IsIdentity);
@@ -266,7 +273,7 @@ namespace NQuery.Tests
         [Fact]
         public void Conversion_ClassifiesBoxingCorrectly()
         {
-            var conversion = Helpers.ClassifyConversion(typeof (int), typeof (object));
+            var conversion = ClassifyConversion(typeof (int), typeof (object));
 
             Assert.True(conversion.Exists);
             Assert.True(conversion.IsImplicit);
@@ -281,7 +288,7 @@ namespace NQuery.Tests
         [Fact]
         public void Conversion_ClassifiesUnboxingCorrectly()
         {
-            var conversion = Helpers.ClassifyConversion(typeof(object), typeof(int));
+            var conversion = ClassifyConversion(typeof(object), typeof(int));
 
             Assert.True(conversion.Exists);
             Assert.False(conversion.IsImplicit);
@@ -296,7 +303,7 @@ namespace NQuery.Tests
         [Fact]
         public void Conversion_ClassifiesUpCastCorrectly()
         {
-            var conversion = Helpers.ClassifyConversion(typeof(string), typeof(object));
+            var conversion = ClassifyConversion(typeof(string), typeof(object));
 
             Assert.True(conversion.Exists);
             Assert.True(conversion.IsImplicit);
@@ -311,7 +318,7 @@ namespace NQuery.Tests
         [Fact]
         public void Conversion_ClassifiesDownCastCorrectly()
         {
-            var conversion = Helpers.ClassifyConversion(typeof(object), typeof(string));
+            var conversion = ClassifyConversion(typeof(object), typeof(string));
 
             Assert.True(conversion.Exists);
             Assert.False(conversion.IsImplicit);
