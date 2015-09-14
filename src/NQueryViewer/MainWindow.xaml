@@ -13,10 +13,21 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0"
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Exit"
+                          Click="MenuItem_File_Exist_OnClick"/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+                <MenuItem Header="Generate _Parser Tests to clipboard"
+                          Click="MenuItem_Tools_GenerateParserTestToClipBoard_OnClick"/>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1"
               Background="LemonChiffon">
             <StackPanel 
                         Margin="2"
@@ -34,7 +45,7 @@
                           MinWidth="200" />
             </StackPanel>
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="3" />
@@ -112,7 +123,7 @@
                 </TabControl>
             </Grid>
         </Grid>
-        <StatusBar Grid.Row="2">
+        <StatusBar Grid.Row="3">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>

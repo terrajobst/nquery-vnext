@@ -8,10 +8,10 @@ using Xunit;
 
 namespace NQuery.Tests.Syntax
 {
-    public class ParserTests
+    public partial class ParserTests
     {
         [Fact]
-        public void Parser_SkipsBadTokens()
+        public void Parser_Error_SkipsBadTokens()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'First' + !'Last' AS Name");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -38,7 +38,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
-        public void Parser_DetectsErrorAtEnd()
+        public void Parser_Error_DetectsErrorAtEnd()
         {
             var syntaxTree = SyntaxTree.ParseQuery("SELECT 'foo' WITH");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -47,6 +47,49 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(1, diagnostics.Length);
             Assert.Equal(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
+        }
+
+        [Fact]
+        public void Parser_Error_MissingIdentifier_IsInserted_IfKeywordOnNextLine()
+        {
+            const string text = @"
+                SELECT   o.|
+                FROM     Orders
+            ";
+
+            int position;
+            var compilation = CompilationFactory.CreateQuery(text, out position);
+
+            var dotToken = compilation.SyntaxTree.Root.FindToken(position, true);
+            Assert.Equal(SyntaxKind.DotToken, dotToken.Kind);
+
+            var identifierToken = dotToken.GetNextToken(true, true);
+            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.Kind);
+            Assert.True(identifierToken.IsMissing);
+        }
+
+        [Fact]
+        public void Parser_Error_MissingIdentifier_IsInserted_AndSkipsKeyword_IfKeywordOnSameLine()
+        {
+            const string text = @"
+                SELECT   o.Or|
+                FROM     Orders
+            ";
+
+            int position;
+            var compilation = CompilationFactory.CreateQuery(text, out position);
+
+            var orKeyword = compilation.SyntaxTree.Root.FindToken(position, true);
+            Assert.Equal(SyntaxKind.OrKeyword, orKeyword.Kind);
+
+            var dotToken = orKeyword.GetPreviousToken(true, true);
+            Assert.Equal(SyntaxKind.DotToken, dotToken.Kind);
+            Assert.False(dotToken.IsMissing);
+
+            var skippedTrivia = orKeyword.Parent.AncestorsAndSelf().OfType<SkippedTokensTriviaSyntax>().Single();
+            var identifierToken = skippedTrivia.ParentTrivia.Parent;
+            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.Kind);
+            Assert.True(identifierToken.IsMissing);
         }
     }
 }

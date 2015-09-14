@@ -14,22 +14,34 @@ namespace NQuery
             return new Compilation(DataContext, syntaxTree);
         }
 
-        public static Compilation CreateQuery(string queryWithPipe, out int position)
+        public static Compilation CreateQuery(string textWithPipe, out int position)
         {
-            var query = queryWithPipe.ParseSinglePosition(out position);
-            return CreateQuery(query);
+            var text = textWithPipe.ParseSinglePosition(out position);
+            return CreateQuery(text);
         }
 
-        public static Compilation CreateQuery(string queryWithMarkers, out TextSpan span)
+        public static Compilation CreateQuery(string textWithMarkers, out TextSpan span)
         {
-            var query = queryWithMarkers.ParseSingleSpan(out span);
-            return CreateQuery(query);
+            var text = textWithMarkers.ParseSingleSpan(out span);
+            return CreateQuery(text);
         }
 
-        public static Compilation CreateExpression(string query)
+        public static Compilation CreateExpression(string text)
         {
-            var syntaxTree = SyntaxTree.ParseExpression(query);
+            var syntaxTree = SyntaxTree.ParseExpression(text);
             return new Compilation(DataContext, syntaxTree);
+        }
+
+        public static Compilation CreateExpression(string textWithPipe, out int position)
+        {
+            var text = textWithPipe.ParseSinglePosition(out position);
+            return CreateExpression(text);
+        }
+
+        public static Compilation CreateExpression(string textWithMarkers, out TextSpan span)
+        {
+            var text = textWithMarkers.ParseSingleSpan(out span);
+            return CreateExpression(text);
         }
     }
 }

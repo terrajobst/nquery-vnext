@@ -645,8 +645,7 @@ namespace NQuery.Syntax
 
         private ExpressionSyntax ParseNameOrFunctionInvocationExpression()
         {
-            var isFunctionInvocation = Current.Kind == SyntaxKind.IdentifierToken &&
-                                       Lookahead.Kind == SyntaxKind.LeftParenthesisToken;
+            var isFunctionInvocation = Lookahead.Kind == SyntaxKind.LeftParenthesisToken;
 
             return !isFunctionInvocation
                        ? ParseNameExpression()
