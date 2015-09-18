@@ -316,12 +316,16 @@ namespace NQueryViewer
                 textSpan = new TextSpan(0, document.Text.Length);
 
             var syntaxTree = await document.GetSyntaxTreeAsync();
-            var node = syntaxTree.Root.DescendantNodes().First(n => n.Span == textSpan);
+            var node = syntaxTree.Root.DescendantNodes()
+                                      .Last(n => n.Span.Contains(textSpan));
+            var nodeOrTokens = syntaxTree.Root.Root.DescendantNodesAndTokensAndSelf(true)
+                                                   .Where(n => textSpan.Contains(n.Span));
+
             var isExpression = node is ExpressionSyntax;
 
             string text;
 
-            if (isExpression)
+            if (node.Span == textSpan)
             {
                 text = document.Text.GetText(node.Span);
             }
@@ -374,7 +378,7 @@ namespace NQueryViewer
 
                     writer.Indent++;
 
-                    foreach (var nodesOrToken in node.DescendantNodesAndTokensAndSelf(true))
+                    foreach (var nodesOrToken in nodeOrTokens)
                     {
                         if (nodesOrToken.IsNode)
                         {
