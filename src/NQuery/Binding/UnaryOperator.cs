@@ -10,7 +10,7 @@ namespace NQuery.Binding
 {
     internal static class UnaryOperator
     {
-        private static readonly UnaryOperatorSignature[] BuiltInIdentitySignatures = new[]
+        private static readonly UnaryOperatorSignature[] BuiltInIdentitySignatures =
         {
             new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(int), typeof(int)),
             new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(uint), typeof(uint)),
@@ -21,7 +21,7 @@ namespace NQuery.Binding
             new UnaryOperatorSignature(UnaryOperatorKind.Identity, BuiltInOperators.DecimalUnaryIdentityMethod)
         };
 
-        private static readonly UnaryOperatorSignature[] BuiltInNegationSignatures = new[]
+        private static readonly UnaryOperatorSignature[] BuiltInNegationSignatures =
         {
             new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(int), typeof(int)),
             new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(long), typeof(long)),
@@ -30,7 +30,7 @@ namespace NQuery.Binding
             new UnaryOperatorSignature(UnaryOperatorKind.Negation, BuiltInOperators.DecimalUnaryNegationMethod)
         };
 
-        private static readonly UnaryOperatorSignature[] BuiltInComplementSignatures = new[]
+        private static readonly UnaryOperatorSignature[] BuiltInComplementSignatures =
         {
             new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(int), typeof(int)),
             new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(uint), typeof(uint)),
@@ -38,7 +38,7 @@ namespace NQuery.Binding
             new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(ulong), typeof(ulong))
         };
 
-        private static readonly UnaryOperatorSignature[] BuiltInLogicalNotSignatures = new[]
+        private static readonly UnaryOperatorSignature[] BuiltInLogicalNotSignatures =
         {
             new UnaryOperatorSignature(UnaryOperatorKind.LogicalNot, typeof(bool), typeof(bool))
         };
