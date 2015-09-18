@@ -121,7 +121,7 @@ namespace NQuery
                     if (child.IsToken && descendIntoTrivia)
                     {
                         var token = child.AsToken();
-                        var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s != null);
                         foreach (var structure in structures)
                             stack.Push(structure);
                     }
@@ -131,7 +131,7 @@ namespace NQuery
                     if (child.IsToken && descendIntoTrivia)
                     {
                         var token = child.AsToken();
-                        var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s != null);
                         foreach (var structure in structures)
                             stack.Push(structure);
                     }
