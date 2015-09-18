@@ -16,6 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Dependency Include="Microsoft.Bcl.Immutable">
+      <Version>1.1.20-beta</Version>
+    </Dependency>
+  </ItemGroup>
+
+  <ItemGroup>
     <Library Include="$(BasePath)NQuery.dll">
       <TargetFramework>net45</TargetFramework>
     </Library>
