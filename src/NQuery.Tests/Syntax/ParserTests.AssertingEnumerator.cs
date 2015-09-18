@@ -47,9 +47,9 @@ namespace NQuery.Tests.Syntax
                 var span = annotatedText.Spans.Any()
                     ? annotatedText.Spans.Single()
                     : syntaxTree.Root.Root.Span;
-                var enumerator = syntaxTree.Root
-                                           .DescendantNodesAndTokens()
-                                           .Where(n => span.Contains(n.Span) && n.Kind != SyntaxKind.EndOfFileToken)
+                var enumerator = syntaxTree.Root.Root
+                                           .DescendantNodesAndTokensAndSelf(true)
+                                           .Where(n => span.Contains(n.Span))
                                            .GetEnumerator();
                 return new AssertingEnumerator(enumerator);
             }
