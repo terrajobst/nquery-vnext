@@ -77,7 +77,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
                 case SemanticClassification.Method:
                     return _classificationTypes.Method;
                 default:
-                    throw new ArgumentOutOfRangeException("classification");
+                    throw new ArgumentOutOfRangeException(nameof(classification));
             }
         }
 

@@ -18,7 +18,7 @@ namespace NQuery.Symbols
             : base(name, methodInfo == null ? null : methodInfo.ReturnType, ConvertParameters(methodInfo))
         {
             if (methodInfo == null)
-                throw new ArgumentNullException("methodInfo");
+                throw new ArgumentNullException(nameof(methodInfo));
 
             MethodInfo = methodInfo;
         }

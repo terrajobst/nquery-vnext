@@ -191,7 +191,7 @@ namespace NQuery.Iterators
                 case BoundNodeKind.CaseExpression:
                     return BuildCaseExpression((BoundCaseExpression)expression);
                 default:
-                    throw new ArgumentOutOfRangeException("expression", $"Unknown expression kind: {expression.Kind}.");
+                    throw new ArgumentOutOfRangeException(nameof(expression), $"Unknown expression kind: {expression.Kind}.");
             }
         }
 

@@ -72,7 +72,7 @@ namespace NQuery.Text
         public override int GetLineNumberFromPosition(int position)
         {
             if (position < 0 || position > Length)
-                throw new ArgumentOutOfRangeException("position");
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             var lower = 0;
             var upper = _lines.Count - 1;

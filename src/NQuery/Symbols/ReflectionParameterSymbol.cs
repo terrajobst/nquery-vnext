@@ -9,7 +9,7 @@ namespace NQuery.Symbols
             : this(parameterInfo, parameterInfo == null ? null : parameterInfo.Name)
         {
             if (parameterInfo == null)
-                throw new ArgumentNullException("parameterInfo");
+                throw new ArgumentNullException(nameof(parameterInfo));
 
             ParameterInfo = parameterInfo;
         }
@@ -18,7 +18,7 @@ namespace NQuery.Symbols
             : base(name, parameterInfo == null ? null : parameterInfo.ParameterType)
         {
             if (parameterInfo == null)
-                throw new ArgumentNullException("parameterInfo");
+                throw new ArgumentNullException(nameof(parameterInfo));
 
             ParameterInfo = parameterInfo;
         }

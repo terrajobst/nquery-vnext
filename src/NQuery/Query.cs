@@ -13,10 +13,10 @@ namespace NQuery
         public Query(DataContext dataContext, string text)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             _dataContext = dataContext;
             _text = text;

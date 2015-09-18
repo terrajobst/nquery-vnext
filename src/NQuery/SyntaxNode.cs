@@ -166,7 +166,7 @@ namespace NQuery
             }
 
             if (!FullSpan.Contains(position))
-                throw new ArgumentOutOfRangeException("position");
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             var child = (from nodeOrToken in ChildNodesAndTokens()
                          where nodeOrToken.FullSpan.Contains(position)

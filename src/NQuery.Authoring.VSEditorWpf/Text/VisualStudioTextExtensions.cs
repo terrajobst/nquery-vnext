@@ -15,7 +15,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public static SourceTextContainer ToSourceTextContainer(this ITextBuffer textBuffer)
         {
             if (textBuffer == null)
-                throw new ArgumentNullException("textBuffer");
+                throw new ArgumentNullException(nameof(textBuffer));
 
             return ProviderMap.GetValue(textBuffer, tb => new VisualStudioSourceTextContainer(tb));
         }
@@ -23,7 +23,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
         {
             if (textSnapshot == null)
-                throw new ArgumentNullException("textSnapshot");
+                throw new ArgumentNullException(nameof(textSnapshot));
 
             var container = (VisualStudioSourceTextContainer)textSnapshot.TextBuffer.ToSourceTextContainer();
             return SnapshotMap.GetValue(textSnapshot, ts => new VisualStudioSourceText(container, ts));
@@ -32,11 +32,11 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public static ITextSnapshot ToTextSnapshot(this SourceText text)
         {
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             var visualStudioSourceText = text as VisualStudioSourceText;
             if (visualStudioSourceText == null)
-                throw new ArgumentException("The source text didn't originate from a Visual Studio Editor", "text");
+                throw new ArgumentException("The source text didn't originate from a Visual Studio Editor", nameof(text));
 
             return visualStudioSourceText.Snapshot;
         }
@@ -44,11 +44,11 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public static ITextBuffer ToTextBuffer(this SourceTextContainer container)
         {
             if (container == null)
-                throw new ArgumentNullException("container");
+                throw new ArgumentNullException(nameof(container));
 
             var visualStudioSourceTextContainer = container as VisualStudioSourceTextContainer;
             if (visualStudioSourceTextContainer == null)
-                throw new ArgumentException("The source text container didn't originate from a Visual Studio Editor", "text");
+                throw new ArgumentException("The source text container didn't originate from a Visual Studio Editor", nameof(container));
 
             return visualStudioSourceTextContainer.TextBuffer;
         }

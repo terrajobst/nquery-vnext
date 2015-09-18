@@ -15,7 +15,7 @@ namespace NQuery.Data
         public DataTableDefinition(DataTable dataTable)
         {
             if (dataTable == null)
-                throw new ArgumentNullException("dataTable");
+                throw new ArgumentNullException(nameof(dataTable));
 
             _dataTable = dataTable;
         }

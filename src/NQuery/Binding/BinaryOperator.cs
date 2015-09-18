@@ -323,7 +323,7 @@ namespace NQuery.Binding
                 case BinaryOperatorKind.Soundslike:
                     return BuiltInSoundsLikeSignatures;
                 default:
-                    throw new ArgumentOutOfRangeException("kind");
+                    throw new ArgumentOutOfRangeException(nameof(kind));
             }
         }
 
@@ -387,7 +387,7 @@ namespace NQuery.Binding
                 case BinaryOperatorKind.LogicalOr:
                     return "op_LogicalOr";
                 default:
-                    throw new ArgumentOutOfRangeException("kind");
+                    throw new ArgumentOutOfRangeException(nameof(kind));
             }
         }
     }

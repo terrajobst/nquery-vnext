@@ -70,7 +70,7 @@ namespace NQuery.Binding
                 case UnaryOperatorKind.LogicalNot:
                     return BuiltInLogicalNotSignatures;
                 default:
-                    throw new ArgumentOutOfRangeException("kind");
+                    throw new ArgumentOutOfRangeException(nameof(kind));
             }
         }
 
@@ -103,7 +103,7 @@ namespace NQuery.Binding
                 case UnaryOperatorKind.LogicalNot:
                     return "op_LogicalNot";
                 default:
-                    throw new ArgumentOutOfRangeException("kind");
+                    throw new ArgumentOutOfRangeException(nameof(kind));
             }
         }
     }

@@ -18,16 +18,16 @@ namespace NQuery.Authoring
         public DocumentView(Document document, int position, TextSpan selection)
         {
             if (document == null)
-                throw new ArgumentNullException("document");
+                throw new ArgumentNullException(nameof(document));
 
             if (position < 0 || position > document.Text.Length)
-                throw new ArgumentOutOfRangeException("position");
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             if (selection.Start < 0 || selection.Start > document.Text.Length)
-                throw new ArgumentOutOfRangeException("selection");
+                throw new ArgumentOutOfRangeException(nameof(selection));
 
             if (selection.End < 0 || selection.End > document.Text.Length)
-                throw new ArgumentOutOfRangeException("selection");
+                throw new ArgumentOutOfRangeException(nameof(selection));
 
             _document = document;
             _position = position;

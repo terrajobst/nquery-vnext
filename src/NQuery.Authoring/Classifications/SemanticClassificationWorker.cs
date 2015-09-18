@@ -68,7 +68,7 @@ namespace NQuery.Authoring.Classifications
                 case SymbolKind.Method:
                     return SemanticClassification.Method;
                 default:
-                    throw new ArgumentException("symbol");
+                    throw new ArgumentOutOfRangeException(nameof(symbol));
             }
         }
 

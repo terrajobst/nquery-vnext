@@ -207,7 +207,7 @@ namespace NQuery.Hosting
         public IEnumerable<PropertySymbol> GetProperties(Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             var propertyTable = new PropertyTable();
             var propertyList = new List<PropertySymbol>();
@@ -261,7 +261,7 @@ namespace NQuery.Hosting
         public static bool IsInvocable(MethodInfo methodInfo)
         {
             if (methodInfo == null)
-                throw new ArgumentNullException("methodInfo");
+                throw new ArgumentNullException(nameof(methodInfo));
 
             if (methodInfo.IsSpecialName ||
                 methodInfo.IsAbstract ||
@@ -284,7 +284,7 @@ namespace NQuery.Hosting
         public IEnumerable<MethodSymbol> GetMethods(Type type)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             var methodTable = new MethodTable();
             var methodList = new List<MethodSymbol>();

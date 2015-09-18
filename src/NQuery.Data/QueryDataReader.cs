@@ -40,7 +40,7 @@ namespace NQuery.Data
         private void EnsureNotDisposed()
         {
             if (_queryReader == null)
-                throw new ObjectDisposedException("QueryDataReader");
+                throw new ObjectDisposedException(nameof(QueryDataReader));
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace NQuery.Data
         public int GetValues(object[] values)
         {
             if (values == null)
-                throw new ArgumentNullException("values");
+                throw new ArgumentNullException(nameof(values));
 
             EnsureNotDisposed();
 
@@ -205,7 +205,7 @@ namespace NQuery.Data
         public int GetOrdinal(string name)
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             EnsureNotDisposed();
 
@@ -261,7 +261,7 @@ namespace NQuery.Data
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
             if (buffer == null)
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
 
             var fieldData = (byte[])GetValue(i);
 
@@ -304,7 +304,7 @@ namespace NQuery.Data
         public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
         {
             if (buffer == null)
-                throw new ArgumentNullException("buffer");
+                throw new ArgumentNullException(nameof(buffer));
 
             var fieldData = (char[])GetValue(i);
 

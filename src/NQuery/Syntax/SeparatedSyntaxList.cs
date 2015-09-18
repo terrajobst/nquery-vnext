@@ -38,7 +38,7 @@ namespace NQuery.Syntax
                 {
                     var isValidNode = nodeOrToken.IsNode && nodeOrToken.AsNode() is TNode;
                     if (!isValidNode)
-                        throw new ArgumentException("nodeOrTokens");
+                        throw new ArgumentException("The sequence of nodes and tokens is invalid.", nameof(nodeOrTokens));
                 }
 
                 last = nodeOrToken;

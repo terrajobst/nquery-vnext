@@ -15,7 +15,7 @@ namespace NQuery.Symbols
             : base(name, fieldInfo == null ? null : fieldInfo.FieldType)
         {
             if (fieldInfo == null)
-                throw new ArgumentNullException("fieldInfo");
+                throw new ArgumentNullException(nameof(fieldInfo));
 
             FieldInfo = fieldInfo;
         }

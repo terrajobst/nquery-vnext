@@ -15,7 +15,7 @@ namespace NQuery.Symbols
             : base(name, propertyInfo == null ? null : propertyInfo.PropertyType)
         {
             if (propertyInfo == null)
-                throw new ArgumentNullException("propertyInfo");
+                throw new ArgumentNullException(nameof(propertyInfo));
 
             PropertyInfo = propertyInfo;
         }

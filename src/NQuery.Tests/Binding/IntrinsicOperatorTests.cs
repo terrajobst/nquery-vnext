@@ -150,7 +150,7 @@ namespace NQuery.Tests.Binding
             if (type == typeof(object))
                 return "object";
 
-            throw new ArgumentOutOfRangeException("type");
+            throw new ArgumentOutOfRangeException(nameof(type));
         }
 
         private static string GetErrorString(DiagnosticId diagnosticId)
@@ -164,7 +164,7 @@ namespace NQuery.Tests.Binding
                 case DiagnosticId.AmbiguousBinaryOperator:
                     return "#ambiguous";
                 default:
-                    throw new ArgumentOutOfRangeException("diagnosticId");
+                    throw new ArgumentOutOfRangeException(nameof(diagnosticId));
             }
         }
 
@@ -218,7 +218,7 @@ namespace NQuery.Tests.Binding
                     return "CAST(null AS object)";
 
                 default:
-                    throw new ArgumentOutOfRangeException("type");
+                    throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
     }

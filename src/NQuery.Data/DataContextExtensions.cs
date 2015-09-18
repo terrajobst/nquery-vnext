@@ -13,10 +13,10 @@ namespace NQuery.Data
         public static DataContext AddTablesAndRelations(this DataContext dataContext, DataSet dataSet)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataSet == null)
-                throw new ArgumentNullException("dataSet");
+                throw new ArgumentNullException(nameof(dataSet));
 
             return dataContext.AddTables(dataSet).AddRelations(dataSet);
         }
@@ -24,10 +24,10 @@ namespace NQuery.Data
         public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataSet == null)
-                throw new ArgumentNullException("dataSet");
+                throw new ArgumentNullException(nameof(dataSet));
 
             var dataTables = dataSet.Tables.OfType<DataTable>();
             return dataContext.AddTables(dataTables);
@@ -36,7 +36,7 @@ namespace NQuery.Data
         public static DataContext AddTables(this DataContext dataContext, params DataTable[] dataTables)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataTables == null || dataTables.Length == 0)
                 return dataContext;
@@ -47,10 +47,10 @@ namespace NQuery.Data
         public static DataContext AddTables(this DataContext dataContext, IEnumerable<DataTable> dataTables)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataTables == null)
-                throw new ArgumentNullException("dataTables");
+                throw new ArgumentNullException(nameof(dataTables));
 
             var tableSymbols = dataTables.Select(CreateTable);
             return dataContext.AddTables(tableSymbols);
@@ -59,10 +59,10 @@ namespace NQuery.Data
         public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataSet == null)
-                throw new ArgumentNullException("dataSet");
+                throw new ArgumentNullException(nameof(dataSet));
 
             var dataRelations = dataSet.Relations.OfType<DataRelation>();
             return dataContext.AddRelations(dataRelations);
@@ -71,7 +71,7 @@ namespace NQuery.Data
         public static DataContext AddRelations(this DataContext dataContext, params DataRelation[] dataRelations)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataRelations == null || dataRelations.Length == 0)
                 return dataContext;
@@ -82,10 +82,10 @@ namespace NQuery.Data
         public static DataContext AddRelations(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (dataRelations == null)
-                throw new ArgumentNullException("dataRelations");
+                throw new ArgumentNullException(nameof(dataRelations));
 
             var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r));
             return dataContext.AddRelations(tableRelations);

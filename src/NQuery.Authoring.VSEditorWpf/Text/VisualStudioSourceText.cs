@@ -21,7 +21,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public override int GetLineNumberFromPosition(int position)
         {
             if (position < 0 || position > Length)
-                throw new ArgumentOutOfRangeException("position");
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             return _snapshot.GetLineNumberFromPosition(position);
         }

@@ -25,16 +25,16 @@ namespace NQuery
         public Expression(DataContext dataContext, string text, T nullValue, Type targetType)
         {
             if (dataContext == null)
-                throw new ArgumentNullException("dataContext");
+                throw new ArgumentNullException(nameof(dataContext));
 
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             if (targetType == null)
-                throw new ArgumentNullException("targetType");
+                throw new ArgumentNullException(nameof(targetType));
 
             if (!typeof(T).IsAssignableFrom(targetType))
-                throw new ArgumentException($"The target type must be a sub type of {typeof (T).FullName}", "targetType");
+                throw new ArgumentException($"The target type must be a sub type of {typeof (T).FullName}", nameof(targetType));
 
             _dataContext = dataContext;
             _text = text;

@@ -17,7 +17,7 @@ namespace NQuery.Symbols
         private static string GetName(TableDefinition tableDefinition)
         {
             if (tableDefinition == null)
-                throw new ArgumentNullException("tableDefinition");
+                throw new ArgumentNullException(nameof(tableDefinition));
 
             return tableDefinition.Name;
         }
@@ -25,7 +25,7 @@ namespace NQuery.Symbols
         private static ImmutableArray<SchemaColumnSymbol> GetColumns(TableDefinition tableDefinition)
         {
             if (tableDefinition == null)
-                throw new ArgumentNullException("tableDefinition");
+                throw new ArgumentNullException(nameof(tableDefinition));
 
             return tableDefinition.Columns.Select(c => new SchemaColumnSymbol(c)).ToImmutableArray();
         }

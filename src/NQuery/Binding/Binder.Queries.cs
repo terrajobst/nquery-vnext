@@ -331,7 +331,7 @@ namespace NQuery.Binding
                     return BindSelectQuery((SelectQuerySyntax)node);
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", "node");
+                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
             }
         }
 
@@ -1066,7 +1066,7 @@ namespace NQuery.Binding
                         result.AddRange(boundColumns);
                         break;
                     default:
-                        throw new ArgumentException($"Unknown column kind {node.Kind}.", "nodes");
+                        throw new ArgumentException($"Unknown column kind {node.Kind}.", nameof(nodes));
                 }
             }
 

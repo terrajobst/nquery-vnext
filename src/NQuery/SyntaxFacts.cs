@@ -458,7 +458,7 @@ namespace NQuery
         public static SyntaxKind GetKeywordKind(string text)
         {
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             switch (text.ToUpper())
             {
@@ -614,7 +614,7 @@ namespace NQuery
         public static SyntaxKind GetContextualKeywordKind(string text)
         {
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             switch (text.ToUpper())
             {
@@ -963,7 +963,7 @@ namespace NQuery
                 case SyntaxKind.LogicalNotExpression:
                     return UnaryOperatorKind.LogicalNot;
                 default:
-                    throw new ArgumentOutOfRangeException("expressionKind");
+                    throw new ArgumentOutOfRangeException(nameof(expressionKind));
             }
         }
 
@@ -1018,7 +1018,7 @@ namespace NQuery
                 case SyntaxKind.SimilarToExpression:
                     return BinaryOperatorKind.SimilarTo;
                 default:
-                    throw new ArgumentOutOfRangeException("expressionKind");
+                    throw new ArgumentOutOfRangeException(nameof(expressionKind));
             }
         }
 
@@ -1035,7 +1035,7 @@ namespace NQuery
                 case UnaryOperatorKind.LogicalNot:
                     return SyntaxKind.NotKeyword.GetText();
                 default:
-                    throw new ArgumentOutOfRangeException("operatorKind");
+                    throw new ArgumentOutOfRangeException(nameof(operatorKind));
             }
         }
 
@@ -1110,7 +1110,7 @@ namespace NQuery
                     return SyntaxKind.OrKeyword.GetText();
 
                 default:
-                    throw new ArgumentOutOfRangeException("operatorKind");
+                    throw new ArgumentOutOfRangeException(nameof(operatorKind));
             }
         }
 

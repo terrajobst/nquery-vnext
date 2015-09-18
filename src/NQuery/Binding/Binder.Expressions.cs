@@ -303,7 +303,7 @@ namespace NQuery.Binding
                     return BindAllAnySubselect((AllAnySubselectSyntax) node);
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", "node");
+                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
             }
         }
 

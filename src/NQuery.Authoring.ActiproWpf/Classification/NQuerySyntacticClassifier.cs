@@ -68,7 +68,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
                 case SyntaxClassification.NumberLiteral:
                     return _classificationTypes.NumberLiteral;
                 default:
-                    throw new ArgumentOutOfRangeException("kind");
+                    throw new ArgumentOutOfRangeException(nameof(kind));
             }
         }
 

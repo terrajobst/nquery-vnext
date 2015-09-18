@@ -36,7 +36,7 @@ namespace NQuery.Symbols
             set
             {
                 if (value != null && !_type.IsInstanceOfType(value))
-                    throw new ArgumentException(string.Format(Resources.VariableValueTypeMismatch, value, _type), "value");
+                    throw new ArgumentException(string.Format(Resources.VariableValueTypeMismatch, value, _type), nameof(value));
 
                 _value = value;
             }

@@ -66,7 +66,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
                 case SyntaxClassification.NumberLiteral:
                     return _classificationService.NumberLiteral;
                 default:
-                    throw new ArgumentOutOfRangeException("classification");
+                    throw new ArgumentOutOfRangeException(nameof(classification));
             }
         }
     }

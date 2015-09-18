@@ -9,7 +9,7 @@ namespace NQuery.Data
         public static QueryDataReader ToDataReader(this QueryReader queryReader)
         {
             if (queryReader == null)
-                throw new ArgumentNullException("queryReader");
+                throw new ArgumentNullException(nameof(queryReader));
 
             return new QueryDataReader(queryReader);
         }
@@ -17,7 +17,7 @@ namespace NQuery.Data
         public static DataTable ExecuteDataTable(this QueryReader queryReader)
         {
             if (queryReader == null)
-                throw new ArgumentNullException("queryReader");
+                throw new ArgumentNullException(nameof(queryReader));
 
             var dataTable = queryReader.CreateSchemaTable();
             var values = new object[queryReader.ColumnCount];
@@ -36,7 +36,7 @@ namespace NQuery.Data
         public static DataTable CreateSchemaTable(this QueryReader queryReader)
         {
             if (queryReader == null)
-                throw new ArgumentNullException("queryReader");
+                throw new ArgumentNullException(nameof(queryReader));
 
             var dataTable = new DataTable("Results");
             var existingColumnNames = new HashSet<string>();
@@ -71,7 +71,7 @@ namespace NQuery.Data
         public static QueryDataReader ExecuteDataReader(this Query query)
         {
             if (query == null)
-                throw new ArgumentNullException("query");
+                throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().ToDataReader();
         }
@@ -79,7 +79,7 @@ namespace NQuery.Data
         public static DataTable ExecuteDataTable(this Query query)
         {
             if (query == null)
-                throw new ArgumentNullException("query");
+                throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().ExecuteDataTable();
         }
@@ -87,7 +87,7 @@ namespace NQuery.Data
         public static DataTable ExecuteSchemaDataTable(this Query query)
         {
             if (query == null)
-                throw new ArgumentNullException("query");
+                throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().CreateSchemaTable();
         }

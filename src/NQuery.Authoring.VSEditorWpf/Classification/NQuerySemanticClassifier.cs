@@ -71,7 +71,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
                 case SemanticClassification.Method:
                     return _classificationService.Method;
                 default:
-                    throw new ArgumentException("classification");
+                    throw new ArgumentOutOfRangeException(nameof(classification));
             }
         }
     }

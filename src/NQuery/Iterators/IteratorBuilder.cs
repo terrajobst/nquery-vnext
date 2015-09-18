@@ -67,7 +67,7 @@ namespace NQuery.Iterators
                 case BoundNodeKind.ProjectRelation:
                     return BuildProject((BoundProjectRelation)relation);
                 default:
-                    throw new ArgumentOutOfRangeException("relation", $"Unknown relation kind: {relation.Kind}.");
+                    throw new ArgumentOutOfRangeException(nameof(relation), $"Unknown relation kind: {relation.Kind}.");
             }
         }
 

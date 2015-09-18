@@ -42,7 +42,7 @@ namespace NQuery.Text
         public TextLine GetLineFromPosition(int position)
         {
             if (position < 0 || position > Length)
-                throw new ArgumentOutOfRangeException("position");
+                throw new ArgumentOutOfRangeException(nameof(position));
 
             var lineNumber = GetLineNumberFromPosition(position);
             return Lines[lineNumber];
@@ -148,7 +148,7 @@ namespace NQuery.Text
         public IEnumerable<TextChange> GetChanges(SourceText oldText)
         {
             if (oldText == null)
-                throw new ArgumentNullException("oldText");
+                throw new ArgumentNullException(nameof(oldText));
 
             if (oldText == this)
                 return Enumerable.Empty<TextChange>();
