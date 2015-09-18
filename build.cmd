@@ -7,4 +7,4 @@ if not exist bin mkdir bin
 ::       means that that rebuilding cannot successfully delete the task
 ::       assembly.
 
-"%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" /nologo /m /v:m /nr:false /flp:verbosity=normal;LogFile=bin\msbuild.log %*
+"%ProgramFiles(x86)%\MSBuild\14.0\Bin\MSBuild.exe" /nologo /m /v:m /nr:false /flp:verbosity=normal;LogFile=bin\msbuild.log %*
