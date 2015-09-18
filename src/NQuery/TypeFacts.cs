@@ -105,49 +105,49 @@ namespace NQuery
 
         internal static KnownType? GetKnownType(this Type type)
         {
-            if (type == typeof(Byte))
+            if (type == typeof(byte))
                 return KnownType.Byte;
 
-            if (type == typeof(SByte))
+            if (type == typeof(sbyte))
                 return KnownType.SByte;
 
-            if (type == typeof(Char))
+            if (type == typeof(char))
                 return KnownType.Char;
 
-            if (type == typeof(Int16))
+            if (type == typeof(short))
                 return KnownType.Int16;
 
-            if (type == typeof(UInt16))
+            if (type == typeof(ushort))
                 return KnownType.UInt16;
 
-            if (type == typeof(Int32))
+            if (type == typeof(int))
                 return KnownType.Int32;
 
-            if (type == typeof(UInt32))
+            if (type == typeof(uint))
                 return KnownType.UInt32;
 
-            if (type == typeof(Int64))
+            if (type == typeof(long))
                 return KnownType.Int64;
 
-            if (type == typeof(UInt64))
+            if (type == typeof(ulong))
                 return KnownType.UInt64;
 
-            if (type == typeof(Single))
+            if (type == typeof(float))
                 return KnownType.Single;
 
-            if (type == typeof(Double))
+            if (type == typeof(double))
                 return KnownType.Double;
 
             if (type == typeof(decimal))
                 return KnownType.Decimal;
 
-            if (type == typeof(Boolean))
+            if (type == typeof(bool))
                 return KnownType.Boolean;
 
-            if (type == typeof(String))
+            if (type == typeof(string))
                 return KnownType.String;
 
-            if (type == typeof(Object))
+            if (type == typeof(object))
                 return KnownType.Object;
 
             return null;

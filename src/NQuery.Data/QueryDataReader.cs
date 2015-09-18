@@ -212,7 +212,7 @@ namespace NQuery.Data
             for (var i = 0; i < _queryReader.ColumnCount; i++)
             {
                 var columnName = _queryReader.GetColumnName(i);
-                if (String.Compare(columnName, name, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Compare(columnName, name, StringComparison.OrdinalIgnoreCase) == 0)
                     return i;
             }
 

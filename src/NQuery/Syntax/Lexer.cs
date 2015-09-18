@@ -255,7 +255,7 @@ namespace NQuery.Syntax
                     break;
 
                 case '.':
-                    if (Char.IsDigit(_charReader.Peek()))
+                    if (char.IsDigit(_charReader.Peek()))
                         ReadNumber();
                     else
                     {
@@ -393,11 +393,11 @@ namespace NQuery.Syntax
                     break;
 
                 default:
-                    if (Char.IsLetter(_charReader.Current) || _charReader.Current == '_')
+                    if (char.IsLetter(_charReader.Current) || _charReader.Current == '_')
                     {
                         ReadIdentifierOrKeyword();
                     }
-                    else if (Char.IsDigit(_charReader.Current))
+                    else if (char.IsDigit(_charReader.Current))
                     {
                         ReadNumber();
                     }
@@ -535,7 +535,7 @@ namespace NQuery.Syntax
                         break;
 
                     default:
-                        if (!Char.IsLetterOrDigit(_charReader.Current))
+                        if (!char.IsLetterOrDigit(_charReader.Current))
                             goto ExitLoop;
                         sb.Append(_charReader.Current);
                         _charReader.NextChar();
@@ -646,7 +646,7 @@ namespace NQuery.Syntax
                 default:
                     try
                     {
-                        return Int64.Parse(text, CultureInfo.InvariantCulture);
+                        return long.Parse(text, CultureInfo.InvariantCulture);
                     }
                     catch (OverflowException)
                     {
@@ -700,7 +700,7 @@ namespace NQuery.Syntax
 
                 try
                 {
-                    c = Int32.Parse(new string(octal[i], 1), CultureInfo.InvariantCulture);
+                    c = int.Parse(new string(octal[i], 1), CultureInfo.InvariantCulture);
 
                     if (c > 7)
                     {
@@ -732,7 +732,7 @@ namespace NQuery.Syntax
 
             // The following characters can be letters, digits the underscore and the dollar sign.
 
-            while (Char.IsLetterOrDigit(_charReader.Current) ||
+            while (char.IsLetterOrDigit(_charReader.Current) ||
                    _charReader.Current == '_' ||
                    _charReader.Current == '$')
             {

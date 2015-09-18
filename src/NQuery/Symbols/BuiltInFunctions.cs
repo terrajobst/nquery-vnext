@@ -267,10 +267,10 @@ namespace NQuery.Symbols
                 return null;
 
             if (start == 0 || text.Length == 0)
-                return String.Empty;
+                return string.Empty;
 
             if (start > text.Length)
-                return String.Empty;
+                return string.Empty;
 
             if (start + length - 1 > text.Length)
                 length = text.Length - start + 1;
@@ -368,8 +368,8 @@ namespace NQuery.Symbols
 
         private static string Format(object value, string format)
         {
-            var embeddedFormatString = String.Format(CultureInfo.InvariantCulture, "{{0:{0}}}", format);
-            return String.Format(CultureInfo.CurrentCulture, embeddedFormatString, value);
+            var embeddedFormatString = string.Format(CultureInfo.InvariantCulture, "{{0:{0}}}", format);
+            return string.Format(CultureInfo.CurrentCulture, embeddedFormatString, value);
         }
 
         private static string Replicate(string text, int count)
@@ -419,7 +419,7 @@ namespace NQuery.Symbols
         private static string Space(int numberOfSpaces)
         {
             if (numberOfSpaces <= 0)
-                return String.Empty;
+                return string.Empty;
 
             return Replicate(" ", numberOfSpaces);
         }

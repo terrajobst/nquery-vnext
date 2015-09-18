@@ -63,7 +63,7 @@ namespace NQuery.Data
             var result = columnName;
             var count = 0;
             while (existingColumnNames.Contains(result))
-                result = String.Concat(columnName, ++count);
+                result = string.Concat(columnName, ++count);
 
             return result;
         }

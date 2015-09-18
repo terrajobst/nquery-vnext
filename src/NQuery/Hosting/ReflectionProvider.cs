@@ -290,7 +290,7 @@ namespace NQuery.Hosting
             var methodList = new List<MethodSymbol>();
 
             var methodInfos = type.GetMethods(BindingFlags);
-            Array.Sort(methodInfos, (x, y) => String.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal));
+            Array.Sort(methodInfos, (x, y) => string.Compare(x.ToString(), y.ToString(), StringComparison.Ordinal));
 
             foreach (var currentMethodInfo in methodInfos)
             {

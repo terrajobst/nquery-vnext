@@ -58,7 +58,7 @@ namespace NQuery.Symbols
                         break;
 
                     default:
-                        sb.Append(Char.ToUpper(c, CultureInfo.CurrentCulture));
+                        sb.Append(char.ToUpper(c, CultureInfo.CurrentCulture));
                         break;
                 }
             }

@@ -21,7 +21,7 @@ namespace NQuery
         public static Diagnostic Format(TextSpan textSpan, DiagnosticId diagnosticId, params object[] args)
         {
             var message = diagnosticId.GetMessage();
-            var formattedMessage = String.Format(CultureInfo.CurrentCulture, message, args);
+            var formattedMessage = string.Format(CultureInfo.CurrentCulture, message, args);
             return new Diagnostic(textSpan, diagnosticId, formattedMessage);
         }
 

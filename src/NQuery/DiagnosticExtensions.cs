@@ -323,7 +323,7 @@ namespace NQuery
         public static void ReportUndeclaredFunction(this ICollection<Diagnostic> diagnostics, FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
         {
             var name = node.Name.ValueText;
-            var argumentTypeList = String.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredFunction, name, argumentTypeList);
         }
 
@@ -337,7 +337,7 @@ namespace NQuery
         {
             var name = node.Name.ValueText;
             var declaringTypeName = declaringType.ToDisplayName();
-            var argumentTypeNames = String.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+            var argumentTypeNames = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredMethod, declaringTypeName, name, argumentTypeNames);
         }
 

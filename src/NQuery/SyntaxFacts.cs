@@ -257,7 +257,7 @@ namespace NQuery
                 case SyntaxKind.TiesKeyword:
                     return "TIES";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
@@ -288,7 +288,7 @@ namespace NQuery
         public static string GetDisplayText(this SyntaxToken token)
         {
             var result = token.Text;
-            return !String.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
+            return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
         }
 
         public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
@@ -410,10 +410,10 @@ namespace NQuery
                 return false;
 
             var firstChar = name.First();
-            if (!Char.IsLetter(firstChar) && firstChar != '_')
+            if (!char.IsLetter(firstChar) && firstChar != '_')
                 return false;
 
-            if (!name.Skip(1).All(c => Char.IsLetterOrDigit(c) || c == '_' || c == '$'))
+            if (!name.Skip(1).All(c => char.IsLetterOrDigit(c) || c == '_' || c == '$'))
                 return false;
 
             return GetKeywordKind(name) == SyntaxKind.IdentifierToken;
@@ -648,7 +648,7 @@ namespace NQuery
             var comparison = token.IsQuotedIdentifier()
                                  ? StringComparison.Ordinal
                                  : StringComparison.OrdinalIgnoreCase;
-            return String.Equals(token.ValueText, text, comparison);
+            return string.Equals(token.ValueText, text, comparison);
         }
 
         public static bool IsTerminated(this SyntaxToken token)

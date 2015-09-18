@@ -11,7 +11,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Lexer_Lex_Special_EndOfFile()
         {
-            var token = SyntaxFacts.ParseToken(String.Empty);
+            var token = SyntaxFacts.ParseToken(string.Empty);
 
             Assert.Equal(SyntaxKind.EndOfFileToken, token.Kind);
             Assert.True(token.IsTerminated());
