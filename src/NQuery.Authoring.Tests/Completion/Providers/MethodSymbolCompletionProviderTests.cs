@@ -25,7 +25,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                                              .Count(m => m.Name == methodName) - 1;
             var expectedDescription = overloadCount == 0
                 ? methodMarkup.ToString()
-                : string.Format("{0} (+ {1} overload(s))", methodMarkup, overloadCount);
+                : $"{methodMarkup} (+ {overloadCount} overload(s))";
 
             Assert.Equal(Glyph.Method, methodItem.Glyph);
             Assert.Equal(method.Name, methodItem.DisplayText);

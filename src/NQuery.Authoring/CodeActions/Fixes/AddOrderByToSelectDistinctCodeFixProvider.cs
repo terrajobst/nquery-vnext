@@ -49,7 +49,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             public override string Description
             {
-                get { return string.Format("Add {0} to SELECT list", GetExpressionText()); }
+                get { return $"Add {GetExpressionText()} to SELECT list"; }
             }
 
             private string GetExpressionText()

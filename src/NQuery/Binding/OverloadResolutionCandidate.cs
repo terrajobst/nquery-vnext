@@ -73,7 +73,7 @@ namespace NQuery.Binding
                                  ? "Has Better Alternative"
                                  : "Suitable";
 
-            return string.Format("{0} [{1}]", _signature, type);
+            return $"{_signature} [{type}]";
         }
     }
 }

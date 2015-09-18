@@ -68,7 +68,7 @@ namespace NQuery.Optimization
 
         private string CreateNewName(string name)
         {
-            return string.Format("{0}:CTE:{1}", name, _cteCount);
+            return $"{name}:CTE:{_cteCount}";
         }
 
         private sealed class ValueSlotRewriter : BoundTreeRewriter

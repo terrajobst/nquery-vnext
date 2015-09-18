@@ -50,7 +50,7 @@ namespace NQuery.Binding
         public override string ToString()
         {
             var unaryOperatorKind = _result.Candidates.First().Signature.Kind;
-            return string.Format("{0}({1})", unaryOperatorKind.ToDisplayName(), _expression);
+            return $"{unaryOperatorKind.ToDisplayName()}({_expression})";
         }
     }
 }

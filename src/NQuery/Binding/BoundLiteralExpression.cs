@@ -37,10 +37,10 @@ namespace NQuery.Binding
                 return "NULL";
 
             if (_value is string)
-                return string.Format("'{0}'", _value); // TODO: We should escape this
+                return $"'{_value}'"; // TODO: We should escape this
 
             if (_value is DateTime)
-                return string.Format("#{0}#", _value);
+                return $"#{_value}#";
 
             return _value.ToString();
         }

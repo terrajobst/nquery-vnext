@@ -54,7 +54,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return string.Format("{0}({1})", Symbol.Name, string.Join(",", _arguments));
+            return $"{Symbol.Name}({string.Join(",", _arguments)})";
         }
     }
 }

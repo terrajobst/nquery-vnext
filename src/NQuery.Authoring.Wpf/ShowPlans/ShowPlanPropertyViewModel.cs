@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Wpf
 
         public override string DisplayName
         {
-            get { return string.Format("{0} = {1}", _model.Key, _model.Value); }
+            get { return $"{_model.Key} = {_model.Value}"; }
         }
 
         public override IEnumerable<ShowPlanItemViewModel> Children

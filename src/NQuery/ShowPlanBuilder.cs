@@ -159,13 +159,13 @@ namespace NQuery
                                ? leftAndRight
                                : leftAndRight.Concat(new[] { Build(node.Remainder) });
 
-            return new ShowPlanNode(string.Format("Hash Match ({0}) [{1} = {2}]", node.LogicalOperator, node.BuildKey, node.ProbeKey), properties, children);
+            return new ShowPlanNode($"Hash Match ({node.LogicalOperator}) [{node.BuildKey} = {node.ProbeKey}]", properties, children);
         }
 
         private static ShowPlanNode BuildTop(BoundTopRelation node)
         {
             var tieEntries = string.Join(", ", node.TieEntries.Select(v => v.ValueSlot.Name));
-            var operatorName = string.Format("Top {0}{1}", node.Limit, !node.TieEntries.Any() ? string.Empty : string.Format(" With Ties ({0})", tieEntries));
+            var operatorName = $"Top {node.Limit}{(!node.TieEntries.Any() ? string.Empty : $" With Ties ({tieEntries})")}";
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input) };
             return new ShowPlanNode(operatorName, properties, children);
@@ -177,7 +177,7 @@ namespace NQuery
             var children = new[] { Build(node.Input) };
             var slots = string.Join(", ", node.SortedValues.Select(v => v.ValueSlot.Name));
             var op = node.IsDistinct ? "DistinctSort" : "Sort";
-            var name = string.Format("{0} {1}", op, slots);
+            var name = $"{op} {slots}";
             return new ShowPlanNode(name, properties, children);
         }
 
@@ -187,7 +187,7 @@ namespace NQuery
             var children = node.Inputs.Select(Build);
             var kind = node.IsUnionAll ? "UnionAll" : "Union";
             var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
-            var name = string.Format("{0} {1}", kind, ouputs);
+            var name = $"{kind} {ouputs}";
             return new ShowPlanNode(name, properties, children);
         }
 
@@ -196,7 +196,7 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Inputs.Select(Build);
             var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
-            var name = string.Format("Concatenation {0}", ouputs);
+            var name = $"Concatenation {ouputs}";
             return new ShowPlanNode(name, properties, children);
         }
 

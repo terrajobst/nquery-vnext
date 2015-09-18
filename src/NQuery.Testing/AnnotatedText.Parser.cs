@@ -132,13 +132,13 @@ namespace NQuery
 
             private FormatException ColonUnexpected()
             {
-                var message = string.Format("Character ':' is unexpected at position {0}.", _position);
+                var message = $"Character ':' is unexpected at position {_position}.";
                 return new FormatException(message);
             }
 
             private FormatException MissingClosingBrace()
             {
-                var message = string.Format("Missing '}}' at position {0}.", _position);
+                var message = $"Missing '}}' at position {_position}.";
                 return new FormatException(message);
             }
 

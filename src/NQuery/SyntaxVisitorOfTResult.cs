@@ -196,7 +196,7 @@ namespace NQuery
                      return VisitAlias((AliasSyntax)node);
 
                 default:
-                    throw new ArgumentException(string.Format("Unknown node kind: {0}", node.Kind), "node");
+                    throw new ArgumentException($"Unknown node kind: {node.Kind}", "node");
             }
         }
 

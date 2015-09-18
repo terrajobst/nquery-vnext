@@ -45,7 +45,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return string.Format("CAST({0} AS {1})", _expression, _type.ToDisplayName());
+            return $"CAST({_expression} AS {_type.ToDisplayName()})";
         }
     }
 }

@@ -30,7 +30,7 @@ namespace NQuery.Authoring
                 case SymbolKind.Method:
                     return Glyph.Method;
                 default:
-                    throw new NotImplementedException(string.Format("Unknown symbol kind: {0}", symbol.Kind));
+                    throw new NotImplementedException($"Unknown symbol kind: {symbol.Kind}");
             }
         }
     }

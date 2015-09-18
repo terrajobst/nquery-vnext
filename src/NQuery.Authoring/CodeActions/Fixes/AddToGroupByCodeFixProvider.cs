@@ -46,7 +46,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
                     return GetOrderByFixes(selectQuery, expression);
 
                 default:
-                    throw new Exception(string.Format("Unexpected diagnostic: {0}", diagnostic.DiagnosticId));
+                    throw new Exception($"Unexpected diagnostic: {diagnostic.DiagnosticId}");
             }
         }
 
@@ -108,7 +108,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             public override string Description
             {
-                get { return string.Format("Add '{0}' to GROUP BY", GetExpressionText()); }
+                get { return $"Add '{GetExpressionText()}' to GROUP BY"; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

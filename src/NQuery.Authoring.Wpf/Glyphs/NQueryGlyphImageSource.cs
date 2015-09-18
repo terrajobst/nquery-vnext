@@ -12,7 +12,7 @@ namespace NQuery.Authoring.Wpf
         private static string FromName(string iconName)
         {
             var assemblyName = typeof(NQueryGlyphImageSource).Assembly.GetName().Name;
-            var uri = string.Format("pack://application:,,,/{0};component/Images/{1}.png", assemblyName, iconName);
+            var uri = $"pack://application:,,,/{assemblyName};component/Images/{iconName}.png";
             return uri;
         }
 

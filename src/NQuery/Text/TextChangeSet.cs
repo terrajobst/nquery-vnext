@@ -32,7 +32,7 @@ namespace NQuery.Text
             var conflicts = _changes.Any(existingChange => existingChange.Span.IntersectsWith(newChange.Span));
             if (conflicts)
             {
-                var message = string.Format("Cannot apply change '{0}' because it intersects with another pending change.", newChange);
+                var message = $"Cannot apply change '{newChange}' because it intersects with another pending change.";
                 throw new InvalidOperationException(message);
             }
 

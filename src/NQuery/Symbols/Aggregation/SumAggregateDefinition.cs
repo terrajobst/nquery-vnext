@@ -53,7 +53,7 @@ namespace NQuery.Symbols.Aggregation
 
             var conversionInputVariable = new VariableSymbol("Input", argumentType);
             var convertionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
-            var conversionExpression = new Expression<object>(convertionDataContext, string.Format("CAST(@Input AS {0})", SyntaxFacts.GetValidIdentifier(sumType.Name)));
+            var conversionExpression = new Expression<object>(convertionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
 
             try
             {

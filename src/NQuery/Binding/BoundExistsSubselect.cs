@@ -36,7 +36,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return string.Format("EXISTS ({0})", _relation);
+            return $"EXISTS ({_relation})";
         }
     }
 }

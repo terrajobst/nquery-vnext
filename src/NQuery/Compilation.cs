@@ -69,7 +69,7 @@ namespace NQuery
                 var step = rewriter.RewriteRelation(relation);
                 if (step != relation)
                 {
-                    var stepName = string.Format("Optimization Step: {0}", rewriter.GetType().Name);
+                    var stepName = $"Optimization Step: {rewriter.GetType().Name}";
                     var stepQuery = new BoundQuery(step, inputQuery.OutputColumns);
                     yield return ShowPlanBuilder.Build(stepName, stepQuery);
                 }

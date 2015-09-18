@@ -57,7 +57,7 @@ namespace NQuery.Binding
         public override string ToString()
         {
             var kind = _result.Candidates.First().Signature.Kind;
-            return string.Format("({0} {1} {2})", _left, kind.ToDisplayName(), _right);
+            return $"({_left} {kind.ToDisplayName()} {_right})";
         }
     }
 }

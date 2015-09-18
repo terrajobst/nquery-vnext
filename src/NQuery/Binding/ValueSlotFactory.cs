@@ -10,7 +10,7 @@ namespace NQuery.Binding
 
         public ValueSlot CreateTemporaryValueSlot(Type type)
         {
-            var name = string.Format("Expr{0}", _nextTemporaryNumber);
+            var name = $"Expr{_nextTemporaryNumber}";
             _nextTemporaryNumber++;
             return new ValueSlot(name, type);
         }

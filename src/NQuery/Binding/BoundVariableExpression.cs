@@ -30,7 +30,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return string.Format("@{0}", _variableSymbol.Name);
+            return $"@{_variableSymbol.Name}";
         }
     }
 }

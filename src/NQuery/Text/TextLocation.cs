@@ -54,7 +54,7 @@ namespace NQuery.Text
 
         public override string ToString()
         {
-            return string.Format("Ln {0} Col {1}", Line, Column);
+            return $"Ln {Line} Col {Column}";
         }
     }
 }

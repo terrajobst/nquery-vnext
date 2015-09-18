@@ -34,7 +34,7 @@ namespace NQuery
                 throw new ArgumentNullException("targetType");
 
             if (!typeof(T).IsAssignableFrom(targetType))
-                throw new ArgumentException(string.Format("The target type must be a sub type of {0}", typeof(T).FullName), "targetType");
+                throw new ArgumentException($"The target type must be a sub type of {typeof (T).FullName}", "targetType");
 
             _dataContext = dataContext;
             _text = text;

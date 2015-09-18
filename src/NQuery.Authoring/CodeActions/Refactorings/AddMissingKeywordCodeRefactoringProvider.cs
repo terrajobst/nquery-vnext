@@ -26,7 +26,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return string.Format("Add missing '{0}' keyword", GetKeywordText()); }
+                get { return $"Add missing '{GetKeywordText()}' keyword"; }
             }
 
             private string GetKeywordText()

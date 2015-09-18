@@ -60,7 +60,7 @@ namespace NQuery.Text
 
         public override string ToString()
         {
-            return string.Format("[{0},{1}) => {{{2}}}", Span.Start, Span.End, _newText);
+            return $"[{Span.Start},{Span.End}) => {{{_newText}}}";
         }
     }
 }

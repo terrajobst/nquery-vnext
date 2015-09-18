@@ -141,7 +141,7 @@ namespace NQuery.Authoring.Completion.Providers
 
             var displayText = first.DisplayText;
             var insertionText = first.InsertionText;
-            var description = string.Format("{0} (+ {1} overload(s))", first.Description, numberOfOverloads);
+            var description = $"{first.Description} (+ {numberOfOverloads} overload(s))";
             var glyph = first.Glyph;
             return new CompletionItem(displayText, insertionText, description, glyph, symbol);
         }

@@ -26,7 +26,7 @@ namespace NQuery.Authoring.Tests
         {
             var availableTypes = GetAvailableProviderTypes<T>();
             var standardTypes = GetStandardProviderTypes(selector);
-            var message = string.Format("{{0}} isn't exposed from {0}.{1}()", selector.Method.DeclaringType.Name, selector.Method.Name);
+            var message = $"{{0}} isn't exposed from {selector.Method.DeclaringType.Name}.{selector.Method.Name}()";
 
             foreach (var type in availableTypes)
                 Assert.True(standardTypes.Contains(type), string.Format(message, type.Name));

@@ -135,7 +135,7 @@ namespace NQuery.Tests.Syntax
                 {
                     var op1Text = op1.GetText();
                     var op2Text = op2.GetText();
-                    var text = string.Format("x {0} y {1} z", op1Text, op2Text);
+                    var text = $"x {op1Text} y {op2Text} z";
 
                     var syntaxTree = SyntaxTree.ParseExpression(text);
                     Assert.Empty(syntaxTree.GetDiagnostics());
@@ -500,7 +500,7 @@ namespace NQuery.Tests.Syntax
         public void Parser_Parse_Expression_FunctionInvocation_WithContextualKeyword(SyntaxKind kind)
         {
             var kindText = kind.GetText();
-            var text = string.Format("{0}('2')", kindText);
+            var text = $"{kindText}('2')";
 
             using (var enumerator = AssertingEnumerator.ForExpression(text))
             {
@@ -887,7 +887,7 @@ namespace NQuery.Tests.Syntax
         public void Parser_Parse_Expression_MethodInvocation_WithContextualKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
-            var text = string.Format(@"x.{0}(1)", keyword);
+            var text = $@"x.{keyword}(1)";
 
             using (var enumerator = AssertingEnumerator.ForExpression(text))
             {
@@ -991,7 +991,7 @@ namespace NQuery.Tests.Syntax
         public void Parser_Parse_Expression_PropertyAccess_WithContextualKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
-            var text = string.Format(@"x.{0}", keyword);
+            var text = $@"x.{keyword}";
 
             using (var enumerator = AssertingEnumerator.ForExpression(text))
             {
@@ -1245,7 +1245,7 @@ namespace NQuery.Tests.Syntax
                 {
                     var op1Text = op1.GetText();
                     var op2Text = op2.GetText();
-                    var text = string.Format("{0} x {1} y", op1Text, op2Text);
+                    var text = $"{op1Text} x {op2Text} y";
 
                     var syntaxTree = SyntaxTree.ParseExpression(text);
                     Assert.Empty(syntaxTree.GetDiagnostics());

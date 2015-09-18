@@ -28,7 +28,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return string.Format("Flip arguments of operator '{0}'", _node.OperatorToken.Text); }
+                get { return $"Flip arguments of operator '{_node.OperatorToken.Text}'"; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

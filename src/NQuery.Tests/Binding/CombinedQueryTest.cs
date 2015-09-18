@@ -13,21 +13,21 @@ namespace NQuery.Tests.Binding
         private static void AssertBindsToCommonTypes<T>(string queryCombinator)
             where T: QuerySyntax
         {
-            var query = string.Format(@"
+            var query = $@"
                 SELECT  e.EmployeeID * 2.0,
                         e.LastName,
                         e.FirstName,
                         e.ReportsTo
                 FROM    Employees e
 
-                {0}
+                {queryCombinator}
 
                 SELECT  e.EmployeeID,
                         e.LastName,
                         e.FirstName,
                         e.ReportsTo * 2.0
                 FROM    Employees e
-            ", queryCombinator);
+            ";
 
             var compilation = CompilationFactory.CreateQuery(query);
             var combinedQuery = compilation.SyntaxTree.Root.DescendantNodes().OfType<T>().Single();

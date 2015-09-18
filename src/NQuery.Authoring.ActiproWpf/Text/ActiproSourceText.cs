@@ -60,7 +60,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public override string ToString()
         {
-            return string.Format("Version={0}, Length={1}", _snapshot.Version.Number, _snapshot.Length);
+            return $"Version={_snapshot.Version.Number}, Length={_snapshot.Length}";
         }
     }
 }

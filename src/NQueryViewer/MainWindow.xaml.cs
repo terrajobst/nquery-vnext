@@ -76,7 +76,7 @@ namespace NQueryViewer
             var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
             var tabItem = new TabItem
             {
-                Header = string.Format("Query {0} [{1}]", id, editorViewFactory.DisplayName),
+                Header = $"Query {id} [{editorViewFactory.DisplayName}]",
                 Content = editorView.Element,
                 Tag = id,
             };
@@ -129,7 +129,7 @@ namespace NQueryViewer
 
             DataGrid.ItemsSource = dataTable.DefaultView;
             BottomToolWindowTabControl.SelectedItem = ResultsTabItem;
-            ExecutionTimeTextBlock.Text = string.Format("Completed in {0}", elapsed);
+            ExecutionTimeTextBlock.Text = $"Completed in {elapsed}";
         }
 
         private async void UpdateTree()
