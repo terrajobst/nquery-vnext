@@ -26,7 +26,7 @@
       NuProjPath=$(SourceDir)packages\NuProj.0.9.2-beta\tools\;
     </ProjectProperties>
   </PropertyGroup>
-  
+
   <!-- External Tasks -->
 
   <UsingTask AssemblyFile="$(OutDir)NQuery.BuildTasks.dll" TaskName="NQuery.BuildTasks.GetFileVersionInfo" />
@@ -60,7 +60,7 @@
               PropertyName="_LicenseUrl" />
     </GetAssemblyMetadata>
     <PropertyGroup>
-      <Version>$(_FileMajorPart).$(_FileMinorPart).$(_FileBuildPart)</Version>
+      <Version>$(_FileMajorPart).$(_FileMinorPart).$(_FileBuildPart)-beta</Version>
       <Authors>$(_CompanyName)</Authors>
       <Owners>$(_CompanyName)</Owners>
       <Copyright>$(_LegalCopyright)</Copyright>
