@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Immutable;
-using System.Linq;
-
-using NQuery.Syntax;
 
 using Xunit;
 
@@ -13,83 +9,91 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void Parser_Error_SkipsBadTokens()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT 'First' + !'Last' AS Name");
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+            const string text = @"
+                'First' + !'Last'
+            ";
 
-            var query = (SelectQuerySyntax) syntaxTree.Root.Root;
-            var column = (ExpressionSelectColumnSyntax) query.SelectClause.Columns.Single();
-            var binaryExpression = (BinaryExpressionSyntax) column.Expression;
-            var left = (LiteralExpressionSyntax) binaryExpression.Left;
-            var right = (LiteralExpressionSyntax) binaryExpression.Right;
-
-            var skippedTokenTrivia = (SkippedTokensTriviaSyntax) right.Token.LeadingTrivia.Single().Structure;
-            var skippedToken = skippedTokenTrivia.Tokens.Single();
-
-            Assert.Equal("First", left.Value);
-            Assert.Equal("Last", right.Value);
-
-            Assert.Equal(SyntaxKind.BadToken, skippedToken.Kind);
-            Assert.Equal("!", skippedToken.ValueText);
-
-            Assert.Equal(1, diagnostics.Length);
-            Assert.Equal(DiagnosticId.IllegalInputCharacter, diagnostics[0].DiagnosticId);
+            using (var enumerator = AssertingEnumerator.ForExpression(text))
+            {
+                enumerator.AssertNode(SyntaxKind.AddExpression);
+                enumerator.AssertNode(SyntaxKind.LiteralExpression);
+                enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'First'");
+                enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+                enumerator.AssertNode(SyntaxKind.LiteralExpression);
+                enumerator.AssertNode(SyntaxKind.SkippedTokensTrivia);
+                enumerator.AssertToken(SyntaxKind.BadToken, @"!");
+                enumerator.AssertDiagnostic(DiagnosticId.IllegalInputCharacter, @"Invalid character in input '!'.");
+                enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'Last'");
+            }
         }
 
         [Fact]
         public void Parser_Error_DetectsErrorAtEnd()
         {
-            var syntaxTree = SyntaxTree.ParseQuery("SELECT 'foo' WITH");
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+            const string text = @"
+                SELECT 'foo' WITH
+            ";
 
-            Assert.Equal(1, diagnostics.Length);
-            Assert.Equal(DiagnosticId.TokenExpected, diagnostics[0].DiagnosticId);
+            var syntaxTree = SyntaxTree.ParseQuery(text);
+
+            using (var enumerator = AssertingEnumerator.ForNode(syntaxTree.Root))
+            {
+                enumerator.AssertNode(SyntaxKind.CompilationUnit);
+                enumerator.AssertNode(SyntaxKind.SelectQuery);
+                enumerator.AssertNode(SyntaxKind.SelectClause);
+                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+                enumerator.AssertNode(SyntaxKind.LiteralExpression);
+                enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'foo'");
+                enumerator.AssertNode(SyntaxKind.SkippedTokensTrivia);
+                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+                enumerator.AssertToken(SyntaxKind.EndOfFileToken, @"");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'WITH' but expected '<end-of-file>'.");
+            }
         }
 
         [Fact]
         public void Parser_Error_MissingIdentifier_IsInserted_IfKeywordOnNextLine()
         {
             const string text = @"
-                SELECT   o.|
-                FROM     Orders
+                SELECT   {o.
+                FROM}     Orders
             ";
 
-            int position;
-            var compilation = CompilationFactory.CreateQuery(text, out position);
-
-            var dotToken = compilation.SyntaxTree.Root.FindToken(position, true);
-            Assert.Equal(SyntaxKind.DotToken, dotToken.Kind);
-
-            var identifierToken = dotToken.GetNextToken(true, true);
-            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.Kind);
-            Assert.True(identifierToken.IsMissing);
+            using (var enumerator = AssertingEnumerator.ForQuery(text))
+            {
+                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+                enumerator.AssertNode(SyntaxKind.NameExpression);
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"o");
+                enumerator.AssertToken(SyntaxKind.DotToken, @".");
+                enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'FROM' but expected '<identifier>'.");
+                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            }
         }
 
         [Fact]
         public void Parser_Error_MissingIdentifier_IsInserted_AndSkipsKeyword_IfKeywordOnSameLine()
         {
             const string text = @"
-                SELECT   o.Or|
-                FROM     Orders
+                SELECT   {o.Or
+                FROM}     Orders
             ";
 
-            int position;
-            var compilation = CompilationFactory.CreateQuery(text, out position);
-
-            var orKeyword = compilation.SyntaxTree.Root.FindToken(position, true);
-            Assert.Equal(SyntaxKind.OrKeyword, orKeyword.Kind);
-
-            var dotToken = orKeyword.GetPreviousToken(true, true);
-            Assert.Equal(SyntaxKind.DotToken, dotToken.Kind);
-            Assert.False(dotToken.IsMissing);
-
-            var skippedTrivia = orKeyword.Parent.AncestorsAndSelf().OfType<SkippedTokensTriviaSyntax>().Single();
-            var identifierToken = skippedTrivia.ParentTrivia.Parent;
-            Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.Kind);
-            Assert.True(identifierToken.IsMissing);
+            using (var enumerator = AssertingEnumerator.ForQuery(text))
+            {
+                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+                enumerator.AssertNode(SyntaxKind.NameExpression);
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"o");
+                enumerator.AssertToken(SyntaxKind.DotToken, @".");
+                enumerator.AssertNode(SyntaxKind.SkippedTokensTrivia);
+                enumerator.AssertToken(SyntaxKind.OrKeyword, @"Or");
+                enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'Or' but expected '<identifier>'.");
+                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            }
         }
     }
 }
