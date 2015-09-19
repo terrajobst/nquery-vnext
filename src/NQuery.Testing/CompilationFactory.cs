@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 
 using NQuery.Text;
 
@@ -26,6 +27,12 @@ namespace NQuery
             return CreateQuery(text);
         }
 
+        public static Compilation CreateQuery(string textWithMarkers, out ImmutableArray<TextSpan> spans)
+        {
+            var text = textWithMarkers.ParseSpans(out spans);
+            return CreateQuery(text);
+        }
+
         public static Compilation CreateExpression(string text)
         {
             var syntaxTree = SyntaxTree.ParseExpression(text);
@@ -41,6 +48,12 @@ namespace NQuery
         public static Compilation CreateExpression(string textWithMarkers, out TextSpan span)
         {
             var text = textWithMarkers.ParseSingleSpan(out span);
+            return CreateExpression(text);
+        }
+
+        public static Compilation CreateExpression(string textWithMarkers, out ImmutableArray<TextSpan> spans)
+        {
+            var text = textWithMarkers.ParseSpans(out spans);
             return CreateExpression(text);
         }
     }
