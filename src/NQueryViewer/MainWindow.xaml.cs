@@ -1,11 +1,9 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 using System.Data;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,12 +15,8 @@ using System.Windows.Threading;
 
 using NQuery;
 using NQuery.Data;
-using NQuery.Syntax;
-using NQuery.Text;
 
 using NQueryViewer.Editor;
-
-using TextChange = NQuery.Text.TextChange;
 
 namespace NQueryViewer
 {
@@ -306,115 +300,13 @@ namespace NQueryViewer
 
         private async void MenuItem_Tools_GenerateParserTestToClipBoard_OnClick(object sender, RoutedEventArgs e)
         {
-            if (CurrentEditorView == null)
+            var documentView = CurrentEditorView?.GetDocumentView();
+
+            if (documentView == null)
                 return;
 
-            var document = CurrentEditorView.Workspace.CurrentDocument;
-            var textSpan = CurrentEditorView.Selection;
-
-            if (textSpan.Length == 0)
-                textSpan = new TextSpan(0, document.Text.Length);
-
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var node = syntaxTree.Root.DescendantNodes()
-                                      .Last(n => n.Span.Contains(textSpan));
-            var nodeOrTokens = syntaxTree.Root.Root.DescendantNodesAndTokensAndSelf(true)
-                                                   .Where(n => textSpan.Contains(n.Span));
-
-            var isExpression = node is ExpressionSyntax;
-
-            string text;
-
-            if (node.Span == textSpan)
-            {
-                text = document.Text.GetText(node.Span);
-            }
-            else if (syntaxTree.Root.Root.Span == textSpan)
-            {
-                text = document.Text.GetText();
-            }
-            else
-            {
-                text = document.Text.WithChanges(
-                    TextChange.ForInsertion(textSpan.Start, "{"),
-                    TextChange.ForInsertion(textSpan.End, "}")
-                ).GetText();
-            }
-
-            using (var stringWriter = new StringWriter())
-            {
-                using (var writer = new IndentedTextWriter(stringWriter))
-                {
-                    writer.Indent = 2;
-
-                    var sb = writer;
-                    sb.WriteLine("[Fact]");
-                    sb.WriteLine("public void Parser_Parse_{0}()", node.GetType().Name.Substring(0, node.GetType().Name.Length - "Syntax".Length));
-                    sb.WriteLine("{");
-
-                    writer.Indent++;
-
-                    sb.WriteLine("const string text = @\"");
-
-                    using (var stringReader = new StringReader(text))
-                    {
-                        writer.Indent++;
-
-                        string line;
-                        while ((line = stringReader.ReadLine()) != null)
-                        {
-                            sb.WriteLine(line.Replace("\"", "\"\""));
-                        }
-
-                        writer.Indent--;
-                    }
-
-                    var method = isExpression ? "ForExpression" : "ForQuery";
-
-                    sb.WriteLine("\";");
-                    sb.WriteLine();
-                    sb.WriteLine("using (var enumerator = AssertingEnumerator.{0}(text))", method);
-                    sb.WriteLine("{");
-
-                    writer.Indent++;
-
-                    foreach (var nodesOrToken in nodeOrTokens)
-                    {
-                        if (nodesOrToken.IsNode)
-                        {
-                            var missingModifier = nodesOrToken.IsMissing ? "Missing" : "";
-                            sb.WriteLine("enumerator.AssertNode{0}(SyntaxKind.{1});", missingModifier, nodesOrToken.Kind);
-                        }
-                        else
-                        {
-                            var token = nodesOrToken.AsToken();
-                            var tokenText = token.Text.Replace("\"", "\"\"");
-
-                            if (token.IsMissing)
-                            {
-                                sb.WriteLine("enumerator.AssertTokenMissing(SyntaxKind.{0});", nodesOrToken.Kind);
-                            }
-                            else
-                            {
-                                sb.WriteLine("enumerator.AssertToken(SyntaxKind.{0}, @\"{1}\");", nodesOrToken.Kind, tokenText);
-                            }
-
-                            foreach (var diagnostic in token.Diagnostics)
-                            {
-                                sb.WriteLine("enumerator.AssertDiagnostic(DiagnosticId.{0}, @\"{1}\");", diagnostic.DiagnosticId, diagnostic.Message);
-                            }
-                        }
-                    }
-
-                    writer.Indent--;
-                    sb.WriteLine("}");
-
-                    writer.Indent--;
-                    sb.WriteLine("}");
-                }
-
-                Clipboard.SetText(stringWriter.ToString());
-            }
+            var test = await documentView.GenerateParserTest();
+            Clipboard.SetText(test);
         }
     }
 }

@@ -52,6 +52,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="StringExtensions.cs" />
+    <Compile Include="TestGenerationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Northwind.xml" />
@@ -63,6 +64,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
+      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
+      <Name>NQuery.Authoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
       <Project>{d93d9870-4e7a-4bec-aa4e-dacbf8616c29}</Project>
       <Name>NQuery.Data</Name>
