@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NQuery.Text;
+
 using Xunit;
 
 namespace NQuery.Tests.Syntax
@@ -14,8 +16,9 @@ namespace NQuery.Tests.Syntax
             var token = SyntaxFacts.ParseToken(string.Empty);
 
             Assert.Equal(SyntaxKind.EndOfFileToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Theory]
@@ -27,10 +30,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.BadToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
 
             var diagnostic = Assert.Single(token.Diagnostics);
             Assert.Equal(DiagnosticId.IllegalInputCharacter, diagnostic.DiagnosticId);
+            Assert.Equal($"Invalid character in input '{text}'.", diagnostic.Message);
         }
 
         [Fact]
@@ -42,7 +47,7 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.WhitespaceTrivia, trivia.Kind);
             Assert.True(trivia.IsTerminated());
-            Assert.Equal(0, trivia.Diagnostics.Length);
+            Assert.Empty(trivia.Diagnostics);
         }
 
         [Theory]
@@ -56,7 +61,7 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.EndOfLineTrivia, trivia.Kind);
             Assert.True(trivia.IsTerminated());
-            Assert.Equal(0, trivia.Diagnostics.Length);
+            Assert.Empty(trivia.Diagnostics);
         }
 
         [Fact]
@@ -71,13 +76,13 @@ namespace NQuery.Tests.Syntax
             Assert.Equal("// test", comment.Text);
             Assert.Equal(SyntaxKind.SingleLineCommentTrivia, comment.Kind);
             Assert.True(comment.IsTerminated());
-            Assert.Equal(0, comment.Diagnostics.Length);
+            Assert.Empty(comment.Diagnostics);
 
             var lineBreak = token.LeadingTrivia[1];
             Assert.Equal(Environment.NewLine, lineBreak.Text);
             Assert.Equal(SyntaxKind.EndOfLineTrivia, lineBreak.Kind);
             Assert.True(lineBreak.IsTerminated());
-            Assert.Equal(0, lineBreak.Diagnostics.Length);
+            Assert.Empty(lineBreak.Diagnostics);
         }
 
         [Fact]
@@ -92,19 +97,19 @@ namespace NQuery.Tests.Syntax
             Assert.Equal("-- test", comment.Text);
             Assert.Equal(SyntaxKind.SingleLineCommentTrivia, comment.Kind);
             Assert.True(comment.IsTerminated());
-            Assert.Equal(0, comment.Diagnostics.Length);
+            Assert.Empty(comment.Diagnostics);
 
             var lineBreak = token.LeadingTrivia[1];
             Assert.Equal(Environment.NewLine, lineBreak.Text);
             Assert.Equal(SyntaxKind.EndOfLineTrivia, lineBreak.Kind);
             Assert.True(lineBreak.IsTerminated());
-            Assert.Equal(0, lineBreak.Diagnostics.Length);
+            Assert.Empty(lineBreak.Diagnostics);
         }
 
         [Fact]
         public void Lexer_Lex_Trivia_Comment_SingleLine_WithoutEndOfLine()
         {
-            var text = "-- test";
+            const string text = "-- test";
             var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(SyntaxKind.EndOfFileToken, token.Kind);
@@ -113,7 +118,7 @@ namespace NQuery.Tests.Syntax
             Assert.Equal("-- test", comment.Text);
             Assert.Equal(SyntaxKind.SingleLineCommentTrivia, comment.Kind);
             Assert.True(comment.IsTerminated());
-            Assert.Equal(0, comment.Diagnostics.Length);
+            Assert.Empty(comment.Diagnostics);
         }
 
         [Fact]
@@ -125,7 +130,7 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
             Assert.True(trivia.IsTerminated());
-            Assert.Equal(0, trivia.Diagnostics.Length);
+            Assert.Empty(trivia.Diagnostics);
         }
 
         [Fact]
@@ -137,9 +142,10 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
             Assert.False(trivia.IsTerminated());
-            Assert.Equal(1, trivia.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(trivia.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedComment, diagnostic.DiagnosticId);
+            Assert.Equal("Comment is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -151,9 +157,10 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, trivia.Text);
             Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
             Assert.False(trivia.IsTerminated());
-            Assert.Equal(1, trivia.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedComment, trivia.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Comment is not properly terminated.", trivia.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(trivia.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedComment, diagnostic.DiagnosticId);
+            Assert.Equal("Comment is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -228,8 +235,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(identifierText, token.Value);
             Assert.Equal(identifierText, token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -242,8 +250,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("]test", token.Value);
             Assert.Equal("]test", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -256,8 +265,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("te]st", token.Value);
             Assert.Equal("te]st", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -270,8 +280,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("test]", token.Value);
             Assert.Equal("test]", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -282,10 +293,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Parenthesized identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -296,10 +309,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Parenthesized identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -310,10 +325,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Parenthesized identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedParenthesizedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Parenthesized identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -339,8 +356,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
             Assert.Equal(identifierText, token.Value);
             Assert.Equal(identifierText, token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -353,8 +371,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal(@"""test", token.Value);
             Assert.Equal(@"""test", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -367,8 +386,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal(@"te""st", token.Value);
             Assert.Equal(@"te""st", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -381,8 +401,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal(@"test""", token.Value);
             Assert.Equal(@"test""", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -393,10 +414,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Quoted identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -407,10 +430,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Quoted identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -421,10 +446,12 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Quoted identifier is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, diagnostic.DiagnosticId);
+            Assert.Equal("Quoted identifier is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
@@ -437,8 +464,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("lorem ipsum", token.Value);
             Assert.Equal("lorem ipsum", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -451,8 +479,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("'test", token.Value);
             Assert.Equal("'test", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -465,8 +494,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("te'st", token.Value);
             Assert.Equal("te'st", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -479,8 +509,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(text, token.Text);
             Assert.Equal("test'", token.Value);
             Assert.Equal("test'", token.ValueText);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -491,14 +522,15 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
             Assert.Equal("aaa", token.Value);
             Assert.Equal("aaa", token.ValueText);
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("String is not properly terminated.", token.Diagnostics[0].Message);
-            Assert.Equal(0, token.Diagnostics[0].Span.Start);
-            Assert.Equal(2, token.Diagnostics[0].Span.End);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedString, diagnostic.DiagnosticId);
+            Assert.Equal("String is not properly terminated.", diagnostic.Message);
+            Assert.Equal(new TextSpan(0, 2), diagnostic.Span);
         }
 
         [Fact]
@@ -509,12 +541,13 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("String is not properly terminated.", token.Diagnostics[0].Message);
-            Assert.Equal(0, token.Diagnostics[0].Span.Start);
-            Assert.Equal(1, token.Diagnostics[0].Span.End);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedString, diagnostic.DiagnosticId);
+            Assert.Equal("String is not properly terminated.", diagnostic.Message);
+            Assert.Equal(new TextSpan(0, 1), diagnostic.Span);
         }
 
         [Fact]
@@ -525,34 +558,41 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.StringLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedString, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("String is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedString, diagnostic.DiagnosticId);
+            Assert.Equal("String is not properly terminated.", diagnostic.Message);
         }
 
         [Fact]
         public void Lexer_Lex_Literal_DateTime()
         {
-            const string dateSource = "#03.14.1987#";
-            var date = new DateTime(1987, 3, 14);
+            const string text = "#03.14.1987#";
+            var token = SyntaxFacts.ParseToken(text);
 
-            var token = SyntaxFacts.ParseToken(dateSource);
-
-            Assert.Equal(dateSource, token.Text);
+            Assert.Equal(text, token.Text);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
-            Assert.Equal(date, token.Value);
+            Assert.Equal(new DateTime(1987, 3, 14), token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
         public void Lexer_Lex_Literal_DateTime_IfInvalid()
         {
-            const string invalidDate = "#13.13.1212#";
-            var token = SyntaxFacts.ParseToken(invalidDate);
+            const string text = "#13.13.1212#";
+            var token = SyntaxFacts.ParseToken(text);
 
-            Assert.Equal(invalidDate, token.Text);
+            Assert.Equal(text, token.Text);
+            Assert.False(token.IsMissing);
             Assert.True(token.IsTerminated());
             Assert.IsType<DateTime>(token.Value);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.InvalidDate, diagnostic.DiagnosticId);
+            Assert.Equal("'13.13.1212' is not a valid date.", diagnostic.Message);
         }
 
         [Fact]
@@ -563,11 +603,14 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.DateLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
             Assert.Equal(new DateTime(1900, 12, 4), token.Value);
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Date is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.UnterminatedDate, diagnostic.DiagnosticId);
+            Assert.Equal("Date is not properly terminated.", diagnostic.Message);
+            Assert.Equal(new TextSpan(0, 2), diagnostic.Span);
         }
 
         [Fact]
@@ -578,10 +621,20 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.DateLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
             Assert.False(token.IsTerminated());
+
             Assert.Equal(2, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.UnterminatedDate, token.Diagnostics[0].DiagnosticId);
-            Assert.Equal("Date is not properly terminated.", token.Diagnostics[0].Message);
+
+            var diagnostic1 = token.Diagnostics[0];
+            Assert.Equal(DiagnosticId.UnterminatedDate, diagnostic1.DiagnosticId);
+            Assert.Equal("Date is not properly terminated.", diagnostic1.Message);
+            Assert.Equal(new TextSpan(0, 1), diagnostic1.Span);
+
+            var diagnostic2 = token.Diagnostics[1];
+            Assert.Equal(DiagnosticId.InvalidDate, diagnostic2.DiagnosticId);
+            Assert.Equal("'' is not a valid date.", diagnostic2.Message);
+            Assert.Equal(new TextSpan(0, 1), diagnostic2.Span);
         }
 
         [Fact]
@@ -593,9 +646,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(value, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -606,9 +661,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(10, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -619,10 +676,14 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.InvalidBinary, token.Diagnostics[0].DiagnosticId);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(0, token.Value);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.InvalidBinary, diagnostic.DiagnosticId);
+            Assert.Equal("'1234' is not a valid binary number.", diagnostic.Message);
         }
 
         [Fact]
@@ -633,9 +694,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(5349, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -646,10 +709,14 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.InvalidOctal, token.Diagnostics[0].DiagnosticId);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(0, token.Value);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.InvalidOctal, diagnostic.DiagnosticId);
+            Assert.Equal("'78' is not a valid octal number.", diagnostic.Message);
         }
 
         [Fact]
@@ -660,9 +727,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(2748, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -673,10 +742,14 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(1, token.Diagnostics.Length);
-            Assert.Equal(DiagnosticId.InvalidHex, token.Diagnostics[0].DiagnosticId);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
             Assert.Equal(0, token.Value);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.InvalidHex, diagnostic.DiagnosticId);
+            Assert.Equal("'0FG' is not a valid hex number.", diagnostic.Message);
         }
 
         [Fact]
@@ -685,27 +758,32 @@ namespace NQuery.Tests.Syntax
             const ulong value = ulong.MaxValue;
             var text = value.ToString();
             var token = SyntaxFacts.ParseToken(text);
-            var diagnostics = token.Diagnostics;
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<int>(token.Value);
-            Assert.Equal(1, diagnostics.Length);
-            Assert.Equal(DiagnosticId.NumberTooLarge, diagnostics[0].DiagnosticId);
+
+            var diagnostic = Assert.Single(token.Diagnostics);
+            Assert.Equal(DiagnosticId.NumberTooLarge, diagnostic.DiagnosticId);
+            Assert.Equal($"The number '{value}' is too large.", diagnostic.Message);
         }
 
         [Fact]
         public void Lexer_Lex_Literal_Int64_WhenInDecimal()
         {
-            var value = (long)int.MaxValue + 1;
+            const long value = (long)int.MaxValue + 1;
             var text = value.ToString();
             var token = SyntaxFacts.ParseToken(text);
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<long>(token.Value);
             Assert.Equal(value, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -716,9 +794,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<long>(token.Value);
             Assert.Equal(2863311530L, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -729,9 +809,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<long>(token.Value);
             Assert.Equal(718046312823L, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -742,9 +824,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<long>(token.Value);
             Assert.Equal(68719476735L, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -755,9 +839,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
             Assert.Equal(1.0, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -768,9 +854,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
             Assert.Equal(0.0, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -781,9 +869,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
             Assert.Equal(1e4, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -794,9 +884,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
             Assert.Equal(1e-4, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -807,9 +899,11 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
             Assert.Equal(1e+4, token.Value);
+            Assert.Empty(token.Diagnostics);
         }
 
         [Fact]
@@ -821,9 +915,13 @@ namespace NQuery.Tests.Syntax
 
             Assert.Equal(text, token.Text);
             Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
             Assert.IsType<double>(token.Value);
-            Assert.Equal(1, diagnostics.Length);
-            Assert.Equal(DiagnosticId.InvalidReal, diagnostics[0].DiagnosticId);
+
+            var diagnostic = Assert.Single(diagnostics);
+            Assert.Equal(DiagnosticId.InvalidReal, diagnostic.DiagnosticId);
+            Assert.Equal("'123e123e' is not a valid decimal number.", diagnostic.Message);
         }
 
         [Theory]
@@ -859,8 +957,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(kind, token.Kind);
             Assert.Equal(expectedContextualKind, token.ContextualKind);
             Assert.Equal(text, token.Text);
-            Assert.Equal(true, token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
+            Assert.Empty(token.Diagnostics);
         }
 
         [Theory]
@@ -874,7 +973,7 @@ namespace NQuery.Tests.Syntax
         [MemberData("GetContextualKeywordKinds")]
         public void Lexer_Lex_Keyword_Contextual(SyntaxKind kind)
         {
-            LexKeyword(kind, isReserved: false);
+            LexKeyword(kind, isReserved:false);
         }
 
         private static void LexKeyword(SyntaxKind kind, bool isReserved)
@@ -893,8 +992,9 @@ namespace NQuery.Tests.Syntax
             Assert.Equal(expectedKind, token.Kind);
             Assert.Equal(expectedContextualKind, token.ContextualKind);
             Assert.Equal(text, token.Text);
-            Assert.Equal(true, token.IsTerminated());
-            Assert.Equal(0, token.Diagnostics.Length);
+            Assert.False(token.IsMissing);
+            Assert.True(token.IsTerminated());
+            Assert.Empty(token.Diagnostics);
         }
 
         private static SyntaxTrivia LexSingleTrivia(string text)
