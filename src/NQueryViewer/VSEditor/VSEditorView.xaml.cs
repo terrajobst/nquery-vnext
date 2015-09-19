@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring;
+using NQuery.Authoring.VSEditorWpf;
 using NQuery.Authoring.VSEditorWpf.Selection;
 using NQuery.Text;
 
@@ -59,6 +60,11 @@ namespace NQueryViewer.VSEditor
         {
             var element = _textViewHost.TextView.VisualElement;
             element.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => element.Focus()));
+        }
+
+        public override DocumentView GetDocumentView()
+        {
+            return _textViewHost.TextView.GetDocumentView();
         }
 
         private int GetCaretPosition()

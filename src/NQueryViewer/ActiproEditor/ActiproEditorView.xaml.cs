@@ -84,6 +84,11 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.ActiveView.Focus();
         }
 
+        public override DocumentView GetDocumentView()
+        {
+            return _syntaxEditor.GetDocumentView();
+        }
+
         public override Workspace Workspace
         {
             get { return _workspace; }

@@ -14,6 +14,7 @@ namespace NQueryViewer.Editor
         Workspace Workspace { get; }
 
         void Focus();
+        DocumentView GetDocumentView();
 
         event EventHandler CaretPositionChanged;
         event EventHandler SelectionChanged;

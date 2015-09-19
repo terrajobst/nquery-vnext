@@ -27,6 +27,11 @@ namespace NQueryViewer.Editor
         {
         }
 
+        public virtual DocumentView GetDocumentView()
+        {
+            return null;
+        }
+
         protected virtual void OnCaretPositionChanged()
         {
             var handler = CaretPositionChanged;
