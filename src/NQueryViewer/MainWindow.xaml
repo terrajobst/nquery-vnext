@@ -13,50 +13,51 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="_File">
-                <MenuItem Header="_Exit"
-                          Click="MenuItem_File_Exist_OnClick"/>
+            <MenuItem x:Name="FileMenuItem"
+                      Header="_File">
+                <Separator x:Name="FileNewSeperator" />
+                <MenuItem x:Name="FileExitMenuItem"
+                          Header="_Exit"
+                          Click="FileExitMenuItem_OnClick" />
+            </MenuItem>
+            <MenuItem Header="_Query">
+                <MenuItem x:Name="QueryExecuteMenuItem"
+                          Header="_Execute"
+                          InputGestureText="F5"
+                          Click="QueryExecuteMenuItem_OnClick" />
+                <MenuItem x:Name="QueryExplainMenuItem"
+                          Header="Ex_plain"
+                          InputGestureText="Ctrl+L"
+                          Click="QueryExplainMenuItem_OnClick" />
             </MenuItem>
             <MenuItem Header="_Tools">
-                <MenuItem Header="Generate _Parser Tests to clipboard"
-                          Click="MenuItem_Tools_GenerateParserTestToClipBoard_OnClick"/>
+                <MenuItem x:Name="ToolsViewSyntaxMenuItem"
+                          Header="View Syntax"
+                          Click="ToolsViewSyntaxMenuItem_OnClick"/>
+                <MenuItem x:Name="ToolsGenerateParserTestMenuItem"
+                          Header="Generate _Parser Tests to clipboard"
+                          Click="ToolsGenerateParserTestMenuItem_OnClick" />
             </MenuItem>
         </Menu>
-        <Grid Grid.Row="1"
-              Background="LemonChiffon">
-            <StackPanel 
-                        Margin="2"
-                        Orientation="Horizontal"
-                        VerticalAlignment="Center">
-                <CheckBox x:Name="FullSpanHighlightingCheckBox"
-                          Content="Highlight Full Span"
-                          Margin="5"
-                          Checked="FullSpanHighlightingCheckBoxChecked"
-                          Unchecked="FullSpanHighlightingCheckBoxChecked" />
-                <Label Content="_Editor: "
-                       Target="{Binding ElementName=EditorFactoryComboBox}" />
-                <ComboBox x:Name="EditorFactoryComboBox"
-                          DisplayMemberPath="DisplayName"
-                          MinWidth="200" />
-            </StackPanel>
-        </Grid>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="3" />
+                <ColumnDefinition x:Name="SyntaxTreeVisualizerColumn"
+                                  Width="1*" />
+                <ColumnDefinition x:Name="SyntaxTreeVisualizerGridSplitterColumn"
+                                  Width="3" />
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <wpf:SyntaxTreeVisualizer x:Name="SyntaxTreeVisualizer"
                                       Grid.Column="0"
-                                      SelectedNodeChanged="SyntaxTreeVisualizerSelectedNodeChanged"/>
-            <GridSplitter Grid.Column="1"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch" />
+                                      SelectedNodeChanged="SyntaxTreeVisualizerSelectedNodeChanged" />
+            <GridSplitter x:Name="SyntaxTreeVisualizerGridSplitter"
+                          Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch" />
             <Grid Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="3*" />
@@ -71,12 +72,13 @@
                               VerticalAlignment="Stretch" />
                 <TabControl x:Name="BottomToolWindowTabControl"
                     Grid.Row="2">
-                    <TabItem Header="Error List">
+                    <TabItem x:Name="ErrorListTabItem"
+                             Header="Error List">
                         <wpf:DiagnosticGrid x:Name="DiagnosticGrid"
-                                            Grid.Row="2"
                                             MouseDoubleClick="DiagnosticGridMouseDoubleClick" />
                     </TabItem>
-                    <TabItem Header="Execution Plan">
+                    <TabItem x:Name="ExecutionPlanTabItem"
+                             Header="Execution Plan">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -123,7 +125,7 @@
                 </TabControl>
             </Grid>
         </Grid>
-        <StatusBar Grid.Row="3">
+        <StatusBar Grid.Row="2">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>

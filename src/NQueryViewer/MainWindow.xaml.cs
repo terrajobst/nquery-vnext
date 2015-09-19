@@ -44,10 +44,14 @@ namespace NQueryViewer
         public void OnImportsSatisfied()
         {
             foreach (var editorViewFactory in EditorViewFactories.OrderBy(e => e.Priority))
-                EditorFactoryComboBox.Items.Add(editorViewFactory);
+            {
+                var menuItem = new MenuItem();
+                menuItem.Header = $"New {editorViewFactory.DisplayName}";
+                menuItem.Tag = editorViewFactory;
+                menuItem.Click += delegate { NewEditor(editorViewFactory); };
 
-            if (EditorFactoryComboBox.Items.Count > 0)
-                EditorFactoryComboBox.SelectedIndex = 0;
+                FileMenuItem.Items.Insert(FileMenuItem.Items.IndexOf(FileNewSeperator), menuItem);
+            }
 
             NewEditor();
             UpdateTree();
@@ -55,11 +59,13 @@ namespace NQueryViewer
 
         private void NewEditor()
         {
-            var editorViewFactory = EditorFactoryComboBox.SelectedItem as IEditorViewFactory;
-            if (editorViewFactory == null)
-                return;
+            var editorViewFactory = EditorViewFactories.OrderBy(e => e.Priority).FirstOrDefault();
+            NewEditor(editorViewFactory);
+        }
 
-            var editorView = editorViewFactory.CreateEditorView();
+        private void NewEditor(IEditorViewFactory editorViewFactory)
+        {
+            var editorView = editorViewFactory?.CreateEditorView();
             if (editorView == null)
                 return;
 
@@ -91,7 +97,7 @@ namespace NQueryViewer
             DocumentTabControl.Items.RemoveAt(DocumentTabControl.SelectedIndex);
         }
 
-        private async void RunQuery()
+        private async void ExecuteQuery()
         {
             var editorView = CurrentEditorView;
             if (editorView == null)
@@ -107,7 +113,10 @@ namespace NQueryViewer
             var semanticModelDiagnostcics = semanticModel.GetDiagnostics();
             var diagnostics = syntaxDiagnostics.Concat(semanticModelDiagnostcics);
             if (diagnostics.Any())
+            {
+                BottomToolWindowTabControl.SelectedItem = ErrorListTabItem;
                 return;
+            }
 
             var query = semanticModel.Compilation.Compile();
 
@@ -126,8 +135,28 @@ namespace NQueryViewer
             ExecutionTimeTextBlock.Text = $"Completed in {elapsed}";
         }
 
+        private void ExplainQuery()
+        {
+            BottomToolWindowTabControl.SelectedItem = ExecutionPlanTabItem;
+        }
+
         private async void UpdateTree()
         {
+            var isVisible = ToolsViewSyntaxMenuItem.IsChecked;
+
+            var visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            SyntaxTreeVisualizer.Visibility = visibility;
+            SyntaxTreeVisualizerGridSplitter.Visibility = visibility;
+
+            SyntaxTreeVisualizerColumn.Width = isVisible ? new GridLength(1, GridUnitType.Star) : new GridLength();
+            SyntaxTreeVisualizerGridSplitterColumn.Width = isVisible ? new GridLength(3) : new GridLength();
+
+            if (!isVisible)
+            {
+                SyntaxTreeVisualizer.SyntaxTree = SyntaxTree.Empty;
+                return;
+            }
+
             SyntaxTreeVisualizer.SyntaxTree = CurrentEditorView == null
                 ? null
                 : await CurrentEditorView.Workspace.CurrentDocument.GetSyntaxTreeAsync();
@@ -136,53 +165,21 @@ namespace NQueryViewer
 
         private void UpdateTreeExpansion()
         {
+            if (!ToolsViewSyntaxMenuItem.IsChecked)
+                return;
+
             if (CurrentEditorView != null)
                 SyntaxTreeVisualizer.SelectNode(CurrentEditorView.CaretPosition);
         }
 
         private void UpdateSelectedText()
         {
-            var span = FullSpanHighlightingCheckBox.IsChecked == true
-                              ? SyntaxTreeVisualizer.SelectedFullSpan
-                              : SyntaxTreeVisualizer.SelectedSpan;
+            var span = SyntaxTreeVisualizer.SelectedSpan;
             if (span == null)
                 return;
 
             if (CurrentEditorView != null)
                 CurrentEditorView.Selection = span.Value;
-        }
-
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            if (e.Key == Key.N && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-            {
-                NewEditor();
-                e.Handled = true;
-            }
-            else if (e.Key == Key.F4 && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
-            {
-                CloseEditor();
-                e.Handled = true;
-            }
-            else if (e.Key == Key.F5 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
-            {
-                RunQuery();
-                e.Handled = true;
-            }
-
-            base.OnPreviewKeyDown(e);
-        }
-
-        private void FullSpanHighlightingCheckBoxChecked(object sender, RoutedEventArgs e)
-        {
-            UpdateSelectedText();
-        }
-
-        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
-        {
-            UpdateTree();
-            UpdateDiagnostics();
-            UpdateShowPlan();
         }
 
         private async void UpdateDiagnostics()
@@ -196,18 +193,18 @@ namespace NQueryViewer
                 var document = CurrentEditorView.Workspace.CurrentDocument;
                 var semanticModel = await document.GetSemanticModelAsync();
                 var syntaxTree = semanticModel == null
-                                     ? await document.GetSyntaxTreeAsync()
-                                     : semanticModel.Compilation.SyntaxTree;
+                    ? await document.GetSyntaxTreeAsync()
+                    : semanticModel.Compilation.SyntaxTree;
                 var syntaxTreeDiagnostics = syntaxTree == null
-                                                ? Enumerable.Empty<Diagnostic>()
-                                                : syntaxTree.GetDiagnostics();
+                    ? Enumerable.Empty<Diagnostic>()
+                    : syntaxTree.GetDiagnostics();
                 var semanticModelDiagnostics = semanticModel == null
-                                                   ? Enumerable.Empty<Diagnostic>()
-                                                   : semanticModel.GetDiagnostics();
+                    ? Enumerable.Empty<Diagnostic>()
+                    : semanticModel.GetDiagnostics();
                 var diagnostics = syntaxTreeDiagnostics.Concat(semanticModelDiagnostics);
                 var text = syntaxTree == null
-                                     ? null
-                                     : syntaxTree.Text;
+                    ? null
+                    : syntaxTree.Text;
                 DiagnosticGrid.UpdateGrid(diagnostics, text);
             }
         }
@@ -230,6 +227,70 @@ namespace NQueryViewer
             }
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            if (e.Key == Key.N && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                NewEditor();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F4 && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                CloseEditor();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F5 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
+            {
+                ExecuteQuery();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.L && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                ExplainQuery();
+                e.Handled = true;
+            }
+
+            base.OnPreviewKeyDown(e);
+        }
+
+        private void FileExitMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void QueryExecuteMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            ExecuteQuery();
+        }
+
+        private void QueryExplainMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            ExplainQuery();
+        }
+
+        private void ToolsViewSyntaxMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            ToolsViewSyntaxMenuItem.IsChecked = !ToolsViewSyntaxMenuItem.IsChecked;
+
+            UpdateTree();
+        }
+
+        private async void ToolsGenerateParserTestMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            var documentView = CurrentEditorView?.GetDocumentView();
+            if (documentView == null)
+                return;
+
+            var test = await documentView.GenerateParserTest();
+            Clipboard.SetText(test);
+        }
+
+        private void SyntaxTreeVisualizerSelectedNodeChanged(object sender, EventArgs e)
+        {
+            if (SyntaxTreeVisualizer.IsKeyboardFocusWithin)
+                UpdateSelectedText();
+        }
+
         private void TabControlOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
@@ -247,16 +308,17 @@ namespace NQueryViewer
                                         : Visibility.Collapsed;
         }
 
-        private void SyntaxTreeVisualizerSelectedNodeChanged(object sender, EventArgs e)
-        {
-            if (SyntaxTreeVisualizer.IsKeyboardFocusWithin)
-                UpdateSelectedText();
-        }
-
         private void EditorViewOnCaretPositionChanged(object sender, EventArgs e)
         {
             if (CurrentEditorView != null && CurrentEditorView.Element.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
+        }
+
+        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+        {
+            UpdateTree();
+            UpdateDiagnostics();
+            UpdateShowPlan();
         }
 
         private void DiagnosticGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -291,22 +353,6 @@ namespace NQueryViewer
                                      }
                              };
             e.Column.Header = header;
-        }
-
-        private void MenuItem_File_Exist_OnClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private async void MenuItem_Tools_GenerateParserTestToClipBoard_OnClick(object sender, RoutedEventArgs e)
-        {
-            var documentView = CurrentEditorView?.GetDocumentView();
-
-            if (documentView == null)
-                return;
-
-            var test = await documentView.GenerateParserTest();
-            Clipboard.SetText(test);
         }
     }
 }
