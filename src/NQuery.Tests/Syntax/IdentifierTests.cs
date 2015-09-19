@@ -11,7 +11,7 @@ namespace NQuery.Tests.Syntax
         {
             var token = SyntaxFacts.ParseToken("Test");
 
-            Assert.False(token.IsQuotedIdentifier());
+            Assert.False(token.IsParenthesizedIdentifier());
             Assert.False(token.IsQuotedIdentifier());
             Assert.True(token.IsTerminated());
             Assert.True(token.Matches("Test"));
