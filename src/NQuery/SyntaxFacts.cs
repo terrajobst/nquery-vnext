@@ -701,9 +701,9 @@ namespace NQuery
             yield return SyntaxKind.NotKeyword;
         }
 
-        internal static SyntaxKind GetUnaryOperatorExpression(SyntaxKind token)
+        internal static SyntaxKind GetUnaryOperatorExpression(SyntaxKind tokenKind)
         {
-            switch (token)
+            switch (tokenKind)
             {
                 case SyntaxKind.BitwiseNotToken:
                     return SyntaxKind.ComplementExpression;
@@ -769,9 +769,10 @@ namespace NQuery
             yield return SyntaxKind.OrKeyword;
         }
 
-        internal static SyntaxKind GetBinaryOperatorExpression(SyntaxKind token)
         {
-            switch (token)
+        internal static SyntaxKind GetBinaryOperatorExpression(SyntaxKind tokenKind)
+        {
+            switch (tokenKind)
             {
                 case SyntaxKind.AmpersandToken:
                     return SyntaxKind.BitwiseAndExpression;
@@ -854,9 +855,9 @@ namespace NQuery
             }
         }
 
-        internal static int GetBinaryOperatorPrecedence(SyntaxKind binaryExpression)
+        internal static int GetBinaryOperatorPrecedence(SyntaxKind binaryExpressionKind)
         {
-            switch (binaryExpression)
+            switch (binaryExpressionKind)
             {
                 case SyntaxKind.BitwiseAndExpression:
                     return 5;
@@ -938,9 +939,9 @@ namespace NQuery
             }
         }
 
-        internal static int GetTernaryOperatorPrecedence(SyntaxKind ternaryExpression)
+        internal static int GetTernaryOperatorPrecedence(SyntaxKind ternaryExpressionKind)
         {
-            switch (ternaryExpression)
+            switch (ternaryExpressionKind)
             {
                 case SyntaxKind.BetweenExpression:
                     return 4;
@@ -1114,16 +1115,16 @@ namespace NQuery
             }
         }
 
-        public static bool IsValidAllAnyOperator(this SyntaxKind binaryExpression)
+        public static bool IsValidAllAnyOperator(this SyntaxKind binaryExpressionKind)
         {
-            return binaryExpression == SyntaxKind.EqualExpression ||
-                   binaryExpression == SyntaxKind.NotEqualExpression ||
-                   binaryExpression == SyntaxKind.NotLessExpression ||
-                   binaryExpression == SyntaxKind.NotGreaterExpression ||
-                   binaryExpression == SyntaxKind.LessExpression ||
-                   binaryExpression == SyntaxKind.LessOrEqualExpression ||
-                   binaryExpression == SyntaxKind.GreaterExpression ||
-                   binaryExpression == SyntaxKind.GreaterOrEqualExpression;
+            return binaryExpressionKind == SyntaxKind.EqualExpression ||
+                   binaryExpressionKind == SyntaxKind.NotEqualExpression ||
+                   binaryExpressionKind == SyntaxKind.NotLessExpression ||
+                   binaryExpressionKind == SyntaxKind.NotGreaterExpression ||
+                   binaryExpressionKind == SyntaxKind.LessExpression ||
+                   binaryExpressionKind == SyntaxKind.LessOrEqualExpression ||
+                   binaryExpressionKind == SyntaxKind.GreaterExpression ||
+                   binaryExpressionKind == SyntaxKind.GreaterOrEqualExpression;
         }
 
         public static bool CanHaveLeadingNot(this SyntaxKind syntaxKind)
