@@ -149,6 +149,38 @@ namespace NQuery
                     return DownCast;
             }
 
+            // TODO: The implementation of user defined conversions (UDC) is incomplete.
+            //
+            //       For instance, the following is considered valid in C#:
+            //
+            //              class SomeType
+            //              {
+            //                  public static implicit operator sbyte (SomeType argument)
+            //                  {
+            //                      return 42;
+            //                  }
+            //              }
+            //
+            //              class Program
+            //              {
+            //                  static void Main()
+            //                  {
+            //                      float x = new SomeType();
+            //                      var y = - new SomeType(); // Uses unary minus on int
+            //                  }
+            //              }
+            //
+            //       In other words, the conversions SomeType -> float and SomeType -> int
+            //       are considered valid because SomeType has a UDC from SomeType -> sbyte.
+            //
+            //       Also, C# considers UDC that are on base types.
+            //
+            //       Implementing this isn't that easy because we also need to apply the
+            //       usual betterness rules in order to find the best UDC among a set of
+            //       candidates. For instance, if we'd add an implicit conversion to
+            //       SomeType -> int, that's the one it would use instead of the one
+            //       that returns an sbyte.
+
             var implicitConversions = GetConversionMethods(sourceType, targetType, true);
             if (implicitConversions.Length > 0)
                 return ImplicitViaConversionMethod(implicitConversions);
