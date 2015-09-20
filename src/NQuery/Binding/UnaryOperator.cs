@@ -45,16 +45,20 @@ namespace NQuery.Binding
 
         internal static OverloadResolutionResult<UnaryOperatorSignature> Resolve(UnaryOperatorKind kind, Type type)
         {
-            var methodName = GetMethodName(kind);
-            var signatures = (from m in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
-                              where IsValidOperator(m, methodName)
-                              select new UnaryOperatorSignature(kind, m)).ToImmutableArray();
-
-            if (signatures.Length > 0)
-                return GetOperator(signatures, type);
+            if (!TypeBuiltIn(type))
+            {
+                var userDefinedSignatures = GetUserDefinedSignatures(kind, type);
+                if (userDefinedSignatures.Any())
+                    return OverloadResolution.Perform(userDefinedSignatures, type);
+            }
 
             var builtInSignatures = GetBuiltInSignatures(kind);
-            return GetOperator(builtInSignatures, type);
+            return OverloadResolution.Perform(builtInSignatures, type);
+        }
+
+        private static bool TypeBuiltIn(Type type)
+        {
+            return type.GetKnownType() != null;
         }
 
         private static IEnumerable<UnaryOperatorSignature> GetBuiltInSignatures(UnaryOperatorKind kind)
@@ -74,23 +78,15 @@ namespace NQuery.Binding
             }
         }
 
-        private static OverloadResolutionResult<UnaryOperatorSignature> GetOperator(IEnumerable<UnaryOperatorSignature> signatures, Type operandType)
+        private static ImmutableArray<UnaryOperatorSignature> GetUserDefinedSignatures(UnaryOperatorKind kind, Type type)
         {
-            return OverloadResolution.Perform(signatures, operandType);
+            var methodName = GetOperatorMethodName(kind);
+            return (from m in GetOperatorMethods(methodName, type)
+                    where HasOperatorSignature(m)
+                    select new UnaryOperatorSignature(kind, m)).ToImmutableArray();
         }
 
-        private static bool IsValidOperator(MethodInfo methodInfo, string methodName)
-        {
-            if (methodInfo.ReturnType == typeof(void))
-                return false;
-
-            if (methodInfo.GetParameters().Length != 1)
-                return false;
-
-            return methodInfo.Name.Equals(methodName, StringComparison.Ordinal);
-        }
-
-        private static string GetMethodName(UnaryOperatorKind kind)
+        private static string GetOperatorMethodName(UnaryOperatorKind kind)
         {
             switch (kind)
             {
@@ -105,6 +101,18 @@ namespace NQuery.Binding
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind));
             }
+        }
+
+        private static IEnumerable<MethodInfo> GetOperatorMethods(string methodName, Type type)
+        {
+            return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                       .Where(m => string.Equals(m.Name, methodName, StringComparison.Ordinal));
+        }
+
+        private static bool HasOperatorSignature(MethodInfo methodInfo)
+        {
+            return methodInfo.ReturnType != typeof (void) &&
+                   methodInfo.GetParameters().Length == 1;
         }
     }
 }

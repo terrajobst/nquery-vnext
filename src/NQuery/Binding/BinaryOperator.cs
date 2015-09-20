@@ -245,33 +245,21 @@ namespace NQuery.Binding
 
         private static OverloadResolutionResult<BinaryOperatorSignature> ResolveOverloads(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
         {
-            var shouldConsiderUserDefinedOperators = leftOperandType.GetKnownType() == null ||
-                                                     rightOperandType.GetKnownType() == null;
-            if (shouldConsiderUserDefinedOperators)
+            if (!BothTypesBuiltIn(leftOperandType, rightOperandType))
             {
-                var methodName = GetMethodName(kind);
-                var signatures = (from m in GetMethods(leftOperandType, rightOperandType)
-                                  where IsValidOperator(m, methodName)
-                                  select new BinaryOperatorSignature(kind, m)).ToImmutableArray();
-
-                if (signatures.Length > 0)
-                    return OverloadResolution.Perform(signatures, leftOperandType, rightOperandType);
+                var userDefinedSignatures = GetUserDefinedSignatures(kind, leftOperandType, rightOperandType);
+                if (userDefinedSignatures.Any())
+                    return OverloadResolution.Perform(userDefinedSignatures, leftOperandType, rightOperandType);
             }
 
             var builtInSignatures = GetBuiltInSignatures(kind);
             return OverloadResolution.Perform(builtInSignatures, leftOperandType, rightOperandType);
         }
 
-        private static IEnumerable<MethodInfo> GetMethods(Type leftType, Type rightType)
+        private static bool BothTypesBuiltIn(Type leftOperandType, Type rightOperandType)
         {
-            return leftType == rightType
-                       ? GetMethods(leftType)
-                       : GetMethods(leftType).Concat(GetMethods(rightType));
-        }
-
-        private static IEnumerable<MethodInfo> GetMethods(Type leftType)
-        {
-            return leftType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            return leftOperandType.GetKnownType() != null &&
+                   rightOperandType.GetKnownType() != null;
         }
 
         private static IEnumerable<BinaryOperatorSignature> GetBuiltInSignatures(BinaryOperatorKind kind)
@@ -327,18 +315,15 @@ namespace NQuery.Binding
             }
         }
 
-        private static bool IsValidOperator(MethodInfo methodInfo, string methodName)
+        private static ImmutableArray<BinaryOperatorSignature> GetUserDefinedSignatures(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
         {
-            if (methodInfo.ReturnType == typeof(void))
-                return false;
-
-            if (methodInfo.GetParameters().Length != 2)
-                return false;
-
-            return methodInfo.Name.Equals(methodName, StringComparison.Ordinal);
+            var methodName = GetOperatorMethodName(kind);
+            return (from m in GetOperatorMethods(methodName, leftOperandType, rightOperandType)
+                    where HasOperatorSignature(m)
+                    select new BinaryOperatorSignature(kind, m)).ToImmutableArray();
         }
 
-        private static string GetMethodName(BinaryOperatorKind kind)
+        private static string GetOperatorMethodName(BinaryOperatorKind kind)
         {
             switch (kind)
             {
@@ -389,6 +374,25 @@ namespace NQuery.Binding
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind));
             }
+        }
+
+        private static IEnumerable<MethodInfo> GetOperatorMethods(string methodName, Type type, Type rightType)
+        {
+            return type == rightType
+                       ? GetOperatorMethods(methodName, type)
+                       : GetOperatorMethods(methodName, type).Concat(GetOperatorMethods(methodName, rightType));
+        }
+
+        private static IEnumerable<MethodInfo> GetOperatorMethods(string methodName, Type type)
+        {
+            return type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                       .Where(m => string.Equals(m.Name, methodName, StringComparison.Ordinal));
+        }
+
+        private static bool HasOperatorSignature(MethodInfo methodInfo)
+        {
+            return methodInfo.ReturnType != typeof (void) &&
+                   methodInfo.GetParameters().Length == 2;
         }
     }
 }
