@@ -11,7 +11,10 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, BinaryExpressionSyntax node)
         {
-            return node.OperatorToken.Span.ContainsOrTouches(position)
+            var operatorToken = node.OperatorToken;
+            var canSwap = operatorToken.Span.ContainsOrTouches(position) &&
+                          SyntaxFacts.CanSwapBinaryExpressionTokenKind(operatorToken.Kind);
+            return canSwap
                     ? new[] {new FlipBinaryOperatorSidesCodeAction(node)}
                     : Enumerable.Empty<ICodeAction>();
         }
@@ -19,20 +22,32 @@ namespace NQuery.Authoring.CodeActions.Refactorings
         private sealed class FlipBinaryOperatorSidesCodeAction : CodeAction
         {
             private readonly BinaryExpressionSyntax _node;
+            private readonly string _description;
+            private readonly string _swappedOperatorText;
 
             public FlipBinaryOperatorSidesCodeAction(BinaryExpressionSyntax node)
                 : base(node.SyntaxTree)
             {
                 _node = node;
+
+                var operatorKind = _node.OperatorToken.Kind;
+                var swappedOperatorKind = SyntaxFacts.SwapBinaryExpressionTokenKind(operatorKind);
+                var operatorText = operatorKind.GetText();
+                _swappedOperatorText = swappedOperatorKind.GetText();
+
+                _description = operatorText == _swappedOperatorText
+                    ? $"Flip '{operatorText}' operands"
+                    : $"Flip '{operatorText}' operator to '{_swappedOperatorText}'";
             }
 
             public override string Description
             {
-                get { return $"Flip arguments of operator '{_node.OperatorToken.Text}'"; }
+                get { return _description; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
+                var operatorSpan = _node.OperatorToken.Span;
                 var leftSpan = _node.Left.Span;
                 var rightSpan = _node.Right.Span;
 
@@ -41,6 +56,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 var right = text.GetText(rightSpan);
 
                 changeSet.ReplaceText(leftSpan, right);
+                changeSet.ReplaceText(operatorSpan, _swappedOperatorText);
                 changeSet.ReplaceText(rightSpan, left);
             }
         }

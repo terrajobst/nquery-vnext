@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
@@ -14,24 +16,83 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
             return new FlipBinaryOperatorSidesCodeRefactoringProvider();
         }
 
-        [Fact]
-        public void FlipBinaryOperatorSides_SwapsOperators()
+        [Theory]
+        [MemberData("GetBinaryOperatorTokensThatCanBeSwapped", true)]
+        public void FlipBinaryOperatorSides_SwapsOperator_ToSelf(SyntaxKind kind)
         {
-            var query = @"
+            var operatorText = kind.GetText();
+
+            var query = $@"
                 SELECT  *
                 FROM    Employees e
-                WHERE   /* prefix */ e.FirstName /* before */ =| /* after */ 'Andrew' /* suffix */
+                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
             ";
 
-            var fixedQuery = @"
+            var fixedQuery = $@"
                 SELECT  *
                 FROM    Employees e
-                WHERE   /* prefix */ 'Andrew' /* before */ = /* after */ e.FirstName /* suffix */
+                WHERE   /* prefix */ 'Andrew' /* before */ {operatorText} /* after */ e.FirstName /* suffix */
             ";
 
-            var description = "Flip arguments of operator '='";
+            var description = $"Flip '{operatorText}' operands";
 
             AssertFixes(query, fixedQuery, description);
+        }
+
+        [Theory]
+        [MemberData("GetBinaryOperatorTokensThatCanBeSwapped", false)]
+        public void FlipBinaryOperatorSides_SwapsOperator_ToOther(SyntaxKind kind)
+        {
+            var operatorText = kind.GetText();
+            var otherOperatorText = SyntaxFacts.SwapBinaryExpressionTokenKind(kind).GetText();
+
+            var query = $@"
+                SELECT  *
+                FROM    Employees e
+                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
+            ";
+
+            var fixedQuery = $@"
+                SELECT  *
+                FROM    Employees e
+                WHERE   /* prefix */ 'Andrew' /* before */ {otherOperatorText} /* after */ e.FirstName /* suffix */
+            ";
+
+            var description = $"Flip '{operatorText}' operator to '{otherOperatorText}'";
+
+            AssertFixes(query, fixedQuery, description);
+        }
+
+        [Theory]
+        [MemberData("GetBinaryOperatorTokensThatCannotBeSwapped")]
+        public void FlipBinaryOperatorSides_DoesNoTrigger_ForInvalidOperators(SyntaxKind kind)
+        {
+            var operatorText = kind.GetText();
+
+            var query = $@"
+                SELECT  *
+                FROM    Employees e
+                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
+            ";
+
+            AssertDoesNotTrigger(query);
+        }
+
+        public static IEnumerable<object[]> GetBinaryOperatorTokensThatCanBeSwapped(bool self)
+        {
+            return SyntaxFacts.GetBinaryExpressionTokenKinds()
+                              .Where(k => k != SyntaxKind.BarToken) // Causes issues with AnnotatedText
+                              .Where(SyntaxFacts.CanSwapBinaryExpressionTokenKind)
+                              .Where(k => self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) == k ||
+                                          !self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) != k)
+                              .Select(k => new object[] {k});
+        }
+
+        public static IEnumerable<object[]> GetBinaryOperatorTokensThatCannotBeSwapped()
+        {
+            return SyntaxFacts.GetBinaryExpressionTokenKinds()
+                              .Where(k => !SyntaxFacts.CanSwapBinaryExpressionTokenKind(k))
+                              .Select(k => new object[] { k });
         }
     }
 }
