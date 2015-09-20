@@ -74,6 +74,7 @@
     <Compile Include="CodeActions\Refactorings\AddAsDerivedTableCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\CodeFixProvider.cs" />
+    <Compile Include="CodeActions\Refactorings\BetweenCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\ICodeAction.cs" />

@@ -84,6 +84,7 @@
     <Compile Include="CodeActions\Refactorings\AddAsAliasTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsDerivedTableTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddMissingKeywordTests.cs" />
+    <Compile Include="CodeActions\Refactorings\BetweenTests.cs" />
     <Compile Include="CodeActions\Refactorings\ExpandWildcardTests.cs" />
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
     <Compile Include="CodeActions\Refactorings\QualifyColumnTests.cs" />
