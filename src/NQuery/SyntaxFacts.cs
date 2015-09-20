@@ -769,7 +769,66 @@ namespace NQuery
             yield return SyntaxKind.OrKeyword;
         }
 
+        public static bool CanSwapBinaryExpressionTokenKind(SyntaxKind tokenKind)
         {
+            switch (tokenKind)
+            {
+                case SyntaxKind.AmpersandToken:
+                case SyntaxKind.BarToken:
+                case SyntaxKind.CaretToken:
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                case SyntaxKind.AsteriskToken:
+                case SyntaxKind.EqualsToken:
+                case SyntaxKind.LessGreaterToken:
+                case SyntaxKind.ExclamationEqualsToken:
+                case SyntaxKind.AndKeyword:
+                case SyntaxKind.OrKeyword:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessEqualToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterEqualToken:
+                case SyntaxKind.ExclamationLessToken:
+                case SyntaxKind.ExclamationGreaterToken:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public static SyntaxKind SwapBinaryExpressionTokenKind(SyntaxKind tokenKind)
+        {
+            switch (tokenKind)
+            {
+                case SyntaxKind.AmpersandToken:
+                case SyntaxKind.BarToken:
+                case SyntaxKind.CaretToken:
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                case SyntaxKind.AsteriskToken:
+                case SyntaxKind.EqualsToken:
+                case SyntaxKind.LessGreaterToken:
+                case SyntaxKind.ExclamationEqualsToken:
+                case SyntaxKind.AndKeyword:
+                case SyntaxKind.OrKeyword:
+                    return tokenKind;
+                case SyntaxKind.LessToken:
+                    return SyntaxKind.GreaterToken;
+                case SyntaxKind.LessEqualToken:
+                    return SyntaxKind.GreaterEqualToken;
+                case SyntaxKind.GreaterToken:
+                    return SyntaxKind.LessToken;
+                case SyntaxKind.GreaterEqualToken:
+                    return SyntaxKind.LessEqualToken;
+                case SyntaxKind.ExclamationLessToken:
+                    return SyntaxKind.ExclamationGreaterToken;
+                case SyntaxKind.ExclamationGreaterToken:
+                    return SyntaxKind.ExclamationLessToken;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(tokenKind));
+            }
+        }
+
         internal static SyntaxKind GetBinaryOperatorExpression(SyntaxKind tokenKind)
         {
             switch (tokenKind)

@@ -190,6 +190,31 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void SyntaxFacts_Token_SwapBinaryExpressionTokenKind_Cycles()
+        {
+            var validOperators = GetAllKinds().Where(SyntaxFacts.CanSwapBinaryExpressionTokenKind);
+
+            foreach (var tokenKind in validOperators)
+            {
+                var outputKind1 = SyntaxFacts.SwapBinaryExpressionTokenKind(tokenKind);
+                var outputKind2 = SyntaxFacts.SwapBinaryExpressionTokenKind(outputKind1);
+
+                Assert.Equal(tokenKind, outputKind2);
+            }
+        }
+
+        [Fact]
+        public void SyntaxFacts_Token_SwapBinaryExpressionTokenKind_Throws()
+        {
+            var invalidOperators = GetAllKinds().Where(k => !SyntaxFacts.CanSwapBinaryExpressionTokenKind(k));
+
+            foreach (var tokenKind in invalidOperators)
+            {
+                Assert.Throws<ArgumentOutOfRangeException>(() => SyntaxFacts.SwapBinaryExpressionTokenKind(tokenKind));
+            }
+        }
+
+        [Fact]
         public void SyntaxFacts_Literal_IsLiteral_IsTrueForAllKindsNamedLiteralToken()
         {
             foreach (var kind in GetAllKindsNamedLiteralToken())
