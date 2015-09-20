@@ -199,11 +199,11 @@ namespace NQuery
 
             return (from m in methods
                     where m.Name.Equals(methodName, StringComparison.Ordinal) &&
-                          IsConversionMethods(m, sourceType, targetType)
+                          HasConversionSignature(m, sourceType, targetType)
                     select m).ToImmutableArray();
         }
 
-        private static bool IsConversionMethods(MethodInfo methodInfo, Type sourceType, Type targetType)
+        private static bool HasConversionSignature(MethodInfo methodInfo, Type sourceType, Type targetType)
         {
             if (methodInfo.ReturnType != targetType)
                 return false;
