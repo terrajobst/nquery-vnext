@@ -245,15 +245,36 @@ namespace NQuery.Binding
 
         private static OverloadResolutionResult<BinaryOperatorSignature> ResolveOverloads(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
         {
-            if (!BothTypesBuiltIn(leftOperandType, rightOperandType))
+            var builtInSignatures = GetBuiltInSignatures(kind);
+
+            // If both types are built-in, we can simply perform the overload resolution
+            // against the built-in signatures only.
+
+            if (BothTypesBuiltIn(leftOperandType, rightOperandType))
+                return OverloadResolution.Perform(builtInSignatures, leftOperandType, rightOperandType);
+
+            // Otherwise, we need to consider user defined signatures.
+            //
+            // NOTE: We generally want to perform an overload resolution against the unified
+            //       set of both, built-in signatures as well as user defined signatures.
+            //       However, if the type provides an operator that is applicable, we want to
+            //       to hide the built-in operators. In other words, in those cases the user
+            //       defined operators shadows the built-in operators.
+            //       Please note that we don't ask whether the overload resolution found a
+            //       best match -- we just check if it has an applicable operator. This makes
+            //       sure that any any ambiguity errors will not include built-in operators
+            //       in the output.
+
+            var userDefinedSignatures = GetUserDefinedSignatures(kind, leftOperandType, rightOperandType);
+            if (userDefinedSignatures.Any())
             {
-                var userDefinedSignatures = GetUserDefinedSignatures(kind, leftOperandType, rightOperandType);
-                if (userDefinedSignatures.Any())
-                    return OverloadResolution.Perform(userDefinedSignatures, leftOperandType, rightOperandType);
+                var userDefinedResult = OverloadResolution.Perform(userDefinedSignatures, leftOperandType, rightOperandType);
+                if (userDefinedResult.Candidates.Any(c => c.IsApplicable))
+                    return userDefinedResult;
             }
 
-            var builtInSignatures = GetBuiltInSignatures(kind);
-            return OverloadResolution.Perform(builtInSignatures, leftOperandType, rightOperandType);
+            var signatures = builtInSignatures.Concat(userDefinedSignatures);
+            return OverloadResolution.Perform(signatures, leftOperandType, rightOperandType);
         }
 
         private static bool BothTypesBuiltIn(Type leftOperandType, Type rightOperandType)
