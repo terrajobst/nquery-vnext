@@ -6,10 +6,47 @@
              Margin="-3"
              Background="Transparent">
     <FrameworkElement.Resources>
-        <BitmapImage x:Key="IssueFixImage"
-                     UriSource="..\Images\CodeActionIssue.png" />
-        <BitmapImage x:Key="RefactoringImage"
-                     UriSource="..\Images\CodeActionRefactoring.png"/>
+        <DrawingImage x:Key="IssueFixImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup>
+                    <GeometryDrawing Geometry="F1M92.844,27.406C92.709,27.432,92.581,27.485,92.469,27.563L75.031,39.188 67.594,33.594C67.220,33.313 66.700,33.335 66.351,33.646 66.002,33.957 65.920,34.471 66.156,34.875L74.156,47.875C74.311,48.143 74.583,48.323 74.891,48.360 75.198,48.397 75.505,48.287 75.719,48.063L93.719,29.063C94.020,28.758 94.088,28.293 93.888,27.914 93.688,27.535 93.265,27.330 92.844,27.406z">
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="74.911,32.362" EndPoint="84.911,47.451" MappingMode="Absolute" SpreadMethod="Pad">
+                                <GradientStop Color="#FF236B0D" Offset="0" ></GradientStop>
+                                <GradientStop Color="#FF238D0C" Offset="1" ></GradientStop>
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                    <GeometryDrawing Geometry="F1M92.906,28.469L75.000,40.406 67.094,34.469 75.031,47.344 92.906,28.469z">
+                        <GeometryDrawing.Brush>
+                            <LinearGradientBrush StartPoint="72.946,35.589" EndPoint="85,47.375" MappingMode="Absolute" SpreadMethod="Pad">
+                                <GradientStop Color="#FF97FF82" Offset="0" ></GradientStop>
+                                <GradientStop Color="#00CEFF24" Offset="1" ></GradientStop>
+                            </LinearGradientBrush>
+                        </GeometryDrawing.Brush>
+                    </GeometryDrawing>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="RefactoringImage">
+            <DrawingImage.Drawing>
+                <DrawingGroup>
+                    <DrawingGroup>
+                        <GeometryDrawing Geometry="F1M17.907,21.216L36.899,40.647C37.668,41.526 40.103,42.204 41.730,40.647 43.301,39.144 42.937,37.025 41.400,35.488L23.176,15.946C25.426,9.696,20.872,4.446,14.997,5.571L13.735,6.724 17.687,10.457 17.907,13.750 14.956,16.444 11.429,16.056 7.807,12.653C7.807,12.653 6.536,13.907 6.536,13.907 5.946,19.549 11.844,24.591 17.907,21.216z">
+                            <GeometryDrawing.Brush>
+                                <LinearGradientBrush StartPoint="19.794,42.078" EndPoint="20.657,10.919" MappingMode="Absolute" SpreadMethod="Pad">
+                                    <GradientStop Color="#546684" Offset="0" ></GradientStop>
+                                    <GradientStop Color="#D6EAF4" Offset="1" ></GradientStop>
+                                </LinearGradientBrush>
+                            </GeometryDrawing.Brush>
+                            <GeometryDrawing.Pen>
+                                <Pen Brush="#114466" Thickness="2" MiterLimit="4" ></Pen>
+                            </GeometryDrawing.Pen>
+                        </GeometryDrawing>
+                    </DrawingGroup>
+                </DrawingGroup>
+            </DrawingImage.Drawing>
+        </DrawingImage>
         <Style x:Key="GlyphIconStyle"
                TargetType="{x:Type Button}">
             <Setter Property="Template">
@@ -51,7 +88,7 @@
                 MouseLeave="GlyphOnMouseLeave"
                 Click="GlyphOnClick">
             <Image x:Name="GlyphImage" 
-                   Source="{StaticResource IssueFixImage}"/>
+                   Source="{StaticResource IssueFixImage}" />
             <FrameworkElement.ContextMenu>
                 <ContextMenu x:Name="GlyphContextMenu"
                              Placement="Bottom"

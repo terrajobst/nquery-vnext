@@ -145,10 +145,6 @@
     <Resource Include="Images\Variable.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\CodeActionIssue.png" />
-    <Resource Include="Images\CodeActionRefactoring.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
