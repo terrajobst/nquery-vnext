@@ -357,7 +357,7 @@ namespace NQuery.Syntax
                 case SyntaxKind.SimilarKeyword:
                     return ParseSimilarToExpression(left, notKeyword, operatorPrecedence, operatorToken);
                 case SyntaxKind.SoundsKeyword:
-                    return ParseSoundslikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
+                    return ParseSoundsLikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
                 case SyntaxKind.LikeKeyword:
                     return ParseLikeExpression(left, notKeyword, operatorPrecedence, operatorToken);
                 case SyntaxKind.InKeyword:
@@ -396,11 +396,11 @@ namespace NQuery.Syntax
             return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
         }
 
-        private ExpressionSyntax ParseSoundslikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
+        private ExpressionSyntax ParseSoundsLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
         {
             var likeKeyword = Match(SyntaxKind.LikeKeyword);
             var expression = ParseSubExpression(null, operatorPrecedence);
-            return new SoundslikeExpressionSyntax(_syntaxTree, left, notKeyword, soundsKeywordToken, likeKeyword, expression);
+            return new SoundsLikeExpressionSyntax(_syntaxTree, left, notKeyword, soundsKeywordToken, likeKeyword, expression);
         }
 
         private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
@@ -417,7 +417,7 @@ namespace NQuery.Syntax
                 var argumentList = ParseArgumentList(1);
                 return new InExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, argumentList);
             }
-            
+
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var querySyntax = ParseQuery();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);

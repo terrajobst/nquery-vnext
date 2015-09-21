@@ -23,7 +23,7 @@ namespace NQuery.Binding
         RightShift,
         Like,
         SimilarTo,
-        Soundslike,
+        SoundsLike,
         LogicalAnd,
         LogicalOr
     }

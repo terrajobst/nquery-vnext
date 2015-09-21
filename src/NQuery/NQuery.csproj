@@ -315,7 +315,7 @@
     <Compile Include="Syntax\SimilarToExpressionSyntax.cs" />
     <Compile Include="Syntax\SingleRowSubselectSyntax.cs" />
     <Compile Include="Syntax\SkippedTokensTriviaSyntax.cs" />
-    <Compile Include="Syntax\SoundslikeExpressionSyntax.cs" />
+    <Compile Include="Syntax\SoundsLikeExpressionSyntax.cs" />
     <Compile Include="Syntax\StructuredTriviaSyntax.cs" />
     <Compile Include="Syntax\SubselectExpressionSyntax.cs" />
     <Compile Include="SyntaxFacts.cs" />
@@ -352,7 +352,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

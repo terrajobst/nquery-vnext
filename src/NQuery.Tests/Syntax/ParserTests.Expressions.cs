@@ -1043,7 +1043,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
-        public void Parser_Parse_Expression_Soundslike()
+        public void Parser_Parse_Expression_SoundsLike()
         {
             const string text = @"
                 'x' SOUNDS LIKE 'y'
@@ -1051,7 +1051,7 @@ namespace NQuery.Tests.Syntax
 
             using (var enumerator = AssertingEnumerator.ForExpression(text))
             {
-                enumerator.AssertNode(SyntaxKind.SoundslikeExpression);
+                enumerator.AssertNode(SyntaxKind.SoundsLikeExpression);
                 enumerator.AssertNode(SyntaxKind.LiteralExpression);
                 enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'x'");
                 enumerator.AssertToken(SyntaxKind.SoundsKeyword, @"SOUNDS");
@@ -1062,7 +1062,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
-        public void Parser_Parse_Expression_Soundslike_WithNotKeyword()
+        public void Parser_Parse_Expression_SoundsLike_WithNotKeyword()
         {
             const string text = @"
                 'x' NOT SOUNDS LIKE 'y'
@@ -1070,7 +1070,7 @@ namespace NQuery.Tests.Syntax
 
             using (var enumerator = AssertingEnumerator.ForExpression(text))
             {
-                enumerator.AssertNode(SyntaxKind.SoundslikeExpression);
+                enumerator.AssertNode(SyntaxKind.SoundsLikeExpression);
                 enumerator.AssertNode(SyntaxKind.LiteralExpression);
                 enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'x'");
                 enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");

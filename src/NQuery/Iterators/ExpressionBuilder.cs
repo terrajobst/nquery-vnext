@@ -263,7 +263,7 @@ namespace NQuery.Iterators
             // Normally, a binary expression will yield NULL if any of the operands is NULL.
             //
             // For conjuctions and disjunctions this is not true. For certain values these
-            // operators will return TRUE or FALSE though an operand was null. The following 
+            // operators will return TRUE or FALSE though an operand was null. The following
             // truth table must hold, sepcial cases are marked in parentheses:
             //
             //    AND |  F  |  T  |  N       OR |  F  |  T  |  N
@@ -341,7 +341,7 @@ namespace NQuery.Iterators
                 case BinaryOperatorKind.Power:
                 case BinaryOperatorKind.Like:
                 case BinaryOperatorKind.SimilarTo:
-                case BinaryOperatorKind.Soundslike:
+                case BinaryOperatorKind.SoundsLike:
                     return Expression.Call(signature.MethodInfo, left, right);
                 default:
                     throw new ArgumentOutOfRangeException();

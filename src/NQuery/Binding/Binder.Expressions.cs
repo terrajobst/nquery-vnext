@@ -156,7 +156,7 @@ namespace NQuery.Binding
             {
                 // TODO: We may want to report an ambiguity error here.
             }
-            
+
             if (conversionLeftToRight.IsImplicit)
             {
                 newLeft = BindConversion(diagnosticSpan, new BoundValueSlotExpression(left), right.Type);
@@ -239,8 +239,8 @@ namespace NQuery.Binding
                 case SyntaxKind.LikeExpression:
                     return BindLikeExpression((LikeExpressionSyntax) node);
 
-                case SyntaxKind.SoundslikeExpression:
-                    return BindSoundslikeExpression((SoundslikeExpressionSyntax) node);
+                case SyntaxKind.SoundsLikeExpression:
+                    return BindSoundsLikeExpression((SoundsLikeExpressionSyntax) node);
 
                 case SyntaxKind.SimilarToExpression:
                     return BindSimilarToExpression((SimilarToExpressionSyntax) node);
@@ -414,9 +414,9 @@ namespace NQuery.Binding
             return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.Like, node.Left, node.Right);
         }
 
-        private BoundExpression BindSoundslikeExpression(SoundslikeExpressionSyntax node)
+        private BoundExpression BindSoundsLikeExpression(SoundsLikeExpressionSyntax node)
         {
-            return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.Soundslike, node.Left, node.Right);
+            return BindBinaryExpression(node.Span, node.NotKeyword, BinaryOperatorKind.SoundsLike, node.Left, node.Right);
         }
 
         private BoundExpression BindSimilarToExpression(SimilarToExpressionSyntax node)

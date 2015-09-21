@@ -140,7 +140,7 @@ namespace NQuery
         LogicalAndExpression,
         LogicalOrExpression,
         LikeExpression,
-        SoundslikeExpression,
+        SoundsLikeExpression,
         SimilarToExpression,
 
         // Expressions

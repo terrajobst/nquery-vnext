@@ -48,8 +48,8 @@ namespace NQuery
                 case SyntaxKind.LikeExpression:
                      return VisitLikeExpression((LikeExpressionSyntax)node);
 
-                case SyntaxKind.SoundslikeExpression:
-                     return VisitSoundslikeExpression((SoundslikeExpressionSyntax)node);
+                case SyntaxKind.SoundsLikeExpression:
+                     return VisitSoundsLikeExpression((SoundsLikeExpressionSyntax)node);
 
                 case SyntaxKind.SimilarToExpression:
                      return VisitSimilarToExpression((SimilarToExpressionSyntax)node);
@@ -330,7 +330,7 @@ namespace NQuery
             return DefaultVisit(node);
         }
 
-        public virtual TResult VisitSoundslikeExpression(SoundslikeExpressionSyntax node)
+        public virtual TResult VisitSoundsLikeExpression(SoundsLikeExpressionSyntax node)
         {
             return DefaultVisit(node);
         }

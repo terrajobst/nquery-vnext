@@ -210,7 +210,7 @@ namespace NQuery.Binding
 
         private static readonly BinaryOperatorSignature[] BuiltInSoundsLikeSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Soundslike, BuiltInOperators.SoundsLikeMethod)
+            new BinaryOperatorSignature(BinaryOperatorKind.SoundsLike, BuiltInOperators.SoundsLikeMethod)
         };
 
         internal static OverloadResolutionResult<BinaryOperatorSignature> Resolve(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
@@ -329,7 +329,7 @@ namespace NQuery.Binding
                     return BuiltInLikeSignatures;
                 case BinaryOperatorKind.SimilarTo:
                     return BuiltInSimilarToSignatures;
-                case BinaryOperatorKind.Soundslike:
+                case BinaryOperatorKind.SoundsLike:
                     return BuiltInSoundsLikeSignatures;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(kind));
@@ -386,7 +386,7 @@ namespace NQuery.Binding
                     return "op_Like";
                 case BinaryOperatorKind.SimilarTo:
                     return "op_SimilarTo";
-                case BinaryOperatorKind.Soundslike:
+                case BinaryOperatorKind.SoundsLike:
                     return "op_SoundsLike";
                 case BinaryOperatorKind.LogicalAnd:
                     return "op_LogicalAnd";

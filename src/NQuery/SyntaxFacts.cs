@@ -901,7 +901,7 @@ namespace NQuery
                     return SyntaxKind.LikeExpression;
 
                 case SyntaxKind.SoundsKeyword:
-                    return SyntaxKind.SoundslikeExpression;
+                    return SyntaxKind.SoundsLikeExpression;
 
                 case SyntaxKind.SimilarKeyword:
                     return SyntaxKind.SimilarToExpression;
@@ -984,7 +984,7 @@ namespace NQuery
                 case SyntaxKind.LikeExpression:
                     return 3;
 
-                case SyntaxKind.SoundslikeExpression:
+                case SyntaxKind.SoundsLikeExpression:
                     return 3;
 
                 case SyntaxKind.SimilarToExpression:
@@ -1073,8 +1073,8 @@ namespace NQuery
                     return BinaryOperatorKind.LogicalOr;
                 case SyntaxKind.LikeExpression:
                     return BinaryOperatorKind.Like;
-                case SyntaxKind.SoundslikeExpression:
-                    return BinaryOperatorKind.Soundslike;
+                case SyntaxKind.SoundsLikeExpression:
+                    return BinaryOperatorKind.SoundsLike;
                 case SyntaxKind.SimilarToExpression:
                     return BinaryOperatorKind.SimilarTo;
                 default:
@@ -1160,7 +1160,7 @@ namespace NQuery
                 case BinaryOperatorKind.SimilarTo:
                     return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
 
-                case BinaryOperatorKind.Soundslike:
+                case BinaryOperatorKind.SoundsLike:
                     return SyntaxKind.SoundsKeyword.GetText() + " " + SyntaxKind.LikeKeyword.GetText();
 
                 case BinaryOperatorKind.LogicalAnd:
