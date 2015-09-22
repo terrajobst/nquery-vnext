@@ -45,7 +45,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 var columnReference = GetColumnReference(index, boundSymbol);
 
                 var codeAction = new[] {new ReplaceSelectorCodeAction(selector, columnReference)};
-                yield return new CodeIssue(CodeIssueKind.Warning, selector.Span, codeAction);
+                yield return new CodeIssue(CodeIssueKind.Warning, selector.Span, "Duplicate expressions should be avoided.", codeAction);
             }
         }
 

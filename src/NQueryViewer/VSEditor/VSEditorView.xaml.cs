@@ -89,6 +89,7 @@ namespace NQueryViewer.VSEditor
         {
             var snapshot = _textViewHost.TextView.TextSnapshot;
             var snapshotSpan = new SnapshotSpan(snapshot, selection.Start, selection.Length);
+            _textViewHost.TextView.Caret.MoveTo(snapshotSpan.End);
             _textViewHost.TextView.Selection.Select(snapshotSpan, false);
             _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
         }

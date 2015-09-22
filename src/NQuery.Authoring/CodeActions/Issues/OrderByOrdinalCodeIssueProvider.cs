@@ -18,7 +18,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                    where column != null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
                    let action = new[] {new ReplaceOrdingalByNamedReferenceCodeAction(selector, namedReference)}
-                   select new CodeIssue(CodeIssueKind.Warning, selector.Span, action);
+                   select new CodeIssue(CodeIssueKind.Warning, selector.Span, "Ordinal ORDER BY references should be avoided.", action);
         }
 
         private sealed class ReplaceOrdingalByNamedReferenceCodeAction : CodeAction
