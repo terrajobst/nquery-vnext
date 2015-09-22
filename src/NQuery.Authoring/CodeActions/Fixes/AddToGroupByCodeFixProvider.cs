@@ -79,11 +79,11 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
         private static IEnumerable<ICodeAction> GetOrderByFixes(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
         {
-            var orderByColumn = expression.Ancestors().OfType<OrderByColumnSyntax>().FirstOrDefault();
-            if (orderByColumn == null)
+            var expressionSelector = expression.Ancestors().OfType<ExpressionOrderBySelectorSyntax>().FirstOrDefault();
+            if (expressionSelector == null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return GetExpressionFixes(selectQuery, orderByColumn.ColumnSelector, expression);
+            return GetExpressionFixes(selectQuery, expressionSelector.Expression, expression);
         }
 
         private static IEnumerable<ICodeAction> GetExpressionFixes(SelectQuerySyntax selectQuery, ExpressionSyntax containingExpression, ExpressionSyntax expression)

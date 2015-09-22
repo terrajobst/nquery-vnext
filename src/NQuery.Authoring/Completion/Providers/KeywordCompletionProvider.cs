@@ -524,7 +524,7 @@ namespace NQuery.Authoring.Completion.Providers
             if (orderByColumn == null)
                 return false;
 
-            return orderByColumn.ColumnSelector.Span.End <= position;
+            return orderByColumn.Selector.Span.End <= position;
         }
 
         private static bool IsInCaseAndAfterLabelOrAtStart(SyntaxTree syntaxTree, int position)

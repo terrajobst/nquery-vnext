@@ -1323,14 +1323,12 @@ namespace NQuery.Binding
 
             foreach (var column in node.Columns)
             {
-                var selector = column.ColumnSelector;
-                var isAscending = column.Modifier == null ||
-                                  column.Modifier.Kind == SyntaxKind.AscKeyword;
+                var selector = column.Selector;
 
                 // Let's bind the select against the query columns of the first SELECT query
                 // we are applied to.
 
-                var boundSelector = selectorBinder.BindOrderBySelector(selectorQueryColumns, column.ColumnSelector);
+                var boundSelector = selectorBinder.BindOrderBySelector(selectorQueryColumns, column.Selector);
 
                 // If the expression didn't exist in the query output already, we need to
                 // compute it. This is only possible if we don't require selectors being
@@ -1369,20 +1367,24 @@ namespace NQuery.Binding
                 // the associated comparer.
 
                 var baseComparer = BindComparer(selector.Span, valueSlot.Type, DiagnosticId.InvalidDataTypeInOrderBy);
+
+                var isAscending = column.Modifier == null ||
+                                  column.Modifier.Kind == SyntaxKind.AscKeyword;
+
                 var comparer = isAscending || baseComparer == null
                                    ? baseComparer
                                    : new NegatedComparer(baseComparer);
 
                 var sortedValue = new BoundComparedValue(valueSlot, comparer);
                 var boundColumn = new BoundOrderByColumn(queryColumn, sortedValue);
-                Bind(column, boundColumn);
+                Bind(selector, boundColumn);
                 boundColumns.Add(boundColumn);
             }
 
             return new BoundOrderByClause(boundColumns);
         }
 
-        private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
+        private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, OrderBySelectorSyntax selector)
         {
             // Although ORDER BY can contain abitrary expression, there are special rules to how those
             // expressions relate to the SELECT list of a query:
@@ -1403,29 +1405,30 @@ namespace NQuery.Binding
 
             // Case (1): Check for positional form.
 
-            var selectorAsLiteral = selector as LiteralExpressionSyntax;
-            if (selectorAsLiteral != null)
+            var ordinalSelector = selector as OrdinalOrderBySelectorSyntax;
+            if (ordinalSelector != null)
             {
-                var position = selectorAsLiteral.Value as int?;
-                if (position != null)
-                {
-                    var index = position.Value - 1;
-                    var indexValid = 0 <= index && index < queryColumns.Length;
-                    if (indexValid)
-                        return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
+                var ordinal = (int) ordinalSelector.Ordinal.Value;
+                var index = ordinal - 1;
+                var indexValid = 0 <= index && index < queryColumns.Length;
+                if (indexValid)
+                    return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
 
-                    // Report that the given position isn't valid.
-                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Length);
+                // Report that the given position isn't valid.
+                Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, ordinal, queryColumns.Length);
 
-                    // And to avoid cascading errors, we'll fake up an invalid slot.
+                // And to avoid cascading errors, we'll fake up an invalid slot.
                     var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
-                    return new BoundOrderBySelector(errorSlot, null);
-                }
+                return new BoundOrderBySelector(errorSlot, null);
             }
+
+            // Case (2) or (3)
+
+            var expressionSelector = (ExpressionOrderBySelectorSyntax) selector;
 
             // Case (2): Check for query column name.
 
-            var selectorAsName = selector as NameExpressionSyntax;
+            var selectorAsName = expressionSelector.Expression as NameExpressionSyntax;
             if (selectorAsName != null)
             {
                 var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToImmutableArray();
@@ -1446,7 +1449,7 @@ namespace NQuery.Binding
 
             // Case (3): Bind regular expression.
 
-            var boundSelector = BindExpression(selector);
+            var boundSelector = BindExpression(expressionSelector.Expression);
 
             if (boundSelector is BoundLiteralExpression)
                 Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
@@ -1457,7 +1460,7 @@ namespace NQuery.Binding
                 return new BoundOrderBySelector(valueSlot, null);
 
             valueSlot = ValueSlotFactory.CreateTemporary(boundSelector.Type);
-            var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
+            var computedValue = new BoundComputedValueWithSyntax(expressionSelector.Expression, boundSelector, valueSlot);
             return new BoundOrderBySelector(valueSlot, computedValue);
         }
     }

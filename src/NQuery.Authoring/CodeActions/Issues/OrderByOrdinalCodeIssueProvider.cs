@@ -12,9 +12,9 @@ namespace NQuery.Authoring.CodeActions.Issues
         protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, OrderedQuerySyntax node)
         {
             return from orderByColumn in node.Columns
-                   let selector = orderByColumn.ColumnSelector as LiteralExpressionSyntax
-                   where selector != null && selector.Value is int
-                   let column = semanticModel.GetSymbol(orderByColumn)
+                   let selector = orderByColumn.Selector as OrdinalOrderBySelectorSyntax
+                   where selector != null && selector.Ordinal.Value is int
+                   let column = semanticModel.GetSymbol(selector)
                    where column != null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
                    let action = new[] {new ReplaceOrdingalByNamedReferenceCodeAction(selector, namedReference)}
@@ -23,10 +23,10 @@ namespace NQuery.Authoring.CodeActions.Issues
 
         private sealed class ReplaceOrdingalByNamedReferenceCodeAction : CodeAction
         {
-            private readonly ExpressionSyntax _selector;
+            private readonly OrdinalOrderBySelectorSyntax _selector;
             private readonly string _columnReference;
 
-            public ReplaceOrdingalByNamedReferenceCodeAction(ExpressionSyntax selector, string columnReference)
+            public ReplaceOrdingalByNamedReferenceCodeAction(OrdinalOrderBySelectorSyntax selector, string columnReference)
                 : base(selector.SyntaxTree)
             {
                 _selector = selector;

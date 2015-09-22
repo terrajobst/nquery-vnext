@@ -256,7 +256,10 @@
     <Compile Include="Symbols\TableDefinition.cs" />
     <Compile Include="Symbols\TableRelation.cs" />
     <Compile Include="Syntax\CaseElseLabelSyntax.cs" />
+    <Compile Include="Syntax\ExpressionOrderBySelectorSyntax.cs" />
     <Compile Include="Syntax\InQueryExpressionSyntax.cs" />
+    <Compile Include="Syntax\OrderBySelectorSyntax.cs" />
+    <Compile Include="Syntax\OrdinalOrderBySelectorSyntax.cs" />
     <Compile Include="Syntax\SeparatedSyntaxList.cs" />
     <Compile Include="Symbols\CommonTableExpressionSymbol.cs" />
     <Compile Include="SyntaxExtensions.cs" />

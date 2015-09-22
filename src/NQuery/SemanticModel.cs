@@ -60,12 +60,12 @@ namespace NQuery
             return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
         }
 
-        public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
+        public QueryColumnInstanceSymbol GetSymbol(OrderBySelectorSyntax selector)
         {
-            if (orderByColumn == null)
-                throw new ArgumentNullException(nameof(orderByColumn));
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
 
-            var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;
+            var boundOrderByColumn = _bindingResult.GetBoundNode(selector) as BoundOrderByColumn;
             return boundOrderByColumn?.QueryColumn;
         }
 

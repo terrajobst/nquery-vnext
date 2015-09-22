@@ -184,6 +184,8 @@ namespace NQuery
         IntersectQuery,
         OrderedQuery,
         OrderByColumn,
+        OrdinalOrderBySelector,
+        ExpressionOrderBySelector,
         ParenthesizedQuery,
         CommonTableExpressionQuery,
         CommonTableExpression,
@@ -199,6 +201,6 @@ namespace NQuery
         GroupByClause,
         GroupByColumn,
         HavingClause,
-        Alias,
+        Alias
     }
 }

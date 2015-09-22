@@ -15,7 +15,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         {
             foreach (var orderByColumn in node.Columns)
             {
-                var selector = orderByColumn.ColumnSelector;
+                var selector = orderByColumn.Selector;
 
                 // If the selector refers to a column, we don't want to report
                 // an issue because it's too trivial to be replaced.
@@ -33,7 +33,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 // and correlate this with the symbol the ORDER BY selector
                 // is bound to.
 
-                var boundSymbol = semanticModel.GetSymbol(orderByColumn);
+                var boundSymbol = semanticModel.GetSymbol(selector);
                 var expressionColumns = semanticModel.GetOutputColumns(node.Query).ToImmutableArray();
                 var index = expressionColumns.IndexOf(boundSymbol);
                 if (index < 0)
@@ -49,10 +49,13 @@ namespace NQuery.Authoring.CodeActions.Issues
             }
         }
 
-        private static bool IsTrivialColumnReference(ExpressionSyntax selector, SemanticModel semanticModel)
+        private static bool IsTrivialColumnReference(OrderBySelectorSyntax selector, SemanticModel semanticModel)
         {
-            return IsColumnReference(selector, semanticModel) ||
-                   IsOrdinalColumnReference(selector);
+            if (selector is OrdinalOrderBySelectorSyntax)
+                return true;
+
+            var expressionSelector = (ExpressionOrderBySelectorSyntax)selector;
+            return IsColumnReference(expressionSelector.Expression, semanticModel);
         }
 
         private static bool IsColumnReference(ExpressionSyntax selector, SemanticModel semanticModel)
@@ -62,12 +65,6 @@ namespace NQuery.Authoring.CodeActions.Issues
             //       such "FirstName" or "e.FirstName".
 
             return semanticModel.GetSymbol(selector) is ColumnInstanceSymbol;
-        }
-
-        private static bool IsOrdinalColumnReference(ExpressionSyntax selector)
-        {
-            var literal = selector as LiteralExpressionSyntax;
-            return literal != null && literal.Value is int;
         }
 
         private static string GetColumnReference(int index, QueryColumnInstanceSymbol column)
@@ -81,10 +78,10 @@ namespace NQuery.Authoring.CodeActions.Issues
 
         private sealed class ReplaceSelectorCodeAction : CodeAction
         {
-            private readonly ExpressionSyntax _selector;
+            private readonly OrderBySelectorSyntax _selector;
             private readonly string _columnReference;
 
-            public ReplaceSelectorCodeAction(ExpressionSyntax selector, string columnReference)
+            public ReplaceSelectorCodeAction(OrderBySelectorSyntax selector, string columnReference)
                 : base(selector.SyntaxTree)
             {
                 _selector = selector;

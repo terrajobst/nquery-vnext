@@ -849,7 +849,7 @@ namespace NQuery.Syntax
 
         private OrderByColumnSyntax ParseOrderByColumn()
         {
-            var expression = ParseExpression();
+            var selector = ParseOrderBySelector();
             SyntaxToken modifier;
 
             if (Current.Kind == SyntaxKind.AscKeyword)
@@ -865,8 +865,18 @@ namespace NQuery.Syntax
                 modifier = null;
             }
 
-            var column = new OrderByColumnSyntax(_syntaxTree, expression, modifier);
+            var column = new OrderByColumnSyntax(_syntaxTree, selector, modifier);
             return column;
+        }
+
+        private OrderBySelectorSyntax ParseOrderBySelector()
+        {
+            var expression = ParseExpression();
+            var literal = expression as LiteralExpressionSyntax;
+            if (literal != null && literal.Value is int)
+                return new OrdinalOrderBySelectorSyntax(_syntaxTree, literal.Token);
+
+            return new ExpressionOrderBySelectorSyntax(_syntaxTree, expression);
         }
 
         private QuerySyntax ParseUnifiedOrExceptionalQuery()

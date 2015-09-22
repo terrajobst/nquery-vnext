@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NQuery.Symbols;
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.SymbolSearch
@@ -123,6 +124,14 @@ namespace NQuery.Authoring.SymbolSearch
                         if (namedTable.Alias != null)
                             yield return SymbolSpan.CreateDefinition(tableInstanceSymbol, namedTable.Alias.Identifier.Span);
                     }
+                    break;
+                }
+                case SyntaxKind.OrdinalOrderBySelector:
+                {
+                    var selectorSyntax = (OrdinalOrderBySelectorSyntax) node;
+                    var symbol = semanticModel.GetSymbol(selectorSyntax);
+                    if (symbol != null)
+                        yield return SymbolSpan.CreateReference(symbol, selectorSyntax.Span);
                     break;
                 }
             }

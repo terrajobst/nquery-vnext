@@ -115,6 +115,9 @@ namespace NQuery.Authoring.Classifications
                 case SyntaxKind.DerivedTableReference:
                     ClassifyDerivedTableReference((DerivedTableReferenceSyntax)node);
                     break;
+                case SyntaxKind.OrdinalOrderBySelector:
+                    ClassifyOrdinalOrderBySelector((OrdinalOrderBySelectorSyntax)node);
+                    break;
                 default:
                     VisitChildren(node);
                     break;
@@ -231,6 +234,13 @@ namespace NQuery.Authoring.Classifications
             var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
             if (tableInstanceSymbol != null)
                 AddClassification(node.Name, tableInstanceSymbol);
+        }
+
+        private void ClassifyOrdinalOrderBySelector(OrdinalOrderBySelectorSyntax node)
+        {
+            var columnInstanceSymbol = _semanticModel.GetSymbol(node);
+            if (columnInstanceSymbol != null)
+                AddClassification(node.Ordinal, columnInstanceSymbol);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace NQuery.Tests.Binding
                                           .Select(semanticModel.GetDeclaredSymbol)
                                           .ToImmutableArray();
             var orderBySymbols = syntaxTree.Root.DescendantNodes()
-                                           .OfType<OrderByColumnSyntax>()
+                                           .OfType<OrderBySelectorSyntax>()
                                            .Select(semanticModel.GetSymbol)
                                            .ToImmutableArray();
 
@@ -67,7 +67,7 @@ namespace NQuery.Tests.Binding
 
             var unionColumn = semanticModel.GetOutputColumns(unionQuery).Single();
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
-            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
+            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Select(c => c.Selector).Single());
 
             Assert.Equal(0, diagnostics.Length);
             Assert.NotEqual(firstColumn, orderByColumn);
@@ -86,12 +86,12 @@ namespace NQuery.Tests.Binding
                                          .Select(semanticModel.GetDeclaredSymbol)
                                          .FirstOrDefault();
             var orderByColumn = syntaxTree.Root.DescendantNodes()
-                                           .OfType<OrderByColumnSyntax>()
+                                           .OfType<OrderBySelectorSyntax>()
                                            .Select(semanticModel.GetSymbol)
                                            .FirstOrDefault();
             var orderByColumnSelector = syntaxTree.Root.DescendantNodes()
-                                           .OfType<OrderByColumnSyntax>()
-                                           .Select(c => semanticModel.GetSymbol(c.ColumnSelector))
+                                           .OfType<ExpressionOrderBySelectorSyntax>()
+                                           .Select(c => semanticModel.GetSymbol(c.Expression))
                                            .FirstOrDefault();
 
             Assert.Equal(0, diagnostics.Length);
@@ -123,7 +123,7 @@ namespace NQuery.Tests.Binding
 
             var unionColumn = semanticModel.GetOutputColumns(unionQuery).Single();
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
-            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
+            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Select(c => c.Selector).Single());
 
             Assert.Equal(0, diagnostics.Length);
             Assert.NotEqual(firstColumn, orderByColumn);
@@ -142,7 +142,7 @@ namespace NQuery.Tests.Binding
                                          .Select(semanticModel.GetDeclaredSymbol)
                                          .FirstOrDefault();
             var orderByColumn = syntaxTree.Root.DescendantNodes()
-                                           .OfType<OrderByColumnSyntax>()
+                                           .OfType<OrderBySelectorSyntax>()
                                            .Select(semanticModel.GetSymbol)
                                            .FirstOrDefault();
 
@@ -174,7 +174,7 @@ namespace NQuery.Tests.Binding
 
             var unionColumn = semanticModel.GetOutputColumns(unionQuery).Single();
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
-            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
+            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Select(c => c.Selector).Single());
 
             Assert.Equal(0, diagnostics.Length);
             Assert.NotEqual(firstColumn, orderByColumn);
@@ -214,7 +214,7 @@ namespace NQuery.Tests.Binding
 
             var unionColumn = semanticModel.GetOutputColumns(unionQuery).Single();
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
-            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
+            var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Select(c => c.Selector).Single());
 
             Assert.Equal(0, diagnostics.Length);
             Assert.NotEqual(firstColumn, orderByColumn);
@@ -229,7 +229,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var orderByColumn = syntaxTree.Root.DescendantNodes()
-                                          .OfType<OrderByColumnSyntax>()
+                                          .OfType<OrderBySelectorSyntax>()
                                           .Select(semanticModel.GetSymbol)
                                           .FirstOrDefault();
 

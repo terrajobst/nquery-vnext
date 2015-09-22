@@ -32,19 +32,19 @@ namespace NQuery.Authoring.CodeActions.Fixes
             if (selectQuery == null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector)};
+            return new[] {new AddOrderByToSelectDistinctCodeAction(selectQuery, column.Selector)};
         }
 
         private sealed class AddOrderByToSelectDistinctCodeAction : CodeAction
         {
             private readonly SelectQuerySyntax _selectQuery;
-            private readonly ExpressionSyntax _expression;
+            private readonly OrderBySelectorSyntax _selector;
 
-            public AddOrderByToSelectDistinctCodeAction(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
+            public AddOrderByToSelectDistinctCodeAction(SelectQuerySyntax selectQuery, OrderBySelectorSyntax selector)
                 : base(selectQuery.SyntaxTree)
             {
                 _selectQuery = selectQuery;
-                _expression = expression;
+                _selector = selector;
             }
 
             public override string Description
@@ -54,7 +54,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             private string GetExpressionText()
             {
-                return _expression.ToString().Trim();
+                return _selector.ToString().Trim();
             }
 
             private string GetInsertionText()
