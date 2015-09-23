@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using NQuery.Symbols;
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.SymbolSearch
@@ -123,6 +124,15 @@ namespace NQuery.Authoring.SymbolSearch
                         if (namedTable.Alias != null)
                             yield return SymbolSpan.CreateDefinition(tableInstanceSymbol, namedTable.Alias.Identifier.Span);
                     }
+                    break;
+                }
+                case SyntaxKind.OrderByColumn:
+                {
+                    var orderByColumn = (OrderByColumnSyntax)node;
+                    var isOrdinal = orderByColumn.ColumnSelector is LiteralExpressionSyntax;
+                    var columnInstanceSymbol = semanticModel.GetSymbol(orderByColumn);
+                    if (isOrdinal && columnInstanceSymbol != null)
+                        yield return SymbolSpan.CreateReference(columnInstanceSymbol, orderByColumn.ColumnSelector.Span);
                     break;
                 }
             }

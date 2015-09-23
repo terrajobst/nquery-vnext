@@ -138,6 +138,7 @@
     <Compile Include="QuickInfo\Providers\NamedTableReferenceQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\NameExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\NullIfQuickInfoModelProvider.cs" />
+    <Compile Include="QuickInfo\Providers\OrdinalOrderByColumnQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\PropertyAccessExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\QuickInfoExtensions.cs" />
     <Compile Include="QuickInfo\QuickInfoModel.cs" />

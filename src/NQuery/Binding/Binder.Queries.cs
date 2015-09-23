@@ -1412,7 +1412,16 @@ namespace NQuery.Binding
                     var index = position.Value - 1;
                     var indexValid = 0 <= index && index < queryColumns.Length;
                     if (indexValid)
-                        return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
+                    {
+                        var queryColumn = queryColumns[index];
+
+                        // It seems odd to bind the literal expression but it allows other
+                        // components to deduce that the selector is 'trivial' i.e. doesn't
+                        // repesent a compound expression.
+                        Bind(selectorAsLiteral, new BoundColumnExpression(queryColumn));
+
+                        return new BoundOrderBySelector(queryColumn.ValueSlot, null);
+                    }
 
                     // Report that the given position isn't valid.
                     Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Length);

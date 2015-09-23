@@ -51,23 +51,12 @@ namespace NQuery.Authoring.CodeActions.Issues
 
         private static bool IsTrivialColumnReference(ExpressionSyntax selector, SemanticModel semanticModel)
         {
-            return IsColumnReference(selector, semanticModel) ||
-                   IsOrdinalColumnReference(selector);
-        }
-
-        private static bool IsColumnReference(ExpressionSyntax selector, SemanticModel semanticModel)
-        {
             // NOTE: We don't check the syntax because using the symbol allows
             //       to capture any syntax that would just resolve to column,
-            //       such "FirstName" or "e.FirstName".
+            //       such "FirstName" or "e.FirstName". This also includes
+            //       ordinal references, such as ORDER BY 1.
 
             return semanticModel.GetSymbol(selector) is ColumnInstanceSymbol;
-        }
-
-        private static bool IsOrdinalColumnReference(ExpressionSyntax selector)
-        {
-            var literal = selector as LiteralExpressionSyntax;
-            return literal != null && literal.Value is int;
         }
 
         private static string GetColumnReference(int index, QueryColumnInstanceSymbol column)

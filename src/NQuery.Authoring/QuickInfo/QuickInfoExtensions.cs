@@ -26,7 +26,8 @@ namespace NQuery.Authoring.QuickInfo
                        new NullIfQuickInfoModelProvider(),
                        new PropertyAccessExpressionQuickInfoModelProvider(),
                        new VariableExpressionQuickInfoModelProvider(),
-                       new WildcardSelectColumnQuickInfoModelProvider()
+                       new WildcardSelectColumnQuickInfoModelProvider(),
+                       new OrdinalOrderByColumnQuickInfoModelProvider()
                    };
         }
 
