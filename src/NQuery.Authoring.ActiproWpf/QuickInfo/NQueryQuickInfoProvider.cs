@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
+using ActiproSoftware.Text;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
 using NQuery.Authoring.ActiproWpf.SymbolContent;
+using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.QuickInfo;
 
 namespace NQuery.Authoring.ActiproWpf.QuickInfo
@@ -33,14 +35,17 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
 
         public override object GetContext(IEditorView view, int offset)
         {
-            var snapshot = view.SyntaxEditor.GetDocumentView();
-            var document = snapshot.Document;
+            var documentView = view.SyntaxEditor.GetDocumentView();
+            var document = documentView.Document;
 
             SemanticModel semanticModel;
             if (!document.TryGetSemanticModel(out semanticModel))
                 return null;
 
-            var position = snapshot.ToSnapshotOffset(offset).ToOffset();
+            var snapshot = document.Text.ToTextSnapshot();
+            var snapshotOffset = new TextSnapshotOffset(snapshot, offset);
+            var position = snapshotOffset.ToOffset();
+
             var model = semanticModel.GetQuickInfoModel(position, _providers);
             return model;
         }
