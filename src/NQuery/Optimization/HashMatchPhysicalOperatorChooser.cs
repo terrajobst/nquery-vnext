@@ -72,7 +72,7 @@ namespace NQuery.Optimization
         private static EqualPredicate GetEqualPredicate(BoundExpression predicate, ImmutableArray<ValueSlot> left, ImmutableArray<ValueSlot> right)
         {
             var binary = predicate as BoundBinaryExpression;
-            if (binary == null)
+            if (binary == null || binary.OperatorKind != BinaryOperatorKind.Equal)
                 return null;
 
             var leftExpression = binary.Left as BoundValueSlotExpression;
