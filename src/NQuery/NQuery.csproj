@@ -337,6 +337,7 @@
     <Compile Include="Syntax\UnionQuerySyntax.cs" />
     <Compile Include="Syntax\WhereClauseSyntax.cs" />
     <Compile Include="Syntax\WildcardSelectColumnSyntax.cs" />
+    <Compile Include="ValueTuple.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
