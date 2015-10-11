@@ -42,5 +42,10 @@ namespace NQuery.Binding
         {
             return GetDefinedValues();
         }
+
+        public override string ToString()
+        {
+            return _tableInstance.Name;
+        }
     }
 }
