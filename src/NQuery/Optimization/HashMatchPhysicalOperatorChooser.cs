@@ -15,10 +15,18 @@ namespace NQuery.Optimization
             if (op == null)
                 return base.RewriteJoinRelation(node);
 
-            var left = RewriteRelation(node.Left);
+            // The optimizer already made sure that left usually contains the bigger
+            // relations.
+            //
+            // For a hash match, the left side is the one we're indexing. Hence, it's
+            // beneficial to make sure the we use the smaller relation as the left side.
+            //
+            // Hence, we simply swap left and right.
+
+            var left = RewriteRelation(node.Right);
             var leftOutputs = left.GetOutputValues().ToImmutableArray();
 
-            var right = RewriteRelation(node.Right);
+            var right = RewriteRelation(node.Left);
             var rightOutputs = right.GetOutputValues().ToImmutableArray();
 
             var equalPredicatesInfo = GetEqualPredicatesInfo(node.Condition, leftOutputs, rightOutputs);
