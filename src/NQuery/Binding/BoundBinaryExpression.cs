@@ -41,6 +41,12 @@ namespace NQuery.Binding
             get { return _result; }
         }
 
+
+        public BinaryOperatorKind OperatorKind
+        {
+            get { return _result.Selected?.Signature.Kind ?? BinaryOperatorKind.Equal; }
+        }
+
         public BoundExpression Right
         {
             get { return _right; }

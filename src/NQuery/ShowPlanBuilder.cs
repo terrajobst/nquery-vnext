@@ -255,7 +255,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Left), Build(node.Right) };
-            return new ShowPlanNode(node.Result.Selected.Signature.Kind.ToString(), properties, children, true);
+            return new ShowPlanNode(node.OperatorKind.ToString(), properties, children, true);
         }
 
         private static ShowPlanNode BuildLiteralExpression(BoundLiteralExpression node)

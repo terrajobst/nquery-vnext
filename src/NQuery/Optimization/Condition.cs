@@ -34,7 +34,7 @@ namespace NQuery.Optimization
             {
                 var current = stack.Pop();
                 var binary = current as BoundBinaryExpression;
-                if (binary != null && binary.Result.Selected.Signature.Kind == BinaryOperatorKind.LogicalAnd)
+                if (binary != null && binary.OperatorKind == BinaryOperatorKind.LogicalAnd)
                 {
                     stack.Push(binary.Left);
                     stack.Push(binary.Right);
