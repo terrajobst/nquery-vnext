@@ -38,7 +38,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues().Concat(GetDefinedValues());
+            return _input.GetOutputValues().Concat(_definedValues.Select(c => c.ValueSlot));
         }
 
         public BoundComputeRelation Update(BoundRelation input, IEnumerable<BoundComputedValue> definedValues)
