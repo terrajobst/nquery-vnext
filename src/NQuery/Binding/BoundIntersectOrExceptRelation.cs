@@ -39,7 +39,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return Enumerable.Empty<ValueSlot>();
+            return GetOutputValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()

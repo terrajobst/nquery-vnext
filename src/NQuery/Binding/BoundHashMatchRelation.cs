@@ -68,7 +68,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return Enumerable.Empty<ValueSlot>();
+            return _build.GetDefinedValues().Concat(_probe.GetDefinedValues());
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()

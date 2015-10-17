@@ -33,7 +33,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _definedValues.Select(c => c.ValueSlot);
+            return _input.GetDefinedValues().Concat(_definedValues.Select(c => c.ValueSlot));
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()

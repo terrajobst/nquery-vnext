@@ -51,12 +51,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _aggregates.Select(v => v.Output);
+            return GetOutputValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _groups.Concat(GetDefinedValues());
+            return _groups.Concat(_aggregates.Select(v => v.Output));
         }
     }
 }
