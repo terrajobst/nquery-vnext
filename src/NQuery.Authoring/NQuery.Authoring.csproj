@@ -82,6 +82,7 @@
     <Compile Include="CodeActions\ICodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\CodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\QualifyColumnCodeRefactoringProvider.cs" />
+    <Compile Include="CodeActions\Refactorings\RemoveRedundantBracketsCodeRefactoringProvider.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderCodeRefactoringProvider.cs" />
     <Compile Include="Commenting\Commenter.cs" />
     <Compile Include="Completion\CompletionExtensions.cs" />
