@@ -11,7 +11,7 @@ namespace NQuery
                 if (syntaxNodeOrToken.IsToken)
                     VisitToken(syntaxNodeOrToken.AsToken());
                 else
-                    Dispatch(node);
+                    Dispatch(syntaxNodeOrToken.AsNode());
             }
         }
 
