@@ -15,7 +15,8 @@ namespace NQuery.Authoring.CodeActions
                    {
                        new AddOrderByToSelectDistinctCodeFixProvider(),
                        new AddParenthesesCodeFixProvider(),
-                       new AddToGroupByCodeFixProvider()
+                       new AddToGroupByCodeFixProvider(),
+                       new UnresolvedNameCodeFixProvider()
                    };
         }
 

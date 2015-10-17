@@ -62,6 +62,7 @@
     <Compile Include="CodeActions\Fixes\AddOrderByToSelectDistinctCodeFixProvider.cs" />
     <Compile Include="CodeActions\Fixes\AddParenthesesCodeFixProvider.cs" />
     <Compile Include="CodeActions\Fixes\AddToGroupByCodeFixProvider.cs" />
+    <Compile Include="CodeActions\Fixes\UnresolvedNameCodeFixProvider.cs" />
     <Compile Include="CodeActions\ICodeFixProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
