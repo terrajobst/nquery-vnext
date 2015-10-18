@@ -248,7 +248,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] {Build(node.Expression)};
-            return new ShowPlanNode(node.Result.Selected.Signature.Kind.ToString(), properties, children, true);
+            return new ShowPlanNode(node.OperatorKind.ToString(), properties, children, true);
         }
 
         private static ShowPlanNode BuildBinaryExpression(BoundBinaryExpression node)

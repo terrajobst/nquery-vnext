@@ -37,7 +37,7 @@ namespace NQuery.Binding
 
         private static bool IsRejectingNull(BoundUnaryExpression expression, ValueSlot valueSlot)
         {
-            if (expression.Result.Selected?.Signature.Kind == UnaryOperatorKind.LogicalNot)
+            if (expression.OperatorKind == UnaryOperatorKind.LogicalNot)
                 return !IsRejectingNull(expression.Expression, valueSlot);
 
             return IsRejectingNull(expression.Expression, valueSlot);
