@@ -5,11 +5,13 @@ namespace NQuery.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
     {
+        private readonly UnaryOperatorKind _operatorKind;
         private readonly OverloadResolutionResult<UnaryOperatorSignature> _result;
         private readonly BoundExpression _expression;
 
-        public BoundUnaryExpression(OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
+        public BoundUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
         {
+            _operatorKind = operatorKind;
             _expression = expression;
             _result = result;
         }
@@ -29,6 +31,11 @@ namespace NQuery.Binding
             }
         }
 
+        public UnaryOperatorKind OperatorKind
+        {
+            get { return _operatorKind; }
+        }
+
         public OverloadResolutionResult<UnaryOperatorSignature> Result
         {
             get { return _result; }
@@ -39,12 +46,12 @@ namespace NQuery.Binding
             get { return _expression; }
         }
 
-        public BoundUnaryExpression Update(OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
+        public BoundUnaryExpression Update(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
         {
-            if (result == _result && expression == _expression)
+            if (operatorKind == _operatorKind && result == _result && expression == _expression)
                 return this;
             
-            return new BoundUnaryExpression(result, expression);
+            return new BoundUnaryExpression(operatorKind, result, expression);
         }
 
         public override string ToString()

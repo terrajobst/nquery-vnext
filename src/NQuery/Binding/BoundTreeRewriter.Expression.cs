@@ -60,8 +60,9 @@ namespace NQuery.Binding
 
         protected virtual BoundExpression RewriteUnaryExpression(BoundUnaryExpression node)
         {
-            return node.Update(RewriteExpression(node.Expression),
-                               node.Result);
+            return node.Update(node.OperatorKind,
+                               node.Result,
+                               RewriteExpression(node.Expression));
         }
 
         protected virtual BoundExpression RewriteBinaryExpression(BoundBinaryExpression node)

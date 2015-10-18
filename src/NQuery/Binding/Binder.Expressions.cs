@@ -325,7 +325,7 @@ namespace NQuery.Binding
             // an operator if the expression couldn't be resolved.
 
             if (expression.Type.IsError())
-                return new BoundUnaryExpression(expression, OverloadResolutionResult<UnaryOperatorSignature>.None);
+                return new BoundUnaryExpression(operatorKind, OverloadResolutionResult<UnaryOperatorSignature>.None, expression);
 
             var result = LookupUnaryOperator(operatorKind, expression);
             if (result.Best == null)
@@ -344,7 +344,7 @@ namespace NQuery.Binding
 
             var convertedArgument = BindArgument(expression, result, 0);
 
-            return new BoundUnaryExpression(convertedArgument, result);
+            return new BoundUnaryExpression(operatorKind, result, convertedArgument);
         }
 
         private BoundExpression BindOptionalNegation(TextSpan diagnosticSpan, SyntaxToken notKeyword, BoundExpression expression)
