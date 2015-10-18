@@ -1003,7 +1003,7 @@ namespace NQuery
             switch (ternaryExpressionKind)
             {
                 case SyntaxKind.BetweenExpression:
-                    return 4;
+                    return 7;
 
                 default:
                     return 0;

@@ -314,6 +314,10 @@ namespace NQuery.Syntax
 
                 if (Current.Kind == SyntaxKind.BetweenKeyword)
                 {
+                    var operatorPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
+                    if (operatorPrecedence <= precedence)
+                        return left;
+
                     left = ParseBetweenExpression(left, notKeyword);
                 }
                 else
@@ -381,11 +385,11 @@ namespace NQuery.Syntax
 
         private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken notKeyword)
         {
-            var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
+            var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
             var betweenKeyword = NextToken();
-            var lowerBound = ParseSubExpression(null, betweenPrecedence);
+            var lowerBound = ParseSubExpression(null, andPrecedence);
             var andKeyword = Match(SyntaxKind.AndKeyword);
-            var upperBound = ParseSubExpression(null, betweenPrecedence);
+            var upperBound = ParseSubExpression(null, andPrecedence);
             return new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
         }
 

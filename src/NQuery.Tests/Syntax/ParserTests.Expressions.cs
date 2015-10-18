@@ -109,6 +109,302 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Binary_Left()
+        {
+            var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
+
+            foreach (var op in SyntaxFacts.GetBinaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(opExpressionKind);
+                var opText = op.GetText();
+                var text = $"x {opText} y BETWEEN a AND b";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                if (betweenPrecedence > opPrecedence)
+                {
+                    //    op
+                    //  x     BETWEEN
+                    //       y   a   b
+
+                    using (var enumerator = AssertingEnumerator.ForNode(expression))
+                    {
+                        enumerator.AssertNode(opExpressionKind);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                        enumerator.AssertToken(op, opText);
+                        enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "y");
+                        enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                        enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    }
+                }
+                else
+                {
+                    //    BETWEEN
+                    //  op    a   b
+                    // x   y
+
+                    using (var enumerator = AssertingEnumerator.ForNode(expression))
+                    {
+                        enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                        enumerator.AssertNode(opExpressionKind);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                        enumerator.AssertToken(op, opText);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "y");
+                        enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                        enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Binary_Middle()
+        {
+            var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
+
+            foreach (var op in SyntaxFacts.GetBinaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(opExpressionKind);
+                if (opPrecedence <= andPrecedence)
+                    continue;
+
+                var opText = op.GetText();
+                var text = $"a BETWEEN x {opText} y AND b";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                //  BETWEEN
+                // a   op   b
+                //    x  y
+
+                using (var enumerator = AssertingEnumerator.ForNode(expression))
+                {
+                    enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                    enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                    enumerator.AssertNode(opExpressionKind);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                    enumerator.AssertToken(op, opText);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "y");
+                    enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                }
+            }
+        }
+
+        [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Binary_Right()
+        {
+            var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
+
+            foreach (var op in SyntaxFacts.GetBinaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(opExpressionKind);
+                if (opPrecedence <= andPrecedence)
+                    continue;
+
+                var opText = op.GetText();
+                var text = $"a BETWEEN b AND x {opText} y";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                //  BETWEEN
+                // a   b   op
+                //        x  y
+
+                using (var enumerator = AssertingEnumerator.ForNode(expression))
+                {
+                    enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                    enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                    enumerator.AssertNode(opExpressionKind);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                    enumerator.AssertToken(op, opText);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "y");
+                }
+            }
+        }
+
+        [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Unary_Left()
+        {
+            var betweenPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
+
+            foreach (var op in SyntaxFacts.GetUnaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetUnaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(opExpressionKind);
+                var opText = op.GetText();
+                var text = $"{opText} x BETWEEN a AND b";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                if (betweenPrecedence > opPrecedence)
+                {
+                    //     op
+                    //   BETWEEN
+                    //  x   a   b
+
+                    using (var enumerator = AssertingEnumerator.ForNode(expression))
+                    {
+                        enumerator.AssertNode(opExpressionKind);
+                        enumerator.AssertToken(op, opText);
+                        enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                        enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                        enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    }
+                }
+                else
+                {
+                    //    BETWEEN
+                    //  op    a   b
+                    //   x
+
+                    using (var enumerator = AssertingEnumerator.ForNode(expression))
+                    {
+                        enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                        enumerator.AssertNode(opExpressionKind);
+                        enumerator.AssertToken(op, opText);
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                        enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                        enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                        enumerator.AssertNode(SyntaxKind.NameExpression);
+                        enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    }
+                }
+            }
+        }
+
+        [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Unary_Middle()
+        {
+            var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
+
+            foreach (var op in SyntaxFacts.GetUnaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetUnaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(opExpressionKind);
+                if (opPrecedence <= andPrecedence)
+                    continue;
+
+                var opText = op.GetText();
+                var text = $"a BETWEEN {opText} x AND b";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                //  BETWEEN
+                // a   op   b
+                //    x  y
+
+                using (var enumerator = AssertingEnumerator.ForNode(expression))
+                {
+                    enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                    enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                    enumerator.AssertNode(opExpressionKind);
+                    enumerator.AssertToken(op, opText);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                    enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                }
+            }
+        }
+
+        [Fact]
+        public void Parser_Parse_Expression_Between_HonorsPriorities_Unary_Right()
+        {
+            var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
+
+            foreach (var op in SyntaxFacts.GetUnaryExpressionTokenKinds())
+            {
+                var opExpressionKind = SyntaxFacts.GetUnaryOperatorExpression(op);
+                var opPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(opExpressionKind);
+                if (opPrecedence <= andPrecedence)
+                    continue;
+
+                var opText = op.GetText();
+                var text = $"a BETWEEN b AND {opText} x";
+
+                var syntaxTree = SyntaxTree.ParseExpression(text);
+                Assert.Empty(syntaxTree.GetDiagnostics());
+
+                var expression = syntaxTree.Root.Root;
+
+                //  BETWEEN
+                // a   b   op
+                //         x
+
+                using (var enumerator = AssertingEnumerator.ForNode(expression))
+                {
+                    enumerator.AssertNode(SyntaxKind.BetweenExpression);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "a");
+                    enumerator.AssertToken(SyntaxKind.BetweenKeyword, "BETWEEN");
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "b");
+                    enumerator.AssertToken(SyntaxKind.AndKeyword, "AND");
+                    enumerator.AssertNode(opExpressionKind);
+                    enumerator.AssertToken(op, opText);
+                    enumerator.AssertNode(SyntaxKind.NameExpression);
+                    enumerator.AssertToken(SyntaxKind.IdentifierToken, "x");
+                }
+            }
+        }
+
+        [Fact]
         public void Parser_Parse_Expression_Binary()
         {
             const string text = @"
