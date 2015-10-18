@@ -30,7 +30,8 @@ namespace NQuery.Optimization
 
             // TODO: semi join simplification
             // TODO: decorrelation
-            // TODO: outer join removal
+
+            yield return new OuterJoinRemover();
 
             // selection pushing
             yield return new SelectionPusher();
