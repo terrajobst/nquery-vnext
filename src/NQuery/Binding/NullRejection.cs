@@ -45,7 +45,7 @@ namespace NQuery.Binding
 
         private static bool IsRejectingNull(BoundBinaryExpression expression, ValueSlot valueSlot)
         {
-            if (expression.Result.Selected?.Signature.Kind == BinaryOperatorKind.LogicalOr)
+            if (expression.OperatorKind == BinaryOperatorKind.LogicalOr)
             {
                 // Special handling for logical OR:
                 // For logical OR both arguments must be NULL to yield FALSE/NULL.
