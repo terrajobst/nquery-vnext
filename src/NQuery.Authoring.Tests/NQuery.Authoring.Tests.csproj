@@ -89,6 +89,7 @@
     <Compile Include="CodeActions\Refactorings\FlipBinaryOperatorSidesTests.cs" />
     <Compile Include="CodeActions\Refactorings\QualifyColumnTests.cs" />
     <Compile Include="CodeActions\Refactorings\RemoveRedundantBracketsTests.cs" />
+    <Compile Include="CodeActions\Refactorings\RemoveRedundantParenthesisTests.cs" />
     <Compile Include="CodeActions\Refactorings\SortOrderTests.cs" />
     <Compile Include="CodeActions\CodeRefactoringTests.cs" />
     <Compile Include="Commenting\CommenterTests.cs" />

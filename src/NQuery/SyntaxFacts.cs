@@ -1286,5 +1286,63 @@ namespace NQuery
                    CanStartQueryClause(kind) ||
                    kind == SyntaxKind.EndOfFileToken;
         }
+
+        public static bool ParenthesisIsRedundant(ParenthesizedExpressionSyntax expression)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            var parentExpression = expression.Parent as ExpressionSyntax;
+            var childExpression = expression.Expression;
+
+            // If the parent isn't an expression, the parentheses are definitely
+            // redundant.
+            if (parentExpression == null)
+                return true;
+
+            var parentPrecedence = GetPrecedence(parentExpression);
+            var childPrecedence = GetPrecedence(childExpression);
+            var parentRequiresPrimary = parentExpression is MethodInvocationExpressionSyntax ||
+                                        parentExpression is PropertyAccessExpressionSyntax ||
+                                        parentExpression is IsNullExpressionSyntax;
+
+            if (childPrecedence == 0)
+            {
+                // If the child expression doesn't have predence,
+                // then parentheses are redundant.
+                return true;
+            }
+
+            if (parentPrecedence == 0)
+            {
+                // If the parent doesn't have a precedence, it depends on whether it
+                // requires a primary expression.
+                return !parentRequiresPrimary;
+            }
+
+            var parentBinary = parentExpression as BinaryExpressionSyntax;
+            var childIsOnRight = parentBinary != null && parentBinary.Right == expression;
+
+            // NOTE: All expressions are left associative.
+
+            if (parentPrecedence == childPrecedence)
+                return !childIsOnRight;
+
+            return parentPrecedence < childPrecedence;
+        }
+
+        private static int GetPrecedence(ExpressionSyntax expression)
+        {
+            if (expression is BinaryExpressionSyntax)
+                return GetBinaryOperatorPrecedence(expression.Kind);
+
+            if (expression is UnaryExpressionSyntax)
+                return GetUnaryOperatorPrecedence(expression.Kind);
+
+            if (expression is BetweenExpressionSyntax)
+                return GetTernaryOperatorPrecedence(expression.Kind);
+
+            return 0;
+        }
     }
 }
