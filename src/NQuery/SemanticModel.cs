@@ -145,6 +145,18 @@ namespace NQuery
             return boundExpression?.Type;
         }
 
+        public bool IsRejectingNulls(ExpressionSyntax expressionSyntax, TableInstanceSymbol symbol)
+        {
+            return symbol.ColumnInstances.Any(c => IsRejectingNulls(expressionSyntax, c));
+        }
+
+        public bool IsRejectingNulls(ExpressionSyntax expressionSyntax, ColumnInstanceSymbol symbol)
+        {
+            var boundExpression = GetBoundExpression(expressionSyntax);
+            return boundExpression != null &&
+                   NullRejection.IsRejectingNull(boundExpression, symbol.ValueSlot);
+        }
+
         public Conversion GetConversion(CastExpressionSyntax expression)
         {
             if (expression == null)

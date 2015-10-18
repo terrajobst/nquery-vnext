@@ -65,6 +65,7 @@
     <Compile Include="CodeActions\ICodeFixProvider.cs" />
     <Compile Include="CodeActions\Issues\ColumnsInExistsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\ComparisonWithNullCodeIssueProvider.cs" />
+    <Compile Include="CodeActions\Issues\NullRejectionCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\OrderByOrdinalCodeIssueProvider.cs" />
     <Compile Include="CodeActions\Issues\RecursiveCodeIssueProvider.cs" />
