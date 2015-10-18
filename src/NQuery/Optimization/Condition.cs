@@ -41,7 +41,7 @@ namespace NQuery.Optimization
                 }
                 else
                 {
-                    yield return binary;
+                    yield return current;
                 }
             }
         }
