@@ -7,10 +7,11 @@ namespace NQuery.Authoring.BraceMatching
     {
         public BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position)
         {
-            return (from t in syntaxTree.Root.FindStartTokens(position)
-                let r = MatchBraces(t, position)
-                where r.IsValid
-                select r).DefaultIfEmpty(BraceMatchingResult.None).First();
+            return syntaxTree.Root.FindStartTokens(position)
+                                  .Select(t => MatchBraces(t, position))
+                                  .Where(r => r.IsValid)
+                                  .DefaultIfEmpty(BraceMatchingResult.None)
+                                  .First();
         }
 
         protected abstract BraceMatchingResult MatchBraces(SyntaxToken syntaxTree, int position);

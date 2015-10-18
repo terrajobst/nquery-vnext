@@ -14,11 +14,10 @@ namespace NQuery.Authoring.SymbolSearch
                 throw new ArgumentNullException(nameof(semanticModel));
 
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            return (from t in syntaxTree.Root.FindStartTokens(position)
-                    from n in t.Parent.AncestorsAndSelf()
-                    from s in GetSymbolSpans(semanticModel, n)
-                    where s.Span.ContainsOrTouches(position)
-                    select s).Cast<SymbolSpan?>().FirstOrDefault();
+            return syntaxTree.Root.FindNodes(position)
+                                  .SelectMany(n => GetSymbolSpans(semanticModel, n))
+                                  .Where(s => s.Span.ContainsOrTouches(position))
+                                  .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
         }
 
         public static IEnumerable<SymbolSpan> FindUsages(this SemanticModel semanticModel, Symbol symbol)

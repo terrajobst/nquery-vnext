@@ -24,6 +24,22 @@ namespace NQuery
                 yield return previousToken;
         }
 
+        public static IEnumerable<SyntaxNode> FindNodes(this SyntaxNode root, int position)
+        {
+            // NOTE: We don't use Distinct() because we want to preserve the
+            //       order of nodes.
+            var seenNodes = new HashSet<SyntaxNode>();
+            return root.FindStartTokens(position)
+                       .SelectMany(t => t.Parent.AncestorsAndSelf())
+                       .Where(seenNodes.Add);
+        } 
+
+        public static IEnumerable<T> FindNodes<T>(this SyntaxNode root, int position)
+            where T: SyntaxNode
+        {
+            return root.FindNodes(position).OfType<T>();
+        } 
+
         public static SyntaxToken GetPreviousTokenIfEndOfFile(this SyntaxToken token)
         {
             return token.Kind != SyntaxKind.EndOfFileToken

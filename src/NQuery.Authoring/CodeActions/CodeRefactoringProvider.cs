@@ -10,10 +10,8 @@ namespace NQuery.Authoring.CodeActions
         public IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position)
         {
             var syntaxTree = semanticModel.Compilation.SyntaxTree;
-            return from t in syntaxTree.Root.FindStartTokens(position)
-                   from n in t.Parent.AncestorsAndSelf().OfType<T>()
-                   from r in GetRefactorings(semanticModel, position, n)
-                   select r;
+            return syntaxTree.Root.FindNodes<T>(position)
+                                  .SelectMany(n => GetRefactorings(semanticModel, position, n));
         }
 
         protected abstract IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, T node);
