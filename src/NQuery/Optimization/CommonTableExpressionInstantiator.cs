@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 
 using NQuery.Binding;
@@ -10,17 +9,7 @@ namespace NQuery.Optimization
 {
     internal sealed class CommonTableExpressionInstantiator : BoundTreeRewriter
     {
-        private readonly Dictionary<ValueSlot, ValueSlot> _valueSlotMapping = new Dictionary<ValueSlot, ValueSlot>();
         private int _cteCount;
-
-        protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
-        {
-            if (valueSlot == null)
-                return null;
-
-            ValueSlot newSlot;
-            return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
-        }
 
         protected override BoundRelation RewriteTableRelation(BoundTableRelation node)
         {
@@ -29,9 +18,7 @@ namespace NQuery.Optimization
                 return base.RewriteTableRelation(node);
 
             var prototype = symbol.Query.Relation;
-            var instantiatedQuery = InstantiateCommonTableExpression(prototype);
-
-            AddOutputSlotMapping(node.TableInstance, instantiatedQuery);
+            var instantiatedQuery = InstantiateCommonTableExpression(node.GetOutputValues(), prototype);
 
             // For regular SELECT queries the output node will be a projection.
             // We don't need this moving forward so it's safe to omit.
@@ -42,27 +29,15 @@ namespace NQuery.Optimization
             var projection = instantiatedQuery as BoundProjectRelation;
             var result = projection == null ? instantiatedQuery : projection.Input;
 
-
             return result;
         }
 
-        private void AddOutputSlotMapping(TableInstanceSymbol commonTableExpressionReference, BoundRelation instantiatedCommonTableExpression)
+        private BoundRelation InstantiateCommonTableExpression(IEnumerable<ValueSlot> outputValues, BoundRelation relation)
         {
-            var originalSlots = commonTableExpressionReference.ColumnInstances.Select(c => c.ValueSlot).ToImmutableArray();
-            var instanceSlots = instantiatedCommonTableExpression.GetOutputValues().ToImmutableArray();
+            var mapping = outputValues.Zip(relation.GetOutputValues(), (v, k) => new KeyValuePair<ValueSlot, ValueSlot>(k, v));
 
-            for (var i = 0; i < originalSlots.Length; i++)
-            {
-                var originalSlot = originalSlots[i];
-                var instanceSlot = instanceSlots[i];
-                _valueSlotMapping.Add(originalSlot, instanceSlot);
-            }
-        }
-
-        private BoundRelation InstantiateCommonTableExpression(BoundRelation relation)
-        {
             _cteCount++;
-            var valueSlotRewriter = new ValueSlotRewriter(CreateNewName);
+            var valueSlotRewriter = new ValueSlotRewriter(mapping, CreateNewName);
             return valueSlotRewriter.RewriteRelation(relation);
         }
 
@@ -76,18 +51,21 @@ namespace NQuery.Optimization
             private readonly Func<string, string> _nameProvider;
             private readonly Dictionary<ValueSlot, ValueSlot> _valueSlotMapping = new Dictionary<ValueSlot, ValueSlot>();
 
-            public ValueSlotRewriter(Func<string, string> nameProvider)
+            public ValueSlotRewriter(IEnumerable<KeyValuePair<ValueSlot, ValueSlot>> mapping, Func<string, string> nameProvider)
             {
                 _nameProvider = nameProvider;
+                foreach (var pair in mapping)
+                    _valueSlotMapping.Add(pair.Key, pair.Value);
             }
 
             private void AddValueSlotMapping(IEnumerable<ValueSlot> valueSlots)
             {
-                foreach (var valueSlot in valueSlots)
+                var unmappedSlots = valueSlots.Where(v => !_valueSlotMapping.ContainsKey(v));
+                foreach (var unmappedSlot in unmappedSlots)
                 {
-                    var name = _nameProvider(valueSlot.Name);
-                    var newSlot = new ValueSlot(name, valueSlot.Type);
-                    _valueSlotMapping.Add(valueSlot, newSlot);
+                    var name = _nameProvider(unmappedSlot.Name);
+                    var newSlot = new ValueSlot(name, unmappedSlot.Type);
+                    _valueSlotMapping.Add(unmappedSlot, newSlot);
                 }
             }
 
