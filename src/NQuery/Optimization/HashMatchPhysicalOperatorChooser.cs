@@ -21,12 +21,16 @@ namespace NQuery.Optimization
             // For a hash match, the left side is the one we're indexing. Hence, it's
             // beneficial to make sure the we use the smaller relation as the left side.
             //
-            // Hence, we simply swap left and right.
+            // Hence, we simply swap left and right. However, this transformation is
+            // only valid if it's an inner join -- for the other join types it would
+            // change the semantics of the join.
 
-            var left = RewriteRelation(node.Right);
+            var swapLeftRight = op == BoundHashMatchOperator.Inner;
+
+            var left = RewriteRelation(swapLeftRight ? node.Right : node.Left);
             var leftOutputs = left.GetOutputValues().ToImmutableArray();
 
-            var right = RewriteRelation(node.Left);
+            var right = RewriteRelation(swapLeftRight ? node.Left : node.Right);
             var rightOutputs = right.GetOutputValues().ToImmutableArray();
 
             var equalPredicatesInfo = GetEqualPredicatesInfo(node.Condition, leftOutputs, rightOutputs);
