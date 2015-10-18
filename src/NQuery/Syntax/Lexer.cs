@@ -34,7 +34,7 @@ namespace NQuery.Syntax
             _leadingTrivia.Clear();
             _diagnostics.Clear();
             _start = _charReader.Position;
-            ReadTrivia(_leadingTrivia, isLeading: false);
+            ReadTrivia(_leadingTrivia, isTrailing: false);
             var leadingTrivia = _leadingTrivia.ToImmutableArray();
 
             _kind = SyntaxKind.BadToken;
@@ -52,7 +52,7 @@ namespace NQuery.Syntax
             _trailingTrivia.Clear();
             _diagnostics.Clear();
             _start = _charReader.Position;
-            ReadTrivia(_trailingTrivia, isLeading: true);
+            ReadTrivia(_trailingTrivia, isTrailing: true);
             var trailingTrivia = _trailingTrivia.ToImmutableArray();
 
             return new SyntaxToken(_syntaxTree, kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
@@ -68,7 +68,7 @@ namespace NQuery.Syntax
             get { return TextSpan.FromBounds(_start, Math.Min(_start + 2, _text.Length)); }
         }
 
-        private void ReadTrivia(List<SyntaxTrivia> target, bool isLeading)
+        private void ReadTrivia(List<SyntaxTrivia> target, bool isTrailing)
         {
             while (true)
             {
@@ -79,7 +79,7 @@ namespace NQuery.Syntax
                         {
                             ReadEndOfLine();
                             AddTrivia(target, SyntaxKind.EndOfLineTrivia);
-                            if (isLeading)
+                            if (isTrailing)
                                 return;
                         }
                         break;
