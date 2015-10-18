@@ -38,15 +38,14 @@ namespace NQuery.Binding
             get { return _left; }
         }
 
-        public OverloadResolutionResult<BinaryOperatorSignature> Result
-        {
-            get { return _result; }
-        }
-
-
         public BinaryOperatorKind OperatorKind
         {
             get { return _operatorKind; }
+        }
+
+        public OverloadResolutionResult<BinaryOperatorSignature> Result
+        {
+            get { return _result; }
         }
 
         public BoundExpression Right
