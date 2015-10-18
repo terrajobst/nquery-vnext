@@ -373,7 +373,7 @@ namespace NQuery.Binding
             // if either side couldn't be resolved.
 
             if (left.Type.IsError() || right.Type.IsError())
-                return new BoundBinaryExpression(left, OverloadResolutionResult<BinaryOperatorSignature>.None, right);
+                return new BoundBinaryExpression(left, operatorKind, OverloadResolutionResult<BinaryOperatorSignature>.None, right);
 
             // TODO: We should consider supporting three-state-short-circuit evaluation.
             //
@@ -400,7 +400,7 @@ namespace NQuery.Binding
             var convertedLeft = BindArgument(left, result, 0);
             var convertedRight = BindArgument(right, result, 1);
 
-            return new BoundBinaryExpression(convertedLeft, result, convertedRight);
+            return new BoundBinaryExpression(convertedLeft, operatorKind, result, convertedRight);
         }
 
         private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, SyntaxToken notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
@@ -1086,13 +1086,13 @@ namespace NQuery.Binding
 
             if (!isAll)
             {
-                var condition = new BoundBinaryExpression(convertedLeft, result, convertedRight);
+                var condition = new BoundBinaryExpression(convertedLeft, operatorKind, result, convertedRight);
                 var filter = new BoundFilterRelation(relation, condition);
                 return new BoundExistsSubselect(filter);
             }
             else
             {
-                var comparison = new BoundBinaryExpression(convertedLeft, result, right);
+                var comparison = new BoundBinaryExpression(convertedLeft, operatorKind, result, right);
                 var negatedComparison = BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, comparison);
                 var leftIsNull = new BoundIsNullExpression(convertedLeft);
                 var rightisNull = new BoundIsNullExpression(right);

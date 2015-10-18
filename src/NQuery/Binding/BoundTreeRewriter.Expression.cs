@@ -67,6 +67,7 @@ namespace NQuery.Binding
         protected virtual BoundExpression RewriteBinaryExpression(BoundBinaryExpression node)
         {
             return node.Update(RewriteExpression(node.Left),
+                               node.OperatorKind,
                                node.Result,
                                RewriteExpression(node.Right));
         }

@@ -16,8 +16,9 @@ namespace NQuery.Optimization
             if (right == null)
                 return left;
 
-            var result = BinaryOperator.Resolve(BinaryOperatorKind.LogicalAnd, left.Type, right.Type);
-            return new BoundBinaryExpression(left, result, right);
+            const BinaryOperatorKind operatorKind = BinaryOperatorKind.LogicalAnd;
+            var result = BinaryOperator.Resolve(operatorKind, left.Type, right.Type);
+            return new BoundBinaryExpression(left, operatorKind, result, right);
         }
 
         public static BoundExpression And(IEnumerable<BoundExpression> conditions)
