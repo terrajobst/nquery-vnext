@@ -969,6 +969,18 @@ namespace NQuery.Binding
 
             var boundQuery = BindSubquery(node.Query);
 
+            if (boundQuery.OutputColumns.Length == 0)
+            {
+                // This can happen in cases like this:
+                //
+                //    SELECT  (SELECT * FROM
+                //    FROM EmployeeTerritories et
+                //
+                // We shouldn't report an error but we can't return bound
+                // single row subselect either.
+                return new BoundErrorExpression();
+            }
+
             if (boundQuery.OutputColumns.Length > 1)
             {
                 // TODO: Error
