@@ -65,6 +65,7 @@
     <Compile Include="Iterators\DistinctSortIterator.cs" />
     <Compile Include="Iterators\IteratorFunction.cs" />
     <Compile Include="Iterators\IteratorPredicate.cs" />
+    <Compile Include="Iterators\NullRowBuffer.cs" />
     <Compile Include="Iterators\RowBufferAllocation.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Iterators\HashMatchIterator.cs" />
