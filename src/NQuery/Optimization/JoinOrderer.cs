@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 using NQuery.Binding;
@@ -10,6 +11,8 @@ namespace NQuery.Optimization
 {
     internal sealed class JoinOrderer : BoundTreeRewriter
     {
+        private bool _dumped = true;
+
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
             // Extract relations and predicates
@@ -24,6 +27,14 @@ namespace NQuery.Optimization
             ICollection<JoinNode> nodes;
             ICollection<JoinEdge> edges;
             BuildGraph(relations, predicates, out nodes, out edges);
+
+            // TODO: Remove DEBUG dumping
+
+            if (!_dumped)
+            {
+                DumpGraph(nodes, edges);
+                _dumped = true;
+            }
 
             // Given the graph, compute a join order that uses the predicates.
 
@@ -222,6 +233,20 @@ namespace NQuery.Optimization
             // TODO: We should somehow compute from the actual data context
             return left.ValueSlot.Name.Contains(@"ID:") &&
                    right.ValueSlot.Name.Contains(@"ID:");
+        }
+
+        private static void DumpGraph(ICollection<JoinNode> nodes, ICollection<JoinEdge> edges)
+        {
+            var doc = Dgml.Create(
+                nodes,
+                edges,
+                e => e.Left,
+                e => e.Right
+            );
+
+            var desktop = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            var path = Path.Combine(desktop, "joins.dgml");
+            doc.Save(path);
         }
 
         private sealed class JoinNode
