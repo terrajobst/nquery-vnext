@@ -104,7 +104,9 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
-            return new ShowPlanNode("Table (" + node.TableInstance + ")", properties, children);
+            var name = node.TableInstance.Table.Name;
+            var columns = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
+            return new ShowPlanNode($"Table ({name}), DefinedValues := {columns}", properties, children);
         }
 
         private static ShowPlanNode BuildDerivedTable(BoundDerivedTableRelation node)
@@ -136,7 +138,7 @@ namespace NQuery
 
         private static ShowPlanNode BuildJoin(BoundJoinRelation node)
         {
-            var outerReferences = GetOuterReferences(node.Left,node.Right);
+            var outerReferences = GetOuterReferences(node);
             var probe = node.Probe == null ? string.Empty : $", ProbeColumn := {node.Probe}";
             var passthru = node.PassthruPredicate == null ? string.Empty : $", Passthru := {node.PassthruPredicate}";
             var name = $"{node.JoinType}Join{outerReferences}{probe}{passthru}";
@@ -365,21 +367,16 @@ namespace NQuery
             return new ShowPlanNode("Exists", properties, children, true);
         }
 
-        private static string GetOuterReferences(BoundRelation left, BoundRelation right)
+        private static string GetOuterReferences(BoundJoinRelation node)
         {
-            var valueSlotDependencyFinder = new ValueSlotDependencyFinder();
-            valueSlotDependencyFinder.VisitRelation(right);
-            var usedValueSlots = valueSlotDependencyFinder.ValueSlots;
+            var outerReferences = OuterReferenceFinder.GetOuterReferences(node);
 
             var sb = new StringBuilder();
 
-            foreach (var valueSlot in left.GetDefinedValues())
+            foreach (var valueSlot in outerReferences)
             {
-                if (usedValueSlots.Contains(valueSlot))
-                {
-                    sb.Append(sb.Length == 0 ? " Outer References := [" : ", ");
-                    sb.Append(valueSlot.Name);
-                }
+                sb.Append(sb.Length == 0 ? " Outer References := [" : ", ");
+                sb.Append(valueSlot.Name);
             }
 
             if (sb.Length == 0)

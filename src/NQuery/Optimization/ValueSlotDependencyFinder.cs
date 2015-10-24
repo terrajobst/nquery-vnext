@@ -7,9 +7,19 @@ namespace NQuery.Optimization
 {
     internal sealed class ValueSlotDependencyFinder : BoundTreeWalker
     {
-        private readonly HashSet<ValueSlot> _valueSlots = new HashSet<ValueSlot>();
+        private readonly HashSet<ValueSlot> _valueSlots;
 
-        public ISet<ValueSlot> ValueSlots
+        public ValueSlotDependencyFinder()
+        {
+            _valueSlots = new HashSet<ValueSlot>();
+        }
+
+        public ValueSlotDependencyFinder(HashSet<ValueSlot> valueSlots)
+        {
+            _valueSlots = valueSlots;
+        }
+
+        public HashSet<ValueSlot> ValueSlots
         {
             get { return _valueSlots; }
         }

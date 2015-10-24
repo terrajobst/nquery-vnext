@@ -92,8 +92,7 @@ namespace NQuery.Iterators
         {
             var schemaTableSymbol = (SchemaTableSymbol) relation.TableInstance.Table;
             var tableDefinition = schemaTableSymbol.Definition;
-            // TODO: We proably want to only define the needed columns here.
-            var columnInstances = relation.TableInstance.ColumnInstances;
+            var columnInstances = relation.DefinedValues;
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
                                                .Select(c => c.Definition)

@@ -92,9 +92,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Optimization\OuterJoinRemover.cs" />
+    <Compile Include="Optimization\OuterReferenceFinder.cs" />
     <Compile Include="Optimization\SelectionPusher.cs" />
     <Compile Include="Optimization\SubqueryChecker.cs" />
     <Compile Include="Optimization\SubqueryExpander.cs" />
+    <Compile Include="Optimization\UnusedValueSlotRemover.cs" />
     <Compile Include="Optimization\ValueSlotDependencyFinder.cs" />
     <Compile Include="ShowPlan.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
