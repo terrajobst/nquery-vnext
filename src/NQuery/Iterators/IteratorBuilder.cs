@@ -37,7 +37,12 @@ namespace NQuery.Iterators
 
         private static RowBufferAllocation BuildRowBufferAllocation(BoundRelation input, RowBuffer rowBuffer)
         {
-            return new RowBufferAllocation(rowBuffer, input.GetOutputValues());
+            return BuildRowBufferAllocation(input.GetOutputValues(), rowBuffer);
+        }
+
+        private static RowBufferAllocation BuildRowBufferAllocation(IEnumerable<ValueSlot> outputValues, RowBuffer rowBuffer)
+        {
+            return new RowBufferAllocation(rowBuffer, outputValues);
         }
 
         private static IteratorFunction BuildFunction(BoundExpression expression, IEnumerable<RowBufferAllocation> rowBufferAllocations)
@@ -149,10 +154,12 @@ namespace NQuery.Iterators
             var probeAllocation = BuildRowBufferAllocation(relation.Probe, probe.RowBuffer);
             var probeIndex = probeAllocation[relation.ProbeKey];
 
-            var rowBufferAllocations = BuildRowBufferAllocations(buildAllocation, probeAllocation);
-            var predicate = BuildPredicate(relation.Remainder, rowBufferAllocations);
+            var outputRowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var outputAllocation = BuildRowBufferAllocation(relation, outputRowBuffer);
+            var outputAllocations = BuildRowBufferAllocations(outputAllocation);
+            var predicate = BuildPredicate(relation.Remainder, outputAllocations);
 
-            return new HashMatchIterator(relation.LogicalOperator, build, probe, buildIndex, probeIndex, predicate);
+            return new HashMatchIterator(relation.LogicalOperator, build, probe, buildIndex, probeIndex, predicate, outputRowBuffer);
         }
 
         private Iterator BuildFilter(BoundFilterRelation relation)

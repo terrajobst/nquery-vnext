@@ -65,6 +65,9 @@
     <Compile Include="ExpressionEvaluator.cs" />
     <Compile Include="Iterators\AssertIterator.cs" />
     <Compile Include="Iterators\DistinctSortIterator.cs" />
+    <Compile Include="Iterators\HashMatchEntry.cs" />
+    <Compile Include="Iterators\HashMatchEntryRowBuffer.cs" />
+    <Compile Include="Iterators\HashMatchRowBuffer.cs" />
     <Compile Include="Iterators\IteratorFunction.cs" />
     <Compile Include="Iterators\IteratorPredicate.cs" />
     <Compile Include="Iterators\LeftAntiSemiNestedLoopsIterator.cs" />

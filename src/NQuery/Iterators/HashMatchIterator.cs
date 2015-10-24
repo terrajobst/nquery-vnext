@@ -15,15 +15,15 @@ namespace NQuery.Iterators
         private readonly IteratorPredicate _remainder;
         private readonly HashMatchRowBuffer _rowBuffer;
 
-        private Dictionary<object,Entry> _hashTable;
-        private Entry _entry;
-        private IEnumerator<Entry> _entryEnumerator;
+        private Dictionary<object,HashMatchEntry> _hashTable;
+        private HashMatchEntry _entry;
+        private IEnumerator<HashMatchEntry> _entryEnumerator;
         private Phase _currentPhase;
         private bool _probeMatched;
 
         private static readonly object NullKey = new object();
 
-        public HashMatchIterator(BoundHashMatchOperator logicalOperator, Iterator build, Iterator probe, int buildIndex, int probeIndex, IteratorPredicate remainder)
+        public HashMatchIterator(BoundHashMatchOperator logicalOperator, Iterator build, Iterator probe, int buildIndex, int probeIndex, IteratorPredicate remainder, HashMatchRowBuffer rowBuffer)
         {
             _logicalOperator = logicalOperator;
             _build = build;
@@ -31,7 +31,7 @@ namespace NQuery.Iterators
             _buildIndex = buildIndex;
             _probeIndex = probeIndex;
             _remainder = remainder;
-            _rowBuffer= new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            _rowBuffer = rowBuffer;
         }
 
         public override RowBuffer RowBuffer
@@ -53,7 +53,7 @@ namespace NQuery.Iterators
 
         private void BuildHashtable()
         {
-            _hashTable = new Dictionary<object, Entry>();
+            _hashTable = new Dictionary<object, HashMatchEntry>();
 
             while (_build.Read())
             {
@@ -66,16 +66,16 @@ namespace NQuery.Iterators
 
         private void AddToHashtable(object keyValue, object[] values)
         {
-            Entry entry;
+            HashMatchEntry entry;
             _hashTable.TryGetValue(keyValue, out entry);
 
             if (entry == null)
             {
-                entry = new Entry();
+                entry = new HashMatchEntry();
             }
             else
             {
-                var newEntry = new Entry {Next = entry};
+                var newEntry = new HashMatchEntry {Next = entry};
                 entry = newEntry;
             }
 
@@ -192,86 +192,6 @@ namespace NQuery.Iterators
                 default:
                     throw new NotImplementedException();
             }
-        }
-
-        private sealed class EntryRowBuffer : RowBuffer
-        {
-            public Entry Entry { get; set; }
-
-            public override int Count
-            {
-                get { return Entry.RowValues.Length; }
-            }
-
-            public override object this[int index]
-            {
-                get { return Entry.RowValues[index]; }
-            }
-
-            public override void CopyTo(object[] array, int destinationIndex)
-            {
-                var source = Entry.RowValues;
-                Array.Copy(source, 0, array, destinationIndex, source.Length);
-            }
-        }
-
-        private sealed class HashMatchRowBuffer : RowBuffer
-        {
-            private readonly IndirectedRowBuffer _build;
-            private readonly EntryRowBuffer _buildEntry;
-            private readonly NullRowBuffer _buildNull;
-
-            private readonly IndirectedRowBuffer _probe;
-            private readonly NullRowBuffer _probeNull;
-
-            public HashMatchRowBuffer(int buildCount, int probeCount)
-            {
-                _build = new IndirectedRowBuffer(buildCount);
-                _buildEntry = new EntryRowBuffer();
-                _buildNull = new NullRowBuffer(buildCount);
-
-                _probe = new IndirectedRowBuffer(probeCount);
-                _probeNull = new NullRowBuffer(probeCount);
-            }
-
-            public void SetBuild(Entry entry)
-            {
-                _buildEntry.Entry = entry;
-                _build.ActiveRowBuffer = entry == null ? (RowBuffer) _buildNull : _buildEntry;
-            }
-
-            public void SetProbe(RowBuffer rowBuffer)
-            {
-                _probe.ActiveRowBuffer = rowBuffer ?? _probeNull;
-            }
-
-            public override int Count
-            {
-                get { return _buildNull.Count + _probeNull.Count; }
-            }
-
-            public override object this[int index]
-            {
-                get
-                {
-                    return index < _build.Count
-                               ? _build[index]
-                               : _probe[index - _build.Count];
-                }
-            }
-
-            public override void CopyTo(object[] array, int destinationIndex)
-            {
-                _build.CopyTo(array, destinationIndex);
-                _probe.CopyTo(array, _build.Count + destinationIndex);
-            }
-        }
-
-        private sealed class Entry
-        {
-            public object[] RowValues;
-            public Entry Next;
-            public bool Matched;
         }
 
         private enum Phase
