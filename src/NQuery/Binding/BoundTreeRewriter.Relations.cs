@@ -38,6 +38,8 @@ namespace NQuery.Binding
                     return RewriteSortRelation((BoundSortRelation)node);
                 case BoundNodeKind.TopRelation:
                     return RewriteTopRelation((BoundTopRelation)node);
+                case BoundNodeKind.AssertRelation:
+                    return RewriteAssertRelation((BoundAssertRelation)node);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -59,7 +61,9 @@ namespace NQuery.Binding
             return node.Update(node.JoinType,
                                RewriteRelation(node.Left),
                                RewriteRelation(node.Right),
-                               RewriteExpression(node.Condition));
+                               RewriteExpression(node.Condition),
+                               RewriteValueSlot(node.Probe),
+                               RewriteExpression(node.PassthruPredicate));
         }
 
         protected virtual BoundRelation RewriteHashMatchRelation(BoundHashMatchRelation node)
@@ -141,6 +145,13 @@ namespace NQuery.Binding
             return node.Update(RewriteRelation(node.Input),
                                node.Limit,
                                RewriteSortedValues(node.TieEntries));
+        }
+
+        protected virtual BoundRelation RewriteAssertRelation(BoundAssertRelation node)
+        {
+            return node.Update(RewriteRelation(node.Input),
+                               RewriteExpression(node.Condition),
+                               node.Message);
         }
    }
 }

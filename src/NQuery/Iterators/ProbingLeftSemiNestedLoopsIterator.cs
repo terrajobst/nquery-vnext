@@ -1,25 +1,23 @@
-﻿using System;
+using System;
 
 namespace NQuery.Iterators
 {
-    internal sealed class InnerNestedLoopsIterator : NestedLoopsIterator
+    internal sealed class ProbingLeftSemiNestedLoopsIterator : NestedLoopsIterator
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
         private readonly IteratorPredicate _predicate;
-        private readonly IteratorPredicate _passthruPredicate;
-        private readonly RowBuffer _rowBuffer;
+        private readonly ProbedRowBuffer _rowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public InnerNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate, IteratorPredicate passthruPredicate)
+        public ProbingLeftSemiNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
-            _passthruPredicate = passthruPredicate;
-            _rowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+            _rowBuffer = new ProbedRowBuffer(left.RowBuffer);
         }
 
         public override RowBuffer RowBuffer
@@ -36,6 +34,7 @@ namespace NQuery.Iterators
 
         public override bool Read()
         {
+            _rowBuffer.SetProbe(false);
             var matchingRowFound = false;
             while (!matchingRowFound)
             {
@@ -46,29 +45,33 @@ namespace NQuery.Iterators
                     if (!_left.Read())
                         return false;
 
-                    if (_passthruPredicate())
-                    {
-                        _advanceOuter = true;
-                        return true;
-                    }
-
                     _right.Open();
                 }
 
-                // If we are bof or the inner is eof, reset the inner and
-                // advance both cursors.
-
-                if (_bof || !_right.Read())
+                if (_bof)
                 {
                     _bof = false;
                     _advanceOuter = true;
                     continue;
                 }
 
+                // If the inner is eof, reset the inner and advance both cursors.
+                if (!_right.Read())
+                {
+                    _advanceOuter = true;
+                    // We found no matching row. However, since this a probing iterator
+                    // we must return this row as well.
+                    return true;
+                }
+
                 // Check predicate.
                 matchingRowFound = _predicate();
+
+                if (matchingRowFound)
+                    _advanceOuter = true;
             }
 
+            _rowBuffer.SetProbe(true);
             return true;
         }
     }

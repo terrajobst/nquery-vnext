@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using NQuery.Binding;
 
 namespace NQuery.Iterators
-{ 
+{
     internal sealed class HashMatchIterator : Iterator
     {
         private readonly BoundHashMatchOperator _logicalOperator;

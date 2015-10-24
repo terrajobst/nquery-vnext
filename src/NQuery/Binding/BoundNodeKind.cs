@@ -39,6 +39,7 @@ namespace NQuery.Binding
         ProjectRelation,
         SortRelation,
         TopRelation,
+        AssertRelation,
 
         // Other
         Query,

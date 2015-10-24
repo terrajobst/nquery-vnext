@@ -79,7 +79,7 @@ namespace NQuery.Binding
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-            return new BoundJoinRelation(BoundJoinType.Inner, left, right, null);
+            return new BoundJoinRelation(BoundJoinType.Inner, left, right, null, null, null);
         }
 
         private BoundRelation BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
@@ -93,7 +93,7 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinRelation(BoundJoinType.Inner, left, right, condition);
+            return new BoundJoinRelation(BoundJoinType.Inner, left, right, condition, null, null);
         }
 
         private BoundRelation BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
@@ -113,7 +113,7 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinRelation(joinType, left, right, condition);
+            return new BoundJoinRelation(joinType, left, right, condition, null, null);
         }
 
         private BoundRelation BindDerivedTableReference(DerivedTableReferenceSyntax node)

@@ -40,7 +40,7 @@ namespace NQuery.Optimization
 
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
-            if (node.Condition != null)
+            if (node.Condition != null && node.Probe == null)
             {
                 BoundExpression pushedLeft = null;
                 BoundExpression pushedRight = null;
@@ -73,7 +73,9 @@ namespace NQuery.Optimization
                 var newNode = node.Update(node.JoinType,
                                           RewriteRelation(newLeft),
                                           RewriteRelation(newRight),
-                                          remainder);
+                                          remainder,
+                                          RewriteValueSlot(node.Probe),
+                                          RewriteExpression(node.PassthruPredicate));
                 return newNode;
             }
 
@@ -83,41 +85,33 @@ namespace NQuery.Optimization
         private static bool AllowsLeftPushDown(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.RightOuter /* ||
+                   type == BoundJoinType.RightOuter ||
                    type == BoundJoinType.LeftSemi ||
-                   type == BoundJoinType.RightSemi ||
-                   type == BoundJoinType.LeftAntiSemi ||
-                   type == BoundJoinType.RightAntiSemi */;
+                   type == BoundJoinType.LeftAntiSemi;
         }
 
         private static bool AllowsRightPushDown(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.LeftOuter /* ||
+                   type == BoundJoinType.LeftOuter ||
                    type == BoundJoinType.LeftSemi ||
-                   type == BoundJoinType.RightSemi ||
-                   type == BoundJoinType.LeftAntiSemi ||
-                   type == BoundJoinType.RightAntiSemi*/;
+                   type == BoundJoinType.LeftAntiSemi;
         }
 
         private static bool AllowsLeftPushOver(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.LeftOuter /*||
+                   type == BoundJoinType.LeftOuter||
                    type == BoundJoinType.LeftSemi ||
-                   type == BoundJoinType.RightSemi ||
-                   type == BoundJoinType.LeftAntiSemi ||
-                   type == BoundJoinType.RightAntiSemi*/;
+                   type == BoundJoinType.LeftAntiSemi;
         }
 
         private static bool AllowsRightPushOver(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.RightOuter /*||
+                   type == BoundJoinType.RightOuter||
                    type == BoundJoinType.LeftSemi ||
-                   type == BoundJoinType.RightSemi ||
-                   type == BoundJoinType.LeftAntiSemi ||
-                   type == BoundJoinType.RightAntiSemi*/;
+                   type == BoundJoinType.LeftAntiSemi;
         }
 
         private static bool AllowsMerge(BoundJoinType type)
@@ -228,10 +222,20 @@ namespace NQuery.Optimization
 
         private BoundRelation MergeWithOrPushOverJoin(BoundFilterRelation node, BoundJoinRelation input)
         {
-            if (AllowsMerge(input.JoinType))
+            // TODO: Right now, we're not pushing over a join if it has any probing.
+            //
+            //       That might be too restristive. It should be OK to push a over
+            //       a join to the side that isn't affecting the probe column.
+            //
+            //       In other words:
+            //
+            //       * pushing to the left is OK if it's a left (anti) semi join
+            //       * pushing to the right is OK if it's a right (anti) semi join
+
+            if (AllowsMerge(input.JoinType) && input.Probe == null)
             {
                 var newCondition = Condition.And(input.Condition, node.Condition);
-                var newInput = input.Update(input.JoinType, input.Left, input.Right, newCondition);
+                var newInput = input.Update(input.JoinType, input.Left, input.Right, newCondition, null, null);
                 return RewriteRelation(newInput);
             }
             else
@@ -267,7 +271,9 @@ namespace NQuery.Optimization
                 var newInput = input.Update(input.JoinType,
                                             RewriteRelation(newLeft),
                                             RewriteRelation(newRight),
-                                            input.Condition);
+                                            input.Condition,
+                                            RewriteValueSlot(input.Probe),
+                                            RewriteExpression(input.PassthruPredicate));
 
                 var newNode = remainder == null
                     ? (BoundRelation)newInput

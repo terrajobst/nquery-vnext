@@ -123,16 +123,31 @@ namespace NQueryViewer
             ExecutionTimeTextBlock.Text = "Running query...";
 
             var stopwatch = Stopwatch.StartNew();
-            var dataTable = await Task.Run(() =>
+
+            DataTable dataTable = null;
+            Exception exception = null;
+
+            try
             {
-                using (var reader = query.CreateReader())
-                    return reader.ExecuteDataTable();
-            });
+                dataTable = await Task.Run(() =>
+                {
+                    using (var reader = query.CreateReader())
+                        return reader.ExecuteDataTable();
+                });
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+            }
+
             var elapsed = stopwatch.Elapsed;
 
-            DataGrid.ItemsSource = dataTable.DefaultView;
+            DataGrid.ItemsSource = dataTable?.DefaultView;
             BottomToolWindowTabControl.SelectedItem = ResultsTabItem;
             ExecutionTimeTextBlock.Text = $"Completed in {elapsed}";
+
+            if (exception != null)
+                MessageBox.Show(exception.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void ExplainQuery()

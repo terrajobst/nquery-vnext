@@ -41,6 +41,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Binding\BoundAssertNode.cs" />
     <Compile Include="Binding\BoundComputedValueWithSyntax.cs" />
     <Compile Include="Binding\BoundConcatenationRelation.cs" />
     <Compile Include="Binding\BoundGroupByClause.cs" />
@@ -62,10 +63,17 @@
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
+    <Compile Include="Iterators\AssertIterator.cs" />
     <Compile Include="Iterators\DistinctSortIterator.cs" />
     <Compile Include="Iterators\IteratorFunction.cs" />
     <Compile Include="Iterators\IteratorPredicate.cs" />
+    <Compile Include="Iterators\LeftAntiSemiNestedLoopsIterator.cs" />
+    <Compile Include="Iterators\LeftOuterNestedLoopsIterator.cs" />
+    <Compile Include="Iterators\LeftSemiNestedLoopsIterator.cs" />
+    <Compile Include="Iterators\NestedLoopsIterator.cs" />
     <Compile Include="Iterators\NullRowBuffer.cs" />
+    <Compile Include="Iterators\ProbingLeftSemiNestedLoopsIterator.cs" />
+    <Compile Include="Iterators\ProbedRowBuffer.cs" />
     <Compile Include="Iterators\RowBufferAllocation.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Iterators\HashMatchIterator.cs" />
@@ -76,13 +84,17 @@
     <Compile Include="Optimization\Condition.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
     <Compile Include="Iterators\StreamAggregateIterator.cs" />
+    <Compile Include="Optimization\FullOuterJoinExpander.cs" />
     <Compile Include="Optimization\HashMatchPhysicalOperatorChooser.cs" />
+    <Compile Include="Optimization\Instatiator.cs" />
     <Compile Include="Optimization\JoinLinearizer.cs" />
     <Compile Include="Optimization\Optimizer.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Optimization\OuterJoinRemover.cs" />
     <Compile Include="Optimization\SelectionPusher.cs" />
+    <Compile Include="Optimization\SubqueryChecker.cs" />
+    <Compile Include="Optimization\SubqueryExpander.cs" />
     <Compile Include="Optimization\ValueSlotDependencyFinder.cs" />
     <Compile Include="ShowPlan.cs" />
     <Compile Include="ShowPlanBuilder.cs" />
@@ -146,6 +158,7 @@
     <Compile Include="Binding\LocalBinder.cs" />
     <Compile Include="Binding\BoundAggregateExpression.cs" />
     <Compile Include="Binding\BoundWildcardSelectColumn.cs" />
+    <Compile Include="Symbols\Aggregation\AnyAggregatable.cs" />
     <Compile Include="Symbols\Aggregation\AvgAggregateDefinition.cs" />
     <Compile Include="Symbols\Aggregation\AggregateDefinition.cs" />
     <Compile Include="Symbols\Aggregation\ConcatAggregateDefinition.cs" />

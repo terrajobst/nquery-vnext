@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 using NQuery.Binding;
+using NQuery.Optimization;
 
 namespace NQuery
 {
@@ -50,6 +52,8 @@ namespace NQuery
                     return BuildStreamAggregatesRelation((BoundStreamAggregatesRelation)node);
                 case BoundNodeKind.ProjectRelation:
                     return BuildProject((BoundProjectRelation)node);
+                case BoundNodeKind.AssertRelation:
+                    return BuildAssert((BoundAssertRelation)node);
                 case BoundNodeKind.UnaryExpression:
                     return BuildUnaryExpression((BoundUnaryExpression)node);
                 case BoundNodeKind.BinaryExpression:
@@ -132,18 +136,17 @@ namespace NQuery
 
         private static ShowPlanNode BuildJoin(BoundJoinRelation node)
         {
+            var outerReferences = GetOuterReferences(node.Left,node.Right);
+            var probe = node.Probe == null ? string.Empty : $", ProbeColumn := {node.Probe}";
+            var passthru = node.PassthruPredicate == null ? string.Empty : $", Passthru := {node.PassthruPredicate}";
+            var name = $"{node.JoinType}Join{outerReferences}{probe}{passthru}";
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var leftAndRight = new[]
-                               {
-                                   Build(node.Left),
-                                   Build(node.Right)
-                               };
-
+            var leftAndRight = new[] { Build(node.Left), Build(node.Right) };
             var children = node.Condition == null
                                ? leftAndRight
                                : leftAndRight.Concat(new[] {Build(node.Condition)});
 
-            return new ShowPlanNode(node.JoinType + "Join", properties, children);
+            return new ShowPlanNode(name, properties, children);
         }
 
         private static ShowPlanNode BuildHashMatch(BoundHashMatchRelation node)
@@ -242,6 +245,13 @@ namespace NQuery
             var children = new[] { Build(node.Input) };
             var slots = string.Join(", ", node.Outputs.Select(v => v.Name));
             return new ShowPlanNode("Project " + slots, properties, children);
+        }
+
+        private static ShowPlanNode BuildAssert(BoundAssertRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Input), Build(node.Condition) };
+            return new ShowPlanNode("Assert", properties, children);
         }
 
         private static ShowPlanNode BuildUnaryExpression(BoundUnaryExpression node)
@@ -353,6 +363,30 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Relation) };
             return new ShowPlanNode("Exists", properties, children, true);
+        }
+
+        private static string GetOuterReferences(BoundRelation left, BoundRelation right)
+        {
+            var valueSlotDependencyFinder = new ValueSlotDependencyFinder();
+            valueSlotDependencyFinder.VisitRelation(right);
+            var usedValueSlots = valueSlotDependencyFinder.ValueSlots;
+
+            var sb = new StringBuilder();
+
+            foreach (var valueSlot in left.GetDefinedValues())
+            {
+                if (usedValueSlots.Contains(valueSlot))
+                {
+                    sb.Append(sb.Length == 0 ? " Outer References := [" : ", ");
+                    sb.Append(valueSlot.Name);
+                }
+            }
+
+            if (sb.Length == 0)
+                return string.Empty;
+
+            sb.Append("]");
+            return sb.ToString();
         }
     }
 }

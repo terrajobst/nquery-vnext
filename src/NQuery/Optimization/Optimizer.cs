@@ -28,6 +28,12 @@ namespace NQuery.Optimization
             // Instantiate CTEs
             yield return new CommonTableExpressionInstantiator();
 
+            // Expand full outer joins
+            yield return new FullOuterJoinExpander();
+
+            // Expand subqueries
+            yield return new SubqueryExpander();
+
             // TODO: semi join simplification
             // TODO: decorrelation
 
@@ -50,7 +56,6 @@ namespace NQuery.Optimization
             yield return new ConcatenationPhysicalOperatorChooser();
 
             // TODO: null scan optimization
-            // TODO: full outer join expansion
         }
     }
 }

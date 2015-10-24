@@ -1208,7 +1208,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    lastTableReference = new BoundJoinRelation(BoundJoinType.Inner, lastTableReference, boundTableReference, null);
+                    lastTableReference = new BoundJoinRelation(BoundJoinType.Inner, lastTableReference, boundTableReference, null, null, null);
                 }
             }
 

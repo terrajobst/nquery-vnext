@@ -2,29 +2,27 @@
 
 namespace NQuery.Iterators
 {
-    internal sealed class InnerNestedLoopsIterator : NestedLoopsIterator
+    internal sealed class LeftSemiNestedLoopsIterator : NestedLoopsIterator
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
         private readonly IteratorPredicate _predicate;
         private readonly IteratorPredicate _passthruPredicate;
-        private readonly RowBuffer _rowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public InnerNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate, IteratorPredicate passthruPredicate)
+        public LeftSemiNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate, IteratorPredicate passthruPredicate)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
             _passthruPredicate = passthruPredicate;
-            _rowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
         }
 
         public override RowBuffer RowBuffer
         {
-            get { return _rowBuffer; }
+            get { return _left.RowBuffer; }
         }
 
         public override void Open()
@@ -57,7 +55,6 @@ namespace NQuery.Iterators
 
                 // If we are bof or the inner is eof, reset the inner and
                 // advance both cursors.
-
                 if (_bof || !_right.Read())
                 {
                     _bof = false;
@@ -67,6 +64,9 @@ namespace NQuery.Iterators
 
                 // Check predicate.
                 matchingRowFound = _predicate();
+
+                if (matchingRowFound)
+                    _advanceOuter = true;
             }
 
             return true;

@@ -67,7 +67,7 @@ namespace NQuery.Optimization
                         ? BoundJoinType.Inner
                         : BoundJoinType.LeftOuter;
 
-                    node = node.Update(newType, node.Left, node.Right, node.Condition);
+                    node = node.Update(newType, node.Left, node.Right, node.Condition, node.Probe, node.PassthruPredicate);
                 }
             }
 
@@ -80,7 +80,7 @@ namespace NQuery.Optimization
                         ? BoundJoinType.Inner
                         : BoundJoinType.RightOuter;
 
-                    node = node.Update(newType, node.Left, node.Right, node.Condition);
+                    node = node.Update(newType, node.Left, node.Right, node.Condition, node.Probe, node.PassthruPredicate);
                 }
             }
 

@@ -53,6 +53,9 @@ namespace NQuery.Binding
                 case BoundNodeKind.TopRelation:
                     VisitTopRelation((BoundTopRelation)node);
                     break;
+                case BoundNodeKind.AssertRelation:
+                    VisitAssertRelation((BoundAssertRelation)node);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -74,6 +77,9 @@ namespace NQuery.Binding
 
             if (node.Condition != null)
                 VisitExpression(node.Condition);
+
+            if (node.PassthruPredicate != null)
+                VisitExpression(node.PassthruPredicate);
         }
 
         protected virtual void VisitHashMatchRelation(BoundHashMatchRelation node)
@@ -144,6 +150,12 @@ namespace NQuery.Binding
         protected virtual void VisitTopRelation(BoundTopRelation node)
         {
             VisitRelation(node.Input);
+        }
+
+        protected virtual void VisitAssertRelation(BoundAssertRelation node)
+        {
+            VisitRelation(node.Input);
+            VisitExpression(node.Condition);
         }
     }
 }

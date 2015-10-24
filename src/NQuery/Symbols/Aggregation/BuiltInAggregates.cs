@@ -9,7 +9,7 @@ namespace NQuery.Symbols.Aggregation
         {
             return new[]
             {
-                new AggregateSymbol(new CountAggregateDefinition()),
+                Count,
                 new AggregateSymbol(new AvgAggregateDefinition()),
                 new AggregateSymbol(new MaxAggregateDefinition()),
                 new AggregateSymbol(new MinAggregateDefinition()),
@@ -19,5 +19,8 @@ namespace NQuery.Symbols.Aggregation
                 new AggregateSymbol(new ConcatAggregateDefinition())
             };
         }
+
+        public static AggregateSymbol Count = new AggregateSymbol(new CountAggregateDefinition());
+        public static AggregateSymbol Any = new AggregateSymbol(new AnyAggregateDefinition());
     }
 }

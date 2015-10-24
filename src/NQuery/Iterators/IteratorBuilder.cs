@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 
 using NQuery.Binding;
@@ -18,20 +19,20 @@ namespace NQuery.Iterators
             return builder.BuildRelation(relation);
         }
 
-        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(BoundRelation input, RowBuffer inputRowBuffer)
+        private ImmutableArray<RowBufferAllocation> BuildRowBufferAllocations(BoundRelation input, RowBuffer inputRowBuffer)
         {
             var inputAllocation = BuildRowBufferAllocation(input, inputRowBuffer);
             return BuildRowBufferAllocations(inputAllocation);
         }
 
-        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation input)
+        private ImmutableArray<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation input)
         {
-            return ImmutableArray.Create(input).Concat(_outerRowBufferAllocations);
+            return ImmutableArray.Create(input).Concat(_outerRowBufferAllocations).ToImmutableArray();
         }
 
-        private IEnumerable<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation left, RowBufferAllocation right)
+        private ImmutableArray<RowBufferAllocation> BuildRowBufferAllocations(RowBufferAllocation left, RowBufferAllocation right)
         {
-            return ImmutableArray.Create(left, right).Concat(_outerRowBufferAllocations);
+            return ImmutableArray.Create(left, right).Concat(_outerRowBufferAllocations).ToImmutableArray();
         }
 
         private static RowBufferAllocation BuildRowBufferAllocation(BoundRelation input, RowBuffer rowBuffer)
@@ -75,6 +76,8 @@ namespace NQuery.Iterators
                     return BuildStreamAggregatesRelation((BoundStreamAggregatesRelation)relation);
                 case BoundNodeKind.ProjectRelation:
                     return BuildProject((BoundProjectRelation)relation);
+                case BoundNodeKind.AssertRelation:
+                    return BuildAssert((BoundAssertRelation)relation);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(relation), $"Unknown relation kind: {relation.Kind}.");
             }
@@ -102,14 +105,39 @@ namespace NQuery.Iterators
         {
             var left = BuildRelation(relation.Left);
             var leftAllocation = BuildRowBufferAllocation(relation.Left, left.RowBuffer);
+            _outerRowBufferAllocations.Push(leftAllocation);
 
             var right = BuildRelation(relation.Right);
             var rightAllocation = BuildRowBufferAllocation(relation.Right, right.RowBuffer);
+            _outerRowBufferAllocations.Pop();
 
             var rowBufferAllocations = BuildRowBufferAllocations(leftAllocation, rightAllocation);
             var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
 
-            return new InnerNestedLoopsIterator(left, right, predicate);
+            var passthruPredicate = relation.PassthruPredicate == null
+                ? () => false
+                : BuildPredicate(relation.PassthruPredicate, rowBufferAllocations);
+
+            switch (relation.JoinType)
+            {
+                case BoundJoinType.Inner:
+                    Debug.Assert(relation.Probe == null);
+                    return new InnerNestedLoopsIterator(left, right, predicate, passthruPredicate);
+                case BoundJoinType.LeftSemi:
+                    return relation.Probe == null
+                        ? (Iterator) new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
+                        : new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
+                case BoundJoinType.LeftAntiSemi:
+                    // TODO: Support ProbingLeftAntiSemiJoin
+                    Debug.Assert(relation.Probe == null);
+                    return new LeftAntiSemiNestedLoopsIterator(left, right, predicate, passthruPredicate);
+                case BoundJoinType.LeftOuter:
+                    return new LeftOuterNestedLoopsIterator(left, right, predicate, passthruPredicate);
+                case BoundJoinType.FullOuter:
+                case BoundJoinType.RightOuter:
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private Iterator BuildHashMatch(BoundHashMatchRelation relation)
@@ -211,6 +239,14 @@ namespace NQuery.Iterators
             var inputRowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
             var projectedIndices = relation.Outputs.Select(vs => inputRowBufferAllocation[vs]).ToImmutableArray();
             return new ProjectionIterator(input, projectedIndices);
+        }
+
+        private Iterator BuildAssert(BoundAssertRelation relation)
+        {
+            var input = BuildRelation(relation.Input);
+            var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
+            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
+            return new AssertIterator(input, predicate, relation.Message);
         }
     }
 }
