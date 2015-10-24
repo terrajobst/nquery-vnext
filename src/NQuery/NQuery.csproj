@@ -79,6 +79,8 @@
     <Compile Include="Iterators\HashMatchIterator.cs" />
     <Compile Include="Iterators\IndirectedRowBuffer.cs" />
     <Compile Include="Binding\BoundHashMatchRelation.cs" />
+    <Compile Include="Optimization\CardinalityEstimate.cs" />
+    <Compile Include="Optimization\CardinalityEstimator.cs" />
     <Compile Include="Optimization\CommonTableExpressionInstantiator.cs" />
     <Compile Include="Optimization\ConcatenationPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\Condition.cs" />
@@ -88,6 +90,7 @@
     <Compile Include="Optimization\HashMatchPhysicalOperatorChooser.cs" />
     <Compile Include="Optimization\Instatiator.cs" />
     <Compile Include="Optimization\JoinLinearizer.cs" />
+    <Compile Include="Optimization\JoinOrderer.cs" />
     <Compile Include="Optimization\Optimizer.cs">
       <SubType>Code</SubType>
     </Compile>

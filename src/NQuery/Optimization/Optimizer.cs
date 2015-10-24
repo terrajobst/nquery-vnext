@@ -50,6 +50,12 @@ namespace NQuery.Optimization
 
             // TODO: outer join reordering
             // TODO: join order optimization
+
+            yield return new JoinOrderer();
+
+            // after the join ordering, we need to push selections again
+            yield return new SelectionPusher();
+
             // TODO: at most one row reordering
             // TODO: push computations
             
