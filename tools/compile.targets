@@ -13,4 +13,6 @@
     <Compile Include="$(SourceDir)Common\CommonAssemblyInfo.cs" />
   </ItemGroup>
 
+  <Import Project="$(PackagesDir)NuProj.0.10.4-beta-gf7fc34e7d8\tools\Microsoft.Common.NuProj.targets" />
+
 </Project>

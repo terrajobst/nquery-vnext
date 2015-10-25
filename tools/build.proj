@@ -36,7 +36,6 @@
     <BuildStep Include="$(ToolsDir)compile.proj" />
     <BuildStep Include="$(ToolsDir)tests.proj"
                Condition="'$(SkipTests)' != 'True'" />
-    <BuildStep Include="$(ToolsDir)package.proj" />
   </ItemGroup>
 
   <Target Name="Clean">

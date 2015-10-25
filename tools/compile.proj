@@ -11,12 +11,15 @@
 
   <PropertyGroup>
     <CustomAfterMicrosoftCSharpTargets>$(ToolsDir)compile.targets</CustomAfterMicrosoftCSharpTargets>
+    <CustomBeforeNuProjTargets>$(SourceDir)Common\CommonNuProj.props</CustomBeforeNuProjTargets>
     <ProjectProperties>
       Configuration=$(Configuration);
       Platform=$(Platform);
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
-      CustomAfterMicrosoftCSharpTargets=$(CustomAfterMicrosoftCSharpTargets)
+      CustomAfterMicrosoftCSharpTargets=$(CustomAfterMicrosoftCSharpTargets);
+      CustomBeforeNuProjTargets=$(CustomBeforeNuProjTargets);
+      NuProjPath=$(SourceDir)packages\NuProj.0.10.4-beta-gf7fc34e7d8\tools\;
     </ProjectProperties>
   </PropertyGroup>
 
