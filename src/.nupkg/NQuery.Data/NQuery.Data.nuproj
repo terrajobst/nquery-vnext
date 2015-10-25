@@ -21,6 +21,7 @@
     <NuProjPath Condition=" '$(NuProjPath)' == '' ">$(MSBuildExtensionsPath)\NuProj\</NuProjPath>
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.props" Condition="Exists('$(NuProjPath)\NuProj.props')" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Common\CommonNuProj.props" />
   <PropertyGroup Label="Configuration">
     <Id>NQuery.Data</Id>
     <Title>NQuery.Data</Title>
@@ -30,4 +31,5 @@
     </ReleaseNotes>
   </PropertyGroup>
   <Import Project="$(NuProjPath)\NuProj.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Common\CommonNuProj.targets" />
 </Project>

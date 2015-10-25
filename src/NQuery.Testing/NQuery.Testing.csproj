@@ -55,6 +55,7 @@
     <Compile Include="TestGenerationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Resources\Northwind.xml" />
   </ItemGroup>
   <ItemGroup>

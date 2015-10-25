@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <Version>1.0.0-alpha</Version>
     <Authors>Immo Landwerth</Authors>
     <Owners>Immo Landwerth</Owners>
     <ProjectUrl>http://nquery.codeplex.com</ProjectUrl>
@@ -10,6 +9,11 @@
     <Copyright>Copyright (c) Immo Landwerth</Copyright>
     <RequireLicenseAcceptance>False</RequireLicenseAcceptance>
     <Tags>NQuery SQL</Tags>
+  </PropertyGroup>
+
+  <!-- Versioning hookup for Nerdbank.GitVersioning -->
+  <PropertyGroup>
+    <VersionDependsOn>$(VersionDependsOn);GetNuPkgVersion</VersionDependsOn>
   </PropertyGroup>
 
 </Project>

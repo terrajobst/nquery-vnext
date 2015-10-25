@@ -13,6 +13,7 @@
     <IntermediateOutputPath Condition=" '$(IntermediateOutputPath)' == '' ">$(ProjectDir)obj\</IntermediateOutputPath>
     <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
     <Platform Condition="'$(Platform)' == ''">Any CPU</Platform>
+    <PublicRelease Condition="'$(PublicRelease)' == ''">True</PublicRelease>
   </PropertyGroup>
 
   <!--
@@ -28,6 +29,7 @@
       Platform=$(Platform);
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
+      PublicRelease=$(PublicRelease);
     </ProjectProperties>
   </PropertyGroup>
 
