@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace NQuery.Symbols
 {
     public sealed class DerivedTableSymbol : TableSymbol
     {
         internal DerivedTableSymbol(IEnumerable<ColumnSymbol> columns)
-            : base(string.Empty, columns)
+            : base(string.Empty)
         {
+            Columns = columns.ToImmutableArray();
         }
 
         public override SymbolKind Kind
@@ -19,5 +21,7 @@ namespace NQuery.Symbols
         {
             get { return TypeFacts.Missing; }
         }
+
+        public override ImmutableArray<ColumnSymbol> Columns { get; }
     }
 }

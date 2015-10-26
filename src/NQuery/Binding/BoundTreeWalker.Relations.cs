@@ -56,6 +56,12 @@ namespace NQuery.Binding
                 case BoundNodeKind.AssertRelation:
                     VisitAssertRelation((BoundAssertRelation)node);
                     break;
+                case BoundNodeKind.TableSpoolPusher:
+                    VisitTableSpoolPusher((BoundTableSpoolPusher)node);
+                    break;
+                case BoundNodeKind.TableSpoolPopper:
+                    VisitTableSpoolPopper((BoundTableSpoolPopper)node);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
@@ -156,6 +162,15 @@ namespace NQuery.Binding
         {
             VisitRelation(node.Input);
             VisitExpression(node.Condition);
+        }
+
+        protected virtual void VisitTableSpoolPusher(BoundTableSpoolPusher node)
+        {
+            VisitRelation(node.Input);
+        }
+
+        protected virtual void VisitTableSpoolPopper(BoundTableSpoolPopper node)
+        {
         }
     }
 }

@@ -21,6 +21,7 @@ namespace NQuery.Iterators
     internal sealed class IteratorBuilder
     {
         private readonly Stack<RowBufferAllocation> _outerRowBufferAllocations = new Stack<RowBufferAllocation>();
+        private readonly Stack<TableSpoolStack> _tableSpoolStack = new Stack<TableSpoolStack>();
 
         public static Iterator Build(BoundRelation relation)
         {
@@ -92,6 +93,10 @@ namespace NQuery.Iterators
                     return BuildProject((BoundProjectRelation)relation);
                 case BoundNodeKind.AssertRelation:
                     return BuildAssert((BoundAssertRelation)relation);
+                case BoundNodeKind.TableSpoolPusher:
+                    return BuildTableSpoolPusher((BoundTableSpoolPusher)relation);
+                case BoundNodeKind.TableSpoolPopper:
+                    return BuildTableSpoolPopper((BoundTableSpoolPopper)relation);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(relation), $"Unknown relation kind: {relation.Kind}.");
             }
@@ -298,6 +303,22 @@ namespace NQuery.Iterators
             var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
             var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
             return new AssertIterator(input, predicate, relation.Message);
+        }
+
+        private Iterator BuildTableSpoolPusher(BoundTableSpoolPusher relation)
+        {
+            var stack = new TableSpoolStack(relation.Input.GetOutputValues().Count());
+            _tableSpoolStack.Push(stack);
+            var input = BuildRelation(relation.Input);
+            _tableSpoolStack.Pop();
+
+            return new TableSpoolIterator(input, stack);
+        }
+
+        private Iterator BuildTableSpoolPopper(BoundTableSpoolPopper relation)
+        {
+            var stack = _tableSpoolStack.Peek();
+            return new TableSpoolRefIterator(stack);
         }
     }
 }

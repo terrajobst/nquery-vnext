@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 using NQuery.Binding;
@@ -8,16 +7,25 @@ namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
-        internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query)
-            : this(name, columns, query, s => ImmutableArray<BoundQuery>.Empty)
+        internal CommonTableExpressionSymbol(
+            string name,
+            Func<CommonTableExpressionSymbol, ValueTuple<BoundQuery, ImmutableArray<ColumnSymbol>>> anchorBinder
+        )
+            : this(name, anchorBinder, s => ImmutableArray<BoundQuery>.Empty)
         {
         }
 
-        internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query, Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> lazyBoundRecursiveMembers)
-            : base(name, columns)
+        internal CommonTableExpressionSymbol(
+            string name,
+            Func<CommonTableExpressionSymbol, ValueTuple<BoundQuery, ImmutableArray<ColumnSymbol>>> anchorBinder,
+            Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> recursiveBinder
+        )
+            : base(name)
         {
-            Query = query;
-            RecursiveMembers = lazyBoundRecursiveMembers(this);
+            var tuple = anchorBinder(this);
+            Anchor = tuple.Item1;
+            Columns = tuple.Item2;
+            RecursiveMembers = recursiveBinder(this);
         }
 
         public override SymbolKind Kind
@@ -30,7 +38,9 @@ namespace NQuery.Symbols
             get { return TypeFacts.Missing; }
         }
 
-        internal BoundQuery Query { get; }
+        public override ImmutableArray<ColumnSymbol> Columns { get; }
+
+        internal BoundQuery Anchor { get; }
 
         internal ImmutableArray<BoundQuery> RecursiveMembers { get; }
     }

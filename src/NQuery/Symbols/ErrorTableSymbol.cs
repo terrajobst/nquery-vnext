@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Immutable;
 
 namespace NQuery.Symbols
 {
     public sealed class ErrorTableSymbol : TableSymbol
     {
         internal ErrorTableSymbol(string name)
-            : base(name, new ColumnSymbol[0])
+            : base(name)
         {
         }
 
@@ -17,6 +18,11 @@ namespace NQuery.Symbols
         public override Type Type
         {
             get { return TypeFacts.Unknown; }
+        }
+
+        public override ImmutableArray<ColumnSymbol> Columns
+        {
+            get { return ImmutableArray<ColumnSymbol>.Empty; }
         }
     }
 }

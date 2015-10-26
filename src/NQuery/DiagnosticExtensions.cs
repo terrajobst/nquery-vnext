@@ -616,67 +616,49 @@ namespace NQuery
             diagnostics.Report(cteTableName.Span, DiagnosticId.CteDoesNotHaveAnchorMember, cteTableName.ValueText);
         }
 
-        //public static void ReportCteContainsRecursiveReferenceInSubquery(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsRecursiveReferenceInSubquery, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsRecursiveReferenceInSubquery, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsRecursiveReferenceInSubquery(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsRecursiveReferenceInSubquery, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsUnexpectedAnchorMember(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsUnexpectedAnchorMember, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsUnexpectedAnchorMember, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsUnexpectedAnchorMember(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsUnexpectedAnchorMember, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsMultipleRecursiveReferences(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsMultipleRecursiveReferences, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsMultipleRecursiveReferences, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsMultipleRecursiveReferences(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsMultipleRecursiveReferences, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsUnion(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsUnion, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsUnion, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsUnion(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsUnion, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsDistinct(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsDistinct, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsDistinct, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsDistinct(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsDistinct, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsTop(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsTop, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsTop, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsTop(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsTop, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsOuterJoin(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsOuterJoin, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsOuterJoin, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsOuterJoin(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsOuterJoin, cteTableName.Text);
+        }
 
-        //public static void ReportCteContainsGroupByHavingOrAggregate(this ICollection<Diagnostic> diagnostics, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteContainsGroupByHavingOrAggregate, cteTableName.Text);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteContainsGroupByHavingOrAggregate, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteContainsGroupByHavingOrAggregate(this ICollection<Diagnostic> diagnostics, SyntaxToken cteTableName)
+        {
+            diagnostics.Report(cteTableName.Span, DiagnosticId.CteContainsGroupByHavingOrAggregate, cteTableName.Text);
+        }
 
-        //public static void ReportCteHasTypeMismatchBetweenAnchorAndRecursivePart(this ICollection<Diagnostic> diagnostics, Identifier columnName, Identifier cteTableName)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CteHasTypeMismatchBetweenAnchorAndRecursivePart, columnName.Text, cteTableName);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CteHasTypeMismatchBetweenAnchorAndRecursivePart, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportCteHasTypeMismatchBetweenAnchorAndRecursivePart(this ICollection<Diagnostic> diagnostics, TextSpan diagnosticSpan, string anchorColumnName, string recursiveColumnName)
+        {
+            diagnostics.Report(diagnosticSpan, DiagnosticId.CteHasTypeMismatchBetweenAnchorAndRecursivePart, anchorColumnName, recursiveColumnName);
+        }
     }
 }

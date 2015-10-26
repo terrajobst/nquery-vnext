@@ -40,6 +40,10 @@ namespace NQuery.Binding
                     return RewriteTopRelation((BoundTopRelation)node);
                 case BoundNodeKind.AssertRelation:
                     return RewriteAssertRelation((BoundAssertRelation)node);
+                case BoundNodeKind.TableSpoolPusher:
+                    return RewriteTableSpoolPusher((BoundTableSpoolPusher)node);
+                case BoundNodeKind.TableSpoolPopper:
+                    return RewriteTableSpoolPopper((BoundTableSpoolPopper)node);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
@@ -152,6 +156,16 @@ namespace NQuery.Binding
             return node.Update(RewriteRelation(node.Input),
                                RewriteExpression(node.Condition),
                                node.Message);
+        }
+
+        protected virtual BoundRelation RewriteTableSpoolPusher(BoundTableSpoolPusher node)
+        {
+            return node.Update(RewriteRelation(node.Input));
+        }
+
+        protected virtual BoundRelation RewriteTableSpoolPopper(BoundTableSpoolPopper node)
+        {
+            return node.Update(RewriteValueSlots(node.Outputs));
         }
    }
 }

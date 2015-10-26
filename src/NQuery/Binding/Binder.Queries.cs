@@ -677,12 +677,9 @@ namespace NQuery.Binding
             var currentBinder = this;
             var uniqueTableNames = new HashSet<string>();
 
-            var boundCommonTableExpressions = new List<BoundCommonTableExpression>();
-
             foreach (var commonTableExpression in node.CommonTableExpressions)
             {
                 var boundCommonTableExpression = currentBinder.BindCommonTableExpression(commonTableExpression);
-                boundCommonTableExpressions.Add(boundCommonTableExpression);
 
                 var tableSymbol = boundCommonTableExpression.TableSymbol;
 
@@ -690,7 +687,6 @@ namespace NQuery.Binding
                     Diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.Name);
 
                 currentBinder = currentBinder.CreateLocalBinder(tableSymbol);
-
             }
 
             return currentBinder.BindQuery(node.Query);
@@ -711,16 +707,132 @@ namespace NQuery.Binding
 
         private BoundCommonTableExpression BindCommonTableExpressionNonRecursive(CommonTableExpressionSyntax commonTableExpression)
         {
-            // First let's bind the query.
+            var name = commonTableExpression.Name.ValueText;
+            var symbol = new CommonTableExpressionSymbol(name, s =>
+            {
+                var binder = CreateLocalBinder(s);
+                var boundQuery = binder.BindQuery(commonTableExpression.Query);
+                var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundQuery);
+                return ValueTuple.Create(boundQuery, columns);
+            });
 
-            var boundQuery = BindQuery(commonTableExpression.Query);
+            return new BoundCommonTableExpression(symbol);
+        }
 
+        private BoundCommonTableExpression BindCommonTableExpressionRecursive(CommonTableExpressionSyntax commonTableExpression)
+        {
+            // Recursive CTEs must have the following structure:
+            //
+            //    {One or more anchor members}
+            //    UNION ALL
+            //    {One or more recursive members}
+
+            var rootQuery = commonTableExpression.Query as UnionQuerySyntax;
+            if (rootQuery == null || rootQuery.AllKeyword == null)
+            {
+                Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
+
+                if (rootQuery == null)
+                    return BindErrorCommonTableExpression(commonTableExpression);
+            }
+
+            var members = new List<QuerySyntax>();
+            FlattenUnionQueries(members, rootQuery);
+
+            var anchorMembers = new List<QuerySyntax>();
+            var recursiveMembers = new List<QuerySyntax>();
+
+            foreach (var member in members)
+            {
+                if (IsRecursive(commonTableExpression, member))
+                {
+                    recursiveMembers.Add(member);
+                }
+                else
+                {
+                    if (recursiveMembers.Any())
+                        Diagnostics.ReportCteContainsUnexpectedAnchorMember(commonTableExpression.Name);
+                    anchorMembers.Add(member);
+                }
+            }
+
+            // Ensure we have at least one anchor
+
+            if (anchorMembers.Count == 0)
+            {
+                Diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.Name);
+                return BindErrorCommonTableExpression(commonTableExpression);
+            }
+
+            var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText, s =>
+            {
+                var binder = CreateLocalBinder(s);
+                var boundAnchor = binder.BindCommonTableExpressionAnchorMember(commonTableExpression, anchorMembers);
+                var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundAnchor);
+                return ValueTuple.Create(boundAnchor, columns);
+            }, s =>
+            {
+                var binder = CreateLocalBinder(s);
+                return binder.BindCommonTableExpressionRecursiveMembers(commonTableExpression, s, recursiveMembers);
+            });
+
+            return new BoundCommonTableExpression(symbol);
+        }
+
+        private BoundQuery BindCommonTableExpressionAnchorMember(CommonTableExpressionSyntax commonTableExpression, IEnumerable<QuerySyntax> anchorMembers)
+        {
+            var diagnosticSpan = commonTableExpression.Name.Span;
+            var boundAnchorMembers = anchorMembers.Select(BindQuery).ToImmutableArray();
+            return BindUnionOrUnionAllQuery(diagnosticSpan, true, boundAnchorMembers);
+        }
+
+        private ImmutableArray<BoundQuery> BindCommonTableExpressionRecursiveMembers(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, IEnumerable<QuerySyntax> recursiveMembers)
+        {
+            return recursiveMembers.Select(r => BindCommonTableExpressionRecursiveMember(commonTableExpression, symbol, r))
+                                   .ToImmutableArray();
+        }
+
+        private BoundQuery BindCommonTableExpressionRecursiveMember(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, QuerySyntax recursiveMember)
+        {
+            var boundAnchorQuery = symbol.Anchor;
+            var name = commonTableExpression.Name;
+            var diagnosticSpan = name.Span;
+            var boundRecursiveMember = BindQuery(recursiveMember);
+
+            if (boundRecursiveMember.OutputColumns.Length != boundAnchorQuery.OutputColumns.Length)
+                Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
+
+            var columnCount = Math.Min(boundAnchorQuery.OutputColumns.Length, boundRecursiveMember.OutputColumns.Length);
+            for (var i = 0; i < columnCount; i++)
+            {
+                var anchorColumn = boundAnchorQuery.OutputColumns[i];
+                var recursiveColumn = boundRecursiveMember.OutputColumns[i];
+                if (anchorColumn.Type != recursiveColumn.Type)
+                    Diagnostics.ReportCteHasTypeMismatchBetweenAnchorAndRecursivePart(diagnosticSpan, anchorColumn.Name, recursiveColumn.Name);
+            }
+
+            var checker = new RecursiveCommonTableExpressionChecker(commonTableExpression, Diagnostics, symbol);
+            checker.VisitRelation(boundRecursiveMember.Relation);
+
+            return boundRecursiveMember;
+        }
+
+        private static BoundCommonTableExpression BindErrorCommonTableExpression(CommonTableExpressionSyntax commonTableExpression)
+        {
+            var symbol = new CommonTableExpressionSymbol(
+                commonTableExpression.Name.ValueText,
+                s => ValueTuple.Create((BoundQuery) null, ImmutableArray<ColumnSymbol>.Empty),
+                s => ImmutableArray<BoundQuery>.Empty
+            );
+
+            return new BoundCommonTableExpression(symbol);
+        }
+
+        private ImmutableArray<ColumnSymbol> BindCommonTableExpressionColumns(CommonTableExpressionSyntax commonTableExpression, BoundQuery boundQuery)
+        {
             // Now let's figure out the column names we want to give result.
 
-            var specifiedColumnNames = commonTableExpression.ColumnNameList == null
-                                           ? null
-                                           : commonTableExpression.ColumnNameList.ColumnNames;
-
+            var specifiedColumnNames = commonTableExpression.ColumnNameList?.ColumnNames;
             var queryColumns = boundQuery.OutputColumns;
 
             if (specifiedColumnNames == null)
@@ -764,12 +876,12 @@ namespace NQuery.Binding
             // (3) The column list shouldn't contain duplicate names.
 
             var columnCount = specifiedColumnNames == null
-                                  ? queryColumns.Length
-                                  : Math.Min(specifiedColumnNames.Count, queryColumns.Length);
+                ? queryColumns.Length
+                : Math.Min(specifiedColumnNames.Count, queryColumns.Length);
 
             var columnNames = specifiedColumnNames == null
-                                  ? queryColumns.Select(c => c.Name)
-                                  : specifiedColumnNames.Select(t => t.Identifier.ValueText);
+                ? queryColumns.Select(c => c.Name)
+                : specifiedColumnNames.Select(t => t.Identifier.ValueText);
 
             var columns = queryColumns.Take(columnCount)
                                       .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
@@ -780,119 +892,7 @@ namespace NQuery.Binding
             foreach (var column in columns.Where(c => !uniqueColumnNames.Add(c.Name)))
                 Diagnostics.ReportCteHasDuplicateColumnName(commonTableExpression.Name, column.Name);
 
-            // Given the bound query and the column list, we can now produce a CTE table symbol.
-
-            var name = commonTableExpression.Name.ValueText;
-            var tableSymbol = new CommonTableExpressionSymbol(name, columns.ToImmutableArray(), boundQuery);
-
-            return new BoundCommonTableExpression(tableSymbol);
-        }
-
-        private BoundCommonTableExpression BindCommonTableExpressionRecursive(CommonTableExpressionSyntax commonTableExpression)
-        {
-            // Recursive CTEs must have the following structure:
-            //
-            //    {One or more anchor members}
-            //    UNION ALL
-            //    {One or more recursive members}
-
-            var rootQuery = commonTableExpression.Query as UnionQuerySyntax;
-            if (rootQuery == null || rootQuery.AllKeyword == null)
-            {
-                Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
-
-                if (rootQuery == null)
-                    return BindCommonTableExpressionNonRecursive(commonTableExpression);
-            }
-
-            var toBeExpanded = new Stack<UnionQuerySyntax>();
-            toBeExpanded.Push(rootQuery);
-
-            var anchorMembers = new List<QuerySyntax>();
-            var recursiveMembers = new List<QuerySyntax>();
-
-            Action<QuerySyntax> processQuery = q =>
-            {
-                var qAsUnion = q as UnionQuerySyntax;
-                if (qAsUnion != null)
-                {
-                    toBeExpanded.Push(qAsUnion);
-                }
-                else if (IsRecursive(commonTableExpression, q))
-                {
-                    recursiveMembers.Add(q);
-                }
-                else
-                {
-                    anchorMembers.Add(q);
-                }
-            };
-
-            while (toBeExpanded.Count > 0)
-            {
-                var q = toBeExpanded.Pop();
-                processQuery(q.LeftQuery);
-                processQuery(q.RightQuery);
-            }
-
-            // Ensure we have at least one anchor
-
-            if (anchorMembers.Count == 0)
-            {
-                Diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.Name);
-                return BindCommonTableExpressionNonRecursive(commonTableExpression);
-            }
-
-            var diagnosticSpan = commonTableExpression.Name.Span;
-            var boundAnchorMembers = anchorMembers.Select(BindQuery).ToImmutableArray();
-            var boundAnchorQuery = BindUnionOrUnionAllQuery(diagnosticSpan, true, boundAnchorMembers);
-
-            // TODO: We should respect the CTE's column list, if present
-            var columns = (boundAnchorQuery == null
-                               ? Enumerable.Empty<ColumnSymbol>()
-                               : boundAnchorQuery.OutputColumns.Select(c => new ColumnSymbol(c.Name, c.Type))).ToImmutableArray();
-
-            var name = commonTableExpression.Name.ValueText;
-
-            Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> lazyBoundRecursiveMembers = s =>
-            {
-                var binder = CreateLocalBinder(s);
-                var boundRecursiveMembers = recursiveMembers.Select(binder.BindQuery).ToImmutableArray();
-
-                foreach (var boundRecursiveMember in boundRecursiveMembers)
-                {
-                    // TODO: Check that all column counts match the CTE
-                    // TODO: Check that data types of all query columns match exactly the ones from the CTE -- implicit conversion ARE NOT supported here.
-
-                    // TODO: Check conditions below:
-                    //if (checker.RecursiveReferenceInSubquery)
-                    //    _errorReporter.CteContainsRecursiveReferenceInSubquery(commonTableExpression.TableName);
-                    //else if (checker.RecursiveReferences == 0)
-                    //    _errorReporter.CteContainsUnexpectedAnchorMember(commonTableExpression.TableName);
-                    //else if (checker.RecursiveReferences > 1)
-                    //    _errorReporter.CteContainsMultipleRecursiveReferences(commonTableExpression.TableName);
-
-                    //if (checker.ContainsUnion)
-                    //    _errorReporter.CteContainsUnion(commonTableExpression.TableName);
-
-                    //if (checker.ContainsDisctinct)
-                    //    _errorReporter.CteContainsDistinct(commonTableExpression.TableName);
-
-                    //if (checker.ContainsTop)
-                    //    _errorReporter.CteContainsTop(commonTableExpression.TableName);
-
-                    //if (checker.ContainsOuterJoin)
-                    //    _errorReporter.CteContainsOuterJoin(commonTableExpression.TableName);
-
-                    //if (checker.ContainsGroupByHavingOrAggregate)
-                    //    _errorReporter.CteContainsGroupByHavingOrAggregate(commonTableExpression.TableName);
-                }
-
-                return boundRecursiveMembers.ToImmutableArray();
-            };
-
-            var commonTableExpressionSymbol = new CommonTableExpressionSymbol(name, columns, boundAnchorQuery, lazyBoundRecursiveMembers);
-            return new BoundCommonTableExpression(commonTableExpressionSymbol);
+            return columns;
         }
 
         private BoundQuery BindSelectQuery(SelectQuerySyntax node)

@@ -51,6 +51,8 @@
     <Compile Include="Binding\BoundOrderBySelector.cs" />
     <Compile Include="Binding\BoundQueryState.cs" />
     <Compile Include="Binding\BoundStreamAggregatesRelation.cs" />
+    <Compile Include="Binding\BoundTableSpoolPopper.cs" />
+    <Compile Include="Binding\BoundTableSpoolPusher.cs" />
     <Compile Include="Binding\BoundTreeRewriter.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Lists.cs" />
     <Compile Include="Binding\BoundTreeRewriter.Relations.cs" />
@@ -60,6 +62,7 @@
     <Compile Include="Binding\BoundUnifiedValue.cs" />
     <Compile Include="Binding\BoundUnionRelation.cs" />
     <Compile Include="Binding\NullRejection.cs" />
+    <Compile Include="Binding\RecursiveCommonTableExpressionChecker.cs" />
     <Compile Include="CompiledQuery.cs" />
     <Compile Include="Binding\BoundTreeWalker.cs" />
     <Compile Include="ExpressionEvaluator.cs" />
@@ -78,6 +81,9 @@
     <Compile Include="Iterators\ProbingLeftSemiNestedLoopsIterator.cs" />
     <Compile Include="Iterators\ProbedRowBuffer.cs" />
     <Compile Include="Iterators\RowBufferAllocation.cs" />
+    <Compile Include="Iterators\TableSpoolIterator.cs" />
+    <Compile Include="Iterators\TableSpoolRefIterator.cs" />
+    <Compile Include="Iterators\TableSpoolStack.cs" />
     <Compile Include="Optimization\AggregationPhysicalOperatorChooser.cs" />
     <Compile Include="Iterators\HashMatchIterator.cs" />
     <Compile Include="Iterators\IndirectedRowBuffer.cs" />

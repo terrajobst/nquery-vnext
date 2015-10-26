@@ -162,6 +162,14 @@ namespace NQuery.Optimization
             return base.RewriteAssertRelation(node);
         }
 
+        protected override BoundRelation RewriteTableSpoolPusher(BoundTableSpoolPusher node)
+        {
+            var inputs = node.Input.GetOutputValues().ToImmutableArray();
+            _recorder.Record(inputs);
+
+            return base.RewriteTableSpoolPusher(node);
+        }
+
         protected override BoundExpression RewriteSingleRowSubselect(BoundSingleRowSubselect node)
         {
             _recorder.Record(node.Value);

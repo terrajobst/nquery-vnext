@@ -54,6 +54,10 @@ namespace NQuery
                     return BuildProject((BoundProjectRelation)node);
                 case BoundNodeKind.AssertRelation:
                     return BuildAssert((BoundAssertRelation)node);
+                case BoundNodeKind.TableSpoolPusher:
+                    return BuildTableSpoolPusher((BoundTableSpoolPusher)node);
+                case BoundNodeKind.TableSpoolPopper:
+                    return BuildTableSpoolPopper((BoundTableSpoolPopper)node);
                 case BoundNodeKind.UnaryExpression:
                     return BuildUnaryExpression((BoundUnaryExpression)node);
                 case BoundNodeKind.BinaryExpression:
@@ -254,6 +258,21 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] { Build(node.Input), Build(node.Condition) };
             return new ShowPlanNode("Assert", properties, children);
+        }
+
+        private static ShowPlanNode BuildTableSpoolPusher(BoundTableSpoolPusher node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = new[] { Build(node.Input) };
+            return new ShowPlanNode("TableSpoolPusher", properties, children);
+        }
+
+        private static ShowPlanNode BuildTableSpoolPopper(BoundTableSpoolPopper node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = Enumerable.Empty<ShowPlanNode>();
+            var slots = string.Join(", ", node.Outputs.Select(v => v.Name));
+            return new ShowPlanNode("TableSpoolPopper " + slots, properties, children);
         }
 
         private static ShowPlanNode BuildUnaryExpression(BoundUnaryExpression node)

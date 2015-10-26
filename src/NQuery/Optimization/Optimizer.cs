@@ -22,11 +22,11 @@ namespace NQuery.Optimization
 
         public static IEnumerable<BoundTreeRewriter> GetOptimizationSteps()
         {
-            // TODO: This shouldn't be necessary
-            yield return new DerivedTableRemover();
-
             // Instantiate CTEs
             yield return new CommonTableExpressionInstantiator();
+
+            // TODO: This shouldn't be necessary
+            yield return new DerivedTableRemover();
 
             // Expand full outer joins
             yield return new FullOuterJoinExpander();

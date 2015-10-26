@@ -7,9 +7,10 @@ namespace NQuery.Symbols
     public sealed class SchemaTableSymbol : TableSymbol
     {
         public SchemaTableSymbol(TableDefinition tableDefinition)
-            : base(GetName(tableDefinition), GetColumns(tableDefinition))
+            : base(GetName(tableDefinition))
         {
             Definition = tableDefinition;
+            Columns = tableDefinition.Columns.Select(c => (ColumnSymbol)new SchemaColumnSymbol(c)).ToImmutableArray();
         }
 
         private static string GetName(TableDefinition tableDefinition)
@@ -18,14 +19,6 @@ namespace NQuery.Symbols
                 throw new ArgumentNullException(nameof(tableDefinition));
 
             return tableDefinition.Name;
-        }
-
-        private static ImmutableArray<SchemaColumnSymbol> GetColumns(TableDefinition tableDefinition)
-        {
-            if (tableDefinition == null)
-                throw new ArgumentNullException(nameof(tableDefinition));
-
-            return tableDefinition.Columns.Select(c => new SchemaColumnSymbol(c)).ToImmutableArray();
         }
 
         public TableDefinition Definition { get; }
@@ -39,5 +32,7 @@ namespace NQuery.Symbols
         {
             get { return Definition.RowType; }
         }
+
+        public override ImmutableArray<ColumnSymbol> Columns { get; }
     }
 }

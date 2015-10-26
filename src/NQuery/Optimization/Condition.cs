@@ -8,6 +8,11 @@ namespace NQuery.Optimization
 {
     internal static class Condition
     {
+        public static BoundExpression Plus(BoundExpression left, BoundExpression right)
+        {
+            return Merge(left, right, BinaryOperatorKind.Add);
+        }
+
         public static BoundExpression Not(BoundExpression expression)
         {
             const UnaryOperatorKind logicalNot = UnaryOperatorKind.LogicalNot;

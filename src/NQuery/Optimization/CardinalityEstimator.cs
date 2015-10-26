@@ -43,6 +43,12 @@ namespace NQuery.Optimization
                     return EstimateSortRelation((BoundSortRelation)relation);
                 case BoundNodeKind.TopRelation:
                     return EstimateTopRelation((BoundTopRelation)relation);
+                case BoundNodeKind.AssertRelation:
+                    return EstimateAssertRelation((BoundAssertRelation)relation);
+                case BoundNodeKind.TableSpoolPusher:
+                    return EstimateTableSpoolPusher((BoundTableSpoolPusher)relation);
+                case BoundNodeKind.TableSpoolPopper:
+                    return EstimateTableSpoolPopper((BoundTableSpoolPopper)relation);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -136,6 +142,22 @@ namespace NQuery.Optimization
             return relation.TieEntries.Any()
                 ? input
                 : new CardinalityEstimate(input.Minimum, relation.Limit);
+        }
+
+        private static CardinalityEstimate EstimateAssertRelation(BoundAssertRelation relation)
+        {
+            // TODO: If we knew more about the asser (such as MAX(1) or MAX(100)) we'd be able to give better estimates.
+            return Estimate(relation.Input);
+        }
+
+        private static CardinalityEstimate EstimateTableSpoolPusher(BoundTableSpoolPusher relation)
+        {
+            return CardinalityEstimate.Unknown;
+        }
+
+        private static CardinalityEstimate EstimateTableSpoolPopper(BoundTableSpoolPopper relation)
+        {
+            return CardinalityEstimate.Unknown;
         }
     }
 }

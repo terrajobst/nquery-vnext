@@ -40,6 +40,8 @@ namespace NQuery.Binding
         SortRelation,
         TopRelation,
         AssertRelation,
+        TableSpoolPusher,
+        TableSpoolPopper,
 
         // Other
         Query,
