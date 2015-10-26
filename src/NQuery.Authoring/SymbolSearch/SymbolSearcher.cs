@@ -108,9 +108,12 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var namedTable = (NamedTableReferenceSyntax)node;
                     var tableInstanceSymbol = semanticModel.GetDeclaredSymbol(namedTable);
-                    yield return SymbolSpan.CreateReference(tableInstanceSymbol.Table, namedTable.TableName.Span);
-                    if (namedTable.Alias != null)
-                        yield return SymbolSpan.CreateDefinition(tableInstanceSymbol, namedTable.Alias.Identifier.Span);
+                    if (tableInstanceSymbol != null)
+                    {
+                        yield return SymbolSpan.CreateReference(tableInstanceSymbol.Table, namedTable.TableName.Span);
+                        if (namedTable.Alias != null)
+                            yield return SymbolSpan.CreateDefinition(tableInstanceSymbol, namedTable.Alias.Identifier.Span);
+                    }
                     break;
                 }
             }
