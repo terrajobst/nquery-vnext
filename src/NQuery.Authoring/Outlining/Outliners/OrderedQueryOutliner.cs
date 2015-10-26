@@ -5,7 +5,7 @@ using NQuery.Syntax;
 
 namespace NQuery.Authoring.Outlining.Outliners
 {
-    public sealed class OrderedQueryOutliner : SyntaxNodeOutliner<OrderedQuerySyntax>
+    internal sealed class OrderedQueryOutliner : SyntaxNodeOutliner<OrderedQuerySyntax>
     {
         protected override IEnumerable<OutliningRegionSpan> FindRegions(OrderedQuerySyntax node)
         {

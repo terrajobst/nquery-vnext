@@ -6,7 +6,7 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.Outlining.Outliners
 {
-    public sealed class MultiLineCommentOutliner : SyntaxTokenOutliner
+    internal sealed class MultiLineCommentOutliner : SyntaxTokenOutliner
     {
         protected override IEnumerable<OutliningRegionSpan> FindRegions(SyntaxToken token)
         {
