@@ -80,6 +80,7 @@
     <Compile Include="CodeActions\Issues\ComparisonWithNullTests.cs" />
     <Compile Include="CodeActions\Issues\OrderByExpressionsTests.cs" />
     <Compile Include="CodeActions\Issues\OrderByOrdinalTests.cs" />
+    <Compile Include="CodeActions\Issues\RecursiveCodeIssueProviderTests.cs" />
     <Compile Include="CodeActions\Issues\UnusedCommonTableExpressionTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsAliasTests.cs" />
     <Compile Include="CodeActions\Refactorings\AddAsDerivedTableTests.cs" />

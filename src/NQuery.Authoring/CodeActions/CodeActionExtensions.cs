@@ -38,7 +38,8 @@ namespace NQuery.Authoring.CodeActions
                        new ComparisonWithNullCodeIssueProvider(),
                        new OrderByExpressionsCodeIssueProvider(),
                        new OrderByOrdinalCodeIssueProvider(),
-                       new UnusedCommonTableExpressionCodeIssueProvider()
+                       new UnusedCommonTableExpressionCodeIssueProvider(),
+                       new RecursiveCodeIssueProvider()
                    };
         }
 
