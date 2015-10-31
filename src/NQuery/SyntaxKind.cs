@@ -96,6 +96,7 @@ namespace NQuery
         OnKeyword,
         WithKeyword,
         TiesKeyword,
+        RecursiveKeyword,
 
         // Trivia
 

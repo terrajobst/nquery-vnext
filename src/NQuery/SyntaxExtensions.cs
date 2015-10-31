@@ -108,7 +108,7 @@ namespace NQuery
         public static bool GuaranteedInUserGivenName(this SyntaxNode root, int position)
         {
             return root.GuaranteedInAlias(position) ||
-                   root.InCteName(position) ||
+                   root.GuaranteedInCteName(position) ||
                    root.InCteColumnList(position) ||
                    root.InDerivedTableName(position);
         }
@@ -116,7 +116,7 @@ namespace NQuery
         public static bool PossiblyInUserGivenName(this SyntaxNode root, int position)
         {
             return root.PossiblyInAlias(position) ||
-                   root.InCteName(position) ||
+                   root.PossiblyInCteName(position) ||
                    root.InCteColumnList(position) ||
                    root.InDerivedTableName(position);
         }
@@ -135,7 +135,14 @@ namespace NQuery
             return node != null && node.Span.ContainsOrTouches(position);
         }
 
-        private static bool InCteName(this SyntaxNode root, int position)
+        private static bool GuaranteedInCteName(this SyntaxNode root, int position)
+        {
+            var token = root.FindTokenOnLeft(position);
+            var cte = token.Parent as CommonTableExpressionSyntax;
+            return cte != null && cte.RecursiveKeyword != null && cte.Name.Span.ContainsOrTouches(position);
+        }
+
+        private static bool PossiblyInCteName(this SyntaxNode root, int position)
         {
             var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;

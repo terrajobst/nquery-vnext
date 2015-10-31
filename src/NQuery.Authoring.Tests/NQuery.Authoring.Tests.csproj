@@ -99,6 +99,7 @@
     <Compile Include="Completion\Providers\AggregateSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\AliasCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\ColumnSymbolCompletionProviderTests.cs" />
+    <Compile Include="Completion\Providers\CommonTableExpressionCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\EmptySymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\FunctionSymbolCompletionProviderTests.cs" />
     <Compile Include="Completion\Providers\JoinCompletionProviderTests.cs" />

@@ -115,6 +115,13 @@ namespace NQuery.Authoring.Completion.Providers
                 yield return SyntaxKind.WithKeyword;
             }
 
+            // RECURSIVE
+
+            if (IsAfterWithKeyword(syntaxTree, position))
+            {
+                yield return SyntaxKind.RecursiveKeyword;
+            }
+
             // TIES
 
             if (IsAfterWithKeyword(syntaxTree, position))

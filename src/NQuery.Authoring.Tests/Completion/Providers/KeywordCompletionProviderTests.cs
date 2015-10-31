@@ -376,6 +376,16 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         }
 
         [Fact]
+        public void KeywordCompletionProvider_ReturnsRecursive_IfAfterWith()
+        {
+            var query = @"
+                WITH |
+            ";
+
+            AssertIsMatch(query, "RECURSIVE");
+        }
+
+        [Fact]
         public void KeywordCompletionProvider_ReturnsTies_IfAfterWith()
         {
             var query = @"

@@ -17,7 +17,8 @@ namespace NQuery.Authoring.Completion
                        new JoinCompletionProvider(),
                        new KeywordCompletionProvider(),
                        new SymbolCompletionProvider(),
-                       new TypeCompletionProvider()
+                       new TypeCompletionProvider(),
+                       new CommonTableExpressionCompletionProvider()
                    };
         }
 

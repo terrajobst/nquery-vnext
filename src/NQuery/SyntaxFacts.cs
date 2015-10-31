@@ -79,6 +79,7 @@ namespace NQuery
             yield return SyntaxKind.OrderKeyword;
             yield return SyntaxKind.OrKeyword;
             yield return SyntaxKind.OuterKeyword;
+            yield return SyntaxKind.RecursiveKeyword;
             yield return SyntaxKind.SelectKeyword;
             yield return SyntaxKind.SimilarKeyword;
             yield return SyntaxKind.SomeKeyword;
@@ -256,6 +257,8 @@ namespace NQuery
                     return "WITH";
                 case SyntaxKind.TiesKeyword:
                     return "TIES";
+                case SyntaxKind.RecursiveKeyword:
+                    return "RECURSIVE";
                 default:
                     return string.Empty;
             }
@@ -355,6 +358,7 @@ namespace NQuery
                 case SyntaxKind.OnKeyword:
                 case SyntaxKind.WithKeyword:
                 case SyntaxKind.TiesKeyword:
+                case SyntaxKind.RecursiveKeyword:
                     return true;
 
                 default:
@@ -605,6 +609,9 @@ namespace NQuery
 
                 case "TIES":
                     return SyntaxKind.TiesKeyword;
+
+                case "RECURSIVE":
+                    return SyntaxKind.RecursiveKeyword;
 
                 default:
                     return SyntaxKind.IdentifierToken;

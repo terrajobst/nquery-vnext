@@ -5,6 +5,7 @@ namespace NQuery.Syntax
 {
     public sealed class CommonTableExpressionSyntax : SyntaxNode
     {
+        private readonly SyntaxToken _recursiveKeyword;
         private readonly SyntaxToken _name;
         private readonly CommonTableExpressionColumnNameListSyntax _columnNameList;
         private readonly SyntaxToken _asKeyword;
@@ -12,9 +13,10 @@ namespace NQuery.Syntax
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
+            _recursiveKeyword = recursiveKeyword;
             _name = name;
             _columnNameList = columnNameList;
             _asKeyword = asKeyword;
@@ -30,6 +32,8 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
+            if (_recursiveKeyword != null)
+                yield return _recursiveKeyword;
             yield return _name;
             if (_columnNameList != null)
                 yield return _columnNameList;
@@ -37,6 +41,11 @@ namespace NQuery.Syntax
             yield return _leftParenthesis;
             yield return _query;
             yield return _rightParenthesis;
+        }
+
+        public SyntaxToken RecursiveKeyword
+        {
+            get { return _recursiveKeyword; }
         }
 
         public SyntaxToken Name

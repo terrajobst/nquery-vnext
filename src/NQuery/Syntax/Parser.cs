@@ -772,13 +772,14 @@ namespace NQuery.Syntax
 
         private CommonTableExpressionSyntax ParseCommonTableExpression()
         {
+            var recursiveKeyword = NextTokenIf(SyntaxKind.RecursiveKeyword);
             var identifer = Match(SyntaxKind.IdentifierToken);
             var commonTableExpressionColumnNameList = ParseCommonTableExpressionColumnNameList();
             var asKeyword = Match(SyntaxKind.AsKeyword);
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var query = ParseQuery();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-            return new CommonTableExpressionSyntax(_syntaxTree, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
+            return new CommonTableExpressionSyntax(_syntaxTree, recursiveKeyword, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
         }
 
         private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
