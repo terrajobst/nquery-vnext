@@ -74,7 +74,7 @@ namespace NQuery.Optimization
                 return false;
 
             if (SubqueryChecker.ContainsSubquery(node.Condition))
-                return false;
+                return true;
 
             var left = node.Left.GetOutputValues().ToImmutableArray();
             var right = node.Right.GetOutputValues().ToImmutableArray();
