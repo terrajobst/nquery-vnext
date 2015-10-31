@@ -191,7 +191,7 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Inputs.Select(Build);
             var kind = node.IsUnionAll ? "UnionAll" : "Union";
-            var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
+            var ouputs = string.Join(", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(", ", d.InputValueSlots.Select(i => i.Name))}]"));
             var name = $"{kind} {ouputs}";
             return new ShowPlanNode(name, properties, children);
         }
@@ -200,7 +200,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Inputs.Select(Build);
-            var ouputs = string.Join(", ", node.DefinedValues.Select(d => d.ValueSlot.Name));
+            var ouputs = string.Join(", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(", ", d.InputValueSlots.Select(i => i.Name))}]"));
             var name = $"Concatenation {ouputs}";
             return new ShowPlanNode(name, properties, children);
         }
