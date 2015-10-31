@@ -28,11 +28,11 @@ namespace NQuery.Optimization
             // Instantiate CTEs
             yield return new CommonTableExpressionInstantiator();
 
-            // Remove unused values
-            yield return new UnusedValueSlotRemover();
-
             // Expand full outer joins
             yield return new FullOuterJoinExpander();
+
+            // Remove unused values
+            yield return new UnusedValueSlotRemover();
 
             // Expand subqueries
             yield return new SubqueryExpander();
