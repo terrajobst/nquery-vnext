@@ -33,8 +33,6 @@ namespace NQuery.Optimization
     //
     internal sealed class FullOuterJoinExpander : BoundTreeRewriter
     {
-        private int _fullOuterJoinExpansions;
-
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
             node = (BoundJoinRelation) base.RewriteJoinRelation(node);
@@ -43,16 +41,13 @@ namespace NQuery.Optimization
             if (!needsRewriting)
                 return node;
 
-            _fullOuterJoinExpansions++;
-            var nameProvider = new Func<string, string>(name => $"{name}:FOJ:{_fullOuterJoinExpansions}");
-
-            var node1 = (BoundJoinRelation)Instatiator.Instantiate(node, nameProvider);
-            var node2 = (BoundJoinRelation)Instatiator.Instantiate(node, nameProvider);
+            var node1 = (BoundJoinRelation)Instatiator.Instantiate(node);
+            var node2 = (BoundJoinRelation)Instatiator.Instantiate(node);
 
             var leftOuterJoin = node1.Update(BoundJoinType.LeftOuter, node1.Left, node1.Right, node1.Condition, null, null);
             var leftAntiSemiJoin = node1.Update(BoundJoinType.LeftAntiSemi, node2.Right, node2.Left, node2.Condition, null, null);
 
-            var computedValueSlots = node.Left.GetOutputValues().Select(v => new ValueSlot(v.Name, v.Type)).ToImmutableArray();
+            var computedValueSlots = node.Left.GetOutputValues().Select(v => v.Duplicate()).ToImmutableArray();
             var computedValues = computedValueSlots.Select(v => new BoundComputedValue(Expression.Null(), v));
             var compute = new BoundComputeRelation(leftAntiSemiJoin, computedValues);
             var project = new BoundProjectRelation(compute, computedValueSlots.Concat(leftAntiSemiJoin.GetOutputValues()));

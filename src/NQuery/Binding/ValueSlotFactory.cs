@@ -1,30 +1,33 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
     internal sealed class ValueSlotFactory
     {
-        private readonly Dictionary<string, int> _usedNames = new Dictionary<string, int>();
-        private int _nextTemporaryNumber = 1000;
+        private const string TemporaryFormatString = @"Expr{0}";
+        private ImmutableDictionary<string, int> _usedNames = ImmutableDictionary<string, int>.Empty;
 
-        public ValueSlot CreateTemporaryValueSlot(Type type)
+        public ValueSlotFactory()
         {
-            var name = $"Expr{_nextTemporaryNumber}";
-            _nextTemporaryNumber++;
-            return new ValueSlot(name, type);
+            _usedNames.Add(TemporaryFormatString, 1000);
         }
 
-        public ValueSlot CreateValueSlot(string name, Type type)
+        public ValueSlot Create(string formatString, Type type)
         {
-            int highestNumber;
-            _usedNames.TryGetValue(name, out highestNumber);
+            var number = ImmutableInterlocked.AddOrUpdate(ref _usedNames, formatString, 1, (k, v) => v + 1);
+            return new ValueSlot(this, formatString, number, type);
+        }
 
-            highestNumber++;
-            _usedNames[name] = highestNumber;
+        public ValueSlot CreateTemporary(Type type)
+        {
+            return Create(TemporaryFormatString, type);
+        }
 
-            var qualifiedName = $"{name}:{highestNumber}";
-            return new ValueSlot(qualifiedName, type);
+        public ValueSlot CreateNamed(string name, Type type)
+        {
+            var formatString = $"{name}:{{0}}";
+            return Create(formatString, type);
         }
     }
 }

@@ -360,7 +360,7 @@ namespace NQuery.Binding
             var outputValues = inputs.First()
                 .GetOutputValues()
                 .Take(columnCount)
-                .Select(v => ValueSlotFactory.CreateTemporaryValueSlot(v.Type))
+                .Select(v => ValueSlotFactory.CreateTemporary(v.Type))
                 .ToImmutableArray();
             var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.GetOutputValues().ElementAt(columnIndex))));
             var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
@@ -470,7 +470,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    var newLeftValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedLeft.Type);
+                    var newLeftValue = ValueSlotFactory.CreateTemporary(convertedLeft.Type);
                     var computedValue = new BoundComputedValue(convertedLeft, newLeftValue);
                     leftComputedValues.Add(computedValue);
                     leftOutputs.Add(newLeftValue);
@@ -482,7 +482,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    var newRightValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedRight.Type);
+                    var newRightValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
                     var computedValue = new BoundComputedValue(convertedRight, newRightValue);
                     rightComputedValues.Add(computedValue);
                     rightOutputs.Add(newRightValue);
@@ -532,7 +532,7 @@ namespace NQuery.Binding
                         if (computations[queryIndex] == null)
                             computations[queryIndex] = new List<BoundComputedValue>();
 
-                        var computedValueSlot = ValueSlotFactory.CreateTemporaryValueSlot(converted.Type);
+                        var computedValueSlot = ValueSlotFactory.CreateTemporary(converted.Type);
                         var computedValue = new BoundComputedValue(converted, computedValueSlot);
                         computations[queryIndex].Add(computedValue);
 
@@ -1085,7 +1085,7 @@ namespace NQuery.Binding
             ValueSlot valueSlot;
             if (!TryGetExistingValue(boundExpression, out valueSlot))
             {
-                valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundExpression.Type);
+                valueSlot = ValueSlotFactory.CreateTemporary(boundExpression.Type);
                 QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
             }
 
@@ -1263,7 +1263,7 @@ namespace NQuery.Binding
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
-                    valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(expressionType);
+                    valueSlot = ValueSlotFactory.CreateTemporary(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
@@ -1418,7 +1418,7 @@ namespace NQuery.Binding
                     Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Length);
 
                     // And to avoid cascading errors, we'll fake up an invalid slot.
-                    var errorSlot = ValueSlotFactory.CreateTemporaryValueSlot(TypeFacts.Missing);
+                    var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
                     return new BoundOrderBySelector(errorSlot, null);
                 }
             }
@@ -1456,7 +1456,7 @@ namespace NQuery.Binding
             if (TryGetExistingValue(boundSelector, out valueSlot))
                 return new BoundOrderBySelector(valueSlot, null);
 
-            valueSlot = ValueSlotFactory.CreateTemporaryValueSlot(boundSelector.Type);
+            valueSlot = ValueSlotFactory.CreateTemporary(boundSelector.Type);
             var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
             return new BoundOrderBySelector(valueSlot, computedValue);
         }

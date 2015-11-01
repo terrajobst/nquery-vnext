@@ -899,7 +899,7 @@ namespace NQuery.Binding
                 var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
                 if (existingSlot == null)
                 {
-                    var slot = ValueSlotFactory.CreateTemporaryValueSlot(boundAggregate.Type);
+                    var slot = ValueSlotFactory.CreateTemporary(boundAggregate.Type);
                     queryState.ComputedAggregates.Add(new BoundComputedValueWithSyntax(aggregate, boundAggregate, slot));
                 }
             }
@@ -1020,7 +1020,7 @@ namespace NQuery.Binding
 
             if (boundQuery.OutputColumns.Length == 0)
             {
-                var outputValue = ValueSlotFactory.CreateTemporaryValueSlot(typeof(bool));
+                var outputValue = ValueSlotFactory.CreateTemporary(typeof(bool));
                 return new BoundValueSlotExpression(outputValue);
             }
 
@@ -1064,7 +1064,7 @@ namespace NQuery.Binding
             }
             else
             {
-                var outputValue = ValueSlotFactory.CreateTemporaryValueSlot(convertedRight.Type);
+                var outputValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
                 var outputValues = new[] {outputValue};
                 var computedValue = new BoundComputedValue(convertedRight, outputValue);
                 var computedValues = new[] {computedValue};

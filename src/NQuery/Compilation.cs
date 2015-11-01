@@ -104,7 +104,8 @@ namespace NQuery
 
         private static BoundQuery CreateBoundQuery(BoundExpression expression)
         {
-            var valueSlot = new ValueSlot(@"result", expression.Type);
+            var factory = new ValueSlotFactory();
+            var valueSlot = new ValueSlot(factory, @"result", 0, expression.Type);
             var computedValue = new BoundComputedValue(expression, valueSlot);
             var constantRelation = new BoundConstantRelation();
             var computeRelation = new BoundComputeRelation(constantRelation, new[] {computedValue});

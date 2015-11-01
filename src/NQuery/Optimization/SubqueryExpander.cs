@@ -12,8 +12,6 @@ namespace NQuery.Optimization
         private readonly Stack<List<Subquery>> _subqueryStack = new Stack<List<Subquery>>();
         private readonly Stack<BoundExpression> _passthruStack = new Stack<BoundExpression>();
 
-        private int _counter = 2000;
-
         private enum SubqueryKind
         {
             Exists,
@@ -90,14 +88,16 @@ namespace NQuery.Optimization
         {
             var relation = RewriteRelation(node.Relation);
 
+            var factory = node.Value.Factory;
+
             // TODO: If the query is guranteed to return a single, e.g. if it is a aggregated but not grouped,
             //       we should not emit the additional aggregation and assertion.
 
             // 1. We need to know whether it returns more then one row.
 
             var valueSlot = node.Value;
-            var anyOutput = new ValueSlot($"SubselectAny{_counter++}", valueSlot.Type);
-            var countOutput = new ValueSlot($"SubselectCount{_counter++}", typeof(int));
+            var anyOutput = factory.CreateTemporary(valueSlot.Type);
+            var countOutput = factory.CreateTemporary(typeof(int));
 
             var anyAggregateSymbol = BuiltInAggregates.Any;
             var anyAggregatable = anyAggregateSymbol.Definition.CreateAggregatable(valueSlot.Type);
@@ -131,7 +131,9 @@ namespace NQuery.Optimization
         {
             var relation = RewriteRelation(node.Relation);
 
-            var valueSlot = new ValueSlot($"Exists{_counter++}", typeof (bool));
+            var facory = node.Relation.GetOutputValues().First().Factory;
+
+            var valueSlot = facory.CreateTemporary(typeof(bool));
             var subquery = new Subquery(SubqueryKind.Exists, valueSlot, relation, CurrentPassthru);
             var subqueries = _subqueryStack.Peek();
             subqueries.Add(subquery);

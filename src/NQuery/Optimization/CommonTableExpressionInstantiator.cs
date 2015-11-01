@@ -11,17 +11,14 @@ namespace NQuery.Optimization
 {
     internal sealed class CommonTableExpressionInstantiator : BoundTreeRewriter
     {
-        private readonly NameGenerator _nameGenerator;
         private readonly CommonTableExpressionSymbol _symbol;
 
         public CommonTableExpressionInstantiator()
         {
-            _nameGenerator = new NameGenerator();
         }
 
-        private CommonTableExpressionInstantiator(NameGenerator nameGenerator, CommonTableExpressionSymbol symbol)
+        private CommonTableExpressionInstantiator(CommonTableExpressionSymbol symbol)
         {
-            _nameGenerator = nameGenerator;
             _symbol = symbol;
         }
 
@@ -36,7 +33,7 @@ namespace NQuery.Optimization
                 return new BoundConstantRelation();
             }
 
-            var outputValues = node.GetOutputValues();
+            var outputValues = node.GetOutputValues().ToImmutableArray();
             var instantiatedQuery = symbol.RecursiveMembers.Any()
                 ? InstantiateRecursiveCommonTableExpression(outputValues, symbol)
                 : InstantiateCommonTableExpression(outputValues, symbol);
@@ -88,18 +85,17 @@ namespace NQuery.Optimization
             return tableRelation.TableInstance.Table == _symbol;
         }
 
-        private BoundRelation InstantiateCommonTableExpression(IEnumerable<ValueSlot> outputValues, CommonTableExpressionSymbol symbol)
+        private BoundRelation InstantiateCommonTableExpression(ImmutableArray<ValueSlot> outputValues, CommonTableExpressionSymbol symbol)
         {
             var prototype = symbol.Anchor.Relation;
             var prototypeOutputValues = prototype.GetOutputValues();
             var mapping = outputValues.Zip(prototypeOutputValues, (v, k) => new KeyValuePair<ValueSlot, ValueSlot>(k, v));
 
-            _nameGenerator.NewScope();
-            var instantiatedRelation = Instatiator.Instantiate(prototype, _nameGenerator.CreateNewName, mapping);
+            var instantiatedRelation = Instatiator.Instantiate(prototype, mapping);
             return RewriteRelation(instantiatedRelation);
         }
 
-        private BoundRelation InstantiateRecursiveCommonTableExpression(IEnumerable<ValueSlot> outputValues, CommonTableExpressionSymbol symbol)
+        private BoundRelation InstantiateRecursiveCommonTableExpression(ImmutableArray<ValueSlot> outputValues, CommonTableExpressionSymbol symbol)
         {
             // TableSpoolPusher
             //     Concat
@@ -115,19 +111,19 @@ namespace NQuery.Optimization
             //                      Filter <RecursiveJoinPredicate2>
             //                          <RecursiveMember2>
 
-            _nameGenerator.NewScope();
+            var valueSlotFactory = outputValues.First().Factory;
 
             // Create output values
 
-            var unionRecusionSlot = _nameGenerator.CreateInt32Slot(@"RecursionUnion");
-            var concatValueSlots = outputValues.ToImmutableArray().Add(unionRecusionSlot);
+            var unionRecusionSlot = valueSlotFactory.CreateTemporary(typeof(int));
+            var concatValueSlots = outputValues.Add(unionRecusionSlot);
 
             // Create anchor
 
-            var anchor = RewriteRelation(Instatiator.Instantiate(symbol.Anchor.Relation, _nameGenerator.CreateNewName));
+            var anchor = RewriteRelation(Instatiator.Instantiate(symbol.Anchor.Relation));
             var anchorValues = anchor.GetOutputValues().ToImmutableArray();
 
-            var initRecursionSlot = _nameGenerator.CreateInt32Slot(@"RecursionStart");
+            var initRecursionSlot = valueSlotFactory.CreateTemporary(typeof(int));
             var initRecursionDefinition = new BoundComputedValue(Expression.Literal(0), initRecursionSlot);
             var initRecursion = new BoundComputeRelation(anchor, ImmutableArray.Create(initRecursionDefinition));
 
@@ -135,19 +131,19 @@ namespace NQuery.Optimization
 
             // Create TableSpoolPopper
 
-            var tableSpoolPopperSlots = _nameGenerator.Duplicate(initRecursionOutputs, @"AnchorRecursion");
+            var tableSpoolPopperSlots = initRecursionOutputs.Select(v => v.Duplicate()).ToImmutableArray();
 
             var tableSpoolPopper = new BoundTableSpoolPopper(tableSpoolPopperSlots);
 
             var anchorRecursionCounter = tableSpoolPopperSlots.Last();
             var inc = Expression.Plus(Expression.Value(anchorRecursionCounter), Expression.Literal(1));
-            var incRecursionSlot = _nameGenerator.CreateInt32Slot(@"RecursionIncrement");
+            var incRecursionSlot = valueSlotFactory.CreateTemporary(typeof(int));
             var incRecursionDefinition = new BoundComputedValue(inc, incRecursionSlot);
             var incRecursion = new BoundComputeRelation(tableSpoolPopper, ImmutableArray.Create(incRecursionDefinition));
 
             // Create recursive members
 
-            var recursiveRewriter = new CommonTableExpressionInstantiator(_nameGenerator, symbol);
+            var recursiveRewriter = new CommonTableExpressionInstantiator(symbol);
             var recursiveMembers = new List<BoundRelation>(symbol.RecursiveMembers.Length);
             var recursiveMemberOutputs = new List<ImmutableArray<ValueSlot>>(symbol.RecursiveMembers.Length);
 
@@ -157,7 +153,7 @@ namespace NQuery.Optimization
             {
                 var recursivePrototype = recursiveMember.Relation;
                 var mapping = CreateRecursiveMemberInstanceValueSlotMapping(symbol, anchorReferences, recursivePrototype);
-                var recursiveInstance = Instatiator.Instantiate(recursivePrototype, _nameGenerator.CreateNewName, mapping);
+                var recursiveInstance = Instatiator.Instantiate(recursivePrototype, mapping);
                 var recursiveRelation = recursiveRewriter.RewriteRelation(recursiveInstance);
                 var recursiveRelationOutputs = recursiveRelation.GetOutputValues().ToImmutableArray();
                 recursiveMembers.Add(recursiveRelation);
@@ -170,8 +166,7 @@ namespace NQuery.Optimization
                 .Range(0, concatValueSlots.Length - 1)
                 .Select(i =>
                 {
-                    var name = _nameGenerator.CreateNewName(@"Union");
-                    var slot = new ValueSlot(name, concatValueSlots[i].Type);
+                    var slot = valueSlotFactory.CreateTemporary(concatValueSlots[i].Type);
                     return new BoundUnifiedValue(slot, recursiveMemberOutputs.Select(o => o[i]));
                 })
                 .ToImmutableArray();
@@ -223,39 +218,6 @@ namespace NQuery.Optimization
 
             return instanceSlots.Zip(finder.Instance.ColumnInstances, (v, c) => new KeyValuePair<ValueSlot, ValueSlot>(c.ValueSlot, v))
                                 .ToImmutableDictionary();
-        }
-
-        private sealed class NameGenerator
-        {
-            private int _cteCount;
-
-            public void NewScope()
-            {
-                _cteCount++;
-            }
-
-            public string CreateNewName(string name)
-            {
-                return $"{name}:CTE:{_cteCount}";
-            }
-
-            public ValueSlot CreateInt32Slot(string name)
-            {
-                var qualifiedName = CreateNewName(name);
-                return new ValueSlot(qualifiedName, typeof(int));
-            }
-
-            private ValueSlot Duplicate(ValueSlot slot, string suffix)
-            {
-                var oldName = slot.Name;
-                var newName = $"{CreateNewName(oldName)}:{suffix}";
-                return new ValueSlot(newName, slot.Type);
-            }
-
-            public ImmutableArray<ValueSlot> Duplicate(ImmutableArray<ValueSlot> slots, string suffix)
-            {
-                return slots.Select(o => Duplicate(o, suffix)).ToImmutableArray();
-            }
         }
 
         private sealed class CommonTableExpressionInstanceFinder : BoundTreeWalker
