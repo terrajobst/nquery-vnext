@@ -67,11 +67,16 @@ namespace NQuery.Binding
                 Diagnostics.ReportAmbiguousTable(node.TableName, symbols);
 
             var table = symbols[0];
-            var alias = node.Alias == null
-                            ? table.Name
-                            : node.Alias.Identifier.ValueText;
+            var aliasIdentifier = node.Alias != null
+                ? node.Alias.Identifier
+                : node.TableName;
+
+            var alias = aliasIdentifier.ValueText;
 
             var tableInstance = new TableInstanceSymbol(alias, table, ValueSlotFactory);
+
+            QueryState.IntroducedTables.Add(tableInstance, aliasIdentifier);
+
             return new BoundTableRelation(tableInstance);
         }
 

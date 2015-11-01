@@ -9,7 +9,7 @@ namespace NQuery.Binding
     internal sealed class BoundQueryState
     {
         private readonly BoundQueryState _parent;
-        private readonly HashSet<TableInstanceSymbol> _introducedTables = new HashSet<TableInstanceSymbol>();
+        private readonly Dictionary<TableInstanceSymbol, SyntaxToken> _introducedTables = new Dictionary<TableInstanceSymbol, SyntaxToken>();
         private readonly List<BoundComputedValueWithSyntax> _computedGroupings = new List<BoundComputedValueWithSyntax>();
         private readonly List<BoundComputedValueWithSyntax> _computedAggregates = new List<BoundComputedValueWithSyntax>(); 
         private readonly List<BoundComputedValueWithSyntax> _computedProjections = new List<BoundComputedValueWithSyntax>(); 
@@ -25,7 +25,7 @@ namespace NQuery.Binding
             get { return _parent; }
         }
 
-        public HashSet<TableInstanceSymbol> IntroducedTables
+        public Dictionary<TableInstanceSymbol, SyntaxToken> IntroducedTables
         {
             get { return _introducedTables; }
         }

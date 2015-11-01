@@ -64,7 +64,7 @@ namespace NQuery.Binding
             var queryState = QueryState;
             while (queryState != null)
             {
-                if (queryState.IntroducedTables.Contains(tableInstanceSymbol))
+                if (queryState.IntroducedTables.ContainsKey(tableInstanceSymbol))
                     return queryState;
 
                 queryState = queryState.Parent;
@@ -240,7 +240,7 @@ namespace NQuery.Binding
                                        select Tuple.Create((SyntaxNode) n, c);
 
             var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
-                                          where QueryState.IntroducedTables.Contains(t.Item2.TableInstance)
+                                          where QueryState.IntroducedTables.ContainsKey(t.Item2.TableInstance)
                                           select t;
 
             foreach (var invalidColumnReference in invalidColumnReferences)
@@ -906,10 +906,6 @@ namespace NQuery.Binding
             var queryBinder = CreateQueryBinder();
 
             var fromClause = queryBinder.BindFromClause(node.FromClause);
-            var declaredTableInstances = fromClause == null
-                                             ? ImmutableArray<TableInstanceSymbol>.Empty
-                                             : fromClause.GetDeclaredTableInstances();
-            queryBinder.QueryState.IntroducedTables.UnionWith(declaredTableInstances);
 
             var fromAwareBinder = fromClause == null
                                       ? queryBinder
@@ -1190,6 +1186,23 @@ namespace NQuery.Binding
 
             _sharedBinderState.BoundNodeFromSynatxNode.Add(node, boundNode);
             _sharedBinderState.BinderFromBoundNode[boundNode] = binder;
+
+            // Ensure that there are no duplicates
+
+            var introducedTables = QueryState.IntroducedTables;
+            var lookup = introducedTables.Values.ToLookup(t => t.ValueText, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var name in introducedTables.Values)
+            {
+                var matches = lookup[name.ValueText];
+
+                if (name.IsQuotedIdentifier())
+                    matches = matches.Where(t => string.Equals(t.ValueText, name.ValueText, StringComparison.Ordinal));
+
+                var isDuplicate = matches.Skip(1).Any();
+                if (isDuplicate)
+                    Diagnostics.ReportDuplicateTableRefInFrom(name);
+            }
 
             return boundNode;
         }

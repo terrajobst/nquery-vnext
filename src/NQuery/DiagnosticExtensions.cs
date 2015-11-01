@@ -537,12 +537,10 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.AggregateInvalidInCurrentContext);
         }
 
-        //public static void ReportDuplicateTableRefInFrom(this ICollection<Diagnostic> diagnostics, Identifier identifier)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.DuplicateTableRefInFrom, identifier);
-        //    var diagnostic = new Diagnostic(DiagnosticId.DuplicateTableRefInFrom, message);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportDuplicateTableRefInFrom(this ICollection<Diagnostic> diagnostics, SyntaxToken identifier)
+        {
+            diagnostics.Report(identifier.Span, DiagnosticId.DuplicateTableRefInFrom, identifier.GetDisplayText());
+        }
 
         public static void ReportTopWithTiesRequiresOrderBy(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {
