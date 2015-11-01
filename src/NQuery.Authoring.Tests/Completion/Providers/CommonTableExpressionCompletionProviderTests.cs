@@ -76,5 +76,21 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
             AssertIsNoMatch(query);
         }
+
+        [Fact]
+        public void CommonTableExpressionCompletionProvider_ReturnsNoBuilder_WhenInQuery()
+        {
+            var query = @"
+                WITH Emps AS
+                (
+                    SELECT  |
+                    FROM    Employees e
+                )
+                SELECT  *
+                FROM    Emps
+            ";
+
+            AssertIsNoMatch(query);
+        }
     }
 }

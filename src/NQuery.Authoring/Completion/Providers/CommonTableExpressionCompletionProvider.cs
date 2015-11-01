@@ -11,7 +11,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             if (node.RecursiveKeyword != null ||
                 node.Name.IsMissing ||
-                !node.Span.ContainsOrTouches(position))
+                !node.Name.FullSpan.ContainsOrTouches(position))
             {
                 yield break;
             }
