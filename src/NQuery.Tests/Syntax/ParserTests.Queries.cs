@@ -855,6 +855,39 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void Parser_Parse_Query_CommonTableExpression_WithRecursiveKeyword()
+        {
+            const string text = @"
+                WITH RECURSIVE CTE AS (
+                    SELECT *
+                )
+                SELECT  *
+            ";
+
+            using (var enumerator = AssertingEnumerator.ForQuery(text))
+            {
+                enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
+                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+                enumerator.AssertNode(SyntaxKind.CommonTableExpression);
+                enumerator.AssertToken(SyntaxKind.RecursiveKeyword, @"RECURSIVE");
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE");
+                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+                enumerator.AssertNode(SyntaxKind.SelectQuery);
+                enumerator.AssertNode(SyntaxKind.SelectClause);
+                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+                enumerator.AssertNode(SyntaxKind.SelectQuery);
+                enumerator.AssertNode(SyntaxKind.SelectClause);
+                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            }
+        }
+
+        [Fact]
         public void Parser_Parse_Query_CommonTableExpression_WithMultipleExpressions()
         {
             const string text = @"
