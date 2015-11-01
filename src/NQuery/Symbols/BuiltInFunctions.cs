@@ -14,7 +14,6 @@ namespace NQuery.Symbols
         {
             return new FunctionSymbol[]
             {
-                #region Conversion
                 new FunctionSymbol<object, bool>("TO_BOOLEAN", "value", ToBoolean),
                 new FunctionSymbol<object, byte>("TO_BYTE", "value", ToByte),
                 new FunctionSymbol<object, char>("TO_CHAR", "value", ToChar),
@@ -30,9 +29,7 @@ namespace NQuery.Symbols
                 new FunctionSymbol<object, ushort>("TO_UINT16", "value", ToUInt16),
                 new FunctionSymbol<object, uint>("TO_UINT32", "value", ToUInt32),
                 new FunctionSymbol<object, ulong>("TO_UINT64", "value", ToUInt64),
-                #endregion
 
-                #region Math
                 new FunctionSymbol<decimal, decimal>("ABS", "value", Math.Abs),
                 new FunctionSymbol<double, double>("ABS", "value", Math.Abs),
                 new FunctionSymbol<float, float>("ABS", "value", Math.Abs),
@@ -70,9 +67,7 @@ namespace NQuery.Symbols
                 new FunctionSymbol<int, int>("SIGN", "basis", Math.Sign),
                 new FunctionSymbol<short, int>("SIGN", "basis", Math.Sign),
                 new FunctionSymbol<sbyte, int>("SIGN", "basis", Math.Sign),
-                #endregion
 
-                #region String
                 new FunctionSymbol<string, string>("SOUNDEX", "text", GetSoundexCode),
                 new FunctionSymbol<string, int>("LEN", "text", StringLength),
                 new FunctionSymbol<string, string, int>("CHARINDEX", "chars", "text", CharIndex),
@@ -96,19 +91,14 @@ namespace NQuery.Symbols
                 new FunctionSymbol<int, string>("SPACE", "numberOfSpaces", Space),
                 new FunctionSymbol<string, int, string>("LPAD", "text", "totalWidth", LPad),
                 new FunctionSymbol<string, int, string>("RPAD", "text", "totalWidth", RPad),
-                #endregion
 
-                #region Date
                 new FunctionSymbol<DateTime>("GETDATE", GetDate),
                 new FunctionSymbol<DateTime>("GETUTCDATE", GetUtcDate),
                 new FunctionSymbol<DateTime, int>("DAY", "dateTime", GetDay),
                 new FunctionSymbol<DateTime, int>("MONTH", "dateTime", GetMonth),
                 new FunctionSymbol<DateTime, int>("YEAR", "dateTime", GetYear)
-                #endregion
             };
         }
-
-        #region Conversion
 
         private static bool ToBoolean(object value)
         {
@@ -229,10 +219,6 @@ namespace NQuery.Symbols
 
             return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
         }
-
-        #endregion
-
-        #region String
 
         private static string GetSoundexCode(string text)
         {
@@ -440,10 +426,6 @@ namespace NQuery.Symbols
             return text.PadRight(totalWidth);
         }
 
-        #endregion
-
-        #region Date
-
         private static DateTime GetDate()
         {
             return DateTime.Now;
@@ -468,8 +450,6 @@ namespace NQuery.Symbols
         {
             return dateTime.Year;
         }
-
-        #endregion
     }
 }
 

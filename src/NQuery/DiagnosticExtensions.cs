@@ -214,8 +214,6 @@ namespace NQuery
             diagnostics.Add(diagnostic);
         }
 
-        #region Lexer Errors
-
         public static void ReportIllegalInputCharacter(this ICollection<Diagnostic> diagnostics, TextSpan textSpan, char character)
         {
             diagnostics.Report(textSpan, DiagnosticId.IllegalInputCharacter, character);
@@ -281,10 +279,6 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.NumberTooLarge, tokenText);
         }
 
-        #endregion
-
-        #region Parser Errors
-
         public static void ReportTokenExpected(this ICollection<Diagnostic> diagnostics, TextSpan span, SyntaxToken actual, SyntaxKind expected)
         {
             var actualText = actual.GetDisplayText();
@@ -298,10 +292,6 @@ namespace NQuery
             var diagnostic = Diagnostic.Format(operatorToken.Span, DiagnosticId.InvalidOperatorForAllAny, operatorText);
             return operatorToken.WithDiagnotics(new[] {diagnostic});
         }
-
-        #endregion
-
-        #region Binding Errors
 
         public static void ReportUndeclaredTable(this ICollection<Diagnostic> diagnostics, NamedTableReferenceSyntax namedTableReference)
         {
@@ -707,7 +697,5 @@ namespace NQuery
         //    var diagnostic = new Diagnostic(DiagnosticId.CteHasTypeMismatchBetweenAnchorAndRecursivePart, message);
         //    diagnostics.Add(diagnostic);
         //}
-
-        #endregion
     }
 }
