@@ -220,6 +220,25 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void Parser_Parse_Query_SelectClause_WithAll()
+        {
+            const string text = @"
+                SELECT ALL x
+            ";
+
+            using (var enumerator = AssertingEnumerator.ForQuery(text))
+            {
+                enumerator.AssertNode(SyntaxKind.SelectQuery);
+                enumerator.AssertNode(SyntaxKind.SelectClause);
+                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+                enumerator.AssertToken(SyntaxKind.AllKeyword, @"ALL");
+                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+                enumerator.AssertNode(SyntaxKind.NameExpression);
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
+            }
+        }
+
+        [Fact]
         public void Parser_Parse_Query_SelectClause_WithTopClause()
         {
             const string text = @"
