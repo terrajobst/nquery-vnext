@@ -982,9 +982,7 @@ namespace NQuery.Binding
             }
 
             if (boundQuery.OutputColumns.Length > 1)
-            {
-                // TODO: Error
-            }
+                Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(node.Span);
 
             var value = boundQuery.OutputColumns.First().ValueSlot;
 
@@ -1028,9 +1026,7 @@ namespace NQuery.Binding
             }
 
             if (boundQuery.OutputColumns.Length > 1)
-            {
-                // TODO: Error
-            }
+                Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(queryNode.Span);
 
             var rightColumn = boundQuery.OutputColumns[0];
             var right = new BoundValueSlotExpression(rightColumn.ValueSlot);

@@ -589,11 +589,10 @@ namespace NQuery
             diagnostics.Report(textSpan, DiagnosticId.ConstantExpressionInOrderBy);
         }
 
-        //public static void ReportTooManyExpressionsInSelectListOfSubquery(this ICollection<Diagnostic> diagnostics)
-        //{
-        //    var diagnostic = new Diagnostic(DiagnosticId.TooManyExpressionsInSelectListOfSubquery, Resources.TooManyExpressionsInSelectListOfSubquery);
-        //    diagnostics.Add(diagnostic);
-        //}
+        public static void ReportTooManyExpressionsInSelectListOfSubquery(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.TooManyExpressionsInSelectListOfSubquery);
+        }
 
         public static void ReportInvalidRowReference(this ICollection<Diagnostic> diagnostics, SyntaxToken tableName)
         {
