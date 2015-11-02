@@ -232,7 +232,10 @@ namespace NQuery.Optimization
             //       * pushing to the left is OK if it's a left (anti) semi join
             //       * pushing to the right is OK if it's a right (anti) semi join
 
-            if (AllowsMerge(input.JoinType) && input.Probe == null)
+            if (input.Probe != null)
+                return node.Update(RewriteRelation(input), node.Condition);
+
+            if (AllowsMerge(input.JoinType))
             {
                 var newCondition = Condition.And(input.Condition, node.Condition);
                 var newInput = input.Update(input.JoinType, input.Left, input.Right, newCondition, null, null);
