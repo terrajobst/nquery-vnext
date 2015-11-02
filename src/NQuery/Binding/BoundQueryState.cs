@@ -10,6 +10,7 @@ namespace NQuery.Binding
     {
         private readonly BoundQueryState _parent;
         private readonly Dictionary<TableInstanceSymbol, SyntaxToken> _introducedTables = new Dictionary<TableInstanceSymbol, SyntaxToken>();
+        private readonly List<BoundComputedValueWithSyntax> _accessibleComputedValues = new List<BoundComputedValueWithSyntax>();
         private readonly List<BoundComputedValueWithSyntax> _computedGroupings = new List<BoundComputedValueWithSyntax>();
         private readonly List<BoundComputedValueWithSyntax> _computedAggregates = new List<BoundComputedValueWithSyntax>(); 
         private readonly List<BoundComputedValueWithSyntax> _computedProjections = new List<BoundComputedValueWithSyntax>(); 
@@ -28,6 +29,11 @@ namespace NQuery.Binding
         public Dictionary<TableInstanceSymbol, SyntaxToken> IntroducedTables
         {
             get { return _introducedTables; }
+        }
+
+        public List<BoundComputedValueWithSyntax> AccessibleComputedValues
+        {
+            get { return _accessibleComputedValues; }
         }
 
         public List<BoundComputedValueWithSyntax> ComputedGroupings

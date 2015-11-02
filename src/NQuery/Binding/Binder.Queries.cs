@@ -93,9 +93,8 @@ namespace NQuery.Binding
 
             while (queryState != null)
             {
-                var candidates = queryState.ComputedGroupings
-                                           .Concat(queryState.ComputedAggregates)
-                                           .Concat(queryState.ComputedProjections);
+                var candidates = queryState.AccessibleComputedValues
+                                           .Concat(queryState.ComputedAggregates);
                 valueSlot = FindComputedValue(expression, candidates);
 
                 if (valueSlot != null)
@@ -1066,6 +1065,8 @@ namespace NQuery.Binding
                 }
             }
 
+            QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedProjections);
+
             return result;
         }
 
@@ -1271,6 +1272,8 @@ namespace NQuery.Binding
 
                 boundColumns.Add(valueSlot);
             }
+
+            QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedAggregates);
 
             return new BoundGroupByClause(boundColumns.ToImmutableArray());
         }
