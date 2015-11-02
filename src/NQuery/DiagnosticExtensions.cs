@@ -79,8 +79,6 @@ namespace NQuery
                     return Resources.AmbiguousAggregate;
                 case DiagnosticId.AmbiguousProperty:
                     return Resources.AmbiguousProperty;
-                case DiagnosticId.AmbiguousType:
-                    return Resources.AmbiguousType;
                 case DiagnosticId.AmbiguousInvocation:
                     return Resources.AmbiguousInvocation;
                 case DiagnosticId.InvocationRequiresParenthesis:
@@ -97,8 +95,6 @@ namespace NQuery
                     return Resources.AmbiguousConversion;
                 case DiagnosticId.WhenMustEvaluateToBool:
                     return Resources.WhenMustEvaluateToBool;
-                case DiagnosticId.CannotFoldConstants:
-                    return Resources.CannotFoldConstants;
                 case DiagnosticId.CannotConvert:
                     return Resources.CannotConvert;
                 case DiagnosticId.MustSpecifyTableToSelectFrom:
@@ -393,13 +389,6 @@ namespace NQuery
             diagnostics.Report(name.Span, DiagnosticId.AmbiguousProperty, name.ValueText);
         }
 
-        //public static void ReportAmbiguousType(this ICollection<Diagnostic> diagnostics, string typeReference, Type[] candidates)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.AmbiguousType, typeReference, FormattingHelpers.FormatFullyQualifiedTypeList(candidates));
-        //    var diagnostic = new Diagnostic(DiagnosticId.AmbiguousType, message);
-        //    diagnostics.Add(diagnostic);
-        //}
-
         public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, InvocableSymbol symbol1, InvocableSymbol symbol2, IReadOnlyList<Type> argumentTypes)
         {
             if (argumentTypes.Count > 0)
@@ -469,13 +458,6 @@ namespace NQuery
             var typeName = typeof (bool).ToDisplayName();
             diagnostics.Report(span, DiagnosticId.WhenMustEvaluateToBool, typeName);
         }
-
-        //public static void ReportCannotFoldConstants(this ICollection<Diagnostic> diagnostics, RuntimeException exception)
-        //{
-        //    var message = String.Format(CultureInfo.CurrentCulture, Resources.CannotFoldConstants, exception.Message);
-        //    var diagnostic = new Diagnostic(DiagnosticId.CannotFoldConstants, message);
-        //    diagnostics.Add(diagnostic);
-        //}
 
         public static void ReportMustSpecifyTableToSelectFrom(this ICollection<Diagnostic> diagnostics, TextSpan textSpan)
         {

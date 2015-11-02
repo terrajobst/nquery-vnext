@@ -241,15 +241,6 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type reference &apos;{0}&apos; is ambiguous between 1}..
-        /// </summary>
-        internal static string AmbiguousType {
-            get {
-                return ResourceManager.GetString("AmbiguousType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Unary operator &apos;{0}&apos; invocation on type &apos;{1}&apos; is ambiguous..
         /// </summary>
         internal static string AmbiguousUnaryOperator {
@@ -345,15 +336,6 @@ namespace NQuery {
         internal static string CannotConvert {
             get {
                 return ResourceManager.GetString("CannotConvert", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot evaluate constant expression: {0}.
-        /// </summary>
-        internal static string CannotFoldConstants {
-            get {
-                return ResourceManager.GetString("CannotFoldConstants", resourceCulture);
             }
         }
         

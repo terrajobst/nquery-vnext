@@ -180,9 +180,6 @@
   <data name="AmbiguousTable" xml:space="preserve">
     <value>Table name {0} is ambiguous between '{1}' and '{2}'.</value>
   </data>
-  <data name="AmbiguousType" xml:space="preserve">
-    <value>Type reference '{0}' is ambiguous between 1}.</value>
-  </data>
   <data name="AmbiguousUnaryOperator" xml:space="preserve">
     <value>Unary operator '{0}' invocation on type '{1}' is ambiguous.</value>
   </data>
@@ -212,9 +209,6 @@
   </data>
   <data name="CannotConvert" xml:space="preserve">
     <value>Cannot convert type '{0}' to '{1}'.</value>
-  </data>
-  <data name="CannotFoldConstants" xml:space="preserve">
-    <value>Cannot evaluate constant expression: {0}</value>
   </data>
   <data name="CastingOperatorFailed" xml:space="preserve">
     <value>Casting operator threw an exception.</value>

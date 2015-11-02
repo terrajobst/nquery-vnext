@@ -37,7 +37,6 @@ namespace NQuery
         AmbiguousVariable,
         AmbiguousAggregate,
         AmbiguousProperty,
-        AmbiguousType,
         AmbiguousInvocation,
         InvocationRequiresParenthesis,
         CannotApplyUnaryOperator,
@@ -46,7 +45,6 @@ namespace NQuery
         AmbiguousBinaryOperator,
         AmbiguousConversion,
         WhenMustEvaluateToBool,
-        CannotFoldConstants,
         CannotConvert,
 
         MustSpecifyTableToSelectFrom,
