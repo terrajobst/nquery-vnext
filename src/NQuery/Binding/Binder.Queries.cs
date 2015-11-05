@@ -1274,6 +1274,7 @@ namespace NQuery.Binding
             }
 
             QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedAggregates);
+            QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedGroupings);
 
             return new BoundGroupByClause(boundColumns.ToImmutableArray());
         }
