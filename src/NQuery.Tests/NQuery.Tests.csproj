@@ -87,6 +87,7 @@
     <Compile Include="ExpressionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
+    <Compile Include="Symbols\EumerableTableDefinitionTests.cs" />
     <Compile Include="Syntax\IdentifierTests.cs" />
     <Compile Include="Syntax\LexerTests.cs" />
     <Compile Include="Syntax\ParserTests.AssertingEnumerator.cs" />

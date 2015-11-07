@@ -186,6 +186,7 @@
     <Compile Include="Binding\FunctionSymbolSignature.cs" />
     <Compile Include="Symbols\ColumnDefinition.cs" />
     <Compile Include="Symbols\ColumnInstanceSymbol.cs" />
+    <Compile Include="Symbols\EumerableTableDefinition.cs" />
     <Compile Include="Symbols\KnownType.cs" />
     <Compile Include="Binding\MethodSymbolSignature.cs" />
     <Compile Include="Binding\OverloadResolution.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Binding\BinaryOperatorKind.cs" />
     <Compile Include="Binding\UnaryOperatorKind.cs" />
     <Compile Include="Hosting\NullProviders.cs" />
+    <Compile Include="Symbols\PropertyColumnDefinition.cs" />
     <Compile Include="Symbols\ReflectionFieldSymbol.cs" />
     <Compile Include="Symbols\ReflectionMethodSymbol.cs" />
     <Compile Include="Symbols\ReflectionParameterSymbol.cs" />
