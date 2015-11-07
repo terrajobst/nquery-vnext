@@ -14,8 +14,8 @@ namespace NQuery.Symbols
             get
             {
                 if (_columns.IsDefault)
-                    _columns = GetColumns().ToImmutableArray();
-                
+                    ImmutableInterlocked.InterlockedInitialize(ref _columns, GetColumns().ToImmutableArray());
+
                 return _columns;
             }
         }
