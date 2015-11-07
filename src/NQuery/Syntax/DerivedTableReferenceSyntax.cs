@@ -11,7 +11,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _asKeyword;
         private readonly SyntaxToken _name;
 
-        public DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken asKeyword, SyntaxToken name)
+        internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken asKeyword, SyntaxToken name)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis;

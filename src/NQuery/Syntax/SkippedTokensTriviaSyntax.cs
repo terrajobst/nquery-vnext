@@ -9,7 +9,7 @@ namespace NQuery.Syntax
     {
         private readonly ImmutableArray<SyntaxToken> _tokens;
 
-        public SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
+        internal SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
             : base(syntaxTree)
         {
             _tokens = tokens.ToImmutableArray();

@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _dotToken;
         private readonly SyntaxToken _asteriskToken;
 
-        public WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, SyntaxToken dotToken, SyntaxToken asteriskToken)
+        internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, SyntaxToken dotToken, SyntaxToken asteriskToken)
             : base(syntaxTree)
         {
             _tableName = tableName;

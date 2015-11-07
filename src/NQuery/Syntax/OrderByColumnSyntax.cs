@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly ExpressionSyntax _columnSelector;
         private readonly SyntaxToken _modifier;
 
-        public OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken modifier)
+        internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken modifier)
             : base(syntaxTree)
         {
             _columnSelector = columnSelector;

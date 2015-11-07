@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly TopClauseSyntax _topClause;
         private readonly SeparatedSyntaxList<SelectColumnSyntax> _columns;
 
-        public SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken distinctAllKeyword, TopClauseSyntax topClause, SeparatedSyntaxList<SelectColumnSyntax> selectColumns)
+        internal SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken distinctAllKeyword, TopClauseSyntax topClause, SeparatedSyntaxList<SelectColumnSyntax> selectColumns)
             : base(syntaxTree)
         {
             _selectKeyword = selectKeyword;

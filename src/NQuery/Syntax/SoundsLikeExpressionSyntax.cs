@@ -11,7 +11,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _likeKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SoundsLikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundsKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
+        internal SoundsLikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundsKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;

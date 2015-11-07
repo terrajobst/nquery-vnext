@@ -13,7 +13,7 @@ namespace NQuery.Syntax
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _recursiveKeyword = recursiveKeyword;

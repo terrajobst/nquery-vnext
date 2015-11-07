@@ -11,7 +11,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _toKeyword;
         private readonly ExpressionSyntax _right;
 
-        public SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
+        internal SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;

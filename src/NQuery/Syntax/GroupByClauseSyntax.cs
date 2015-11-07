@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _byKeyword;
         private readonly SeparatedSyntaxList<GroupByColumnSyntax> _columns;
 
-        public GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<GroupByColumnSyntax> columns)
+        internal GroupByClauseSyntax(SyntaxTree syntaxTree, SyntaxToken groupKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<GroupByColumnSyntax> columns)
             : base(syntaxTree)
         {
             _groupKeyword = groupKeyword;

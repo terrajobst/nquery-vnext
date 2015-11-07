@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxNode _root;
         private readonly SyntaxToken _endOfFileToken;
 
-        public CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode root, SyntaxToken endOfFileToken)
+        internal CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode root, SyntaxToken endOfFileToken)
             : base(syntaxTree)
         {
             _root = root;

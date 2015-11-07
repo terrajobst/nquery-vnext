@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _fromKeyword;
         private readonly SeparatedSyntaxList<TableReferenceSyntax> _tableReferences;
 
-        public FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, SeparatedSyntaxList<TableReferenceSyntax> tableReferences)
+        internal FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, SeparatedSyntaxList<TableReferenceSyntax> tableReferences)
             : base(syntaxTree)
         {
             _fromKeyword = fromKeyword;

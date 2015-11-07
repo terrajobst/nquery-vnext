@@ -8,7 +8,7 @@ namespace NQuery.Syntax
     {
         private readonly ExpressionSyntax _expression;
 
-        public GroupByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression)
+        internal GroupByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression)
             : base(syntaxTree)
         {
             _expression = expression;

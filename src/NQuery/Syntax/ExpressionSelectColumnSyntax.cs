@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly ExpressionSyntax _expression;
         private readonly AliasSyntax _alias;
 
-        public ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
+        internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
             : base(syntaxTree)
         {
             _expression = expression;

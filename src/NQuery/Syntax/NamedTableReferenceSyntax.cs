@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _tableName;
         private readonly AliasSyntax _alias;
 
-        public NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias)
+        internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias)
             : base(syntaxTree)
         {
             _tableName = tableName;

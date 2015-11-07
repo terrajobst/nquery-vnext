@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _allKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken allKeyword, QuerySyntax rightQuery)
+        internal UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken allKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;

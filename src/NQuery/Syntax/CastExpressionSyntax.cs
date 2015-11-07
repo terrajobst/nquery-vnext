@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _typeName;
         private readonly SyntaxToken _rightParenthesisToken;
 
-        public CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken typeName, SyntaxToken rightParenthesisToken)
+        internal CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken typeName, SyntaxToken rightParenthesisToken)
             : base(syntaxTree)
         {
             _castKeyword = castKeyword;

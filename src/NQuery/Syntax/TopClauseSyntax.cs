@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _withKeyword;
         private readonly SyntaxToken _tiesKeyword;
 
-        public TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken withKeyword, SyntaxToken tiesKeyword)
+        internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken withKeyword, SyntaxToken tiesKeyword)
             : base(syntaxTree)
         {
             _topKeyword = topKeyword;

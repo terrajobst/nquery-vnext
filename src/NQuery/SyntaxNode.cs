@@ -15,7 +15,7 @@ namespace NQuery
         private TextSpan? _span;
         private TextSpan? _fullSpan;
 
-        protected SyntaxNode(SyntaxTree syntaxTree)
+        internal SyntaxNode(SyntaxTree syntaxTree)
         {
             _syntaxTree = syntaxTree;
         }

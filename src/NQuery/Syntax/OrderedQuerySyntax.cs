@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _byKeyword;
         private readonly SeparatedSyntaxList<OrderByColumnSyntax> _columns;
 
-        public OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<OrderByColumnSyntax> columns)
+        internal OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<OrderByColumnSyntax> columns)
             : base(syntaxTree)
         {
             _query = query;

@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _dot;
         private readonly SyntaxToken _name;
 
-        public PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
+        internal PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
             : base(syntaxTree)
         {
             _target = target;

@@ -7,7 +7,7 @@ namespace NQuery.Syntax
     {
         private readonly SyntaxToken _name;
 
-        public NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name)
+        internal NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name)
             : base(syntaxTree)
         {
             _name = name;

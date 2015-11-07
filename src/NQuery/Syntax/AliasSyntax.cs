@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _asKeyword;
         private readonly SyntaxToken _identifier;
 
-        public AliasSyntax(SyntaxTree syntaxTree, SyntaxToken asKeyword, SyntaxToken identifier)
+        internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken asKeyword, SyntaxToken identifier)
             : base(syntaxTree)
         {
             _asKeyword = asKeyword;

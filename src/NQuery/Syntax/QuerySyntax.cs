@@ -4,7 +4,7 @@ namespace NQuery.Syntax
 {
     public abstract class QuerySyntax : SyntaxNode
     {
-        protected QuerySyntax(SyntaxTree syntaxTree)
+        internal QuerySyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }

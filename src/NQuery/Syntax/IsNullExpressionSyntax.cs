@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _notKeyword;
         private readonly SyntaxToken _nullKeyword;
 
-        public IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken notKeyword, SyntaxToken nullKeyword)
+        internal IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken notKeyword, SyntaxToken nullKeyword)
             : base(syntaxTree)
         {
             _expression = expression;

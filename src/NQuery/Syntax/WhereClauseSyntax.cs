@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _whereKeyword;
         private readonly ExpressionSyntax _predicate;
 
-        public WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
+        internal WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
             : base(syntaxTree)
         {
             _whereKeyword = whereKeyword;

@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly TableReferenceSyntax _tableReference;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis)
+        internal ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis;

@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _name;
         private readonly ArgumentListSyntax _argumentList;
 
-        public MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
+        internal MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
             _target = target;

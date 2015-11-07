@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SeparatedSyntaxList<ExpressionSyntax> _arguments;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<ExpressionSyntax> arguments, SyntaxToken rightParenthesis)
+        internal ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<ExpressionSyntax> arguments, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis;

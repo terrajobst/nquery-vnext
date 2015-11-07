@@ -4,7 +4,7 @@ namespace NQuery.Syntax
 {
     public abstract class ExpressionSyntax : SyntaxNode
     {
-        protected ExpressionSyntax(SyntaxTree syntaxTree)
+        internal ExpressionSyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }

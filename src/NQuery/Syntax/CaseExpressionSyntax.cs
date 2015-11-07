@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly CaseElseLabelSyntax _elseLabel;
         private readonly SyntaxToken _endKeyword;
 
-        public CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
+        internal CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
             : base(syntaxTree)
         {
             _caseKeyword = caseKeyword;

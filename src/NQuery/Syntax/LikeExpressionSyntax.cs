@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _likeKeyword;
         private readonly ExpressionSyntax _right;
 
-        public LikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
+        internal LikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;

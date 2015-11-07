@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _andKeyword;
         private readonly ExpressionSyntax _upperBound;
 
-        public BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
+        internal BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
             : base(syntaxTree)
         {
             _left = left;

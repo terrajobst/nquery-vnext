@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _expression = expression;

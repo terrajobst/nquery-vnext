@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _operatorToken;
         private readonly ExpressionSyntax _expression;
 
-        public UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax expression)
+        internal UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax expression)
             : base(syntaxTree)
         {
             _operatorToken = operatorToken;

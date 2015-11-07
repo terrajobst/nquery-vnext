@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _asteriskToken;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
+        internal CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _name = identifier;

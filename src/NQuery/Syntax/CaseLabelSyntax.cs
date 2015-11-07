@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _thenKeyword;
         private readonly ExpressionSyntax _thenExpression;
 
-        public CaseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken whenKeyword, ExpressionSyntax whenExpression, SyntaxToken thenKeyword, ExpressionSyntax thenExpression)
+        internal CaseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken whenKeyword, ExpressionSyntax whenExpression, SyntaxToken thenKeyword, ExpressionSyntax thenExpression)
             : base(syntaxTree)
         {
             _whenKeyword = whenKeyword;

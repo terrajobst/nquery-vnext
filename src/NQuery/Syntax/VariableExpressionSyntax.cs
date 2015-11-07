@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _atToken;
         private readonly SyntaxToken _name;
 
-        public VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
+        internal VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
             : base(syntaxTree)
         {
             _atToken = atToken;

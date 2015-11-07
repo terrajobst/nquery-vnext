@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _name;
         private readonly ArgumentListSyntax _argumentList;
 
-        public FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
+        internal FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
             _name = name;

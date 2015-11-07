@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _exceptKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public ExceptQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken exceptKeyword, QuerySyntax rightQuery)
+        internal ExceptQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken exceptKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;

@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _innerKeyword;
         private readonly SyntaxToken _joinKeyword;
 
-        public InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+        internal InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
             : base(syntaxTree, left, right, onKeyword, condition)
         {
             _innerKeyword = innerKeyword;

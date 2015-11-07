@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        internal AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _left = left;

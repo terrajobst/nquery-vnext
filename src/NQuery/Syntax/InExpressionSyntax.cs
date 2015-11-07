@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _inKeyword;
         private readonly ArgumentListSyntax _argumentList;
 
-        public InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
+        internal InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
             _expression = expression;

@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _crossKeyword;
         private readonly SyntaxToken _joinKeyword;
 
-        public CrossJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken crossKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right)
+        internal CrossJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken crossKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right)
             : base(syntaxTree, left, right)
         {
             _crossKeyword = crossKeyword;

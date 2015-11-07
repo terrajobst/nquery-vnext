@@ -7,7 +7,7 @@ namespace NQuery.Syntax
     {
         private readonly SyntaxToken _identifier;
 
-        public CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier)
+        internal CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier)
             : base(syntaxTree)
         {
             _identifier = identifier;

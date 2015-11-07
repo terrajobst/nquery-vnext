@@ -4,7 +4,7 @@ namespace NQuery.Syntax
 {
     public abstract class SelectColumnSyntax : SyntaxNode
     {
-        protected SelectColumnSyntax(SyntaxTree syntaxTree)
+        internal SelectColumnSyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }

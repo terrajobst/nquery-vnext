@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> _columnNames;
         private readonly SyntaxToken _rightParenthesis;
 
-        public CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesis)
+        internal CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis;

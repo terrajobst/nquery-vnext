@@ -10,7 +10,7 @@ namespace NQuery.Syntax
         private readonly QuerySyntax _query;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        internal ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _existsKeyword = existsKeyword;

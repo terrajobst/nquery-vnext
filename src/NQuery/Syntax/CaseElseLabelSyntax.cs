@@ -8,7 +8,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _elseKeyword;
         private readonly ExpressionSyntax _expression;
 
-        public CaseElseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken elseKeyword, ExpressionSyntax expression)
+        internal CaseElseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken elseKeyword, ExpressionSyntax expression)
             : base(syntaxTree)
         {
             _elseKeyword = elseKeyword;

@@ -11,7 +11,7 @@ namespace NQuery.Syntax
         private readonly GroupByClauseSyntax _groupByClause;
         private readonly HavingClauseSyntax _havingClause;
 
-        public SelectQuerySyntax(SyntaxTree syntaxTree, SelectClauseSyntax selectClause, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
+        internal SelectQuerySyntax(SyntaxTree syntaxTree, SelectClauseSyntax selectClause, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
             : base(syntaxTree)
         {
             _selectClause = selectClause;

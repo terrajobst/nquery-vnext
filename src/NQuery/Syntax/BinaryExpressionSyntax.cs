@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _operatorToken;
         private readonly ExpressionSyntax _right;
 
-        public BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
+        internal BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
             : base(syntaxTree)
         {
             _left = left;

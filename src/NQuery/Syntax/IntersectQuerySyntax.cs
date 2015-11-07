@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SyntaxToken _intersectKeyword;
         private readonly QuerySyntax _rightQuery;
 
-        public IntersectQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken intersectKeyword, QuerySyntax rightQuery)
+        internal IntersectQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken intersectKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
             _leftQuery = leftQuery;

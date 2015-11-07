@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly ExpressionSyntax _expression;
         private readonly SyntaxToken _rightParenthesis;
 
-        public ParenthesizedExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, ExpressionSyntax expression, SyntaxToken rightParenthesis)
+        internal ParenthesizedExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, ExpressionSyntax expression, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             _leftParenthesis = leftParenthesis;

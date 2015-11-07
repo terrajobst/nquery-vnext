@@ -9,7 +9,7 @@ namespace NQuery.Syntax
         private readonly SeparatedSyntaxList<CommonTableExpressionSyntax> _commonTableExpressions;
         private readonly QuerySyntax _query;
 
-        public CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, SeparatedSyntaxList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
+        internal CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, SeparatedSyntaxList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
             : base(syntaxTree)
         {
             _withKeyword = withKeyword;

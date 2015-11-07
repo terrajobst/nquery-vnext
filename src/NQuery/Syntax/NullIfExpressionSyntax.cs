@@ -12,7 +12,7 @@ namespace NQuery.Syntax
         private readonly ExpressionSyntax _rightExpression;
         private readonly SyntaxToken _rightParenthesisToken;
 
-        public NullIfExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken nullIfKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax leftExpression, SyntaxToken commaToken, ExpressionSyntax rightExpression, SyntaxToken rightParenthesisToken)
+        internal NullIfExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken nullIfKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax leftExpression, SyntaxToken commaToken, ExpressionSyntax rightExpression, SyntaxToken rightParenthesisToken)
             : base(syntaxTree)
         {
             _nullIfKeyword = nullIfKeyword;

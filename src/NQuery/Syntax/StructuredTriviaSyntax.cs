@@ -4,7 +4,7 @@ namespace NQuery.Syntax
 {
     public abstract class StructuredTriviaSyntax : SyntaxNode
     {
-        protected StructuredTriviaSyntax(SyntaxTree syntaxTree)
+        internal StructuredTriviaSyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }
