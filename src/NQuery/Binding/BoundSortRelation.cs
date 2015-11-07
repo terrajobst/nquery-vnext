@@ -7,15 +7,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSortRelation : BoundRelation
     {
-        private readonly bool _isDistinct;
-        private readonly BoundRelation _input;
-        private readonly ImmutableArray<BoundSortedValue> _sortedValues;
-
         public BoundSortRelation(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
-            _input = input;
-            _sortedValues = sortedValues.ToImmutableArray();
-            _isDistinct = isDistinct;
+            Input = input;
+            SortedValues = sortedValues.ToImmutableArray();
+            IsDistinct = isDistinct;
         }
 
         public override BoundNodeKind Kind
@@ -23,26 +19,17 @@ namespace NQuery.Binding
             get { return BoundNodeKind.SortRelation;}
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public ImmutableArray<BoundSortedValue> SortedValues
-        {
-            get { return _sortedValues; }
-        }
+        public ImmutableArray<BoundSortedValue> SortedValues { get; }
 
-        public bool IsDistinct
-        {
-            get { return _isDistinct; }
-        }
+        public bool IsDistinct { get; }
 
         public BoundSortRelation Update(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
         {
             var newSortedValues = sortedValues.ToImmutableArray();
 
-            if (isDistinct == _isDistinct && input == _input && newSortedValues == _sortedValues)
+            if (isDistinct == IsDistinct && input == Input && newSortedValues == SortedValues)
                 return this;
 
             return new BoundSortRelation(isDistinct, input, newSortedValues);
@@ -50,12 +37,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _input.GetDefinedValues();
+            return Input.GetDefinedValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues();
+            return Input.GetOutputValues();
         }
     }
 }

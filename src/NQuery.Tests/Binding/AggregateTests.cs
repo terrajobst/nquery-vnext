@@ -14,17 +14,12 @@ namespace NQuery.Tests.Binding
     {
         private sealed class FakeAggregateDefinition : AggregateDefinition
         {
-            private readonly string _name;
-
             public FakeAggregateDefinition(string name)
             {
-                _name = name;
+                Name = name;
             }
 
-            public override string Name
-            {
-                get { return _name; }
-            }
+            public override string Name { get; }
 
             public override IAggregatable CreateAggregatable(Type argumentType)
             {

@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class InnerJoinedTableReferenceSyntax : ConditionedJoinedTableReferenceSyntax
     {
-        private readonly SyntaxToken _innerKeyword;
-        private readonly SyntaxToken _joinKeyword;
-
         internal InnerJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken innerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
             : base(syntaxTree, left, right, onKeyword, condition)
         {
-            _innerKeyword = innerKeyword;
-            _joinKeyword = joinKeyword;
+            InnerKeyword = innerKeyword;
+            JoinKeyword = joinKeyword;
         }
 
         public override SyntaxKind Kind
@@ -23,22 +20,16 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Left;
-            if (_innerKeyword != null)
-                yield return _innerKeyword;
-            yield return _joinKeyword;
+            if (InnerKeyword != null)
+                yield return InnerKeyword;
+            yield return JoinKeyword;
             yield return Right;
             yield return OnKeyword;
             yield return Condition;
         }
 
-        public SyntaxToken InnerKeyword
-        {
-            get { return _innerKeyword; }
-        }
+        public SyntaxToken InnerKeyword { get; }
 
-        public SyntaxToken JoinKeyword
-        {
-            get { return _joinKeyword; }
-        }
+        public SyntaxToken JoinKeyword { get; }
     }
 }

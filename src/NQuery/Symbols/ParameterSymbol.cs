@@ -4,12 +4,10 @@ namespace NQuery.Symbols
 {
     public class ParameterSymbol : Symbol
     {
-        private readonly Type _type;
-
         public ParameterSymbol(string name, Type type)
             : base(name)
         {
-            _type = type;
+            Type = type;
         }
 
         public override SymbolKind Kind
@@ -17,9 +15,6 @@ namespace NQuery.Symbols
             get { return SymbolKind.Parameter; }
         }
 
-        public override Type Type
-        {
-            get { return _type; }
-        }
+        public override Type Type { get; }
     }
 }

@@ -10,24 +10,19 @@ namespace NQuery.Data
 {
     public sealed class DataTableDefinition : TableDefinition
     {
-        private readonly DataTable _dataTable;
-
         public DataTableDefinition(DataTable dataTable)
         {
             if (dataTable == null)
                 throw new ArgumentNullException(nameof(dataTable));
 
-            _dataTable = dataTable;
+            DataTable = dataTable;
         }
 
-        public DataTable DataTable
-        {
-            get { return _dataTable; }
-        }
+        public DataTable DataTable { get; }
 
         public override string Name
         {
-            get { return _dataTable.TableName; }
+            get { return DataTable.TableName; }
         }
 
         public override Type RowType
@@ -37,12 +32,12 @@ namespace NQuery.Data
 
         protected override IEnumerable<ColumnDefinition> GetColumns()
         {
-            return _dataTable.Columns.Cast<DataColumn>().Select(c => new DataColumnDefinition(c));
+            return DataTable.Columns.Cast<DataColumn>().Select(c => new DataColumnDefinition(c));
         }
 
         public override IEnumerable GetRows()
         {
-            return _dataTable.Rows;
+            return DataTable.Rows;
         }
     }
 }

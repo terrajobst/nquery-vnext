@@ -5,24 +5,16 @@ namespace NQuery.Syntax
 {
     public sealed class CommonTableExpressionSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _recursiveKeyword;
-        private readonly SyntaxToken _name;
-        private readonly CommonTableExpressionColumnNameListSyntax _columnNameList;
-        private readonly SyntaxToken _asKeyword;
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _recursiveKeyword = recursiveKeyword;
-            _name = name;
-            _columnNameList = columnNameList;
-            _asKeyword = asKeyword;
-            _leftParenthesis = leftParenthesis;
-            _query = query;
-            _rightParenthesis = rightParenthesis;
+            RecursiveKeyword = recursiveKeyword;
+            Name = name;
+            ColumnNameList = columnNameList;
+            AsKeyword = asKeyword;
+            LeftParenthesis = leftParenthesis;
+            Query = query;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -32,50 +24,29 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            if (_recursiveKeyword != null)
-                yield return _recursiveKeyword;
-            yield return _name;
-            if (_columnNameList != null)
-                yield return _columnNameList;
-            yield return _asKeyword;
-            yield return _leftParenthesis;
-            yield return _query;
-            yield return _rightParenthesis;
+            if (RecursiveKeyword != null)
+                yield return RecursiveKeyword;
+            yield return Name;
+            if (ColumnNameList != null)
+                yield return ColumnNameList;
+            yield return AsKeyword;
+            yield return LeftParenthesis;
+            yield return Query;
+            yield return RightParenthesis;
         }
 
-        public SyntaxToken RecursiveKeyword
-        {
-            get { return _recursiveKeyword; }
-        }
+        public SyntaxToken RecursiveKeyword { get; }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
 
-        public CommonTableExpressionColumnNameListSyntax ColumnNameList
-        {
-            get { return _columnNameList; }
-        }
+        public CommonTableExpressionColumnNameListSyntax ColumnNameList { get; }
 
-        public SyntaxToken AsKeyword
-        {
-            get { return _asKeyword; }
-        }
+        public SyntaxToken AsKeyword { get; }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

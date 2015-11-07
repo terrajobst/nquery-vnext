@@ -11,12 +11,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
 {
     internal sealed class NQueryOutliner : INQueryOutliner
     {
-        private readonly Collection<IAuthoringOutliner> _outliners = new Collection<IAuthoringOutliner>();
-
-        public Collection<IAuthoringOutliner> Outliners
-        {
-            get { return _outliners; }
-        }
+        public Collection<IAuthoringOutliner> Outliners { get; } = new Collection<IAuthoringOutliner>();
 
         public IOutliningSource GetOutliningSource(ITextSnapshot snapshot)
         {
@@ -26,7 +21,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
             if (!document.TryGetSyntaxTree(out syntaxTree))
                 return null;
 
-            return new NQueryOutliningSource(snapshot, syntaxTree, _outliners.ToImmutableArray());
+            return new NQueryOutliningSource(snapshot, syntaxTree, Outliners.ToImmutableArray());
         }
 
         public AutomaticOutliningUpdateTrigger UpdateTrigger

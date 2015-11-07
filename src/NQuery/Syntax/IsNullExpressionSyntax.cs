@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class IsNullExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _isKeyword;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _nullKeyword;
-
         internal IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken notKeyword, SyntaxToken nullKeyword)
             : base(syntaxTree)
         {
-            _expression = expression;
-            _isKeyword = isKeyword;
-            _notKeyword = notKeyword;
-            _nullKeyword = nullKeyword;
+            Expression = expression;
+            IsKeyword = isKeyword;
+            NotKeyword = notKeyword;
+            NullKeyword = nullKeyword;
         }
 
         public override SyntaxKind Kind
@@ -26,31 +21,19 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _expression;
-            yield return _isKeyword;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _nullKeyword;
+            yield return Expression;
+            yield return IsKeyword;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return NullKeyword;
         }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
 
-        public SyntaxToken IsKeyword
-        {
-            get { return _isKeyword; }
-        }
+        public SyntaxToken IsKeyword { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken NullKeyword
-        {
-            get { return _nullKeyword; }
-        }
+        public SyntaxToken NullKeyword { get; }
     }
 }

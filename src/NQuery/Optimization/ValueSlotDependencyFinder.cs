@@ -7,26 +7,21 @@ namespace NQuery.Optimization
 {
     internal sealed class ValueSlotDependencyFinder : BoundTreeWalker
     {
-        private readonly HashSet<ValueSlot> _valueSlots;
-
         public ValueSlotDependencyFinder()
         {
-            _valueSlots = new HashSet<ValueSlot>();
+            ValueSlots = new HashSet<ValueSlot>();
         }
 
         public ValueSlotDependencyFinder(HashSet<ValueSlot> valueSlots)
         {
-            _valueSlots = valueSlots;
+            ValueSlots = valueSlots;
         }
 
-        public HashSet<ValueSlot> ValueSlots
-        {
-            get { return _valueSlots; }
-        }
+        public HashSet<ValueSlot> ValueSlots { get; }
 
         protected override void VisitValueSlotExpression(BoundValueSlotExpression node)
         {
-            _valueSlots.Add(node.ValueSlot);
+            ValueSlots.Add(node.ValueSlot);
             base.VisitValueSlotExpression(node);
         }
     }

@@ -6,40 +6,28 @@ namespace NQuery.Binding
 {
     internal sealed class BindingResult
     {
-        private readonly SyntaxNode _root;
-        private readonly BoundNode _boundRoot;
         private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
         private readonly IDictionary<BoundNode, Binder> _binderFromBoundNode;
-        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
         public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
         {
-            _root = root;
-            _boundRoot = boundRoot;
+            Root = root;
+            BoundRoot = boundRoot;
             _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
             _binderFromBoundNode = binderFromBoundNode;
-            _diagnostics = diagnostics.ToImmutableArray();
+            Diagnostics = diagnostics.ToImmutableArray();
         }
 
-        public SyntaxNode Root
-        {
-            get { return _root; }
-        }
+        public SyntaxNode Root { get; }
 
-        public BoundNode BoundRoot
-        {
-            get { return _boundRoot; }
-        }
+        public BoundNode BoundRoot { get; }
 
         public Binder RootBinder
         {
-            get { return _binderFromBoundNode[_boundRoot]; }
+            get { return _binderFromBoundNode[BoundRoot]; }
         }
 
-        public ImmutableArray<Diagnostic> Diagnostics
-        {
-            get { return _diagnostics; }
-        }
+        public ImmutableArray<Diagnostic> Diagnostics { get; }
 
         public BoundNode GetBoundNode(SyntaxNode syntaxNode)
         {

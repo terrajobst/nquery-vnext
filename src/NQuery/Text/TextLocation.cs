@@ -4,28 +4,19 @@ namespace NQuery.Text
 {
     public struct TextLocation : IEquatable<TextLocation>
     {
-        private readonly int _line;
-        private readonly int _column;
-
         public TextLocation(int line, int column)
         {
-            _line = line;
-            _column = column;
+            Line = line;
+            Column = column;
         }
 
-        public int Line
-        {
-            get { return _line; }
-        }
+        public int Line { get; }
 
-        public int Column
-        {
-            get { return _column; }
-        }
+        public int Column { get; }
 
         public bool Equals(TextLocation other)
         {
-            return _line == other._line && _column == other._column;
+            return Line == other.Line && Column == other.Column;
         }
 
         public override bool Equals(object obj)
@@ -38,7 +29,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (_line*397) ^ _column;
+                return (Line*397) ^ Column;
             }
         }
 

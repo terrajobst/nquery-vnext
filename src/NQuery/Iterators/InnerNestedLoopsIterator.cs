@@ -8,7 +8,6 @@ namespace NQuery.Iterators
         private readonly Iterator _right;
         private readonly IteratorPredicate _predicate;
         private readonly IteratorPredicate _passthruPredicate;
-        private readonly RowBuffer _rowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
@@ -19,13 +18,10 @@ namespace NQuery.Iterators
             _right = right;
             _predicate = predicate;
             _passthruPredicate = passthruPredicate;
-            _rowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+            RowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
         }
 
-        public override RowBuffer RowBuffer
-        {
-            get { return _rowBuffer; }
-        }
+        public override RowBuffer RowBuffer { get; }
 
         public override void Open()
         {

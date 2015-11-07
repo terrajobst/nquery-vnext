@@ -20,28 +20,19 @@ namespace NQuery.Text
             return new TextChange(span, string.Empty);
         }
 
-        private readonly TextSpan _span;
-        private readonly string _newText;
-
         public TextChange(TextSpan span, string newText)
         {
-            _span = span;
-            _newText = newText;
+            Span = span;
+            NewText = newText;
         }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public string NewText
-        {
-            get { return _newText; }
-        }
+        public string NewText { get; }
 
         public bool Equals(TextChange other)
         {
-            return _span.Equals(other._span) && string.Equals(_newText, other._newText);
+            return Span.Equals(other.Span) && string.Equals(NewText, other.NewText);
         }
 
         public override bool Equals(object obj)
@@ -54,13 +45,13 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (_span.GetHashCode()*397) ^ (_newText != null ? _newText.GetHashCode() : 0);
+                return (Span.GetHashCode()*397) ^ (NewText != null ? NewText.GetHashCode() : 0);
             }
         }
 
         public override string ToString()
         {
-            return $"[{Span.Start},{Span.End}) => {{{_newText}}}";
+            return $"[{Span.Start},{Span.End}) => {{{NewText}}}";
         }
     }
 }

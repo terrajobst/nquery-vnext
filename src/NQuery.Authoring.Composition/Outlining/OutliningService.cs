@@ -11,17 +11,12 @@ namespace NQuery.Authoring.Composition.Outlining
     [Export(typeof(IOutliningService))]
     internal sealed class OutliningService : IOutliningService
     {
-        private readonly ImmutableArray<IOutliner> _outliners;
-
         [ImportingConstructor]
         public OutliningService([ImportMany] IEnumerable<IOutliner> matchers)
         {
-            _outliners = matchers.Concat(OutliningExtensions.GetStandardOutliners()).ToImmutableArray();
+            Outliners = matchers.Concat(OutliningExtensions.GetStandardOutliners()).ToImmutableArray();
         }
 
-        public ImmutableArray<IOutliner> Outliners
-        {
-            get { return _outliners; }
-        }
+        public ImmutableArray<IOutliner> Outliners { get; }
     }
 }

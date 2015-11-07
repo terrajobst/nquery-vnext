@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class WhereClauseSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _whereKeyword;
-        private readonly ExpressionSyntax _predicate;
-
         internal WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
             : base(syntaxTree)
         {
-            _whereKeyword = whereKeyword;
-            _predicate = predicate;
+            WhereKeyword = whereKeyword;
+            Predicate = predicate;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _whereKeyword;
-            yield return _predicate;
+            yield return WhereKeyword;
+            yield return Predicate;
         }
 
-        public SyntaxToken WhereKeyword
-        {
-            get { return _whereKeyword; }
-        }
+        public SyntaxToken WhereKeyword { get; }
 
-        public ExpressionSyntax Predicate
-        {
-            get { return _predicate; }
-        }
+        public ExpressionSyntax Predicate { get; }
     }
 }

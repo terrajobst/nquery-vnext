@@ -5,22 +5,15 @@ namespace NQuery.Syntax
 {
     public sealed class AllAnySubselectSyntax : SubselectExpressionSyntax
     {
-        private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken _operatorToken;
-        private readonly SyntaxToken _keyword;
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _left = left;
-            _operatorToken = operatorToken;
-            _keyword = keyword;
-            _leftParenthesis = leftParenthesis;
-            _query = query;
-            _rightParenthesis = rightParenthesis;
+            Left = left;
+            OperatorToken = operatorToken;
+            Keyword = keyword;
+            LeftParenthesis = leftParenthesis;
+            Query = query;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -31,42 +24,24 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _left;
-            yield return _operatorToken;
-            yield return _keyword;
-            yield return _leftParenthesis;
-            yield return _query;
-            yield return _rightParenthesis;
+            yield return Left;
+            yield return OperatorToken;
+            yield return Keyword;
+            yield return LeftParenthesis;
+            yield return Query;
+            yield return RightParenthesis;
         }
 
-        public ExpressionSyntax Left
-        {
-            get { return _left; }
-        }
+        public ExpressionSyntax Left { get; }
 
-        public SyntaxToken OperatorToken
-        {
-            get { return _operatorToken; }
-        }
+        public SyntaxToken OperatorToken { get; }
 
-        public SyntaxToken Keyword
-        {
-            get { return _keyword; }
-        }
+        public SyntaxToken Keyword { get; }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

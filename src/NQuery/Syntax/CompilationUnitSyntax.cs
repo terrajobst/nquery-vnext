@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class CompilationUnitSyntax : SyntaxNode
     {
-        private readonly SyntaxNode _root;
-        private readonly SyntaxToken _endOfFileToken;
-
         internal CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode root, SyntaxToken endOfFileToken)
             : base(syntaxTree)
         {
-            _root = root;
-            _endOfFileToken = endOfFileToken;
+            Root = root;
+            EndOfFileToken = endOfFileToken;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _root;
-            yield return _endOfFileToken;
+            yield return Root;
+            yield return EndOfFileToken;
         }
 
-        public SyntaxNode Root
-        {
-            get { return _root; }
-        }
+        public SyntaxNode Root { get; }
 
-        public SyntaxToken EndOfFileToken
-        {
-            get { return _endOfFileToken; }
-        }
+        public SyntaxToken EndOfFileToken { get; }
     }
 }

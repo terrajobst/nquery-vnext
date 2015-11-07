@@ -22,7 +22,6 @@ namespace NQuery.Authoring.CodeActions.Refactorings
         private sealed class FlipBinaryOperatorSidesCodeAction : CodeAction
         {
             private readonly BinaryExpressionSyntax _node;
-            private readonly string _description;
             private readonly string _swappedOperatorText;
 
             public FlipBinaryOperatorSidesCodeAction(BinaryExpressionSyntax node)
@@ -35,15 +34,12 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 var operatorText = operatorKind.GetText();
                 _swappedOperatorText = swappedOperatorKind.GetText();
 
-                _description = operatorText == _swappedOperatorText
+                Description = operatorText == _swappedOperatorText
                     ? $"Flip '{operatorText}' operands"
                     : $"Flip '{operatorText}' operator to '{_swappedOperatorText}'";
             }
 
-            public override string Description
-            {
-                get { return _description; }
-            }
+            public override string Description { get; }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {

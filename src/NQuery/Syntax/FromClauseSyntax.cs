@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class FromClauseSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _fromKeyword;
-        private readonly SeparatedSyntaxList<TableReferenceSyntax> _tableReferences;
-
         internal FromClauseSyntax(SyntaxTree syntaxTree, SyntaxToken fromKeyword, SeparatedSyntaxList<TableReferenceSyntax> tableReferences)
             : base(syntaxTree)
         {
-            _fromKeyword = fromKeyword;
-            _tableReferences = tableReferences;
+            FromKeyword = fromKeyword;
+            TableReferences = tableReferences;
         }
 
         public override SyntaxKind Kind
@@ -22,19 +19,13 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _fromKeyword;
-            foreach (var nodeOrToken in _tableReferences.GetWithSeparators())
+            yield return FromKeyword;
+            foreach (var nodeOrToken in TableReferences.GetWithSeparators())
                 yield return nodeOrToken;
         }
 
-        public SyntaxToken FromKeyword
-        {
-            get { return _fromKeyword; }
-        }
+        public SyntaxToken FromKeyword { get; }
 
-        public SeparatedSyntaxList<TableReferenceSyntax> TableReferences
-        {
-            get { return _tableReferences; }
-        }
+        public SeparatedSyntaxList<TableReferenceSyntax> TableReferences { get; }
     }
 }

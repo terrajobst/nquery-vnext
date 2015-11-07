@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class OrderByColumnSyntax : SyntaxNode
     {
-        private readonly ExpressionSyntax _columnSelector;
-        private readonly SyntaxToken _modifier;
-
         internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken modifier)
             : base(syntaxTree)
         {
-            _columnSelector = columnSelector;
-            _modifier = modifier;
+            ColumnSelector = columnSelector;
+            Modifier = modifier;
         }
 
         public override SyntaxKind Kind
@@ -22,19 +19,13 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _columnSelector;
-            if (_modifier != null)
-                yield return _modifier;
+            yield return ColumnSelector;
+            if (Modifier != null)
+                yield return Modifier;
         }
 
-        public ExpressionSyntax ColumnSelector
-        {
-            get { return _columnSelector; }
-        }
+        public ExpressionSyntax ColumnSelector { get; }
 
-        public SyntaxToken Modifier
-        {
-            get { return _modifier; }
-        }
+        public SyntaxToken Modifier { get; }
     }
 }

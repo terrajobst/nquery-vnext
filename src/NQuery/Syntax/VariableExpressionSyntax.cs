@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class VariableExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _atToken;
-        private readonly SyntaxToken _name;
-
         internal VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
             : base(syntaxTree)
         {
-            _atToken = atToken;
-            _name = name;
+            AtToken = atToken;
+            Name = name;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _atToken;
-            yield return _name;
+            yield return AtToken;
+            yield return Name;
         }
 
-        public SyntaxToken AtToken
-        {
-            get { return _atToken; }
-        }
+        public SyntaxToken AtToken { get; }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
     }
 }

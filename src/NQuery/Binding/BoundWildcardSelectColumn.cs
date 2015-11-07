@@ -9,15 +9,13 @@ namespace NQuery.Binding
 {
     internal sealed class BoundWildcardSelectColumn : BoundNode
     {
-        private readonly TableInstanceSymbol _table;
         private readonly ImmutableArray<TableColumnInstanceSymbol> _tableColumns;
-        private readonly ImmutableArray<QueryColumnInstanceSymbol> _queryColumns;
 
         public BoundWildcardSelectColumn(TableInstanceSymbol table, IEnumerable<TableColumnInstanceSymbol> columns)
         {
-            _table = table;
+            Table = table;
             _tableColumns = columns.ToImmutableArray();
-            _queryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlot)).ToImmutableArray();
+            QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlot)).ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -25,19 +23,13 @@ namespace NQuery.Binding
             get { return BoundNodeKind.WildcardSelectColumn; }
         }
 
-        public TableInstanceSymbol Table
-        {
-            get { return _table; }
-        }
+        public TableInstanceSymbol Table { get; }
 
         public ImmutableArray<TableColumnInstanceSymbol> TableColumns
         {
             get { return _tableColumns; }
         }
 
-        public ImmutableArray<QueryColumnInstanceSymbol> QueryColumns
-        {
-            get { return _queryColumns; }
-        }
+        public ImmutableArray<QueryColumnInstanceSymbol> QueryColumns { get; }
     }
 }

@@ -4,17 +4,12 @@ namespace NQuery.Text
 {
     internal class StaticSourceTextContainer : SourceTextContainer
     {
-        private readonly SourceText _current;
-
         public StaticSourceTextContainer(SourceText current)
         {
-            _current = current;
+            Current = current;
         }
 
-        public override SourceText Current
-        {
-            get { return _current; }
-        }
+        public override SourceText Current { get; }
 
         public override event EventHandler<EventArgs> CurrentChanged
         {

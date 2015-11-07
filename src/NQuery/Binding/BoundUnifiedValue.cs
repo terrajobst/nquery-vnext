@@ -6,30 +6,21 @@ namespace NQuery.Binding
 {
     internal sealed class BoundUnifiedValue
     {
-        private readonly ValueSlot _valueSlot;
-        private readonly ImmutableArray<ValueSlot> _inputValueSlots;
-
         public BoundUnifiedValue(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
         {
-            _valueSlot = valueSlot;
-            _inputValueSlots = inputValueSlots.ToImmutableArray();
+            ValueSlot = valueSlot;
+            InputValueSlots = inputValueSlots.ToImmutableArray();
         }
 
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
+        public ValueSlot ValueSlot { get; }
 
-        public ImmutableArray<ValueSlot> InputValueSlots
-        {
-            get { return _inputValueSlots; }
-        }
+        public ImmutableArray<ValueSlot> InputValueSlots { get; }
 
         public BoundUnifiedValue Update(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
         {
             var newInputValueSlots = inputValueSlots.ToImmutableArray();
 
-            if (valueSlot == _valueSlot && newInputValueSlots == _inputValueSlots)
+            if (valueSlot == ValueSlot && newInputValueSlots == InputValueSlots)
                 return this;
 
             return new BoundUnifiedValue(valueSlot, newInputValueSlots);

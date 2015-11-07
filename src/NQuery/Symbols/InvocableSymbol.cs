@@ -7,25 +7,16 @@ namespace NQuery.Symbols
 {
     public abstract class InvocableSymbol : Symbol
     {
-        private readonly Type _type;
-        private readonly ImmutableArray<ParameterSymbol> _parameters;
-
         protected InvocableSymbol(string name, Type type, IEnumerable<ParameterSymbol> parameters)
             : base(name)
         {
-            _type = type;
-            _parameters = parameters.ToImmutableArray();
+            Type = type;
+            Parameters = parameters.ToImmutableArray();
         }
 
-        public override Type Type
-        {
-            get { return _type; }
-        }
+        public override Type Type { get; }
 
-        public ImmutableArray<ParameterSymbol> Parameters
-        {
-            get { return _parameters; }
-        }
+        public ImmutableArray<ParameterSymbol> Parameters { get; }
 
         public IEnumerable<Type> GetParameterTypes()
         {

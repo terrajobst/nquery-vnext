@@ -6,12 +6,10 @@ namespace NQuery.Syntax
     // TODO: Do we need this element at all?
     public sealed class GroupByColumnSyntax : SyntaxNode
     {
-        private readonly ExpressionSyntax _expression;
-
         internal GroupByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression)
             : base(syntaxTree)
         {
-            _expression = expression;
+            Expression = expression;
         }
 
         public override SyntaxKind Kind
@@ -21,12 +19,9 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _expression;
+            yield return Expression;
         }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
     }
 }

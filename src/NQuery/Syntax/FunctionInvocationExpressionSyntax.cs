@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class FunctionInvocationExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _name;
-        private readonly ArgumentListSyntax _argumentList;
-
         internal FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _name = name;
-            _argumentList = argumentList;
+            Name = name;
+            ArgumentList = argumentList;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _name;
-            yield return _argumentList;
+            yield return Name;
+            yield return ArgumentList;
         }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
 
-        public ArgumentListSyntax ArgumentList
-        {
-            get { return _argumentList; }
-        }
+        public ArgumentListSyntax ArgumentList { get; }
     }
 }

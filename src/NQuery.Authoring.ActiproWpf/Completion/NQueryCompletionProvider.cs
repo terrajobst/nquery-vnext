@@ -18,17 +18,13 @@ namespace NQuery.Authoring.ActiproWpf.Completion
     internal sealed class NQueryCompletionProvider : CompletionProviderBase, INQueryCompletionProvider
     {
         private readonly IServiceLocator _serviceLocator;
-        private readonly Collection<NQueryICompletionProvider> _providers = new Collection<NQueryICompletionProvider>();
 
         public NQueryCompletionProvider(IServiceLocator serviceLocator)
         {
             _serviceLocator = serviceLocator;
         }
 
-        public Collection<NQueryICompletionProvider> Providers
-        {
-            get { return _providers; }
-        }
+        public Collection<NQueryICompletionProvider> Providers { get; } = new Collection<NQueryICompletionProvider>();
 
         private INQuerySymbolContentProvider SymbolContentProvider
         {
@@ -47,7 +43,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             var document = viewSnapshot.Document;
             var position = viewSnapshot.Position;
             var semanticModel = await document.GetSemanticModelAsync();
-            var model = semanticModel.GetCompletionModel(position, _providers);
+            var model = semanticModel.GetCompletionModel(position, Providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
             var completionSession = existingSession ?? new NQueryCompletionSession

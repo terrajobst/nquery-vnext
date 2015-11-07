@@ -7,15 +7,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundUnionRelation : BoundRelation
     {
-        private readonly bool _isUnionAll;
-        private readonly ImmutableArray<BoundRelation> _inputs;
-        private readonly ImmutableArray<BoundUnifiedValue> _definedValues;
-
         public BoundUnionRelation(bool isUnionAll, IEnumerable<BoundRelation> inputs, IEnumerable<BoundUnifiedValue> definedValues)
         {
-            _isUnionAll = isUnionAll;
-            _inputs = inputs.ToImmutableArray();
-            _definedValues = definedValues.ToImmutableArray();
+            IsUnionAll = isUnionAll;
+            Inputs = inputs.ToImmutableArray();
+            DefinedValues = definedValues.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -23,24 +19,15 @@ namespace NQuery.Binding
             get { return BoundNodeKind.UnionRelation; }
         }
 
-        public bool IsUnionAll
-        {
-            get { return _isUnionAll; }
-        }
+        public bool IsUnionAll { get; }
 
-        public ImmutableArray<BoundRelation> Inputs
-        {
-            get { return _inputs; }
-        }
+        public ImmutableArray<BoundRelation> Inputs { get; }
 
-        public ImmutableArray<BoundUnifiedValue> DefinedValues
-        {
-            get { return _definedValues; }
-        }
+        public ImmutableArray<BoundUnifiedValue> DefinedValues { get; }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _definedValues.Select(v => v.ValueSlot);
+            return DefinedValues.Select(v => v.ValueSlot);
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
@@ -53,7 +40,7 @@ namespace NQuery.Binding
             var newInputs = inputs.ToImmutableArray();
             var newDefinedValues = definedValues.ToImmutableArray();
 
-            if (isUnionAll == _isUnionAll && newInputs == _inputs && newDefinedValues == _definedValues)
+            if (isUnionAll == IsUnionAll && newInputs == Inputs && newDefinedValues == DefinedValues)
                 return this;
 
             return new BoundUnionRelation(isUnionAll, newInputs, newDefinedValues);

@@ -6,15 +6,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundAggregateExpression : BoundExpression
     {
-        private readonly AggregateSymbol _aggregate;
-        private readonly IAggregatable _aggregatable;
-        private readonly BoundExpression _argument;
-
         public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
-            _aggregate = aggregate;
-            _aggregatable = aggregatable;
-            _argument = argument;
+            Symbol = aggregate;
+            Aggregatable = aggregatable;
+            Argument = argument;
         }
 
         public override BoundNodeKind Kind
@@ -26,35 +22,26 @@ namespace NQuery.Binding
         {
             get
             {
-                return _aggregatable == null
+                return Aggregatable == null
                     ? TypeFacts.Unknown
-                    : _aggregatable.ReturnType;
+                    : Aggregatable.ReturnType;
             }
         }
 
-        public AggregateSymbol Symbol
-        {
-            get { return _aggregate; }
-        }
+        public AggregateSymbol Symbol { get; }
 
         public AggregateSymbol Aggregate
         {
-            get { return _aggregate; }
+            get { return Symbol; }
         }
 
-        public IAggregatable Aggregatable
-        {
-            get { return _aggregatable; }
-        }
+        public IAggregatable Aggregatable { get; }
 
-        public BoundExpression Argument
-        {
-            get { return _argument; }
-        }
+        public BoundExpression Argument { get; }
 
         public BoundAggregateExpression Update(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
-            if (aggregate == _aggregate && aggregatable == _aggregatable && argument == _argument)
+            if (aggregate == Symbol && aggregatable == Aggregatable && argument == Argument)
                 return this;
 
             return new BoundAggregateExpression(aggregate, aggregatable, argument);
@@ -62,7 +49,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"{_aggregate.Name}({_argument})";
+            return $"{Symbol.Name}({Argument})";
         }
     }
 }

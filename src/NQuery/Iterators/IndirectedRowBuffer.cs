@@ -4,19 +4,14 @@ namespace NQuery.Iterators
 {
     internal sealed class IndirectedRowBuffer : RowBuffer
     {
-        private readonly int _count;
-
         public IndirectedRowBuffer(int count)
         {
-            _count = count;
+            Count = count;
         }
 
         public RowBuffer ActiveRowBuffer { get; set; }
 
-        public override int Count
-        {
-            get { return _count; }
-        }
+        public override int Count { get; }
 
         public override object this[int index]
         {

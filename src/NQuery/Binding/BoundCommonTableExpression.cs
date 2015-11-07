@@ -6,17 +6,12 @@ namespace NQuery.Binding
 {
     internal sealed class BoundCommonTableExpression : BoundNode
     {
-        private readonly CommonTableExpressionSymbol _tableSymbol;
-
         public BoundCommonTableExpression(CommonTableExpressionSymbol tableSymbol)
         {
-            _tableSymbol = tableSymbol;
+            TableSymbol = tableSymbol;
         }
 
-        public CommonTableExpressionSymbol TableSymbol
-        {
-            get { return _tableSymbol; }
-        }
+        public CommonTableExpressionSymbol TableSymbol { get; }
 
         public override BoundNodeKind Kind
         {

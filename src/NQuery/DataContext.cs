@@ -12,15 +12,6 @@ namespace NQuery
 {
     public sealed class DataContext
     {
-        private readonly IImmutableList<TableSymbol> _tables;
-        private readonly IImmutableList<TableRelation> _relations;
-        private readonly IImmutableList<FunctionSymbol> _functions;
-        private readonly IImmutableList<AggregateSymbol> _aggregates;
-        private readonly IImmutableList<VariableSymbol> _variables;
-        private readonly IImmutableDictionary<Type, IPropertyProvider> _propertyProviders;
-        private readonly IImmutableDictionary<Type, IMethodProvider> _methodProviders;
-        private readonly IImmutableDictionary<Type, IComparer> _comparers;
-
         private DataContext(IImmutableList<TableSymbol> tables,
                             IImmutableList<TableRelation> relations,
                             IImmutableList<FunctionSymbol> functions,
@@ -30,58 +21,34 @@ namespace NQuery
                             IImmutableDictionary<Type, IMethodProvider> methodProviders,
                             IImmutableDictionary<Type, IComparer> comparers)
         {
-            _tables = tables;
-            _relations = relations;
-            _functions = functions;
-            _aggregates = aggregates;
-            _variables = variables;
-            _propertyProviders = propertyProviders;
-            _methodProviders = methodProviders;
-            _comparers = comparers;
+            Tables = tables;
+            Relations = relations;
+            Functions = functions;
+            Aggregates = aggregates;
+            Variables = variables;
+            PropertyProviders = propertyProviders;
+            MethodProviders = methodProviders;
+            Comparers = comparers;
         }
 
         public static readonly DataContext Empty = CreateEmpty();
         public static readonly DataContext Default = CreateDefault();
 
-        public IImmutableList<TableSymbol> Tables
-        {
-            get { return _tables; }
-        }
+        public IImmutableList<TableSymbol> Tables { get; }
 
-        public IImmutableList<TableRelation> Relations
-        {
-            get { return _relations; }
-        }
+        public IImmutableList<TableRelation> Relations { get; }
 
-        public IImmutableList<FunctionSymbol> Functions
-        {
-            get { return _functions; }
-        }
+        public IImmutableList<FunctionSymbol> Functions { get; }
 
-        public IImmutableList<AggregateSymbol> Aggregates
-        {
-            get { return _aggregates; }
-        }
+        public IImmutableList<AggregateSymbol> Aggregates { get; }
 
-        public IImmutableList<VariableSymbol> Variables
-        {
-            get { return _variables; }
-        }
+        public IImmutableList<VariableSymbol> Variables { get; }
 
-        public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders
-        {
-            get { return _propertyProviders; }
-        }
+        public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders { get; }
 
-        public IImmutableDictionary<Type, IMethodProvider> MethodProviders
-        {
-            get { return _methodProviders; }
-        }
+        public IImmutableDictionary<Type, IMethodProvider> MethodProviders { get; }
 
-        public IImmutableDictionary<Type, IComparer> Comparers
-        {
-            get { return _comparers; }
-        }
+        public IImmutableDictionary<Type, IComparer> Comparers { get; }
 
         private static DataContext CreateEmpty()
         {
@@ -127,7 +94,7 @@ namespace NQuery
 
         public DataContext AddTables(IEnumerable<TableSymbol> tables)
         {
-            var newTables = _tables.AddRange(tables);
+            var newTables = Tables.AddRange(tables);
             return WithTables(newTables);
         }
 
@@ -141,23 +108,23 @@ namespace NQuery
 
         public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
         {
-            var newTables = _tables.RemoveRange(tables);
+            var newTables = Tables.RemoveRange(tables);
             return WithTables(newTables);
         }
 
         public DataContext RemoveAllTables()
         {
-            var newTables = _tables.Clear();
+            var newTables = Tables.Clear();
             return WithTables(newTables);
         }
 
         public DataContext WithTables(IEnumerable<TableSymbol> tables)
         {
-            if (ReferenceEquals(tables, _tables))
+            if (ReferenceEquals(tables, Tables))
                 return this;
 
             var newTables = tables.ToImmutableList();
-            return new DataContext(newTables, _relations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
+            return new DataContext(newTables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
         }
 
         // Relations
@@ -172,7 +139,7 @@ namespace NQuery
 
         public DataContext AddRelations(IEnumerable<TableRelation> relations)
         {
-            var newRelations = _relations.AddRange(relations);
+            var newRelations = Relations.AddRange(relations);
             return WithRelations(newRelations);
         }
 
@@ -186,23 +153,23 @@ namespace NQuery
 
         public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
         {
-            var newRelations = _relations.RemoveRange(relations);
+            var newRelations = Relations.RemoveRange(relations);
             return WithRelations(newRelations);
         }
 
         public DataContext RemoveAllRelations()
         {
-            var newRelations = _relations.Clear();
+            var newRelations = Relations.Clear();
             return WithRelations(newRelations);
         }
 
         public DataContext WithRelations(IEnumerable<TableRelation> relations)
         {
-            if (ReferenceEquals(relations, _relations))
+            if (ReferenceEquals(relations, Relations))
                 return this;
 
             var newRelations = relations.ToImmutableList();
-            return new DataContext(_tables, newRelations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
+            return new DataContext(Tables, newRelations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
         }
 
         // Functions
@@ -217,7 +184,7 @@ namespace NQuery
 
         public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            var newFunctions = _functions.AddRange(functions);
+            var newFunctions = Functions.AddRange(functions);
             return WithFunctions(newFunctions);
         }
 
@@ -231,23 +198,23 @@ namespace NQuery
 
         public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            var newFunctions = _functions.RemoveRange(functions);
+            var newFunctions = Functions.RemoveRange(functions);
             return WithFunctions(newFunctions);
         }
 
         public DataContext RemoveAllFunctions()
         {
-            var newFunctions = _functions.Clear();
+            var newFunctions = Functions.Clear();
             return WithFunctions(newFunctions);
         }
 
         public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            if (ReferenceEquals(functions, _functions))
+            if (ReferenceEquals(functions, Functions))
                 return this;
 
             var newFunctions = functions.ToImmutableList();
-            return new DataContext(_tables, _relations, newFunctions, _aggregates, _variables, _propertyProviders, _methodProviders, _comparers);
+            return new DataContext(Tables, Relations, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
         }
 
         // Aggregates
@@ -262,7 +229,7 @@ namespace NQuery
 
         public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            var newAggregates = _aggregates.AddRange(aggregates);
+            var newAggregates = Aggregates.AddRange(aggregates);
             return WithAggregates(newAggregates);
         }
 
@@ -276,23 +243,23 @@ namespace NQuery
 
         public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            var newAggregates = _aggregates.RemoveRange(aggregates);
+            var newAggregates = Aggregates.RemoveRange(aggregates);
             return WithAggregates(newAggregates);
         }
 
         public DataContext RemoveAllAggregates()
         {
-            var newAggregates = _aggregates.Clear();
+            var newAggregates = Aggregates.Clear();
             return WithAggregates(newAggregates);
         }
 
         public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            if (ReferenceEquals(aggregates, _aggregates))
+            if (ReferenceEquals(aggregates, Aggregates))
                 return this;
 
             var newAggregates = aggregates.ToImmutableList();
-            return new DataContext(_tables, _relations, _functions, newAggregates, _variables, _propertyProviders, _methodProviders, _comparers);
+            return new DataContext(Tables, Relations, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
         }
 
         // Variables
@@ -307,7 +274,7 @@ namespace NQuery
 
         public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
         {
-            var newVariables = _variables.AddRange(variables);
+            var newVariables = Variables.AddRange(variables);
             return WithVariables(newVariables);
         }
 
@@ -321,36 +288,36 @@ namespace NQuery
 
         public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
         {
-            var newVariables = _variables.RemoveRange(variables);
+            var newVariables = Variables.RemoveRange(variables);
             return WithVariables(newVariables);
         }
 
         public DataContext RemoveAllVariables()
         {
-            var newVariables = _variables.Clear();
+            var newVariables = Variables.Clear();
             return WithVariables(newVariables);
         }
 
         public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
         {
-            if (ReferenceEquals(variables, _variables))
+            if (ReferenceEquals(variables, Variables))
                 return this;
 
             var newVariables = variables.ToImmutableList();
-            return new DataContext(_tables, _relations, _functions, _aggregates, newVariables, _propertyProviders, _methodProviders, _comparers);
+            return new DataContext(Tables, Relations, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
         }
 
         // Property Providers
 
         public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
         {
-            var newProviders = _propertyProviders.Add(type, provider);
+            var newProviders = PropertyProviders.Add(type, provider);
             return WithPropertyProviders(newProviders);
         }
 
         public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
         {
-            var newProviders = _propertyProviders.AddRange(providers);
+            var newProviders = PropertyProviders.AddRange(providers);
             return WithPropertyProviders(newProviders);
         }
 
@@ -364,35 +331,35 @@ namespace NQuery
 
         public DataContext RemovePropertyProviders(IEnumerable<Type> types)
         {
-            var newProviders = _propertyProviders.RemoveRange(types);
+            var newProviders = PropertyProviders.RemoveRange(types);
             return WithPropertyProviders(newProviders);
         }
 
         public DataContext RemoveAllPropertyProviders()
         {
-            var newProviders = _propertyProviders.Clear();
+            var newProviders = PropertyProviders.Clear();
             return WithPropertyProviders(newProviders);
         }
 
         public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
         {
-            if (ReferenceEquals(_propertyProviders, providers))
+            if (ReferenceEquals(PropertyProviders, providers))
                 return this;
 
-            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, providers, _methodProviders, _comparers);
+            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, providers, MethodProviders, Comparers);
         }
 
         // Method Providers
 
         public DataContext AddMethodProvider(Type type, IMethodProvider provider)
         {
-            var newProviders = _methodProviders.Add(type, provider);
+            var newProviders = MethodProviders.Add(type, provider);
             return WithMethodProviders(newProviders);
         }
 
         public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
         {
-            var newProviders = _methodProviders.AddRange(providers);
+            var newProviders = MethodProviders.AddRange(providers);
             return WithMethodProviders(newProviders);
         }
 
@@ -406,35 +373,35 @@ namespace NQuery
 
         public DataContext RemoveMethodProviders(IEnumerable<Type> types)
         {
-            var newProviders = _methodProviders.RemoveRange(types);
+            var newProviders = MethodProviders.RemoveRange(types);
             return WithMethodProviders(newProviders);
         }
 
         public DataContext RemoveAllMethodProviders()
         {
-            var newProviders = _methodProviders.Clear();
+            var newProviders = MethodProviders.Clear();
             return WithMethodProviders(newProviders);
         }
 
         public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
         {
-            if (ReferenceEquals(_methodProviders, providers))
+            if (ReferenceEquals(MethodProviders, providers))
                 return this;
 
-            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, _propertyProviders, providers, _comparers);
+            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, providers, Comparers);
         }
 
         // Comparers
 
         public DataContext AddComparer(Type type, IComparer comparer)
         {
-            var newProviders = _comparers.Add(type, comparer);
+            var newProviders = Comparers.Add(type, comparer);
             return WithComparers(newProviders);
         }
 
         public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
         {
-            var newProviders = _comparers.AddRange(comparer);
+            var newProviders = Comparers.AddRange(comparer);
             return WithComparers(newProviders);
         }
 
@@ -448,22 +415,22 @@ namespace NQuery
 
         public DataContext RemoveComparers(IEnumerable<Type> types)
         {
-            var newProviders = _comparers.RemoveRange(types);
+            var newProviders = Comparers.RemoveRange(types);
             return WithComparers(newProviders);
         }
 
         public DataContext RemoveAllComparers()
         {
-            var newProviders = _comparers.Clear();
+            var newProviders = Comparers.Clear();
             return WithComparers(newProviders);
         }
 
         public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
         {
-            if (ReferenceEquals(_comparers, comparers))
+            if (ReferenceEquals(Comparers, comparers))
                 return this;
 
-            return new DataContext(_tables, _relations, _functions, _aggregates, _variables, _propertyProviders, _methodProviders, comparers);
+            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
         }
     }
 }

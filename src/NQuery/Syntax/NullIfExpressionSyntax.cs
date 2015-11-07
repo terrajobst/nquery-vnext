@@ -5,22 +5,15 @@ namespace NQuery.Syntax
 {
     public sealed class NullIfExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _nullIfKeyword;
-        private readonly SyntaxToken _leftParenthesisToken;
-        private readonly ExpressionSyntax _leftExpression;
-        private readonly SyntaxToken _commaToken;
-        private readonly ExpressionSyntax _rightExpression;
-        private readonly SyntaxToken _rightParenthesisToken;
-
         internal NullIfExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken nullIfKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax leftExpression, SyntaxToken commaToken, ExpressionSyntax rightExpression, SyntaxToken rightParenthesisToken)
             : base(syntaxTree)
         {
-            _nullIfKeyword = nullIfKeyword;
-            _leftParenthesisToken = leftParenthesisToken;
-            _leftExpression = leftExpression;
-            _commaToken = commaToken;
-            _rightExpression = rightExpression;
-            _rightParenthesisToken = rightParenthesisToken;
+            NullIfKeyword = nullIfKeyword;
+            LeftParenthesisToken = leftParenthesisToken;
+            LeftExpression = leftExpression;
+            CommaToken = commaToken;
+            RightExpression = rightExpression;
+            RightParenthesisToken = rightParenthesisToken;
         }
 
         public override SyntaxKind Kind
@@ -30,42 +23,24 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _nullIfKeyword;
-            yield return _leftParenthesisToken;
-            yield return _leftExpression;
-            yield return _commaToken;
-            yield return _rightExpression;
-            yield return _rightParenthesisToken;
+            yield return NullIfKeyword;
+            yield return LeftParenthesisToken;
+            yield return LeftExpression;
+            yield return CommaToken;
+            yield return RightExpression;
+            yield return RightParenthesisToken;
         }
 
-        public SyntaxToken NullIfKeyword
-        {
-            get { return _nullIfKeyword; }
-        }
+        public SyntaxToken NullIfKeyword { get; }
 
-        public SyntaxToken LeftParenthesisToken
-        {
-            get { return _leftParenthesisToken; }
-        }
+        public SyntaxToken LeftParenthesisToken { get; }
 
-        public ExpressionSyntax LeftExpression
-        {
-            get { return _leftExpression; }
-        }
+        public ExpressionSyntax LeftExpression { get; }
 
-        public SyntaxToken CommaToken
-        {
-            get { return _commaToken; }
-        }
+        public SyntaxToken CommaToken { get; }
 
-        public ExpressionSyntax RightExpression
-        {
-            get { return _rightExpression; }
-        }
+        public ExpressionSyntax RightExpression { get; }
 
-        public SyntaxToken RightParenthesisToken
-        {
-            get { return _rightParenthesisToken; }
-        }
+        public SyntaxToken RightParenthesisToken { get; }
     }
 }

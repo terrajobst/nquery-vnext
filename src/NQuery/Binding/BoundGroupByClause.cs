@@ -6,16 +6,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundGroupByClause
     {
-        private readonly ImmutableArray<ValueSlot> _columns;
-
         public BoundGroupByClause(IEnumerable<ValueSlot> columns)
         {
-            _columns = columns.ToImmutableArray();
+            Columns = columns.ToImmutableArray();
         }
 
-        public ImmutableArray<ValueSlot> Columns
-        {
-            get { return _columns; }
-        }
+        public ImmutableArray<ValueSlot> Columns { get; }
     }
 }

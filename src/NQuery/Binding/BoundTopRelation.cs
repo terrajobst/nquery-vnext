@@ -7,15 +7,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundTopRelation : BoundRelation
     {
-        private readonly BoundRelation _input;
-        private readonly int _limit;
-        private readonly ImmutableArray<BoundSortedValue> _tieEntries;
-
         public BoundTopRelation(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
         {
-            _input = input;
-            _limit = limit;
-            _tieEntries = tieEntries.ToImmutableArray();
+            Input = input;
+            Limit = limit;
+            TieEntries = tieEntries.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -23,26 +19,17 @@ namespace NQuery.Binding
             get { return BoundNodeKind.TopRelation;  }
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public int Limit
-        {
-            get { return _limit; }
-        }
+        public int Limit { get; }
 
-        public ImmutableArray<BoundSortedValue> TieEntries
-        {
-            get { return _tieEntries; }
-        }
+        public ImmutableArray<BoundSortedValue> TieEntries { get; }
 
         public BoundTopRelation Update(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
         {
             var newTieEntries = tieEntries.ToImmutableArray();
 
-            if (input == _input && limit == _limit && newTieEntries == _tieEntries)
+            if (input == Input && limit == Limit && newTieEntries == TieEntries)
                 return this;
 
             return new BoundTopRelation(input, limit, newTieEntries);
@@ -50,12 +37,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _input.GetDefinedValues();
+            return Input.GetDefinedValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues();
+            return Input.GetOutputValues();
         }
     }
 }

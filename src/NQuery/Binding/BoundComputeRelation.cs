@@ -7,13 +7,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundComputeRelation : BoundRelation
     {
-        private readonly BoundRelation _input;
-        private readonly ImmutableArray<BoundComputedValue> _definedValues;
-
         public BoundComputeRelation(BoundRelation input, IEnumerable<BoundComputedValue> definedValues)
         {
-            _input = input;
-            _definedValues = definedValues.ToImmutableArray();
+            Input = input;
+            DefinedValues = definedValues.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -21,31 +18,25 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ComputeRelation; }
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public ImmutableArray<BoundComputedValue> DefinedValues
-        {
-            get { return _definedValues; }
-        }
+        public ImmutableArray<BoundComputedValue> DefinedValues { get; }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _input.GetDefinedValues().Concat(_definedValues.Select(c => c.ValueSlot));
+            return Input.GetDefinedValues().Concat(DefinedValues.Select(c => c.ValueSlot));
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues().Concat(_definedValues.Select(c => c.ValueSlot));
+            return Input.GetOutputValues().Concat(DefinedValues.Select(c => c.ValueSlot));
         }
 
         public BoundComputeRelation Update(BoundRelation input, IEnumerable<BoundComputedValue> definedValues)
         {
             var newDefinedValues = definedValues.ToImmutableArray();
 
-            if (input == _input && newDefinedValues == _definedValues)
+            if (input == Input && newDefinedValues == DefinedValues)
                 return this;
 
             return new BoundComputeRelation(input, newDefinedValues);

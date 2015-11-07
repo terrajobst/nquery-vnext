@@ -16,7 +16,6 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
     internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQuickInfoProvider
     {
         private readonly IServiceLocator _serviceLocator;
-        private readonly Collection<IQuickInfoModelProvider> _providers = new Collection<IQuickInfoModelProvider>();
 
         public NQueryQuickInfoProvider(IServiceLocator serviceLocator)
         {
@@ -28,10 +27,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
         }
 
-        public Collection<IQuickInfoModelProvider> Providers
-        {
-            get { return _providers; }
-        }
+        public Collection<IQuickInfoModelProvider> Providers { get; } = new Collection<IQuickInfoModelProvider>();
 
         public override object GetContext(IEditorView view, int offset)
         {
@@ -46,7 +42,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             var snapshotOffset = new TextSnapshotOffset(snapshot, offset);
             var position = snapshotOffset.ToOffset();
 
-            var model = semanticModel.GetQuickInfoModel(position, _providers);
+            var model = semanticModel.GetQuickInfoModel(position, Providers);
             return model;
         }
 

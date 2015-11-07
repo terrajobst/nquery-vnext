@@ -4,13 +4,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSingleRowSubselect : BoundExpression
     {
-        private readonly ValueSlot _value;
-        private readonly BoundRelation _relation;
-
         public BoundSingleRowSubselect(ValueSlot value, BoundRelation relation)
         {
-            _value = value;
-            _relation = relation;
+            Value = value;
+            Relation = relation;
         }
 
         public override BoundNodeKind Kind
@@ -20,22 +17,16 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return _value.Type; }
+            get { return Value.Type; }
         }
 
-        public ValueSlot Value
-        {
-            get { return _value; }
-        }
+        public ValueSlot Value { get; }
 
-        public BoundRelation Relation
-        {
-            get { return _relation; }
-        }
+        public BoundRelation Relation { get; }
 
         public BoundSingleRowSubselect Update(ValueSlot value, BoundRelation relation)
         {
-            if (value == _value && relation == _relation)
+            if (value == Value && relation == Relation)
                 return this;
 
             return new BoundSingleRowSubselect(value, relation);
@@ -43,7 +34,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"({_relation})";
+            return $"({Relation})";
         }
     }
 }

@@ -8,9 +8,6 @@ namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
-        private readonly BoundQuery _query;
-        private readonly ImmutableArray<BoundQuery> _recursiveMembers;
-
         internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query)
             : this(name, columns, query, s => ImmutableArray<BoundQuery>.Empty)
         {
@@ -19,8 +16,8 @@ namespace NQuery.Symbols
         internal CommonTableExpressionSymbol(string name, IEnumerable<ColumnSymbol> columns, BoundQuery query, Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> lazyBoundRecursiveMembers)
             : base(name, columns)
         {
-            _query = query;
-            _recursiveMembers = lazyBoundRecursiveMembers(this);
+            Query = query;
+            RecursiveMembers = lazyBoundRecursiveMembers(this);
         }
 
         public override SymbolKind Kind
@@ -33,14 +30,8 @@ namespace NQuery.Symbols
             get { return TypeFacts.Missing; }
         }
 
-        internal BoundQuery Query
-        {
-            get { return _query; }
-        }
+        internal BoundQuery Query { get; }
 
-        internal ImmutableArray<BoundQuery> RecursiveMembers
-        {
-            get { return _recursiveMembers; }
-        }
+        internal ImmutableArray<BoundQuery> RecursiveMembers { get; }
     }
 }

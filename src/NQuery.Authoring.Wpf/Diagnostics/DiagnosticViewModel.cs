@@ -6,38 +6,21 @@ namespace NQuery.Authoring.Wpf
 {
     internal sealed class DiagnosticViewModel
     {
-        private readonly Diagnostic _diagnostic;
-        private readonly string _description;
-        private readonly int _line;
-        private readonly int _column;
-
         public DiagnosticViewModel(Diagnostic diagnostic, SourceText sourceText)
         {
             var textLocation = sourceText.GetTextLocation(diagnostic.Span.Start);
-            _diagnostic = diagnostic;
-            _description = diagnostic.Message;
-            _column = textLocation.Column + 1;
-            _line = textLocation.Line + 1;
+            Diagnostic = diagnostic;
+            Description = diagnostic.Message;
+            Column = textLocation.Column + 1;
+            Line = textLocation.Line + 1;
         }
 
-        public Diagnostic Diagnostic
-        {
-            get { return _diagnostic; }
-        }
+        public Diagnostic Diagnostic { get; }
 
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; }
 
-        public int Line
-        {
-            get { return _line; }
-        }
+        public int Line { get; }
 
-        public int Column
-        {
-            get { return _column; }
-        }
+        public int Column { get; }
     }
 }

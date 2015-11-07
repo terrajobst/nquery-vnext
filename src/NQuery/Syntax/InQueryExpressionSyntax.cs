@@ -5,22 +5,15 @@ namespace NQuery.Syntax
 {
     public sealed class InQueryExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _inKeyword;
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _expression = expression;
-            _notKeyword = notKeyword;
-            _inKeyword = inKeyword;
-            _leftParenthesis = leftParenthesis;
-            _query = query;
-            _rightParenthesis = rightParenthesis;
+            Expression = expression;
+            NotKeyword = notKeyword;
+            InKeyword = inKeyword;
+            LeftParenthesis = leftParenthesis;
+            Query = query;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -30,43 +23,25 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _expression;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _inKeyword;
-            yield return _leftParenthesis;
-            yield return _query;
-            yield return _rightParenthesis;
+            yield return Expression;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return InKeyword;
+            yield return LeftParenthesis;
+            yield return Query;
+            yield return RightParenthesis;
         }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken InKeyword
-        {
-            get { return _inKeyword; }
-        }
+        public SyntaxToken InKeyword { get; }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

@@ -4,11 +4,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundValueSlotExpression : BoundExpression
     {
-        private readonly ValueSlot _valueSlot;
-
         public BoundValueSlotExpression(ValueSlot valueSlot)
         {
-            _valueSlot = valueSlot;
+            ValueSlot = valueSlot;
         }
 
         public override BoundNodeKind Kind
@@ -18,17 +16,14 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return _valueSlot.Type; }
+            get { return ValueSlot.Type; }
         }
 
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
+        public ValueSlot ValueSlot { get; }
 
         public BoundValueSlotExpression Update(ValueSlot valueSlot)
         {
-            if (valueSlot == _valueSlot)
+            if (valueSlot == ValueSlot)
                 return this;
 
             return new BoundValueSlotExpression(valueSlot);
@@ -36,7 +31,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return _valueSlot.Name;
+            return ValueSlot.Name;
         }
     }
 }

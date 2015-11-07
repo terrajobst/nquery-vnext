@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class PropertyAccessExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _target;
-        private readonly SyntaxToken _dot;
-        private readonly SyntaxToken _name;
-
         internal PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
             : base(syntaxTree)
         {
-            _target = target;
-            _dot = dot;
-            _name = name;
+            Target = target;
+            Dot = dot;
+            Name = name;
         }
 
         public override SyntaxKind Kind
@@ -24,24 +20,15 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _target;
-            yield return _dot;
-            yield return _name;
+            yield return Target;
+            yield return Dot;
+            yield return Name;
         }
 
-        public ExpressionSyntax Target
-        {
-            get { return _target; }
-        }
+        public ExpressionSyntax Target { get; }
 
-        public SyntaxToken Dot
-        {
-            get { return _dot; }
-        }
+        public SyntaxToken Dot { get; }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
     }
 }

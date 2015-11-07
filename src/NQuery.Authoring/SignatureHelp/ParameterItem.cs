@@ -6,30 +6,21 @@ namespace NQuery.Authoring.SignatureHelp
 {
     public sealed class ParameterItem : IEquatable<ParameterItem>
     {
-        private readonly string _name;
-        private readonly TextSpan _span;
-
         public ParameterItem(string name, TextSpan span)
         {
-            _name = name;
-            _span = span;
+            Name = name;
+            Span = span;
         }
 
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
         public bool Equals(ParameterItem other)
         {
             return other != null &&
-                   _name == other.Name &&
-                   _span == other.Span;
+                   Name == other.Name &&
+                   Span == other.Span;
         }
 
         public override bool Equals(object obj)
@@ -42,8 +33,8 @@ namespace NQuery.Authoring.SignatureHelp
         {
             unchecked
             {
-                var hashCode = (_name != null ? _name.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ _span.GetHashCode();
+                var hashCode = (Name != null ? Name.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ Span.GetHashCode();
                 return hashCode;
             }
         }

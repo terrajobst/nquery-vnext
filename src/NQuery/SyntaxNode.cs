@@ -10,14 +10,13 @@ namespace NQuery
 {
     public abstract class SyntaxNode
     {
-        private readonly SyntaxTree _syntaxTree;
         private bool? _isMissing;
         private TextSpan? _span;
         private TextSpan? _fullSpan;
 
         internal SyntaxNode(SyntaxTree syntaxTree)
         {
-            _syntaxTree = syntaxTree;
+            SyntaxTree = syntaxTree;
         }
 
         private TextSpan ComputeSpan()
@@ -195,14 +194,11 @@ namespace NQuery
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
 
-        public SyntaxTree SyntaxTree
-        {
-            get { return _syntaxTree; }
-        }
+        public SyntaxTree SyntaxTree { get; }
 
         public SyntaxNode Parent
         {
-            get { return _syntaxTree.GetParentNode(this); }
+            get { return SyntaxTree.GetParentNode(this); }
         }
 
         public abstract SyntaxKind Kind { get; }

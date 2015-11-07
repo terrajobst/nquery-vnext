@@ -4,12 +4,7 @@ namespace NQuery.Iterators
 {
     internal sealed class EmptyIterator : Iterator
     {
-        private readonly RowBuffer _rowBuffer = new EmptyRowBuffer();
-
-        public override RowBuffer RowBuffer
-        {
-            get { return _rowBuffer; }
-        }
+        public override RowBuffer RowBuffer { get; } = new EmptyRowBuffer();
 
         public override void Open()
         {

@@ -13,29 +13,24 @@ namespace NQuery.Data
         private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) });
         private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull");
 
-        private readonly DataColumn _dataColumn;
-
         public DataColumnDefinition(DataColumn dataColumn)
         {
             if (dataColumn == null)
                 throw new ArgumentNullException(nameof(dataColumn));
 
-            _dataColumn = dataColumn;
+            DataColumn = dataColumn;
         }
 
-        public DataColumn DataColumn
-        {
-            get { return _dataColumn; }
-        }
+        public DataColumn DataColumn { get; }
 
         public override string Name
         {
-            get { return _dataColumn.ColumnName; }
+            get { return DataColumn.ColumnName; }
         }
 
         public override Type DataType
         {
-            get { return _dataColumn.DataType; }
+            get { return DataColumn.DataType; }
         }
 
         public override Expression CreateInvocation(Expression instance)
@@ -65,7 +60,7 @@ namespace NQuery.Data
                                 typeof(DataRow)
                             ),
                             DataRowIndexer,
-                            new[] { Expression.Constant(_dataColumn) }
+                            new[] { Expression.Constant(DataColumn) }
                         )
                     ),
                     Expression.Condition(

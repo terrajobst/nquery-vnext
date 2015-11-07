@@ -6,12 +6,10 @@ namespace NQuery.Symbols
 {
     public sealed class SchemaTableSymbol : TableSymbol
     {
-        private readonly TableDefinition _tableDefinition;
-
         public SchemaTableSymbol(TableDefinition tableDefinition)
             : base(GetName(tableDefinition), GetColumns(tableDefinition))
         {
-            _tableDefinition = tableDefinition;
+            Definition = tableDefinition;
         }
 
         private static string GetName(TableDefinition tableDefinition)
@@ -30,10 +28,7 @@ namespace NQuery.Symbols
             return tableDefinition.Columns.Select(c => new SchemaColumnSymbol(c)).ToImmutableArray();
         }
 
-        public TableDefinition Definition
-        {
-            get { return _tableDefinition; }
-        }
+        public TableDefinition Definition { get; }
 
         public override SymbolKind Kind
         {
@@ -42,7 +37,7 @@ namespace NQuery.Symbols
 
         public override Type Type
         {
-            get { return _tableDefinition.RowType; }
+            get { return Definition.RowType; }
         }
     }
 }

@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class CountAllExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _name;
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly SyntaxToken _asteriskToken;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _name = identifier;
-            _leftParenthesis = leftParenthesis;
-            _asteriskToken = asteriskToken;
-            _rightParenthesis = rightParenthesis;
+            Name = identifier;
+            LeftParenthesis = leftParenthesis;
+            AsteriskToken = asteriskToken;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -26,30 +21,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _name;
-            yield return _leftParenthesis;
-            yield return _asteriskToken;
-            yield return _rightParenthesis;
+            yield return Name;
+            yield return LeftParenthesis;
+            yield return AsteriskToken;
+            yield return RightParenthesis;
         }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public SyntaxToken AsteriskToken
-        {
-            get { return _asteriskToken; }
-        }
+        public SyntaxToken AsteriskToken { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

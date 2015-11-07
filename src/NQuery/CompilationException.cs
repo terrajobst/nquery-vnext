@@ -7,12 +7,10 @@ namespace NQuery
 {
     public sealed class CompilationException : Exception
     {
-        private readonly ImmutableArray<Diagnostic> _diagnostics;
-
         public CompilationException(IReadOnlyCollection<Diagnostic> diagnostics)
             : base(FormatMessage(diagnostics))
         {
-            _diagnostics = diagnostics.ToImmutableArray();
+            Diagnostics = diagnostics.ToImmutableArray();
         }
 
         private static string FormatMessage(IEnumerable<Diagnostic> diagnostics)
@@ -25,9 +23,6 @@ namespace NQuery
             return sb.ToString();
         }
 
-        public ImmutableArray<Diagnostic> Diagnostics
-        {
-            get { return _diagnostics; }
-        }
+        public ImmutableArray<Diagnostic> Diagnostics { get; }
     }
 }

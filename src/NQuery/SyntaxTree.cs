@@ -10,16 +10,13 @@ namespace NQuery
 {
     public sealed class SyntaxTree
     {
-        private readonly SourceText _text;
-        private readonly CompilationUnitSyntax _root;
-
         private Dictionary<object, object> _parentFromChild;
 
         private SyntaxTree(SourceText text, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
             var parser = new Parser(text, this);
-            _text = text;
-            _root = parseMethod(parser);
+            Text = text;
+            Root = parseMethod(parser);
         }
 
         public static SyntaxTree ParseQuery(string text)
@@ -58,7 +55,7 @@ namespace NQuery
              where T: class
         {
             if (_parentFromChild == null)
-                Interlocked.CompareExchange(ref _parentFromChild, GetParents(_root), null);
+                Interlocked.CompareExchange(ref _parentFromChild, GetParents(Root), null);
 
             object parent;
             _parentFromChild.TryGetValue(child, out parent);
@@ -131,11 +128,11 @@ namespace NQuery
 
         public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
         {
-            var newText = _text.WithChanges(textChanges);
-            if (newText == _text)
+            var newText = Text.WithChanges(textChanges);
+            if (newText == Text)
                 return this;
 
-            var isQuery = _root.Root is QuerySyntax;
+            var isQuery = Root.Root is QuerySyntax;
             return isQuery
                 ? ParseQuery(newText)
                 : ParseExpression(newText);
@@ -143,14 +140,8 @@ namespace NQuery
 
         public static SyntaxTree Empty = ParseQuery(string.Empty);
 
-        public CompilationUnitSyntax Root
-        {
-            get { return _root; }
-        }
+        public CompilationUnitSyntax Root { get; }
 
-        public SourceText Text
-        {
-            get { return _text; }
-        }
+        public SourceText Text { get; }
     }
 }

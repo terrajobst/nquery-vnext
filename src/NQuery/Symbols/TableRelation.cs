@@ -7,11 +7,6 @@ namespace NQuery.Symbols
 {
     public sealed class TableRelation
     {
-        private readonly TableSymbol _parentTable;
-        private readonly ImmutableArray<ColumnSymbol> _parentColumns;
-        private readonly TableSymbol _childTable;
-        private readonly ImmutableArray<ColumnSymbol> _childColumns;
-
         public TableRelation(TableSymbol parentTable, IReadOnlyCollection<ColumnSymbol> parentColumns, TableSymbol childTable, IReadOnlyCollection<ColumnSymbol> childColumns)
         {
             if (parentColumns == null)
@@ -32,35 +27,23 @@ namespace NQuery.Symbols
             if (childColumns.Any(c => !childTable.Columns.Contains(c)))
                 throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, nameof(childColumns));
 
-            _parentTable = parentTable;
-            _parentColumns = parentColumns.ToImmutableArray();
-            _childTable = childTable;
-            _childColumns = childColumns.ToImmutableArray();
+            ParentTable = parentTable;
+            ParentColumns = parentColumns.ToImmutableArray();
+            ChildTable = childTable;
+            ChildColumns = childColumns.ToImmutableArray();
         }
 
         public int ColumnCount
         {
-            get { return _parentColumns.Length; }
+            get { return ParentColumns.Length; }
         }
 
-        public TableSymbol ParentTable
-        {
-            get { return _parentTable; }
-        }
+        public TableSymbol ParentTable { get; }
 
-        public ImmutableArray<ColumnSymbol> ParentColumns
-        {
-            get { return _parentColumns; }
-        }
+        public ImmutableArray<ColumnSymbol> ParentColumns { get; }
 
-        public TableSymbol ChildTable
-        {
-            get { return _childTable; }
-        }
+        public TableSymbol ChildTable { get; }
 
-        public ImmutableArray<ColumnSymbol> ChildColumns
-        {
-            get { return _childColumns; }
-        }
+        public ImmutableArray<ColumnSymbol> ChildColumns { get; }
     }
 }

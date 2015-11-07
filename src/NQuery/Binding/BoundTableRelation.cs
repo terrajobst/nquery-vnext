@@ -9,9 +9,6 @@ namespace NQuery.Binding
 {
     internal sealed class BoundTableRelation : BoundRelation
     {
-        private readonly TableInstanceSymbol _tableInstance;
-        private readonly ImmutableArray<TableColumnInstanceSymbol> _definedValues;
-
         public BoundTableRelation(TableInstanceSymbol tableInstance)
             : this(tableInstance, tableInstance.ColumnInstances)
         {
@@ -19,8 +16,8 @@ namespace NQuery.Binding
 
         public BoundTableRelation(TableInstanceSymbol tableInstance, ImmutableArray<TableColumnInstanceSymbol> definedValues)
         {
-            _tableInstance = tableInstance;
-            _definedValues = definedValues;
+            TableInstance = tableInstance;
+            DefinedValues = definedValues;
         }
 
         public override BoundNodeKind Kind
@@ -28,19 +25,13 @@ namespace NQuery.Binding
             get { return BoundNodeKind.TableRelation; }
         }
 
-        public TableInstanceSymbol TableInstance
-        {
-            get { return _tableInstance; }
-        }
+        public TableInstanceSymbol TableInstance { get; }
 
-        public ImmutableArray<TableColumnInstanceSymbol> DefinedValues
-        {
-            get { return _definedValues; }
-        }
+        public ImmutableArray<TableColumnInstanceSymbol> DefinedValues { get; }
 
         public BoundTableRelation Update(TableInstanceSymbol tableInstance, ImmutableArray<TableColumnInstanceSymbol> definedValues)
         {
-            if (tableInstance == _tableInstance && definedValues == _definedValues)
+            if (tableInstance == TableInstance && definedValues == DefinedValues)
                 return this;
 
             return new BoundTableRelation(tableInstance, definedValues);
@@ -48,7 +39,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _definedValues.Select(d => d.ValueSlot);
+            return DefinedValues.Select(d => d.ValueSlot);
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
@@ -58,7 +49,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return _tableInstance.Name;
+            return TableInstance.Name;
         }
     }
 }

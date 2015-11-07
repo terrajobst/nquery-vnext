@@ -4,23 +4,14 @@ namespace NQuery.Binding
 {
     internal struct BoundOrderBySelector
     {
-        private readonly ValueSlot _valueSlot;
-        private readonly BoundComputedValueWithSyntax? _computedValue;
-
         public BoundOrderBySelector(ValueSlot valueSlot, BoundComputedValueWithSyntax? computedValue)
         {
-            _valueSlot = valueSlot;
-            _computedValue = computedValue;
+            ValueSlot = valueSlot;
+            ComputedValue = computedValue;
         }
 
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
+        public ValueSlot ValueSlot { get; }
 
-        public BoundComputedValueWithSyntax? ComputedValue
-        {
-            get { return _computedValue; }
-        }
+        public BoundComputedValueWithSyntax? ComputedValue { get; }
     }
 }

@@ -6,36 +6,31 @@ namespace NQuery.Binding
 {
     internal sealed class FunctionSymbolSignature : Signature
     {
-        private readonly FunctionSymbol _symbol;
-
         public FunctionSymbolSignature(FunctionSymbol symbol)
         {
-            _symbol = symbol;
+            Symbol = symbol;
         }
 
         public override Type ReturnType
         {
-            get { return _symbol.Type; }
+            get { return Symbol.Type; }
         }
 
         public override Type GetParameterType(int index)
         {
-            return _symbol.Parameters[index].Type;
+            return Symbol.Parameters[index].Type;
         }
 
         public override int ParameterCount
         {
-            get { return _symbol.Parameters.Length; }
+            get { return Symbol.Parameters.Length; }
         }
 
-        public FunctionSymbol Symbol
-        {
-            get { return _symbol; }
-        }
+        public FunctionSymbol Symbol { get; }
 
         public override string ToString()
         {
-            return _symbol.ToString();
+            return Symbol.ToString();
         }
     }
 }

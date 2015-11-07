@@ -164,24 +164,15 @@ namespace NQuery.Syntax
 
         private struct Entry
         {
-            private readonly TNode _node;
-            private readonly SyntaxToken _separator;
-
             public Entry(TNode node, SyntaxToken separator)
             {
-                _node = node;
-                _separator = separator;
+                Node = node;
+                Separator = separator;
             }
 
-            public TNode Node
-            {
-                get { return _node; }
-            }
+            public TNode Node { get; }
 
-            public SyntaxToken Separator
-            {
-                get { return _separator; }
-            }
+            public SyntaxToken Separator { get; }
         }
     }
 }

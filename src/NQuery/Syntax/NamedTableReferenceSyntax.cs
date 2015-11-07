@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class NamedTableReferenceSyntax : TableReferenceSyntax
     {
-        private readonly SyntaxToken _tableName;
-        private readonly AliasSyntax _alias;
-
         internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias)
             : base(syntaxTree)
         {
-            _tableName = tableName;
-            _alias = alias;
+            TableName = tableName;
+            Alias = alias;
         }
 
         public override SyntaxKind Kind
@@ -22,19 +19,13 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _tableName;
-            if (_alias != null)
-                yield return _alias;
+            yield return TableName;
+            if (Alias != null)
+                yield return Alias;
         }
 
-        public SyntaxToken TableName
-        {
-            get { return _tableName; }
-        }
+        public SyntaxToken TableName { get; }
 
-        public AliasSyntax Alias
-        {
-            get { return _alias; }
-        }
+        public AliasSyntax Alias { get; }
     }
 }

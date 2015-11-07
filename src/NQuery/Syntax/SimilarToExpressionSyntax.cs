@@ -5,20 +5,14 @@ namespace NQuery.Syntax
 {
     public sealed class SimilarToExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _similarKeyword;
-        private readonly SyntaxToken _toKeyword;
-        private readonly ExpressionSyntax _right;
-
         internal SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
-            _left = left;
-            _notKeyword = notKeyword;
-            _similarKeyword = similarKeyword;
-            _toKeyword = toKeyword;
-            _right = right;
+            Left = left;
+            NotKeyword = notKeyword;
+            SimilarKeyword = similarKeyword;
+            ToKeyword = toKeyword;
+            Right = right;
         }
 
         public override SyntaxKind Kind
@@ -28,37 +22,22 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _left;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _similarKeyword;
-            yield return _toKeyword;
-            yield return _right;
+            yield return Left;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return SimilarKeyword;
+            yield return ToKeyword;
+            yield return Right;
         }
 
-        public ExpressionSyntax Left
-        {
-            get { return _left; }
-        }
+        public ExpressionSyntax Left { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken SimilarKeyword
-        {
-            get { return _similarKeyword; }
-        }
+        public SyntaxToken SimilarKeyword { get; }
 
-        public SyntaxToken ToKeyword
-        {
-            get { return _toKeyword; }
-        }
+        public SyntaxToken ToKeyword { get; }
 
-        public ExpressionSyntax Right
-        {
-            get { return _right; }
-        }
+        public ExpressionSyntax Right { get; }
     }
 }

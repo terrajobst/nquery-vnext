@@ -7,12 +7,10 @@ namespace NQuery.Syntax
 {
     public sealed class SkippedTokensTriviaSyntax : StructuredTriviaSyntax
     {
-        private readonly ImmutableArray<SyntaxToken> _tokens;
-
         internal SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
             : base(syntaxTree)
         {
-            _tokens = tokens.ToImmutableArray();
+            Tokens = tokens.ToImmutableArray();
         }
 
         public override SyntaxKind Kind
@@ -22,12 +20,9 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            return _tokens.Select(token => (SyntaxNodeOrToken)token);
+            return Tokens.Select(token => (SyntaxNodeOrToken)token);
         }
 
-        public ImmutableArray<SyntaxToken> Tokens
-        {
-            get { return _tokens; }
-        }
+        public ImmutableArray<SyntaxToken> Tokens { get; }
     }
 }

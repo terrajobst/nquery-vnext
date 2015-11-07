@@ -7,13 +7,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundConcatenationRelation : BoundRelation
     {
-        private readonly ImmutableArray<BoundRelation> _inputs;
-        private readonly ImmutableArray<BoundUnifiedValue> _definedValues;
-
         public BoundConcatenationRelation(IEnumerable<BoundRelation> inputs, IEnumerable<BoundUnifiedValue> definedValues)
         {
-            _inputs = inputs.ToImmutableArray();
-            _definedValues = definedValues.ToImmutableArray();
+            Inputs = inputs.ToImmutableArray();
+            DefinedValues = definedValues.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -21,19 +18,13 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ConcatenationRelation; }
         }
 
-        public ImmutableArray<BoundRelation> Inputs
-        {
-            get { return _inputs; }
-        }
+        public ImmutableArray<BoundRelation> Inputs { get; }
 
-        public ImmutableArray<BoundUnifiedValue> DefinedValues
-        {
-            get { return _definedValues; }
-        }
+        public ImmutableArray<BoundUnifiedValue> DefinedValues { get; }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _definedValues.Select(v => v.ValueSlot);
+            return DefinedValues.Select(v => v.ValueSlot);
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
@@ -46,7 +37,7 @@ namespace NQuery.Binding
             var newInputs = inputs.ToImmutableArray();
             var newDefinedValues = definedValues.ToImmutableArray();
 
-            if (newInputs == _inputs && newDefinedValues == _definedValues)
+            if (newInputs == Inputs && newDefinedValues == DefinedValues)
                 return this;
 
             return new BoundConcatenationRelation(newInputs, newDefinedValues);

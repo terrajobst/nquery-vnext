@@ -8,30 +8,17 @@ namespace NQuery.Authoring.BraceMatching
     {
         public static readonly BraceMatchingResult None =  new BraceMatchingResult();
 
-        private readonly bool _isValid;
-        private readonly TextSpan _left;
-        private readonly TextSpan _right;
-
         public BraceMatchingResult(TextSpan left, TextSpan right)
         {
-            _isValid = true;
-            _left = left;
-            _right = right;
+            IsValid = true;
+            Left = left;
+            Right = right;
         }
 
-        public bool IsValid
-        {
-            get { return _isValid; }
-        }
+        public bool IsValid { get; }
 
-        public TextSpan Left
-        {
-            get { return _left; }
-        }
+        public TextSpan Left { get; }
 
-        public TextSpan Right
-        {
-            get { return _right; }
-        }
+        public TextSpan Right { get; }
     }
 }

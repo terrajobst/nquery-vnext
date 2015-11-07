@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class ArgumentListSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly SeparatedSyntaxList<ExpressionSyntax> _arguments;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal ArgumentListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<ExpressionSyntax> arguments, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis;
-            _arguments = arguments;
-            _rightParenthesis = rightParenthesis;
+            LeftParenthesis = leftParenthesis;
+            Arguments = arguments;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -24,27 +20,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _leftParenthesis;
+            yield return LeftParenthesis;
 
-            foreach (var nodeOrToken in _arguments.GetWithSeparators())
+            foreach (var nodeOrToken in Arguments.GetWithSeparators())
                 yield return nodeOrToken;
 
-            yield return _rightParenthesis;
+            yield return RightParenthesis;
         }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public SeparatedSyntaxList<ExpressionSyntax> Arguments
-        {
-            get { return _arguments; }
-        }
+        public SeparatedSyntaxList<ExpressionSyntax> Arguments { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

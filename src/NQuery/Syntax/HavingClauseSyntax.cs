@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class HavingClauseSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _havingKeyword;
-        private readonly ExpressionSyntax _predicate;
-
         internal HavingClauseSyntax(SyntaxTree syntaxTree, SyntaxToken havingKeyword, ExpressionSyntax predicate)
             : base(syntaxTree)
         {
-            _havingKeyword = havingKeyword;
-            _predicate = predicate;
+            HavingKeyword = havingKeyword;
+            Predicate = predicate;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _havingKeyword;
-            yield return _predicate;
+            yield return HavingKeyword;
+            yield return Predicate;
         }
 
-        public SyntaxToken HavingKeyword
-        {
-            get { return _havingKeyword; }
-        }
+        public SyntaxToken HavingKeyword { get; }
 
-        public ExpressionSyntax Predicate
-        {
-            get { return _predicate; }
-        }
+        public ExpressionSyntax Predicate { get; }
     }
 }

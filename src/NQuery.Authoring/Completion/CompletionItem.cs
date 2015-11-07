@@ -4,13 +4,6 @@ namespace NQuery.Authoring.Completion
 {
     public sealed class CompletionItem
     {
-        private readonly string _displayText;
-        private readonly string _insertionText;
-        private readonly string _description;
-        private readonly Glyph? _glyph;
-        private readonly Symbol _symbol;
-        private readonly bool _isBuilder;
-
         public CompletionItem(string displayText, string insertionText, string description, Glyph? glyph)
             : this(displayText, insertionText, description, glyph, null)
         {
@@ -28,42 +21,24 @@ namespace NQuery.Authoring.Completion
 
         public CompletionItem(string displayText, string insertionText, string description, Glyph? glyph, Symbol symbol, bool isBuilder)
         {
-            _displayText = displayText;
-            _insertionText = insertionText;
-            _description = description;
-            _glyph = glyph;
-            _symbol = symbol;
-            _isBuilder = isBuilder;
+            DisplayText = displayText;
+            InsertionText = insertionText;
+            Description = description;
+            Glyph = glyph;
+            Symbol = symbol;
+            IsBuilder = isBuilder;
         }
 
-        public string DisplayText
-        {
-            get { return _displayText; }
-        }
+        public string DisplayText { get; }
 
-        public string InsertionText
-        {
-            get { return _insertionText; }
-        }
+        public string InsertionText { get; }
 
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; }
 
-        public Glyph? Glyph
-        {
-            get { return _glyph; }
-        }
+        public Glyph? Glyph { get; }
 
-        public Symbol Symbol
-        {
-            get { return _symbol; }
-        }
+        public Symbol Symbol { get; }
 
-        public bool IsBuilder
-        {
-            get { return _isBuilder; }
-        }
+        public bool IsBuilder { get; }
     }
 }

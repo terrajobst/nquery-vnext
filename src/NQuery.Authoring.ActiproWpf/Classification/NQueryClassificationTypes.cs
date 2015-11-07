@@ -7,113 +7,40 @@ namespace NQuery.Authoring.ActiproWpf.Classification
 {
     internal sealed class NQueryClassificationTypes : INQueryClassificationTypes
     {
-        private readonly IClassificationType _whiteSpace = new ClassificationType("whiteSpace");
-        private readonly IClassificationType _comment = new ClassificationType("comment");
-        private readonly IClassificationType _keyword = new ClassificationType("keyword");
-        private readonly IClassificationType _punctuation = new ClassificationType("punctuation");
-        private readonly IClassificationType _identifier = new ClassificationType("identifier");
-        private readonly IClassificationType _stringLiteral = new ClassificationType("stringLiteral");
-        private readonly IClassificationType _numberLiteral = new ClassificationType("numberLiteral");
-        private readonly IClassificationType _schemaTable = new ClassificationType("schemaTable");
-        private readonly IClassificationType _derivedTable = new ClassificationType("derivedTable");
-        private readonly IClassificationType _commonTableExpression = new ClassificationType("commonTableExpression");
-        private readonly IClassificationType _column = new ClassificationType("column");
-        private readonly IClassificationType _method = new ClassificationType("method");
-        private readonly IClassificationType _property = new ClassificationType("property");
-        private readonly IClassificationType _function = new ClassificationType("function");
-        private readonly IClassificationType _aggregate = new ClassificationType("aggregate");
-        private readonly IClassificationType _operator = new ClassificationType("operator");
-        private readonly IClassificationType _variable = new ClassificationType("variable");
-        private readonly IClassificationType _unnecessary = new ClassificationType("unnecessary");
+        public IClassificationType WhiteSpace { get; } = new ClassificationType("whiteSpace");
 
-        public IClassificationType WhiteSpace
-        {
-            get { return _whiteSpace; }
-        }
+        public IClassificationType Comment { get; } = new ClassificationType("comment");
 
-        public IClassificationType Comment
-        {
-            get { return _comment; }
-        }
+        public IClassificationType Keyword { get; } = new ClassificationType("keyword");
 
-        public IClassificationType Keyword
-        {
-            get { return _keyword; }
-        }
+        public IClassificationType Punctuation { get; } = new ClassificationType("punctuation");
 
-        public IClassificationType Punctuation
-        {
-            get { return _punctuation; }
-        }
+        public IClassificationType Identifier { get; } = new ClassificationType("identifier");
 
-        public IClassificationType Identifier
-        {
-            get { return _identifier; }
-        }
+        public IClassificationType StringLiteral { get; } = new ClassificationType("stringLiteral");
 
-        public IClassificationType StringLiteral
-        {
-            get { return _stringLiteral; }
-        }
+        public IClassificationType NumberLiteral { get; } = new ClassificationType("numberLiteral");
 
-        public IClassificationType NumberLiteral
-        {
-            get { return _numberLiteral; }
-        }
+        public IClassificationType SchemaTable { get; } = new ClassificationType("schemaTable");
 
-        public IClassificationType SchemaTable
-        {
-            get { return _schemaTable; }
-        }
+        public IClassificationType DerivedTable { get; } = new ClassificationType("derivedTable");
 
-        public IClassificationType DerivedTable
-        {
-            get { return _derivedTable; }
-        }
+        public IClassificationType CommonTableExpression { get; } = new ClassificationType("commonTableExpression");
 
-        public IClassificationType CommonTableExpression
-        {
-            get { return _commonTableExpression; }
-        }
+        public IClassificationType Column { get; } = new ClassificationType("column");
 
-        public IClassificationType Column
-        {
-            get { return _column; }
-        }
+        public IClassificationType Method { get; } = new ClassificationType("method");
 
-        public IClassificationType Method
-        {
-            get { return _method; }
-        }
+        public IClassificationType Property { get; } = new ClassificationType("property");
 
-        public IClassificationType Property
-        {
-            get { return _property; }
-        }
+        public IClassificationType Function { get; } = new ClassificationType("function");
 
-        public IClassificationType Function
-        {
-            get { return _function; }
-        }
+        public IClassificationType Aggregate { get; } = new ClassificationType("aggregate");
 
-        public IClassificationType Aggregate
-        {
-            get { return _aggregate; }
-        }
+        public IClassificationType Operator { get; } = new ClassificationType("operator");
 
-        public IClassificationType Operator
-        {
-            get { return _operator; }
-        }
+        public IClassificationType Variable { get; } = new ClassificationType("variable");
 
-        public IClassificationType Variable
-        {
-            get { return _variable; }
-        }
-
-        public IClassificationType Unnecessary
-        {
-            get { return _unnecessary; }
-        }
+        public IClassificationType Unnecessary { get; } = new ClassificationType("unnecessary");
     }
 }

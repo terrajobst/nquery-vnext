@@ -22,7 +22,6 @@ namespace NQueryViewer.ActiproEditor
     internal sealed partial class ActiproEditorView : IActiproEditorView
     {
         private readonly SyntaxEditor _syntaxEditor;
-        private readonly Workspace _workspace;
 
         public ActiproEditorView()
         {
@@ -46,7 +45,7 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.RegisterCommentingCommands();
             _syntaxEditor.ViewMarginFactories.Add(new NQueryEditorViewMarginFactory());
 
-            _workspace = _syntaxEditor.Document.GetWorkspace();
+            Workspace = _syntaxEditor.Document.GetWorkspace();
 
             EditorHost.Content = _syntaxEditor;
         }
@@ -89,10 +88,7 @@ namespace NQueryViewer.ActiproEditor
             return _syntaxEditor.GetDocumentView();
         }
 
-        public override Workspace Workspace
-        {
-            get { return _workspace; }
-        }
+        public override Workspace Workspace { get; }
 
         public override int CaretPosition
         {

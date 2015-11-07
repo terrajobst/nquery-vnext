@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class MethodInvocationExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _target;
-        private readonly SyntaxToken _dot;
-        private readonly SyntaxToken _name;
-        private readonly ArgumentListSyntax _argumentList;
-
         internal MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _target = target;
-            _dot = dot;
-            _name = name;
-            _argumentList = argumentList;
+            Target = target;
+            Dot = dot;
+            Name = name;
+            ArgumentList = argumentList;
         }
 
         public override SyntaxKind Kind
@@ -26,30 +21,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _target;
-            yield return _dot;
-            yield return _name;
-            yield return _argumentList;
+            yield return Target;
+            yield return Dot;
+            yield return Name;
+            yield return ArgumentList;
         }
 
-        public ExpressionSyntax Target
-        {
-            get { return _target; }
-        }
+        public ExpressionSyntax Target { get; }
 
-        public SyntaxToken Dot
-        {
-            get { return _dot; }
-        }
+        public SyntaxToken Dot { get; }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
 
-        public ArgumentListSyntax ArgumentList
-        {
-            get { return _argumentList; }
-        }
+        public ArgumentListSyntax ArgumentList { get; }
     }
 }

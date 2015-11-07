@@ -6,31 +6,18 @@ namespace NQuery.Tests.Binding
     {
         private sealed class UnaryOperatorTestCase
         {
-            private readonly string _op;
-            private readonly string _argument;
-            private readonly string _expectedResult;
-
             public UnaryOperatorTestCase(string op, string argument, string expectedResult)
             {
-                _op = op;
-                _argument = argument;
-                _expectedResult = expectedResult;
+                Op = op;
+                Argument = argument;
+                ExpectedResult = expectedResult;
             }
 
-            public string Op
-            {
-                get { return _op; }
-            }
+            public string Op { get; }
 
-            public string Argument
-            {
-                get { return _argument; }
-            }
+            public string Argument { get; }
 
-            public string ExpectedResult
-            {
-                get { return _expectedResult; }
-            }
+            public string ExpectedResult { get; }
         }
 
         private static readonly UnaryOperatorTestCase[] UnaryTestCases =

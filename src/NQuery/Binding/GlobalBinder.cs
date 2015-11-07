@@ -11,7 +11,6 @@ namespace NQuery.Binding
     internal sealed class GlobalBinder : Binder
     {
         private readonly DataContext _dataContext;
-        private readonly SymbolTable _localSymbols;
 
         private readonly Dictionary<Type, ImmutableArray<PropertySymbol>> _propertySymbols = new Dictionary<Type, ImmutableArray<PropertySymbol>>();
         private readonly Dictionary<Type, ImmutableArray<MethodSymbol>> _methodSymbols = new Dictionary<Type, ImmutableArray<MethodSymbol>>();
@@ -25,13 +24,10 @@ namespace NQuery.Binding
                                      .Concat(dataContext.Variables);
 
             _dataContext = dataContext;
-            _localSymbols = SymbolTable.Create(symbols);
+            LocalSymbols = SymbolTable.Create(symbols);
         }
 
-        public override SymbolTable LocalSymbols
-        {
-            get { return _localSymbols; }
-        }
+        public override SymbolTable LocalSymbols { get; }
 
         public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {

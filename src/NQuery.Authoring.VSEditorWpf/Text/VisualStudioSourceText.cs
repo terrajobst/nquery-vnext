@@ -8,13 +8,12 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 {
     internal sealed class VisualStudioSourceText : SourceText
     {
-        private readonly ITextSnapshot _snapshot;
         private readonly VisualStudioTextLineCollection _lines;
 
         public VisualStudioSourceText(VisualStudioSourceTextContainer container, ITextSnapshot snapshot)
             : base(container)
         {
-            _snapshot = snapshot;
+            Snapshot = snapshot;
             _lines = new VisualStudioTextLineCollection(this, snapshot);
         }
 
@@ -23,27 +22,24 @@ namespace NQuery.Authoring.VSEditorWpf.Text
             if (position < 0 || position > Length)
                 throw new ArgumentOutOfRangeException(nameof(position));
 
-            return _snapshot.GetLineNumberFromPosition(position);
+            return Snapshot.GetLineNumberFromPosition(position);
         }
 
         public override string GetText(TextSpan textSpan)
         {
-            return _snapshot.GetText(textSpan.Start, textSpan.Length);
+            return Snapshot.GetText(textSpan.Start, textSpan.Length);
         }
 
-        public ITextSnapshot Snapshot
-        {
-            get { return _snapshot; }
-        }
+        public ITextSnapshot Snapshot { get; }
 
         public override char this[int index]
         {
-            get { return _snapshot[index]; }
+            get { return Snapshot[index]; }
         }
 
         public override int Length
         {
-            get { return _snapshot.Length; }
+            get { return Snapshot.Length; }
         }
 
         public override TextLineCollection Lines

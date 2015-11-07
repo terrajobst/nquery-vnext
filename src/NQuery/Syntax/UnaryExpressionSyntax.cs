@@ -5,35 +5,26 @@ namespace NQuery.Syntax
 {
     public sealed class UnaryExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _operatorToken;
-        private readonly ExpressionSyntax _expression;
-
         internal UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax expression)
             : base(syntaxTree)
         {
-            _operatorToken = operatorToken;
-            _expression = expression;
+            OperatorToken = operatorToken;
+            Expression = expression;
         }
 
         public override SyntaxKind Kind
         {
-            get { return SyntaxFacts.GetUnaryOperatorExpression(_operatorToken.Kind); }
+            get { return SyntaxFacts.GetUnaryOperatorExpression(OperatorToken.Kind); }
         }
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _operatorToken;
-            yield return _expression;
+            yield return OperatorToken;
+            yield return Expression;
         }
 
-        public SyntaxToken OperatorToken
-        {
-            get { return _operatorToken; }
-        }
+        public SyntaxToken OperatorToken { get; }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
     }
 }

@@ -8,15 +8,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundMethodInvocationExpression : BoundExpression
     {
-        private readonly BoundExpression _target;
-        private readonly ImmutableArray<BoundExpression> _arguments;
-        private readonly OverloadResolutionResult<MethodSymbolSignature> _result;
-
         public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
-            _target = target;
-            _arguments = arguments.ToImmutableArray();
-            _result = result;
+            Target = target;
+            Arguments = arguments.ToImmutableArray();
+            Result = result;
         }
 
         public override BoundNodeKind Kind
@@ -31,29 +27,20 @@ namespace NQuery.Binding
 
         public MethodSymbol Symbol
         {
-            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
+            get { return Result.Selected == null ? null : Result.Selected.Signature.Symbol; }
         }
 
-        public BoundExpression Target
-        {
-            get { return _target; }
-        }
+        public BoundExpression Target { get; }
 
-        public ImmutableArray<BoundExpression> Arguments
-        {
-            get { return _arguments; }
-        }
+        public ImmutableArray<BoundExpression> Arguments { get; }
 
-        public OverloadResolutionResult<MethodSymbolSignature> Result
-        {
-            get { return _result; }
-        }
+        public OverloadResolutionResult<MethodSymbolSignature> Result { get; }
 
         public BoundMethodInvocationExpression Update(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
         {
             var newArguments = arguments.ToImmutableArray();
 
-            if (target == _target && newArguments == _arguments && result == _result)
+            if (target == Target && newArguments == Arguments && result == Result)
                 return this;
 
             return new BoundMethodInvocationExpression(target, newArguments, result);
@@ -61,7 +48,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"{_target}.{Symbol.Name}({string.Join(", ", _arguments)})";
+            return $"{Target}.{Symbol.Name}({string.Join(", ", Arguments)})";
         }
     }
 }

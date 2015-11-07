@@ -10,19 +10,15 @@ namespace NQuery
 {
     public sealed class SemanticModel
     {
-        private readonly Compilation _compilation;
         private readonly BindingResult _bindingResult;
 
         internal SemanticModel(Compilation compilation, BindingResult bindingResult)
         {
-            _compilation = compilation;
+            Compilation = compilation;
             _bindingResult = bindingResult;
         }
 
-        public Compilation Compilation
-        {
-            get { return _compilation; }
-        }
+        public Compilation Compilation { get; }
 
         public Conversion ClassifyConversion(Type sourceType, Type targetType)
         {

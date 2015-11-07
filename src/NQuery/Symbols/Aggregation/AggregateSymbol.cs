@@ -4,18 +4,13 @@ namespace NQuery.Symbols.Aggregation
 {
     public sealed class AggregateSymbol : Symbol
     {
-        private readonly AggregateDefinition _definition;
-
         public AggregateSymbol(AggregateDefinition definition)
             : base(definition.Name)
         {
-            _definition = definition;
+            Definition = definition;
         }
 
-        public AggregateDefinition Definition
-        {
-            get { return _definition; }
-        }
+        public AggregateDefinition Definition { get; }
 
         public override SymbolKind Kind
         {

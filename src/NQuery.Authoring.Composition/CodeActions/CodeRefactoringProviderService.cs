@@ -11,17 +11,12 @@ namespace NQuery.Authoring.Composition.CodeActions
     [Export(typeof(ICodeRefactoringProviderService))]
     internal sealed class CodeRefactoringProviderService : ICodeRefactoringProviderService
     {
-        private readonly ImmutableArray<ICodeRefactoringProvider> _providers;
-
         [ImportingConstructor]
         public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
         {
-            _providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
+            Providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
         }
 
-        public ImmutableArray<ICodeRefactoringProvider> Providers
-        {
-            get { return _providers; }
-        }
+        public ImmutableArray<ICodeRefactoringProvider> Providers { get; }
     }
 }

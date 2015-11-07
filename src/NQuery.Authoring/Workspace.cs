@@ -6,13 +6,12 @@ namespace NQuery.Authoring
 {
     public sealed class Workspace
     {
-        private readonly SourceTextContainer _textContainer;
         private Document _currentDocument;
 
         public Workspace(SourceTextContainer textContainer)
         {
-            _textContainer = textContainer;
-            _textContainer.CurrentChanged += TextContainerOnCurrentChanged;
+            TextContainer = textContainer;
+            TextContainer.CurrentChanged += TextContainerOnCurrentChanged;
             _currentDocument = new Document(DocumentKind.Query, DataContext.Empty, textContainer.Current);
         }
 
@@ -28,18 +27,15 @@ namespace NQuery.Authoring
             set { CurrentDocument = CurrentDocument.WithDataContext(value); }
         }
 
-        public SourceTextContainer TextContainer
-        {
-            get { return _textContainer; }
-        }
+        public SourceTextContainer TextContainer { get; }
 
         public Document CurrentDocument
         {
             get
             {
                 // Ensure the document is up-to-date
-                if (_currentDocument.Text != _textContainer.Current)
-                    _currentDocument = _currentDocument.WithText(_textContainer.Current);
+                if (_currentDocument.Text != TextContainer.Current)
+                    _currentDocument = _currentDocument.WithText(TextContainer.Current);
 
                 return _currentDocument;
             }

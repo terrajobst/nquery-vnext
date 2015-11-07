@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class WildcardSelectColumnSyntax : SelectColumnSyntax
     {
-        private readonly SyntaxToken _tableName;
-        private readonly SyntaxToken _dotToken;
-        private readonly SyntaxToken _asteriskToken;
-
         internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, SyntaxToken dotToken, SyntaxToken asteriskToken)
             : base(syntaxTree)
         {
-            _tableName = tableName;
-            _dotToken = dotToken;
-            _asteriskToken = asteriskToken;
+            TableName = tableName;
+            DotToken = dotToken;
+            AsteriskToken = asteriskToken;
         }
 
         public override SyntaxKind Kind
@@ -24,26 +20,17 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            if (_tableName != null)
-                yield return _tableName;
-            if (_dotToken != null)
-                yield return _dotToken;
-            yield return _asteriskToken;
+            if (TableName != null)
+                yield return TableName;
+            if (DotToken != null)
+                yield return DotToken;
+            yield return AsteriskToken;
         }
 
-        public SyntaxToken TableName
-        {
-            get { return _tableName; }
-        }
+        public SyntaxToken TableName { get; }
 
-        public SyntaxToken DotToken
-        {
-            get { return _dotToken; }
-        }
+        public SyntaxToken DotToken { get; }
 
-        public SyntaxToken AsteriskToken
-        {
-            get { return _asteriskToken; }
-        }
+        public SyntaxToken AsteriskToken { get; }
     }
 }

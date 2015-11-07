@@ -6,21 +6,14 @@ namespace NQuery.Binding
 {
     internal sealed class BoundHashMatchRelation : BoundRelation
     {
-        private readonly BoundHashMatchOperator _logicalOperator;
-        private readonly BoundRelation _build;
-        private readonly BoundRelation _probe;
-        private readonly ValueSlot _buildKey;
-        private readonly ValueSlot _probeKey;
-        private readonly BoundExpression _remainder;
-
         public BoundHashMatchRelation(BoundHashMatchOperator logicalOperator, BoundRelation build, BoundRelation probe, ValueSlot buildKey, ValueSlot probeKey, BoundExpression remainder)
         {
-            _logicalOperator = logicalOperator;
-            _build = build;
-            _probe = probe;
-            _buildKey = buildKey;
-            _probeKey = probeKey;
-            _remainder = remainder;
+            LogicalOperator = logicalOperator;
+            Build = build;
+            Probe = probe;
+            BuildKey = buildKey;
+            ProbeKey = probeKey;
+            Remainder = remainder;
         }
 
         public override BoundNodeKind Kind
@@ -28,39 +21,21 @@ namespace NQuery.Binding
             get { return BoundNodeKind.HashMatchRelation; }
         }
 
-        public BoundHashMatchOperator LogicalOperator
-        {
-            get { return _logicalOperator; }
-        }
+        public BoundHashMatchOperator LogicalOperator { get; }
 
-        public BoundRelation Build
-        {
-            get { return _build; }
-        }
+        public BoundRelation Build { get; }
 
-        public BoundRelation Probe
-        {
-            get { return _probe; }
-        }
+        public BoundRelation Probe { get; }
 
-        public ValueSlot BuildKey
-        {
-            get { return _buildKey; }
-        }
+        public ValueSlot BuildKey { get; }
 
-        public ValueSlot ProbeKey
-        {
-            get { return _probeKey; }
-        }
+        public ValueSlot ProbeKey { get; }
 
-        public BoundExpression Remainder
-        {
-            get { return _remainder; }
-        }
+        public BoundExpression Remainder { get; }
 
         public BoundHashMatchRelation Update(BoundHashMatchOperator logicalOperator, BoundRelation build, BoundRelation probe, ValueSlot buildKey, ValueSlot probeKey, BoundExpression remainder)
         {
-            if (logicalOperator == _logicalOperator && build == _build && probe == _probe && buildKey == _buildKey && probeKey == _probeKey && remainder == _remainder)
+            if (logicalOperator == LogicalOperator && build == Build && probe == Probe && buildKey == BuildKey && probeKey == ProbeKey && remainder == Remainder)
                 return this;
 
             return new BoundHashMatchRelation(logicalOperator, build, probe, buildKey, probeKey, remainder);
@@ -68,12 +43,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _build.GetDefinedValues().Concat(_probe.GetDefinedValues());
+            return Build.GetDefinedValues().Concat(Probe.GetDefinedValues());
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _build.GetOutputValues().Concat(_probe.GetOutputValues());
+            return Build.GetOutputValues().Concat(Probe.GetOutputValues());
         }
     }
 }

@@ -6,11 +6,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundTableExpression : BoundExpression
     {
-        private readonly TableInstanceSymbol _symbol;
-
         public BoundTableExpression(TableInstanceSymbol symbol)
         {
-            _symbol = symbol;
+            Symbol = symbol;
         }
 
         public override BoundNodeKind Kind
@@ -20,17 +18,14 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return _symbol.Type; }
+            get { return Symbol.Type; }
         }
 
-        public TableInstanceSymbol Symbol
-        {
-            get { return _symbol; }
-        }
+        public TableInstanceSymbol Symbol { get; }
 
         public override string ToString()
         {
-            return _symbol.ToString();
+            return Symbol.ToString();
         }
     }
 }

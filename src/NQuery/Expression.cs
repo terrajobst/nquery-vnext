@@ -5,11 +5,6 @@ namespace NQuery
 {
     public sealed class Expression<T>
     {
-        private readonly DataContext _dataContext;
-        private readonly string _text;
-        private readonly T _nullValue;
-        private readonly Type _targetType;
-
         private ExpressionEvaluator _expressionEvaluator;
 
         public Expression(DataContext dataContext, string text)
@@ -36,10 +31,10 @@ namespace NQuery
             if (!typeof(T).IsAssignableFrom(targetType))
                 throw new ArgumentException($"The target type must be a sub type of {typeof (T).FullName}", nameof(targetType));
 
-            _dataContext = dataContext;
-            _text = text;
-            _nullValue = nullValue;
-            _targetType = targetType;
+            DataContext = dataContext;
+            Text = text;
+            NullValue = nullValue;
+            TargetType = targetType;
         }
 
         private void EnsureCompiled()
@@ -47,8 +42,8 @@ namespace NQuery
             if (_expressionEvaluator != null)
                 return;
 
-            var syntaxTree = SyntaxTree.ParseExpression(_text);
-            var compilation = new Compilation(_dataContext, syntaxTree);
+            var syntaxTree = SyntaxTree.ParseExpression(Text);
+            var compilation = new Compilation(DataContext, syntaxTree);
             var compiledQuery = compilation.Compile();
             var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
             Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);
@@ -65,28 +60,16 @@ namespace NQuery
             EnsureCompiled();
             var result = _expressionEvaluator.Evalutate();
             return result == null
-                ? _nullValue
+                ? NullValue
                 : (T) result;
         }
 
-        public DataContext DataContext
-        {
-            get { return _dataContext; }
-        }
+        public DataContext DataContext { get; }
 
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
 
-        public T NullValue
-        {
-            get { return _nullValue; }
-        }
+        public T NullValue { get; }
 
-        public Type TargetType
-        {
-            get { return _targetType; }
-        }
+        public Type TargetType { get; }
     }
 }

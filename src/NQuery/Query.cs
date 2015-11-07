@@ -5,9 +5,6 @@ namespace NQuery
 {
     public sealed class Query
     {
-        private readonly DataContext _dataContext;
-        private readonly string _text;
-
         private CompiledQuery _query;
 
         public Query(DataContext dataContext, string text)
@@ -18,8 +15,8 @@ namespace NQuery
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            _dataContext = dataContext;
-            _text = text;
+            DataContext = dataContext;
+            Text = text;
         }
 
         private void EnsureCompiled()
@@ -27,8 +24,8 @@ namespace NQuery
             if (_query != null)
                 return;
 
-            var syntaxTree = SyntaxTree.ParseQuery(_text);
-            var compilation = new Compilation(_dataContext, syntaxTree);
+            var syntaxTree = SyntaxTree.ParseQuery(Text);
+            var compilation = new Compilation(DataContext, syntaxTree);
             Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
         }
 
@@ -59,14 +56,8 @@ namespace NQuery
             return _query.CreateSchemaReader();
         }
 
-        public DataContext DataContext
-        {
-            get { return _dataContext; }
-        }
+        public DataContext DataContext { get; }
 
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
     }
 }

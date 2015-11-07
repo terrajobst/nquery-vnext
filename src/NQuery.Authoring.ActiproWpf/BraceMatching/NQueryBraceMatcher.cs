@@ -11,12 +11,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
 {
     internal sealed class NQueryBraceMatcher : INQueryBraceMatcher
     {
-        private readonly Collection<IBraceMatcher> _matchers = new Collection<IBraceMatcher>();
-
-        public Collection<IBraceMatcher> Matchers
-        {
-            get { return _matchers; }
-        }
+        public Collection<IBraceMatcher> Matchers { get; } = new Collection<IBraceMatcher>();
 
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
         {
@@ -30,7 +25,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
 
             var position = snapshot.Position;
 
-            var result = syntaxTree.MatchBraces(position, _matchers);
+            var result = syntaxTree.MatchBraces(position, Matchers);
             if (!result.IsValid)
                 return null;
 

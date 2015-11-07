@@ -5,20 +5,14 @@ namespace NQuery.Syntax
 {
     public sealed class SelectQuerySyntax : QuerySyntax
     {
-        private readonly SelectClauseSyntax _selectClause;
-        private readonly FromClauseSyntax _fromClause;
-        private readonly WhereClauseSyntax _whereClause;
-        private readonly GroupByClauseSyntax _groupByClause;
-        private readonly HavingClauseSyntax _havingClause;
-
         internal SelectQuerySyntax(SyntaxTree syntaxTree, SelectClauseSyntax selectClause, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
             : base(syntaxTree)
         {
-            _selectClause = selectClause;
-            _fromClause = fromClause;
-            _whereClause = whereClause;
-            _groupByClause = groupByClause;
-            _havingClause = havingClause;
+            SelectClause = selectClause;
+            FromClause = fromClause;
+            WhereClause = whereClause;
+            GroupByClause = groupByClause;
+            HavingClause = havingClause;
         }
 
         public override SyntaxKind Kind
@@ -28,40 +22,25 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _selectClause;
-            if (_fromClause != null)
-                yield return _fromClause;
-            if (_whereClause != null)
-                yield return _whereClause;
-            if (_groupByClause != null)
-                yield return _groupByClause;
-            if (_havingClause != null)
-                yield return _havingClause;
+            yield return SelectClause;
+            if (FromClause != null)
+                yield return FromClause;
+            if (WhereClause != null)
+                yield return WhereClause;
+            if (GroupByClause != null)
+                yield return GroupByClause;
+            if (HavingClause != null)
+                yield return HavingClause;
         }
 
-        public SelectClauseSyntax SelectClause
-        {
-            get { return _selectClause; }
-        }
+        public SelectClauseSyntax SelectClause { get; }
 
-        public FromClauseSyntax FromClause
-        {
-            get { return _fromClause; }
-        }
+        public FromClauseSyntax FromClause { get; }
 
-        public WhereClauseSyntax WhereClause
-        {
-            get { return _whereClause; }
-        }
+        public WhereClauseSyntax WhereClause { get; }
 
-        public GroupByClauseSyntax GroupByClause
-        {
-            get { return _groupByClause; }
-        }
+        public GroupByClauseSyntax GroupByClause { get; }
 
-        public HavingClauseSyntax HavingClause
-        {
-            get { return _havingClause; }
-        }
+        public HavingClauseSyntax HavingClause { get; }
     }
 }

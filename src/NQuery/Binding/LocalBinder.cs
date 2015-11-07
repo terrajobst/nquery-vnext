@@ -7,18 +7,13 @@ namespace NQuery.Binding
 {
     internal class LocalBinder : Binder
     {
-        private readonly SymbolTable _localSymbols;
-
         public LocalBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
             : base(sharedBinderState, parent)
         {
-            _localSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
+            LocalSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
         }
 
-        public override SymbolTable LocalSymbols
-        {
-            get { return _localSymbols; }
-        }
+        public override SymbolTable LocalSymbols { get; }
 
         private static IEnumerable<Symbol> ExpandTableInstances(IEnumerable<Symbol> symbols)
         {

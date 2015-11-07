@@ -4,28 +4,19 @@ namespace NQuery.Binding
 {
     internal sealed class BoundCaseLabel
     {
-        private readonly BoundExpression _condition;
-        private readonly BoundExpression _thenExpression;
-
         public BoundCaseLabel(BoundExpression condition, BoundExpression thenExpression)
         {
-            _condition = condition;
-            _thenExpression = thenExpression;
+            Condition = condition;
+            ThenExpression = thenExpression;
         }
 
-        public BoundExpression Condition
-        {
-            get { return _condition; }
-        }
+        public BoundExpression Condition { get; }
 
-        public BoundExpression ThenExpression
-        {
-            get { return _thenExpression; }
-        }
+        public BoundExpression ThenExpression { get; }
 
         public BoundCaseLabel Update(BoundExpression condition, BoundExpression thenExpression)
         {
-            if (condition == _condition && thenExpression == _thenExpression)
+            if (condition == Condition && thenExpression == ThenExpression)
                 return this;
 
             return new BoundCaseLabel(condition, thenExpression);
@@ -33,7 +24,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"WHEN {_condition} THEN {_thenExpression}";
+            return $"WHEN {Condition} THEN {ThenExpression}";
         }
     }
 }

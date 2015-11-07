@@ -11,24 +11,21 @@ namespace NQuery
 {
     public sealed class Compilation
     {
-        private readonly DataContext _dataContext;
-        private readonly SyntaxTree _syntaxTree;
-
         public Compilation(DataContext dataContext, SyntaxTree syntaxTree)
         {
-            _dataContext = dataContext;
-            _syntaxTree = syntaxTree;
+            DataContext = dataContext;
+            SyntaxTree = syntaxTree;
         }
 
         public SemanticModel GetSemanticModel()
         {
-            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+            var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
             return new SemanticModel(this, bindingResult);
         }
 
         public CompiledQuery Compile()
         {
-            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+            var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
             var boundQuery = GetBoundQuery(bindingResult.BoundRoot);
             var diagnostics = GetDiagnostics(bindingResult);
 
@@ -42,7 +39,7 @@ namespace NQuery
 
         private ImmutableArray<Diagnostic> GetDiagnostics(BindingResult bindingResult)
         {
-            var syntaxDiagnostics = _syntaxTree.GetDiagnostics();
+            var syntaxDiagnostics = SyntaxTree.GetDiagnostics();
             var semanticDiagnostics = bindingResult.Diagnostics;
             return syntaxDiagnostics.Concat(semanticDiagnostics).ToImmutableArray();
         }
@@ -54,7 +51,7 @@ namespace NQuery
 
         public IEnumerable<ShowPlan> GetShowPlanSteps()
         {
-            var bindingResult = Binder.Bind(_syntaxTree.Root, _dataContext);
+            var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
 
             if (GetDiagnostics(bindingResult).Any())
                 yield break;
@@ -106,24 +103,18 @@ namespace NQuery
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
         {
-            return _syntaxTree == syntaxTree ? this : new Compilation(_dataContext, syntaxTree);
+            return SyntaxTree == syntaxTree ? this : new Compilation(DataContext, syntaxTree);
         }
 
         public Compilation WithDataContext(DataContext dataContext)
         {
-            return _dataContext == dataContext ? this : new Compilation(dataContext, _syntaxTree);
+            return DataContext == dataContext ? this : new Compilation(dataContext, SyntaxTree);
         }
 
         public static readonly Compilation Empty = new Compilation(DataContext.Empty, SyntaxTree.Empty);
 
-        public SyntaxTree SyntaxTree
-        {
-            get { return _syntaxTree; }
-        }
+        public SyntaxTree SyntaxTree { get; }
 
-        public DataContext DataContext
-        {
-            get { return _dataContext; }
-        }
+        public DataContext DataContext { get; }
     }
 }

@@ -6,10 +6,6 @@ namespace NQuery.Authoring
 {
     public sealed class DocumentView
     {
-        private readonly Document _document;
-        private readonly int _position;
-        private readonly TextSpan _selection;
-
         public DocumentView(Document document, int position)
             : this(document, position, new TextSpan(position, 0))
         {
@@ -29,29 +25,20 @@ namespace NQuery.Authoring
             if (selection.End < 0 || selection.End > document.Text.Length)
                 throw new ArgumentOutOfRangeException(nameof(selection));
 
-            _document = document;
-            _position = position;
-            _selection = selection;
+            Document = document;
+            Position = position;
+            Selection = selection;
         }
 
-        public Document Document
-        {
-            get { return _document; }
-        }
+        public Document Document { get; }
 
         public SourceText Text
         {
-            get { return _document.Text; }
+            get { return Document.Text; }
         }
 
-        public int Position
-        {
-            get { return _position; }
-        }
+        public int Position { get; }
 
-        public TextSpan Selection
-        {
-            get { return _selection; }
-        }
+        public TextSpan Selection { get; }
     }
 }

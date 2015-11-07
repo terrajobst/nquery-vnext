@@ -4,11 +4,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundIsNullExpression : BoundExpression
     {
-        private readonly BoundExpression _expression;
-
         public BoundIsNullExpression(BoundExpression expression)
         {
-            _expression = expression;
+            Expression = expression;
         }
 
         public override BoundNodeKind Kind
@@ -21,14 +19,11 @@ namespace NQuery.Binding
             get { return typeof(bool); }
         }
 
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
+        public BoundExpression Expression { get; }
 
         public BoundIsNullExpression Update(BoundExpression expression)
         {
-            if (expression == _expression)
+            if (expression == Expression)
                 return this;
 
             return new BoundIsNullExpression(expression);
@@ -36,7 +31,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"{_expression} IS NULL";
+            return $"{Expression} IS NULL";
         }
     }
 }

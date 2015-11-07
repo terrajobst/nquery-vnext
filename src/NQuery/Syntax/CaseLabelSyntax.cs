@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class CaseLabelSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _whenKeyword;
-        private readonly ExpressionSyntax _whenExpression;
-        private readonly SyntaxToken _thenKeyword;
-        private readonly ExpressionSyntax _thenExpression;
-
         internal CaseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken whenKeyword, ExpressionSyntax whenExpression, SyntaxToken thenKeyword, ExpressionSyntax thenExpression)
             : base(syntaxTree)
         {
-            _whenKeyword = whenKeyword;
-            _whenExpression = whenExpression;
-            _thenKeyword = thenKeyword;
-            _thenExpression = thenExpression;
+            WhenKeyword = whenKeyword;
+            WhenExpression = whenExpression;
+            ThenKeyword = thenKeyword;
+            ThenExpression = thenExpression;
         }
 
         public override SyntaxKind Kind
@@ -26,30 +21,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _whenKeyword;
-            yield return _whenExpression;
-            yield return _thenKeyword;
-            yield return _thenExpression;
+            yield return WhenKeyword;
+            yield return WhenExpression;
+            yield return ThenKeyword;
+            yield return ThenExpression;
         }
 
-        public SyntaxToken WhenKeyword
-        {
-            get { return _whenKeyword; }
-        }
+        public SyntaxToken WhenKeyword { get; }
 
-        public ExpressionSyntax WhenExpression
-        {
-            get { return _whenExpression; }
-        }
+        public ExpressionSyntax WhenExpression { get; }
 
-        public SyntaxToken ThenKeyword
-        {
-            get { return _thenKeyword; }
-        }
+        public SyntaxToken ThenKeyword { get; }
 
-        public ExpressionSyntax ThenExpression
-        {
-            get { return _thenExpression; }
-        }
+        public ExpressionSyntax ThenExpression { get; }
     }
 }

@@ -6,21 +6,14 @@ namespace NQuery.Binding
 {
     internal sealed class BoundJoinRelation : BoundRelation
     {
-        private readonly BoundRelation _left;
-        private readonly BoundRelation _right;
-        private readonly BoundJoinType _joinType;
-        private readonly BoundExpression _condition;
-        private readonly ValueSlot _probe;
-        private readonly BoundExpression _passthruPredicate;
-
         public BoundJoinRelation(BoundJoinType joinType, BoundRelation left, BoundRelation right, BoundExpression condition, ValueSlot probe, BoundExpression passthruPredicate)
         {
-            _left = left;
-            _right = right;
-            _joinType = joinType;
-            _condition = condition;
-            _probe = probe;
-            _passthruPredicate = passthruPredicate;
+            Left = left;
+            Right = right;
+            JoinType = joinType;
+            Condition = condition;
+            Probe = probe;
+            PassthruPredicate = passthruPredicate;
         }
 
         public override BoundNodeKind Kind
@@ -28,39 +21,21 @@ namespace NQuery.Binding
             get { return BoundNodeKind.JoinRelation; }
         }
 
-        public BoundRelation Left
-        {
-            get { return _left; }
-        }
+        public BoundRelation Left { get; }
 
-        public BoundRelation Right
-        {
-            get { return _right; }
-        }
+        public BoundRelation Right { get; }
 
-        public BoundJoinType JoinType
-        {
-            get { return _joinType; }
-        }
+        public BoundJoinType JoinType { get; }
 
-        public BoundExpression Condition
-        {
-            get { return _condition; }
-        }
+        public BoundExpression Condition { get; }
 
-        public ValueSlot Probe
-        {
-            get { return _probe; }
-        }
+        public ValueSlot Probe { get; }
 
-        public BoundExpression PassthruPredicate
-        {
-            get { return _passthruPredicate; }
-        }
+        public BoundExpression PassthruPredicate { get; }
 
         public BoundJoinRelation Update(BoundJoinType joinType, BoundRelation left, BoundRelation right, BoundExpression condition, ValueSlot probe, BoundExpression passthruPredicate)
         {
-            if (joinType == _joinType && left == _left && right == _right && condition == _condition && probe == _probe && passthruPredicate == _passthruPredicate)
+            if (joinType == JoinType && left == Left && right == Right && condition == Condition && probe == Probe && passthruPredicate == PassthruPredicate)
                 return this;
 
             return new BoundJoinRelation(joinType, left, right, condition, probe, passthruPredicate);
@@ -68,25 +43,25 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            var probe = _probe == null
+            var probe = Probe == null
                 ? Enumerable.Empty<ValueSlot>()
-                : new[] {_probe};
-            return _left.GetDefinedValues().Concat(_right.GetDefinedValues()).Concat(probe);
+                : new[] {Probe};
+            return Left.GetDefinedValues().Concat(Right.GetDefinedValues()).Concat(probe);
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            var left = IncludeLeftValues() ? _left.GetOutputValues() : Enumerable.Empty<ValueSlot>();
-            var right = IncludeRightValues() ? _right.GetOutputValues() : Enumerable.Empty<ValueSlot>();
+            var left = IncludeLeftValues() ? Left.GetOutputValues() : Enumerable.Empty<ValueSlot>();
+            var right = IncludeRightValues() ? Right.GetOutputValues() : Enumerable.Empty<ValueSlot>();
             var leftAndRight = left.Concat(right);
-            return _probe == null
+            return Probe == null
                     ? leftAndRight
-                    : leftAndRight.Concat(new[] {_probe});
+                    : leftAndRight.Concat(new[] {Probe});
         }
 
         private bool IncludeLeftValues()
         {
-            switch (_joinType)
+            switch (JoinType)
             {
                 case BoundJoinType.Inner:
                 case BoundJoinType.FullOuter:
@@ -102,7 +77,7 @@ namespace NQuery.Binding
 
         private bool IncludeRightValues()
         {
-            switch (_joinType)
+            switch (JoinType)
             {
                 case BoundJoinType.Inner:
                 case BoundJoinType.FullOuter:

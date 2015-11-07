@@ -7,15 +7,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundGroupByAndAggregationRelation : BoundRelation
     {
-        private readonly BoundRelation _input;
-        private readonly ImmutableArray<ValueSlot> _groups;
-        private readonly ImmutableArray<BoundAggregatedValue> _aggregates;
-
         public BoundGroupByAndAggregationRelation(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
-            _input = input;
-            _groups = groups.ToImmutableArray();
-            _aggregates = aggregates.ToImmutableArray();
+            Input = input;
+            Groups = groups.ToImmutableArray();
+            Aggregates = aggregates.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -23,27 +19,18 @@ namespace NQuery.Binding
             get { return BoundNodeKind.GroupByAndAggregationRelation; }
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public ImmutableArray<ValueSlot> Groups
-        {
-            get { return _groups; }
-        }
+        public ImmutableArray<ValueSlot> Groups { get; }
 
-        public ImmutableArray<BoundAggregatedValue> Aggregates
-        {
-            get { return _aggregates; }
-        }
+        public ImmutableArray<BoundAggregatedValue> Aggregates { get; }
 
         public BoundGroupByAndAggregationRelation Update(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
             var newGroups = groups.ToImmutableArray();
             var newAggregates = aggregates.ToImmutableArray();
 
-            if (input == _input && newGroups == _groups && newAggregates == _aggregates)
+            if (input == Input && newGroups == Groups && newAggregates == Aggregates)
                 return this;
 
             return new BoundGroupByAndAggregationRelation(input, newGroups, newAggregates);
@@ -56,7 +43,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _groups.Concat(_aggregates.Select(v => v.Output));
+            return Groups.Concat(Aggregates.Select(v => v.Output));
         }
     }
 }

@@ -18,20 +18,16 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
     internal sealed class ActiproSourceText : SourceText
     {
-        private readonly ITextSnapshot _snapshot;
         private readonly SourceText _sourceText;
 
         public ActiproSourceText(ActiproSourceTextContainer container, ITextSnapshot snapshot)
             : base(container)
         {
-            _snapshot = snapshot;
+            Snapshot = snapshot;
             _sourceText = From(snapshot.Text);
         }
 
-        public ITextSnapshot Snapshot
-        {
-            get { return _snapshot; }
-        }
+        public ITextSnapshot Snapshot { get; }
 
         public override int GetLineNumberFromPosition(int position)
         {
@@ -60,7 +56,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public override string ToString()
         {
-            return $"Version={_snapshot.Version.Number}, Length={_snapshot.Length}";
+            return $"Version={Snapshot.Version.Number}, Length={Snapshot.Length}";
         }
     }
 }

@@ -4,18 +4,13 @@ namespace NQuery.Binding
 {
     internal sealed class QueryBinder : Binder
     {
-        private readonly BoundQueryState _queryState;
-
         public QueryBinder(SharedBinderState sharedBinderState, Binder parent)
             : base(sharedBinderState, parent)
         {
-            _queryState = new BoundQueryState(parent.QueryState);
+            QueryState = new BoundQueryState(parent.QueryState);
         }
 
-        public override BoundQueryState QueryState
-        {
-            get { return _queryState; }
-        }
+        public override BoundQueryState QueryState { get; }
 
         protected override bool InWhereClause
         {

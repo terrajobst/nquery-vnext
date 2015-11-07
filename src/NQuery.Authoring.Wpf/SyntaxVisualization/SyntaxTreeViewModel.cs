@@ -7,24 +7,15 @@ namespace NQuery.Authoring.Wpf
 {
     internal sealed class SyntaxTreeViewModel
     {
-        private readonly SyntaxTree _model;
-        private readonly ImmutableArray<SyntaxNodeViewModel> _root;
-
         public SyntaxTreeViewModel(SyntaxTree model, SyntaxNodeViewModel root)
         {
-            _model = model;
-            _root = ImmutableArray.Create(root);
+            Model = model;
+            Root = ImmutableArray.Create(root);
         }
 
-        public SyntaxTree Model
-        {
-            get { return _model; }
-        }
+        public SyntaxTree Model { get; }
 
-        public ImmutableArray<SyntaxNodeViewModel> Root
-        {
-            get { return _root; }
-        }
+        public ImmutableArray<SyntaxNodeViewModel> Root { get; }
 
         public static SyntaxTreeViewModel Create(SyntaxTree syntaxTree)
         {

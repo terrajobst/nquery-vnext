@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class UnionQuerySyntax : QuerySyntax
     {
-        private readonly QuerySyntax _leftQuery;
-        private readonly SyntaxToken _unionKeyword;
-        private readonly SyntaxToken _allKeyword;
-        private readonly QuerySyntax _rightQuery;
-
         internal UnionQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken unionKeyword, SyntaxToken allKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
-            _leftQuery = leftQuery;
-            _unionKeyword = unionKeyword;
-            _allKeyword = allKeyword;
-            _rightQuery = rightQuery;
+            LeftQuery = leftQuery;
+            UnionKeyword = unionKeyword;
+            AllKeyword = allKeyword;
+            RightQuery = rightQuery;
         }
 
         public override SyntaxKind Kind
@@ -26,31 +21,19 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _leftQuery;
-            yield return _unionKeyword;
-            if (_allKeyword != null)
-                yield return _allKeyword;
-            yield return _rightQuery;
+            yield return LeftQuery;
+            yield return UnionKeyword;
+            if (AllKeyword != null)
+                yield return AllKeyword;
+            yield return RightQuery;
         }
 
-        public QuerySyntax LeftQuery
-        {
-            get { return _leftQuery; }
-        }
+        public QuerySyntax LeftQuery { get; }
 
-        public SyntaxToken UnionKeyword
-        {
-            get { return _unionKeyword; }
-        }
+        public SyntaxToken UnionKeyword { get; }
 
-        public SyntaxToken AllKeyword
-        {
-            get { return _allKeyword; }
-        }
+        public SyntaxToken AllKeyword { get; }
 
-        public QuerySyntax RightQuery
-        {
-            get { return _rightQuery; }
-        }
+        public QuerySyntax RightQuery { get; }
     }
 }

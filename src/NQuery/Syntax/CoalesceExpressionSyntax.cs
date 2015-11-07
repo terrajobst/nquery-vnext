@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class CoalesceExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _coalesceKeyword;
-        private readonly ArgumentListSyntax _argumentList;
-
         internal CoalesceExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken coalesceKeyword, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _coalesceKeyword = coalesceKeyword;
-            _argumentList = argumentList;
+            CoalesceKeyword = coalesceKeyword;
+            ArgumentList = argumentList;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _coalesceKeyword;
-            yield return _argumentList;
+            yield return CoalesceKeyword;
+            yield return ArgumentList;
         }
 
-        public SyntaxToken CoalesceKeyword
-        {
-            get { return _coalesceKeyword; }
-        }
+        public SyntaxToken CoalesceKeyword { get; }
 
-        public ArgumentListSyntax ArgumentList
-        {
-            get { return _argumentList; }
-        }
+        public ArgumentListSyntax ArgumentList { get; }
     }
 }

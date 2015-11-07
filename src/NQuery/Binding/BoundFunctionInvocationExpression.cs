@@ -8,13 +8,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundFunctionInvocationExpression : BoundExpression
     {
-        private readonly ImmutableArray<BoundExpression> _arguments;
-        private readonly OverloadResolutionResult<FunctionSymbolSignature> _result;
-
         public BoundFunctionInvocationExpression(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
         {
-            _arguments = arguments.ToImmutableArray();
-            _result = result;
+            Arguments = arguments.ToImmutableArray();
+            Result = result;
         }
 
         public override BoundNodeKind Kind
@@ -29,24 +26,18 @@ namespace NQuery.Binding
 
         public FunctionSymbol Symbol
         {
-            get { return _result.Selected == null ? null : _result.Selected.Signature.Symbol; }
+            get { return Result.Selected == null ? null : Result.Selected.Signature.Symbol; }
         }
 
-        public ImmutableArray<BoundExpression> Arguments
-        {
-            get { return _arguments; }
-        }
+        public ImmutableArray<BoundExpression> Arguments { get; }
 
-        public OverloadResolutionResult<FunctionSymbolSignature> Result
-        {
-            get { return _result; }
-        }
+        public OverloadResolutionResult<FunctionSymbolSignature> Result { get; }
 
         public BoundFunctionInvocationExpression Update(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
         {
             var newArguments = arguments.ToImmutableArray();
 
-            if (newArguments == _arguments && result == _result)
+            if (newArguments == Arguments && result == Result)
                 return this;
 
             return new BoundFunctionInvocationExpression(newArguments, result);
@@ -54,7 +45,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            return $"{Symbol.Name}({string.Join(",", _arguments)})";
+            return $"{Symbol.Name}({string.Join(",", Arguments)})";
         }
     }
 }

@@ -5,15 +5,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
     {
-        private readonly UnaryOperatorKind _operatorKind;
-        private readonly OverloadResolutionResult<UnaryOperatorSignature> _result;
-        private readonly BoundExpression _expression;
-
         public BoundUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
         {
-            _operatorKind = operatorKind;
-            _expression = expression;
-            _result = result;
+            OperatorKind = operatorKind;
+            Expression = expression;
+            Result = result;
         }
 
         public override BoundNodeKind Kind
@@ -25,30 +21,21 @@ namespace NQuery.Binding
         {
             get
             {
-                return _result.Selected == null
+                return Result.Selected == null
                            ? TypeFacts.Unknown
-                           : _result.Selected.Signature.ReturnType;
+                           : Result.Selected.Signature.ReturnType;
             }
         }
 
-        public UnaryOperatorKind OperatorKind
-        {
-            get { return _operatorKind; }
-        }
+        public UnaryOperatorKind OperatorKind { get; }
 
-        public OverloadResolutionResult<UnaryOperatorSignature> Result
-        {
-            get { return _result; }
-        }
+        public OverloadResolutionResult<UnaryOperatorSignature> Result { get; }
 
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
+        public BoundExpression Expression { get; }
 
         public BoundUnaryExpression Update(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
         {
-            if (operatorKind == _operatorKind && result == _result && expression == _expression)
+            if (operatorKind == OperatorKind && result == Result && expression == Expression)
                 return this;
             
             return new BoundUnaryExpression(operatorKind, result, expression);
@@ -56,8 +43,8 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            var unaryOperatorKind = _result.Candidates.First().Signature.Kind;
-            return $"{unaryOperatorKind.ToDisplayName()}({_expression})";
+            var unaryOperatorKind = Result.Candidates.First().Signature.Kind;
+            return $"{unaryOperatorKind.ToDisplayName()}({Expression})";
         }
     }
 }

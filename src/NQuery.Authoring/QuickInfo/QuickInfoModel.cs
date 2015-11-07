@@ -7,17 +7,12 @@ namespace NQuery.Authoring.QuickInfo
 {
     public sealed class QuickInfoModel
     {
-        private readonly SemanticModel _semanticModel;
-        private readonly TextSpan _span;
-        private readonly Glyph _glyph;
-        private readonly SymbolMarkup _markup;
-
         public QuickInfoModel(SemanticModel semanticModel, TextSpan span, Glyph glyph, SymbolMarkup markup)
         {
-            _semanticModel = semanticModel;
-            _span = span;
-            _glyph = glyph;
-            _markup = markup;
+            SemanticModel = semanticModel;
+            Span = span;
+            Glyph = glyph;
+            Markup = markup;
         }
 
         public static QuickInfoModel ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
@@ -30,24 +25,12 @@ namespace NQuery.Authoring.QuickInfo
             return new QuickInfoModel(semanticModel, span, glyph, symbolMarkup);
         }
 
-        public SemanticModel SemanticModel
-        {
-            get { return _semanticModel; }
-        }
+        public SemanticModel SemanticModel { get; }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public Glyph Glyph
-        {
-            get { return _glyph; }
-        }
+        public Glyph Glyph { get; }
 
-        public SymbolMarkup Markup
-        {
-            get { return _markup; }
-        }
+        public SymbolMarkup Markup { get; }
     }
 }

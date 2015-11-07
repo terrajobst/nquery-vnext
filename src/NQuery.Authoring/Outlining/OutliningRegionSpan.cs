@@ -6,23 +6,14 @@ namespace NQuery.Authoring.Outlining
 {
     public struct OutliningRegionSpan
     {
-        private readonly TextSpan _span;
-        private readonly string _text;
-
         public OutliningRegionSpan(TextSpan span, string text)
         {
-            _span = span;
-            _text = text;
+            Span = span;
+            Text = text;
         }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
     }
 }

@@ -8,7 +8,6 @@ namespace NQuery.Authoring.Wpf
     internal sealed class ShowPlanNodeViewModel : ShowPlanItemViewModel
     {
         private readonly ShowPlanNode _model;
-        private readonly IEnumerable<ShowPlanItemViewModel> _children;
 
         public ShowPlanNodeViewModel(ShowPlanNode model)
         {
@@ -16,8 +15,7 @@ namespace NQuery.Authoring.Wpf
             var nodeChildren = model.Children.Select(c => new ShowPlanNodeViewModel(c));
 
             _model = model;
-            _children = propertyChildren.Concat<ShowPlanItemViewModel>(nodeChildren).ToImmutableArray();
-
+            Children = propertyChildren.Concat<ShowPlanItemViewModel>(nodeChildren).ToImmutableArray();
         }
 
         public override string DisplayName
@@ -25,10 +23,7 @@ namespace NQuery.Authoring.Wpf
             get { return _model.OperatorName; }
         }
 
-        public override IEnumerable<ShowPlanItemViewModel> Children
-        {
-            get { return _children; }
-        }
+        public override IEnumerable<ShowPlanItemViewModel> Children { get; }
 
         public override string Kind
         {

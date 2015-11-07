@@ -14,13 +14,12 @@ namespace NQueryViewer.VSEditor
 {
     internal sealed partial class VSEditorView : IVSEditorView
     {
-        private readonly Workspace _workspace;
         private readonly IWpfTextViewHost _textViewHost;
         private readonly INQuerySelectionProvider _selectionProvider;
 
         public VSEditorView(Workspace workspace, IWpfTextViewHost textViewHost, INQuerySelectionProvider selectionProvider)
         {
-            _workspace = workspace;
+            Workspace = workspace;
             _textViewHost = textViewHost;
             _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
 
@@ -95,10 +94,7 @@ namespace NQueryViewer.VSEditor
             return TextSpan.FromBounds(start, end);
         }
 
-        public override Workspace Workspace
-        {
-            get { return _workspace; }
-        }
+        public override Workspace Workspace { get; }
 
         public override int CaretPosition
         {

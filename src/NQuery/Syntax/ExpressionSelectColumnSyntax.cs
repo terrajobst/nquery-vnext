@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class ExpressionSelectColumnSyntax : SelectColumnSyntax
     {
-        private readonly ExpressionSyntax _expression;
-        private readonly AliasSyntax _alias;
-
         internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
             : base(syntaxTree)
         {
-            _expression = expression;
-            _alias = alias;
+            Expression = expression;
+            Alias = alias;
         }
 
         public override SyntaxKind Kind
@@ -22,19 +19,13 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _expression;
-            if (_alias != null)
-                yield return _alias;
+            yield return Expression;
+            if (Alias != null)
+                yield return Alias;
         }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
 
-        public AliasSyntax Alias
-        {
-            get { return _alias; }
-        }
+        public AliasSyntax Alias { get; }
     }
 }

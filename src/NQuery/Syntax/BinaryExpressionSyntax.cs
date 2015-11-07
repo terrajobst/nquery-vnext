@@ -5,43 +5,30 @@ namespace NQuery.Syntax
 {
     public sealed class BinaryExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken _operatorToken;
-        private readonly ExpressionSyntax _right;
-
         internal BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
             : base(syntaxTree)
         {
-            _left = left;
-            _operatorToken = operatorToken;
-            _right = right;
+            Left = left;
+            OperatorToken = operatorToken;
+            Right = right;
         }
 
         public override SyntaxKind Kind
         {
-            get { return SyntaxFacts.GetBinaryOperatorExpression(_operatorToken.Kind); }
+            get { return SyntaxFacts.GetBinaryOperatorExpression(OperatorToken.Kind); }
         }
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _left;
-            yield return _operatorToken;
-            yield return _right;
+            yield return Left;
+            yield return OperatorToken;
+            yield return Right;
         }
 
-        public ExpressionSyntax Left
-        {
-            get { return _left; }
-        }
+        public ExpressionSyntax Left { get; }
 
-        public SyntaxToken OperatorToken
-        {
-            get { return _operatorToken; }
-        }
+        public SyntaxToken OperatorToken { get; }
 
-        public ExpressionSyntax Right
-        {
-            get { return _right; }
-        }
+        public ExpressionSyntax Right { get; }
     }
 }

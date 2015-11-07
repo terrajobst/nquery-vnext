@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class TopClauseSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _topKeyword;
-        private readonly SyntaxToken _value;
-        private readonly SyntaxToken _withKeyword;
-        private readonly SyntaxToken _tiesKeyword;
-
         internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken withKeyword, SyntaxToken tiesKeyword)
             : base(syntaxTree)
         {
-            _topKeyword = topKeyword;
-            _value = value;
-            _withKeyword = withKeyword;
-            _tiesKeyword = tiesKeyword;
+            TopKeyword = topKeyword;
+            Value = value;
+            WithKeyword = withKeyword;
+            TiesKeyword = tiesKeyword;
         }
 
         public override SyntaxKind Kind
@@ -26,32 +21,20 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _topKeyword;
-            yield return _value;
-            if (_withKeyword != null)
-                yield return _withKeyword;
-            if (_tiesKeyword != null)
-                yield return _tiesKeyword;
+            yield return TopKeyword;
+            yield return Value;
+            if (WithKeyword != null)
+                yield return WithKeyword;
+            if (TiesKeyword != null)
+                yield return TiesKeyword;
         }
 
-        public SyntaxToken TopKeyword
-        {
-            get { return _topKeyword; }
-        }
+        public SyntaxToken TopKeyword { get; }
 
-        public SyntaxToken Value
-        {
-            get { return _value; }
-        }
+        public SyntaxToken Value { get; }
 
-        public SyntaxToken WithKeyword
-        {
-            get { return _withKeyword; }
-        }
+        public SyntaxToken WithKeyword { get; }
 
-        public SyntaxToken TiesKeyword
-        {
-            get { return _tiesKeyword; }
-        }
+        public SyntaxToken TiesKeyword { get; }
     }
 }

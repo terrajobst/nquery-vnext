@@ -4,28 +4,19 @@ namespace NQuery.Binding
 {
     internal sealed class BoundComputedValue
     {
-        private readonly BoundExpression _expression;
-        private readonly ValueSlot _valueSlot;
-
         public BoundComputedValue(BoundExpression expression, ValueSlot valueSlot)
         {
-            _expression = expression;
-            _valueSlot = valueSlot;
+            Expression = expression;
+            ValueSlot = valueSlot;
         }
 
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
+        public BoundExpression Expression { get; }
 
-        public ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
+        public ValueSlot ValueSlot { get; }
 
         public BoundComputedValue Update(BoundExpression expression, ValueSlot valueSlot)
         {
-            if (expression == _expression && valueSlot == _valueSlot)
+            if (expression == Expression && valueSlot == ValueSlot)
                 return this;
 
             return new BoundComputedValue(expression, valueSlot);

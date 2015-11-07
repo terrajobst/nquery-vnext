@@ -8,12 +8,11 @@ namespace NQuery.Iterators
 {
     internal sealed class RowBufferAllocation
     {
-        private readonly RowBuffer _rowBuffer;
         private readonly Dictionary<ValueSlot, int> _mapping;
 
         public RowBufferAllocation(RowBuffer rowBuffer, IEnumerable<ValueSlot> valueSlots)
         {
-            _rowBuffer = rowBuffer;
+            RowBuffer = rowBuffer;
             _mapping = GetValueMapping(valueSlots.ToImmutableArray());
         }
 
@@ -40,9 +39,6 @@ namespace NQuery.Iterators
             get { return _mapping[valueSlot]; }
         }
 
-        public RowBuffer RowBuffer
-        {
-            get { return _rowBuffer; }
-        }
+        public RowBuffer RowBuffer { get; }
     }
 }

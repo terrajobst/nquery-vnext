@@ -6,20 +6,14 @@ namespace NQuery.Syntax
 {
     public sealed class CaseExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _caseKeyword;
-        private readonly ExpressionSyntax _inputExpression;
-        private readonly ImmutableArray<CaseLabelSyntax> _caseLabels;
-        private readonly CaseElseLabelSyntax _elseLabel;
-        private readonly SyntaxToken _endKeyword;
-
         internal CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
             : base(syntaxTree)
         {
-            _caseKeyword = caseKeyword;
-            _inputExpression = inputExpression;
-            _caseLabels = caseLabels.ToImmutableArray();
-            _elseLabel = elseLabel;
-            _endKeyword = endKeyword;
+            CaseKeyword = caseKeyword;
+            InputExpression = inputExpression;
+            CaseLabels = caseLabels.ToImmutableArray();
+            ElseLabel = elseLabel;
+            EndKeyword = endKeyword;
         }
 
         public override SyntaxKind Kind
@@ -29,43 +23,28 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _caseKeyword;
+            yield return CaseKeyword;
 
-            if (_inputExpression != null)
-                yield return _inputExpression;
+            if (InputExpression != null)
+                yield return InputExpression;
 
-            foreach (var caseLabel in _caseLabels)
+            foreach (var caseLabel in CaseLabels)
                 yield return caseLabel;
 
-            if (_elseLabel != null)
-                yield return _elseLabel;
+            if (ElseLabel != null)
+                yield return ElseLabel;
 
-            yield return _endKeyword;
+            yield return EndKeyword;
         }
 
-        public SyntaxToken CaseKeyword
-        {
-            get { return _caseKeyword; }
-        }
+        public SyntaxToken CaseKeyword { get; }
 
-        public ExpressionSyntax InputExpression
-        {
-            get { return _inputExpression; }
-        }
+        public ExpressionSyntax InputExpression { get; }
 
-        public ImmutableArray<CaseLabelSyntax> CaseLabels
-        {
-            get { return _caseLabels; }
-        }
+        public ImmutableArray<CaseLabelSyntax> CaseLabels { get; }
 
-        public CaseElseLabelSyntax ElseLabel
-        {
-            get { return _elseLabel; }
-        }
+        public CaseElseLabelSyntax ElseLabel { get; }
 
-        public SyntaxToken EndKeyword
-        {
-            get { return _endKeyword; }
-        }
+        public SyntaxToken EndKeyword { get; }
     }
 }

@@ -5,19 +5,17 @@ namespace NQuery.Binding
 {
     internal sealed class BinaryOperatorSignature : Signature
     {
-        private readonly BinaryOperatorKind _kind;
         private readonly Type _returnType;
         private readonly Type _leftParameterType;
         private readonly Type _rightParameterType;
-        private readonly MethodInfo _methodInfo;
 
         public BinaryOperatorSignature(BinaryOperatorKind kind, Type returnType, Type leftParameterType, Type rightParameterType, MethodInfo methodInfo)
         {
-            _kind = kind;
+            Kind = kind;
             _returnType = returnType;
             _leftParameterType = leftParameterType;
             _rightParameterType = rightParameterType;
-            _methodInfo = methodInfo;
+            MethodInfo = methodInfo;
         }
 
         public BinaryOperatorSignature(BinaryOperatorKind kind, MethodInfo methodInfo)
@@ -50,19 +48,13 @@ namespace NQuery.Binding
             get { return 2; }
         }
 
-        public BinaryOperatorKind Kind
-        {
-            get { return _kind; }
-        }
+        public BinaryOperatorKind Kind { get; }
 
-        public MethodInfo MethodInfo
-        {
-            get { return _methodInfo; }
-        }
+        public MethodInfo MethodInfo { get; }
 
         public override string ToString()
         {
-            return $"{_kind}({_leftParameterType.ToDisplayName()}, {_rightParameterType.ToDisplayName()}) AS {_returnType.ToDisplayName()}";
+            return $"{Kind}({_leftParameterType.ToDisplayName()}, {_rightParameterType.ToDisplayName()}) AS {_returnType.ToDisplayName()}";
         }
     }
 }

@@ -4,17 +4,12 @@ namespace NQuery.Symbols
 {
     public sealed class SchemaColumnSymbol : ColumnSymbol
     {
-        private readonly ColumnDefinition _columnDefinition;
-
         public SchemaColumnSymbol(ColumnDefinition columnDefinition)
             : base(columnDefinition.Name, columnDefinition.DataType)
         {
-            _columnDefinition = columnDefinition;
+            Definition = columnDefinition;
         }
 
-        public ColumnDefinition Definition
-        {
-            get { return _columnDefinition; }
-        }
+        public ColumnDefinition Definition { get; }
     }
 }

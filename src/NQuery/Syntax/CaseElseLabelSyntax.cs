@@ -5,14 +5,11 @@ namespace NQuery.Syntax
 {
     public sealed class CaseElseLabelSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _elseKeyword;
-        private readonly ExpressionSyntax _expression;
-
         internal CaseElseLabelSyntax(SyntaxTree syntaxTree, SyntaxToken elseKeyword, ExpressionSyntax expression)
             : base(syntaxTree)
         {
-            _elseKeyword = elseKeyword;
-            _expression = expression;
+            ElseKeyword = elseKeyword;
+            Expression = expression;
         }
 
         public override SyntaxKind Kind
@@ -22,18 +19,12 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _elseKeyword;
-            yield return _expression;
+            yield return ElseKeyword;
+            yield return Expression;
         }
 
-        public SyntaxToken ElseKeyword
-        {
-            get { return _elseKeyword; }
-        }
+        public SyntaxToken ElseKeyword { get; }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
     }
 }

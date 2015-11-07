@@ -7,17 +7,12 @@ namespace NQuery.Symbols
 {
     public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
     {
-        private readonly ImmutableArray<SymbolMarkupToken> _tokens;
-
         public SymbolMarkup(IEnumerable<SymbolMarkupToken> tokens)
         {
-            _tokens = tokens.ToImmutableArray();
+            Tokens = tokens.ToImmutableArray();
         }
 
-        public ImmutableArray<SymbolMarkupToken> Tokens
-        {
-            get { return _tokens; }
-        }
+        public ImmutableArray<SymbolMarkupToken> Tokens { get; }
 
         public override bool Equals(object obj)
         {
@@ -27,12 +22,12 @@ namespace NQuery.Symbols
 
         public bool Equals(SymbolMarkup other)
         {
-            if (other.Tokens.Length != _tokens.Length)
+            if (other.Tokens.Length != Tokens.Length)
                 return false;
 
-            for (var i = 0; i < _tokens.Length; i++)
+            for (var i = 0; i < Tokens.Length; i++)
             {
-                if (!_tokens[i].Equals(other.Tokens[i]))
+                if (!Tokens[i].Equals(other.Tokens[i]))
                     return false;
             }
 
@@ -41,12 +36,12 @@ namespace NQuery.Symbols
 
         public override int GetHashCode()
         {
-            return _tokens.GetHashCode();
+            return Tokens.GetHashCode();
         }
 
         public override string ToString()
         {
-            return string.Concat(_tokens.Select(n => n.Text));
+            return string.Concat(Tokens.Select(n => n.Text));
         }
 
         public static SymbolMarkup ForSymbol(Symbol symbol)

@@ -7,7 +7,6 @@ namespace NQuery.Syntax
     internal sealed class CharReader
     {
         private readonly SourceText _text;
-        private int _position;
 
         public CharReader(SourceText text)
         {
@@ -16,13 +15,10 @@ namespace NQuery.Syntax
 
         public void NextChar()
         {
-            _position++;
+            Position++;
         }
 
-        public int Position
-        {
-            get { return _position; }
-        }
+        public int Position { get; private set; }
 
         public char Current
         {
@@ -39,7 +35,7 @@ namespace NQuery.Syntax
 
         private char Peek(int offset)
         {
-            var index = _position + offset;
+            var index = Position + offset;
             return index < _text.Length
                        ? _text[index]
                        : '\0';

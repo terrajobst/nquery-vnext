@@ -8,12 +8,10 @@ namespace NQuery.Authoring.ActiproWpf.Text
 {
     internal sealed class ActiproSourceTextContainer : SourceTextContainer
     {
-        private readonly ITextDocument _textDocument;
-
         public ActiproSourceTextContainer(ITextDocument textDocument)
         {
-            _textDocument = textDocument;
-            _textDocument.TextChanged += TextDocumentOnTextChanged;
+            TextDocument = textDocument;
+            TextDocument.TextChanged += TextDocumentOnTextChanged;
         }
 
         private void TextDocumentOnTextChanged(object sender, TextSnapshotChangedEventArgs e)
@@ -30,13 +28,10 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public override SourceText Current
         {
-            get { return _textDocument.CurrentSnapshot.ToSourceText(); }
+            get { return TextDocument.CurrentSnapshot.ToSourceText(); }
         }
 
-        public ITextDocument TextDocument
-        {
-            get { return _textDocument; }
-        }
+        public ITextDocument TextDocument { get; }
 
         public override event EventHandler<EventArgs> CurrentChanged;
     }

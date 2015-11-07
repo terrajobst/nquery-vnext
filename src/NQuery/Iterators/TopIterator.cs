@@ -4,44 +4,35 @@ namespace NQuery.Iterators
 {
     internal class TopIterator : Iterator
     {
-        private readonly Iterator _input;
-        private readonly int _limit;
-
         private int _rowCount;
 
         public TopIterator(Iterator input, int limit)
         {
-            _input = input;
-            _limit = limit;
+            Input = input;
+            Limit = limit;
         }
 
-        protected Iterator Input
-        {
-            get { return _input; }
-        }
+        protected Iterator Input { get; }
 
-        protected int Limit
-        {
-            get { return _limit; }
-        }
+        protected int Limit { get; }
 
         public override RowBuffer RowBuffer
         {
-            get { return _input.RowBuffer; }
+            get { return Input.RowBuffer; }
         }
 
         public override void Open()
         {
-            _input.Open();
+            Input.Open();
             _rowCount = 0;
         }
 
         public override bool Read()
         {
-            if (!_input.Read())
+            if (!Input.Read())
                 return false;
 
-            if (_rowCount == _limit)
+            if (_rowCount == Limit)
                 return false;
 
             _rowCount++;

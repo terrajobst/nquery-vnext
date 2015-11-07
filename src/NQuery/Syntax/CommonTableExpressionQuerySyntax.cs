@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class CommonTableExpressionQuerySyntax : QuerySyntax
     {
-        private readonly SyntaxToken _withKeyword;
-        private readonly SeparatedSyntaxList<CommonTableExpressionSyntax> _commonTableExpressions;
-        private readonly QuerySyntax _query;
-
         internal CommonTableExpressionQuerySyntax(SyntaxTree syntaxTree, SyntaxToken withKeyword, SeparatedSyntaxList<CommonTableExpressionSyntax> commonTableExpressions, QuerySyntax query)
             : base(syntaxTree)
         {
-            _withKeyword = withKeyword;
-            _query = query;
-            _commonTableExpressions = commonTableExpressions;
+            WithKeyword = withKeyword;
+            Query = query;
+            CommonTableExpressions = commonTableExpressions;
         }
 
         public override SyntaxKind Kind
@@ -24,27 +20,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _withKeyword;
+            yield return WithKeyword;
 
-            foreach (var nodeOrToken in _commonTableExpressions.GetWithSeparators())
+            foreach (var nodeOrToken in CommonTableExpressions.GetWithSeparators())
                 yield return nodeOrToken;
 
-            yield return _query;
+            yield return Query;
         }
 
-        public SyntaxToken WithKeyword
-        {
-            get { return _withKeyword; }
-        }
+        public SyntaxToken WithKeyword { get; }
 
-        public SeparatedSyntaxList<CommonTableExpressionSyntax> CommonTableExpressions
-        {
-            get { return _commonTableExpressions; }
-        }
+        public SeparatedSyntaxList<CommonTableExpressionSyntax> CommonTableExpressions { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
     }
 }

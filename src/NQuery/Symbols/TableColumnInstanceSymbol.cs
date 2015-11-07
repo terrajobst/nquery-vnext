@@ -6,16 +6,12 @@ namespace NQuery.Symbols
 {
     public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol
     {
-        private readonly TableInstanceSymbol _tableInstance;
-        private readonly ColumnSymbol _column;
-        private readonly ValueSlot _valueSlot;
-
         internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, Func<TableInstanceSymbol, ColumnSymbol, ValueSlot> valueSlotFactory)
             : base(column.Name)
         {
-            _tableInstance = tableInstance;
-            _column = column;
-            _valueSlot = valueSlotFactory(tableInstance, column);
+            TableInstance = tableInstance;
+            Column = column;
+            ValueSlot = valueSlotFactory(tableInstance, column);
         }
 
         public override SymbolKind Kind
@@ -23,19 +19,10 @@ namespace NQuery.Symbols
             get { return SymbolKind.TableColumnInstance; }
         }
 
-        internal override ValueSlot ValueSlot
-        {
-            get { return _valueSlot; }
-        }
+        internal override ValueSlot ValueSlot { get; }
 
-        public TableInstanceSymbol TableInstance
-        {
-            get { return _tableInstance; }
-        }
+        public TableInstanceSymbol TableInstance { get; }
 
-        public ColumnSymbol Column
-        {
-            get { return _column; }
-        }
+        public ColumnSymbol Column { get; }
     }
 }

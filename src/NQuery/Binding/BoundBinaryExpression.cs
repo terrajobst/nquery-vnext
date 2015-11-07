@@ -5,17 +5,12 @@ namespace NQuery.Binding
 {
     internal sealed class BoundBinaryExpression : BoundExpression
     {
-        private readonly BoundExpression _left;
-        private readonly BinaryOperatorKind _operatorKind;
-        private readonly OverloadResolutionResult<BinaryOperatorSignature> _result;
-        private readonly BoundExpression _right;
-
         public BoundBinaryExpression(BoundExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
         {
-            _left = left;
-            _operatorKind = operatorKind;
-            _result = result;
-            _right = right;
+            Left = left;
+            OperatorKind = operatorKind;
+            Result = result;
+            Right = right;
         }
 
         public override BoundNodeKind Kind
@@ -27,35 +22,23 @@ namespace NQuery.Binding
         {
             get
             {
-                return _result.Selected == null
+                return Result.Selected == null
                            ? TypeFacts.Unknown
-                           : _result.Selected.Signature.ReturnType;
+                           : Result.Selected.Signature.ReturnType;
             }
         }
 
-        public BoundExpression Left
-        {
-            get { return _left; }
-        }
+        public BoundExpression Left { get; }
 
-        public BinaryOperatorKind OperatorKind
-        {
-            get { return _operatorKind; }
-        }
+        public BinaryOperatorKind OperatorKind { get; }
 
-        public OverloadResolutionResult<BinaryOperatorSignature> Result
-        {
-            get { return _result; }
-        }
+        public OverloadResolutionResult<BinaryOperatorSignature> Result { get; }
 
-        public BoundExpression Right
-        {
-            get { return _right; }
-        }
+        public BoundExpression Right { get; }
 
         public BoundBinaryExpression Update(BoundExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
         {
-            if (left == _left && operatorKind == _operatorKind && result == _result && right == _right)
+            if (left == Left && operatorKind == OperatorKind && result == Result && right == Right)
                 return this;
 
             return new BoundBinaryExpression(left, operatorKind, result, right);
@@ -63,8 +46,8 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            var kind = _result.Candidates.First().Signature.Kind;
-            return $"({_left} {kind.ToDisplayName()} {_right})";
+            var kind = Result.Candidates.First().Signature.Kind;
+            return $"({Left} {kind.ToDisplayName()} {Right})";
         }
     }
 }

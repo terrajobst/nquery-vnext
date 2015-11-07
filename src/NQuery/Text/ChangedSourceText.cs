@@ -6,56 +6,43 @@ namespace NQuery.Text
 {
     internal sealed class ChangedSourceText : SourceText
     {
-        private readonly SourceText _oldText;
-        private readonly SourceText _newText;
-        private readonly ImmutableArray<TextChange> _changes;
-
         public ChangedSourceText(SourceText oldText, SourceText newText, IEnumerable<TextChange> changes)
             : base(newText.Container)
         {
-            _oldText = oldText;
-            _newText = newText;
-            _changes = changes.ToImmutableArray();
+            OldText = oldText;
+            NewText = newText;
+            Changes = changes.ToImmutableArray();
         }
 
-        public SourceText OldText
-        {
-            get { return _oldText; }
-        }
+        public SourceText OldText { get; }
 
-        public SourceText NewText
-        {
-            get { return _newText; }
-        }
+        public SourceText NewText { get; }
 
-        public ImmutableArray<TextChange> Changes
-        {
-            get { return _changes; }
-        }
+        public ImmutableArray<TextChange> Changes { get; }
 
         public override int GetLineNumberFromPosition(int position)
         {
-            return _newText.GetLineNumberFromPosition(position);
+            return NewText.GetLineNumberFromPosition(position);
         }
 
         public override string GetText(TextSpan textSpan)
         {
-            return _newText.GetText(textSpan);
+            return NewText.GetText(textSpan);
         }
 
         public override char this[int index]
         {
-            get { return _newText[index]; }
+            get { return NewText[index]; }
         }
 
         public override int Length
         {
-            get { return _newText.Length; }
+            get { return NewText.Length; }
         }
 
         public override TextLineCollection Lines
         {
-            get { return _newText.Lines; }
+            get { return NewText.Lines; }
         }
     }
 }

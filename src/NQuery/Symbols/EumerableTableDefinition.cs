@@ -9,14 +9,13 @@ namespace NQuery.Symbols
 {
     internal sealed class EumerableTableDefinition : TableDefinition
     {
-        private readonly string _name;
         private readonly IEnumerable _source;
         private readonly Type _rowType;
         private readonly IPropertyProvider _propertyProvider;
 
         public EumerableTableDefinition(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
         {
-            _name = name;
+            Name = name;
             _source = source;
             _rowType = rowType;
             _propertyProvider = propertyProvider;
@@ -33,10 +32,7 @@ namespace NQuery.Symbols
             return _source;
         }
 
-        public override string Name
-        {
-            get { return _name; }
-        }
+        public override string Name { get; }
 
         public override Type RowType
         {

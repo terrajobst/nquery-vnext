@@ -11,20 +11,15 @@ namespace NQuery
     public sealed class SyntaxTrivia
     {
         private readonly SyntaxTree _syntaxTree;
-        private readonly SyntaxKind _kind;
-        private readonly string _text;
-        private readonly TextSpan _span;
-        private readonly StructuredTriviaSyntax _structure;
-        private readonly ImmutableArray<Diagnostic> _diagnostics;
 
         internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IEnumerable<Diagnostic> diagnostics)
         {
             _syntaxTree = syntaxTree;
-            _kind = kind;
-            _text = text;
-            _span = span;
-            _structure = structure;
-            _diagnostics = diagnostics.ToImmutableArray();
+            Kind = kind;
+            Text = text;
+            Span = span;
+            Structure = structure;
+            Diagnostics = diagnostics.ToImmutableArray();
         }
 
         public SyntaxToken Parent
@@ -32,34 +27,19 @@ namespace NQuery
             get { return _syntaxTree == null ? null : _syntaxTree.GetParentToken(this); }
         }
 
-        public SyntaxKind Kind
-        {
-            get { return _kind; }
-        }
+        public SyntaxKind Kind { get; }
 
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public StructuredTriviaSyntax Structure
-        {
-            get { return _structure; }
-        }
+        public StructuredTriviaSyntax Structure { get; }
 
-        public ImmutableArray<Diagnostic> Diagnostics
-        {
-            get { return _diagnostics; }
-        }
+        public ImmutableArray<Diagnostic> Diagnostics { get; }
 
         public void WriteTo(TextWriter writer)
         {
-            writer.Write(_text);
+            writer.Write(Text);
         }
 
         public override string ToString()

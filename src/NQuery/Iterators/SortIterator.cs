@@ -8,16 +8,14 @@ namespace NQuery.Iterators
     internal class SortIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly ImmutableArray<int> _sortEntries;
-        private readonly ImmutableArray<IComparer> _comparers;
 
         private readonly SpooledRowBuffer _spooledRowBuffer;
 
         public SortIterator(Iterator input, IEnumerable<int> sortEntries, IEnumerable<IComparer> comparers)
         {
             _input = input;
-            _sortEntries = sortEntries.ToImmutableArray();
-            _comparers = comparers.ToImmutableArray();
+            SortEntries = sortEntries.ToImmutableArray();
+            Comparers = comparers.ToImmutableArray();
             _spooledRowBuffer = new SpooledRowBuffer(_input.RowBuffer.Count);
         }
 
@@ -26,15 +24,9 @@ namespace NQuery.Iterators
             get { return _spooledRowBuffer; }
         }
 
-        public ImmutableArray<int> SortEntries
-        {
-            get { return _sortEntries; }
-        }
+        public ImmutableArray<int> SortEntries { get; }
 
-        public ImmutableArray<IComparer> Comparers
-        {
-            get { return _comparers; }
-        }
+        public ImmutableArray<IComparer> Comparers { get; }
 
         protected object[] GetCurrentRow()
         {
@@ -55,7 +47,7 @@ namespace NQuery.Iterators
                 result.Add(rowValues);
             }
 
-            var rowComparer = new RowComparer(_sortEntries, _comparers);
+            var rowComparer = new RowComparer(SortEntries, Comparers);
             result.Sort(rowComparer);
             return result;
         }
@@ -83,21 +75,16 @@ namespace NQuery.Iterators
 
         private sealed class SpooledRowBuffer : RowBuffer
         {
-            private readonly int _count;
-
             public SpooledRowBuffer(int count)
             {
-                _count = count;
+                Count = count;
             }
 
             public IReadOnlyList<object[]> Rows { get; set; }
 
             public int RowIndex { get; set; }
 
-            public override int Count
-            {
-                get { return _count; }
-            }
+            public override int Count { get; }
 
             public override object this[int index]
             {

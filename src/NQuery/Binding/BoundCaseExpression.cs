@@ -8,13 +8,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundCaseExpression : BoundExpression
     {
-        private readonly ImmutableArray<BoundCaseLabel> _caseLabels;
-        private readonly BoundExpression _elseExpression;
-
         public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
         {
-            _caseLabels = caseLabels.ToImmutableArray();
-            _elseExpression = elseExpression;
+            CaseLabels = caseLabels.ToImmutableArray();
+            ElseExpression = elseExpression;
         }
 
         public override BoundNodeKind Kind
@@ -24,24 +21,18 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return _caseLabels.First().ThenExpression.Type; }
+            get { return CaseLabels.First().ThenExpression.Type; }
         }
 
-        public ImmutableArray<BoundCaseLabel> CaseLabels
-        {
-            get { return _caseLabels; }
-        }
+        public ImmutableArray<BoundCaseLabel> CaseLabels { get; }
 
-        public BoundExpression ElseExpression
-        {
-            get { return _elseExpression; }
-        }
+        public BoundExpression ElseExpression { get; }
 
         public BoundCaseExpression Update(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
         {
             var newCaseLabels = caseLabels.ToImmutableArray();
 
-            if (newCaseLabels == _caseLabels && elseExpression == _elseExpression)
+            if (newCaseLabels == CaseLabels && elseExpression == ElseExpression)
                 return this;
 
             return new BoundCaseExpression(newCaseLabels, elseExpression);
@@ -52,7 +43,7 @@ namespace NQuery.Binding
             var sb = new StringBuilder();
             sb.Append("CASE ");
 
-            foreach (var boundCaseLabel in _caseLabels)
+            foreach (var boundCaseLabel in CaseLabels)
             {
                 sb.Append("WHEN ");
                 sb.Append(boundCaseLabel.Condition);
@@ -60,10 +51,10 @@ namespace NQuery.Binding
                 sb.Append(boundCaseLabel.ThenExpression);
             }
 
-            if (_elseExpression != null)
+            if (ElseExpression != null)
             {
                 sb.Append(" ELSE ");
-                sb.Append(_elseExpression);
+                sb.Append(ElseExpression);
             }
 
             sb.Append(" END");

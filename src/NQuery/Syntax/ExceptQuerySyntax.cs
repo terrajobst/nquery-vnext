@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class ExceptQuerySyntax : QuerySyntax
     {
-        private readonly QuerySyntax _leftQuery;
-        private readonly SyntaxToken _exceptKeyword;
-        private readonly QuerySyntax _rightQuery;
-
         internal ExceptQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken exceptKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
-            _leftQuery = leftQuery;
-            _exceptKeyword = exceptKeyword;
-            _rightQuery = rightQuery;
+            LeftQuery = leftQuery;
+            ExceptKeyword = exceptKeyword;
+            RightQuery = rightQuery;
         }
 
         public override SyntaxKind Kind
@@ -24,24 +20,15 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _leftQuery;
-            yield return _exceptKeyword;
-            yield return _rightQuery;
+            yield return LeftQuery;
+            yield return ExceptKeyword;
+            yield return RightQuery;
         }
 
-        public QuerySyntax LeftQuery
-        {
-            get { return _leftQuery; }
-        }
+        public QuerySyntax LeftQuery { get; }
 
-        public SyntaxToken ExceptKeyword
-        {
-            get { return _exceptKeyword; }
-        }
+        public SyntaxToken ExceptKeyword { get; }
 
-        public QuerySyntax RightQuery
-        {
-            get { return _rightQuery; }
-        }
+        public QuerySyntax RightQuery { get; }
     }
 }

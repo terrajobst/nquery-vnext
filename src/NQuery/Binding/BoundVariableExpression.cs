@@ -6,11 +6,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundVariableExpression :  BoundExpression
     {
-        private readonly VariableSymbol _variableSymbol;
-
         public BoundVariableExpression(VariableSymbol variableSymbol)
         {
-            _variableSymbol = variableSymbol;
+            Symbol = variableSymbol;
         }
 
         public override BoundNodeKind Kind
@@ -20,17 +18,14 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return _variableSymbol.Type; }
+            get { return Symbol.Type; }
         }
 
-        public VariableSymbol Symbol
-        {
-            get { return _variableSymbol; }
-        }
+        public VariableSymbol Symbol { get; }
 
         public override string ToString()
         {
-            return $"@{_variableSymbol.Name}";
+            return $"@{Symbol.Name}";
         }
     }
 }

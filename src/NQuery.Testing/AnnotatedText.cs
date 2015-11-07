@@ -7,15 +7,11 @@ namespace NQuery
 {
     public sealed partial class AnnotatedText
     {
-        private readonly string _text;
-        private readonly ImmutableArray<TextSpan> _spans;
-        private readonly ImmutableArray<TextChange> _changes;
-
         public AnnotatedText(string text, ImmutableArray<TextSpan> spans, ImmutableArray<TextChange> changes)
         {
-            _text = text;
-            _spans = spans;
-            _changes = changes;
+            Text = text;
+            Spans = spans;
+            Changes = changes;
         }
 
         public static AnnotatedText Parse(string text)
@@ -27,19 +23,10 @@ namespace NQuery
             return parser.Parse();
         }
 
-        public string Text
-        {
-            get { return _text; }
-        }
+        public string Text { get; }
 
-        public ImmutableArray<TextSpan> Spans
-        {
-            get { return _spans; }
-        }
+        public ImmutableArray<TextSpan> Spans { get; }
 
-        public ImmutableArray<TextChange> Changes
-        {
-            get { return _changes; }
-        }
+        public ImmutableArray<TextChange> Changes { get; }
     }
 }

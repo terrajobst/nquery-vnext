@@ -5,17 +5,15 @@ namespace NQuery.Binding
 {
     internal sealed class UnaryOperatorSignature : Signature
     {
-        private readonly UnaryOperatorKind _kind;
         private readonly Type _returnType;
         private readonly Type _argumentType;
-        private readonly MethodInfo _methodInfo;
 
         private UnaryOperatorSignature(UnaryOperatorKind kind, Type returnType, Type argumentType, MethodInfo methodInfo)
         {
-            _kind = kind;
+            Kind = kind;
             _returnType = returnType;
             _argumentType = argumentType;
-            _methodInfo = methodInfo;
+            MethodInfo = methodInfo;
         }
 
         public UnaryOperatorSignature(UnaryOperatorKind kind, MethodInfo methodInfo)
@@ -43,19 +41,13 @@ namespace NQuery.Binding
             get { return 1; }
         }
 
-        public UnaryOperatorKind Kind
-        {
-            get { return _kind; }
-        }
+        public UnaryOperatorKind Kind { get; }
 
-        public MethodInfo MethodInfo
-        {
-            get { return _methodInfo; }
-        }
+        public MethodInfo MethodInfo { get; }
 
         public override string ToString()
         {
-            return $"{_kind}({_argumentType.ToDisplayName()}) AS {_returnType.ToDisplayName()}";
+            return $"{Kind}({_argumentType.ToDisplayName()}) AS {_returnType.ToDisplayName()}";
         }
     }
 }

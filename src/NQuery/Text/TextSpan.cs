@@ -4,13 +4,10 @@ namespace NQuery.Text
 {
     public struct TextSpan : IEquatable<TextSpan>
     {
-        private readonly int _start;
-        private readonly int _length;
-
         public TextSpan(int start, int length)
         {
-            _start = start;
-            _length = length;
+            Start = start;
+            Length = length;
         }
 
         public static TextSpan FromBounds(int start, int end)
@@ -19,20 +16,14 @@ namespace NQuery.Text
             return new TextSpan(start, length);
         }
 
-        public int Start
-        {
-            get { return _start; }
-        }
+        public int Start { get; }
 
         public int End
         {
-            get { return _start + _length; }
+            get { return Start + Length; }
         }
 
-        public int Length
-        {
-            get { return _length; }
-        }
+        public int Length { get; }
 
         public bool Contains(int position)
         {
@@ -63,8 +54,8 @@ namespace NQuery.Text
 
         public bool Equals(TextSpan other)
         {
-            return _start == other._start &&
-                   _length == other._length;
+            return Start == other.Start &&
+                   Length == other.Length;
         }
 
         public override bool Equals(object obj)
@@ -77,7 +68,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (_start*397) ^ _length;
+                return (Start*397) ^ Length;
             }
         }
 

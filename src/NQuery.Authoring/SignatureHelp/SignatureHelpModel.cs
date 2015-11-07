@@ -8,42 +8,25 @@ namespace NQuery.Authoring.SignatureHelp
 {
     public sealed class SignatureHelpModel
     {
-        private readonly TextSpan _applicableSpan;
-        private readonly ImmutableArray<SignatureItem> _signatures;
-        private readonly SignatureItem _signature;
-        private readonly int _selectedParameter;
-
         public SignatureHelpModel(TextSpan applicableSpan, IEnumerable<SignatureItem> signatures, SignatureItem signature, int selectedParameter)
         {
-            _signatures = signatures.ToImmutableArray();
-            _applicableSpan = applicableSpan;
-            _signature = signature;
-            _selectedParameter = selectedParameter;
+            Signatures = signatures.ToImmutableArray();
+            ApplicableSpan = applicableSpan;
+            Signature = signature;
+            SelectedParameter = selectedParameter;
         }
 
-        public TextSpan ApplicableSpan
-        {
-            get { return _applicableSpan; }
-        }
+        public TextSpan ApplicableSpan { get; }
 
-        public ImmutableArray<SignatureItem> Signatures
-        {
-            get { return _signatures; }
-        }
+        public ImmutableArray<SignatureItem> Signatures { get; }
 
-        public SignatureItem Signature
-        {
-            get { return _signature; }
-        }
+        public SignatureItem Signature { get; }
 
-        public int SelectedParameter
-        {
-            get { return _selectedParameter; }
-        }
+        public int SelectedParameter { get; }
 
         public SignatureHelpModel WithSignature(SignatureItem signatureItem)
         {
-            return new SignatureHelpModel(_applicableSpan, _signatures, signatureItem, _selectedParameter);
+            return new SignatureHelpModel(ApplicableSpan, Signatures, signatureItem, SelectedParameter);
         }
     }
 }

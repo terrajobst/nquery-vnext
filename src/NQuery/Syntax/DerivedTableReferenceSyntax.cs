@@ -5,20 +5,14 @@ namespace NQuery.Syntax
 {
     public sealed class DerivedTableReferenceSyntax : TableReferenceSyntax
     {
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParenthesis;
-        private readonly SyntaxToken _asKeyword;
-        private readonly SyntaxToken _name;
-
         internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken asKeyword, SyntaxToken name)
             : base(syntaxTree)
         {
-            _leftParenthesis = leftParenthesis;
-            _query = query;
-            _rightParenthesis = rightParenthesis;
-            _asKeyword = asKeyword;
-            _name = name;
+            LeftParenthesis = leftParenthesis;
+            Query = query;
+            RightParenthesis = rightParenthesis;
+            AsKeyword = asKeyword;
+            Name = name;
         }
 
         public override SyntaxKind Kind
@@ -28,37 +22,22 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _leftParenthesis;
-            yield return _query;
-            yield return _rightParenthesis;
-            if (_asKeyword != null)
-                yield return _asKeyword;
-            yield return _name;
+            yield return LeftParenthesis;
+            yield return Query;
+            yield return RightParenthesis;
+            if (AsKeyword != null)
+                yield return AsKeyword;
+            yield return Name;
         }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
 
-        public SyntaxToken AsKeyword
-        {
-            get { return _asKeyword; }
-        }
+        public SyntaxToken AsKeyword { get; }
 
-        public SyntaxToken Name
-        {
-            get { return _name; }
-        }
+        public SyntaxToken Name { get; }
     }
 }

@@ -6,38 +6,21 @@ namespace NQuery.Tests.Binding
     {
         private sealed class BinaryOperatorTestCase
         {
-            private readonly string _op;
-            private readonly string _left;
-            private readonly string _right;
-            private readonly string _expectedResult;
-
             public BinaryOperatorTestCase(string op, string left, string right, string expectedResult)
             {
-                _op = op;
-                _left = left;
-                _right = right;
-                _expectedResult = expectedResult;
+                Op = op;
+                Left = left;
+                Right = right;
+                ExpectedResult = expectedResult;
             }
 
-            public string Op
-            {
-                get { return _op; }
-            }
+            public string Op { get; }
 
-            public string Left
-            {
-                get { return _left; }
-            }
+            public string Left { get; }
 
-            public string Right
-            {
-                get { return _right; }
-            }
+            public string Right { get; }
 
-            public string ExpectedResult
-            {
-                get { return _expectedResult; }
-            }
+            public string ExpectedResult { get; }
         }
 
         private static readonly BinaryOperatorTestCase[] BinaryTestCases =

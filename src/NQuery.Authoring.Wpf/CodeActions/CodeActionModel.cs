@@ -6,19 +6,15 @@ namespace NQuery.Authoring.Wpf.CodeActions
 {
     public abstract class CodeActionModel
     {
-        private readonly CodeActionKind _kind;
         private readonly ICodeAction _codeAction;
 
         protected CodeActionModel(CodeActionKind kind, ICodeAction codeAction)
         {
-            _kind = kind;
+            Kind = kind;
             _codeAction = codeAction;
         }
 
-        public CodeActionKind Kind
-        {
-            get { return _kind; }
-        }
+        public CodeActionKind Kind { get; }
 
         public string Description
         {

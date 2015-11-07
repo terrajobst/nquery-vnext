@@ -6,42 +6,25 @@ namespace NQuery.Binding
 {
     internal sealed class BoundAggregatedValue
     {
-        private readonly ValueSlot _output;
-        private readonly AggregateSymbol _aggregate;
-        private readonly IAggregatable _aggregatable;
-        private readonly BoundExpression _argument;
-
         public BoundAggregatedValue(ValueSlot output, AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
-            _output = output;
-            _aggregate = aggregate;
-            _aggregatable = aggregatable;
-            _argument = argument;
+            Output = output;
+            Aggregate = aggregate;
+            Aggregatable = aggregatable;
+            Argument = argument;
         }
 
-        public ValueSlot Output
-        {
-            get { return _output; }
-        }
+        public ValueSlot Output { get; }
 
-        public AggregateSymbol Aggregate
-        {
-            get { return _aggregate; }
-        }
+        public AggregateSymbol Aggregate { get; }
 
-        public IAggregatable Aggregatable
-        {
-            get { return _aggregatable; }
-        }
+        public IAggregatable Aggregatable { get; }
 
-        public BoundExpression Argument
-        {
-            get { return _argument; }
-        }
+        public BoundExpression Argument { get; }
 
         public BoundAggregatedValue Update(ValueSlot output, AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
-            if (output == _output && aggregate == _aggregate && aggregatable == _aggregatable && argument == _argument)
+            if (output == Output && aggregate == Aggregate && aggregatable == Aggregatable && argument == Argument)
                 return this;
 
             return new BoundAggregatedValue(output, aggregate, aggregatable, argument);

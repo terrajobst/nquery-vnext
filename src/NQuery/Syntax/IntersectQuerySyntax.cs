@@ -5,16 +5,12 @@ namespace NQuery.Syntax
 {
     public sealed class IntersectQuerySyntax : QuerySyntax
     {
-        private readonly QuerySyntax _leftQuery;
-        private readonly SyntaxToken _intersectKeyword;
-        private readonly QuerySyntax _rightQuery;
-
         internal IntersectQuerySyntax(SyntaxTree syntaxTree, QuerySyntax leftQuery, SyntaxToken intersectKeyword, QuerySyntax rightQuery)
             : base(syntaxTree)
         {
-            _leftQuery = leftQuery;
-            _intersectKeyword = intersectKeyword;
-            _rightQuery = rightQuery;
+            LeftQuery = leftQuery;
+            IntersectKeyword = intersectKeyword;
+            RightQuery = rightQuery;
         }
 
         public override SyntaxKind Kind
@@ -24,24 +20,15 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _leftQuery;
-            yield return _intersectKeyword;
-            yield return _rightQuery;
+            yield return LeftQuery;
+            yield return IntersectKeyword;
+            yield return RightQuery;
         }
 
-        public QuerySyntax LeftQuery
-        {
-            get { return _leftQuery; }
-        }
+        public QuerySyntax LeftQuery { get; }
 
-        public SyntaxToken IntersectKeyword
-        {
-            get { return _intersectKeyword; }
-        }
+        public SyntaxToken IntersectKeyword { get; }
 
-        public QuerySyntax RightQuery
-        {
-            get { return _rightQuery; }
-        }
+        public QuerySyntax RightQuery { get; }
     }
 }

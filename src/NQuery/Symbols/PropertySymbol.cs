@@ -5,12 +5,10 @@ namespace NQuery.Symbols
 {
     public abstract class PropertySymbol : Symbol
     {
-        private readonly Type _type;
-
         public PropertySymbol(string name, Type type)
             : base(name)
         {
-            _type = type;
+            Type = type;
         }
 
         public abstract Expression CreateInvocation(Expression instance);
@@ -20,9 +18,6 @@ namespace NQuery.Symbols
             get { return SymbolKind.Property; }
         }
 
-        public override Type Type
-        {
-            get { return _type; }
-        }
+        public override Type Type { get; }
     }
 }

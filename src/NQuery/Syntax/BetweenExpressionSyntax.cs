@@ -5,22 +5,15 @@ namespace NQuery.Syntax
 {
     public sealed class BetweenExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _betweenKeyword;
-        private readonly ExpressionSyntax _lowerBound;
-        private readonly SyntaxToken _andKeyword;
-        private readonly ExpressionSyntax _upperBound;
-
         internal BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
             : base(syntaxTree)
         {
-            _left = left;
-            _notKeyword = notKeyword;
-            _betweenKeyword = betweenKeyword;
-            _lowerBound = lowerBound;
-            _andKeyword = andKeyword;
-            _upperBound = upperBound;
+            Left = left;
+            NotKeyword = notKeyword;
+            BetweenKeyword = betweenKeyword;
+            LowerBound = lowerBound;
+            AndKeyword = andKeyword;
+            UpperBound = upperBound;
         }
 
         public override SyntaxKind Kind
@@ -30,43 +23,25 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _left;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _betweenKeyword;
-            yield return _lowerBound;
-            yield return _andKeyword;
-            yield return _upperBound;
+            yield return Left;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return BetweenKeyword;
+            yield return LowerBound;
+            yield return AndKeyword;
+            yield return UpperBound;
         }
 
-        public ExpressionSyntax Left
-        {
-            get { return _left; }
-        }
+        public ExpressionSyntax Left { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken BetweenKeyword
-        {
-            get { return _betweenKeyword; }
-        }
+        public SyntaxToken BetweenKeyword { get; }
 
-        public ExpressionSyntax LowerBound
-        {
-            get { return _lowerBound; }
-        }
+        public ExpressionSyntax LowerBound { get; }
 
-        public SyntaxToken AndKeyword
-        {
-            get { return _andKeyword; }
-        }
+        public SyntaxToken AndKeyword { get; }
 
-        public ExpressionSyntax UpperBound
-        {
-            get { return _upperBound; }
-        }
+        public ExpressionSyntax UpperBound { get; }
     }
 }

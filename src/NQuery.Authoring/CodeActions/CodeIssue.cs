@@ -9,11 +9,6 @@ namespace NQuery.Authoring.CodeActions
 {
     public sealed class CodeIssue
     {
-        private readonly CodeIssueKind _kind;
-        private readonly TextSpan _span;
-        private readonly string _description;
-        private readonly ImmutableArray<ICodeAction> _actions;
-
         public CodeIssue(CodeIssueKind kind, TextSpan span, string description)
             : this(kind, span, description, Enumerable.Empty<ICodeAction>())
         {
@@ -26,30 +21,18 @@ namespace NQuery.Authoring.CodeActions
 
         public CodeIssue(CodeIssueKind kind, TextSpan span, string description, IEnumerable<ICodeAction> actions)
         {
-            _kind = kind;
-            _span = span;
-            _description = description;
-            _actions = actions.ToImmutableArray();
+            Kind = kind;
+            Span = span;
+            Description = description;
+            Actions = actions.ToImmutableArray();
         }
 
-        public CodeIssueKind Kind
-        {
-            get { return _kind; }
-        }
+        public CodeIssueKind Kind { get; }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public string Description
-        {
-            get { return _description; }
-        }
+        public string Description { get; }
 
-        public ImmutableArray<ICodeAction> Actions
-        {
-            get { return _actions; }
-        }
+        public ImmutableArray<ICodeAction> Actions { get; }
     }
 }

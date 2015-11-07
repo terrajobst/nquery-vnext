@@ -5,22 +5,15 @@ namespace NQuery.Syntax
 {
     public sealed class CastExpressionSyntax : ExpressionSyntax
     {
-        private readonly SyntaxToken _castKeyword;
-        private readonly SyntaxToken _leftParenthesisToken;
-        private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _asKeyword;
-        private readonly SyntaxToken _typeName;
-        private readonly SyntaxToken _rightParenthesisToken;
-
         internal CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken typeName, SyntaxToken rightParenthesisToken)
             : base(syntaxTree)
         {
-            _castKeyword = castKeyword;
-            _leftParenthesisToken = leftParenthesisToken;
-            _expression = expression;
-            _asKeyword = asKeyword;
-            _typeName = typeName;
-            _rightParenthesisToken = rightParenthesisToken;
+            CastKeyword = castKeyword;
+            LeftParenthesisToken = leftParenthesisToken;
+            Expression = expression;
+            AsKeyword = asKeyword;
+            TypeName = typeName;
+            RightParenthesisToken = rightParenthesisToken;
         }
 
         public override SyntaxKind Kind
@@ -30,42 +23,24 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _castKeyword;
-            yield return _leftParenthesisToken;
-            yield return _expression;
-            yield return _asKeyword;
-            yield return _typeName;
-            yield return _rightParenthesisToken;
+            yield return CastKeyword;
+            yield return LeftParenthesisToken;
+            yield return Expression;
+            yield return AsKeyword;
+            yield return TypeName;
+            yield return RightParenthesisToken;
         }
 
-        public SyntaxToken CastKeyword
-        {
-            get { return _castKeyword; }
-        }
+        public SyntaxToken CastKeyword { get; }
 
-        public SyntaxToken LeftParenthesisToken
-        {
-            get { return _leftParenthesisToken; }
-        }
+        public SyntaxToken LeftParenthesisToken { get; }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
 
-        public SyntaxToken AsKeyword
-        {
-            get { return _asKeyword; }
-        }
+        public SyntaxToken AsKeyword { get; }
 
-        public SyntaxToken TypeName
-        {
-            get { return _typeName; }
-        }
+        public SyntaxToken TypeName { get; }
 
-        public SyntaxToken RightParenthesisToken
-        {
-            get { return _rightParenthesisToken; }
-        }
+        public SyntaxToken RightParenthesisToken { get; }
     }
 }

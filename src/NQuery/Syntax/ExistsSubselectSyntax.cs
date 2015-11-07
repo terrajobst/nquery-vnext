@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class ExistsSubselectSyntax : SubselectExpressionSyntax
     {
-        private readonly SyntaxToken _existsKeyword;
-        private readonly SyntaxToken _leftParenthesis;
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _rightParenthesis;
-
         internal ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
-            _existsKeyword = existsKeyword;
-            _leftParenthesis = leftParenthesis;
-            _query = query;
-            _rightParenthesis = rightParenthesis;
+            ExistsKeyword = existsKeyword;
+            LeftParenthesis = leftParenthesis;
+            Query = query;
+            RightParenthesis = rightParenthesis;
         }
 
         public override SyntaxKind Kind
@@ -26,30 +21,18 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _existsKeyword;
-            yield return _leftParenthesis;
-            yield return _query;
-            yield return _rightParenthesis;
+            yield return ExistsKeyword;
+            yield return LeftParenthesis;
+            yield return Query;
+            yield return RightParenthesis;
         }
 
-        public SyntaxToken ExistsKeyword
-        {
-            get { return _existsKeyword; }
-        }
+        public SyntaxToken ExistsKeyword { get; }
 
-        public SyntaxToken LeftParenthesis
-        {
-            get { return _leftParenthesis; }
-        }
+        public SyntaxToken LeftParenthesis { get; }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken RightParenthesis
-        {
-            get { return _rightParenthesis; }
-        }
+        public SyntaxToken RightParenthesis { get; }
     }
 }

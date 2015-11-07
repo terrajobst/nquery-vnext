@@ -13,12 +13,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
     internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase, INQuerySignatureHelpProvider
     {
-        private readonly Collection<ISignatureHelpModelProvider> _providers = new Collection<ISignatureHelpModelProvider>();
-
-        public Collection<ISignatureHelpModelProvider> Providers
-        {
-            get { return _providers; }
-        }
+        public Collection<ISignatureHelpModelProvider> Providers { get; } = new Collection<ISignatureHelpModelProvider>();
 
         public override bool RequestSession(IEditorView view)
         {
@@ -33,7 +28,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
             var text = snapshot.Text;
             var position = snapshot.Position;
 
-            var model = semanticModel.GetSignatureHelpModel(position, _providers);
+            var model = semanticModel.GetSignatureHelpModel(position, Providers);
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
 

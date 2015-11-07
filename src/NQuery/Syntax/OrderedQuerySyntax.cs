@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class OrderedQuerySyntax : QuerySyntax
     {
-        private readonly QuerySyntax _query;
-        private readonly SyntaxToken _orderKeyword;
-        private readonly SyntaxToken _byKeyword;
-        private readonly SeparatedSyntaxList<OrderByColumnSyntax> _columns;
-
         internal OrderedQuerySyntax(SyntaxTree syntaxTree, QuerySyntax query, SyntaxToken orderKeyword, SyntaxToken byKeyword, SeparatedSyntaxList<OrderByColumnSyntax> columns)
             : base(syntaxTree)
         {
-            _query = query;
-            _orderKeyword = orderKeyword;
-            _byKeyword = byKeyword;
-            _columns = columns;
+            Query = query;
+            OrderKeyword = orderKeyword;
+            ByKeyword = byKeyword;
+            Columns = columns;
         }
 
         public override SyntaxKind Kind
@@ -26,31 +21,19 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _query;
-            yield return _orderKeyword;
-            yield return _byKeyword;
-            foreach (var nodeOrToken in _columns.GetWithSeparators())
+            yield return Query;
+            yield return OrderKeyword;
+            yield return ByKeyword;
+            foreach (var nodeOrToken in Columns.GetWithSeparators())
                 yield return nodeOrToken;
         }
 
-        public QuerySyntax Query
-        {
-            get { return _query; }
-        }
+        public QuerySyntax Query { get; }
 
-        public SyntaxToken OrderKeyword
-        {
-            get { return _orderKeyword; }
-        }
+        public SyntaxToken OrderKeyword { get; }
 
-        public SyntaxToken ByKeyword
-        {
-            get { return _byKeyword; }
-        }
+        public SyntaxToken ByKeyword { get; }
 
-        public SeparatedSyntaxList<OrderByColumnSyntax> Columns
-        {
-            get { return _columns; }
-        }
+        public SeparatedSyntaxList<OrderByColumnSyntax> Columns { get; }
     }
 }

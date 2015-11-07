@@ -11,17 +11,12 @@ namespace NQuery.Authoring.Composition.Completion
     [Export(typeof(ICompletionProviderService))]
     internal sealed class CompletionProviderService : ICompletionProviderService
     {
-        private readonly ImmutableArray<ICompletionProvider> _providers;
-
         [ImportingConstructor]
         public CompletionProviderService([ImportMany] IEnumerable<ICompletionProvider> providers)
         {
-            _providers = providers.Concat(CompletionExtensions.GetStandardCompletionProviders()).ToImmutableArray();
+            Providers = providers.Concat(CompletionExtensions.GetStandardCompletionProviders()).ToImmutableArray();
         }
 
-        public ImmutableArray<ICompletionProvider> Providers
-        {
-            get { return _providers; }
-        }
+        public ImmutableArray<ICompletionProvider> Providers { get; }
     }
 }

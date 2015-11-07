@@ -6,40 +6,27 @@ namespace NQuery.Authoring.SymbolSearch
 {
     public struct SymbolSpan : IEquatable<SymbolSpan>
     {
-        private readonly SymbolSpanKind _kind;
-        private readonly Symbol _symbol;
-        private readonly TextSpan _span;
-
         public SymbolSpan(SymbolSpanKind kind, Symbol symbol, TextSpan span)
         {
             if (symbol == null)
                 throw new ArgumentNullException(nameof(symbol));
 
-            _kind = kind;
-            _symbol = symbol;
-            _span = span;
+            Kind = kind;
+            Symbol = symbol;
+            Span = span;
         }
 
-        public SymbolSpanKind Kind
-        {
-            get { return _kind; }
-        }
+        public SymbolSpanKind Kind { get; }
 
-        public Symbol Symbol
-        {
-            get { return _symbol; }
-        }
+        public Symbol Symbol { get; }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
         public bool Equals(SymbolSpan other)
         {
-            return _kind == other._kind &&
-                   _symbol == other._symbol &&
-                   _span == other._span;
+            return Kind == other.Kind &&
+                   Symbol == other.Symbol &&
+                   Span == other.Span;
         }
 
         public override bool Equals(object obj)
@@ -52,9 +39,9 @@ namespace NQuery.Authoring.SymbolSearch
         {
             unchecked
             {
-                var hashCode = (int) _kind;
-                hashCode = (hashCode*397) ^ _symbol.GetHashCode();
-                hashCode = (hashCode*397) ^ _span.GetHashCode();
+                var hashCode = (int) Kind;
+                hashCode = (hashCode*397) ^ Symbol.GetHashCode();
+                hashCode = (hashCode*397) ^ Span.GetHashCode();
                 return hashCode;
             }
         }

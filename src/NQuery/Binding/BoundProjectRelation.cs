@@ -7,13 +7,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundProjectRelation : BoundRelation
     {
-        private readonly BoundRelation _input;
-        private readonly ImmutableArray<ValueSlot> _outputs;
-
         public BoundProjectRelation(BoundRelation input, IEnumerable<ValueSlot> outputs)
         {
-            _input = input;
-            _outputs = outputs.ToImmutableArray();
+            Input = input;
+            Outputs = outputs.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -21,21 +18,15 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ProjectRelation; }
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public ImmutableArray<ValueSlot> Outputs
-        {
-            get { return _outputs; }
-        }
+        public ImmutableArray<ValueSlot> Outputs { get; }
 
         public BoundProjectRelation Update(BoundRelation input, IEnumerable<ValueSlot> outputs)
         {
             var newOutputs = outputs.ToImmutableArray();
 
-            if (input == _input && newOutputs == _outputs)
+            if (input == Input && newOutputs == Outputs)
                 return this;
 
             return new BoundProjectRelation(input, newOutputs);
@@ -48,7 +39,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _outputs;
+            return Outputs;
         }
     }
 }

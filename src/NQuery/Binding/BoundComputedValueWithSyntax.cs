@@ -6,30 +6,17 @@ namespace NQuery.Binding
 {
     internal struct BoundComputedValueWithSyntax
     {
-        private readonly ExpressionSyntax _syntax;
-        private readonly BoundExpression _expression;
-        private readonly ValueSlot _result;
-
         public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, ValueSlot result)
         {
-            _syntax = syntax;
-            _expression = expression;
-            _result = result;
+            Syntax = syntax;
+            Expression = expression;
+            Result = result;
         }
 
-        public ExpressionSyntax Syntax
-        {
-            get { return _syntax; }
-        }
+        public ExpressionSyntax Syntax { get; }
 
-        public BoundExpression Expression
-        {
-            get { return _expression; }
-        }
+        public BoundExpression Expression { get; }
 
-        public ValueSlot Result
-        {
-            get { return _result; }
-        }
+        public ValueSlot Result { get; }
     }
 }

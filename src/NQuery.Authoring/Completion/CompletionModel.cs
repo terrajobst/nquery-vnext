@@ -8,30 +8,17 @@ namespace NQuery.Authoring.Completion
 {
     public sealed class CompletionModel
     {
-        private readonly SemanticModel _semanticModel;
-        private readonly TextSpan _applicableSpan;
-        private readonly ImmutableArray<CompletionItem> _items;
-
         public CompletionModel(SemanticModel semanticModel, TextSpan applicableSpan, IEnumerable<CompletionItem> items)
         {
-            _semanticModel = semanticModel;
-            _applicableSpan = applicableSpan;
-            _items = items.ToImmutableArray();
+            SemanticModel = semanticModel;
+            ApplicableSpan = applicableSpan;
+            Items = items.ToImmutableArray();
         }
 
-        public SemanticModel SemanticModel
-        {
-            get { return _semanticModel; }
-        }
+        public SemanticModel SemanticModel { get; }
 
-        public TextSpan ApplicableSpan
-        {
-            get { return _applicableSpan; }
-        }
+        public TextSpan ApplicableSpan { get; }
 
-        public ImmutableArray<CompletionItem> Items
-        {
-            get { return _items; }
-        }
+        public ImmutableArray<CompletionItem> Items { get; }
     }
 }

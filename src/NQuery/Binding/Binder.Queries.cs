@@ -15,7 +15,7 @@ namespace NQuery.Binding
     {
         public virtual BoundQueryState QueryState
         {
-            get { return _parent == null ? null : _parent.QueryState; }
+            get { return Parent == null ? null : Parent.QueryState; }
         }
 
         private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)

@@ -33,21 +33,16 @@ namespace NQuery
             /* Double  */  {  N,        N,       N,        N,         N,      N,       N,       N,        N,       N,        N}
         };
 
-        private readonly bool _exists;
-        private readonly bool _isIdentity;
-        private readonly bool _isImplicit;
         private readonly bool _isBoxingOrUnboxing;
-        private readonly bool _isReference;
-        private readonly ImmutableArray<MethodInfo> _conversionMethods;
 
         private Conversion(bool exists, bool isIdentity, bool isImplicit, bool isBoxingOrUnboxing, bool isReference, IEnumerable<MethodInfo> conversionMethods)
         {
-            _exists = exists;
-            _isIdentity = isIdentity;
-            _isImplicit = isImplicit;
+            Exists = exists;
+            IsIdentity = isIdentity;
+            IsImplicit = isImplicit;
             _isBoxingOrUnboxing = isBoxingOrUnboxing;
-            _isReference = isReference;
-            _conversionMethods = conversionMethods == null
+            IsReference = isReference;
+            ConversionMethods = conversionMethods == null
                 ? ImmutableArray<MethodInfo>.Empty
                 : conversionMethods.ToImmutableArray();
         }
@@ -62,20 +57,11 @@ namespace NQuery
         private static readonly Conversion UpCast = new Conversion(true, false, true, false, true, null);
         private static readonly Conversion DownCast = new Conversion(true, false, false, false, true, null);
 
-        public bool Exists
-        {
-            get { return _exists; }
-        }
+        public bool Exists { get; }
 
-        public bool IsIdentity
-        {
-            get { return _isIdentity; }
-        }
+        public bool IsIdentity { get; }
 
-        public bool IsImplicit
-        {
-            get { return _isImplicit; }
-        }
+        public bool IsImplicit { get; }
 
         public bool IsExplicit
         {
@@ -84,7 +70,7 @@ namespace NQuery
 
         public bool IsBoxing
         {
-            get { return _isBoxingOrUnboxing &&  _isImplicit; }
+            get { return _isBoxingOrUnboxing &&  IsImplicit; }
         }
 
         public bool IsUnboxing
@@ -92,15 +78,9 @@ namespace NQuery
             get { return _isBoxingOrUnboxing && IsExplicit; }
         }
 
-        public bool IsReference
-        {
-            get { return _isReference; }
-        }
+        public bool IsReference { get; }
 
-        public ImmutableArray<MethodInfo> ConversionMethods
-        {
-            get { return _conversionMethods; }
-        }
+        public ImmutableArray<MethodInfo> ConversionMethods { get; }
 
         internal static Conversion Classify(Type sourceType, Type targetType)
         {

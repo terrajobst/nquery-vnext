@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class LikeExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _left;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _likeKeyword;
-        private readonly ExpressionSyntax _right;
-
         internal LikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
-            _left = left;
-            _notKeyword = notKeyword;
-            _likeKeyword = likeKeyword;
-            _right = right;
+            Left = left;
+            NotKeyword = notKeyword;
+            LikeKeyword = likeKeyword;
+            Right = right;
         }
 
         public override SyntaxKind Kind
@@ -26,31 +21,19 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _left;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _likeKeyword;
-            yield return _right;
+            yield return Left;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return LikeKeyword;
+            yield return Right;
         }
 
-        public ExpressionSyntax Left
-        {
-            get { return _left; }
-        }
+        public ExpressionSyntax Left { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken LikeKeyword
-        {
-            get { return _likeKeyword; }
-        }
+        public SyntaxToken LikeKeyword { get; }
 
-        public ExpressionSyntax Right
-        {
-            get { return _right; }
-        }
+        public ExpressionSyntax Right { get; }
     }
 }

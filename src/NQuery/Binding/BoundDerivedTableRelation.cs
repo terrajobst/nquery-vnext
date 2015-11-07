@@ -8,13 +8,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundDerivedTableRelation : BoundRelation
     {
-        private readonly TableInstanceSymbol _tableInstance;
-        private readonly BoundRelation _relation;
-
         public BoundDerivedTableRelation(TableInstanceSymbol tableInstance, BoundRelation relation)
         {
-            _tableInstance = tableInstance;
-            _relation = relation;
+            TableInstance = tableInstance;
+            Relation = relation;
         }
 
         public override BoundNodeKind Kind
@@ -22,19 +19,13 @@ namespace NQuery.Binding
             get { return BoundNodeKind.DerivedTableRelation; }
         }
 
-        public TableInstanceSymbol TableInstance
-        {
-            get { return _tableInstance; }
-        }
+        public TableInstanceSymbol TableInstance { get; }
 
-        public BoundRelation Relation
-        {
-            get { return _relation; }
-        }
+        public BoundRelation Relation { get; }
 
         public BoundDerivedTableRelation Update(TableInstanceSymbol tableInstance, BoundRelation relation)
         {
-            if (tableInstance == _tableInstance && _relation == relation)
+            if (tableInstance == TableInstance && Relation == relation)
                 return this;
 
             return new BoundDerivedTableRelation(tableInstance, relation);
@@ -47,7 +38,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _relation.GetOutputValues();
+            return Relation.GetOutputValues();
         }
     }
 }

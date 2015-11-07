@@ -6,23 +6,14 @@ namespace NQuery.Authoring.Classifications
 {
     public struct SemanticClassificationSpan
     {
-        private readonly TextSpan _span;
-        private readonly SemanticClassification _classification;
-
         public SemanticClassificationSpan(TextSpan span, SemanticClassification classification)
         {
-            _span = span;
-            _classification = classification;
+            Span = span;
+            Classification = classification;
         }
 
-        public TextSpan Span
-        {
-            get { return _span; }
-        }
+        public TextSpan Span { get; }
 
-        public SemanticClassification Classification
-        {
-            get { return _classification; }
-        }
+        public SemanticClassification Classification { get; }
     }
 }

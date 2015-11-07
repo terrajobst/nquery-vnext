@@ -106,53 +106,31 @@ namespace NQuery.Optimization
 
         private sealed class EqualPredicatesInfo
         {
-            private readonly BoundExpression _remainder;
-            private readonly ImmutableArray<EqualPredicate> _predicates;
-
             public EqualPredicatesInfo(BoundExpression remainder, IEnumerable<EqualPredicate> equalPredicates)
             {
-                _remainder = remainder;
-                _predicates = equalPredicates.ToImmutableArray();
+                Remainder = remainder;
+                Predicates = equalPredicates.ToImmutableArray();
             }
 
-            public BoundExpression Remainder
-            {
-                get { return _remainder; }
-            }
+            public BoundExpression Remainder { get; }
 
-            public ImmutableArray<EqualPredicate> Predicates
-            {
-                get { return _predicates; }
-            }
+            public ImmutableArray<EqualPredicate> Predicates { get; }
         }
 
         private sealed class EqualPredicate
         {
-            private readonly BoundExpression _condition;
-            private readonly ValueSlot _left;
-            private readonly ValueSlot _right;
-
             public EqualPredicate(BoundExpression condition, ValueSlot left, ValueSlot right)
             {
-                _condition = condition;
-                _left = left;
-                _right = right;
+                Condition = condition;
+                Left = left;
+                Right = right;
             }
 
-            public BoundExpression Condition
-            {
-                get { return _condition; }
-            }
+            public BoundExpression Condition { get; }
 
-            public ValueSlot Left
-            {
-                get { return _left; }
-            }
+            public ValueSlot Left { get; }
 
-            public ValueSlot Right
-            {
-                get { return _right; }
-            }
+            public ValueSlot Right { get; }
         }
     }
 }

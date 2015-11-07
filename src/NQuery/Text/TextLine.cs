@@ -4,21 +4,17 @@ namespace NQuery.Text
 {
     public struct TextLine : IEquatable<TextLine>
     {
-        private readonly SourceText _text;
         private readonly int _start;
         private readonly int _length;
 
         public TextLine(SourceText text, int start, int length)
         {
-            _text = text;
+            Text = text;
             _start = start;
             _length = length;
         }
 
-        public SourceText Text
-        {
-            get { return _text; }
-        }
+        public SourceText Text { get; }
 
         public TextSpan Span
         {
@@ -30,8 +26,8 @@ namespace NQuery.Text
             get
             {
                 var nextLineIndex = LineNumber + 1;
-                var nextLine = nextLineIndex < _text.Lines.Count
-                                ? (TextLine?) _text.Lines[nextLineIndex]
+                var nextLine = nextLineIndex < Text.Lines.Count
+                                ? (TextLine?) Text.Lines[nextLineIndex]
                                 : null;
                 var start = Span.Start;
                 var end = Span.End;
@@ -49,17 +45,17 @@ namespace NQuery.Text
 
         public int LineNumber
         {
-            get { return _text.GetLineNumberFromPosition(_start); }
+            get { return Text.GetLineNumberFromPosition(_start); }
         }
 
         public string GetText()
         {
-            return _text.GetText(_start, _length);
+            return Text.GetText(_start, _length);
         }
 
         public bool Equals(TextLine other)
         {
-            return _text == other._text &&
+            return Text == other.Text &&
                    _start == other._start &&
                    _length == other._length;
         }
@@ -74,7 +70,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                var hashCode = (_text != null ? _text.GetHashCode() : 0);
+                var hashCode = (Text != null ? Text.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ _start;
                 hashCode = (hashCode*397) ^ _length;
                 return hashCode;

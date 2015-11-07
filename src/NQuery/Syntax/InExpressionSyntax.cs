@@ -5,18 +5,13 @@ namespace NQuery.Syntax
 {
     public sealed class InExpressionSyntax : ExpressionSyntax
     {
-        private readonly ExpressionSyntax _expression;
-        private readonly SyntaxToken _notKeyword;
-        private readonly SyntaxToken _inKeyword;
-        private readonly ArgumentListSyntax _argumentList;
-
         internal InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
             : base(syntaxTree)
         {
-            _expression = expression;
-            _notKeyword = notKeyword;
-            _inKeyword = inKeyword;
-            _argumentList = argumentList;
+            Expression = expression;
+            NotKeyword = notKeyword;
+            InKeyword = inKeyword;
+            ArgumentList = argumentList;
         }
 
         public override SyntaxKind Kind
@@ -26,31 +21,19 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _expression;
-            if (_notKeyword != null)
-                yield return _notKeyword;
-            yield return _inKeyword;
-            yield return _argumentList;
+            yield return Expression;
+            if (NotKeyword != null)
+                yield return NotKeyword;
+            yield return InKeyword;
+            yield return ArgumentList;
         }
 
-        public ExpressionSyntax Expression
-        {
-            get { return _expression; }
-        }
+        public ExpressionSyntax Expression { get; }
 
-        public SyntaxToken NotKeyword
-        {
-            get { return _notKeyword; }
-        }
+        public SyntaxToken NotKeyword { get; }
 
-        public SyntaxToken InKeyword
-        {
-            get { return _inKeyword; }
-        }
+        public SyntaxToken InKeyword { get; }
 
-        public ArgumentListSyntax ArgumentList
-        {
-            get { return _argumentList; }
-        }
+        public ArgumentListSyntax ArgumentList { get; }
     }
 }

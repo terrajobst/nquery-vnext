@@ -6,15 +6,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundIntersectOrExceptRelation : BoundRelation
     {
-        private readonly bool _isIntersect;
-        private readonly BoundRelation _left;
-        private readonly BoundRelation _right;
-
         public BoundIntersectOrExceptRelation(bool isIntersect, BoundRelation left, BoundRelation right)
         {
-            _isIntersect = isIntersect;
-            _left = left;
-            _right = right;
+            IsIntersect = isIntersect;
+            Left = left;
+            Right = right;
         }
 
         public override BoundNodeKind Kind
@@ -22,20 +18,11 @@ namespace NQuery.Binding
             get { return BoundNodeKind.IntersectOrExceptRelation; }
         }
 
-        public bool IsIntersect
-        {
-            get { return _isIntersect; }
-        }
+        public bool IsIntersect { get; }
 
-        public BoundRelation Left
-        {
-            get { return _left; }
-        }
+        public BoundRelation Left { get; }
 
-        public BoundRelation Right
-        {
-            get { return _right; }
-        }
+        public BoundRelation Right { get; }
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
@@ -44,12 +31,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _left.GetOutputValues();
+            return Left.GetOutputValues();
         }
 
         public BoundIntersectOrExceptRelation Update(bool isIntersect, BoundRelation left, BoundRelation right)
         {
-            if (isIntersect == _isIntersect && left == _left && right == _right)
+            if (isIntersect == IsIntersect && left == Left && right == Right)
                 return this;
 
             return new BoundIntersectOrExceptRelation(isIntersect, left, right);

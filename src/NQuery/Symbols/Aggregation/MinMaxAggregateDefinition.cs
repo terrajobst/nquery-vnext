@@ -25,19 +25,15 @@ namespace NQuery.Symbols.Aggregation
 
         private sealed class MinMaxAggregatable : IAggregatable
         {
-            private readonly Type _argumentType;
             private readonly bool _isMin;
 
             public MinMaxAggregatable(Type argumentType, bool isMin)
             {
-                _argumentType = argumentType;
+                ReturnType = argumentType;
                 _isMin = isMin;
             }
 
-            public Type ReturnType
-            {
-                get { return _argumentType; }
-            }
+            public Type ReturnType { get; }
 
             public IAggregator CreateAggregator()
             {

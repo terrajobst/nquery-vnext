@@ -5,12 +5,10 @@ namespace NQuery.Syntax
 {
     public sealed class CommonTableExpressionColumnNameSyntax : SyntaxNode
     {
-        private readonly SyntaxToken _identifier;
-
         internal CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier)
             : base(syntaxTree)
         {
-            _identifier = identifier;
+            Identifier = identifier;
         }
 
         public override SyntaxKind Kind
@@ -20,12 +18,9 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return _identifier;
+            yield return Identifier;
         }
 
-        public SyntaxToken Identifier
-        {
-            get { return _identifier; }
-        }
+        public SyntaxToken Identifier { get; }
     }
 }

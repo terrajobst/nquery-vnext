@@ -8,35 +8,22 @@ namespace NQuery.Authoring
 {
     public sealed class Document
     {
-        private readonly DocumentKind _kind;
-        private readonly DataContext _dataContext;
-        private readonly SourceText _text;
-
         private Task<SyntaxTree> _syntaxTreeTask;
         private Task<Compilation> _compilationTask;
         private Task<SemanticModel> _semanticModelTask;
 
         public Document(DocumentKind kind, DataContext dataContext, SourceText text)
         {
-            _kind = kind;
-            _dataContext = dataContext;
-            _text = text;
+            Kind = kind;
+            DataContext = dataContext;
+            Text = text;
         }
 
-        public DocumentKind Kind
-        {
-            get { return _kind; }
-        }
+        public DocumentKind Kind { get; }
 
-        public DataContext DataContext
-        {
-            get { return _dataContext; }
-        }
+        public DataContext DataContext { get; }
 
-        public SourceText Text
-        {
-            get { return _text; }
-        }
+        public SourceText Text { get; }
 
         public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
         {
@@ -109,12 +96,12 @@ namespace NQuery.Authoring
 
         private SyntaxTree ComputeSyntaxTree()
         {
-            switch (_kind)
+            switch (Kind)
             {
                 case DocumentKind.Query:
-                    return SyntaxTree.ParseQuery(_text);
+                    return SyntaxTree.ParseQuery(Text);
                 case DocumentKind.Expression:
-                    return SyntaxTree.ParseExpression(_text);
+                    return SyntaxTree.ParseExpression(Text);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -123,7 +110,7 @@ namespace NQuery.Authoring
         private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
         {
             var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
-            return new Compilation(_dataContext, syntaxTree);
+            return new Compilation(DataContext, syntaxTree);
         }
 
         private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)
@@ -134,17 +121,17 @@ namespace NQuery.Authoring
 
         public Document WithKind(DocumentKind kind)
         {
-            return kind == _kind ? this : new Document(kind, _dataContext, _text);
+            return kind == Kind ? this : new Document(kind, DataContext, Text);
         }
 
         public Document WithDataContext(DataContext dataContext)
         {
-            return dataContext == _dataContext ? this : new Document(_kind, dataContext, _text);
+            return dataContext == DataContext ? this : new Document(Kind, dataContext, Text);
         }
 
         public Document WithText(SourceText text)
         {
-            return text == _text ? this : new Document(_kind, _dataContext, text);
+            return text == Text ? this : new Document(Kind, DataContext, text);
         }
     }
 }

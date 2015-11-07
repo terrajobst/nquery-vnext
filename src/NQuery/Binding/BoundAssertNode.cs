@@ -5,15 +5,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundAssertRelation : BoundRelation
     {
-        private readonly BoundRelation _input;
-        private readonly BoundExpression _condition;
-        private readonly string _message;
-
         public BoundAssertRelation(BoundRelation input, BoundExpression condition, string message)
         {
-            _input = input;
-            _condition = condition;
-            _message = message;
+            Input = input;
+            Condition = condition;
+            Message = message;
         }
 
         public override BoundNodeKind Kind
@@ -21,24 +17,15 @@ namespace NQuery.Binding
             get { return BoundNodeKind.AssertRelation; }
         }
 
-        public BoundRelation Input
-        {
-            get { return _input; }
-        }
+        public BoundRelation Input { get; }
 
-        public BoundExpression Condition
-        {
-            get { return _condition; }
-        }
+        public BoundExpression Condition { get; }
 
-        public string Message
-        {
-            get { return _message; }
-        }
+        public string Message { get; }
 
         public BoundAssertRelation Update(BoundRelation input, BoundExpression condition, string message)
         {
-            if (input == _input && condition == _condition && message == _message)
+            if (input == Input && condition == Condition && message == Message)
                 return this;
 
             return new BoundAssertRelation(input, condition, message);
@@ -46,12 +33,12 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return _input.GetDefinedValues();
+            return Input.GetDefinedValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return _input.GetOutputValues();
+            return Input.GetOutputValues();
         }
     }
 }

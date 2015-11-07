@@ -4,11 +4,9 @@ namespace NQuery.Binding
 {
     internal sealed class BoundLiteralExpression : BoundExpression
     {
-        private readonly object _value;
-
         public BoundLiteralExpression(object value)
         {
-            _value = value;
+            Value = value;
         }
 
         public override BoundNodeKind Kind
@@ -20,29 +18,26 @@ namespace NQuery.Binding
         {
             get
             {
-                return _value == null
+                return Value == null
                            ? TypeFacts.Null
-                           : _value.GetType();
+                           : Value.GetType();
             }
         }
 
-        public object Value
-        {
-            get { return _value; }
-        }
+        public object Value { get; }
 
         public override string ToString()
         {
-            if (_value == null)
+            if (Value == null)
                 return "NULL";
 
-            if (_value is string)
-                return $"'{_value}'"; // TODO: We should escape this
+            if (Value is string)
+                return $"'{Value}'"; // TODO: We should escape this
 
-            if (_value is DateTime)
-                return $"#{_value}#";
+            if (Value is DateTime)
+                return $"#{Value}#";
 
-            return _value.ToString();
+            return Value.ToString();
         }
     }
 }

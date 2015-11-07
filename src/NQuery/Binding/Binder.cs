@@ -9,18 +9,14 @@ namespace NQuery.Binding
     internal abstract partial class Binder
     {
         private readonly SharedBinderState _sharedBinderState;
-        private readonly Binder _parent;
 
         protected Binder(SharedBinderState sharedBinderState, Binder parent)
         {
-            _parent = parent;
+            Parent = parent;
             _sharedBinderState = sharedBinderState;
         }
 
-        public Binder Parent
-        {
-            get { return _parent; }
-        }
+        public Binder Parent { get; }
 
         private List<Diagnostic> Diagnostics
         {
@@ -34,22 +30,22 @@ namespace NQuery.Binding
 
         protected virtual bool InWhereClause
         {
-            get { return _parent != null && _parent.InWhereClause; }
+            get { return Parent != null && Parent.InWhereClause; }
         }
 
         protected virtual bool InOnClause
         {
-            get { return _parent != null && _parent.InOnClause; }
+            get { return Parent != null && Parent.InOnClause; }
         }
 
         protected virtual bool InGroupByClause
         {
-            get { return _parent != null && _parent.InGroupByClause; }
+            get { return Parent != null && Parent.InGroupByClause; }
         }
 
         protected virtual bool InAggregateArgument
         {
-            get { return _parent != null && _parent.InAggregateArgument; }
+            get { return Parent != null && Parent.InAggregateArgument; }
         }
 
         private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)
