@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 
 namespace NQuery.Symbols
 {
@@ -6,6 +7,6 @@ namespace NQuery.Symbols
     {
         public abstract string Name { get; }
         public abstract Type DataType { get; }
-        public abstract object GetValue(object row);
+        public abstract Expression CreateInvocation(Expression instance);
     }
 }

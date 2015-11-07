@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 
 using NQuery.Binding;
 using NQuery.Symbols;
@@ -100,9 +101,16 @@ namespace NQuery.Iterators
             var columnInstances = relation.DefinedValues;
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
-                                               .Select(c => c.Definition)
-                                               .ToImmutableArray();
+                                               .Select(c => BuildColumnAccess(c.Definition));
             return new TableIterator(tableDefinition, definedValues);
+        }
+
+        private static Func<object, object> BuildColumnAccess(ColumnDefinition definition)
+        {
+            var instance = Expression.Parameter(typeof(object));
+            var body = definition.CreateInvocation(instance);
+            var lambda = Expression.Lambda<Func<object, object>>(body, instance);
+            return lambda.Compile();
         }
 
         private Iterator BuildJoin(BoundJoinRelation relation)

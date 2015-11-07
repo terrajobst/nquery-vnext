@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlTypes;
+using System.Linq.Expressions;
+using System.Reflection;
 
 using NQuery.Symbols;
 
@@ -8,6 +10,9 @@ namespace NQuery.Data
 {
     public sealed class DataColumnDefinition : ColumnDefinition
     {
+        private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) });
+        private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull");
+
         private readonly DataColumn _dataColumn;
 
         public DataColumnDefinition(DataColumn dataColumn)
@@ -33,19 +38,64 @@ namespace NQuery.Data
             get { return _dataColumn.DataType; }
         }
 
-        public override object GetValue(object row)
+        public override Expression CreateInvocation(Expression instance)
         {
-            var dataRow = (DataRow) row;
-            var value = dataRow[_dataColumn];
+            // var v = ((DataRow)row)[_dataColumn];
+            // INullable n;
+            // return
+            //    v is DBNull
+            //      ? null
+            //      : (n = v as INullable) != null && n.IsNull
+            //          ? null
+            //          : v;
 
-            if (value is DBNull)
-                return null;
+            var v = Expression.Variable(typeof(object));
+            var n = Expression.Variable(typeof(INullable));
+            var objectNull = Expression.Constant(null, typeof(object));
 
-            var nullable = value as INullable;
-            if (nullable != null && nullable.IsNull)
-                return null;
-
-            return value;
+            return
+                Expression.Block(
+                    typeof(object),
+                    new[] { v, n },
+                    Expression.Assign(
+                        v,
+                        Expression.MakeIndex(
+                            Expression.Convert(
+                                instance,
+                                typeof(DataRow)
+                            ),
+                            DataRowIndexer,
+                            new[] { Expression.Constant(_dataColumn) }
+                        )
+                    ),
+                    Expression.Condition(
+                        Expression.TypeIs(
+                            v,
+                            typeof(DBNull)
+                        ),
+                        objectNull,
+                        Expression.Condition(
+                            Expression.AndAlso(
+                                Expression.NotEqual(
+                                    Expression.Assign(
+                                        n,
+                                        Expression.TypeAs(
+                                            v,
+                                            typeof(INullable)
+                                        )
+                                    ),
+                                    objectNull
+                                ),
+                                Expression.Property(
+                                    n,
+                                    NullableIsNull
+                                )
+                            ),
+                            objectNull,
+                            v
+                        ) 
+                    )
+                );
         }
     }
 }
