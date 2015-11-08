@@ -6,7 +6,7 @@ namespace NQuery
     {
         private readonly Func<object> _evaluator;
 
-        public ExpressionEvaluator(Type type, Func<object> evaluator)
+        internal ExpressionEvaluator(Type type, Func<object> evaluator)
         {
             Type = type;
             _evaluator = evaluator;

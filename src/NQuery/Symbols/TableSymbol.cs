@@ -6,7 +6,7 @@ namespace NQuery.Symbols
 {
     public abstract class TableSymbol : Symbol
     {
-        protected TableSymbol(string name, IEnumerable<ColumnSymbol> columns)
+        internal TableSymbol(string name, IEnumerable<ColumnSymbol> columns)
             : base(name)
         {
             Columns = columns.ToImmutableArray();

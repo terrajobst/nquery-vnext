@@ -4,7 +4,7 @@ namespace NQuery.Symbols
 {
     public sealed class SymbolMarkupToken : IEquatable<SymbolMarkupToken>
     {
-        public SymbolMarkupToken(SymbolMarkupKind kind, string text)
+        internal SymbolMarkupToken(SymbolMarkupKind kind, string text)
         {
             Kind = kind;
             Text = text;

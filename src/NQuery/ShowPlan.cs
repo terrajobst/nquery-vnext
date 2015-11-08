@@ -4,7 +4,7 @@ namespace NQuery
 {
     public sealed class ShowPlan
     {
-        public ShowPlan(string name, ShowPlanNode root)
+        internal ShowPlan(string name, ShowPlanNode root)
         {
             Name = name;
             Root = root;

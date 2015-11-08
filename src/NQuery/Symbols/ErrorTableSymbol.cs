@@ -4,7 +4,7 @@ namespace NQuery.Symbols
 {
     public sealed class ErrorTableSymbol : TableSymbol
     {
-        public ErrorTableSymbol(string name)
+        internal ErrorTableSymbol(string name)
             : base(name, new ColumnSymbol[0])
         {
         }

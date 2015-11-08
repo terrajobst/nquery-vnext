@@ -9,13 +9,13 @@ namespace NQuery
         private readonly SyntaxNode _syntaxNode;
         private readonly SyntaxToken _syntaxToken;
 
-        public SyntaxNodeOrToken(SyntaxToken syntaxToken)
+        internal SyntaxNodeOrToken(SyntaxToken syntaxToken)
         {
             _syntaxToken = syntaxToken;
             _syntaxNode = null;
         }
 
-        public SyntaxNodeOrToken(SyntaxNode syntaxNode)
+        internal SyntaxNodeOrToken(SyntaxNode syntaxNode)
         {
             _syntaxToken = null;
             _syntaxNode = syntaxNode;

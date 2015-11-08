@@ -49,7 +49,7 @@ namespace NQuery.Hosting
             return existingMemberDistance > newMemberDistance;
         }
 
-        private class PropertyTable
+        private sealed class PropertyTable
         {
             private readonly Dictionary<string, Entry> _table = new Dictionary<string, Entry>();
 
@@ -88,7 +88,7 @@ namespace NQuery.Hosting
             }
         }
 
-        private class MethodTable
+        private sealed class MethodTable
         {
             private readonly Dictionary<string, Entry> _table = new Dictionary<string, Entry>();
 

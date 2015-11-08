@@ -5,7 +5,7 @@ namespace NQuery.Symbols
 {
     public abstract class PropertySymbol : Symbol
     {
-        public PropertySymbol(string name, Type type)
+        protected PropertySymbol(string name, Type type)
             : base(name)
         {
             Type = type;

@@ -7,7 +7,7 @@ namespace NQuery.Symbols
 {
     public abstract class InvocableSymbol : Symbol
     {
-        protected InvocableSymbol(string name, Type type, IEnumerable<ParameterSymbol> parameters)
+        internal InvocableSymbol(string name, Type type, IEnumerable<ParameterSymbol> parameters)
             : base(name)
         {
             Type = type;
