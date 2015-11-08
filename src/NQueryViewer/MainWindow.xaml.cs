@@ -41,6 +41,11 @@ namespace NQueryViewer
             get { return DocumentTabControl.SelectedContent as IEditorView; }
         }
 
+        private IEnumerable<IEditorView> EditorViews
+        {
+            get { return DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Content).OfType<IEditorView>(); }
+        } 
+
         public void OnImportsSatisfied()
         {
             foreach (var editorViewFactory in EditorViewFactories.OrderBy(e => e.Priority))
@@ -70,8 +75,12 @@ namespace NQueryViewer
                 return;
 
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
+            editorView.ZoomLevelChanged += EditorViewOnZoomLevelChanged;
             editorView.Workspace.DataContext = NorthwindDataContext.Instance;
             editorView.Workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+
+            if (CurrentEditorView != null)
+                editorView.ZoomLevel = CurrentEditorView.ZoomLevel;
 
             var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
             var tabItem = new TabItem
@@ -92,6 +101,7 @@ namespace NQueryViewer
                 return;
 
             editorView.CaretPositionChanged -= EditorViewOnCaretPositionChanged;
+            editorView.ZoomLevelChanged -= EditorViewOnZoomLevelChanged;
             editorView.Workspace.CurrentDocumentChanged -= WorkspaceOnCurrentDocumentChanged;
 
             DocumentTabControl.Items.RemoveAt(DocumentTabControl.SelectedIndex);
@@ -327,6 +337,22 @@ namespace NQueryViewer
         {
             if (CurrentEditorView != null && CurrentEditorView.Element.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
+        }
+
+        private void EditorViewOnZoomLevelChanged(object sender, EventArgs e)
+        {
+            var changedView = sender as IEditorView;
+            if (changedView == null)
+                return;
+
+            var newZoomLevel = changedView.ZoomLevel;
+
+            foreach (var editorView in EditorViews)
+                editorView.ZoomLevel = newZoomLevel;
+
+            var percent = newZoomLevel / 100;
+
+            BottomToolWindowTabControl.FontSize = FontSize * percent;
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)

@@ -12,11 +12,13 @@ namespace NQueryViewer.Editor
         int CaretPosition { get; set; }
         TextSpan Selection { get; set; }
         Workspace Workspace { get; }
+        double ZoomLevel { get; set; }
 
         void Focus();
         DocumentView GetDocumentView();
 
         event EventHandler CaretPositionChanged;
         event EventHandler SelectionChanged;
+        event EventHandler ZoomLevelChanged;
     }
 }

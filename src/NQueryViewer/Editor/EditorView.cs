@@ -19,6 +19,8 @@ namespace NQueryViewer.Editor
             get { return null; }
         }
 
+        public virtual double ZoomLevel { get; set; }
+
         public virtual int CaretPosition { get; set; }
 
         public virtual TextSpan Selection { get; set; }
@@ -46,8 +48,17 @@ namespace NQueryViewer.Editor
                 handler(this, EventArgs.Empty);
         }
 
+        protected virtual void OnZoomLevelChanged()
+        {
+            var handler = ZoomLevelChanged;
+            if (handler != null)
+                handler(this, EventArgs.Empty);
+        }
+
         public event EventHandler CaretPositionChanged;
 
         public event EventHandler SelectionChanged;
+
+        public event EventHandler ZoomLevelChanged;
     }
 }

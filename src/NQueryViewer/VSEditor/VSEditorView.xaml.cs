@@ -22,6 +22,7 @@ namespace NQueryViewer.VSEditor
             Workspace = workspace;
             _textViewHost = textViewHost;
             _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
+            _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
 
             _selectionProvider = selectionProvider;
 
@@ -34,6 +35,11 @@ namespace NQueryViewer.VSEditor
         {
             OnCaretPositionChanged();
             OnSelectionChanged();
+        }
+
+        private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
+        {
+            OnZoomLevelChanged();
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -94,6 +100,16 @@ namespace NQueryViewer.VSEditor
             return TextSpan.FromBounds(start, end);
         }
 
+        private void SetZoomLevel(double value)
+        {
+            _textViewHost.TextView.ZoomLevel = value;
+        }
+
+        private double GetZoomLevel()
+        {
+            return _textViewHost.TextView.ZoomLevel;
+        }
+
         public override Workspace Workspace { get; }
 
         public override int CaretPosition
@@ -106,6 +122,12 @@ namespace NQueryViewer.VSEditor
         {
             get { return GetSelection(); }
             set { SetSelection(value); }
+        }
+
+        public override double ZoomLevel
+        {
+            get { return GetZoomLevel(); }
+            set { SetZoomLevel(value); }
         }
     }
 }

@@ -40,6 +40,7 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.Document.Language = language;
             _syntaxEditor.Document.AutoConvertTabsToSpaces = true;
             _syntaxEditor.ViewSelectionChanged += SyntaxEditorOnViewSelectionChanged;
+            _syntaxEditor.LayoutUpdated += SyntaxEditorOnLayoutUpdated;
             _syntaxEditor.RegisterCodeActionCommands();
             _syntaxEditor.RegisterSelectionCommands();
             _syntaxEditor.RegisterCommentingCommands();
@@ -54,6 +55,11 @@ namespace NQueryViewer.ActiproEditor
         {
             OnCaretPositionChanged();
             OnSelectionChanged();
+        }
+
+        private void SyntaxEditorOnLayoutUpdated(object sender, EventArgs e)
+        {
+            OnZoomLevelChanged();
         }
 
         private int GetCaretPosition()
@@ -78,6 +84,16 @@ namespace NQueryViewer.ActiproEditor
             _syntaxEditor.ActiveView.Selection.SelectRange(range);
         }
 
+        private double GetZoomLevel()
+        {
+            return _syntaxEditor.ZoomLevel * 100;
+        }
+
+        private void SetZoomLevel(double value)
+        {
+            _syntaxEditor.ZoomLevel = value / 100;
+        }
+
         public override void Focus()
         {
             _syntaxEditor.ActiveView.Focus();
@@ -100,6 +116,12 @@ namespace NQueryViewer.ActiproEditor
         {
             get { return GetSelection(); }
             set { SetSelection(value); }
+        }
+
+        public override double ZoomLevel
+        {
+            get { return GetZoomLevel(); }
+            set { SetZoomLevel(value); }
         }
     }
 }
