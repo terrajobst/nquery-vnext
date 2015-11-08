@@ -47,7 +47,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Fixes
                 WHERE   GETDATE() = e.Birthdate
             ";
 
-            AssertFixes(query, fixedQuery, "Add parentheses");            
+            AssertFixes(query, fixedQuery, "Add parentheses");
         }
     }
 }

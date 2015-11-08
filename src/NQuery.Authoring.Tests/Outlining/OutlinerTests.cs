@@ -42,7 +42,7 @@ namespace NQuery.Authoring.Tests.Outlining
         private static void AssertIsMatch(SyntaxNode root, ImmutableArray<IOutliner> outliners, TextSpan expectedSpan, string expectedText)
         {
             var documentSpan = root.SyntaxTree.Root.FullSpan;
-            
+
             AssertMatches(root, documentSpan, outliners, expectedSpan, expectedText);
             AssertMatches(root, expectedSpan, outliners, expectedSpan, expectedText);
         }

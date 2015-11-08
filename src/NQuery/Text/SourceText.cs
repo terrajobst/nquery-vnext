@@ -187,7 +187,7 @@ namespace NQuery.Text
                 var textChange = new TextChange(oldSpan, newText);
                 return ImmutableArray.Create(textChange);
             }
-            
+
             var changes = new List<TextChange>();
             while (path.Count > 0)
             {

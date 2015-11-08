@@ -31,6 +31,6 @@ namespace NQuery.Authoring.Tests.SignatureHelp.Providers
             ";
 
             AssertIsMatch(query);
-        }         
+        }
     }
 }

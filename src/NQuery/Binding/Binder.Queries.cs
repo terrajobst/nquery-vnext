@@ -163,7 +163,7 @@ namespace NQuery.Binding
             // TODO: This is not entirely true. EXISTS (SELECT * FROM GROUP BY ...) is considered valid.
             //
             // For example, the following query is valid:
-            //   
+            //
             //      SELECT  *
             //      FROM    Employees e
             //      WHERE   EXISTS (
@@ -215,9 +215,9 @@ namespace NQuery.Binding
             //                  WHERE   o.EmployeeID = e.EmployeeID
             //                  GROUP   BY o.OrderID
             //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
-            //      
+            //
             //                  UNION ALL
-            //      
+            //
             //                  SELECT  *
             //                  FROM    Orders o
             //                              INNER JOIN [Order Details] od ON od.OrderID = o.OrderID
@@ -626,7 +626,7 @@ namespace NQuery.Binding
 
             // Alright, this is case (2) where we're applied to some sort of combined
             // query.
-            // 
+            //
             // We will first bind the query in the regular way and then retrieve the
             // bound node for the first query. That node has all the information we
             // need, in particular the binder that has the table context we need to

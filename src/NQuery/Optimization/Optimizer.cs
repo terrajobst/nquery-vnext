@@ -58,7 +58,7 @@ namespace NQuery.Optimization
 
             // TODO: at most one row reordering
             // TODO: push computations
-            
+
             // physical op choosing
             yield return new HashMatchPhysicalOperatorChooser();
             yield return new AggregationPhysicalOperatorChooser();

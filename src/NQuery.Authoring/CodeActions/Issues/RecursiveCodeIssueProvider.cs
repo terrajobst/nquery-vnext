@@ -18,7 +18,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 {
                     new CodeIssue(CodeIssueKind.Warning, node.Name.Span, "Should specify RECURSIVE", new[]
                     {
-                        new InsertMissingRecursiveKeywordCodeAction(node) 
+                        new InsertMissingRecursiveKeywordCodeAction(node)
                     })
                 };
             }
@@ -29,7 +29,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 {
                     new CodeIssue(CodeIssueKind.Unnecessary, node.RecursiveKeyword.Span, "RECURSIVE is not needed", new[]
                     {
-                        new RemoveUnnecessaryRecursiveKeywordCodeAction(node.RecursiveKeyword), 
+                        new RemoveUnnecessaryRecursiveKeywordCodeAction(node.RecursiveKeyword),
                     })
                 };
             }

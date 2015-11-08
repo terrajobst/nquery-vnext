@@ -88,7 +88,7 @@ namespace NQuery.Data
                             ),
                             objectNull,
                             v
-                        ) 
+                        )
                     )
                 );
         }

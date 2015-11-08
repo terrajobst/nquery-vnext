@@ -225,7 +225,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
             ";
@@ -247,7 +247,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
             ";
@@ -260,7 +260,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY 1
             ";
@@ -286,7 +286,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
             ";
@@ -308,7 +308,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
             ";
@@ -321,7 +321,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                     UNION
 
                     SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2               
+                    FROM    Employees e2
                 )
                 ORDER   BY FullName
             ";

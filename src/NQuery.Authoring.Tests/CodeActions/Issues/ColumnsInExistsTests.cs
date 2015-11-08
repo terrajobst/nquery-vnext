@@ -25,7 +25,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             SELECT  *
                             FROM    EmployeeTerritories et
                             WHERE   et.EmployeeID = e.EmployeeID
-                        )            
+                        )
             ";
 
             var codeIssues = GetIssues(query);
@@ -46,13 +46,13 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                                     -- After
                             FROM    EmployeeTerritories et
                             WHERE   et.EmployeeID = e.EmployeeID
-                        )            
+                        )
             ";
 
             var codeIssues = GetIssues(query);
 
             Assert.Equal(3, codeIssues.Length);
-            
+
             Assert.Equal(CodeIssueKind.Unnecessary, codeIssues[0].Kind);
             Assert.Equal("et.EmployeeID", query.Substring(codeIssues[0].Span));
 
@@ -81,7 +81,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                                     -- After
                             FROM    EmployeeTerritories et
                             WHERE   et.EmployeeID = e.EmployeeID
-                        )            
+                        )
             ";
 
             var fixedQuery = @"
@@ -93,7 +93,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                                     -- After
                             FROM    EmployeeTerritories et
                             WHERE   et.EmployeeID = e.EmployeeID
-                        )            
+                        )
             ";
 
             var codeIssues = GetIssues(query);
@@ -109,7 +109,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             Assert.Equal("Remove unnecessary columns from EXISTS", action.Description);
 
             var syntaxTree = action.GetEdit();
-            
+
             Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
         }
     }

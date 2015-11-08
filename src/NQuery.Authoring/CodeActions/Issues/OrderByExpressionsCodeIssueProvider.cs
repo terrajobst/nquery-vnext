@@ -24,7 +24,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                     continue;
 
                 // Selector is an expression.
-                // 
+                //
                 // Now let's see whether we can find the expression in the
                 // SELECT list of the underlying query.
                 //

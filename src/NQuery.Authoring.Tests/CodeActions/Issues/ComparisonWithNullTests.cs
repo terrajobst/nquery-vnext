@@ -197,7 +197,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             var query = @"
                 SELECT  *
                 FROM    Employees e
-                WHERE   NULL != e.ReportsTo 
+                WHERE   NULL != e.ReportsTo
             ";
 
             var issues = GetIssues(query);

@@ -41,7 +41,7 @@ namespace NQuery
             return root.FindStartTokens(position)
                        .SelectMany(t => t.Parent.AncestorsAndSelf())
                        .Where(seenNodes.Add);
-        } 
+        }
 
         public static IEnumerable<T> FindNodes<T>(this SyntaxNode root, int position)
             where T: SyntaxNode

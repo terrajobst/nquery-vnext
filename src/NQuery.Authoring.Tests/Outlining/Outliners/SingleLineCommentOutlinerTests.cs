@@ -32,10 +32,10 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
         {
             var query = @"
                 {//---------------------
-                // This is a query. 
+                // This is a query.
                 //---------------------}
                 SELECT  FirstName,
-                        LastName   
+                        LastName
                 FROM    Employees
             ";
 
@@ -47,10 +47,10 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
         {
             var query = @"
                 {-----------------------
-                // This is a query. 
+                // This is a query.
                 -----------------------}
                 SELECT  FirstName,
-                        LastName   
+                        LastName
                 FROM    Employees
             ";
 
@@ -64,7 +64,7 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 SELECT  FirstName, // First column
                         {// Second
                         // Column}
-                        LastName   
+                        LastName
                 FROM    Employees
             ";
 
@@ -77,7 +77,7 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
             var query = @"
                 // First line
                 SELECT  // Second line
-                        FirstName 
+                        FirstName
                 FROM    Employees
             ";
 
@@ -92,7 +92,7 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 /* Second line */
                 {// Third line
                 // Fourth line}
-                SELECT  FirstName 
+                SELECT  FirstName
                 FROM    Employees
             ";
 

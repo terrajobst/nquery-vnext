@@ -148,7 +148,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Fixes
                 SELECT  e.City + ', ' + e.Country|,
                         COUNT(*)
                 FROM    Employees e
-                GROUP   BY e.City, 
+                GROUP   BY e.City,
             ";
 
             var fixedQuery = @"
@@ -168,7 +168,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Fixes
                 SELECT  e.City + ', ' + e.Country|,
                         COUNT(*)
                 FROM    Employees e
-                GROUP   BY e.City.Substring(1 
+                GROUP   BY e.City.Substring(1
             ";
 
             var fixedQuery = @"

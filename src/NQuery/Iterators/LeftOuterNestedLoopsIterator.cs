@@ -71,7 +71,7 @@ namespace NQuery.Iterators
 
                     if (shouldReturnRow)
                     {
-                        // We haven't returned the outer row yet since we couldn't find any matching inner 
+                        // We haven't returned the outer row yet since we couldn't find any matching inner
                         // row. Set the values of the inner row to null and return the combined row.
                         _rowBuffer.SetRightToNull();
                         return true;

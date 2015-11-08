@@ -12,7 +12,7 @@ namespace NQuery.Optimization
     //      SELECT  *
     //      FROM    Table1 t1
     //                  FULL OUTER JOIN Table2 t2 ON Condition
-    // 
+    //
     // Concat
     //     LeftOuterJoin Condition
     //         Table1

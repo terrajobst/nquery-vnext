@@ -12,7 +12,7 @@ namespace NQuery.Iterators
 {
     internal sealed class IteratorBuilder
     {
-        private readonly Stack<RowBufferAllocation> _outerRowBufferAllocations = new Stack<RowBufferAllocation>(); 
+        private readonly Stack<RowBufferAllocation> _outerRowBufferAllocations = new Stack<RowBufferAllocation>();
 
         public static Iterator Build(BoundRelation relation)
         {

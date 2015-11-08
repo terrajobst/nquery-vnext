@@ -19,7 +19,7 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
         {
             var query = @"
                 {/*
-                 * This is a query. 
+                 * This is a query.
                  */}
                 SELECT  FirstName,
                         LastName

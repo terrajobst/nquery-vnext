@@ -56,7 +56,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             var textSnapshotRange = text.ToSnapshotRange(model.Span);
             var textRange = textSnapshotRange.TextRange;
             var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();
-                
+
             var quickInfoSession = new QuickInfoSession();
             quickInfoSession.Context = context;
             quickInfoSession.Content = content;

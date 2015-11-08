@@ -37,7 +37,7 @@ namespace NQuery.Binding
         {
             if (operatorKind == OperatorKind && result == Result && expression == Expression)
                 return this;
-            
+
             return new BoundUnaryExpression(operatorKind, result, expression);
         }
 

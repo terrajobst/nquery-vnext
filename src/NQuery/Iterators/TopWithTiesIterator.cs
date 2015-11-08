@@ -24,7 +24,7 @@ namespace NQuery.Iterators
         public override void Open()
         {
             base.Open();
-        
+
             _limitReached = false;
         }
 

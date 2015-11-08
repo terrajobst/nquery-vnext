@@ -29,7 +29,7 @@ namespace NQuery.Iterators
         {
             get
             {
-                return index < _rowBuffer.Count 
+                return index < _rowBuffer.Count
                     ? _rowBuffer[index]
                     : _value;
             }

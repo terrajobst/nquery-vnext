@@ -35,6 +35,6 @@ namespace NQuery.Authoring.Tests.CodeActions
             var action = actions.Single(a => a.Description == expectedActionDescription);
             var syntaxTree = action.GetEdit();
             Assert.Equal(trimmedExpectedQuery, syntaxTree.Text.GetText());
-        }                
+        }
     }
 }

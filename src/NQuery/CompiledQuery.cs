@@ -59,7 +59,7 @@ namespace NQuery
                 // This means this is a trivial query.
                 return CreateTrivialExpression(computeRelation);
             }
-            
+
             // Too bad, we need to evaluate the expression as a regular query.
             return EvaluteQueryAsExpression;
         }

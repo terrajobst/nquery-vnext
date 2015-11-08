@@ -146,7 +146,7 @@ namespace NQuery.Optimization
             var newInput = RewriteRelation(input.Update(input.Input, mergedCondition));
             return newInput;
         }
-    
+
         private BoundRelation PushOverCompute(BoundFilterRelation node, BoundComputeRelation input)
         {
             BoundExpression remainder = null;
@@ -176,7 +176,7 @@ namespace NQuery.Optimization
 
             return newNode;
         }
-    
+
         private BoundRelation PushOverGroupByAndAggregation(BoundFilterRelation node, BoundGroupByAndAggregationRelation input)
         {
             // TODO: This may not be that easy.

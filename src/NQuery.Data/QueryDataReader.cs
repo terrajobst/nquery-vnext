@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace NQuery.Data
 {
     /// <summary>
-    /// Provides a way of reading a forward-only stream of rows from a <see cref="Query"/>. This class cannot be inherited. 
+    /// Provides a way of reading a forward-only stream of rows from a <see cref="Query"/>. This class cannot be inherited.
     /// </summary>
     public sealed class QueryDataReader : IDataReader
     {
@@ -69,7 +69,7 @@ namespace NQuery.Data
 
         /// <summary>
         /// Returns a <see cref="T:System.Data.DataTable" /> that describes the column metadata
-        /// of the <see cref="T:System.Data.IDataReader" />. 
+        /// of the <see cref="T:System.Data.IDataReader" />.
         /// </summary>
         /// <returns>
         /// A <see cref="T:System.Data.DataTable" /> that describes the column metadata.

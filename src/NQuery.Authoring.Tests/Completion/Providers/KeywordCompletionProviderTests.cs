@@ -214,7 +214,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
             AssertIsMatch(query, "CASE");
         }
-        
+
         [Fact]
         public void KeywordCompletionProvider_ReturnsAnd_IfAfterExpression()
         {
