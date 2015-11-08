@@ -37,8 +37,8 @@ namespace NQuery.Optimization
             if (equalPredicatesInfo.Predicates.Any())
             {
                 var equalPredicate = equalPredicatesInfo.Predicates.First();
-                var otherPredicates = Condition.And(equalPredicatesInfo.Predicates.Skip(1).Select(p => p.Condition));
-                var remainder = Condition.And(equalPredicatesInfo.Remainder, otherPredicates);
+                var otherPredicates = Expression.And(equalPredicatesInfo.Predicates.Skip(1).Select(p => p.Condition));
+                var remainder = Expression.And(equalPredicatesInfo.Remainder, otherPredicates);
                 return new BoundHashMatchRelation(op.Value, left, right, equalPredicate.Left, equalPredicate.Right, remainder);
             }
 
@@ -64,7 +64,7 @@ namespace NQuery.Optimization
 
         private static EqualPredicatesInfo GetEqualPredicatesInfo(BoundExpression condition, ImmutableArray<ValueSlot> leftValues, ImmutableArray<ValueSlot> rightValues)
         {
-            var conjunctions = Condition.SplitConjunctions(condition);
+            var conjunctions = Expression.SplitConjunctions(condition);
             var remainingConjunctions = new List<BoundExpression>();
             var equalPredicates = new List<EqualPredicate>();
 
@@ -77,7 +77,7 @@ namespace NQuery.Optimization
                     equalPredicates.Add(equalPredicate);
             }
 
-            var remainder = Condition.And(remainingConjunctions);
+            var remainder = Expression.And(remainingConjunctions);
             return new EqualPredicatesInfo(remainder, equalPredicates);
         }
 

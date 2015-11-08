@@ -66,7 +66,7 @@ namespace NQuery.Optimization
                 var when = RewriteExpression(oldLabel.Condition);
                 _passthruStack.Pop();
 
-                var thenPassthru = Condition.Or(whenPassthru, Condition.Not(when));
+                var thenPassthru = Expression.Or(whenPassthru, Expression.Not(when));
 
                 _passthruStack.Push(thenPassthru);
                 var then = RewriteExpression(oldLabel.ThenExpression);
@@ -76,7 +76,7 @@ namespace NQuery.Optimization
 
                 labels = labels.Replace(oldLabel, label);
 
-                whenPassthru = Condition.Or(whenPassthru, when);
+                whenPassthru = Expression.Or(whenPassthru, when);
             }
 
             _passthruStack.Push(whenPassthru);
@@ -115,7 +115,7 @@ namespace NQuery.Optimization
 
             // 2. Now we can assert that the number of rows returned is at most one.
 
-            var condition = Condition.LessThan(new BoundValueSlotExpression(countOutput), new BoundLiteralExpression(1));
+            var condition = Expression.LessThan(new BoundValueSlotExpression(countOutput), new BoundLiteralExpression(1));
 
             var message = Resources.SubqueryReturnedMoreThanRow;
             var assertRelation = new BoundAssertRelation(aggregation, condition, message);
@@ -220,7 +220,7 @@ namespace NQuery.Optimization
         {
             var current = input;
             var scalarPredicates = new List<BoundExpression>();
-            var conjunctions = Condition.SplitConjunctions(condition);
+            var conjunctions = Expression.SplitConjunctions(condition);
 
             foreach (var conjunction in conjunctions)
             {
@@ -233,7 +233,7 @@ namespace NQuery.Optimization
                         : BoundJoinType.LeftSemi;
                     current = new BoundJoinRelation(joinType, current, exists.Relation, null, null, null);
                 }
-                else if (Condition.IsDisjunction(conjunction))
+                else if (Expression.IsDisjunction(conjunction))
                 {
                     var relation = RewriteDisjunctions(conjunction);
                     if (relation != null)
@@ -261,7 +261,7 @@ namespace NQuery.Optimization
 
             // Othwerwise We add a filter for the scalars.
 
-            var predicate = Condition.And(scalarPredicates);
+            var predicate = Expression.And(scalarPredicates);
             return new BoundFilterRelation(current, predicate);
         }
 
@@ -270,7 +270,7 @@ namespace NQuery.Optimization
             var scalarPredicates = new List<BoundExpression>();
             var relationalPredicates = new List<BoundRelation>();
 
-            foreach (var disjunction in Condition.SplitDisjunctions(condition))
+            foreach (var disjunction in Expression.SplitDisjunctions(condition))
             {
                 BoundExistsSubselect exists;
                 bool isNegated;
@@ -287,7 +287,7 @@ namespace NQuery.Optimization
                         relationalPredicates.Add(predicate);
                     }
                 }
-                else if (Condition.IsConjunction(disjunction))
+                else if (Expression.IsConjunction(disjunction))
                 {
                     var constantRelation = new BoundConstantRelation();
                     var output = RewriteConjunctions(constantRelation, disjunction);
@@ -313,7 +313,7 @@ namespace NQuery.Optimization
             if (scalarPredicates.Count > 0)
             {
                 var constantRelation = new BoundConstantRelation();
-                var predicate = Condition.Or(scalarPredicates);
+                var predicate = Expression.Or(scalarPredicates);
                 var filter = new BoundFilterRelation(constantRelation, predicate);
                 relationalPredicates.Insert(0, filter);
             }

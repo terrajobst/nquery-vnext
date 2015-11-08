@@ -6,7 +6,7 @@ using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
-    internal static class Condition
+    internal static class Expression
     {
         public static BoundExpression Plus(BoundExpression left, BoundExpression right)
         {

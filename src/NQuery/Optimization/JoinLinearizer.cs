@@ -21,7 +21,7 @@ namespace NQuery.Optimization
             var leftSideRight = rightSide.Left;
             var left = new BoundJoinRelation(node.JoinType, leftSideLeft, leftSideRight, null, null, null);
             var right = rightSide.Right;
-            var condition = Condition.And(node.Condition, rightSide.Condition);
+            var condition = Expression.And(node.Condition, rightSide.Condition);
             var result = new BoundJoinRelation(rightSide.JoinType, left, right, condition, null, null);
 
             return RewriteRelation(result);

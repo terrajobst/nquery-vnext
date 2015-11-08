@@ -34,7 +34,7 @@ namespace NQuery.Optimization
 
             var dependencyFinder = new ValueSlotDependencyFinder();
 
-            foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+            foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
             {
                 dependencyFinder.ValueSlots.Clear();
                 dependencyFinder.VisitExpression(conjunction);
@@ -102,7 +102,7 @@ namespace NQuery.Optimization
             {
                 var dependencyFinder = new ValueSlotDependencyFinder();
 
-                foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+                foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
                 {
                     // Check if we can derive from this conjunction that a table it depends on
                     // is null-rejected.

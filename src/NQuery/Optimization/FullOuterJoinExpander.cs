@@ -79,7 +79,7 @@ namespace NQuery.Optimization
             var left = node.Left.GetOutputValues().ToImmutableArray();
             var right = node.Right.GetOutputValues().ToImmutableArray();
 
-            var conjunctions = Condition.SplitConjunctions(node.Condition);
+            var conjunctions = Expression.SplitConjunctions(node.Condition);
             return !conjunctions.Any(c => CanBeUsedForHashMatch(left, right, c));
         }
 

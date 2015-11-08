@@ -92,7 +92,7 @@
     <Compile Include="Optimization\CardinalityEstimator.cs" />
     <Compile Include="Optimization\CommonTableExpressionInstantiator.cs" />
     <Compile Include="Optimization\ConcatenationPhysicalOperatorChooser.cs" />
-    <Compile Include="Optimization\Condition.cs" />
+    <Compile Include="Optimization\Expression.cs" />
     <Compile Include="Optimization\DerivedTableRemover.cs" />
     <Compile Include="Iterators\StreamAggregateIterator.cs" />
     <Compile Include="Optimization\FullOuterJoinExpander.cs" />

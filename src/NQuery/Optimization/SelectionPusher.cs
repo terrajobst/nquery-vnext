@@ -46,19 +46,19 @@ namespace NQuery.Optimization
                 BoundExpression pushedRight = null;
                 BoundExpression remainder = null;
 
-                foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+                foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
                 {
                     if (AllowsLeftPushDown(node.JoinType) && !conjunction.DependsOnAny(node.Right.GetOutputValues()))
                     {
-                        pushedLeft = Condition.And(pushedLeft, conjunction);
+                        pushedLeft = Expression.And(pushedLeft, conjunction);
                     }
                     else if (AllowsRightPushDown(node.JoinType) && !conjunction.DependsOnAny(node.Left.GetOutputValues()))
                     {
-                        pushedRight = Condition.And(pushedRight, conjunction);
+                        pushedRight = Expression.And(pushedRight, conjunction);
                     }
                     else
                     {
-                        remainder = Condition.And(remainder, conjunction);
+                        remainder = Expression.And(remainder, conjunction);
                     }
                 }
 
@@ -142,7 +142,7 @@ namespace NQuery.Optimization
 
         private BoundRelation MergeWithFilter(BoundFilterRelation node, BoundFilterRelation input)
         {
-            var mergedCondition = Condition.And(input.Condition, node.Condition);
+            var mergedCondition = Expression.And(input.Condition, node.Condition);
             var newInput = RewriteRelation(input.Update(input.Input, mergedCondition));
             return newInput;
         }
@@ -152,15 +152,15 @@ namespace NQuery.Optimization
             BoundExpression remainder = null;
             BoundExpression pushed = null;
 
-            foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+            foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
             {
                 if (conjunction.DependsOnAny(input.GetDefinedValues()))
                 {
-                    remainder = Condition.And(remainder, conjunction);
+                    remainder = Expression.And(remainder, conjunction);
                 }
                 else
                 {
-                    pushed = Condition.And(pushed, conjunction);
+                    pushed = Expression.And(pushed, conjunction);
                 }
             }
 
@@ -195,15 +195,15 @@ namespace NQuery.Optimization
             BoundExpression remainder = null;
             BoundExpression pushed = null;
 
-            foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+            foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
             {
                 if (conjunction.DependsOnAny(input.GetDefinedValues()))
                 {
-                    remainder = Condition.And(remainder, conjunction);
+                    remainder = Expression.And(remainder, conjunction);
                 }
                 else
                 {
-                    pushed = Condition.And(pushed, conjunction);
+                    pushed = Expression.And(pushed, conjunction);
                 }
             }
 
@@ -237,7 +237,7 @@ namespace NQuery.Optimization
 
             if (AllowsMerge(input.JoinType))
             {
-                var newCondition = Condition.And(input.Condition, node.Condition);
+                var newCondition = Expression.And(input.Condition, node.Condition);
                 var newInput = input.Update(input.JoinType, input.Left, input.Right, newCondition, null, null);
                 return RewriteRelation(newInput);
             }
@@ -247,19 +247,19 @@ namespace NQuery.Optimization
                 BoundExpression pushedRight = null;
                 BoundExpression remainder = null;
 
-                foreach (var conjunction in Condition.SplitConjunctions(node.Condition))
+                foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
                 {
                     if (AllowsLeftPushOver(input.JoinType) && !conjunction.DependsOnAny(input.Right.GetOutputValues()))
                     {
-                        pushedLeft = Condition.And(pushedLeft, conjunction);
+                        pushedLeft = Expression.And(pushedLeft, conjunction);
                     }
                     else if (AllowsRightPushOver(input.JoinType) && !conjunction.DependsOnAny(input.Left.GetOutputValues()))
                     {
-                        pushedRight = Condition.And(pushedRight, conjunction);
+                        pushedRight = Expression.And(pushedRight, conjunction);
                     }
                     else
                     {
-                        remainder = Condition.And(remainder, conjunction);
+                        remainder = Expression.And(remainder, conjunction);
                     }
                 }
 

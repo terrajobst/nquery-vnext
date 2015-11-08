@@ -56,7 +56,7 @@ namespace NQuery.Optimization
                 {
                     if (join.Condition != null)
                     {
-                        var conjunctions = Condition.SplitConjunctions(join.Condition);
+                        var conjunctions = Expression.SplitConjunctions(join.Condition);
                         predicates.AddRange(conjunctions);
                     }
 
@@ -168,7 +168,7 @@ namespace NQuery.Optimization
 
                         var left = relation;
                         var right = nextNode.Relation;
-                        var condition = Condition.And(edge.Conditions);
+                        var condition = Expression.And(edge.Conditions);
                         relation = new BoundJoinRelation(BoundJoinType.Inner, left, right, condition, null, null);
                     }
                 }
@@ -183,7 +183,7 @@ namespace NQuery.Optimization
             // Add filter for remaining predicates
 
             var remainingPredicates = remainingEdges.SelectMany(e => e.Conditions);
-            var remainingCondition = Condition.And(remainingPredicates);
+            var remainingCondition = Expression.And(remainingPredicates);
             if (remainingCondition != null)
                 result = new BoundFilterRelation(result, remainingCondition);
 
@@ -260,7 +260,7 @@ namespace NQuery.Optimization
 
             public override string ToString()
             {
-                return Condition.And(Conditions).ToString();
+                return Expression.And(Conditions).ToString();
             }
         }
     }
