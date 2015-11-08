@@ -20,6 +20,8 @@ namespace NQuery
 
         public Compilation Compilation { get; }
 
+        public SyntaxTree SyntaxTree => Compilation.SyntaxTree;
+
         public Conversion ClassifyConversion(Type sourceType, Type targetType)
         {
             if (sourceType == null)

@@ -20,7 +20,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
 
         protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var syntax = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
             var span = syntax.Name.Span;
             var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);

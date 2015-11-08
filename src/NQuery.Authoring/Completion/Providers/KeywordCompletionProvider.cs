@@ -10,7 +10,7 @@ namespace NQuery.Authoring.Completion.Providers
     {
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var root = syntaxTree.Root;
 
             // For certain constructs we never want to show a keyword completion.

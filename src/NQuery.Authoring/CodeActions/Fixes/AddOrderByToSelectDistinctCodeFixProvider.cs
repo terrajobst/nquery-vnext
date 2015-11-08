@@ -19,7 +19,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
         protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic)
         {
-            var root = semanticModel.Compilation.SyntaxTree.Root;
+            var root = semanticModel.SyntaxTree.Root;
             var column = root.DescendantNodes().OfType<OrderByColumnSyntax>().FirstOrDefault(n => n.Span.ContainsOrTouches(position));
             if (column == null)
                 return Enumerable.Empty<ICodeAction>();

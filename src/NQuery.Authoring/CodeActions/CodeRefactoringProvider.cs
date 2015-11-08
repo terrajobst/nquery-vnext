@@ -9,7 +9,7 @@ namespace NQuery.Authoring.CodeActions
     {
         public IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             return syntaxTree.Root.FindNodes<T>(position)
                                   .SelectMany(n => GetRefactorings(semanticModel, position, n));
         }

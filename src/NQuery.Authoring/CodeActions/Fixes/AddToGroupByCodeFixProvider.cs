@@ -23,7 +23,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
         protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var expression = syntaxTree.Root.DescendantNodes().OfType<ExpressionSyntax>().FirstOrDefault(e => e.Span == diagnostic.Span);
             if (expression == null)
                 return Enumerable.Empty<ICodeAction>();

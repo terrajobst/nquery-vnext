@@ -10,7 +10,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         public IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var token = syntaxTree.Root.FindTokenOnLeft(position);
             if (token.Kind != SyntaxKind.IdentifierToken || !token.IsParenthesizedIdentifier())
                 return Enumerable.Empty<ICodeAction>();

@@ -13,7 +13,7 @@ namespace NQuery.Authoring.SymbolSearch
             if (semanticModel == null)
                 throw new ArgumentNullException(nameof(semanticModel));
 
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             return syntaxTree.Root.FindNodes(position)
                                   .SelectMany(n => GetSymbolSpans(semanticModel, n))
                                   .Where(s => s.Span.ContainsOrTouches(position))
@@ -28,7 +28,7 @@ namespace NQuery.Authoring.SymbolSearch
             if (symbol == null)
                 throw new ArgumentNullException(nameof(symbol));
 
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
 
             return from n in syntaxTree.Root.DescendantNodes()
                    from s in GetSymbolSpans(semanticModel, n)

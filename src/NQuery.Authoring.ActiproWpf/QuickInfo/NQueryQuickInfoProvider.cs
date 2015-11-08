@@ -52,7 +52,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             if (model == null)
                 return false;
 
-            var text = model.SemanticModel.Compilation.SyntaxTree.Text;
+            var text = model.SemanticModel.SyntaxTree.Text;
             var textSnapshotRange = text.ToSnapshotRange(model.Span);
             var textRange = textSnapshotRange.TextRange;
             var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();

@@ -33,7 +33,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var snapshot = document.GetTextSnapshot();
             var semanticClassificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySemantics(semanticModel));
             return Tuple.Create(snapshot, semanticClassificationSpans.AsEnumerable());

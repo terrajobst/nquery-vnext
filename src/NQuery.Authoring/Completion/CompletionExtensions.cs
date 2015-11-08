@@ -30,7 +30,7 @@ namespace NQuery.Authoring.Completion
 
         public static CompletionModel GetCompletionModel(this SemanticModel semanticModel, int position, IEnumerable<ICompletionProvider> providers)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
             var applicableSpan = token == null ? new TextSpan(position, 0) : token.Span;
 

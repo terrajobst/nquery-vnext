@@ -19,7 +19,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
 
         protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var syntax = syntaxTree.Root.DescendantNodes().OfType<ExpressionSelectColumnSyntax>().Single();
             var span = syntax.Alias.Identifier.Span;
             var symbol = semanticModel.GetDeclaredSymbol(syntax);

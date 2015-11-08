@@ -143,7 +143,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 }
                 else if (showSession)
                 {
-                    var syntaxTree = _model.SemanticModel.Compilation.SyntaxTree;
+                    var syntaxTree = _model.SemanticModel.SyntaxTree;
                     var snapshot = syntaxTree.Text.ToTextSnapshot();
                     var triggerPosition = _model.ApplicableSpan.Start;
                     var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);

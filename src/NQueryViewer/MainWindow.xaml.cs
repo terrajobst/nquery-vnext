@@ -108,7 +108,7 @@ namespace NQueryViewer
             if (semanticModel == null)
                 return;
 
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var syntaxDiagnostics = syntaxTree.GetDiagnostics();
             var semanticModelDiagnostcics = semanticModel.GetDiagnostics();
             var diagnostics = syntaxDiagnostics.Concat(semanticModelDiagnostcics);
@@ -209,7 +209,7 @@ namespace NQueryViewer
                 var semanticModel = await document.GetSemanticModelAsync();
                 var syntaxTree = semanticModel == null
                     ? await document.GetSyntaxTreeAsync()
-                    : semanticModel.Compilation.SyntaxTree;
+                    : semanticModel.SyntaxTree;
                 var syntaxTreeDiagnostics = syntaxTree == null
                     ? Enumerable.Empty<Diagnostic>()
                     : syntaxTree.GetDiagnostics();

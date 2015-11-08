@@ -41,7 +41,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         {
             var completionModel = GetCompletionModel(query);
             var semanticModel = completionModel.SemanticModel;
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
 
             var tableReference = syntaxTree.Root.DescendantNodesAndSelf()
                 .OfType<NamedTableReferenceSyntax>()

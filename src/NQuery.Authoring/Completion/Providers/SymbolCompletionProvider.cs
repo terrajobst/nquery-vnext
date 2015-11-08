@@ -12,7 +12,7 @@ namespace NQuery.Authoring.Completion.Providers
     {
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {
-            var root = semanticModel.Compilation.SyntaxTree.Root;
+            var root = semanticModel.SyntaxTree.Root;
 
             // We don't want to show a completion when typing an alias name.
             if (root.PossiblyInUserGivenName(position))
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.Completion.Providers
             // In case (1) we can ONLY see table symbols and in (2)
             // we can see all symbols EXCEPT table symbols.
 
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var findTokenContext = syntaxTree.Root.FindTokenContext(position);
             var isTableContext = findTokenContext.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().Any();
 

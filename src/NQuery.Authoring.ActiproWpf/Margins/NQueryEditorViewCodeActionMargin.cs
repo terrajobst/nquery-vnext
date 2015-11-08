@@ -44,7 +44,7 @@ namespace NQuery.Authoring.ActiproWpf.Margins
 
         private static ImmutableArray<CodeActionModel> GetActionModels(SemanticModel semanticModel, int position)
         {
-            var textDocument = semanticModel.Compilation.SyntaxTree.Text.Container.ToTextDocument();
+            var textDocument = semanticModel.SyntaxTree.Text.Container.ToTextDocument();
 
             var fixes = GetCodeFixes(semanticModel, position, textDocument);
             var issues = GetCodeIssues(semanticModel, position, textDocument);

@@ -10,7 +10,7 @@ namespace NQuery.Authoring.CodeActions
 
         public IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position)
         {
-            var syntaxDiagnostics = semanticModel.Compilation.SyntaxTree.GetDiagnostics();
+            var syntaxDiagnostics = semanticModel.SyntaxTree.GetDiagnostics();
             var semanticDiagnostics = semanticModel.GetDiagnostics();
             var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics);
             var applicableDiagnostics = diagnostics.Where(d => d.Span.ContainsOrTouches(position))

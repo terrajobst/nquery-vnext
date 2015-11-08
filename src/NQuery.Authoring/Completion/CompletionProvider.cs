@@ -9,7 +9,7 @@ namespace NQuery.Authoring.Completion
     {
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             var token = syntaxTree.Root.FindTokenOnLeft(position);
             var node = token.Parent.AncestorsAndSelf()
                                    .OfType<T>()

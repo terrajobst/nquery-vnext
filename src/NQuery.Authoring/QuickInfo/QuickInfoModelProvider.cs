@@ -8,7 +8,7 @@ namespace NQuery.Authoring.QuickInfo
     {
         public QuickInfoModel GetModel(SemanticModel semanticModel, int position)
         {
-            var syntaxTree = semanticModel.Compilation.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
             return syntaxTree.Root.FindNodes<T>(position)
                                   .Select(node => CreateModel(semanticModel, position, node))
                                   .FirstOrDefault();
