@@ -11,6 +11,8 @@ namespace NQuery.Binding
 
             switch (node.Kind)
             {
+                case BoundNodeKind.ErrorExpression:
+                    return RewriteErrorExpression((BoundErrorExpression)node);
                 case BoundNodeKind.TableExpression:
                     return RewriteTableExpression((BoundTableExpression)node);
                 case BoundNodeKind.ColumnExpression:
@@ -46,6 +48,11 @@ namespace NQuery.Binding
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
+        }
+
+        protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)
+        {
+            return node;
         }
 
         protected virtual BoundExpression RewriteTableExpression(BoundTableExpression node)

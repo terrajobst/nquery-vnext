@@ -8,6 +8,9 @@ namespace NQuery.Binding
         {
             switch (node.Kind)
             {
+                case BoundNodeKind.ErrorExpression:
+                    VisitErrorExpression((BoundErrorExpression)node);
+                    break;
                 case BoundNodeKind.TableExpression:
                     VisitTableExpression((BoundTableExpression)node);
                     break;
@@ -59,6 +62,10 @@ namespace NQuery.Binding
                 default:
                     throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
+        }
+
+        protected virtual void VisitErrorExpression(BoundErrorExpression node)
+        {
         }
 
         protected virtual void VisitTableExpression(BoundTableExpression node)
