@@ -41,7 +41,7 @@ namespace NQuery.Binding
                 case BoundNodeKind.AssertRelation:
                     return RewriteAssertRelation((BoundAssertRelation)node);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
         }
 

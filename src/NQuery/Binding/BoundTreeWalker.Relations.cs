@@ -57,7 +57,7 @@ namespace NQuery.Binding
                     VisitAssertRelation((BoundAssertRelation)node);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
             }
         }
 
