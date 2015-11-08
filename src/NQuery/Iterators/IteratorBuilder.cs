@@ -10,6 +10,14 @@ using NQuery.Symbols;
 
 namespace NQuery.Iterators
 {
+    // BUG: We don't handle outer references correctly.
+    //
+    // (see related comments for Sort and Concat nodes)
+    //
+    // The fundamental problem is that we use ValueSlot entries to represent
+    // row buffer entries in several iterators. However, this doesn't work
+    // if the ValueSlot is an oute reference as the input row buffer doesn't
+    // provide the value itself.
     internal sealed class IteratorBuilder
     {
         private readonly Stack<RowBufferAllocation> _outerRowBufferAllocations = new Stack<RowBufferAllocation>();
@@ -212,6 +220,21 @@ namespace NQuery.Iterators
 
         private Iterator BuildSort(BoundSortRelation relation)
         {
+            // BUG: BoundSortRelation: Simply using the value slots doesn't work for outer references.
+            //
+            // For instance, this query will not work:
+            //
+            //     SELECT  e.FirstName,
+            //             e.LastName,
+            //             (
+            //                 SELECT  TOP 1
+            //                         et.TerritoryID
+            //                 FROM    EmployeeTerritories et
+            //                 WHERE   et.EmployeeID = e.EmployeeID
+            //                 ORDER   BY LastName
+            //             ) AS Name
+            //     FROM    Employees e
+
             var input = BuildRelation(relation.Input);
             var inputRowBufferAllocation = BuildRowBufferAllocation(relation.Input, input.RowBuffer);
             var sortEntries = relation.SortedValues
@@ -225,6 +248,20 @@ namespace NQuery.Iterators
 
         private Iterator BuildConcatenationRelation(BoundConcatenationRelation relation)
         {
+            // BUG: BoundConcatenationRelation: Simply using the value slots doesn't work for outer references.
+            //
+            // For instance, this query will not work:
+            //
+            //     SELECT  e.FirstName,
+            //             e.LastName,
+            //             (
+            //                 SELECT FirstName
+            //                 UNION   ALL
+            //                 SELECT LastName
+            //                 WHERE  LastName = 'Immo'
+            //             ) AS Name
+            //     FROM    Employees e
+
             var inputs = relation.Inputs.Select(BuildRelation);
             var outputValueSlotCount = relation.DefinedValues.Length;
             return new ConcatenationIterator(inputs, outputValueSlotCount);
