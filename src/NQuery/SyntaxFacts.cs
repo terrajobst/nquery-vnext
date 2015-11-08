@@ -13,6 +13,9 @@ namespace NQuery
     {
         public static SyntaxToken ParseToken(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var sourceText = SourceText.From(text);
             var lexer = new Lexer(null, sourceText);
             return lexer.Lex();
@@ -20,6 +23,9 @@ namespace NQuery
 
         public static ExpressionSyntax ParseExpression(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var tree = SyntaxTree.ParseExpression(text);
             return (ExpressionSyntax)tree.Root.Root;
         }
@@ -290,6 +296,9 @@ namespace NQuery
 
         public static string GetDisplayText(this SyntaxToken token)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             var result = token.Text;
             return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
         }
@@ -403,6 +412,9 @@ namespace NQuery
 
         public static string GetValidIdentifier(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
             return IsValidIdentifier(name)
                        ? name
                        : GetParenthesizedIdentifier(name);
@@ -410,6 +422,9 @@ namespace NQuery
 
         public static bool IsValidIdentifier(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
             if (name.Length == 0)
                 return false;
 
@@ -425,6 +440,9 @@ namespace NQuery
 
         public static string GetParenthesizedIdentifier(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
             var sb = new StringBuilder();
 
             sb.Append('[');
@@ -443,6 +461,9 @@ namespace NQuery
 
         public static string GetQuotedIdentifier(string name)
         {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
             var sb = new StringBuilder();
 
             sb.Append('"');
@@ -638,6 +659,9 @@ namespace NQuery
 
         public static bool IsQuotedIdentifier(this SyntaxToken token)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             return token.Kind == SyntaxKind.IdentifierToken &&
                    token.Text.Length > 0 &&
                    token.Text[0] == '"';
@@ -645,6 +669,9 @@ namespace NQuery
 
         public static bool IsParenthesizedIdentifier(this SyntaxToken token)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             return token.Kind == SyntaxKind.IdentifierToken &&
                    token.Text.Length > 0 &&
                    token.Text[0] == '[';
@@ -652,6 +679,12 @@ namespace NQuery
 
         public static bool Matches(this SyntaxToken token, string text)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var comparison = token.IsQuotedIdentifier()
                                  ? StringComparison.Ordinal
                                  : StringComparison.OrdinalIgnoreCase;
@@ -660,6 +693,9 @@ namespace NQuery
 
         public static bool IsTerminated(this SyntaxToken token)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             switch (token.Kind)
             {
                 case SyntaxKind.IdentifierToken:
@@ -679,6 +715,9 @@ namespace NQuery
 
         public static bool IsTerminated(this SyntaxTrivia trivia)
         {
+            if (trivia == null)
+                throw new ArgumentNullException(nameof(trivia));
+
             switch (trivia.Kind)
             {
                 case SyntaxKind.MultiLineCommentTrivia:

@@ -9,6 +9,15 @@ namespace NQuery.Text
         public ChangedSourceText(SourceText oldText, SourceText newText, IEnumerable<TextChange> changes)
             : base(newText.Container)
         {
+            if (oldText == null)
+                throw new ArgumentNullException(nameof(oldText));
+
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
+            if (changes == null)
+                throw new ArgumentNullException(nameof(changes));
+
             OldText = oldText;
             NewText = newText;
             Changes = changes.ToImmutableArray();

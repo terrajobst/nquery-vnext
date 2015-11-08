@@ -7,6 +7,9 @@ namespace NQuery.Symbols
         internal ColumnSymbol(string name, Type type)
             : base(name)
         {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
             Type = type;
         }
 

@@ -21,23 +21,35 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var sourceText = SourceText.From(text);
             return ParseQuery(sourceText);
         }
 
         public static SyntaxTree ParseQuery(SourceText text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             return new SyntaxTree(text, p => p.ParseRootQuery());
         }
 
         public static SyntaxTree ParseExpression(string source)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             var textBuffer = SourceText.From(source);
             return ParseExpression(textBuffer);
         }
 
         public static SyntaxTree ParseExpression(SourceText sourceText)
         {
+            if (sourceText == null)
+                throw new ArgumentNullException(nameof(sourceText));
+
             return new SyntaxTree(sourceText, p => p.ParseRootExpression());
         }
 
@@ -128,6 +140,9 @@ namespace NQuery
 
         public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
         {
+            if (textChanges == null)
+                throw new ArgumentNullException(nameof(textChanges));
+
             var newText = Text.WithChanges(textChanges);
             if (newText == Text)
                 return this;

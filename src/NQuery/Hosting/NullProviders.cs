@@ -13,6 +13,9 @@ namespace NQuery.Hosting
         {
             public IEnumerable<PropertySymbol> GetProperties(Type type)
             {
+                if (type == null)
+                    throw new ArgumentNullException(nameof(type));
+
                 return Enumerable.Empty<PropertySymbol>();
             }
         }
@@ -21,6 +24,9 @@ namespace NQuery.Hosting
         {
             public IEnumerable<MethodSymbol> GetMethods(Type type)
             {
+                if (type == null)
+                    throw new ArgumentNullException(nameof(type));
+
                 return Enumerable.Empty<MethodSymbol>();
             }
         }

@@ -312,6 +312,9 @@ namespace NQuery.Hosting
         /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual MethodSymbol CreateMethod(MethodInfo methodInfo)
         {
+            if (methodInfo == null)
+                throw new ArgumentNullException(nameof(methodInfo));
+
             return new ReflectionMethodSymbol(methodInfo, methodInfo.Name);
         }
 
@@ -322,6 +325,9 @@ namespace NQuery.Hosting
         /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(PropertyInfo propertyInfo)
         {
+            if (propertyInfo == null)
+                throw new ArgumentNullException(nameof(propertyInfo));
+
             return new ReflectionPropertySymbol(propertyInfo, propertyInfo.Name);
         }
 
@@ -332,6 +338,9 @@ namespace NQuery.Hosting
         /// <returns>If the field should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(FieldInfo fieldInfo)
         {
+            if (fieldInfo == null)
+                throw new ArgumentNullException(nameof(fieldInfo));
+
             return new ReflectionFieldSymbol(fieldInfo, fieldInfo.Name);
         }
     }

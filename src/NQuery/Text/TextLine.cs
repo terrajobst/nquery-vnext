@@ -9,6 +9,9 @@ namespace NQuery.Text
 
         public TextLine(SourceText text, int start, int length)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             Text = text;
             _start = start;
             _length = length;

@@ -23,6 +23,9 @@ namespace NQuery.Text
 
         public static SourceText From(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             return new StringText(text);
         }
 
@@ -92,6 +95,9 @@ namespace NQuery.Text
 
         public SourceText WithChanges(IEnumerable<TextChange> changes)
         {
+            if (changes == null)
+                throw new ArgumentNullException(nameof(changes));
+
             var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
                                           .ToImmutableArray();
 
@@ -194,11 +200,17 @@ namespace NQuery.Text
 
         public SourceText Replace(TextSpan span, string newText)
         {
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
             return WithChanges(new TextChange(span, newText));
         }
 
         public SourceText Replace(int start, int length, string newText)
         {
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
             var span = new TextSpan(start, length);
             return Replace(span, newText);
         }

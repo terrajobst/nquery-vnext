@@ -10,6 +10,9 @@ namespace NQuery.Text
 
         public StringText(string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             _text = text;
             _lines = Parse(this, text);
         }

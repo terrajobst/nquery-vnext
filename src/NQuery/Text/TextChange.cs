@@ -6,11 +6,17 @@ namespace NQuery.Text
     {
         public static TextChange ForReplacement(TextSpan span, string newText)
         {
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
             return new TextChange(span, newText);
         }
 
         public static TextChange ForInsertion(int position, string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var span = new TextSpan(position, 0);
             return new TextChange(span, text);
         }
@@ -22,6 +28,9 @@ namespace NQuery.Text
 
         public TextChange(TextSpan span, string newText)
         {
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
             Span = span;
             NewText = newText;
         }

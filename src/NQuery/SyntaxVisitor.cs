@@ -8,6 +8,9 @@ namespace NQuery
     {
         protected void Dispatch(SyntaxNode node)
         {
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
             switch (node.Kind)
             {
                 case SyntaxKind.CompilationUnit:

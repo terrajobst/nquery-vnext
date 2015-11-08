@@ -22,35 +22,56 @@ namespace NQuery
 
         public Conversion ClassifyConversion(Type sourceType, Type targetType)
         {
+            if (sourceType == null)
+                throw new ArgumentNullException(nameof(sourceType));
+
+            if (targetType == null)
+                throw new ArgumentNullException(nameof(targetType));
+
             return Conversion.Classify(sourceType, targetType);
         }
 
         public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax selectColumn)
         {
+            if (selectColumn == null)
+                throw new ArgumentNullException(nameof(selectColumn));
+
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
             return boundExpression == null ? null : boundExpression.Table;
         }
 
         public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
         {
+            if (selectColumn == null)
+                throw new ArgumentNullException(nameof(selectColumn));
+
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
             return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.TableColumns;
         }
 
         public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
         {
+            if (query == null)
+                throw new ArgumentNullException(nameof(query));
+
             var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
             return boundQuery == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundQuery.OutputColumns;
         }
 
         public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
         {
+            if (orderByColumn == null)
+                throw new ArgumentNullException(nameof(orderByColumn));
+
             var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;
             return boundOrderByColumn == null ? null : boundOrderByColumn.QueryColumn;
         }
 
         public Symbol GetSymbol(ExpressionSyntax expression)
         {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
             var boundExpression = GetBoundExpression(expression);
             return boundExpression == null ? null : GetSymbol(boundExpression);
         }
@@ -115,12 +136,18 @@ namespace NQuery
 
         public Type GetExpressionType(ExpressionSyntax expression)
         {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
             var boundExpression = GetBoundExpression(expression);
             return boundExpression == null ? null : boundExpression.Type;
         }
 
         public Conversion GetConversion(CastExpressionSyntax expression)
         {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
             var boundExpression = GetBoundExpression(expression) as BoundConversionExpression;
             return boundExpression == null ? null : boundExpression.Conversion;
         }
@@ -132,36 +159,54 @@ namespace NQuery
 
         public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
         {
+            if (tableReference == null)
+                throw new ArgumentNullException(nameof(tableReference));
+
             var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
             return result == null ? null : result.GetDeclaredTableInstances().AsEnumerable();
         }
 
         public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
         {
+            if (commonTableExpression == null)
+                throw new ArgumentNullException(nameof(commonTableExpression));
+
             var result = _bindingResult.GetBoundNode(commonTableExpression) as BoundCommonTableExpression;
             return result == null ? null : result.TableSymbol;
         }
 
         public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
         {
+            if (tableReference == null)
+                throw new ArgumentNullException(nameof(tableReference));
+
             var result = _bindingResult.GetBoundNode(tableReference) as BoundTableRelation;
             return result == null ? null : result.TableInstance;
         }
 
         public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
         {
+            if (tableReference == null)
+                throw new ArgumentNullException(nameof(tableReference));
+
             var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableRelation;
             return result == null ? null : result.TableInstance;
         }
 
         public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
         {
+            if (selectColumn == null)
+                throw new ArgumentNullException(nameof(selectColumn));
+
             var result = _bindingResult.GetBoundNode(selectColumn) as BoundSelectColumn;
             return result == null ? null : result.Column;
         }
 
         public IEnumerable<QueryColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
         {
+            if (selectColumn == null)
+                throw new ArgumentNullException(nameof(selectColumn));
+
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
             return boundExpression == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundExpression.QueryColumns;
         }
@@ -223,11 +268,17 @@ namespace NQuery
 
         public IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
             return _bindingResult.RootBinder.LookupMethods(type);
         }
 
         public IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+
             return _bindingResult.RootBinder.LookupProperties(type);
         }
     }

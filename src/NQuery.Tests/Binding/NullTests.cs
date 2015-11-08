@@ -22,7 +22,7 @@ namespace NQuery.Tests.Binding
 
             Assert.Equal(1, columns.Length);
             Assert.True(columns[0].Type.IsNull());
-            Assert.Equal(null, columns[0].Name);
+            Assert.Equal(string.Empty, columns[0].Name);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace NQuery.Tests.Binding
 
             Assert.Equal(1, columns.Length);
             Assert.Equal(typeof(double), columns[0].Type);
-            Assert.Equal(null, columns[0].Name);
+            Assert.Equal(string.Empty, columns[0].Name);
         }
 
         [Fact]

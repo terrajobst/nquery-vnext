@@ -6,6 +6,9 @@ namespace NQuery.Text
     {
         public StaticSourceTextContainer(SourceText current)
         {
+            if (current == null)
+                throw new ArgumentNullException(nameof(current));
+
             Current = current;
         }
 

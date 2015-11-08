@@ -11,12 +11,18 @@ namespace NQuery.Text
 
         public void ReplaceText(TextSpan span, string newText)
         {
+            if (newText == null)
+                throw new ArgumentNullException(nameof(newText));
+
             var change = TextChange.ForReplacement(span, newText);
             RegisterChange(change);
         }
 
         public void InsertText(int position, string text)
         {
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
+
             var change = TextChange.ForInsertion(position, text);
             RegisterChange(change);
         }

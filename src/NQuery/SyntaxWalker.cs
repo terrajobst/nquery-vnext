@@ -6,6 +6,9 @@ namespace NQuery
     {
         public override void DefaultVisit(SyntaxNode node)
         {
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
             foreach (var syntaxNodeOrToken in node.ChildNodesAndTokens())
             {
                 if (syntaxNodeOrToken.IsToken)

@@ -9,6 +9,9 @@ namespace NQuery.Text
 
         public StringTextLineCollection(IReadOnlyList<TextLine> lines)
         {
+            if (lines == null)
+                throw new ArgumentNullException(nameof(lines));
+
             _lines = lines;
         }
 

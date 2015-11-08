@@ -9,6 +9,9 @@ namespace NQuery
     {
         public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
         {
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
             Span = textSpan;
             DiagnosticId = diagnosticId;
             Message = message;

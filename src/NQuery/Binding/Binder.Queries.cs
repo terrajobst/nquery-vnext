@@ -56,7 +56,7 @@ namespace NQuery.Binding
         private string InferColumnName(ExpressionSyntax expressionSyntax)
         {
             var columnExpression = GetBoundNode<BoundColumnExpression>(expressionSyntax);
-            return columnExpression != null ? columnExpression.Symbol.Name : null;
+            return columnExpression?.Symbol.Name ?? string.Empty;
         }
 
         private BoundQueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)

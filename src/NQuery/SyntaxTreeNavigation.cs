@@ -26,6 +26,9 @@ namespace NQuery
 
         public static SyntaxToken GetFirstToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
         {
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
             return GetFirstToken(node, tokenPredicate, triviaPredicate);
@@ -33,6 +36,9 @@ namespace NQuery
 
         public static SyntaxToken GetLastToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
         {
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
             return GetLastToken(node, tokenPredicate, triviaPredicate);
@@ -40,6 +46,9 @@ namespace NQuery
 
         public static SyntaxToken GetPreviousToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
             return GetPreviousToken(token, true, tokenPredicate, triviaPredicate);
@@ -47,6 +56,9 @@ namespace NQuery
 
         public static SyntaxToken GetNextToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
         {
+            if (token == null)
+                throw new ArgumentNullException(nameof(token));
+
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
             return GetNextToken(token, true, tokenPredicate, triviaPredicate);
@@ -409,6 +421,5 @@ namespace NQuery
 
             return null;
         }
-
     }
 }
