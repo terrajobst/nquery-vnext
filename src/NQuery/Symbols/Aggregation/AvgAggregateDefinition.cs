@@ -24,7 +24,7 @@ namespace NQuery.Symbols.Aggregation
             var sumVariable = new VariableSymbol("Sum", sumAggregatable.ReturnType);
             var countVariable = new VariableSymbol("Count", countAggregatable.ReturnType);
             var divisionDataContext = DataContext.Empty.AddVariables(sumVariable, countVariable);
-            var divisionExpression = new Expression<object>(divisionDataContext, @"@Sum / @Count");
+            var divisionExpression = Expression<object>.Create(divisionDataContext, @"@Sum / @Count");
 
             try
             {

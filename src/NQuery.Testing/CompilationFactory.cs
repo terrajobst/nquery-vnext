@@ -12,7 +12,7 @@ namespace NQuery
         public static Compilation CreateQuery(string query)
         {
             var syntaxTree = SyntaxTree.ParseQuery(query);
-            return new Compilation(DataContext, syntaxTree);
+            return Compilation.Create(DataContext, syntaxTree);
         }
 
         public static Compilation CreateQuery(string textWithPipe, out int position)
@@ -36,7 +36,7 @@ namespace NQuery
         public static Compilation CreateExpression(string text)
         {
             var syntaxTree = SyntaxTree.ParseExpression(text);
-            return new Compilation(DataContext, syntaxTree);
+            return Compilation.Create(DataContext, syntaxTree);
         }
 
         public static Compilation CreateExpression(string textWithPipe, out int position)

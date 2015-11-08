@@ -19,7 +19,7 @@ namespace NQuery.Dynamic.Tests
             ";
 
             var dataContext = NorthwindDataContext.Instance;
-            var query = new Query(dataContext, text);
+            var query = Query.Create(dataContext, text);
 
             var rows = query.ExecuteDynamicSequence().ToImmutableArray();
 

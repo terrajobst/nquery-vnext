@@ -110,7 +110,7 @@ namespace NQuery.Authoring
         private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
         {
             var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
-            return new Compilation(DataContext, syntaxTree);
+            return Compilation.Create(DataContext, syntaxTree);
         }
 
         private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)

@@ -7,17 +7,7 @@ namespace NQuery
     {
         private ExpressionEvaluator _expressionEvaluator;
 
-        public Expression(DataContext dataContext, string text)
-            : this(dataContext, text, default(T))
-        {
-        }
-
-        public Expression(DataContext dataContext, string text, T nullValue)
-            : this(dataContext, text, nullValue, typeof(T))
-        {
-        }
-
-        public Expression(DataContext dataContext, string text, T nullValue, Type targetType)
+        private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
         {
             if (dataContext == null)
                 throw new ArgumentNullException(nameof(dataContext));
@@ -37,13 +27,28 @@ namespace NQuery
             TargetType = targetType;
         }
 
+        public static Expression<T> Create(DataContext dataContext, string text)
+        {
+            return Create(dataContext, text, default(T));
+        }
+
+        public static Expression<T> Create(DataContext dataContext, string text, T nullValue)
+        {
+            return Create(dataContext, text, nullValue, typeof(T));
+        }
+
+        public static Expression<T> Create(DataContext dataContext, string text, T nullValue, Type targetType)
+        {
+            return new Expression<T>(dataContext, text, nullValue, targetType);
+        }
+
         private void EnsureCompiled()
         {
             if (_expressionEvaluator != null)
                 return;
 
             var syntaxTree = SyntaxTree.ParseExpression(Text);
-            var compilation = new Compilation(DataContext, syntaxTree);
+            var compilation = Compilation.Create(DataContext, syntaxTree);
             var compiledQuery = compilation.Compile();
             var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
             Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);

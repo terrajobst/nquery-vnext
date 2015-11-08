@@ -13,7 +13,7 @@ namespace NQuery.Tests
             var dataContext = DataContext.Empty;
             var fooBar = "FOO BAR";
 
-            var query = new Expression<object>(dataContext, fooBar);
+            var query = Expression<object>.Create(dataContext, fooBar);
 
             Assert.Equal(dataContext, query.DataContext);
             Assert.Equal(fooBar, query.Text);
@@ -24,7 +24,7 @@ namespace NQuery.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new Expression<object>(null, string.Empty);
+                Expression<object>.Create(null, string.Empty);
             });
         }
 
@@ -33,7 +33,7 @@ namespace NQuery.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new Expression<object>(DataContext.Empty, null);
+                Expression<object>.Create(DataContext.Empty, null);
             });
         }
 
@@ -42,14 +42,14 @@ namespace NQuery.Tests
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                new Expression<bool>(DataContext.Empty, "", false, typeof (int));
+                Expression<bool>.Create(DataContext.Empty, "", false, typeof (int));
             });
         }
 
         [Fact]
         public void Expression_ResolveThrows_IfExpressionCannotBeParsed()
         {
-            var expression = new Expression<bool>(DataContext.Empty, "foo;");
+            var expression = Expression<bool>.Create(DataContext.Empty, "foo;");
 
             try
             {
@@ -65,7 +65,7 @@ namespace NQuery.Tests
         [Fact]
         public void Expression_EvaluateThrows_IfExpressionCannotBeParsed()
         {
-            var expression = new Expression<bool>(DataContext.Empty, "bar;");
+            var expression = Expression<bool>.Create(DataContext.Empty, "bar;");
 
             try
             {
@@ -81,7 +81,7 @@ namespace NQuery.Tests
         [Fact]
         public void Expression_ResolveReturnsValue()
         {
-            var expression = new Expression<double>(DataContext.Empty, "1 + 1.0");
+            var expression = Expression<double>.Create(DataContext.Empty, "1 + 1.0");
             var result = expression.Resolve();
             Assert.Equal(typeof(double), result);
         }
@@ -89,7 +89,7 @@ namespace NQuery.Tests
         [Fact]
         public void Expression_EvaluateReturnsValue()
         {
-            var expression = new Expression<double>(DataContext.Empty, "1 + 1.0");
+            var expression = Expression<double>.Create(DataContext.Empty, "1 + 1.0");
             var result = expression.Evaluate();
             Assert.Equal(2.0, result);
         }
@@ -98,7 +98,7 @@ namespace NQuery.Tests
         public void Expression_Evaluate_HonorsNullValue()
         {
             const int nullValue = 42;
-            var expression = new Expression<int>(DataContext.Empty, "NULL", nullValue);
+            var expression = Expression<int>.Create(DataContext.Empty, "NULL", nullValue);
             var result = expression.Evaluate();
             Assert.Equal(nullValue, result);
         }

@@ -16,7 +16,7 @@ namespace NQuery.Symbols.Aggregation
             var addDataContext = DataContext.Empty.AddVariables(new VariableSymbol("Left", argumentType),
                                                                 new VariableSymbol("Right", argumentType));
 
-            var addExpression = new Expression<object>(addDataContext, @"Left + Right");
+            var addExpression = Expression<object>.Create(addDataContext, @"Left + Right");
 
             Type sumType;
             try
@@ -36,7 +36,7 @@ namespace NQuery.Symbols.Aggregation
             var leftVariable = new VariableSymbol("Left", argumentType);
             var rightVariable = new VariableSymbol("Right", argumentType);
             var sumDataContext = DataContext.Empty.AddVariables(leftVariable, rightVariable);
-            var sumExpression = new Expression<object>(sumDataContext, "Left + Right");
+            var sumExpression = Expression<object>.Create(sumDataContext, "Left + Right");
 
             try
             {
@@ -53,7 +53,7 @@ namespace NQuery.Symbols.Aggregation
 
             var conversionInputVariable = new VariableSymbol("Input", argumentType);
             var convertionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
-            var conversionExpression = new Expression<object>(convertionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
+            var conversionExpression = Expression<object>.Create(convertionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
 
             try
             {

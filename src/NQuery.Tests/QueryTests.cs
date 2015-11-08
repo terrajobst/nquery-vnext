@@ -16,7 +16,7 @@ namespace NQuery.Tests
             var dataContext = DataContext.Empty;
             var fooBar = "FOO BAR";
 
-            var query = new Query(dataContext, fooBar);
+            var query = Query.Create(dataContext, fooBar);
 
             Assert.Equal(dataContext, query.DataContext);
             Assert.Equal(fooBar, query.Text);
@@ -27,7 +27,7 @@ namespace NQuery.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new Query(null, string.Empty);
+                Query.Create(null, string.Empty);
             });
         }
 
@@ -36,14 +36,14 @@ namespace NQuery.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                new Query(DataContext.Empty, null);
+                Query.Create(DataContext.Empty, null);
             });
         }
 
         [Fact]
         public void Query_ExecuteSchemaReaderThrows_IfQueryCannotBeParsed()
         {
-            var query = new Query(DataContext.Empty, "SELECT SchemaReader;");
+            var query = Query.Create(DataContext.Empty, "SELECT SchemaReader;");
             try
             {
                 query.ExecuteSchemaReader();
@@ -59,7 +59,7 @@ namespace NQuery.Tests
         [Fact]
         public void Query_ExecuteReaderThrows_IfQueryCannotBeParsed()
         {
-            var query = new Query(DataContext.Empty, "SELECT Reader;");
+            var query = Query.Create(DataContext.Empty, "SELECT Reader;");
             try
             {
                 query.ExecuteReader();
@@ -78,7 +78,7 @@ namespace NQuery.Tests
             var dataTable = TestData.IdNameTable();
             var dataContext = DataContext.Default.AddTables(dataTable);
 
-            var query = new Query(dataContext, "SELECT * FROM Table");
+            var query = Query.Create(dataContext, "SELECT * FROM Table");
             Assert.Throws<InvalidCastException>(() =>
             {
                 query.ExecuteScalar<string>();
@@ -91,7 +91,7 @@ namespace NQuery.Tests
             var dataTable = TestData.IdNameTable();
             var dataContext = DataContext.Default.AddTables(dataTable);
 
-            var query = new Query(dataContext, "SELECT * FROM Table");
+            var query = Query.Create(dataContext, "SELECT * FROM Table");
             var result = query.ExecuteScalar();
             var expected = dataTable.Rows[0][0];
 
@@ -104,7 +104,7 @@ namespace NQuery.Tests
             var dataTable = TestData.IdNameTable();
             var dataContext = DataContext.Default.AddTables(dataTable);
 
-            var query = new Query(dataContext, "SELECT * FROM Table WHERE FALSE");
+            var query = Query.Create(dataContext, "SELECT * FROM Table WHERE FALSE");
             var result = query.ExecuteScalar();
 
             Assert.Equal(null, result);
@@ -120,7 +120,7 @@ namespace NQuery.Tests
 
             var dataContext = DataContext.Default.AddTables(dataTable);
 
-            var query = new Query(dataContext, "SELECT * FROM Table");
+            var query = Query.Create(dataContext, "SELECT * FROM Table");
             using (var reader = query.ExecuteReader())
             {
                 Assert.Equal(1, reader.ColumnCount);
@@ -149,7 +149,7 @@ namespace NQuery.Tests
 
             var dataContext = DataContext.Default.AddTables(dataTable);
 
-            var query = new Query(dataContext, "SELECT * FROM Table");
+            var query = Query.Create(dataContext, "SELECT * FROM Table");
             using (var reader = query.ExecuteSchemaReader())
             {
                 Assert.Equal(1, reader.ColumnCount);
@@ -163,7 +163,7 @@ namespace NQuery.Tests
         public void Query_SelectNullLiteralReturnsObjectNull()
         {
             var text = "SELECT NULL";
-            var query = new Query(DataContext.Default, text);
+            var query = Query.Create(DataContext.Default, text);
 
             using (var queryReader = query.ExecuteReader())
             {
@@ -180,7 +180,7 @@ namespace NQuery.Tests
         public void Query_SelectNullExpressionReturnsTypedNull()
         {
             var text = "SELECT 1.0 + NULL";
-            var query = new Query(DataContext.Default, text);
+            var query = Query.Create(DataContext.Default, text);
 
             using (var queryReader = query.ExecuteReader())
             {
@@ -197,7 +197,7 @@ namespace NQuery.Tests
         public void Query_SelectIsNullReturnsBooleanTrue()
         {
             var text = "SELECT NULL IS NULL";
-            var query = new Query(DataContext.Default, text);
+            var query = Query.Create(DataContext.Default, text);
 
             using (var queryReader = query.ExecuteReader())
             {

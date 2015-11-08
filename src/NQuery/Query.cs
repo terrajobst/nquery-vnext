@@ -7,7 +7,13 @@ namespace NQuery
     {
         private CompiledQuery _query;
 
-        public Query(DataContext dataContext, string text)
+        private Query(DataContext dataContext, string text)
+        {
+            DataContext = dataContext;
+            Text = text;
+        }
+
+        public static Query Create(DataContext dataContext, string text)
         {
             if (dataContext == null)
                 throw new ArgumentNullException(nameof(dataContext));
@@ -15,8 +21,7 @@ namespace NQuery
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            DataContext = dataContext;
-            Text = text;
+            return new Query(dataContext, text);
         }
 
         private void EnsureCompiled()
@@ -25,7 +30,7 @@ namespace NQuery
                 return;
 
             var syntaxTree = SyntaxTree.ParseQuery(Text);
-            var compilation = new Compilation(DataContext, syntaxTree);
+            var compilation = Compilation.Create(DataContext, syntaxTree);
             Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
         }
 

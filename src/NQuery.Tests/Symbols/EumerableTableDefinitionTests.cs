@@ -83,7 +83,7 @@ namespace NQuery.Tests.Symbols
             var table = TableDefinition.Create("Table", rows);
             var symbol = new SchemaTableSymbol(table);
             var dataContext = DataContext.Empty.AddTables(symbol);
-            var query = new Query(dataContext, $"SELECT * FROM {table.Name}");
+            var query = Query.Create(dataContext, $"SELECT * FROM {table.Name}");
 
             using (var reader = query.ExecuteReader())
             {

@@ -11,7 +11,13 @@ namespace NQuery
 {
     public sealed class Compilation
     {
-        public Compilation(DataContext dataContext, SyntaxTree syntaxTree)
+        private Compilation(DataContext dataContext, SyntaxTree syntaxTree)
+        {
+            DataContext = dataContext;
+            SyntaxTree = syntaxTree;
+        }
+
+        public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree)
         {
             if (dataContext == null)
                 throw new ArgumentNullException(nameof(dataContext));
@@ -19,8 +25,7 @@ namespace NQuery
             if (syntaxTree == null)
                 throw new ArgumentNullException(nameof(syntaxTree));
 
-            DataContext = dataContext;
-            SyntaxTree = syntaxTree;
+            return new Compilation(dataContext, syntaxTree);
         }
 
         public SemanticModel GetSemanticModel()
@@ -112,7 +117,7 @@ namespace NQuery
             if (syntaxTree == null)
                 throw new ArgumentNullException(nameof(syntaxTree));
 
-            return SyntaxTree == syntaxTree ? this : new Compilation(DataContext, syntaxTree);
+            return SyntaxTree == syntaxTree ? this : Create(DataContext, syntaxTree);
         }
 
         public Compilation WithDataContext(DataContext dataContext)
@@ -120,10 +125,10 @@ namespace NQuery
             if (dataContext == null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            return DataContext == dataContext ? this : new Compilation(dataContext, SyntaxTree);
+            return DataContext == dataContext ? this : Create(dataContext, SyntaxTree);
         }
 
-        public static readonly Compilation Empty = new Compilation(DataContext.Empty, SyntaxTree.Empty);
+        public static readonly Compilation Empty = Create(DataContext.Empty, SyntaxTree.Empty);
 
         public SyntaxTree SyntaxTree { get; }
 
