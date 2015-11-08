@@ -37,7 +37,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(selectColumn));
 
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
-            return boundExpression == null ? null : boundExpression.Table;
+            return boundExpression?.Table;
         }
 
         public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
@@ -46,7 +46,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(selectColumn));
 
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
-            return boundExpression == null ? Enumerable.Empty<TableColumnInstanceSymbol>() : boundExpression.TableColumns;
+            return boundExpression?.TableColumns ?? Enumerable.Empty<TableColumnInstanceSymbol>();
         }
 
         public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
@@ -55,7 +55,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(query));
 
             var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
-            return boundQuery == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundQuery.OutputColumns;
+            return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
         }
 
         public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
@@ -64,7 +64,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(orderByColumn));
 
             var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;
-            return boundOrderByColumn == null ? null : boundOrderByColumn.QueryColumn;
+            return boundOrderByColumn?.QueryColumn;
         }
 
         public Symbol GetSymbol(ExpressionSyntax expression)
@@ -140,7 +140,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(expression));
 
             var boundExpression = GetBoundExpression(expression);
-            return boundExpression == null ? null : boundExpression.Type;
+            return boundExpression?.Type;
         }
 
         public Conversion GetConversion(CastExpressionSyntax expression)
@@ -149,7 +149,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(expression));
 
             var boundExpression = GetBoundExpression(expression) as BoundConversionExpression;
-            return boundExpression == null ? null : boundExpression.Conversion;
+            return boundExpression?.Conversion;
         }
 
         private BoundExpression GetBoundExpression(ExpressionSyntax expression)
@@ -163,7 +163,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(tableReference));
 
             var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
-            return result == null ? null : result.GetDeclaredTableInstances().AsEnumerable();
+            return result?.GetDeclaredTableInstances().AsEnumerable();
         }
 
         public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
@@ -172,7 +172,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(commonTableExpression));
 
             var result = _bindingResult.GetBoundNode(commonTableExpression) as BoundCommonTableExpression;
-            return result == null ? null : result.TableSymbol;
+            return result?.TableSymbol;
         }
 
         public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
@@ -181,7 +181,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(tableReference));
 
             var result = _bindingResult.GetBoundNode(tableReference) as BoundTableRelation;
-            return result == null ? null : result.TableInstance;
+            return result?.TableInstance;
         }
 
         public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
@@ -190,7 +190,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(tableReference));
 
             var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableRelation;
-            return result == null ? null : result.TableInstance;
+            return result?.TableInstance;
         }
 
         public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
@@ -199,7 +199,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(selectColumn));
 
             var result = _bindingResult.GetBoundNode(selectColumn) as BoundSelectColumn;
-            return result == null ? null : result.Column;
+            return result?.Column;
         }
 
         public IEnumerable<QueryColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
@@ -208,7 +208,7 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(selectColumn));
 
             var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
-            return boundExpression == null ? Enumerable.Empty<QueryColumnInstanceSymbol>() : boundExpression.QueryColumns;
+            return boundExpression?.QueryColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
         }
 
         public IEnumerable<Diagnostic> GetDiagnostics()

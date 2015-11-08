@@ -21,15 +21,9 @@ namespace NQuery
             _syntaxNode = syntaxNode;
         }
 
-        public bool IsToken
-        {
-            get { return !IsNode; }
-        }
+        public bool IsToken => !IsNode;
 
-        public bool IsNode
-        {
-            get { return _syntaxNode != null; }
-        }
+        public bool IsNode => _syntaxNode != null;
 
         public SyntaxToken AsToken()
         {
@@ -46,30 +40,15 @@ namespace NQuery
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
 
-        public SyntaxTree SyntaxTree
-        {
-            get { return IsNode ? AsNode().SyntaxTree: AsToken().Parent.SyntaxTree; }
-        }
+        public SyntaxTree SyntaxTree => IsNode ? AsNode().SyntaxTree: AsToken().Parent.SyntaxTree;
 
-        public SyntaxKind Kind
-        {
-            get { return IsNode ? AsNode().Kind : AsToken().Kind; }
-        }
+        public SyntaxKind Kind => IsNode ? AsNode().Kind : AsToken().Kind;
 
-        public TextSpan Span
-        {
-            get { return IsNode ? AsNode().Span : AsToken().Span; }
-        }
+        public TextSpan Span => IsNode ? AsNode().Span : AsToken().Span;
 
-        public TextSpan FullSpan
-        {
-            get { return IsNode ? AsNode().FullSpan : AsToken().FullSpan; }
-        }
+        public TextSpan FullSpan => IsNode ? AsNode().FullSpan : AsToken().FullSpan;
 
-        public bool IsMissing
-        {
-            get { return IsNode ? AsNode().IsMissing : AsToken().IsMissing; }
-        }
+        public bool IsMissing => IsNode ? AsNode().IsMissing : AsToken().IsMissing;
 
         public static implicit operator SyntaxNodeOrToken(SyntaxToken syntaxToken)
         {

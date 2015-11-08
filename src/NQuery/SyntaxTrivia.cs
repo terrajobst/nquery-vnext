@@ -22,10 +22,7 @@ namespace NQuery
             Diagnostics = diagnostics.ToImmutableArray();
         }
 
-        public SyntaxToken Parent
-        {
-            get { return _syntaxTree == null ? null : _syntaxTree.GetParentToken(this); }
-        }
+        public SyntaxToken Parent => _syntaxTree?.GetParentToken(this);
 
         public SyntaxKind Kind { get; }
 

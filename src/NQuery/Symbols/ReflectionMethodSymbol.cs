@@ -10,12 +10,12 @@ namespace NQuery.Symbols
     public class ReflectionMethodSymbol : MethodSymbol
     {
         public ReflectionMethodSymbol(MethodInfo methodInfo)
-            : this(methodInfo, methodInfo == null ? null : methodInfo.Name)
+            : this(methodInfo, methodInfo?.Name)
         {
         }
 
         public ReflectionMethodSymbol(MethodInfo methodInfo, string name)
-            : base(name, methodInfo == null ? null : methodInfo.ReturnType, ConvertParameters(methodInfo))
+            : base(name, methodInfo?.ReturnType, ConvertParameters(methodInfo))
         {
             if (methodInfo == null)
                 throw new ArgumentNullException(nameof(methodInfo));
@@ -35,6 +35,6 @@ namespace NQuery.Symbols
             return Expression.Call(instance, MethodInfo, arguments);
         }
 
-        public MethodInfo MethodInfo { get; private set; }
+        public MethodInfo MethodInfo { get; }
     }
 }

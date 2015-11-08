@@ -6,7 +6,7 @@ namespace NQuery.Symbols
     public class ReflectionParameterSymbol : ParameterSymbol
     {
         public ReflectionParameterSymbol(ParameterInfo parameterInfo)
-            : this(parameterInfo, parameterInfo == null ? null : parameterInfo.Name)
+            : this(parameterInfo, parameterInfo?.Name)
         {
             if (parameterInfo == null)
                 throw new ArgumentNullException(nameof(parameterInfo));
@@ -15,7 +15,7 @@ namespace NQuery.Symbols
         }
 
         public ReflectionParameterSymbol(ParameterInfo parameterInfo, string name)
-            : base(name, parameterInfo == null ? null : parameterInfo.ParameterType)
+            : base(name, parameterInfo?.ParameterType)
         {
             if (parameterInfo == null)
                 throw new ArgumentNullException(nameof(parameterInfo));
@@ -23,6 +23,6 @@ namespace NQuery.Symbols
             ParameterInfo = parameterInfo;
         }
 
-        public ParameterInfo ParameterInfo { get; private set; }
+        public ParameterInfo ParameterInfo { get; }
     }
 }

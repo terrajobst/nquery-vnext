@@ -24,7 +24,7 @@ namespace NQuery.Hosting
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
-        public BindingFlags BindingFlags { get; private set; }
+        public BindingFlags BindingFlags { get; }
 
         private static bool ExistingMemberIsMoreSpecific(Type type, MemberInfo existingMember, MemberInfo newMember)
         {
@@ -61,9 +61,9 @@ namespace NQuery.Hosting
                     MemberInfo = memberInfo;
                 }
 
-                public PropertySymbol PropertySymbol { get; private set; }
+                public PropertySymbol PropertySymbol { get; }
 
-                public MemberInfo MemberInfo { get; private set; }
+                public MemberInfo MemberInfo { get; }
             }
 
             public void Add(PropertySymbol propertySymbol, MemberInfo memberInfo)
@@ -101,11 +101,11 @@ namespace NQuery.Hosting
                     Key = key;
                 }
 
-                public string Key { get; private set; }
+                public string Key { get; }
 
-                public MethodSymbol MethodSymbol { get; private set; }
+                public MethodSymbol MethodSymbol { get; }
 
-                public MethodInfo MethodInfo { get; private set; }
+                public MethodInfo MethodInfo { get; }
             }
 
             private static string GenerateKey(string methodName, IEnumerable<Type> parameterTypes)

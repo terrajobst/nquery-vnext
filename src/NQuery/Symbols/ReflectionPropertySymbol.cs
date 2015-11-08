@@ -7,12 +7,12 @@ namespace NQuery.Symbols
     public class ReflectionPropertySymbol : PropertySymbol
     {
         public ReflectionPropertySymbol(PropertyInfo propertyInfo)
-            : this(propertyInfo, propertyInfo == null ? null : propertyInfo.Name)
+            : this(propertyInfo, propertyInfo?.Name)
         {
         }
 
         public ReflectionPropertySymbol(PropertyInfo propertyInfo, string name)
-            : base(name, propertyInfo == null ? null : propertyInfo.PropertyType)
+            : base(name, propertyInfo?.PropertyType)
         {
             if (propertyInfo == null)
                 throw new ArgumentNullException(nameof(propertyInfo));
@@ -25,6 +25,6 @@ namespace NQuery.Symbols
             return Expression.MakeMemberAccess(instance, PropertyInfo);
         }
 
-        public PropertyInfo PropertyInfo { get; private set; }
+        public PropertyInfo PropertyInfo { get; }
     }
 }

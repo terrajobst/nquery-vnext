@@ -26,10 +26,7 @@ namespace NQuery
             Diagnostics = diagnostics.ToImmutableArray();
         }
 
-        public SyntaxNode Parent
-        {
-            get { return _syntaxTree == null ? null : _syntaxTree.GetParentNode(this); }
-        }
+        public SyntaxNode Parent => _syntaxTree?.GetParentNode(this);
 
         public SyntaxKind Kind { get; }
 
@@ -37,17 +34,11 @@ namespace NQuery
 
         public bool IsMissing { get; }
 
-        public string Text
-        {
-            get { return _text ?? Kind.GetText(); }
-        }
+        public string Text => _text ?? Kind.GetText();
 
         public object Value { get; }
 
-        public string ValueText
-        {
-            get { return Value as string ?? Text; }
-        }
+        public string ValueText => Value as string ?? Text;
 
         public TextSpan Span { get; }
 

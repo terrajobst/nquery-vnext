@@ -63,20 +63,11 @@ namespace NQuery
 
         public bool IsImplicit { get; }
 
-        public bool IsExplicit
-        {
-            get { return Exists && !IsImplicit; }
-        }
+        public bool IsExplicit => Exists && !IsImplicit;
 
-        public bool IsBoxing
-        {
-            get { return _isBoxingOrUnboxing &&  IsImplicit; }
-        }
+        public bool IsBoxing => _isBoxingOrUnboxing &&  IsImplicit;
 
-        public bool IsUnboxing
-        {
-            get { return _isBoxingOrUnboxing && IsExplicit; }
-        }
+        public bool IsUnboxing => _isBoxingOrUnboxing && IsExplicit;
 
         public bool IsReference { get; }
 

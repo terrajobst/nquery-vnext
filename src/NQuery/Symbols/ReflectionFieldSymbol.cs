@@ -7,12 +7,12 @@ namespace NQuery.Symbols
     public class ReflectionFieldSymbol : PropertySymbol
     {
         public ReflectionFieldSymbol(FieldInfo fieldInfo)
-            : this(fieldInfo, fieldInfo == null ? null : fieldInfo.Name)
+            : this(fieldInfo, fieldInfo?.Name)
         {
         }
 
         public ReflectionFieldSymbol(FieldInfo fieldInfo, string name)
-            : base(name, fieldInfo == null ? null : fieldInfo.FieldType)
+            : base(name, fieldInfo?.FieldType)
         {
             if (fieldInfo == null)
                 throw new ArgumentNullException(nameof(fieldInfo));
@@ -25,6 +25,6 @@ namespace NQuery.Symbols
             return Expression.MakeMemberAccess(instance, FieldInfo);
         }
 
-        public FieldInfo FieldInfo { get; private set; }
+        public FieldInfo FieldInfo { get; }
     }
 }
