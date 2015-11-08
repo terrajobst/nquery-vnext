@@ -8,16 +8,16 @@ namespace NQuery.Optimization
 {
     internal static class Expression
     {
-        public static BoundExpression Plus(BoundExpression left, BoundExpression right)
-        {
-            return Merge(left, right, BinaryOperatorKind.Add);
-        }
-
         public static BoundExpression Not(BoundExpression expression)
         {
             const UnaryOperatorKind logicalNot = UnaryOperatorKind.LogicalNot;
             var result = UnaryOperator.Resolve(logicalNot, expression.Type);
             return new BoundUnaryExpression(logicalNot, result, expression);
+        }
+
+        public static BoundExpression Plus(BoundExpression left, BoundExpression right)
+        {
+            return Merge(left, right, BinaryOperatorKind.Add);
         }
 
         public static BoundExpression LessThan(BoundExpression left, BoundExpression right)
