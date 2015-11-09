@@ -63,6 +63,7 @@ namespace NQuery.Optimization
             yield return new HashMatchPhysicalOperatorChooser();
             yield return new AggregationPhysicalOperatorChooser();
             yield return new ConcatenationPhysicalOperatorChooser();
+            yield return new ExceptIntersectPhysicalOperatorChooser();
 
             // TODO: null scan optimization
         }
