@@ -107,15 +107,15 @@ namespace NQuery.Optimization
 
             var aggregates = new[]
             {
-                new BoundAggregatedValue(anyOutput, anyAggregateSymbol, anyAggregatable, new BoundValueSlotExpression(valueSlot)),
-                new BoundAggregatedValue(countOutput, countAggregatedSymbol, countAggregatable, new BoundLiteralExpression(0))
+                new BoundAggregatedValue(anyOutput, anyAggregateSymbol, anyAggregatable, Expression.Value(valueSlot)),
+                new BoundAggregatedValue(countOutput, countAggregatedSymbol, countAggregatable, Expression.Literal(0))
             };
 
             var aggregation = new BoundGroupByAndAggregationRelation(relation, Enumerable.Empty<ValueSlot>(), aggregates);
 
             // 2. Now we can assert that the number of rows returned is at most one.
 
-            var condition = Expression.LessThan(new BoundValueSlotExpression(countOutput), new BoundLiteralExpression(1));
+            var condition = Expression.LessThan(Expression.Value(countOutput), Expression.Literal(1));
 
             var message = Resources.SubqueryReturnedMoreThanRow;
             var assertRelation = new BoundAssertRelation(aggregation, condition, message);
@@ -124,7 +124,7 @@ namespace NQuery.Optimization
             var subqueries = _subqueryStack.Peek();
             subqueries.Add(subquery);
 
-            return new BoundValueSlotExpression(anyOutput);
+            return Expression.Value(anyOutput);
         }
 
         protected override BoundExpression RewriteExistsSubselect(BoundExistsSubselect node)
@@ -136,7 +136,7 @@ namespace NQuery.Optimization
             var subqueries = _subqueryStack.Peek();
             subqueries.Add(subquery);
 
-            return new BoundValueSlotExpression(valueSlot);
+            return Expression.Value(valueSlot);
         }
 
         protected override BoundRelation RewriteFilterRelation(BoundFilterRelation node)

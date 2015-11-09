@@ -8,6 +8,26 @@ namespace NQuery.Optimization
 {
     internal static class Expression
     {
+        public static BoundExpression Literal(object value)
+        {
+            return new BoundLiteralExpression(value);
+        }
+
+        public static BoundExpression Value(ValueSlot valueSlot)
+        {
+            return new BoundValueSlotExpression(valueSlot);
+        }
+
+        public static BoundExpression Null()
+        {
+            return Literal(null);
+        }
+
+        public static BoundExpression IsNull(BoundExpression expression)
+        {
+            return new BoundIsNullExpression(expression);
+        }
+
         public static BoundExpression Not(BoundExpression expression)
         {
             const UnaryOperatorKind logicalNot = UnaryOperatorKind.LogicalNot;
@@ -18,6 +38,11 @@ namespace NQuery.Optimization
         public static BoundExpression Plus(BoundExpression left, BoundExpression right)
         {
             return Merge(left, right, BinaryOperatorKind.Add);
+        }
+
+        public static BoundExpression Equal(BoundExpression left, BoundExpression right)
+        {
+            return Merge(left, right, BinaryOperatorKind.Equal);
         }
 
         public static BoundExpression LessThan(BoundExpression left, BoundExpression right)

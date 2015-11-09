@@ -128,7 +128,7 @@ namespace NQuery.Optimization
             var anchorValues = anchor.GetOutputValues().ToImmutableArray();
 
             var initRecursionSlot = _nameGenerator.CreateInt32Slot("RecursionStart");
-            var initRecursionDefinition = new BoundComputedValue(new BoundLiteralExpression(0), initRecursionSlot);
+            var initRecursionDefinition = new BoundComputedValue(Expression.Literal(0), initRecursionSlot);
             var initRecursion = new BoundComputeRelation(anchor, ImmutableArray.Create(initRecursionDefinition));
 
             var initRecursionOutputs = anchorValues.Add(initRecursionSlot);
@@ -140,7 +140,7 @@ namespace NQuery.Optimization
             var tableSpoolPopper = new BoundTableSpoolPopper(tableSpoolPopperSlots);
 
             var anchorRecursionCounter = tableSpoolPopperSlots.Last();
-            var inc = Expression.Plus(new BoundValueSlotExpression(anchorRecursionCounter), new BoundLiteralExpression(1));
+            var inc = Expression.Plus(Expression.Value(anchorRecursionCounter), Expression.Literal(1));
             var incRecursionSlot = _nameGenerator.CreateInt32Slot("RecursionIncrement");
             var incRecursionDefinition = new BoundComputedValue(inc, incRecursionSlot);
             var incRecursion = new BoundComputeRelation(tableSpoolPopper, ImmutableArray.Create(incRecursionDefinition));
@@ -189,7 +189,7 @@ namespace NQuery.Optimization
 
             // Create assert
 
-            var assertCondition = Expression.LessThan(new BoundValueSlotExpression(incRecursionSlot), new BoundLiteralExpression(100));
+            var assertCondition = Expression.LessThan(Expression.Value(incRecursionSlot), Expression.Literal(100));
             var assert = new BoundAssertRelation(recursiveProjection, assertCondition, Resources.MaximumRecursionLevelExceeded);
 
             // Create top level concat

@@ -53,7 +53,7 @@ namespace NQuery.Optimization
             var leftAntiSemiJoin = node1.Update(BoundJoinType.LeftAntiSemi, node2.Right, node2.Left, node2.Condition, null, null);
 
             var computedValueSlots = node.Left.GetOutputValues().Select(v => new ValueSlot(v.Name, v.Type)).ToImmutableArray();
-            var computedValues = computedValueSlots.Select(v => new BoundComputedValue(new BoundLiteralExpression(null), v));
+            var computedValues = computedValueSlots.Select(v => new BoundComputedValue(Expression.Null(), v));
             var compute = new BoundComputeRelation(leftAntiSemiJoin, computedValues);
             var project = new BoundProjectRelation(compute, computedValueSlots.Concat(leftAntiSemiJoin.GetOutputValues()));
 
