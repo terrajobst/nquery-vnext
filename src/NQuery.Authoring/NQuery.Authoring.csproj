@@ -127,6 +127,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuickInfo\Providers\CastExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\CoalesceExpressionQuickInfoModelProvider.cs" />
+    <Compile Include="QuickInfo\Providers\CommonTableExpressionColumnNameQuickInfoModelProvider.cs" />
+    <Compile Include="QuickInfo\Providers\CommonTableExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\CountAllExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\DerivedTableReferenceQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\ExpressionSelectColumnQuickInfoModelProvider.cs" />

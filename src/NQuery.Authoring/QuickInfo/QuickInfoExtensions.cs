@@ -14,6 +14,8 @@ namespace NQuery.Authoring.QuickInfo
                    {
                        new CastExpressionQuickInfoModelProvider(),
                        new CoalesceExpressionQuickInfoModelProvider(),
+                       new CommonTableExpressionColumnNameQuickInfoModelProvider(),
+                       new CommonTableExpressionQuickInfoModelProvider(),
                        new CountAllExpressionQuickInfoModelProvider(),
                        new DerivedTableReferenceQuickInfoModelProvider(),
                        new ExpressionSelectColumnQuickInfoModelProvider(),

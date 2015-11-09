@@ -177,6 +177,38 @@ namespace NQuery
             return result?.TableSymbol;
         }
 
+        public ColumnSymbol GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
+        {
+            if (commonTableExpressionColumnName == null)
+                throw new ArgumentNullException(nameof(commonTableExpressionColumnName));
+
+            var columnList = commonTableExpressionColumnName.Parent as CommonTableExpressionColumnNameListSyntax;
+            if (columnList == null)
+                return null;
+
+            var commonTableExpression = columnList.Parent as CommonTableExpressionSyntax;
+            if (commonTableExpression == null)
+                return null;
+
+            var symbol = GetDeclaredSymbol(commonTableExpression);
+            if (symbol == null)
+                return null;
+
+            var index = 0;
+
+            foreach (var columnName in columnList.ColumnNames)
+            {
+                if (columnName == commonTableExpressionColumnName)
+                {
+                    if (index < symbol.Columns.Length)
+                        return symbol.Columns[index];
+                }
+                index++;
+            }
+
+            return null;
+        }
+
         public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
         {
             if (tableReference == null)

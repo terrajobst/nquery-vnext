@@ -91,10 +91,19 @@ namespace NQuery.Authoring.SymbolSearch
                 }
                 case SyntaxKind.CommonTableExpression:
                 {
-                    // TODO: We should also support CTE column lists.
                     var commonTableExpression = (CommonTableExpressionSyntax)node;
                     var symbol = semanticModel.GetDeclaredSymbol(commonTableExpression);
                     yield return SymbolSpan.CreateDefinition(symbol, commonTableExpression.Name.Span);
+
+                    if (commonTableExpression.ColumnNameList != null)
+                    {
+                        foreach (var columnName in commonTableExpression.ColumnNameList.ColumnNames)
+                        {
+                            var columnSymbol = semanticModel.GetDeclaredSymbol(columnName);
+                            if (columnSymbol != null)
+                                yield return SymbolSpan.CreateDefinition(columnSymbol, columnName.Span);
+                        }
+                    }
                     break;
                 }
                 case SyntaxKind.DerivedTableReference:

@@ -79,6 +79,12 @@ namespace NQuery.Authoring.Classifications
 
             switch (node.Kind)
             {
+                case SyntaxKind.CommonTableExpression:
+                    ClassifyCommonTableExpression((CommonTableExpressionSyntax)node);
+                    break;
+                case SyntaxKind.CommonTableExpressionColumnName:
+                    ClassifyCommonTableExpressionColumnName((CommonTableExpressionColumnNameSyntax)node);
+                    break;
                 case SyntaxKind.NameExpression:
                     ClassifyNameExpression((NameExpressionSyntax)node);
                     break;
@@ -123,6 +129,24 @@ namespace NQuery.Authoring.Classifications
 
             foreach (var childNode in nodes)
                 ClassifyNode(childNode);
+        }
+
+        private void ClassifyCommonTableExpression(CommonTableExpressionSyntax node)
+        {
+            var symbol = _semanticModel.GetDeclaredSymbol(node);
+            if (symbol != null)
+                AddClassification(node.Name, symbol);
+
+            VisitChildren(node);
+        }
+
+        private void ClassifyCommonTableExpressionColumnName(CommonTableExpressionColumnNameSyntax node)
+        {
+            var symbol = _semanticModel.GetDeclaredSymbol(node);
+            if (symbol == null)
+                return;
+
+            AddClassification(node, symbol);
         }
 
         private void ClassifyExpression(ExpressionSyntax node, SyntaxNodeOrToken context)

@@ -32,6 +32,7 @@ namespace NQuery.Authoring.Tests.Classifications
 
             var pieces = new[]
                          {
+                             Tuple.Create("Emps", SemanticClassification.CommonTableExpression),
                              Tuple.Create("e", SemanticClassification.SchemaTable),
                              Tuple.Create("Employees", SemanticClassification.SchemaTable),
                              Tuple.Create("e", SemanticClassification.SchemaTable),
