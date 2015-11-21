@@ -23,7 +23,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                    let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)
                    where declaredTable != null && !referencedTableSet.Contains(declaredTable)
                    let actions = new[] { new RemoveCommonTableExpressionCodeAction(tableExpression) }
-                   select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Span, actions);
+                   select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Name.Span, actions);
         }
 
         private static bool IsRecursiveUsage(SemanticModel semanticModel, NamedTableReferenceSyntax tableReference)

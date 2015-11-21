@@ -30,16 +30,11 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Emps e
             ";
 
-            var unusedCte = @"Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )";
-
             var issues = GetIssues(query);
 
             Assert.Equal(1, issues.Length);
             Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
-            Assert.Equal(unusedCte, query.Substring(issues[0].Span));
+            Assert.Equal("Emps2", query.Substring(issues[0].Span));
         }
 
         [Fact]
@@ -67,21 +62,11 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Emps e
             ";
 
-            var unusedCte = @"EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.ReportsTo IS NULL
-                    UNION   ALL
-                    SELECT  *
-                    FROM    Employees e
-                                INNER JOIN EmpsUnused m ON m.EmployeeID = e.ReportsTo
-                )";
-
             var issues = GetIssues(query);
 
             Assert.Equal(1, issues.Length);
             Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
-            Assert.Equal(unusedCte, query.Substring(issues[0].Span));
+            Assert.Equal("EmpsUnused", query.Substring(issues[0].Span));
         }
 
         [Fact]
