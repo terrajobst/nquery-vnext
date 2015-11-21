@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 
 namespace NQuery.Binding
 {
@@ -34,7 +33,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            return GetOutputValues();
+            return Input.GetDefinedValues();
         }
 
         public override IEnumerable<ValueSlot> GetOutputValues()
