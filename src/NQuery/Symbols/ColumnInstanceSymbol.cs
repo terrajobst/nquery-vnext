@@ -13,7 +13,7 @@ namespace NQuery.Symbols
 
         internal abstract ValueSlot ValueSlot { get; }
 
-        public override sealed Type Type
+        public sealed override Type Type
         {
             get { return ValueSlot.Type; }
         }

@@ -12,8 +12,8 @@ namespace NQuery.Iterators
 {
     internal sealed class ExpressionBuilder
     {
-        private readonly static PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) });
-        private readonly static PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
+        private static readonly PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) });
+        private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
         private readonly ImmutableArray<RowBufferAllocation> _rowBufferAllocations;
         private readonly List<ParameterExpression> _locals = new List<ParameterExpression>();
