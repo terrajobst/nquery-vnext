@@ -760,7 +760,6 @@ namespace NQuery.Binding
             var columnInstances = tableInstance.ColumnInstances.Where(c => columnName.Matches(c.Name)).ToImmutableArray();
             if (columnInstances.Length == 0)
             {
-                // TODO: Check whether we can resolve to a method and if so give error ReportInvocationRequiresParenthesis
                 Diagnostics.ReportUndeclaredColumn(node, tableInstance);
                 return new BoundErrorExpression();
             }
