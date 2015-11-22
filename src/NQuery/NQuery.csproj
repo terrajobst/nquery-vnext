@@ -126,7 +126,7 @@
     <Compile Include="Binding\BoundGroupByAndAggregationRelation.cs" />
     <Compile Include="Binding\BoundProjectRelation.cs" />
     <Compile Include="Binding\BoundRelation.cs" />
-    <Compile Include="Binding\BoundSortedValue.cs" />
+    <Compile Include="Binding\BoundComparedValue.cs" />
     <Compile Include="Binding\BoundSortRelation.cs" />
     <Compile Include="Binding\BoundTableReferenceExtensions.cs" />
     <Compile Include="Binding\BoundTopRelation.cs" />

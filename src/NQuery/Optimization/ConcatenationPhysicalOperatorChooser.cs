@@ -16,7 +16,7 @@ namespace NQuery.Optimization
             if (node.IsUnionAll)
                 return concatenation;
 
-            var sortedValues = concatenation.GetOutputValues().Select(v => new BoundSortedValue(v, Comparer.Default));
+            var sortedValues = concatenation.GetOutputValues().Select(v => new BoundComparedValue(v, Comparer.Default));
             return new BoundSortRelation(true, concatenation, sortedValues);
         }
     }

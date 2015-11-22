@@ -7,7 +7,7 @@ namespace NQuery.Binding
 {
     internal sealed class BoundTopRelation : BoundRelation
     {
-        public BoundTopRelation(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
+        public BoundTopRelation(BoundRelation input, int limit, IEnumerable<BoundComparedValue> tieEntries)
         {
             Input = input;
             Limit = limit;
@@ -23,9 +23,9 @@ namespace NQuery.Binding
 
         public int Limit { get; }
 
-        public ImmutableArray<BoundSortedValue> TieEntries { get; }
+        public ImmutableArray<BoundComparedValue> TieEntries { get; }
 
-        public BoundTopRelation Update(BoundRelation input, int limit, IEnumerable<BoundSortedValue> tieEntries)
+        public BoundTopRelation Update(BoundRelation input, int limit, IEnumerable<BoundComparedValue> tieEntries)
         {
             var newTieEntries = tieEntries.ToImmutableArray();
 

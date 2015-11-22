@@ -52,9 +52,9 @@ namespace NQuery.Binding
             return RewriteArray(list, RewriteUnifiedValue);
         }
 
-        protected IEnumerable<BoundSortedValue> RewriteSortedValues(ImmutableArray<BoundSortedValue> list)
+        protected IEnumerable<BoundComparedValue> RewriteComparedValues(ImmutableArray<BoundComparedValue> list)
         {
-            return RewriteArray(list, RewriteSortedValue);
+            return RewriteArray(list, RewriteComparedValue);
         }
 
         protected IEnumerable<BoundExpression> RewriteExpressions(ImmutableArray<BoundExpression> list)
@@ -92,10 +92,10 @@ namespace NQuery.Binding
                                RewriteValueSlots(value.InputValueSlots));
         }
 
-        protected virtual BoundSortedValue RewriteSortedValue(BoundSortedValue value)
+        protected virtual BoundComparedValue RewriteComparedValue(BoundComparedValue value)
         {
             return value.Update(RewriteValueSlot(value.ValueSlot),
-                value.Comparer);
+                                value.Comparer);
         }
 
         protected virtual ValueSlot RewriteValueSlot(ValueSlot valueSlot)

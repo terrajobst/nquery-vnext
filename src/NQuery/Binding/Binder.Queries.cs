@@ -656,7 +656,7 @@ namespace NQuery.Binding
             var outputQueryCoumns = query.OutputColumns;
             var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
 
-            var relation = new BoundSortRelation(false, query.Relation, orderByClause.Columns.Select(c => c.SortedValue).ToImmutableArray());
+            var relation = new BoundSortRelation(false, query.Relation, orderByClause.Columns.Select(c => c.ComparedValue).ToImmutableArray());
             return new BoundQuery(relation, outputQueryCoumns);
         }
 
@@ -942,11 +942,11 @@ namespace NQuery.Binding
                 ? BindDistinctComparers(node.SelectClause.Columns, outputColumns)
                 : ImmutableArray<IComparer>.Empty;
 
-            ImmutableArray<BoundSortedValue> distincSortValues;
+            ImmutableArray<BoundComparedValue> distincSortValues;
 
             if (!isDistinct || orderByClause == null)
             {
-                distincSortValues = ImmutableArray<BoundSortedValue>.Empty;
+                distincSortValues = ImmutableArray<BoundComparedValue>.Empty;
             }
             else
             {
@@ -956,14 +956,14 @@ namespace NQuery.Binding
                 {
                     var column = orderedQueryNode.Columns[i];
                     var boundColumn = orderByClause.Columns[i];
-                    var orderedValue = boundColumn.SortedValue.ValueSlot;
+                    var orderedValue = boundColumn.ComparedValue.ValueSlot;
 
                     if (!outputValueSet.Contains(orderedValue))
                         Diagnostics.ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(column.Span);
                 }
 
-                var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.SortedValue.ValueSlot));
-                distincSortValues = outputColumns.Select((c, i) => new BoundSortedValue(c.ValueSlot, distinctComparer[i]))
+                var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.ComparedValue.ValueSlot));
+                distincSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.ValueSlot, distinctComparer[i]))
                                                  .Where(s => !orderByValueSet.Contains(s.ValueSlot))
                                                  .ToImmutableArray();
             }
@@ -1006,15 +1006,15 @@ namespace NQuery.Binding
                 : new BoundComputeRelation(havingRelation, projections);
 
             var sortedValues = orderByClause == null
-                ? ImmutableArray<BoundSortedValue>.Empty
-                : orderByClause.Columns.Select(c => c.SortedValue).Concat(distincSortValues).ToImmutableArray();
+                ? ImmutableArray<BoundComparedValue>.Empty
+                : orderByClause.Columns.Select(c => c.ComparedValue).Concat(distincSortValues).ToImmutableArray();
 
             var sortRelation = sortedValues.IsEmpty
                 ? selectComputeRelation
                 : new BoundSortRelation(isDistinct, selectComputeRelation, sortedValues);
 
             var tieEntries = top == null || sortedValues.IsEmpty || !withTies
-                ? ImmutableArray<BoundSortedValue>.Empty
+                ? ImmutableArray<BoundComparedValue>.Empty
                 : sortedValues;
 
             var topRelation = top == null
@@ -1373,7 +1373,7 @@ namespace NQuery.Binding
                                    ? baseComparer
                                    : new NegatedComparer(baseComparer);
 
-                var sortedValue = new BoundSortedValue(valueSlot, comparer);
+                var sortedValue = new BoundComparedValue(valueSlot, comparer);
                 var boundColumn = new BoundOrderByColumn(queryColumn, sortedValue);
                 Bind(column, boundColumn);
                 boundColumns.Add(boundColumn);

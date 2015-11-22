@@ -141,14 +141,14 @@ namespace NQuery.Binding
         {
             return node.Update(node.IsDistinct,
                                RewriteRelation(node.Input),
-                               RewriteSortedValues(node.SortedValues));
+                               RewriteComparedValues(node.SortedValues));
         }
 
         protected virtual BoundRelation RewriteTopRelation(BoundTopRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
                                node.Limit,
-                               RewriteSortedValues(node.TieEntries));
+                               RewriteComparedValues(node.TieEntries));
         }
 
         protected virtual BoundRelation RewriteAssertRelation(BoundAssertRelation node)

@@ -3,9 +3,9 @@ using System.Collections;
 
 namespace NQuery.Binding
 {
-    internal sealed class BoundSortedValue
+    internal sealed class BoundComparedValue
     {
-        public BoundSortedValue(ValueSlot valueSlot, IComparer comparer)
+        public BoundComparedValue(ValueSlot valueSlot, IComparer comparer)
         {
             ValueSlot = valueSlot;
             Comparer = comparer;
@@ -15,12 +15,12 @@ namespace NQuery.Binding
 
         public IComparer Comparer { get; }
 
-        public BoundSortedValue Update(ValueSlot valueSlot, IComparer comparer)
+        public BoundComparedValue Update(ValueSlot valueSlot, IComparer comparer)
         {
             if (valueSlot == ValueSlot && comparer == Comparer)
                 return this;
 
-            return new BoundSortedValue(valueSlot, comparer);
+            return new BoundComparedValue(valueSlot, comparer);
         }
     }
 }

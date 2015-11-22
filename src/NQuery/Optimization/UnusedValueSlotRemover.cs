@@ -230,7 +230,7 @@ namespace NQuery.Optimization
                 }
             }
 
-            public void Record(ImmutableArray<BoundSortedValue> definedValues)
+            public void Record(ImmutableArray<BoundComparedValue> definedValues)
             {
                 foreach (var definedValue in definedValues)
                     UsedValueSlots.Add(definedValue.ValueSlot);

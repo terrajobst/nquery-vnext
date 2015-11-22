@@ -7,7 +7,7 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSortRelation : BoundRelation
     {
-        public BoundSortRelation(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
+        public BoundSortRelation(bool isDistinct, BoundRelation input, IEnumerable<BoundComparedValue> sortedValues)
         {
             Input = input;
             SortedValues = sortedValues.ToImmutableArray();
@@ -21,11 +21,11 @@ namespace NQuery.Binding
 
         public BoundRelation Input { get; }
 
-        public ImmutableArray<BoundSortedValue> SortedValues { get; }
+        public ImmutableArray<BoundComparedValue> SortedValues { get; }
 
         public bool IsDistinct { get; }
 
-        public BoundSortRelation Update(bool isDistinct, BoundRelation input, IEnumerable<BoundSortedValue> sortedValues)
+        public BoundSortRelation Update(bool isDistinct, BoundRelation input, IEnumerable<BoundComparedValue> sortedValues)
         {
             var newSortedValues = sortedValues.ToImmutableArray();
 

@@ -16,7 +16,7 @@ namespace NQuery.Optimization
 
             // BUG: We should use the data context to get the corresponding comparers
             var comparer = Comparer.Default;
-            var sortedValues = left.GetOutputValues().Select(v => new BoundSortedValue(v, comparer));
+            var sortedValues = left.GetOutputValues().Select(v => new BoundComparedValue(v, comparer));
             var sortedLeft = new BoundSortRelation(true, left, sortedValues);
 
             var valueSlots = sortedLeft.GetOutputValues().Zip(right.GetOutputValues(), ValueTuple.Create);

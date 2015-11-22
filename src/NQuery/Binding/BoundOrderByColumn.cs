@@ -6,10 +6,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundOrderByColumn : BoundNode
     {
-        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, BoundSortedValue sortedValue)
+        public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, BoundComparedValue comparedValue)
         {
             QueryColumn = queryColumn;
-            SortedValue = sortedValue;
+            ComparedValue = comparedValue;
         }
 
         public override BoundNodeKind Kind
@@ -19,6 +19,6 @@ namespace NQuery.Binding
 
         public QueryColumnInstanceSymbol QueryColumn { get; }
 
-        public BoundSortedValue SortedValue { get; }
+        public BoundComparedValue ComparedValue { get; }
     }
 }

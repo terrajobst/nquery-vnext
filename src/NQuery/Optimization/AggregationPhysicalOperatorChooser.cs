@@ -12,7 +12,7 @@ namespace NQuery.Optimization
         protected override BoundRelation RewriteGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
         {
             var input = RewriteRelation(node.Input);
-            var sortedValues = node.Groups.Select(g => new BoundSortedValue(g, Comparer.Default)).ToImmutableArray();
+            var sortedValues = node.Groups.Select(g => new BoundComparedValue(g, Comparer.Default)).ToImmutableArray();
 
             if (node.Aggregates.IsEmpty)
                 return new BoundSortRelation(true, input, sortedValues);
