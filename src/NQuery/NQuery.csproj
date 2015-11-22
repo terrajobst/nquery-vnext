@@ -81,6 +81,7 @@
     <Compile Include="Iterators\ProbingLeftSemiNestedLoopsIterator.cs" />
     <Compile Include="Iterators\ProbedRowBuffer.cs" />
     <Compile Include="Iterators\RowBufferAllocation.cs" />
+    <Compile Include="Iterators\RowBufferEntry.cs" />
     <Compile Include="Iterators\TableSpoolIterator.cs" />
     <Compile Include="Iterators\TableSpoolRefIterator.cs" />
     <Compile Include="Iterators\TableSpoolStack.cs" />

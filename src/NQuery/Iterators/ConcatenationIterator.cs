@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace NQuery.Iterators
 {
     internal sealed class ConcatenationIterator : Iterator
     {
         private readonly ImmutableArray<Iterator> _inputs;
+        private readonly ImmutableArray<ProjectedRowBuffer> _inputRowBuffers;
         private readonly IndirectedRowBuffer _rowBuffer;
 
         private int _currentInputIndex;
         private bool _currentInputIsOpen;
 
-        public ConcatenationIterator(IEnumerable<Iterator> inputs, int rowBufferSize)
+        public ConcatenationIterator(IEnumerable<Iterator> inputs, IEnumerable<ImmutableArray<RowBufferEntry>> entries)
         {
             _inputs = inputs.ToImmutableArray();
+            _inputRowBuffers = entries.Select(e => new ProjectedRowBuffer(e)).ToImmutableArray();
+            var rowBufferSize = _inputRowBuffers[0].Count;
             _rowBuffer = new IndirectedRowBuffer(rowBufferSize);
         }
 
@@ -38,7 +42,7 @@ namespace NQuery.Iterators
                 if (!_currentInputIsOpen)
                 {
                     currentInput.Open();
-                    _rowBuffer.ActiveRowBuffer = currentInput.RowBuffer;
+                    _rowBuffer.ActiveRowBuffer = _inputRowBuffers[_currentInputIndex];
                     _currentInputIsOpen = true;
                 }
 

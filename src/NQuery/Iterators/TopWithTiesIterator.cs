@@ -7,13 +7,13 @@ namespace NQuery.Iterators
 {
     internal sealed class TopWithTiesIterator : TopIterator
     {
-        private readonly ImmutableArray<int> _tieEntries;
+        private readonly ImmutableArray<RowBufferEntry> _tieEntries;
         private readonly ImmutableArray<IComparer> _tieComparers;
 
         private readonly object[] _lastTieEntryValues;
         private bool _limitReached;
 
-        public TopWithTiesIterator(Iterator input, int limit, IEnumerable<int> tieEntries, IEnumerable<IComparer> tieComparers)
+        public TopWithTiesIterator(Iterator input, int limit, IEnumerable<RowBufferEntry> tieEntries, IEnumerable<IComparer> tieComparers)
             : base(input, limit)
         {
             _tieEntries = tieEntries.ToImmutableArray();
@@ -43,7 +43,7 @@ namespace NQuery.Iterators
                 else
                 {
                     for (var i = 0; i < _tieEntries.Length; i++)
-                        _lastTieEntryValues[i] = Input.RowBuffer[_tieEntries[i]];
+                        _lastTieEntryValues[i] = _tieEntries[i].GetValue();
 
                     return true;
                 }
@@ -56,7 +56,7 @@ namespace NQuery.Iterators
             for (var i = 0; i < _tieEntries.Length; i++)
             {
                 var lastTieValue = _lastTieEntryValues[i];
-                var thisTieValue = Input.RowBuffer[_tieEntries[i]];
+                var thisTieValue = _tieEntries[i].GetValue();
                 var comparer = _tieComparers[i];
 
                 if (comparer.Compare(lastTieValue, thisTieValue) == 0)

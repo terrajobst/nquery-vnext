@@ -2,21 +2,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace NQuery.Iterators
 {
     internal class SortIterator : Iterator
     {
         private readonly Iterator _input;
-
         private readonly SpooledRowBuffer _spooledRowBuffer;
+        private readonly ImmutableArray<RowBufferEntry> _outerSortEntries;
 
-        public SortIterator(Iterator input, IEnumerable<int> sortEntries, IEnumerable<IComparer> comparers)
+        public SortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
         {
             _input = input;
-            SortEntries = sortEntries.ToImmutableArray();
+            var sortEntryArray = sortEntries.ToImmutableArray();
             Comparers = comparers.ToImmutableArray();
-            _spooledRowBuffer = new SpooledRowBuffer(_input.RowBuffer.Count);
+
+            // We need to have enough room to store the entire input
+            // as well as all sort entries that aren't already part
+            // of the input (for instance, if they come for an outer
+            // reference).
+
+            _outerSortEntries = sortEntryArray.Where(e => e.RowBuffer != _input.RowBuffer)
+                                              .ToImmutableArray();
+
+            var spoolBufferSize = input.RowBuffer.Count + _outerSortEntries.Length;
+            _spooledRowBuffer = new SpooledRowBuffer(spoolBufferSize);
+            SortIndices = sortEntryArray.Select(e => e.RowBuffer == _input.RowBuffer
+                                                    ? e.Index
+                                                    : input.RowBuffer.Count + _outerSortEntries.IndexOf(e))
+                                        .ToImmutableArray();
         }
 
         public override RowBuffer RowBuffer
@@ -24,7 +39,7 @@ namespace NQuery.Iterators
             get { return _spooledRowBuffer; }
         }
 
-        public ImmutableArray<int> SortEntries { get; }
+        public ImmutableArray<int> SortIndices { get; }
 
         public ImmutableArray<IComparer> Comparers { get; }
 
@@ -42,12 +57,24 @@ namespace NQuery.Iterators
 
             while (_input.Read())
             {
-                var rowValues = new object[_input.RowBuffer.Count];
+                var rowValues = new object[_spooledRowBuffer.Count];
+
+                // First, we copy the input
+
                 _input.RowBuffer.CopyTo(rowValues, 0);
+
+                // Now we copy the remainder
+
+                for (var i = 0; i < _outerSortEntries.Length; i++)
+                {
+                    var targetIndex = _input.RowBuffer.Count + i;
+                    rowValues[targetIndex] = _outerSortEntries[i].GetValue();
+                }
+
                 result.Add(rowValues);
             }
 
-            var rowComparer = new RowComparer(SortEntries, Comparers);
+            var rowComparer = new RowComparer(SortIndices, Comparers);
             result.Sort(rowComparer);
             return result;
         }

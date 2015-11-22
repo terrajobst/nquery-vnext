@@ -15,51 +15,36 @@ namespace NQuery.Iterators
         private static readonly PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) });
         private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
-        private readonly ImmutableArray<RowBufferAllocation> _rowBufferAllocations;
+        private readonly RowBufferAllocation _rowBufferAllocation;
         private readonly List<ParameterExpression> _locals = new List<ParameterExpression>();
         private readonly List<Expression> _assignments = new List<Expression>();
 
-        private ExpressionBuilder(IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        private ExpressionBuilder(RowBufferAllocation allocation)
         {
-            _rowBufferAllocations = rowBufferAllocations.ToImmutableArray();
-        }
-
-        private void ResolveRowBufferAndIndex(ValueSlot valueSlot, out RowBuffer rowBuffer, out int rowBufferIndex)
-        {
-            foreach (var allocation in _rowBufferAllocations)
-            {
-                if (allocation.TryGetValueSlot(valueSlot, out rowBufferIndex))
-                {
-                    rowBuffer = allocation.RowBuffer;
-                    return;
-                }
-            }
-
-            throw new ArgumentException(string.Format("Cannot resolve value slot {0}.", valueSlot.Name));
+            _rowBufferAllocation = allocation;
         }
 
         public static Func<object> BuildFunction(BoundExpression expression)
         {
-            var rowBufferAllocations = ImmutableArray<RowBufferAllocation>.Empty;
-            return BuildExpression<Func<object>>(expression, typeof(object), rowBufferAllocations);
+            return BuildExpression<Func<object>>(expression, typeof(object), RowBufferAllocation.Empty);
         }
 
-        public static IteratorFunction BuildIteratorFunction(BoundExpression expression, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        public static IteratorFunction BuildIteratorFunction(BoundExpression expression, RowBufferAllocation allocation)
         {
-            return BuildExpression<IteratorFunction>(expression, typeof(object), rowBufferAllocations);
+            return BuildExpression<IteratorFunction>(expression, typeof(object), allocation);
         }
 
-        public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, bool nullValue, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, bool nullValue, RowBufferAllocation allocation)
         {
             if (predicate == null)
                 return () => nullValue;
 
-            return BuildExpression<IteratorPredicate>(predicate, typeof(bool), rowBufferAllocations);
+            return BuildExpression<IteratorPredicate>(predicate, typeof(bool), allocation);
         }
 
-        private static TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        private static TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType, RowBufferAllocation allocation)
         {
-            var builder = new ExpressionBuilder(rowBufferAllocations);
+            var builder = new ExpressionBuilder(allocation);
             return builder.BuildExpression<TDelegate>(expression, targetType);
         }
 
@@ -366,16 +351,14 @@ namespace NQuery.Iterators
 
         private Expression BuildValueSlotExpression(BoundValueSlotExpression expression)
         {
-            RowBuffer rowBuffer;
-            int rowBufferIndex;
-            ResolveRowBufferAndIndex(expression.ValueSlot, out rowBuffer, out rowBufferIndex);
+            var entry = _rowBufferAllocation[expression.ValueSlot];
 
             return
                 Expression.Convert(
                     Expression.MakeIndex(
-                        Expression.Constant(rowBuffer),
+                        Expression.Constant(entry.RowBuffer),
                         RowBufferIndexer,
-                        new[] { Expression.Constant(rowBufferIndex) }
+                        new[] { Expression.Constant(entry.Index) }
                     ),
                     expression.ValueSlot.Type.GetNullableType()
                 );

@@ -8,7 +8,7 @@ namespace NQuery.Iterators
     {
         private object[] _lastSpooledRow;
 
-        public DistinctSortIterator(Iterator input, IEnumerable<int> sortEntries, IEnumerable<IComparer> comparers)
+        public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
             : base(input, sortEntries, comparers)
         {
         }
@@ -39,9 +39,9 @@ namespace NQuery.Iterators
 
                 var currentRow = GetCurrentRow();
 
-                for (var i = 0; i < SortEntries.Length; i++)
+                for (var i = 0; i < SortIndices.Length; i++)
                 {
-                    var entryIndex = SortEntries[i];
+                    var entryIndex = SortIndices[i];
                     var comparer = Comparers[i];
                     var valueOfLastRow = _lastSpooledRow[entryIndex];
                     var valueOfThisRow = currentRow[entryIndex];

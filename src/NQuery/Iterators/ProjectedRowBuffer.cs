@@ -6,13 +6,11 @@ namespace NQuery.Iterators
 {
     internal sealed class ProjectedRowBuffer : RowBuffer
     {
-        private readonly RowBuffer _source;
-        private readonly ImmutableArray<int> _projectedIndices;
+        private readonly ImmutableArray<RowBufferEntry> _projectedIndices;
 
-        public ProjectedRowBuffer(RowBuffer source, IEnumerable<int> projectedIndices)
+        public ProjectedRowBuffer(IEnumerable<RowBufferEntry> projectedEntries)
         {
-            _source = source;
-            _projectedIndices = projectedIndices.ToImmutableArray();
+            _projectedIndices = projectedEntries.ToImmutableArray();
         }
 
         public override int Count
@@ -22,13 +20,13 @@ namespace NQuery.Iterators
 
         public override object this[int index]
         {
-            get { return _source[_projectedIndices[index]]; }
+            get { return _projectedIndices[index].GetValue(); }
         }
 
         public override void CopyTo(object[] array, int destinationIndex)
         {
             for (var i = 0; i < _projectedIndices.Length; i++)
-                array[i] = _source[_projectedIndices[i]];
+                array[i] = _projectedIndices[i].GetValue();
         }
     }
 }

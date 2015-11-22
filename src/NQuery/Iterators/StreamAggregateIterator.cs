@@ -9,7 +9,7 @@ namespace NQuery.Iterators
     internal sealed class StreamAggregateIterator : Iterator
     {
         private readonly Iterator _input;
-        private readonly ImmutableArray<int> _groupEntries;
+        private readonly ImmutableArray<RowBufferEntry> _groupEntries;
         private readonly ImmutableArray<IAggregator> _aggregators;
         private readonly ImmutableArray<IteratorFunction> _argumentFunctions;
         private readonly ArrayRowBuffer _rowBuffer;
@@ -17,7 +17,7 @@ namespace NQuery.Iterators
         private bool _eof;
         private bool _isFirstRecord;
 
-        public StreamAggregateIterator(Iterator input, IEnumerable<int> groupEntries, IEnumerable<IAggregator> aggregators, IEnumerable<IteratorFunction> argumentFunctions)
+        public StreamAggregateIterator(Iterator input, IEnumerable<RowBufferEntry> groupEntries, IEnumerable<IAggregator> aggregators, IEnumerable<IteratorFunction> argumentFunctions)
         {
             _input = input;
             _groupEntries = groupEntries.ToImmutableArray();
@@ -61,8 +61,7 @@ namespace NQuery.Iterators
         {
             for (var i = 0; i < _groupEntries.Length; i++)
             {
-                var groupIndex = _groupEntries[i];
-                target[i] = _input.RowBuffer[groupIndex];
+                target[i] = _groupEntries[i].GetValue();
             }
         }
 
@@ -78,9 +77,8 @@ namespace NQuery.Iterators
 
             for (var i = 0; i < _groupEntries.Length; i++)
             {
-                var groupIndex = _groupEntries[i];
                 var valueOfLastRow = _rowBuffer[i];
-                var valueOfThisRow = _input.RowBuffer[groupIndex];
+                var valueOfThisRow = _groupEntries[i].GetValue();
 
                 if (valueOfThisRow == valueOfLastRow)
                 {
