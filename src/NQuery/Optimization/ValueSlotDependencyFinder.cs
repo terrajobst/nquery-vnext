@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using NQuery.Binding;
 
@@ -23,6 +24,13 @@ namespace NQuery.Optimization
         {
             ValueSlots.Add(node.ValueSlot);
             base.VisitValueSlotExpression(node);
+        }
+
+        protected override void VisitSingleRowSubselect(BoundSingleRowSubselect node)
+        {
+            var output = node.Relation.GetOutputValues().Single();
+            ValueSlots.Add(output);
+            base.VisitSingleRowSubselect(node);
         }
     }
 }
