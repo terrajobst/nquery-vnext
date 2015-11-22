@@ -60,9 +60,9 @@ namespace NQuery.Iterators
             return ExpressionBuilder.BuildIteratorFunction(expression, rowBufferAllocations);
         }
 
-        private static IteratorPredicate BuildPredicate(BoundExpression predicate, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        private static IteratorPredicate BuildPredicate(BoundExpression predicate, bool nullValue, IEnumerable<RowBufferAllocation> rowBufferAllocations)
         {
-            return ExpressionBuilder.BuildIteratorPredicate(predicate, rowBufferAllocations);
+            return ExpressionBuilder.BuildIteratorPredicate(predicate, nullValue, rowBufferAllocations);
         }
 
         private Iterator BuildRelation(BoundRelation relation)
@@ -137,11 +137,8 @@ namespace NQuery.Iterators
             _outerRowBufferAllocations.Pop();
 
             var rowBufferAllocations = BuildRowBufferAllocations(leftAllocation, rightAllocation);
-            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
-
-            var passthruPredicate = relation.PassthruPredicate == null
-                ? () => false
-                : BuildPredicate(relation.PassthruPredicate, rowBufferAllocations);
+            var predicate = BuildPredicate(relation.Condition, true, rowBufferAllocations);
+            var passthruPredicate = BuildPredicate(relation.PassthruPredicate, false, rowBufferAllocations);
 
             switch (relation.JoinType)
             {
@@ -178,7 +175,7 @@ namespace NQuery.Iterators
             var outputRowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
             var outputAllocation = BuildRowBufferAllocation(relation, outputRowBuffer);
             var outputAllocations = BuildRowBufferAllocations(outputAllocation);
-            var predicate = BuildPredicate(relation.Remainder, outputAllocations);
+            var predicate = BuildPredicate(relation.Remainder, true, outputAllocations);
 
             return new HashMatchIterator(relation.LogicalOperator, build, probe, buildIndex, probeIndex, predicate, outputRowBuffer);
         }
@@ -187,7 +184,7 @@ namespace NQuery.Iterators
         {
             var input = BuildRelation(relation.Input);
             var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
-            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
+            var predicate = BuildPredicate(relation.Condition, true, rowBufferAllocations);
             return new FilterIterator(input, predicate);
         }
 
@@ -301,7 +298,7 @@ namespace NQuery.Iterators
         {
             var input = BuildRelation(relation.Input);
             var rowBufferAllocations = BuildRowBufferAllocations(relation.Input, input.RowBuffer);
-            var predicate = BuildPredicate(relation.Condition, rowBufferAllocations);
+            var predicate = BuildPredicate(relation.Condition, true, rowBufferAllocations);
             return new AssertIterator(input, predicate, relation.Message);
         }
 

@@ -49,10 +49,10 @@ namespace NQuery.Iterators
             return BuildExpression<IteratorFunction>(expression, typeof(object), rowBufferAllocations);
         }
 
-        public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, IEnumerable<RowBufferAllocation> rowBufferAllocations)
+        public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, bool nullValue, IEnumerable<RowBufferAllocation> rowBufferAllocations)
         {
             if (predicate == null)
-                return () => true;
+                return () => nullValue;
 
             return BuildExpression<IteratorPredicate>(predicate, typeof(bool), rowBufferAllocations);
         }
