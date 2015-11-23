@@ -71,6 +71,7 @@ Global
 		NQuery.Shared\NQuery.Shared.projitems*{951e09ad-a6a0-411c-8dce-3bcd2651cc30}*SharedItemsImports = 13
 		NQuery.Shared\NQuery.Shared.projitems*{a3309669-818f-47a9-b0f8-734af347febc}*SharedItemsImports = 4
 		NQuery.Shared\NQuery.Shared.projitems*{bf5539f1-3476-4ed7-89da-d9446b46eeeb}*SharedItemsImports = 4
+		NQuery.Shared\NQuery.Shared.projitems*{5f76c1eb-9eee-4046-9664-a4123984eef3}*SharedItemsImports = 4
 		NQuery.Shared\NQuery.Shared.projitems*{a3b82430-e8ed-4177-b097-3a82748edaef}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

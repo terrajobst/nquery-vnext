@@ -46,7 +46,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
                     return GetOrderByFixes(selectQuery, expression);
 
                 default:
-                    throw new Exception($"Unexpected diagnostic: {diagnostic.DiagnosticId}");
+                    throw ExceptionBuilder.UnexpectedValue(diagnostic.DiagnosticId);
             }
         }
 
