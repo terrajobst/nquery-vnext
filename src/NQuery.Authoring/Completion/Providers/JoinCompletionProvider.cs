@@ -58,17 +58,17 @@ namespace NQuery.Authoring.Completion.Providers
             for (var i = 0; i < leftColumns.Count; i++)
             {
                 if (sb.Length > 0)
-                    sb.Append(" AND ");
+                    sb.Append(@" AND ");
 
                 var leftColumn = leftColumns[i];
                 var rightColumn = rightColumns[i];
 
                 sb.Append(SyntaxFacts.GetValidIdentifier(right.Name));
-                sb.Append(".");
+                sb.Append(@".");
                 sb.Append(SyntaxFacts.GetValidIdentifier(rightColumn.Name));
-                sb.Append(" = ");
+                sb.Append(@" = ");
                 sb.Append(SyntaxFacts.GetValidIdentifier(left.Name));
-                sb.Append(".");
+                sb.Append(@".");
                 sb.Append(SyntaxFacts.GetValidIdentifier(leftColumn.Name));
             }
 

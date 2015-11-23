@@ -35,7 +35,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Replace ordinal by named column reference"; }
+                get { return Resources.CodeActionReplaceOrdinalByNamedColumn; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

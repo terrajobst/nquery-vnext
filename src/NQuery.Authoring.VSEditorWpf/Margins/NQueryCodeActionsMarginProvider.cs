@@ -10,10 +10,10 @@ using NQuery.Authoring.Composition.CodeActions;
 namespace NQuery.Authoring.VSEditorWpf.Margins
 {
     [Export(typeof(IWpfTextViewMarginProvider))]
-    [Name("NQueryCodeActionsMarginProvider")]
+    [Name(@"NQueryCodeActionsMarginProvider")]
     [MarginContainer(PredefinedMarginNames.Left)]
     [Order(Before = PredefinedMarginNames.LeftSelection)]
-    [ContentType("NQuery")]
+    [ContentType(@"NQuery")]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
     internal sealed class NQueryCodeActionsMarginProvider : IWpfTextViewMarginProvider
     {

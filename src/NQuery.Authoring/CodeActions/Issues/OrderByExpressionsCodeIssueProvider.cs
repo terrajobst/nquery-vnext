@@ -93,7 +93,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Replace expression by SELECT column reference"; }
+                get { return Resources.CodeActionReplaceByNamedColumn; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

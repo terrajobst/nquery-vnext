@@ -114,7 +114,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public PunctuationFormat()
             {
-                DisplayName = "Punctuation";
+                DisplayName = Resources.ClassificationFormatPunctuation;
                 ForegroundColor = Colors.DarkCyan;
             }
         }
@@ -129,7 +129,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public SchemaTableFormat()
             {
-                DisplayName = "Schema Table";
+                DisplayName = Resources.ClassificationFormatSchemaTable;
                 ForegroundColor = Colors.DarkBlue;
             }
         }
@@ -144,7 +144,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public DerivedTableFormat()
             {
-                DisplayName = "Derived Table";
+                DisplayName = Resources.ClassificationFormatDerivedTable;
                 ForegroundColor = Colors.DarkBlue;
             }
         }
@@ -159,7 +159,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public CommonTableExpressionFormat()
             {
-                DisplayName = "Common Table Expression";
+                DisplayName = Resources.ClassificationFormatCommonTableExpression;
                 ForegroundColor = Colors.DarkBlue;
             }
         }
@@ -174,7 +174,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public FunctionFormat()
             {
-                DisplayName = "Event";
+                DisplayName = Resources.ClassificationFormatFunction;
                 ForegroundColor = Colors.Fuchsia;
             }
         }
@@ -189,7 +189,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public ColumnFormat()
             {
-                DisplayName = "Column";
+                DisplayName = Resources.ClassificationFormatColumn;
                 ForegroundColor = Colors.Purple;
             }
         }
@@ -204,7 +204,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public MethodFormat()
             {
-                DisplayName = "Method";
+                DisplayName = Resources.ClassificationFormatMethod;
                 ForegroundColor = Colors.DarkCyan;
             }
         }
@@ -219,7 +219,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public AggregateFormat()
             {
-                DisplayName = "Aggregate Function";
+                DisplayName = Resources.ClassificationFormatAggregate;
                 ForegroundColor = Colors.OrangeRed;
             }
         }
@@ -234,7 +234,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public PropertyFormat()
             {
-                DisplayName = "Property";
+                DisplayName = Resources.ClassificationFormatProperty;
                 ForegroundColor = Colors.DarkCyan;
             }
         }
@@ -249,7 +249,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public VariableFormat()
             {
-                DisplayName = "Variable";
+                DisplayName = Resources.ClassificationFormatVariable;
                 ForegroundColor = Colors.DarkCyan;
             }
         }
@@ -264,7 +264,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         {
             public UnnecessaryFormat()
             {
-                DisplayName = "Unnecessary";
+                DisplayName = Resources.ClassificationFormatUnnecessary;
                 ForegroundOpacity = 0.6;
             }
         }

@@ -9,7 +9,7 @@ namespace NQuery.Authoring.Outlining.Outliners
     {
         protected override IEnumerable<OutliningRegionSpan> FindRegions(OrderedQuerySyntax node)
         {
-            var text = node.Query is SelectQuerySyntax ? "SELECT" : "...";
+            var text = node.Query is SelectQuerySyntax ? @"SELECT" : @"...";
             yield return new OutliningRegionSpan(node.Span, text);
         }
     }

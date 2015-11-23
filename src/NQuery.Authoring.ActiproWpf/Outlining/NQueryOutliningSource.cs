@@ -23,7 +23,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
             {
                 var range = text.ToSnapshotRange(regionSpan.Span);
 
-                IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition("NQueryNode")
+                IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition(@"NQueryNode")
                 {
                     DefaultCollapsedContent = regionSpan.Text,
                     IsImplementation = false

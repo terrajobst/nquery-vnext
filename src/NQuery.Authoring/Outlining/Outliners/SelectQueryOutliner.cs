@@ -11,7 +11,7 @@ namespace NQuery.Authoring.Outlining.Outliners
         {
             var parentIsOrderedQuery = node.Parent is OrderedQuerySyntax;
             if (!parentIsOrderedQuery)
-                yield return new OutliningRegionSpan(node.Span, "SELECT");
+                yield return new OutliningRegionSpan(node.Span, @"SELECT");
         }
     }
 }

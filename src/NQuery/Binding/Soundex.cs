@@ -69,7 +69,7 @@ namespace NQuery.Binding
             // Rule 6. A soundex code must be exactly 4 characters long.  If the
             //         code is too short then pad with zeros, otherwise truncate.
 
-            sb.Append("0000");
+            sb.Append(@"0000");
 
             return sb.ToString(0, 4);
         }

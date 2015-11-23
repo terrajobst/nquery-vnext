@@ -26,7 +26,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return $"Add missing '{GetKeywordText()}' keyword"; }
+                get { return string.Format(Resources.CodeActionAddMissingKeyword, GetKeywordText()); }
             }
 
             private string GetKeywordText()
@@ -36,7 +36,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                changeSet.InsertText(_keyword.Span.Start, GetKeywordText() + " ");
+                changeSet.InsertText(_keyword.Span.Start, GetKeywordText() + @" ");
             }
         }
     }

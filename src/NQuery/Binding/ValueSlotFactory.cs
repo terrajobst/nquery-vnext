@@ -23,7 +23,7 @@ namespace NQuery.Binding
             highestNumber++;
             _usedNames[name] = highestNumber;
 
-            var qualifiedName = name + ":" + highestNumber;
+            var qualifiedName = $"{name}:{highestNumber}";
             return new ValueSlot(qualifiedName, type);
         }
     }

@@ -178,7 +178,7 @@ namespace NQuery.Optimization
                     : new BoundJoinRelation(BoundJoinType.Inner, result, relation, null, null, null);
             }
 
-            Debug.Assert(remainingNodes.Count == 0, "Found remaining nodes");
+            Debug.Assert(remainingNodes.Count == 0, @"Found remaining nodes");
 
             // Add filter for remaining predicates
 
@@ -220,8 +220,8 @@ namespace NQuery.Optimization
                 return false;
 
             // TODO: We should somehow compute from the actual data context
-            return left.ValueSlot.Name.Contains("ID:") &&
-                   right.ValueSlot.Name.Contains("ID:");
+            return left.ValueSlot.Name.Contains(@"ID:") &&
+                   right.ValueSlot.Name.Contains(@"ID:");
         }
 
         private sealed class JoinNode

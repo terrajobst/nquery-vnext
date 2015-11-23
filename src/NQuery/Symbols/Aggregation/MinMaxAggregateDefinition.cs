@@ -13,7 +13,7 @@ namespace NQuery.Symbols.Aggregation
 
         public override string Name
         {
-            get { return _isMin ? "MIN" : "MAX"; }
+            get { return _isMin ? @"MIN" : @"MAX"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

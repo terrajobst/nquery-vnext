@@ -85,7 +85,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             var textBlock = new TextBlock
             {
                 VerticalAlignment = VerticalAlignment.Center,
-                FontFamily = new FontFamily("Consolas")
+                FontFamily = new FontFamily(@"Consolas")
             };
             textBlock.Inlines.AddRange(markup.Tokens.Select(GetInline));
             return textBlock;

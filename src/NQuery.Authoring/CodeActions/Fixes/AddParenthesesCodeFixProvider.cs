@@ -42,13 +42,13 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             public override string Description
             {
-                get { return "Add parentheses"; }
+                get { return Resources.CodeActionAddParentheses; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
                 var position = _node.Span.End;
-                changeSet.InsertText(position, "()");
+                changeSet.InsertText(position, @"()");
             }
         }
     }

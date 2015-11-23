@@ -19,7 +19,7 @@ namespace NQuery.Authoring.Outlining.Outliners
                    let line = sourceText.GetLineFromPosition(commentStart)
                    let firstLineEnd = line.Span.End
                    let firstLineSpan = TextSpan.FromBounds(commentStart, firstLineEnd)
-                   let text = sourceText.GetText(firstLineSpan) + " ..."
+                   let text = sourceText.GetText(firstLineSpan) + @" ..."
                    select new OutliningRegionSpan(comment.Span, text);
         }
     }

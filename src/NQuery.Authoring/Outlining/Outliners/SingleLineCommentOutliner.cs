@@ -52,7 +52,7 @@ namespace NQuery.Authoring.Outlining.Outliners
             var start = firstComment.Span.Start;
             var end = lastComment.Span.End;
             var span = TextSpan.FromBounds(start, end);
-            var text = firstComment.Text + " ...";
+            var text = firstComment.Text + @" ...";
             return new OutliningRegionSpan(span, text);
         }
     }

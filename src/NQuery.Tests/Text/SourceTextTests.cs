@@ -169,7 +169,7 @@ namespace NQuery.Tests.Text
             };
 
             var exception = Assert.Throws<InvalidOperationException>(() => sourceText.WithChanges(changes));
-            Assert.Equal("Applying overlapping changes is not supported.", exception.Message);
+            Assert.Equal("Changes must not overlap.", exception.Message);
         }
 
         [Fact]

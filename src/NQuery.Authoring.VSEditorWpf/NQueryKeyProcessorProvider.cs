@@ -14,8 +14,8 @@ using NQuery.Authoring.VSEditorWpf.SignatureHelp;
 namespace NQuery.Authoring.VSEditorWpf
 {
     [Export(typeof(IKeyProcessorProvider))]
-    [Name("NQueryKeyProcessorProvider")]
-    [ContentType("NQuery")]
+    [Name(@"NQueryKeyProcessorProvider")]
+    [ContentType(@"NQuery")]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
     internal sealed class NQueryKeyProcessorProvider : IKeyProcessorProvider
     {

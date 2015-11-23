@@ -112,13 +112,13 @@ namespace NQuery.Binding
             switch (kind)
             {
                 case UnaryOperatorKind.Identity:
-                    return "op_UnaryPlus";
+                    return @"op_UnaryPlus";
                 case UnaryOperatorKind.Negation:
-                    return "op_UnaryNegation";
+                    return @"op_UnaryNegation";
                 case UnaryOperatorKind.Complement:
-                    return "op_OnesComplement";
+                    return @"op_OnesComplement";
                 case UnaryOperatorKind.LogicalNot:
-                    return "op_LogicalNot";
+                    return @"op_LogicalNot";
                 default:
                     throw ExceptionBuilder.UnexpectedValue(kind);
             }

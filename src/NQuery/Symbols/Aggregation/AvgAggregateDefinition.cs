@@ -6,7 +6,7 @@ namespace NQuery.Symbols.Aggregation
     {
         public override string Name
         {
-            get { return "AVG"; }
+            get { return @"AVG"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)
@@ -21,8 +21,8 @@ namespace NQuery.Symbols.Aggregation
             if (countAggregatable == null)
                 return null;
 
-            var sumVariable = new VariableSymbol("Sum", sumAggregatable.ReturnType);
-            var countVariable = new VariableSymbol("Count", countAggregatable.ReturnType);
+            var sumVariable = new VariableSymbol(@"Sum", sumAggregatable.ReturnType);
+            var countVariable = new VariableSymbol(@"Count", countAggregatable.ReturnType);
             var divisionDataContext = DataContext.Empty.AddVariables(sumVariable, countVariable);
             var divisionExpression = Expression<object>.Create(divisionDataContext, @"@Sum / @Count");
 

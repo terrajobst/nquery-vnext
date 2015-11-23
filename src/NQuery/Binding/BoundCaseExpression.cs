@@ -41,23 +41,23 @@ namespace NQuery.Binding
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("CASE ");
+            sb.Append(@"CASE ");
 
             foreach (var boundCaseLabel in CaseLabels)
             {
-                sb.Append("WHEN ");
+                sb.Append(@"WHEN ");
                 sb.Append(boundCaseLabel.Condition);
-                sb.Append(" THEN ");
+                sb.Append(@" THEN ");
                 sb.Append(boundCaseLabel.ThenExpression);
             }
 
             if (ElseExpression != null)
             {
-                sb.Append(" ELSE ");
+                sb.Append(@" ELSE ");
                 sb.Append(ElseExpression);
             }
 
-            sb.Append(" END");
+            sb.Append(@" END");
 
             return sb.ToString();
         }

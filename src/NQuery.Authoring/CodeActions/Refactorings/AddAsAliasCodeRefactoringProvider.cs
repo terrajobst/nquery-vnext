@@ -28,12 +28,12 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "Add 'AS' keyword"; }
+                get { return Resources.CodeActionAddAsKeyword; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                changeSet.InsertText(_node.Span.Start, "AS ");
+                changeSet.InsertText(_node.Span.Start, @"AS ");
             }
         }
     }

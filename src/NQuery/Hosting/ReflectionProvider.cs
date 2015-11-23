@@ -112,7 +112,7 @@ namespace NQuery.Hosting
             {
                 var sb = new StringBuilder();
                 sb.Append(methodName);
-                sb.Append("(");
+                sb.Append(@"(");
 
                 var isFirst = true;
 
@@ -126,7 +126,7 @@ namespace NQuery.Hosting
                     sb.Append(t.Name);
                 }
 
-                sb.Append(")");
+                sb.Append(@")");
                 return sb.ToString();
             }
 

@@ -48,7 +48,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Remove unused common table expression"; }
+                get { return Resources.CodeActionRemoveUnusedCommonTableExpression; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

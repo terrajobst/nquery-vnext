@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(ITextMarkerTag))]
-    [ContentType("NQuery")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
     {
         [Import]

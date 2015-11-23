@@ -309,7 +309,7 @@ namespace NQuery
         public static void ReportUndeclaredFunction(this ICollection<Diagnostic> diagnostics, FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
         {
             var name = node.Name.ValueText;
-            var argumentTypeList = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+            var argumentTypeList = string.Join(@", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredFunction, name, argumentTypeList);
         }
 
@@ -323,7 +323,7 @@ namespace NQuery
         {
             var name = node.Name.ValueText;
             var declaringTypeName = declaringType.ToDisplayName();
-            var argumentTypeNames = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+            var argumentTypeNames = string.Join(@", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredMethod, declaringTypeName, name, argumentTypeNames);
         }
 
@@ -393,7 +393,7 @@ namespace NQuery
         {
             if (argumentTypes.Count > 0)
             {
-                var displayTypes = string.Join(", ", argumentTypes.Select(t => t.ToDisplayName()));
+                var displayTypes = string.Join(@", ", argumentTypes.Select(t => t.ToDisplayName()));
                 diagnostics.Report(span, DiagnosticId.AmbiguousInvocation, symbol1, symbol2, displayTypes);
             }
             else

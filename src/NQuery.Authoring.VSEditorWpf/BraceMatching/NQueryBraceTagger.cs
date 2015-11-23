@@ -57,7 +57,7 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
 
         protected override ITagSpan<ITextMarkerTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)
         {
-            var tag = new TextMarkerTag("bracehighlight");
+            var tag = new TextMarkerTag(@"bracehighlight");
             return new TagSpan<ITextMarkerTag>(rawTag, tag);
         }
     }

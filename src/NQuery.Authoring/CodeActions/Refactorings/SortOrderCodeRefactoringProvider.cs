@@ -30,12 +30,12 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "To explicit sort order"; }
+                get { return Resources.CodeActionToExplicitSortOrder; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                changeSet.InsertText(_node.Span.End, " ASC");
+                changeSet.InsertText(_node.Span.End, @" ASC");
             }
         }
 
@@ -51,7 +51,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "To implicit sort order"; }
+                get { return Resources.CodeActionToImplicitSortOrder; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
@@ -76,8 +76,8 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 get
                 {
                     return _node.Modifier == null || _node.Modifier.Kind == SyntaxKind.AscKeyword
-                                ? "To descending"
-                                : "To ascending";
+                                ? Resources.CodeActionToDescending
+                                : Resources.CodeActionToAscending;
                 }
             }
 
@@ -87,11 +87,11 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
                 if (modifier == null)
                 {
-                    changeSet.InsertText(_node.Span.End, " DESC");
+                    changeSet.InsertText(_node.Span.End, @" DESC");
                 }
                 else
                 {
-                    var newKeyword = modifier.Kind == SyntaxKind.AscKeyword ? "DESC" : "ASC";
+                    var newKeyword = modifier.Kind == SyntaxKind.AscKeyword ? @"DESC" : @"ASC";
                     changeSet.ReplaceText(modifier.Span, newKeyword);
                 }
             }

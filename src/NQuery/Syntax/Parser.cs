@@ -665,7 +665,7 @@ namespace NQuery.Syntax
         private ExpressionSyntax ParseFunctionInvocationExpression()
         {
             var name = Match(SyntaxKind.IdentifierToken);
-            if (Lookahead.Kind == SyntaxKind.AsteriskToken && name.Matches("COUNT"))
+            if (Lookahead.Kind == SyntaxKind.AsteriskToken && name.Matches(@"COUNT"))
             {
                 var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
                 var asteriskToken = Match(SyntaxKind.AsteriskToken);

@@ -119,7 +119,7 @@ namespace NQuery.Optimization
 
             // Create output values
 
-            var unionRecusionSlot = _nameGenerator.CreateInt32Slot("RecursionUnion");
+            var unionRecusionSlot = _nameGenerator.CreateInt32Slot(@"RecursionUnion");
             var concatValueSlots = outputValues.ToImmutableArray().Add(unionRecusionSlot);
 
             // Create anchor
@@ -127,7 +127,7 @@ namespace NQuery.Optimization
             var anchor = RewriteRelation(Instatiator.Instantiate(symbol.Anchor.Relation, _nameGenerator.CreateNewName));
             var anchorValues = anchor.GetOutputValues().ToImmutableArray();
 
-            var initRecursionSlot = _nameGenerator.CreateInt32Slot("RecursionStart");
+            var initRecursionSlot = _nameGenerator.CreateInt32Slot(@"RecursionStart");
             var initRecursionDefinition = new BoundComputedValue(Expression.Literal(0), initRecursionSlot);
             var initRecursion = new BoundComputeRelation(anchor, ImmutableArray.Create(initRecursionDefinition));
 
@@ -135,13 +135,13 @@ namespace NQuery.Optimization
 
             // Create TableSpoolPopper
 
-            var tableSpoolPopperSlots = _nameGenerator.Duplicate(initRecursionOutputs, "AnchorRecursion");
+            var tableSpoolPopperSlots = _nameGenerator.Duplicate(initRecursionOutputs, @"AnchorRecursion");
 
             var tableSpoolPopper = new BoundTableSpoolPopper(tableSpoolPopperSlots);
 
             var anchorRecursionCounter = tableSpoolPopperSlots.Last();
             var inc = Expression.Plus(Expression.Value(anchorRecursionCounter), Expression.Literal(1));
-            var incRecursionSlot = _nameGenerator.CreateInt32Slot("RecursionIncrement");
+            var incRecursionSlot = _nameGenerator.CreateInt32Slot(@"RecursionIncrement");
             var incRecursionDefinition = new BoundComputedValue(inc, incRecursionSlot);
             var incRecursion = new BoundComputeRelation(tableSpoolPopper, ImmutableArray.Create(incRecursionDefinition));
 
@@ -170,7 +170,7 @@ namespace NQuery.Optimization
                 .Range(0, concatValueSlots.Length - 1)
                 .Select(i =>
                 {
-                    var name = _nameGenerator.CreateNewName("Union");
+                    var name = _nameGenerator.CreateNewName(@"Union");
                     var slot = new ValueSlot(name, concatValueSlots[i].Type);
                     return new BoundUnifiedValue(slot, recursiveMemberOutputs.Select(o => o[i]));
                 })
@@ -248,7 +248,7 @@ namespace NQuery.Optimization
             private ValueSlot Duplicate(ValueSlot slot, string suffix)
             {
                 var oldName = slot.Name;
-                var newName = CreateNewName(oldName) + ":" + suffix;
+                var newName = $"{CreateNewName(oldName)}:{suffix}";
                 return new ValueSlot(newName, slot.Type);
             }
 

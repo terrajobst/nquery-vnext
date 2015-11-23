@@ -156,13 +156,13 @@ namespace NQuery
         public static string ToDisplayName(this Type type)
         {
             if (type.IsUnknown())
-                return "<?>";
+                return Resources.TypeUnknown;
 
             if (type.IsNull())
-                return "<null>";
+                return Resources.TypeNull;
 
             if (type.IsMissing())
-                return "<missing>";
+                return Resources.TypeMissing;
 
             var knownType = type.GetKnownType();
             return knownType == null ? type.Name : knownType.Value.ToDisplayName();
@@ -173,35 +173,35 @@ namespace NQuery
             switch (type)
             {
                 case KnownType.SByte:
-                    return "SBYTE";
+                    return @"SBYTE";
                 case KnownType.Byte:
-                    return "BYTE";
+                    return @"BYTE";
                 case KnownType.Int16:
-                    return "SHORT";
+                    return @"SHORT";
                 case KnownType.UInt16:
-                    return "USHORT";
+                    return @"USHORT";
                 case KnownType.Int32:
-                    return "INT";
+                    return @"INT";
                 case KnownType.UInt32:
-                    return "UINT";
+                    return @"UINT";
                 case KnownType.Int64:
-                    return "LONG";
+                    return @"LONG";
                 case KnownType.UInt64:
-                    return "ULONG";
+                    return @"ULONG";
                 case KnownType.Char:
-                    return "CHAR";
+                    return @"CHAR";
                 case KnownType.Single:
-                    return "FLOAT";
+                    return @"FLOAT";
                 case KnownType.Double:
-                    return "DOUBLE";
+                    return @"DOUBLE";
                 case KnownType.Decimal:
-                    return "DECIMAL";
+                    return @"DECIMAL";
                 case KnownType.Boolean:
-                    return "BOOL";
+                    return @"BOOL";
                 case KnownType.String:
-                    return "STRING";
+                    return @"STRING";
                 case KnownType.Object:
-                    return "OBJECT";
+                    return @"OBJECT";
                 default:
                     throw ExceptionBuilder.UnexpectedValue(type);
             }

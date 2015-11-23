@@ -16,7 +16,7 @@ namespace NQuery.Authoring.CodeActions.Issues
             {
                 return new[]
                 {
-                    new CodeIssue(CodeIssueKind.Warning, node.Name.Span, "Should specify RECURSIVE", new[]
+                    new CodeIssue(CodeIssueKind.Warning, node.Name.Span, Resources.CodeIssueShouldSpecifyRecursive, new[]
                     {
                         new InsertMissingRecursiveKeywordCodeAction(node)
                     })
@@ -27,7 +27,7 @@ namespace NQuery.Authoring.CodeActions.Issues
             {
                 return new[]
                 {
-                    new CodeIssue(CodeIssueKind.Unnecessary, node.RecursiveKeyword.Span, "RECURSIVE is not needed", new[]
+                    new CodeIssue(CodeIssueKind.Unnecessary, node.RecursiveKeyword.Span, Resources.CodeIssueRecursiveIsNotNeeded, new[]
                     {
                         new RemoveUnnecessaryRecursiveKeywordCodeAction(node.RecursiveKeyword),
                     })
@@ -58,7 +58,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Remove unnecessary RECURSIVE keyword"; }
+                get { return Resources.CodeActionRemoveRecursive; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
@@ -82,12 +82,12 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Add missing RECURSIVE keyword"; }
+                get { return Resources.CodeActionAddRecursive; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                changeSet.InsertText(_node.Name.Span.Start, "RECURSIVE ");
+                changeSet.InsertText(_node.Name.Span.Start, @"RECURSIVE ");
             }
         }
     }

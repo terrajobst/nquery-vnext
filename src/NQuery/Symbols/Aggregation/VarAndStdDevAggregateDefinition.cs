@@ -14,7 +14,7 @@ namespace NQuery.Symbols.Aggregation
 
         public override string Name
         {
-            get { return _isVar ? "VAR" : "STDEV"; }
+            get { return _isVar ? @"VAR" : @"STDEV"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

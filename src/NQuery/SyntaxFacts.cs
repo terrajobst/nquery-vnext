@@ -112,159 +112,159 @@ namespace NQuery
             switch (kind)
             {
                 case SyntaxKind.BitwiseNotToken:
-                    return "~";
+                    return @"~";
                 case SyntaxKind.AmpersandToken:
-                    return "&";
+                    return @"&";
                 case SyntaxKind.BarToken:
-                    return "|";
+                    return @"|";
                 case SyntaxKind.CaretToken:
-                    return "^";
+                    return @"^";
                 case SyntaxKind.AtToken:
-                    return "@";
+                    return @"@";
                 case SyntaxKind.LeftParenthesisToken:
-                    return "(";
+                    return @"(";
                 case SyntaxKind.RightParenthesisToken:
-                    return ")";
+                    return @")";
                 case SyntaxKind.PlusToken:
-                    return "+";
+                    return @"+";
                 case SyntaxKind.MinusToken:
-                    return "-";
+                    return @"-";
                 case SyntaxKind.AsteriskToken:
-                    return "*";
+                    return @"*";
                 case SyntaxKind.SlashToken:
-                    return "/";
+                    return @"/";
                 case SyntaxKind.PercentToken:
-                    return "%";
+                    return @"%";
                 case SyntaxKind.AsteriskAsteriskToken:
-                    return "**";
+                    return @"**";
                 case SyntaxKind.CommaToken:
-                    return ",";
+                    return @",";
                 case SyntaxKind.DotToken:
-                    return ".";
+                    return @".";
                 case SyntaxKind.EqualsToken:
-                    return "=";
+                    return @"=";
                 case SyntaxKind.ExclamationEqualsToken:
-                    return "!=";
+                    return @"!=";
                 case SyntaxKind.LessGreaterToken:
-                    return "<>";
+                    return @"<>";
                 case SyntaxKind.LessToken:
-                    return "<";
+                    return @"<";
                 case SyntaxKind.LessEqualToken:
-                    return "<=";
+                    return @"<=";
                 case SyntaxKind.GreaterToken:
-                    return ">";
+                    return @">";
                 case SyntaxKind.GreaterEqualToken:
-                    return ">=";
+                    return @">=";
                 case SyntaxKind.ExclamationLessToken:
-                    return "!<";
+                    return @"!<";
                 case SyntaxKind.ExclamationGreaterToken:
-                    return "!>";
+                    return @"!>";
                 case SyntaxKind.LessLessToken:
-                    return "<<";
+                    return @"<<";
                 case SyntaxKind.GreaterGreaterToken:
-                    return ">>";
+                    return @">>";
                 case SyntaxKind.AndKeyword:
-                    return "AND";
+                    return @"AND";
                 case SyntaxKind.OrKeyword:
-                    return "OR";
+                    return @"OR";
                 case SyntaxKind.IsKeyword:
-                    return "IS";
+                    return @"IS";
                 case SyntaxKind.NullKeyword:
-                    return "NULL";
+                    return @"NULL";
                 case SyntaxKind.NotKeyword:
-                    return "NOT";
+                    return @"NOT";
                 case SyntaxKind.LikeKeyword:
-                    return "LIKE";
+                    return @"LIKE";
                 case SyntaxKind.SoundsKeyword:
-                    return "SOUNDS";
+                    return @"SOUNDS";
                 case SyntaxKind.SimilarKeyword:
-                    return "SIMILAR";
+                    return @"SIMILAR";
                 case SyntaxKind.ToKeyword:
-                    return "TO";
+                    return @"TO";
                 case SyntaxKind.BetweenKeyword:
-                    return "BETWEEN";
+                    return @"BETWEEN";
                 case SyntaxKind.InKeyword:
-                    return "IN";
+                    return @"IN";
                 case SyntaxKind.CastKeyword:
-                    return "CAST";
+                    return @"CAST";
                 case SyntaxKind.AsKeyword:
-                    return "AS";
+                    return @"AS";
                 case SyntaxKind.CoalesceKeyword:
-                    return "COALESCE";
+                    return @"COALESCE";
                 case SyntaxKind.NullIfKeyword:
-                    return "NULLIF";
+                    return @"NULLIF";
                 case SyntaxKind.CaseKeyword:
-                    return "CASE";
+                    return @"CASE";
                 case SyntaxKind.WhenKeyword:
-                    return "WHEN";
+                    return @"WHEN";
                 case SyntaxKind.ThenKeyword:
-                    return "THEN";
+                    return @"THEN";
                 case SyntaxKind.ElseKeyword:
-                    return "ELSE";
+                    return @"ELSE";
                 case SyntaxKind.EndKeyword:
-                    return "END";
+                    return @"END";
                 case SyntaxKind.TrueKeyword:
-                    return "TRUE";
+                    return @"TRUE";
                 case SyntaxKind.FalseKeyword:
-                    return "FALSE";
+                    return @"FALSE";
                 case SyntaxKind.SelectKeyword:
-                    return "SELECT";
+                    return @"SELECT";
                 case SyntaxKind.TopKeyword:
-                    return "TOP";
+                    return @"TOP";
                 case SyntaxKind.DistinctKeyword:
-                    return "DISTINCT";
+                    return @"DISTINCT";
                 case SyntaxKind.FromKeyword:
-                    return "FROM";
+                    return @"FROM";
                 case SyntaxKind.WhereKeyword:
-                    return "WHERE";
+                    return @"WHERE";
                 case SyntaxKind.GroupKeyword:
-                    return "GROUP";
+                    return @"GROUP";
                 case SyntaxKind.ByKeyword:
-                    return "BY";
+                    return @"BY";
                 case SyntaxKind.HavingKeyword:
-                    return "HAVING";
+                    return @"HAVING";
                 case SyntaxKind.OrderKeyword:
-                    return "ORDER";
+                    return @"ORDER";
                 case SyntaxKind.AscKeyword:
-                    return "ASC";
+                    return @"ASC";
                 case SyntaxKind.DescKeyword:
-                    return "DESC";
+                    return @"DESC";
                 case SyntaxKind.UnionKeyword:
-                    return "UNION";
+                    return @"UNION";
                 case SyntaxKind.AllKeyword:
-                    return "ALL";
+                    return @"ALL";
                 case SyntaxKind.IntersectKeyword:
-                    return "INTERSECT";
+                    return @"INTERSECT";
                 case SyntaxKind.ExceptKeyword:
-                    return "EXCEPT";
+                    return @"EXCEPT";
                 case SyntaxKind.ExistsKeyword:
-                    return "EXISTS";
+                    return @"EXISTS";
                 case SyntaxKind.AnyKeyword:
-                    return "ANY";
+                    return @"ANY";
                 case SyntaxKind.SomeKeyword:
-                    return "SOME";
+                    return @"SOME";
                 case SyntaxKind.JoinKeyword:
-                    return "JOIN";
+                    return @"JOIN";
                 case SyntaxKind.InnerKeyword:
-                    return "INNER";
+                    return @"INNER";
                 case SyntaxKind.CrossKeyword:
-                    return "CROSS";
+                    return @"CROSS";
                 case SyntaxKind.LeftKeyword:
-                    return "LEFT";
+                    return @"LEFT";
                 case SyntaxKind.RightKeyword:
-                    return "RIGHT";
+                    return @"RIGHT";
                 case SyntaxKind.OuterKeyword:
-                    return "OUTER";
+                    return @"OUTER";
                 case SyntaxKind.FullKeyword:
-                    return "FULL";
+                    return @"FULL";
                 case SyntaxKind.OnKeyword:
-                    return "ON";
+                    return @"ON";
                 case SyntaxKind.WithKeyword:
-                    return "WITH";
+                    return @"WITH";
                 case SyntaxKind.TiesKeyword:
-                    return "TIES";
+                    return @"TIES";
                 case SyntaxKind.RecursiveKeyword:
-                    return "RECURSIVE";
+                    return @"RECURSIVE";
                 default:
                     return string.Empty;
             }
@@ -275,19 +275,19 @@ namespace NQuery
             switch (kind)
             {
                 case SyntaxKind.EndOfFileToken:
-                    return "<end-of-file>";
+                    return Resources.TokenEndOfFile;
 
                 case SyntaxKind.IdentifierToken:
-                    return "<identifier>";
+                    return Resources.TokenIdentifier;
 
                 case SyntaxKind.NumericLiteralToken:
-                    return "<numeric-literal>";
+                    return Resources.TokenNumericLiteral;
 
                 case SyntaxKind.StringLiteralToken:
-                    return "<string-literal>";
+                    return Resources.TokenStringLiteral;
 
                 case SyntaxKind.DateLiteralToken:
-                    return "<date-literal>";
+                    return Resources.TokenDateLiteral;
 
                 default:
                     return GetText(kind);
@@ -707,7 +707,7 @@ namespace NQuery
                 case SyntaxKind.StringLiteralToken:
                     return EndsWithUnescapedChar(token.Text, '\'');
                 case SyntaxKind.DateLiteralToken:
-                    return token.Text.Length >= 2 && token.Text.EndsWith("#");
+                    return token.Text.Length >= 2 && token.Text.EndsWith(@"#");
                 default:
                     return true;
             }
@@ -721,7 +721,7 @@ namespace NQuery
             switch (trivia.Kind)
             {
                 case SyntaxKind.MultiLineCommentTrivia:
-                    return trivia.Text.Length >= 4 && trivia.Text.EndsWith("*/");
+                    return trivia.Text.Length >= 4 && trivia.Text.EndsWith(@"*/");
                 default:
                     return true;
             }
@@ -1204,10 +1204,10 @@ namespace NQuery
                     return SyntaxKind.LikeKeyword.GetText();
 
                 case BinaryOperatorKind.SimilarTo:
-                    return SyntaxKind.SimilarKeyword.GetText() + " " + SyntaxKind.ToKeyword.GetText();
+                    return SyntaxKind.SimilarKeyword.GetText() + @" " + SyntaxKind.ToKeyword.GetText();
 
                 case BinaryOperatorKind.SoundsLike:
-                    return SyntaxKind.SoundsKeyword.GetText() + " " + SyntaxKind.LikeKeyword.GetText();
+                    return SyntaxKind.SoundsKeyword.GetText() + @" " + SyntaxKind.LikeKeyword.GetText();
 
                 case BinaryOperatorKind.LogicalAnd:
                     return SyntaxKind.AndKeyword.GetText();
@@ -1245,29 +1245,29 @@ namespace NQuery
         {
             return new[]
                        {
-                           "BOOL",
-                           "BOOLEAN",
-                           "BYTE",
-                           "SBYTE",
-                           "CHAR",
-                           "SHORT",
-                           "INT16",
-                           "USHORT",
-                           "UINT16",
-                           "INT",
-                           "INT32",
-                           "UINT",
-                           "UINT32",
-                           "LONG",
-                           "INT64",
-                           "ULONG",
-                           "UINT64",
-                           "FLOAT",
-                           "SINGLE",
-                           "DOUBLE",
-                           "DECIMAL",
-                           "STRING",
-                           "OBJECT"
+                           @"BOOL",
+                           @"BOOLEAN",
+                           @"BYTE",
+                           @"SBYTE",
+                           @"CHAR",
+                           @"SHORT",
+                           @"INT16",
+                           @"USHORT",
+                           @"UINT16",
+                           @"INT",
+                           @"INT32",
+                           @"UINT",
+                           @"UINT32",
+                           @"LONG",
+                           @"INT64",
+                           @"ULONG",
+                           @"UINT64",
+                           @"FLOAT",
+                           @"SINGLE",
+                           @"DOUBLE",
+                           @"DECIMAL",
+                           @"STRING",
+                           @"OBJECT"
                        };
         }
 

@@ -9,8 +9,8 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
 {
     [Export(typeof (ITaggerProvider))]
     [TagType(typeof(IClassificationTag))]
-    [ContentType("NQuery")]
-    [Name("NQuerySyntaxClassifier")]
+    [ContentType(@"NQuery")]
+    [Name(@"NQuerySyntaxClassifier")]
     internal sealed class NQuerySyntaxClassifierProvider : ITaggerProvider
     {
         [Import]

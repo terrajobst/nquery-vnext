@@ -68,7 +68,7 @@ namespace NQuery
                 yield break;
 
             var inputQuery = GetBoundQuery(bindingResult.BoundRoot);
-            yield return ShowPlanBuilder.Build("Unoptimized", inputQuery);
+            yield return ShowPlanBuilder.Build(Resources.ShowPlanUnoptimized, inputQuery);
 
             var relation = inputQuery.Relation;
 
@@ -77,7 +77,7 @@ namespace NQuery
                 var step = rewriter.RewriteRelation(relation);
                 if (step != relation)
                 {
-                    var stepName = $"Optimization Step: {rewriter.GetType().Name}";
+                    var stepName = string.Format(Resources.ShowPlanStepFmt, rewriter.GetType().Name);
                     var stepQuery = new BoundQuery(step, inputQuery.OutputColumns);
                     yield return ShowPlanBuilder.Build(stepName, stepQuery);
                 }
@@ -86,7 +86,7 @@ namespace NQuery
             }
 
             var ouputQuery = new BoundQuery(relation, inputQuery.OutputColumns);
-            yield return ShowPlanBuilder.Build("Optimized", ouputQuery);
+            yield return ShowPlanBuilder.Build(Resources.ShowPlanOptimized, ouputQuery);
         }
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)
@@ -104,7 +104,7 @@ namespace NQuery
 
         private static BoundQuery CreateBoundQuery(BoundExpression expression)
         {
-            var valueSlot = new ValueSlot("result", expression.Type);
+            var valueSlot = new ValueSlot(@"result", expression.Type);
             var computedValue = new BoundComputedValue(expression, valueSlot);
             var constantRelation = new BoundConstantRelation();
             var computeRelation = new BoundComputeRelation(constantRelation, new[] {computedValue});

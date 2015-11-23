@@ -36,13 +36,13 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "Qualify column"; }
+                get { return Resources.CodeActionQualifyColumn; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
                 var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance.Name);
-                changeSet.InsertText(_node.Span.Start, name + ".");
+                changeSet.InsertText(_node.Span.Start, name + @".");
             }
         }
     }

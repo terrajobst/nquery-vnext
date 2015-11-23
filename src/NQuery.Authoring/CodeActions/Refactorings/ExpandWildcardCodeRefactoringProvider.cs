@@ -35,7 +35,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "Expand wildcard"; }
+                get { return Resources.CodeActionExpandWildcard; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
@@ -61,7 +61,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                     }
                     else
                     {
-                        sb.Append(",");
+                        sb.Append(@",");
                         sb.AppendLine();
                         sb.Append(indentString);
                     }
@@ -69,7 +69,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                     var table = SyntaxFacts.GetValidIdentifier(symbol.TableInstance.Name);
                     var column = SyntaxFacts.GetValidIdentifier(symbol.Column.Name);
                     sb.Append(table);
-                    sb.Append(".");
+                    sb.Append(@".");
                     sb.Append(column);
                 }
 

@@ -29,7 +29,7 @@ namespace NQuery.Binding
         public override string ToString()
         {
             if (Value == null)
-                return "NULL";
+                return @"NULL";
 
             if (Value is string)
                 return $"'{Value}'"; // TODO: We should escape this

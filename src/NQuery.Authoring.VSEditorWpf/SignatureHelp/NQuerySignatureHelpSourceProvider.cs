@@ -8,8 +8,8 @@ using Microsoft.VisualStudio.Utilities;
 namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     [Export(typeof(ISignatureHelpSourceProvider))]
-    [ContentType("NQuery")]
-    [Name("NQuerySignatureHelpSourceProvider")]
+    [ContentType(@"NQuery")]
+    [Name(@"NQuerySignatureHelpSourceProvider")]
     internal class NQuerySignatureHelpSourceProvider : ISignatureHelpSourceProvider
     {
         public ISignatureHelpSource TryCreateSignatureHelpSource(ITextBuffer textBuffer)

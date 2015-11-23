@@ -24,7 +24,7 @@ namespace NQuery.Authoring.Wpf
         public SyntaxNodeViewModel(SyntaxTrivia data, bool isLeading, IEnumerable<SyntaxNodeViewModel> children)
         {
             Data = data;
-            Title = $"{(isLeading ? "L" : "T")}:{data.Kind}";
+            Title = $"{(isLeading ? @"L" : @"T")}:{data.Kind}";
             NodeType = SyntaxNodeViewModelKind.Trivia;
             Kind = data.Kind;
             ContextualKind = SyntaxKind.BadToken;

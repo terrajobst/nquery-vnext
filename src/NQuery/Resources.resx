@@ -649,10 +649,10 @@
     <value>Found '{0}' but expected '{1}'.</value>
   </data>
   <data name="TokenIdentifier" xml:space="preserve">
-    <value>&lt;Name&gt;</value>
+    <value>&lt;Identifier&gt;</value>
   </data>
-  <data name="TokenNumberLiteral" xml:space="preserve">
-    <value>&lt;Number Literal&gt;</value>
+  <data name="TokenNumericLiteral" xml:space="preserve">
+    <value>&lt;Numeric Literal&gt;</value>
   </data>
   <data name="TokenStringLiteral" xml:space="preserve">
     <value>&lt;String Literal&gt;</value>
@@ -737,5 +737,32 @@
   </data>
   <data name="GroupByCannotContainSubquery" xml:space="preserve">
     <value>GROUP BY cannot contain subqueries</value>
+  </data>
+  <data name="ShowPlanStepFmt" xml:space="preserve">
+    <value>Optimization Step: {0}</value>
+  </data>
+  <data name="ShowPlanUnoptimized" xml:space="preserve">
+    <value>Unoptimized</value>
+  </data>
+  <data name="ShowPlanOptimized" xml:space="preserve">
+    <value>Optimized</value>
+  </data>
+  <data name="SeparatedSyntaxListInvalidSequence" xml:space="preserve">
+    <value>The sequence of nodes and tokens is invalid.</value>
+  </data>
+  <data name="SourceTextChangesMustNotOverlap" xml:space="preserve">
+    <value>Changes must not overlap.</value>
+  </data>
+  <data name="TypeUnknown" xml:space="preserve">
+    <value>&lt;?&gt;</value>
+  </data>
+  <data name="TypeNull" xml:space="preserve">
+    <value>&lt;null&gt;</value>
+  </data>
+  <data name="TypeMissing" xml:space="preserve">
+    <value>&lt;missing&gt;</value>
+  </data>
+  <data name="CannotRegisterOverlappingChange" xml:space="preserve">
+    <value>Cannot apply change '{0}' because it intersects with another pending change.</value>
   </data>
 </root>

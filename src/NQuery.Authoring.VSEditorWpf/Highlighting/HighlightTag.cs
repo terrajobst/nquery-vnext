@@ -7,7 +7,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
     public sealed class HighlightTag : TextMarkerTag
     {
         public HighlightTag()
-            : base("bracehighlight")
+            : base(@"bracehighlight")
         {
         }
     }

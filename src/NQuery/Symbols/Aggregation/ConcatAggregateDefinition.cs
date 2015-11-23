@@ -58,7 +58,7 @@ namespace NQuery.Symbols.Aggregation
                 foreach (var value in _valueList)
                 {
                     if (sb.Length > 0)
-                        sb.Append(", ");
+                        sb.Append(@", ");
 
                     sb.Append(value);
                 }

@@ -7,8 +7,8 @@ using Microsoft.VisualStudio.Utilities;
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     [Export(typeof(IWpfTextViewCreationListener))]
-    [Name("NQueryQuickInfoTriggerProvider")]
-    [ContentType("NQuery")]
+    [Name(@"NQueryQuickInfoTriggerProvider")]
+    [ContentType(@"NQuery")]
     [TextViewRole(PredefinedTextViewRoles.Interactive)]
     internal sealed class NQueryQuickInfoTriggerProvider : IWpfTextViewCreationListener
     {

@@ -376,7 +376,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertNode(SyntaxKind.TopClause);
                 enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
                 enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '#10-10-1998#' but expected '<numeric-literal>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '#10-10-1998#' but expected '<Numeric Literal>'.");
             }
         }
 
@@ -392,7 +392,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertNode(SyntaxKind.TopClause);
                 enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
                 enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ''1'' but expected '<numeric-literal>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ''1'' but expected '<Numeric Literal>'.");
             }
         }
 
@@ -408,7 +408,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertNode(SyntaxKind.TopClause);
                 enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
                 enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected '<numeric-literal>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected '<Numeric Literal>'.");
             }
         }
 

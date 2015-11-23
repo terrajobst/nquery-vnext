@@ -25,7 +25,7 @@ namespace NQuery.Authoring.Wpf
 
         public override string Kind
         {
-            get { return "Property"; }
+            get { return @"Property"; }
         }
     }
 }

@@ -674,12 +674,12 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
                 enumerator.AssertNodeMissing(SyntaxKind.NameExpression);
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<Identifier>'.");
                 enumerator.AssertTokenMissing(SyntaxKind.CommaToken);
                 enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected ','.");
                 enumerator.AssertNodeMissing(SyntaxKind.NameExpression);
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<Identifier>'.");
                 enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
             }
         }
@@ -703,7 +703,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected ','.");
                 enumerator.AssertNodeMissing(SyntaxKind.NameExpression);
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<Identifier>'.");
                 enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
             }
         }
@@ -870,7 +870,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
                 enumerator.AssertNodeMissing(SyntaxKind.NameExpression);
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ')' but expected '<Identifier>'.");
                 enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
             }
         }

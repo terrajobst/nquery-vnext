@@ -109,7 +109,7 @@ namespace NQuery.Text
             foreach (var textChange in persistedChanges)
             {
                 if (textChange.Span.End > previousStart)
-                    throw new InvalidOperationException("Applying overlapping changes is not supported.");
+                    throw new InvalidOperationException(Resources.SourceTextChangesMustNotOverlap);
 
                 previousStart = textChange.Span.Start;
 

@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(HighlightTag))]
-    [ContentType("NQuery")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
     {
         [Import]

@@ -24,43 +24,43 @@ namespace NQuery.Binding
 
             switch (normalizedName)
             {
-                case "BOOL":
-                case "BOOLEAN":
+                case @"BOOL":
+                case @"BOOLEAN":
                     return typeof(bool);
-                case "BYTE":
+                case @"BYTE":
                     return typeof(byte);
-                case "SBYTE":
+                case @"SBYTE":
                     return typeof(sbyte);
-                case "CHAR":
+                case @"CHAR":
                     return typeof(char);
-                case "SHORT":
-                case "INT16":
+                case @"SHORT":
+                case @"INT16":
                     return typeof(short);
-                case "USHORT":
-                case "UINT16":
+                case @"USHORT":
+                case @"UINT16":
                     return typeof(ushort);
-                case "INT":
-                case "INT32":
+                case @"INT":
+                case @"INT32":
                     return typeof(int);
-                case "UINT":
-                case "UINT32":
+                case @"UINT":
+                case @"UINT32":
                     return typeof(uint);
-                case "LONG":
-                case "INT64":
+                case @"LONG":
+                case @"INT64":
                     return typeof(long);
-                case "ULONG":
-                case "UINT64":
+                case @"ULONG":
+                case @"UINT64":
                     return typeof(ulong);
-                case "FLOAT":
-                case "SINGLE":
+                case @"FLOAT":
+                case @"SINGLE":
                     return typeof(float);
-                case "DOUBLE":
+                case @"DOUBLE":
                     return typeof(double);
-                case "DECIMAL":
+                case @"DECIMAL":
                     return typeof(decimal);
-                case "STRING":
+                case @"STRING":
                     return typeof(string);
-                case "OBJECT":
+                case @"OBJECT":
                     return typeof(object);
                 default:
                     return null;

@@ -11,8 +11,8 @@ using NQuery.Authoring.VSEditorWpf.Classification;
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
     [Export(typeof (IQuickInfoSourceProvider))]
-    [Name("NQueryQuickInfoSourceProvider")]
-    [ContentType("NQuery")]
+    [Name(@"NQueryQuickInfoSourceProvider")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider
     {
         [Import]
@@ -26,8 +26,8 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 
         public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
         {
-            var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap("text");
-            var editorFormatMap = EditorFormatMapService.GetEditorFormatMap("text");
+            var classificationFormatMap = ClassificationFormatMapService.GetClassificationFormatMap(@"text");
+            var editorFormatMap = EditorFormatMapService.GetEditorFormatMap(@"text");
             return new NQueryQuickInfoSource(classificationFormatMap, editorFormatMap, ClassificationService);
         }
     }

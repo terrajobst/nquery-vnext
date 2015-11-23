@@ -46,7 +46,7 @@ namespace NQuery.Authoring.VSEditorWpf.Commenting
             var newText = newSyntaxTree.Text;
             var changes = newText.GetChanges(oldText);
 
-            using (var t = _textBufferUndoManager.TextBufferUndoHistory.CreateTransaction("Toggle Comment"))
+            using (var t = _textBufferUndoManager.TextBufferUndoHistory.CreateTransaction(Resources.TransactionToggleComment))
             {
                 foreach (var change in changes)
                 {

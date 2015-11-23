@@ -36,7 +36,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
             var visualStudioSourceText = text as VisualStudioSourceText;
             if (visualStudioSourceText == null)
-                throw new ArgumentException("The source text didn't originate from a Visual Studio Editor", nameof(text));
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(text));
 
             return visualStudioSourceText.Snapshot;
         }
@@ -48,7 +48,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
             var visualStudioSourceTextContainer = container as VisualStudioSourceTextContainer;
             if (visualStudioSourceTextContainer == null)
-                throw new ArgumentException("The source text container didn't originate from a Visual Studio Editor", nameof(container));
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(container));
 
             return visualStudioSourceTextContainer.TextBuffer;
         }

@@ -29,7 +29,7 @@ namespace NQuery.Authoring.ActiproWpf
     public sealed class NQueryLanguage : SyntaxLanguage
     {
         public NQueryLanguage()
-            : base("NQuery")
+            : base(@"NQuery")
         {
             RegisterStructureMatcher();
             RegisterClassificationTypes();

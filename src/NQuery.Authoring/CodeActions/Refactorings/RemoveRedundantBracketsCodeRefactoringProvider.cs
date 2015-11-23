@@ -33,7 +33,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 _token = token;
             }
 
-            public override string Description => "Remove redundant brackets";
+            public override string Description => Resources.CodeActionRemoveRedundantBrackets;
 
             protected override void GetChanges(TextChangeSet changeSet)
             {

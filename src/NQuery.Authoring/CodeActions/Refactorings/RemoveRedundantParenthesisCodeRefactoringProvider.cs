@@ -32,7 +32,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 _expression = expression;
             }
 
-            public override string Description => "Remove redundant parenthesis";
+            public override string Description => Resources.CodeActionRemoveRedundantParenthesis;
 
             protected override void GetChanges(TextChangeSet changeSet)
             {

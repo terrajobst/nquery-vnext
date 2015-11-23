@@ -6,7 +6,7 @@ namespace NQuery.Symbols.Aggregation
     {
         public override string Name
         {
-            get { return "ANY"; }
+            get { return @"ANY"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

@@ -43,7 +43,7 @@ namespace NQuery.Symbols
     public sealed class FunctionSymbol<T, TResult> : FunctionSymbol
     {
         public FunctionSymbol(string name, Func<T, TResult> function)
-            : this(name, "arg", function)
+            : this(name, @"arg", function)
         {
 
         }
@@ -65,7 +65,7 @@ namespace NQuery.Symbols
     public sealed class FunctionSymbol<T1, T2, TResult> : FunctionSymbol
     {
         public FunctionSymbol(string name, Func<T1, T2, TResult> function)
-            : this(name, "arg1", "arg2", function)
+            : this(name, @"arg1", @"arg2", function)
         {
         }
 
@@ -86,7 +86,7 @@ namespace NQuery.Symbols
     public sealed class FunctionSymbol<T1, T2, T3, TResult> : FunctionSymbol
     {
         public FunctionSymbol(string name, Func<T1, T2, T3, TResult> function)
-            : this(name, "arg1", "arg2", "arg3", function)
+            : this(name, @"arg1", @"arg2", @"arg3", function)
         {
         }
 

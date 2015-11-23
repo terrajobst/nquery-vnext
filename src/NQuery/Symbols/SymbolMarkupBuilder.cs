@@ -59,39 +59,39 @@ namespace NQuery.Symbols
 
         public static void AppendCastSymbol(this ICollection<SymbolMarkupToken> markup)
         {
-            markup.AppendKeyword("CAST");
-            markup.AppendPunctuation("(");
-            markup.AppendParameterName("expression");
+            markup.AppendKeyword(@"CAST");
+            markup.AppendPunctuation(@"(");
+            markup.AppendParameterName(@"expression");
             markup.AppendSpace();
-            markup.AppendKeyword("AS");
+            markup.AppendKeyword(@"AS");
             markup.AppendSpace();
-            markup.AppendParameterName("dataType");
-            markup.AppendPunctuation(")");
+            markup.AppendParameterName(@"dataType");
+            markup.AppendPunctuation(@")");
         }
 
         public static void AppendCoalesceSymbol(this ICollection<SymbolMarkupToken> markup)
         {
-            markup.AppendKeyword("COALESCE");
-            markup.AppendPunctuation("(");
-            markup.AppendParameterName("expression1");
-            markup.AppendPunctuation(",");
+            markup.AppendKeyword(@"COALESCE");
+            markup.AppendPunctuation(@"(");
+            markup.AppendParameterName(@"expression1");
+            markup.AppendPunctuation(@",");
             markup.AppendSpace();
-            markup.AppendParameterName("expression2");
-            markup.AppendPunctuation(",");
+            markup.AppendParameterName(@"expression2");
+            markup.AppendPunctuation(@",");
             markup.AppendSpace();
-            markup.AppendParameterName("[, ...]");
-            markup.AppendPunctuation(")");
+            markup.AppendParameterName(@"[, ...]");
+            markup.AppendPunctuation(@")");
         }
 
         public static void AppendNullIfSymbol(this ICollection<SymbolMarkupToken> markup)
         {
-            markup.AppendKeyword("NULLIF");
-            markup.AppendPunctuation("(");
-            markup.AppendParameterName("expression1");
-            markup.AppendPunctuation(",");
+            markup.AppendKeyword(@"NULLIF");
+            markup.AppendPunctuation(@"(");
+            markup.AppendParameterName(@"expression1");
+            markup.AppendPunctuation(@",");
             markup.AppendSpace();
-            markup.AppendParameterName("expression2");
-            markup.AppendPunctuation(")");
+            markup.AppendParameterName(@"expression2");
+            markup.AppendPunctuation(@")");
         }
 
         private static void Append(this ICollection<SymbolMarkupToken> markup, SymbolMarkupKind kind, string text)
@@ -102,7 +102,7 @@ namespace NQuery.Symbols
         private static void AppendName(this ICollection<SymbolMarkupToken> markup, SymbolMarkupKind kind, string name)
         {
             var displayName = string.IsNullOrEmpty(name)
-                                  ? "?"
+                                  ? @"?"
                                   : SyntaxFacts.GetValidIdentifier(name);
             markup.Append(kind, displayName);
         }
@@ -114,7 +114,7 @@ namespace NQuery.Symbols
 
         private static void AppendSpace(this ICollection<SymbolMarkupToken> markup)
         {
-            markup.Append(SymbolMarkupKind.Whitespace, " ");
+            markup.Append(SymbolMarkupKind.Whitespace, @" ");
         }
 
         private static void AppendTableName(this ICollection<SymbolMarkupToken> markup, string text)
@@ -174,14 +174,14 @@ namespace NQuery.Symbols
 
         private static void AppendAsType(this ICollection<SymbolMarkupToken> markup, Type type)
         {
-            markup.AppendKeyword("AS");
+            markup.AppendKeyword(@"AS");
             markup.AppendSpace();
             markup.AppendType(type);
         }
 
         private static void AppendColumnSymbolInfo(this ICollection<SymbolMarkupToken> markup, ColumnSymbol symbol)
         {
-            markup.AppendKeyword("COLUMN");
+            markup.AppendKeyword(@"COLUMN");
             markup.AppendSpace();
             markup.AppendColumnName(symbol.Name);
             markup.AppendSpace();
@@ -190,7 +190,7 @@ namespace NQuery.Symbols
 
         private static void AppendSchemaTableSymbolInfo(this ICollection<SymbolMarkupToken> markup, SchemaTableSymbol symbol)
         {
-            markup.AppendKeyword("TABLE");
+            markup.AppendKeyword(@"TABLE");
             markup.AppendSpace();
             markup.AppendTableName(symbol.Name);
             if (!symbol.Type.IsMissing())
@@ -202,40 +202,40 @@ namespace NQuery.Symbols
 
         private static void AppendDerivedTableSymbolInfo(this ICollection<SymbolMarkupToken> markup, DerivedTableSymbol symbol)
         {
-            markup.AppendKeyword("DERIVED");
+            markup.AppendKeyword(@"DERIVED");
             markup.AppendSpace();
-            markup.AppendKeyword("TABLE");
+            markup.AppendKeyword(@"TABLE");
         }
 
         private static void AppendTableInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, TableInstanceSymbol symbol)
         {
-            markup.AppendKeyword("ALIAS");
+            markup.AppendKeyword(@"ALIAS");
             markup.AppendSpace();
             markup.AppendTableName(symbol.Name);
             markup.AppendSpace();
-            markup.AppendKeyword("FOR");
+            markup.AppendKeyword(@"FOR");
             markup.AppendSpace();
             markup.AppendSymbol(symbol.Table);
         }
 
         private static void AppendTableColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, TableColumnInstanceSymbol symbol)
         {
-            markup.AppendKeyword("COLUMN");
+            markup.AppendKeyword(@"COLUMN");
             markup.AppendSpace();
             markup.AppendTableName(symbol.TableInstance.Name);
-            markup.AppendPunctuation(".");
+            markup.AppendPunctuation(@".");
             markup.AppendColumnName(symbol.Name);
             markup.AppendSpace();
             markup.AppendAsType(symbol.Type);
             markup.AppendSpace();
-            markup.AppendKeyword("OF");
+            markup.AppendKeyword(@"OF");
             markup.AppendSpace();
             markup.AppendSymbol(symbol.TableInstance.Table);
         }
 
         private static void AppendQueryColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, QueryColumnInstanceSymbol symbol)
         {
-            markup.AppendKeyword("COLUMN");
+            markup.AppendKeyword(@"COLUMN");
             markup.AppendSpace();
             markup.AppendColumnName(symbol.Name);
             markup.AppendSpace();
@@ -244,20 +244,20 @@ namespace NQuery.Symbols
 
         private static void AppendCommonTableExpressionSymbolInfo(this ICollection<SymbolMarkupToken> markup, CommonTableExpressionSymbol symbol)
         {
-            markup.AppendKeyword("COMMON");
+            markup.AppendKeyword(@"COMMON");
             markup.AppendSpace();
-            markup.AppendKeyword("TABLE");
+            markup.AppendKeyword(@"TABLE");
             markup.AppendSpace();
-            markup.AppendKeyword("EXPRESSION");
+            markup.AppendKeyword(@"EXPRESSION");
             markup.AppendSpace();
             markup.AppendCommonTableExpressionName(symbol.Name);
         }
 
         private static void AppendVariableSymbolInfo(this ICollection<SymbolMarkupToken> markup, VariableSymbol symbol)
         {
-            markup.AppendKeyword("VARIABLE");
+            markup.AppendKeyword(@"VARIABLE");
             markup.AppendSpace();
-            markup.AppendPunctuation("@");
+            markup.AppendPunctuation(@"@");
             markup.AppendVariableName(symbol.Name);
             markup.AppendSpace();
             markup.AppendAsType(symbol.Type);
@@ -265,7 +265,7 @@ namespace NQuery.Symbols
 
         private static void AppendParameterSymbolInfo(this ICollection<SymbolMarkupToken> markup, ParameterSymbol symbol)
         {
-            markup.AppendKeyword("PARAMETER");
+            markup.AppendKeyword(@"PARAMETER");
             markup.AppendSpace();
             markup.AppendParameterName(symbol.Name);
             markup.AppendSpace();
@@ -274,7 +274,7 @@ namespace NQuery.Symbols
 
         private static void AppendFunctionSymbolInfo(this ICollection<SymbolMarkupToken> markup, FunctionSymbol symbol)
         {
-            markup.AppendKeyword("FUNCTION");
+            markup.AppendKeyword(@"FUNCTION");
             markup.AppendSpace();
             markup.AppendFunctionName(symbol.Name);
             markup.AppendInvocable(symbol);
@@ -282,7 +282,7 @@ namespace NQuery.Symbols
 
         private static void AppendMethodSymbolInfo(this ICollection<SymbolMarkupToken> markup, MethodSymbol symbol)
         {
-            markup.AppendKeyword("METHOD");
+            markup.AppendKeyword(@"METHOD");
             markup.AppendSpace();
             markup.AppendMethodName(symbol.Name);
             markup.AppendInvocable(symbol);
@@ -290,7 +290,7 @@ namespace NQuery.Symbols
 
         private static void AppendPropertySymbolInfo(this ICollection<SymbolMarkupToken> markup, PropertySymbol symbol)
         {
-            markup.AppendKeyword("PROPERTY");
+            markup.AppendKeyword(@"PROPERTY");
             markup.AppendSpace();
             markup.AppendPropertyName(symbol.Name);
             markup.AppendSpace();
@@ -299,17 +299,17 @@ namespace NQuery.Symbols
 
         private static void AppendAggregateSymbolInfo(this ICollection<SymbolMarkupToken> markup, AggregateSymbol symbol)
         {
-            markup.AppendKeyword("AGGREGATE");
+            markup.AppendKeyword(@"AGGREGATE");
             markup.AppendSpace();
             markup.AppendAggregateName(symbol.Name);
-            markup.AppendPunctuation("(");
-            markup.AppendParameterName("value");
-            markup.AppendPunctuation(")");
+            markup.AppendPunctuation(@"(");
+            markup.AppendParameterName(@"value");
+            markup.AppendPunctuation(@")");
         }
 
         private static void AppendInvocable(this ICollection<SymbolMarkupToken> markup, InvocableSymbol symbol)
         {
-            markup.AppendPunctuation("(");
+            markup.AppendPunctuation(@"(");
 
             var isFirst = true;
             foreach (var parameterSymbol in symbol.Parameters)
@@ -318,7 +318,7 @@ namespace NQuery.Symbols
                     isFirst = false;
                 else
                 {
-                    markup.AppendPunctuation(",");
+                    markup.AppendPunctuation(@",");
                     markup.AppendSpace();
                 }
 
@@ -327,7 +327,7 @@ namespace NQuery.Symbols
                 markup.AppendAsType(parameterSymbol.Type);
             }
 
-            markup.AppendPunctuation(")");
+            markup.AppendPunctuation(@")");
             markup.AppendSpace();
             markup.AppendAsType(symbol.Type);
         }

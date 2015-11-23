@@ -48,9 +48,9 @@ namespace NQuery.Authoring.Wpf.CodeActions
             switch (kind)
             {
                 case CodeActionKind.IssueFix:
-                    return "IssueFixImage";
+                    return @"IssueFixImage";
                 case CodeActionKind.Refactoring:
-                    return "RefactoringImage";
+                    return @"RefactoringImage";
                 default:
                     throw ExceptionBuilder.UnexpectedValue(kind);
             }
@@ -95,15 +95,15 @@ namespace NQuery.Authoring.Wpf.CodeActions
             switch (state)
             {
                 case GlyphState.Icon:
-                    Glyph.Style = (Style)TryFindResource("GlyphIconStyle");
+                    Glyph.Style = (Style)TryFindResource(@"GlyphIconStyle");
                     GlyphContextMenu.IsOpen = false;
                     break;
                 case GlyphState.Hovering:
-                    Glyph.Style = (Style)TryFindResource("GlyphHoveringStyle");
+                    Glyph.Style = (Style)TryFindResource(@"GlyphHoveringStyle");
                     GlyphContextMenu.IsOpen = false;
                     break;
                 case GlyphState.Expanded:
-                    Glyph.Style = (Style)TryFindResource("GlyphHoveringStyle");
+                    Glyph.Style = (Style)TryFindResource(@"GlyphHoveringStyle");
                     GlyphContextMenu.IsOpen = true;
                     break;
                 default:

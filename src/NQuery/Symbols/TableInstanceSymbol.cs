@@ -9,7 +9,7 @@ namespace NQuery.Symbols
     public sealed class TableInstanceSymbol : Symbol
     {
         internal TableInstanceSymbol(string name, TableSymbol table, ValueSlotFactory valueFactory)
-            : this(name, table, (ti, c) => valueFactory.CreateValueSlot(ti.Name + "." + c.Name, c.Type))
+            : this(name, table, (ti, c) => valueFactory.CreateValueSlot($"{ti.Name}.{c.Name}", c.Type))
         {
         }
 

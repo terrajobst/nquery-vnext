@@ -50,7 +50,7 @@ namespace NQuery.Symbols
                 switch (c)
                 {
                     case '%':
-                        sb.Append(".*");
+                        sb.Append(@".*");
                         break;
 
                     case '_':

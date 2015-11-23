@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
 {
     [Export(typeof(IViewTaggerProvider))]
     [TagType(typeof(IErrorTag))]
-    [ContentType("NQuery")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryCodeIssueTaggerProvider : IViewTaggerProvider
     {
         [Import]

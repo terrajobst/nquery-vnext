@@ -49,7 +49,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             public override string Description
             {
-                get { return $"Add {GetExpressionText()} to SELECT list"; }
+                get { return string.Format(Resources.CodeActionAddToSelectList, GetExpressionText()); }
             }
 
             private string GetExpressionText()
@@ -60,9 +60,9 @@ namespace NQuery.Authoring.CodeActions.Fixes
             private string GetInsertionText()
             {
                 if (_selectQuery.SelectClause.Columns.Last().IsMissing)
-                    return " " + GetExpressionText();
+                    return @" " + GetExpressionText();
 
-                return ", " + GetExpressionText();
+                return @", " + GetExpressionText();
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

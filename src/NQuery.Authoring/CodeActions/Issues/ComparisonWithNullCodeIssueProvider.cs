@@ -22,12 +22,12 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             if (!isComparison)
             {
-                yield return new CodeIssue(CodeIssueKind.Warning, node.Span, "Expression is always NULL");
+                yield return new CodeIssue(CodeIssueKind.Warning, node.Span, Resources.CodeIssueExpressionIsAlwaysNull);
             }
             else
             {
                 var action = new[] {new ConvertToIsNullCodeAction(node, isEquals)};
-                yield return new CodeIssue(CodeIssueKind.Warning, node.Span, "Comparison with NULL results in NULL", action);
+                yield return new CodeIssue(CodeIssueKind.Warning, node.Span, Resources.CodeIssueComparsionWithNullIsAlwaysNull, action);
             }
         }
 
@@ -51,12 +51,12 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return _isEquals ? "Convert to IS NULL" : "Convert to IS NOT NULL"; }
+                get { return _isEquals ? Resources.CodeActionConvertToIsNull : Resources.CodeActionConvertToIsNotNull; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                var newText = _isEquals ? " IS NULL" : " IS NOT NULL";
+                var newText = _isEquals ? @" IS NULL" : @" IS NOT NULL";
 
                 var useLeft = IsNullLiteral(_node.Right);
                 if (useLeft)

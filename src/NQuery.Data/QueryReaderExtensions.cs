@@ -38,7 +38,7 @@ namespace NQuery.Data
             if (queryReader == null)
                 throw new ArgumentNullException(nameof(queryReader));
 
-            var dataTable = new DataTable("Results");
+            var dataTable = new DataTable(@"Results");
             var existingColumnNames = new HashSet<string>();
 
             for (var i = 0; i < queryReader.ColumnCount; i++)
@@ -58,7 +58,7 @@ namespace NQuery.Data
         private static string GenerateUniqueColumnName(HashSet<string> existingColumnNames, string columnName)
         {
             if (string.IsNullOrWhiteSpace(columnName))
-                columnName = "Column";
+                columnName = @"Column";
 
             var result = columnName;
             var count = 0;

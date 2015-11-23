@@ -71,6 +71,11 @@
     <Compile Include="NQueryParseDataSynchronizer.cs" />
     <Compile Include="Outlining\INQueryOutliner.cs" />
     <Compile Include="QuickInfo\INQueryQuickInfoProvider.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Selection\ExtendSelectionAction.cs" />
     <Compile Include="Selection\SelectionAction.cs" />
     <Compile Include="Selection\SelectionExtensions.cs" />
@@ -127,6 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="..\NQuery.Shared\NQuery.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

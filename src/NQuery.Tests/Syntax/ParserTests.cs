@@ -48,7 +48,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertNode(SyntaxKind.SkippedTokensTrivia);
                 enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
                 enumerator.AssertToken(SyntaxKind.EndOfFileToken, @"");
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'WITH' but expected '<end-of-file>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'WITH' but expected '<End-of-File>'.");
             }
         }
 
@@ -68,7 +68,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertToken(SyntaxKind.IdentifierToken, @"o");
                 enumerator.AssertToken(SyntaxKind.DotToken, @".");
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'FROM' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'FROM' but expected '<Identifier>'.");
                 enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
             }
         }
@@ -91,7 +91,7 @@ namespace NQuery.Tests.Syntax
                 enumerator.AssertNode(SyntaxKind.SkippedTokensTrivia);
                 enumerator.AssertToken(SyntaxKind.OrKeyword, @"Or");
                 enumerator.AssertTokenMissing(SyntaxKind.IdentifierToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'Or' but expected '<identifier>'.");
+                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'Or' but expected '<Identifier>'.");
                 enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
             }
         }

@@ -144,6 +144,11 @@
     <Compile Include="QuickInfo\QuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\VariableExpressionQuickInfoModelProvider.cs" />
     <Compile Include="QuickInfo\Providers\WildcardSelectColumnQuickInfoModelProvider.cs" />
+    <Compile Include="Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Selection\SelectionExtensions.cs" />
     <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProvider.cs" />
@@ -170,6 +175,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="..\NQuery.Shared\NQuery.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

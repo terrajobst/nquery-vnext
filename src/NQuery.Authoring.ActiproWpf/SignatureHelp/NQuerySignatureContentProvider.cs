@@ -42,9 +42,9 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
             var sb = new StringBuilder();
             sb.Append(beforeParameterText);
-            sb.Append("<b>");
+            sb.Append(@"<b>");
             sb.Append(HtmlContentProvider.Escape(parameterText));
-            sb.Append("</b>");
+            sb.Append(@"</b>");
             sb.Append(postParameterText);
             var htmlSnippet = sb.ToString();
             return new HtmlContentProvider(htmlSnippet);

@@ -11,7 +11,7 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
 {
     [Export(typeof(ITaggerProvider))]
     [TagType(typeof(IOutliningRegionTag))]
-    [ContentType("NQuery")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
     {
         [Import]

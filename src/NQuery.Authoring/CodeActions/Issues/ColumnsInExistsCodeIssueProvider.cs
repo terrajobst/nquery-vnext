@@ -52,12 +52,12 @@ namespace NQuery.Authoring.CodeActions.Issues
 
             public override string Description
             {
-                get { return "Remove unnecessary columns from EXISTS"; }
+                get { return Resources.CodeActionRemoveUnnecessaryColumnsFromExists; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
             {
-                changeSet.ReplaceText(_columnListSpan, "*");
+                changeSet.ReplaceText(_columnListSpan, @"*");
             }
         }
     }

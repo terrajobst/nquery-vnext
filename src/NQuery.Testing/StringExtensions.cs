@@ -64,7 +64,7 @@ namespace NQuery
         {
             var annotatedText = AnnotatedText.Parse(text);
             if (annotatedText.Spans.Length != 1 || annotatedText.Spans[0].Length != 0)
-                throw new ArgumentException("The position must be marked with a single pipe, such as 'SELECT e.Empl|oyeeId'", nameof(text));
+                throw new ArgumentException(@"The position must be marked with a single pipe, such as 'SELECT e.Empl|oyeeId'", nameof(text));
 
             position = annotatedText.Spans.Single().Start;
             return annotatedText.Text;
@@ -76,7 +76,7 @@ namespace NQuery
             var result = text.ParseSpans(out spans);
 
             if (spans.Length != 1)
-                throw new ArgumentException("The span must be marked with braces, such as 'SELECT {e.EmployeeId}'", nameof(text));
+                throw new ArgumentException(@"The span must be marked with braces, such as 'SELECT {e.EmployeeId}'", nameof(text));
 
             span = spans[0];
             return result;

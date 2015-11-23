@@ -109,7 +109,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
 
             public override string Description
             {
-                get { return "Replace with BETWEEN"; }
+                get { return Resources.CodeActionReplaceWithBetween; }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)

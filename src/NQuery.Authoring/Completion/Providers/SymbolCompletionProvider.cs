@@ -121,11 +121,11 @@ namespace NQuery.Authoring.Completion.Providers
             var insertionText = SyntaxFacts.GetValidIdentifier(name);
 
             var sb = new StringBuilder();
-            sb.Append("Ambiguous Name:");
+            sb.Append(Resources.AmbiguousName);
             foreach (var symbol in symbols)
             {
                 sb.AppendLine();
-                sb.Append("  ");
+                sb.Append(@"  ");
                 sb.Append(symbol);
             }
 
@@ -141,7 +141,7 @@ namespace NQuery.Authoring.Completion.Providers
 
             var displayText = first.DisplayText;
             var insertionText = first.InsertionText;
-            var description = $"{first.Description} (+ {numberOfOverloads} overload(s))";
+            var description = string.Format(Resources.CompletionItemWithOverloads, first.Description, numberOfOverloads);
             var glyph = first.Glyph;
             return new CompletionItem(displayText, insertionText, description, glyph, symbol);
         }

@@ -51,10 +51,10 @@ namespace NQuery.Binding
         public override string ToString()
         {
             var type = !IsApplicable
-                           ? "Not Applicable"
+                           ? @"Not Applicable"
                            : HasBetterAlternative
-                                 ? "Has Better Alternative"
-                                 : "Suitable";
+                                 ? @"Has Better Alternative"
+                                 : @"Suitable";
 
             return $"{Signature} [{type}]";
         }

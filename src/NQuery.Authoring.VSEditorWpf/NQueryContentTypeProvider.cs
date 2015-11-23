@@ -9,8 +9,8 @@ namespace NQuery.Authoring.VSEditorWpf
     {
 #pragma warning disable 649
         [Export]
-        [BaseDefinition("Code")]
-        [Name("NQuery")]
+        [BaseDefinition(@"Code")]
+        [Name(@"NQuery")]
         public ContentTypeDefinition NQueryContentTypeDefinition;
 #pragma warning restore 649
     }

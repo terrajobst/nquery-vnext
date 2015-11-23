@@ -36,7 +36,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
             var actiproSourceText = text as ActiproSourceText;
             if (actiproSourceText == null)
-                throw new ArgumentException("The source text didn't originate from an Actipro Syntax Editor", nameof(text));
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(text));
 
             return actiproSourceText.Snapshot;
         }
@@ -48,7 +48,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
             var actiproSourceTextContainer = container as ActiproSourceTextContainer;
             if (actiproSourceTextContainer == null)
-                throw new ArgumentException("The source text container didn't originate from an Actipro Syntax Editor", nameof(container));
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(container));
 
             return actiproSourceTextContainer.TextDocument;
         }

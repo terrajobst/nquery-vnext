@@ -23,9 +23,9 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         private static void AppendGlyph(this StringBuilder sb, Glyph glyph)
         {
-            sb.Append("<img src=\"");
+            sb.Append(@"<img src=""");
             sb.Append(glyph);
-            sb.Append("\" align=\"absbottom\" />");
+            sb.Append(@""" align=""absbottom"" />");
         }
 
         private static void AppendMarkup(this StringBuilder sb, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
@@ -85,26 +85,26 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
             if (hasStyle)
             {
-                sb.Append("<span style=\"");
+                sb.Append(@"<span style=""");
                 sb.Append(styleBuilder);
-                sb.Append("\">");
+                sb.Append(@""">");
             }
 
             sb.Append(HtmlContentProvider.Escape(text));
 
             if (hasStyle)
-                sb.Append("</span>");
+                sb.Append(@"</span>");
         }
 
         private static void AppendStyle(this StringBuilder sb, IHighlightingStyle highlightingStyle)
         {
-            sb.AppendColor("background-color", highlightingStyle.Background);
-            sb.AppendColor("color", highlightingStyle.Foreground);
-            sb.AppendFontFamiliy("font-family", highlightingStyle.FontFamilyName);
-            sb.AppendFontSize("font-size", highlightingStyle.FontSize);
-            sb.AppendFontWeight("font-weight", highlightingStyle.Bold);
-            sb.AppendFontStyle("font-style", highlightingStyle.Italic);
-            sb.AppendTextDecoration("text-decoration", highlightingStyle.UnderlineStyle);
+            sb.AppendColor(@"background-color", highlightingStyle.Background);
+            sb.AppendColor(@"color", highlightingStyle.Foreground);
+            sb.AppendFontFamiliy(@"font-family", highlightingStyle.FontFamilyName);
+            sb.AppendFontSize(@"font-size", highlightingStyle.FontSize);
+            sb.AppendFontWeight(@"font-weight", highlightingStyle.Bold);
+            sb.AppendFontStyle(@"font-style", highlightingStyle.Italic);
+            sb.AppendTextDecoration(@"text-decoration", highlightingStyle.UnderlineStyle);
         }
 
         private static void AppendFontFamiliy(this StringBuilder sb, string key, string fontFamilyName)
@@ -139,7 +139,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             if (isBold == null)
                 return;
 
-            var value = isBold.Value ? "bold" : "normal";
+            var value = isBold.Value ? @"bold" : @"normal";
             sb.AppendKeyValue(key, value);
         }
 
@@ -148,7 +148,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             if (isItalic == null)
                 return;
 
-            var value = isItalic.Value ? "italic" : "normal";
+            var value = isItalic.Value ? @"italic" : @"normal";
             sb.AppendKeyValue(key, value);
         }
 
@@ -160,15 +160,15 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             if (!hasUnderlineStyle)
                 return;
 
-            sb.AppendKeyValue(key, "underline");
+            sb.AppendKeyValue(key, @"underline");
         }
 
         private static void AppendKeyValue(this StringBuilder sb, string name, string value)
         {
             sb.Append(name);
-            sb.Append(": ");
+            sb.Append(@": ");
             sb.Append(value);
-            sb.Append(";");
+            sb.Append(@";");
         }
     }
 }

@@ -8,8 +8,8 @@ using Microsoft.VisualStudio.Utilities;
 namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     [Export(typeof(ICompletionSourceProvider))]
-    [Name("NQueryCompletionSourceProvider")]
-    [ContentType("NQuery")]
+    [Name(@"NQueryCompletionSourceProvider")]
+    [ContentType(@"NQuery")]
     internal sealed class NQueryCompletionSourceProvider : ICompletionSourceProvider
     {
         [Import]

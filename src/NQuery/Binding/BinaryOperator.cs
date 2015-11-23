@@ -349,49 +349,49 @@ namespace NQuery.Binding
             switch (kind)
             {
                 case BinaryOperatorKind.Power:
-                    return "op_Power";
+                    return @"op_Power";
                 case BinaryOperatorKind.Multiply:
-                    return "op_Multiply";
+                    return @"op_Multiply";
                 case BinaryOperatorKind.Divide:
-                    return "op_Division";
+                    return @"op_Division";
                 case BinaryOperatorKind.Modulus:
-                    return "op_Modulus";
+                    return @"op_Modulus";
                 case BinaryOperatorKind.Add:
-                    return "op_Addition";
+                    return @"op_Addition";
                 case BinaryOperatorKind.Sub:
-                    return "op_Subtraction";
+                    return @"op_Subtraction";
                 case BinaryOperatorKind.Equal:
-                    return "op_Equality";
+                    return @"op_Equality";
                 case BinaryOperatorKind.NotEqual:
-                    return "op_Inequality";
+                    return @"op_Inequality";
                 case BinaryOperatorKind.Less:
-                    return "op_LessThan";
+                    return @"op_LessThan";
                 case BinaryOperatorKind.LessOrEqual:
-                    return "op_LessThanOrEqual";
+                    return @"op_LessThanOrEqual";
                 case BinaryOperatorKind.Greater:
-                    return "op_GreaterThan";
+                    return @"op_GreaterThan";
                 case BinaryOperatorKind.GreaterOrEqual:
-                    return "op_GreaterThanOrEqual";
+                    return @"op_GreaterThanOrEqual";
                 case BinaryOperatorKind.BitXor:
-                    return "op_ExclusiveOr";
+                    return @"op_ExclusiveOr";
                 case BinaryOperatorKind.BitAnd:
-                    return "op_BitwiseAnd";
+                    return @"op_BitwiseAnd";
                 case BinaryOperatorKind.BitOr:
-                    return "op_BitwiseOr";
+                    return @"op_BitwiseOr";
                 case BinaryOperatorKind.LeftShift:
-                    return "op_LeftShift";
+                    return @"op_LeftShift";
                 case BinaryOperatorKind.RightShift:
-                    return "op_RightShift";
+                    return @"op_RightShift";
                 case BinaryOperatorKind.Like:
-                    return "op_Like";
+                    return @"op_Like";
                 case BinaryOperatorKind.SimilarTo:
-                    return "op_SimilarTo";
+                    return @"op_SimilarTo";
                 case BinaryOperatorKind.SoundsLike:
-                    return "op_SoundsLike";
+                    return @"op_SoundsLike";
                 case BinaryOperatorKind.LogicalAnd:
-                    return "op_LogicalAnd";
+                    return @"op_LogicalAnd";
                 case BinaryOperatorKind.LogicalOr:
-                    return "op_LogicalOr";
+                    return @"op_LogicalOr";
                 default:
                     throw ExceptionBuilder.UnexpectedValue(kind);
             }

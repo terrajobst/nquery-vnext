@@ -67,7 +67,7 @@ namespace NQuery.Authoring.SignatureHelp
 
         private static bool IsCommaToken(SymbolMarkupToken token)
         {
-            return token.Kind == SymbolMarkupKind.Punctuation && token.Text == ",";
+            return token.Kind == SymbolMarkupKind.Punctuation && token.Text == @",";
         }
 
         private static bool IsAsKeyword(SymbolMarkupToken token)
@@ -87,8 +87,8 @@ namespace NQuery.Authoring.SignatureHelp
             {
                 var isParameterName = node.Kind == SymbolMarkupKind.ParameterName;
                 var isWhitespace = node.Kind == SymbolMarkupKind.Whitespace;
-                var isLeftParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == "(";
-                var isRightParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == ")";
+                var isLeftParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == @"(";
+                var isRightParenthesis = node.Kind == SymbolMarkupKind.Punctuation && node.Text == @")";
                 var isSeparator = separatorPredicate(node);
 
                 if (isParameterName)

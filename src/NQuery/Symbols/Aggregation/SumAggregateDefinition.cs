@@ -13,8 +13,8 @@ namespace NQuery.Symbols.Aggregation
         {
             // Create an expression to determine the type of inputType + inputType
 
-            var addDataContext = DataContext.Empty.AddVariables(new VariableSymbol("Left", argumentType),
-                                                                new VariableSymbol("Right", argumentType));
+            var addDataContext = DataContext.Empty.AddVariables(new VariableSymbol(@"Left", argumentType),
+                                                                new VariableSymbol(@"Right", argumentType));
 
             var addExpression = Expression<object>.Create(addDataContext, @"Left + Right");
 
@@ -33,10 +33,10 @@ namespace NQuery.Symbols.Aggregation
             //
             // In order to get the correct answer, let's compose a new expression.
 
-            var leftVariable = new VariableSymbol("Left", argumentType);
-            var rightVariable = new VariableSymbol("Right", argumentType);
+            var leftVariable = new VariableSymbol(@"Left", argumentType);
+            var rightVariable = new VariableSymbol(@"Right", argumentType);
             var sumDataContext = DataContext.Empty.AddVariables(leftVariable, rightVariable);
-            var sumExpression = Expression<object>.Create(sumDataContext, "Left + Right");
+            var sumExpression = Expression<object>.Create(sumDataContext, @"Left + Right");
 
             try
             {
@@ -51,7 +51,7 @@ namespace NQuery.Symbols.Aggregation
 
             // Conversion from inputType to sumType
 
-            var conversionInputVariable = new VariableSymbol("Input", argumentType);
+            var conversionInputVariable = new VariableSymbol(@"Input", argumentType);
             var convertionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
             var conversionExpression = Expression<object>.Create(convertionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
 

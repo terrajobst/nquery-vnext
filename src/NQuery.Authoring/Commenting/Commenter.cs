@@ -64,7 +64,7 @@ namespace NQuery.Authoring.Commenting
 
             var changes = Enumerable.Range(startLine, lineCount)
                                     .Select(i => text.Lines[i])
-                                    .Select(l => TextChange.ForInsertion(l.Span.Start, "--"));
+                                    .Select(l => TextChange.ForInsertion(l.Span.Start, @"--"));
 
             return syntaxTree.WithChanges(changes);
         }
@@ -114,13 +114,13 @@ namespace NQuery.Authoring.Commenting
         {
             var empty = new[]
             {
-                TextChange.ForInsertion(textSpan.Start, "/**/"),
+                TextChange.ForInsertion(textSpan.Start, @"/**/"),
             };
 
             var surround = new[]
             {
-                TextChange.ForInsertion(textSpan.Start, "/*"),
-                TextChange.ForInsertion(textSpan.End, "*/")
+                TextChange.ForInsertion(textSpan.Start, @"/*"),
+                TextChange.ForInsertion(textSpan.End, @"*/")
             };
 
             var changes = textSpan.Length == 0 ? empty : surround;

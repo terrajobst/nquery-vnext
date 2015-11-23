@@ -38,7 +38,7 @@ namespace NQuery.Text
             var conflicts = _changes.Any(existingChange => existingChange.Span.IntersectsWith(newChange.Span));
             if (conflicts)
             {
-                var message = $"Cannot apply change '{newChange}' because it intersects with another pending change.";
+                var message = string.Format(Resources.CannotRegisterOverlappingChange, newChange);
                 throw new InvalidOperationException(message);
             }
 

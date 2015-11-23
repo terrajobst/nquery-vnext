@@ -108,7 +108,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             public override string Description
             {
-                get { return $"Add '{GetExpressionText()}' to GROUP BY"; }
+                get { return string.Format(Resources.CodeActionAddToGroupBy, GetExpressionText()); }
             }
 
             protected override void GetChanges(TextChangeSet changeSet)
@@ -137,12 +137,12 @@ namespace NQuery.Authoring.CodeActions.Fixes
                 if (_selectQuery.GroupByClause != null)
                 {
                     if (_selectQuery.GroupByClause.Columns.Last().IsMissing)
-                        return " " + GetExpressionText();
+                        return @" " + GetExpressionText();
 
-                    return ", " + GetExpressionText();
+                    return @", " + GetExpressionText();
                 }
 
-                return Environment.NewLine + "GROUP   BY " + GetExpressionText();
+                return Environment.NewLine + @"GROUP   BY " + GetExpressionText();
             }
 
             private string GetExpressionText()

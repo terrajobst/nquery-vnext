@@ -35,8 +35,8 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 _swappedOperatorText = swappedOperatorKind.GetText();
 
                 Description = operatorText == _swappedOperatorText
-                    ? $"Flip '{operatorText}' operands"
-                    : $"Flip '{operatorText}' operator to '{_swappedOperatorText}'";
+                    ? string.Format(Resources.CodeActionFlipOperands, operatorText)
+                    : string.Format(Resources.CodeActionFlipOperatorTo, operatorText, _swappedOperatorText);
             }
 
             public override string Description { get; }
