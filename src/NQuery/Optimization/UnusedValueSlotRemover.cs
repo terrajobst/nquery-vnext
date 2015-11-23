@@ -107,7 +107,7 @@ namespace NQuery.Optimization
             if (node.IsUnionAll)
             {
                 var definedValues = RemoveUnusedSlots(node.DefinedValues, d => d.ValueSlot);
-                node = node.Update(node.IsUnionAll, node.Inputs, definedValues);
+                node = node.Update(node.IsUnionAll, node.Inputs, definedValues, node.Comparers);
             }
 
             _recorder.Record(node.DefinedValues);

@@ -227,7 +227,7 @@ namespace NQuery
                              let aChildren = new[] {Build(a.Argument)}
                              select new ShowPlanNode(aName, aProperties, aChildren);
             var children = input.Concat(aggregates);
-            var slots = string.Join(", ", node.Groups.Select(v => v.Name));
+            var slots = string.Join(", ", node.Groups.Select(g => g.ValueSlot.Name));
             return new ShowPlanNode("GroupByAndAggregation " + slots, properties, children);
         }
 
@@ -241,7 +241,7 @@ namespace NQuery
                              let aChildren = new[] { Build(a.Argument) }
                              select new ShowPlanNode(aName, aProperties, aChildren);
             var children = input.Concat(aggregates);
-            var slots = string.Join(", ", node.Groups.Select(v => v.Name));
+            var slots = string.Join(", ", node.Groups.Select(g => g.ValueSlot.Name));
             return new ShowPlanNode("StreamAggregates " + slots, properties, children);
         }
 

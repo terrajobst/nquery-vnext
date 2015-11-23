@@ -229,9 +229,10 @@ namespace NQuery.Iterators
                                             .Select(a => BuildFunction(a.Argument, allocation))
                                             .ToImmutableArray();
             var groupEntries = relation.Groups
-                                       .Select(v => allocation[v])
+                                       .Select(g => allocation[g.ValueSlot])
                                        .ToImmutableArray();
-            return new StreamAggregateIterator(input, groupEntries, aggregators, argumentFunctions);
+            var comparers = relation.Groups.Select(v => v.Comparer).ToImmutableArray();
+            return new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions);
         }
 
         private Iterator BuildProject(BoundProjectRelation relation)

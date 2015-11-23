@@ -1,16 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundIntersectOrExceptRelation : BoundRelation
     {
-        public BoundIntersectOrExceptRelation(bool isIntersect, BoundRelation left, BoundRelation right)
+        public BoundIntersectOrExceptRelation(bool isIntersect, BoundRelation left, BoundRelation right, IEnumerable<IComparer> comparers)
         {
             IsIntersect = isIntersect;
             Left = left;
             Right = right;
+            Comparers = comparers.ToImmutableArray();
         }
 
         public override BoundNodeKind Kind
@@ -24,6 +26,8 @@ namespace NQuery.Binding
 
         public BoundRelation Right { get; }
 
+        public ImmutableArray<IComparer> Comparers { get; }
+
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
             return GetOutputValues();
@@ -34,12 +38,14 @@ namespace NQuery.Binding
             return Left.GetOutputValues();
         }
 
-        public BoundIntersectOrExceptRelation Update(bool isIntersect, BoundRelation left, BoundRelation right)
+        public BoundIntersectOrExceptRelation Update(bool isIntersect, BoundRelation left, BoundRelation right, IEnumerable<IComparer> comparers)
         {
-            if (isIntersect == IsIntersect && left == Left && right == Right)
+            var newComparers = comparers.ToImmutableArray();
+
+            if (isIntersect == IsIntersect && left == Left && right == Right && newComparers == Comparers)
                 return this;
 
-            return new BoundIntersectOrExceptRelation(isIntersect, left, right);
+            return new BoundIntersectOrExceptRelation(isIntersect, left, right, newComparers);
         }
     }
 }

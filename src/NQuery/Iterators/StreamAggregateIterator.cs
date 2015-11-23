@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
@@ -9,6 +10,7 @@ namespace NQuery.Iterators
     internal sealed class StreamAggregateIterator : Iterator
     {
         private readonly Iterator _input;
+        private readonly ImmutableArray<IComparer> _comparers;
         private readonly ImmutableArray<RowBufferEntry> _groupEntries;
         private readonly ImmutableArray<IAggregator> _aggregators;
         private readonly ImmutableArray<IteratorFunction> _argumentFunctions;
@@ -17,9 +19,10 @@ namespace NQuery.Iterators
         private bool _eof;
         private bool _isFirstRecord;
 
-        public StreamAggregateIterator(Iterator input, IEnumerable<RowBufferEntry> groupEntries, IEnumerable<IAggregator> aggregators, IEnumerable<IteratorFunction> argumentFunctions)
+        public StreamAggregateIterator(Iterator input, IEnumerable<RowBufferEntry> groupEntries, ImmutableArray<IComparer> comparers, IEnumerable<IAggregator> aggregators, IEnumerable<IteratorFunction> argumentFunctions)
         {
             _input = input;
+            _comparers = comparers;
             _groupEntries = groupEntries.ToImmutableArray();
             _aggregators = aggregators.ToImmutableArray();
             _argumentFunctions = argumentFunctions.ToImmutableArray();
@@ -79,15 +82,10 @@ namespace NQuery.Iterators
             {
                 var valueOfLastRow = _rowBuffer[i];
                 var valueOfThisRow = _groupEntries[i].GetValue();
+                var comparer = _comparers[i];
+                var equalsPreviousRow = comparer.Compare(valueOfLastRow, valueOfThisRow) == 0;
 
-                if (valueOfThisRow == valueOfLastRow)
-                {
-                    // Same instance, values are equal.
-                    // Check next one.
-                    continue;
-                }
-
-                if (valueOfThisRow == null || valueOfLastRow == null || !valueOfThisRow.Equals(valueOfLastRow))
+                if (!equalsPreviousRow)
                 {
                     // They are not equal. This means the current row in the row buffer
                     // belongs to another group.

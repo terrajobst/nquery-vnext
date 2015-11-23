@@ -111,7 +111,7 @@ namespace NQuery.Optimization
                 new BoundAggregatedValue(countOutput, countAggregatedSymbol, countAggregatable, Expression.Literal(0))
             };
 
-            var aggregation = new BoundGroupByAndAggregationRelation(relation, Enumerable.Empty<ValueSlot>(), aggregates);
+            var aggregation = new BoundGroupByAndAggregationRelation(relation, Enumerable.Empty<BoundComparedValue>(), aggregates);
 
             // 2. Now we can assert that the number of rows returned is at most one.
 

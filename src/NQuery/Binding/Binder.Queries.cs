@@ -364,14 +364,11 @@ namespace NQuery.Binding
                 .ToImmutableArray();
             var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.GetOutputValues().ElementAt(columnIndex))));
             var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
+            var comparers = isUnionAll
+                ? Enumerable.Empty<IComparer>()
+                : outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, DiagnosticId.InvalidDataTypeInUnion));
 
-            if (!isUnionAll)
-            {
-                foreach (var column in outputColumns)
-                    BindComparer(diagnosticSpan, column.Type, DiagnosticId.InvalidDataTypeInUnion);
-            }
-
-            var relation = new BoundUnionRelation(isUnionAll, inputs, definedValues);
+            var relation = new BoundUnionRelation(isUnionAll, inputs, definedValues, comparers);
             return new BoundQuery(relation, outputColumns);
         }
 
@@ -442,10 +439,9 @@ namespace NQuery.Binding
                 ? DiagnosticId.InvalidDataTypeInIntersect
                 : DiagnosticId.InvalidDataTypeInExcept;
 
-            foreach (var column in outputColumns)
-                BindComparer(diagnosticSpan, column.Type, diagnosticId);
+            var comparers = outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, diagnosticId));
 
-            var relation = new BoundIntersectOrExceptRelation(isIntersect, leftInput, rightInput);
+            var relation = new BoundIntersectOrExceptRelation(isIntersect, leftInput, rightInput, comparers);
             return new BoundQuery(relation, outputColumns);
         }
 
@@ -928,8 +924,9 @@ namespace NQuery.Binding
                               let expression = (BoundAggregateExpression)t.Expression
                               select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Aggregatable, expression.Argument)).ToImmutableArray();
 
-            var groups = (from t in queryBinder.QueryState.ComputedGroupings
-                          select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
+            var groups = groupByClause == null
+                ? ImmutableArray<BoundComparedValue>.Empty
+                : groupByClause.Groups;
 
             var projections = (from t in queryBinder.QueryState.ComputedProjections
                                select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
@@ -988,14 +985,18 @@ namespace NQuery.Binding
                 ? fromRelation
                 : new BoundFilterRelation(fromRelation, whereClause);
 
-            var computedGroups = groups.Where(g => !(g.Expression is BoundValueSlotExpression)).ToImmutableArray();
+            var computedGroups = queryBinder.QueryState
+                                            .ComputedGroupings
+                                            .Where(g => !(g.Expression is BoundValueSlotExpression))
+                                            .Select(g => new BoundComputedValue(g.Expression, g.Result))
+                                            .ToImmutableArray();
             var groupComputeRelation = !computedGroups.Any()
                                             ? whereRelation
                                             : new BoundComputeRelation(whereRelation, computedGroups);
 
             var groupByAndAggregationRelation = !groups.Any() && !aggregates.Any()
                 ? groupComputeRelation
-                : new BoundGroupByAndAggregationRelation(groupComputeRelation, groups.Select(g => g.ValueSlot).ToImmutableArray(), aggregates);
+                : new BoundGroupByAndAggregationRelation(groupComputeRelation, groups, aggregates);
 
             var havingRelation = havingClause == null
                 ? groupByAndAggregationRelation
@@ -1031,13 +1032,11 @@ namespace NQuery.Binding
             }
             else
             {
-                // TODO: It seems BoundGroupByAndAggregationRelation should also use the comparers.
+                var distinctValues = from column in outputColumns
+                                     let comparer = BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)
+                                     select new BoundComparedValue(column.ValueSlot, comparer);
 
-                foreach (var column in outputColumns)
-                    BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct);
-
-                var distinctValueSlots = outputColumns.Select(c => c.ValueSlot);
-                distinctRelation = new BoundGroupByAndAggregationRelation(projectRelation, distinctValueSlots, Enumerable.Empty<BoundAggregatedValue>());
+                distinctRelation = new BoundGroupByAndAggregationRelation(projectRelation, distinctValues, Enumerable.Empty<BoundAggregatedValue>());
             }
 
             return new BoundQuery(distinctRelation, outputColumns);
@@ -1250,7 +1249,7 @@ namespace NQuery.Binding
 
             var groupByBinder = CreateGroupByClauseBinder();
 
-            var boundColumns = new List<ValueSlot>(groupByClause.Columns.Count);
+            var groups = new List<BoundComparedValue>(groupByClause.Columns.Count);
 
             foreach (var column in groupByClause.Columns)
             {
@@ -1260,7 +1259,7 @@ namespace NQuery.Binding
 
                 // TODO: We need to very expression references at least one column that is not an outer reference.
 
-                BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
+                var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 ValueSlot valueSlot;
                 if (!TryGetExistingValue(boundExpression, out valueSlot))
@@ -1270,13 +1269,14 @@ namespace NQuery.Binding
                 //       -- independent from whether they are based on existing values or not.
                 QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
 
-                boundColumns.Add(valueSlot);
+                var group = new BoundComparedValue(valueSlot, comparer);
+                groups.Add(group);
             }
 
             QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedAggregates);
             QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedGroupings);
 
-            return new BoundGroupByClause(boundColumns.ToImmutableArray());
+            return new BoundGroupByClause(groups.ToImmutableArray());
         }
 
         private BoundExpression BindHavingClause(HavingClauseSyntax node)

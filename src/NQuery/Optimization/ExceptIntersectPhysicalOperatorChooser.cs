@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,9 +13,8 @@ namespace NQuery.Optimization
             var left = RewriteRelation(node.Left);
             var right = RewriteRelation(node.Right);
 
-            // BUG: We should use the data context to get the corresponding comparers
-            var comparer = Comparer.Default;
-            var sortedValues = left.GetOutputValues().Select(v => new BoundComparedValue(v, comparer));
+            var values = left.GetOutputValues();
+            var sortedValues = values.Zip(node.Comparers, (v, c) => new BoundComparedValue(v, c));
             var sortedLeft = new BoundSortRelation(true, left, sortedValues);
 
             var valueSlots = sortedLeft.GetOutputValues().Zip(right.GetOutputValues(), ValueTuple.Create);

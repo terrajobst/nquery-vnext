@@ -6,11 +6,11 @@ namespace NQuery.Binding
 {
     internal sealed class BoundGroupByClause
     {
-        public BoundGroupByClause(IEnumerable<ValueSlot> columns)
+        public BoundGroupByClause(IEnumerable<BoundComparedValue> groups)
         {
-            Columns = columns.ToImmutableArray();
+            Groups = groups.ToImmutableArray();
         }
 
-        public ImmutableArray<ValueSlot> Columns { get; }
+        public ImmutableArray<BoundComparedValue> Groups { get; }
     }
 }

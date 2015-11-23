@@ -7,7 +7,7 @@ namespace NQuery.Binding
 {
     internal sealed class BoundStreamAggregatesRelation : BoundRelation
     {
-        public BoundStreamAggregatesRelation(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
+        public BoundStreamAggregatesRelation(BoundRelation input, IEnumerable<BoundComparedValue> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
             Input = input;
             Groups = groups.ToImmutableArray();
@@ -21,11 +21,11 @@ namespace NQuery.Binding
 
         public BoundRelation Input { get; }
 
-        public ImmutableArray<ValueSlot> Groups { get; }
+        public ImmutableArray<BoundComparedValue> Groups { get; }
 
         public ImmutableArray<BoundAggregatedValue> Aggregates { get; }
 
-        public BoundStreamAggregatesRelation Update(BoundRelation input, IEnumerable<ValueSlot> groups, IEnumerable<BoundAggregatedValue> aggregates)
+        public BoundStreamAggregatesRelation Update(BoundRelation input, IEnumerable<BoundComparedValue> groups, IEnumerable<BoundAggregatedValue> aggregates)
         {
             var newGroups = groups.ToImmutableArray();
             var newAggregates = aggregates.ToImmutableArray();
@@ -43,7 +43,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetOutputValues()
         {
-            return Groups.Concat(Aggregates.Select(v => v.Output));
+            return Groups.Select(g => g.ValueSlot).Concat(Aggregates.Select(v => v.Output));
         }
     }
 }

@@ -95,14 +95,14 @@ namespace NQuery.Binding
         protected virtual BoundRelation RewriteGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteValueSlots(node.Groups),
+                               RewriteComparedValues(node.Groups),
                                RewriteAggregatedValues(node.Aggregates));
         }
 
         protected virtual BoundRelation RewriteStreamAggregatesRelation(BoundStreamAggregatesRelation node)
         {
             return node.Update(RewriteRelation(node.Input),
-                               RewriteValueSlots(node.Groups),
+                               RewriteComparedValues(node.Groups),
                                RewriteAggregatedValues(node.Aggregates));
         }
 
@@ -115,7 +115,8 @@ namespace NQuery.Binding
         {
             return node.Update(node.IsUnionAll,
                                RewriteRelations(node.Inputs),
-                               RewriteUnifiedValues(node.DefinedValues));
+                               RewriteUnifiedValues(node.DefinedValues),
+                               node.Comparers);
         }
 
         protected virtual BoundRelation RewriteConcatenationRelation(BoundConcatenationRelation node)
@@ -128,7 +129,8 @@ namespace NQuery.Binding
         {
             return node.Update(node.IsIntersect,
                                RewriteRelation(node.Left),
-                               RewriteRelation(node.Right));
+                               RewriteRelation(node.Right),
+                               node.Comparers);
         }
 
         protected virtual BoundRelation RewriteProjectRelation(BoundProjectRelation node)
