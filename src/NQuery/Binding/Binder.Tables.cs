@@ -38,7 +38,7 @@ namespace NQuery.Binding
                     return BindDerivedTableReference((DerivedTableReferenceSyntax)node);
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

@@ -53,7 +53,7 @@ namespace NQuery.Symbols
                     markup.AppendPropertySymbolInfo((PropertySymbol)symbol);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(symbol.Kind);
             }
         }
 

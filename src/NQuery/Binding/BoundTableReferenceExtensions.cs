@@ -29,7 +29,7 @@ namespace NQuery.Binding
                     GetDeclaredTableInstances(receiver, (BoundJoinRelation)node);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

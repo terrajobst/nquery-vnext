@@ -200,7 +200,7 @@ namespace NQuery
                 case DiagnosticId.CteHasTypeMismatchBetweenAnchorAndRecursivePart:
                     return Resources.CteHasTypeMismatchBetweenAnchorAndRecursivePart;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(diagnosticId));
+                    throw ExceptionBuilder.UnexpectedValue(diagnosticId);
             }
         }
 

@@ -45,7 +45,7 @@ namespace NQuery.Binding
                 case BoundNodeKind.TableSpoolPopper:
                     return RewriteTableSpoolPopper((BoundTableSpoolPopper)node);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

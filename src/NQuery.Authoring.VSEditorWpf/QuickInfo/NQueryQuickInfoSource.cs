@@ -122,7 +122,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                 case SymbolMarkupKind.TypeName:
                     return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(markupToken.Kind);
             }
         }
 

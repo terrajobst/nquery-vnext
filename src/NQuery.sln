@@ -63,7 +63,16 @@ Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.ActiproWpf
 EndProject
 Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.VSEditorWpf", ".nupkg\NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.nuproj", "{D312166F-6E89-47C7-9D7F-D556FB29F325}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NQuery.Shared", "NQuery.Shared\NQuery.Shared.shproj", "{951E09AD-A6A0-411C-8DCE-3BCD2651CC30}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		NQuery.Shared\NQuery.Shared.projitems*{52f5cd8b-2ff7-4087-b9f7-c1269c48f06f}*SharedItemsImports = 4
+		NQuery.Shared\NQuery.Shared.projitems*{951e09ad-a6a0-411c-8dce-3bcd2651cc30}*SharedItemsImports = 13
+		NQuery.Shared\NQuery.Shared.projitems*{a3309669-818f-47a9-b0f8-734af347febc}*SharedItemsImports = 4
+		NQuery.Shared\NQuery.Shared.projitems*{bf5539f1-3476-4ed7-89da-d9446b46eeeb}*SharedItemsImports = 4
+		NQuery.Shared\NQuery.Shared.projitems*{a3b82430-e8ed-4177-b097-3a82748edaef}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -179,5 +188,6 @@ Global
 		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8} = {A585A31E-F2FA-46EA-9227-390D695FF749}
 		{A88F184C-F86D-4738-9035-CB35BBAACA5B} = {A585A31E-F2FA-46EA-9227-390D695FF749}
 		{D312166F-6E89-47C7-9D7F-D556FB29F325} = {A585A31E-F2FA-46EA-9227-390D695FF749}
+		{951E09AD-A6A0-411C-8DCE-3BCD2651CC30} = {841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}
 	EndGlobalSection
 EndGlobal

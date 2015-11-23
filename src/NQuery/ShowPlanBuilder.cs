@@ -85,7 +85,7 @@ namespace NQuery
                 case BoundNodeKind.ExistsSubselect:
                     return BuildExistsSubselect((BoundExistsSubselect)node);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

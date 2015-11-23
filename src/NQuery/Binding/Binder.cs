@@ -104,7 +104,7 @@ namespace NQuery.Binding
             if (expression != null)
                 return BindExpression(expression);
 
-            throw new NotSupportedException();
+            throw ExceptionBuilder.UnexpectedValue(root);
         }
 
         private TResult Bind<TInput, TResult>(TInput node, Func<TInput, TResult> bindMethod)

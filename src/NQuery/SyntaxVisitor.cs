@@ -253,7 +253,7 @@ namespace NQuery
                     break;
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

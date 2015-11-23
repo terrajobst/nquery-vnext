@@ -52,7 +52,7 @@ namespace NQuery.Authoring.Wpf.CodeActions
                 case CodeActionKind.Refactoring:
                     return "RefactoringImage";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(kind));
+                    throw ExceptionBuilder.UnexpectedValue(kind);
             }
         }
 
@@ -107,7 +107,7 @@ namespace NQuery.Authoring.Wpf.CodeActions
                     GlyphContextMenu.IsOpen = true;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(state));
+                    throw ExceptionBuilder.UnexpectedValue(state);
             }
         }
 

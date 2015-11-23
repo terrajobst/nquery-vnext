@@ -190,7 +190,7 @@ namespace NQuery.Iterators
                 }
 
                 default:
-                    throw new NotImplementedException();
+                    throw ExceptionBuilder.UnexpectedValue(_currentPhase);
             }
         }
 

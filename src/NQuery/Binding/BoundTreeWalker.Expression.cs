@@ -60,7 +60,7 @@ namespace NQuery.Binding
                     VisitValueSlotExpression((BoundValueSlotExpression)node);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

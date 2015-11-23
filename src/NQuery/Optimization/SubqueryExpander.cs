@@ -48,7 +48,7 @@ namespace NQuery.Optimization
             var result = base.RewriteRelation(node);
 
             if (_subqueryStack.Peek().Any())
-                throw new InvalidOperationException($"Unprocessed probing values on {node.Kind}.");
+                throw ExceptionBuilder.UnexpectedValue(node.Kind);
 
             _subqueryStack.Pop();
 

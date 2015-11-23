@@ -45,7 +45,7 @@ namespace NQuery.Authoring.Wpf
                 case Glyph.Type:
                     return FromName("Type");
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(glyph));
+                    throw ExceptionBuilder.UnexpectedValue(glyph);
             }
         }
 

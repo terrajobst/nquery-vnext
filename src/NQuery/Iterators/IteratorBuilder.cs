@@ -70,7 +70,7 @@ namespace NQuery.Iterators
                 case BoundNodeKind.TableSpoolPopper:
                     return BuildTableSpoolPopper((BoundTableSpoolPopper)relation);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(relation), $"Unknown relation kind: {relation.Kind}.");
+                    throw ExceptionBuilder.UnexpectedValue(relation.Kind);
             }
         }
 
@@ -121,15 +121,12 @@ namespace NQuery.Iterators
                         ? (Iterator) new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
                         : new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
                 case BoundJoinType.LeftAntiSemi:
-                    // TODO: Support ProbingLeftAntiSemiJoin
                     Debug.Assert(relation.Probe == null);
                     return new LeftAntiSemiNestedLoopsIterator(left, right, predicate, passthruPredicate);
                 case BoundJoinType.LeftOuter:
                     return new LeftOuterNestedLoopsIterator(left, right, predicate, passthruPredicate);
-                case BoundJoinType.FullOuter:
-                case BoundJoinType.RightOuter:
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(relation.JoinType);
             }
         }
 

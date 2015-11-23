@@ -871,7 +871,7 @@ namespace NQuery
                 case SyntaxKind.ExclamationGreaterToken:
                     return SyntaxKind.ExclamationLessToken;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(tokenKind));
+                    throw ExceptionBuilder.UnexpectedValue(tokenKind);
             }
         }
 
@@ -1069,7 +1069,7 @@ namespace NQuery
                 case SyntaxKind.LogicalNotExpression:
                     return UnaryOperatorKind.LogicalNot;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(expressionKind));
+                    throw ExceptionBuilder.UnexpectedValue(expressionKind);
             }
         }
 
@@ -1124,7 +1124,7 @@ namespace NQuery
                 case SyntaxKind.SimilarToExpression:
                     return BinaryOperatorKind.SimilarTo;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(expressionKind));
+                    throw ExceptionBuilder.UnexpectedValue(expressionKind);
             }
         }
 
@@ -1141,7 +1141,7 @@ namespace NQuery
                 case UnaryOperatorKind.LogicalNot:
                     return SyntaxKind.NotKeyword.GetText();
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(operatorKind));
+                    throw ExceptionBuilder.UnexpectedValue(operatorKind);
             }
         }
 
@@ -1216,7 +1216,7 @@ namespace NQuery
                     return SyntaxKind.OrKeyword.GetText();
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(operatorKind));
+                    throw ExceptionBuilder.UnexpectedValue(operatorKind);
             }
         }
 

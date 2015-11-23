@@ -69,7 +69,7 @@ namespace NQuery
                     return false;
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(value));
+                    throw ExceptionBuilder.UnexpectedValue(value);
             }
         }
 
@@ -203,7 +203,7 @@ namespace NQuery
                 case KnownType.Object:
                     return "OBJECT";
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
+                    throw ExceptionBuilder.UnexpectedValue(type);
             }
         }
 

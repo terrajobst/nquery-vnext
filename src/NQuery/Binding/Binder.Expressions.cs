@@ -303,7 +303,7 @@ namespace NQuery.Binding
                     return BindAllAnySubselect((AllAnySubselectSyntax) node);
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 
@@ -705,7 +705,7 @@ namespace NQuery.Binding
                     return new BoundTableExpression(tableInstance);
                 }
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(symbol.Kind);
             }
         }
 

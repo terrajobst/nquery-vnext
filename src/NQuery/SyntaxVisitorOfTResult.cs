@@ -199,7 +199,7 @@ namespace NQuery
                      return VisitAlias((AliasSyntax)node);
 
                 default:
-                    throw new ArgumentException($"Unknown node kind: {node.Kind}", nameof(node));
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

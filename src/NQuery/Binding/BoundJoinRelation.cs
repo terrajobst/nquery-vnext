@@ -71,7 +71,7 @@ namespace NQuery.Binding
                 case BoundJoinType.LeftAntiSemi:
                     return true;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(JoinType);
             }
         }
 
@@ -88,7 +88,7 @@ namespace NQuery.Binding
                 case BoundJoinType.LeftAntiSemi:
                     return false;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(JoinType);
             }
         }
     }

@@ -46,7 +46,7 @@ namespace NQuery.Binding
                 case BoundNodeKind.ValueSlotExpression:
                     return RewriteValueSlotExpression((BoundValueSlotExpression)node);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(node), $"Unknown node kind {node.Kind}");
+                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
         }
 

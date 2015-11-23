@@ -187,7 +187,7 @@ namespace NQuery.Iterators
                 case BoundNodeKind.CaseExpression:
                     return BuildCaseExpression((BoundCaseExpression)expression);
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(expression), $"Unknown expression kind: {expression.Kind}.");
+                    throw ExceptionBuilder.UnexpectedValue(expression.Kind);
             }
         }
 
@@ -224,7 +224,7 @@ namespace NQuery.Iterators
                 case UnaryOperatorKind.LogicalNot:
                     return Expression.Not(input, signature.MethodInfo);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(signature.Kind);
             }
         }
 
@@ -340,7 +340,7 @@ namespace NQuery.Iterators
                 case BinaryOperatorKind.SoundsLike:
                     return Expression.Call(signature.MethodInfo, left, right);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(signature.Kind);
             }
         }
 

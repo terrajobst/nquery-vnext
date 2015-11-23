@@ -50,7 +50,7 @@ namespace NQuery.Optimization
                 case BoundNodeKind.TableSpoolPopper:
                     return EstimateTableSpoolPopper((BoundTableSpoolPopper)relation);
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(relation.Kind);
             }
         }
 

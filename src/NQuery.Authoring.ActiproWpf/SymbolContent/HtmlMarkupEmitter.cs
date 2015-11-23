@@ -71,7 +71,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
                 case SymbolMarkupKind.TypeName:
                     return classificationTypes.Identifier;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw ExceptionBuilder.UnexpectedValue(kind);
             }
 
         }

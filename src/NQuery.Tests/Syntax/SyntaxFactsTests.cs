@@ -210,7 +210,7 @@ namespace NQuery.Tests.Syntax
 
             foreach (var tokenKind in invalidOperators)
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() => SyntaxFacts.SwapBinaryExpressionTokenKind(tokenKind));
+                Assert.Throws<InvalidOperationException>(() => SyntaxFacts.SwapBinaryExpressionTokenKind(tokenKind));
             }
         }
 
