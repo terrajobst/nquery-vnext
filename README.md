@@ -12,3 +12,14 @@ This is a Roslyn inspired rewrite of [NQuery][nquery]. The goals are:
 3. Utilize modern idioms to simplify implementation of the compiler.
 
 [nquery]: https://www.github.com/terrajobst/nquery
+
+## Getting NQuery
+
+If you want to play with the bits, you need to add the following feed to your
+NuGet configuration:
+
+```
+https://ci.appveyor.com/nuget/nquery-vnext
+```
+
+You can do this by using the [package manager dialog](http://docs.nuget.org/consume/package-manager-dialog#package-sources).
