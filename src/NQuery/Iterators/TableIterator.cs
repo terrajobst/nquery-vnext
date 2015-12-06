@@ -35,6 +35,15 @@ namespace NQuery.Iterators
             _rows = _table.GetRows().GetEnumerator();
         }
 
+        public override void Dispose()
+        {
+            var disposable = _rows as IDisposable;
+            if (disposable != null)
+                disposable.Dispose();
+
+            _rows = null;
+        }
+
         public override bool Read()
         {
             if (!_rows.MoveNext())
@@ -44,16 +53,6 @@ namespace NQuery.Iterators
                 _rowBuffer.Array[i] = _definedValues[i](_rows.Current);
 
             return true;
-        }
-
-        public override void Dispose()
-        {
-            var disposable = _rows as IDisposable;
-            if (disposable != null)
-                disposable.Dispose();
-
-            _rows = null;
-            base.Dispose();
         }
     }
 }

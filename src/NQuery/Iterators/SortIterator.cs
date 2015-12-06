@@ -26,8 +26,9 @@ namespace NQuery.Iterators
             _outerSortEntries = sortEntryArray.Where(e => e.RowBuffer != _input.RowBuffer)
                                               .ToImmutableArray();
 
-            var spoolBufferSize = input.RowBuffer.Count + _outerSortEntries.Length;
-            _spooledRowBuffer = new SpooledRowBuffer(spoolBufferSize);
+            var exposedCount = input.RowBuffer.Count;
+            var spooledCount = input.RowBuffer.Count + _outerSortEntries.Length;
+            _spooledRowBuffer = new SpooledRowBuffer(exposedCount, spooledCount);
             SortIndices = sortEntryArray.Select(e => e.RowBuffer == _input.RowBuffer
                                                     ? e.Index
                                                     : input.RowBuffer.Count + _outerSortEntries.IndexOf(e))
@@ -45,9 +46,6 @@ namespace NQuery.Iterators
 
         protected object[] GetCurrentRow()
         {
-            if (_spooledRowBuffer.Rows == null)
-                return null;
-
             return _spooledRowBuffer.Rows[_spooledRowBuffer.RowIndex];
         }
 
@@ -57,7 +55,7 @@ namespace NQuery.Iterators
 
             while (_input.Read())
             {
-                var rowValues = new object[_spooledRowBuffer.Count];
+                var rowValues = new object[_spooledRowBuffer.SpooledCount];
 
                 // First, we copy the input
 
@@ -85,6 +83,11 @@ namespace NQuery.Iterators
             _spooledRowBuffer.Rows = null;
         }
 
+        public override void Dispose()
+        {
+            _input.Dispose();
+        }
+
         public override bool Read()
         {
             if (_spooledRowBuffer.Rows == null)
@@ -102,9 +105,10 @@ namespace NQuery.Iterators
 
         private sealed class SpooledRowBuffer : RowBuffer
         {
-            public SpooledRowBuffer(int count)
+            public SpooledRowBuffer(int exposedCount, int spooledCount)
             {
-                Count = count;
+                Count = exposedCount;
+                SpooledCount = spooledCount;
             }
 
             public IReadOnlyList<object[]> Rows { get; set; }
@@ -112,6 +116,8 @@ namespace NQuery.Iterators
             public int RowIndex { get; set; }
 
             public override int Count { get; }
+
+            public int SpooledCount { get; }
 
             public override object this[int index]
             {
@@ -121,7 +127,7 @@ namespace NQuery.Iterators
             public override void CopyTo(object[] array, int destinationIndex)
             {
                 var source = Rows[RowIndex];
-                Array.Copy(source, 0, array, destinationIndex, source.Length);
+                Array.Copy(source, 0, array, destinationIndex, Count);
             }
         }
 
@@ -138,15 +144,6 @@ namespace NQuery.Iterators
 
             public int Compare(object[] x, object[] y)
             {
-                if (x == null && y == null)
-                    return 0;
-
-                if (x == null)
-                    return -1;
-
-                if (y == null)
-                    return +1;
-
                 // Compare all columns
 
                 var result = 0;

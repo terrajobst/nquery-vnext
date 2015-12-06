@@ -51,6 +51,12 @@ namespace NQuery.Iterators
             _probeMatched = true;
         }
 
+        public override void Dispose()
+        {
+            _build.Dispose();
+            _probe.Dispose();
+        }
+
         private void BuildHashtable()
         {
             _hashTable = new Dictionary<object, HashMatchEntry>();

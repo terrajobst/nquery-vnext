@@ -29,6 +29,11 @@ namespace NQuery.Iterators
             _input.Open();
         }
 
+        public override void Dispose()
+        {
+            _input.Dispose();
+        }
+
         public override bool Read()
         {
             if (!_input.Read())

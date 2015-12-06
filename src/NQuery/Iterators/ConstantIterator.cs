@@ -17,6 +17,10 @@ namespace NQuery.Iterators
             _isEof = false;
         }
 
+        public override void Dispose()
+        {
+        }
+
         public override bool Read()
         {
             if (_isEof)

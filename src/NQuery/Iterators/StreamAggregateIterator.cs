@@ -104,6 +104,11 @@ namespace NQuery.Iterators
             _isFirstRecord = true;
         }
 
+        public override void Dispose()
+        {
+            _input.Dispose();
+        }
+
         public override bool Read()
         {
             if (_eof)

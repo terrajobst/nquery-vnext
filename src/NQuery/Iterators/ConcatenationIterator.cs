@@ -33,6 +33,12 @@ namespace NQuery.Iterators
             _currentInputIsOpen = false;
         }
 
+        public override void Dispose()
+        {
+            foreach (var iterator in _inputs)
+                iterator.Dispose();
+        }
+
         public override bool Read()
         {
             while (_currentInputIndex < _inputs.Length)

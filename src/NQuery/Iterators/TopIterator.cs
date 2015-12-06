@@ -16,21 +16,29 @@ namespace NQuery.Iterators
 
         protected int Limit { get; }
 
-        public override RowBuffer RowBuffer
-        {
-            get { return Input.RowBuffer; }
-        }
+        protected bool InputExhausted { get; private set; }
+
+        public override RowBuffer RowBuffer => Input.RowBuffer;
 
         public override void Open()
         {
             Input.Open();
+            InputExhausted = false;
             _rowCount = 0;
+        }
+
+        public override void Dispose()
+        {
+            Input.Dispose();
         }
 
         public override bool Read()
         {
             if (!Input.Read())
+            {
+                InputExhausted = true;
                 return false;
+            }
 
             if (_rowCount == Limit)
                 return false;

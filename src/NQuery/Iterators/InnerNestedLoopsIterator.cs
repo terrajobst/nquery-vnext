@@ -30,6 +30,12 @@ namespace NQuery.Iterators
             _bof = true;
         }
 
+        public override void Dispose()
+        {
+            _left.Dispose();
+            _right.Dispose();
+        }
+
         public override bool Read()
         {
             var matchingRowFound = false;

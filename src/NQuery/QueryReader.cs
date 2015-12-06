@@ -23,10 +23,7 @@ namespace NQuery
             _columnTypes = columnNamesAndTypes.Select(t => t.Item2).ToImmutableArray();
 
             if (!_schemaOnly)
-            {
-                _iterator.Initialize();
                 _iterator.Open();
-            }
 
             _isBof = true;
         }

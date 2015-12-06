@@ -38,6 +38,9 @@ namespace NQuery.Iterators
             {
                 if (!base.Read())
                 {
+                    if (InputExhausted)
+                        return false;
+
                     _limitReached = true;
                 }
                 else

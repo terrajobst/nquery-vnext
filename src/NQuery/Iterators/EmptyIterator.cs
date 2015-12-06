@@ -10,6 +10,10 @@ namespace NQuery.Iterators
         {
         }
 
+        public override void Dispose()
+        {
+        }
+
         public override bool Read()
         {
             return false;

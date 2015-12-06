@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace NQuery.Iterators
 {
@@ -34,6 +33,12 @@ namespace NQuery.Iterators
             _left.Open();
             _advanceOuter = false;
             _bof = true;
+        }
+
+        public override void Dispose()
+        {
+            _left.Dispose();
+            _right.Dispose();
         }
 
         public override bool Read()
