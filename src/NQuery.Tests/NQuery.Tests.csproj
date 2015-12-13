@@ -80,6 +80,7 @@
     <Compile Include="Binding\OrderByTests.cs" />
     <Compile Include="Binding\PropertyAccessExressionTests.cs" />
     <Compile Include="Binding\SelectStarTests.cs" />
+    <Compile Include="Binding\SoundexTests.cs" />
     <Compile Include="Binding\UnaryOperatorExpressionTests.cs" />
     <Compile Include="CompilationExtensions.cs" />
     <Compile Include="ConversionTests.cs" />

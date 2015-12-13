@@ -1,124 +1,107 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Text;
 
 namespace NQuery.Binding
 {
-    /// <summary>
-    /// Utility class for performing soundex algorithm.
-    ///
-    /// The Soundex algorithm is used to convert a word to a
-    /// code based upon the phonetic sound of the word.
-    ///
-    /// The soundex algorithm is outlined below:
-    ///     Rule 1. Keep the first character of the name.
-    ///     Rule 2. Perform a transformation on each remaining characters:
-    ///                 A,E,I,O,U,Y     = A
-    ///                 H,W             = S
-    ///                 B,F,P,V         = 1
-    ///                 C,G,J,K,Q,S,X,Z = 2
-    ///                 D,T             = 3
-    ///                 L               = 4
-    ///                 M,N             = 5
-    ///                 R               = 6
-    ///     Rule 3. If a character is the same as the previous, do not include in the code.
-    ///     Rule 4. If character is "A" or "S" do not include in the code.
-    ///     Rule 5. If a character is blank, then do not include in the code.
-    ///     Rule 6. A soundex code must be exactly 4 characters long.  If the
-    ///             code is too short then pad with zeros, otherwise truncate.
-    /// </summary>
+    // From https://en.wikipedia.org/wiki/Soundex:
+    //
+    //    1. Retain the first letter of the name and drop all other occurrences of:
+    //    
+    //             a, e, i, o, u, y, h, w
+    //    
+    //    2. Replace consonants with digits as follows(after the first letter):
+    //    
+    //             b, f, p, v             -> 1
+    //             c, g, j, k, q, s, x, z -> 2
+    //             d, t                   -> 3
+    //             l                      -> 4
+    //             m, n                   -> 5
+    //             r                      -> 6
+    //    
+    //    3. If two or more letters with the same number are adjacent in the original name
+    //       (before step 1), only retain the first letter; also two letters with the same
+    //       number separated by 'h' or 'w' are coded as a single number, whereas such
+    //       letters separated by a vowel are coded twice. This rule also applies to the
+    //       first letter.
+    //    
+    //    4. If you have too few letters in your word that you can't assign three numbers,
+    //       append with zeros until there are three numbers. If you have more than 3
+    //       letters, just retain the first 3 numbers.
     internal static class Soundex
     {
-        /// <summary>
-        /// Return the soundex code for a given string.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
         public static string GetCode(string text)
         {
-            text = text.ToUpper(CultureInfo.CurrentCulture);
-            StringBuilder sb = new StringBuilder(8);
+            if (string.IsNullOrEmpty(text))
+                return "0000";
 
-            if (text.Length > 0)
+            var result = new[] { char.ToUpperInvariant(text[0]), '0', '0', '0'};
+            var count = 1;
+            var lastCode = Encode(result[0]);
+            var lastLetter = result[0];
+
+            for (var i = 1; i < text.Length; i++)
             {
-                // Rule 1. Keep the first character of the word
-                sb.Append(text[0]);
-            }
+                var letter = char.ToUpperInvariant(text[i]);
+                if (letter < 'A' || 'Z' < letter)
+                    break;
 
-            // Rule 2. Perform a transformation on each remaining characters
-            for (int i = 1; i < text.Length && sb.Length <= 4; i++)
-            {
-                char transformedChar = Transform(text[i]);
-
-                // Rule 3. If a character is the same as the previous, do not include in code
-                if (transformedChar != sb[sb.Length - 1])
+                var codedLetter = Encode(letter);
+                if (!char.IsDigit(codedLetter))
                 {
-                    // Rule 4. If character is "A" or "S" do not include in code
-                    if (transformedChar != 'A' && transformedChar != 'S')
-                    {
-                        // Rule 5. If a character is blank, then do not include in code
-                        if (transformedChar != ' ')
-                        {
-                            sb.Append(transformedChar);
-                        }
-                    }
+                    // Drop occurrence
+                    lastLetter = letter;
+                    continue;
                 }
+
+                if (lastCode == codedLetter)
+                {
+                    // If two or more letters with the same number are adjacent in the original name
+                    // only retain the first letter;
+                    //
+                    // Two letters with the same number separated by 'h' or 'w' are
+                    // coded as a single number, whereas such letters separated by
+                    // a vowel are coded twice.
+
+                    if (lastLetter == 'H' || lastLetter == 'W' || !IsVowel(lastLetter))
+                        continue;
+                }
+
+                result[count++] = codedLetter;
+                lastLetter = letter;
+                lastCode = codedLetter;
+
+                if (count == 4)
+                    break;
             }
 
-            // Rule 6. A soundex code must be exactly 4 characters long.  If the
-            //         code is too short then pad with zeros, otherwise truncate.
-
-            sb.Append(@"0000");
-
-            return sb.ToString(0, 4);
+            return new string(result);
         }
 
-        /// <summary>
-        /// Transform the A-Z alphabetic characters to the appropriate soundex code.
-        /// </summary>
-        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
-        private static char Transform(char c)
+        private static bool IsVowel(char c)
+        {
+            var encoded = Encode(c);
+            return encoded != '\0' && !char.IsDigit(encoded);
+        }
+
+        private static char Encode(char c)
         {
             switch (c)
             {
-                case 'A':
-                case 'E':
-                case 'I':
-                case 'O':
-                case 'U':
-                case 'Y':
-                    return 'A';
-                case 'H':
-                case 'W':
-                    return 'S';
-                case 'B':
-                case 'F':
-                case 'P':
-                case 'V':
+                case 'A': case 'E': case 'I': case 'O': case 'U': case 'Y': case 'H': case 'W':
+                    return c;
+                case 'B': case 'F': case 'P': case 'V':
                     return '1';
-                case 'C':
-                case 'G':
-                case 'J':
-                case 'K':
-                case 'Q':
-                case 'S':
-                case 'X':
-                case 'Z':
+                case 'C': case 'G': case 'J': case 'K': case 'Q': case 'S': case 'X': case 'Z':
                     return '2';
-                case 'D':
-                case 'T':
+                case 'D': case 'T':
                     return '3';
                 case 'L':
                     return '4';
-                case 'M':
-                case 'N':
+                case 'M': case 'N':
                     return '5';
                 case 'R':
                     return '6';
-
                 default:
-                    return ' ';
+                    return '\0';
             }
         }
     }
