@@ -23,8 +23,13 @@ namespace NQuery.Binding
         {
         }
 
+        public BinaryOperatorSignature(BinaryOperatorKind kind, Type type)
+            : this(kind, type, type)
+        {
+        }
+
         public BinaryOperatorSignature(BinaryOperatorKind kind, Type returnType, Type parameterType)
-            : this(kind, returnType, parameterType, parameterType, null)
+            : this(kind, returnType, parameterType, parameterType)
         {
         }
 
