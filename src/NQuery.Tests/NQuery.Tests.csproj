@@ -85,6 +85,9 @@
     <Compile Include="CompilationExtensions.cs" />
     <Compile Include="ConversionTests.cs" />
     <Compile Include="DataContextTests.cs" />
+    <Compile Include="ExpressionTests.Types.cs" />
+    <Compile Include="ExpressionTests.Operators.Binary.cs" />
+    <Compile Include="ExpressionTests.Operators.Unary.cs" />
     <Compile Include="ExpressionTests.cs" />
     <Compile Include="Iterators\AssertIteratorTests.cs" />
     <Compile Include="Iterators\ComputeScalarIteratorTests.cs" />
@@ -110,6 +113,8 @@
     <Compile Include="Iterators\TableSpoolRefIterator.cs" />
     <Compile Include="Iterators\TopIteratorTests.cs" />
     <Compile Include="Iterators\TopWithTiesIteratorTests.cs" />
+    <Compile Include="MockedOperatorClass.cs" />
+    <Compile Include="MockedOperatorStruct.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
     <Compile Include="Symbols\EumerableTableDefinitionTests.cs" />

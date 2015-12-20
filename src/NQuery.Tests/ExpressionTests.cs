@@ -5,7 +5,7 @@ using Xunit;
 
 namespace NQuery.Tests
 {
-    public class ExpressionTests
+    public partial class ExpressionTests
     {
         [Fact]
         public void Expression_AllowsConstructingInvalidExpressions()
