@@ -109,8 +109,9 @@ namespace NQuery
             var computedValue = new BoundComputedValue(expression, valueSlot);
             var constantRelation = new BoundConstantRelation();
             var computeRelation = new BoundComputeRelation(constantRelation, new[] {computedValue});
+            var projectRelation = new BoundProjectRelation(computeRelation, new [] { valueSlot });
             var columnSymbol = new QueryColumnInstanceSymbol(valueSlot.Name, valueSlot);
-            return new BoundQuery(computeRelation, new[] {columnSymbol});
+            return new BoundQuery(projectRelation, new[] {columnSymbol});
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

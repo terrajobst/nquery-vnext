@@ -53,11 +53,15 @@ namespace NQuery
             // a compute node whose input is a constant relation. That means we can
             // just evaluate the expression being defined.
 
-            var computeRelation = _query.Relation as BoundComputeRelation;
-            if (computeRelation != null && computeRelation.Input is BoundConstantRelation)
+            var projectRelation = _query.Relation as BoundProjectRelation;
+            if (projectRelation != null)
             {
-                // This means this is a trivial query.
-                return CreateTrivialExpression(computeRelation);
+                var computeRelation = projectRelation.Input as BoundComputeRelation;
+                if (computeRelation != null && computeRelation.Input is BoundConstantRelation)
+                {
+                    // This means this is a trivial query.
+                    return CreateTrivialExpression(computeRelation);
+                }
             }
 
             // Too bad, we need to evaluate the expression as a regular query.
