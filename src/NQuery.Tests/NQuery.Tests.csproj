@@ -85,6 +85,7 @@
     <Compile Include="CompilationExtensions.cs" />
     <Compile Include="ConversionTests.cs" />
     <Compile Include="DataContextTests.cs" />
+    <Compile Include="ExpressionTests.Queries.cs" />
     <Compile Include="ExpressionTests.Types.cs" />
     <Compile Include="ExpressionTests.Operators.Binary.cs" />
     <Compile Include="ExpressionTests.Operators.Unary.cs" />
