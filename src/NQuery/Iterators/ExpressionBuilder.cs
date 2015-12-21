@@ -346,7 +346,10 @@ namespace NQuery.Iterators
 
         private static Expression BuildLiteralExpression(BoundLiteralExpression expression)
         {
-            return Expression.Constant(expression.Value, expression.Type);
+            return
+                BuildLiftedExpression(
+                    Expression.Constant(expression.Value, expression.Type)
+                );
         }
 
         private Expression BuildValueSlotExpression(BoundValueSlotExpression expression)
