@@ -345,7 +345,7 @@ namespace NQuery.Symbols
             if (text == null || pattern == null || replacementPattern == null)
                 return null;
 
-            return Regex.Replace(pattern, text, replacementPattern);
+            return Regex.Replace(text, pattern, replacementPattern);
         }
 
         private static bool RegexMatch(string text, string pattern)
@@ -353,7 +353,7 @@ namespace NQuery.Symbols
             if (text == null || pattern == null)
                 return false;
 
-            return Regex.IsMatch(pattern, text);
+            return Regex.IsMatch(text, pattern);
         }
 
         private static string RegexEscape(string text)
