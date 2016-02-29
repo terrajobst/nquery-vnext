@@ -47,10 +47,10 @@ namespace NQuery.Symbols
                 new FunctionSymbol<double, double>(@"COSH", @"value", Math.Cosh),
                 new FunctionSymbol<double, double>(@"EXP", @"value", Math.Exp),
                 new FunctionSymbol<double, double>(@"FLOOR", @"value", Math.Floor),
-                new FunctionSymbol<double, double>(@"ROUND", @"value", v => Math.Round(v, MidpointRounding.AwayFromZero)),
-                new FunctionSymbol<double, int, double>(@"ROUND", @"value", @"digits", (v, d) => Math.Round(v, d, MidpointRounding.AwayFromZero)),
-                new FunctionSymbol<decimal, decimal>(@"ROUND", @"value", v => Math.Round(v, MidpointRounding.AwayFromZero)),
-                new FunctionSymbol<decimal, int, decimal>(@"ROUND", @"value", @"digits", (v, d) => Math.Round(v, d, MidpointRounding.AwayFromZero)),
+                new FunctionSymbol<double, double>(@"ROUND", @"value", Round),
+                new FunctionSymbol<double, int, double>(@"ROUND", @"value", @"digits", Round),
+                new FunctionSymbol<decimal, decimal>(@"ROUND", @"value", Round),
+                new FunctionSymbol<decimal, int, decimal>(@"ROUND", @"value", @"digits", Round),
                 new FunctionSymbol<double, double>(@"LOG", @"value", Math.Log),
                 new FunctionSymbol<double, double, double>(@"LOG", @"value", @"newBase", Math.Log),
                 new FunctionSymbol<double, double>(@"LOG10", @"value", Math.Log10),
@@ -218,6 +218,26 @@ namespace NQuery.Symbols
                 return 0;
 
             return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
+        }
+
+        private static double Round(double v)
+        {
+            return Math.Round(v, MidpointRounding.AwayFromZero);
+        }
+
+        private static double Round(double v, int decimals)
+        {
+            return Math.Round(v, decimals, MidpointRounding.AwayFromZero);
+        }
+
+        private static decimal Round(decimal v)
+        {
+            return Math.Round(v, MidpointRounding.AwayFromZero);
+        }
+
+        private static decimal Round(decimal v, int decimals)
+        {
+            return Math.Round(v, decimals, MidpointRounding.AwayFromZero);
         }
 
         private static string GetSoundexCode(string text)
