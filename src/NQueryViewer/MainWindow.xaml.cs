@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -394,6 +395,19 @@ namespace NQueryViewer
                                      }
                              };
             e.Column.Header = header;
+
+            // For some reason, the WPF DataGrid doesn't escape property names containing
+            // a period. This results queries like this:
+            //
+            //      SELECT  e.FirstName [A.B]
+            //      FROM    Employees e
+            //
+            // to display nothing because the binding path A.B can't be resolved.
+            //
+            // To fix this, we force the path to be escaped.
+
+            var gridColumn = (DataGridBoundColumn) e.Column;
+            gridColumn.Binding = new Binding("[" + e.PropertyName + "]");
         }
     }
 }
