@@ -9,10 +9,10 @@
 		NOT('Test' LIKE '%') Like3,
 		NOT('Test' NOT LIKE '%') Like4,
 		
-		'Meyer' SOUNDSLIKE 'Maier' Soundslike1,
-		'Meyer' NOT SOUNDSLIKE 'Maier' Soundslike2,
-		NOT('Meyer' SOUNDSLIKE 'Maier') Soundslike3,
-		NOT('Meyer' NOT SOUNDSLIKE 'Maier') Soundslike4,
+		'Meyer' SOUNDS LIKE 'Maier' Soundslike1,
+		'Meyer' NOT SOUNDS LIKE 'Maier' Soundslike2,
+		NOT('Meyer' SOUNDS LIKE 'Maier') Soundslike3,
+		NOT('Meyer' NOT SOUNDS LIKE 'Maier') Soundslike4,
 		
 		'a = b' SIMILAR TO '[a-z] = [a-z]' SimilarTo1,
 		'a = b' NOT SIMILAR TO '[a-z] = [a-z]' SimilarTo2,
