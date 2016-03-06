@@ -1,4 +1,4 @@
-<executionTest>
+<test>
   <sql xml:space="preserve">WITH MyEmps AS (
 	SELECT	e.EmployeeID * 2.0 AS EmployeeId,
 			e.FirstName + ' ' + e.LastName AS FullName
@@ -230,4 +230,4 @@ FROM	MyEmps D1
       </element>
     </executionPlan>
   </expectedPlan>
-</executionTest>
+</test>
