@@ -5,19 +5,84 @@ using System.Data;
 using System.Linq;
 
 using NQuery.Data;
-
+using NQuery.Symbols.Aggregation;
 using Xunit;
 
 namespace NQuery.Tests.Legacy
 {
     public partial class LegacyTests
     {
+        private sealed class FirstOrLastAggregateDefinition : AggregateDefinition
+        {
+            private readonly bool _isLast;
+
+            public FirstOrLastAggregateDefinition(bool isLast)
+            {
+                _isLast = isLast;
+            }
+
+            public override string Name
+            {
+                get { return _isLast ? "LAST" : "FIRST"; }
+            }
+
+            public override IAggregatable CreateAggregatable(Type argumentType)
+            {
+                return new FirstOrLastAggregatable(_isLast, argumentType);
+            }
+        }
+
+        private sealed class FirstOrLastAggregatable : IAggregatable
+        {
+            private readonly bool _isLast;
+
+            public FirstOrLastAggregatable(bool isLast, Type returnType)
+            {
+                _isLast = isLast;
+                ReturnType = returnType;
+            }
+
+            public Type ReturnType { get; }
+
+            public IAggregator CreateAggregator()
+            {
+                return new FirstOrLastAggregator(_isLast);
+            }
+        }
+
+        private sealed class FirstOrLastAggregator : IAggregator
+        {
+            private readonly bool _isLast;
+            private object _result;
+
+            public FirstOrLastAggregator(bool isLast)
+            {
+                _isLast = isLast;
+            }
+
+            public void Initialize()
+            {
+                _result = null;
+            }
+
+            public void Accumulate(object value)
+            {
+                if (_isLast || _result == null)
+                    _result = value;
+            }
+
+            public object GetResult()
+            {
+                return _result;
+            }
+        }
+
         [Theory]
         [MemberData("GetTestNames")]
         public void LegacyTest_Passes(string name)
         {
             var testDefinition = TestDefinition.FromResource(name);
-            var dataContext = NorthwindDataContext.Instance.WithJoinTables();
+            var dataContext = CreateDataContext();
             var query = Query.Create(dataContext, testDefinition.CommandText);
 
             if (testDefinition.ExpectedResults != null)
@@ -35,6 +100,16 @@ namespace NQuery.Tests.Legacy
                 var actualException = Assert.Throws<Exception>(() => query.ExecuteDataTable());
                 Assert.Equal(testDefinition.ExpectedRuntimeError, actualException.Message);
             }
+        }
+
+        private static DataContext CreateDataContext()
+        {
+            var firstAggregate = new AggregateSymbol(new FirstOrLastAggregateDefinition(false));
+            var lastAggregate = new AggregateSymbol(new FirstOrLastAggregateDefinition(true));
+            var dataContext = NorthwindDataContext.Instance
+                .WithJoinTables()
+                .AddAggregates(firstAggregate, lastAggregate);
+            return dataContext;
         }
 
         private static void AssertEqual(DataTable expectedResults, DataTable actualResults)
