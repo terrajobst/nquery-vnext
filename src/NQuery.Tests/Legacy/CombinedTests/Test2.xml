@@ -1,17 +1,17 @@
 <test>
-  <sql>SELECT	TOP 1
-		c.ContactName,
-		SUM(od.Quantity) Quantity,
-		SUM(od.Quantity * UnitPrice) RegularTotal,
-		SUM(od.Quantity * UnitPrice * (1.0 - od.Discount)) Total
-FROM	Customers c,
-		Orders o,
-		[Order Details] od
-WHERE	c.CustomerID = o.CustomerID
-AND 	o.OrderID = od.OrderID
-GROUP	BY c.ContactName
-HAVING	SUM(od.Quantity * UnitPrice) != SUM(od.Quantity * UnitPrice * (1.0 - od.Discount))
-ORDER	BY SUM(od.Quantity * UnitPrice * (1.0 - od.Discount)) DESC</sql>
+  <sql>SELECT  TOP 1
+        c.ContactName,
+        SUM(od.Quantity) Quantity,
+        SUM(od.Quantity * UnitPrice) RegularTotal,
+        SUM(od.Quantity * UnitPrice * CAST(1.0 - od.Discount AS DECIMAL)) Total
+FROM    Customers c,
+        Orders o,
+        [Order Details] od
+WHERE   c.CustomerID = o.CustomerID
+AND     o.OrderID = od.OrderID
+GROUP   BY c.ContactName
+HAVING  SUM(od.Quantity * UnitPrice) != SUM(od.Quantity * UnitPrice * CAST(1.0 - od.Discount AS DECIMAL))
+ORDER   BY SUM(od.Quantity * UnitPrice * CAST(1.0 - od.Discount AS DECIMAL)) DESC</sql>
   <expectedResults>
     <NewDataSet>
   <xs:schema id="NewDataSet" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
