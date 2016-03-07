@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data;
@@ -6,6 +7,7 @@ using System.Linq;
 
 using NQuery.Data;
 using NQuery.Symbols.Aggregation;
+using NQuery.Syntax;
 using Xunit;
 
 namespace NQuery.Tests.Legacy
@@ -84,11 +86,16 @@ namespace NQuery.Tests.Legacy
             var testDefinition = TestDefinition.FromResource(name);
             var dataContext = CreateDataContext();
             var query = Query.Create(dataContext, testDefinition.CommandText);
+            var isOrdered = SyntaxTree.ParseQuery(testDefinition.CommandText)
+                                      .Root
+                                      .DescendantNodes()
+                                      .OfType<OrderedQuerySyntax>()
+                                      .Any();
 
             if (testDefinition.ExpectedResults != null)
             {
                 var actualResults = query.ExecuteDataTable();
-                AssertEqual(testDefinition.ExpectedResults, actualResults);
+                AssertEqual(testDefinition.ExpectedResults, actualResults, isOrdered);
             }
             else if (testDefinition.ExpectedDiagnostics.Any())
             {
@@ -112,7 +119,8 @@ namespace NQuery.Tests.Legacy
             return dataContext;
         }
 
-        private static void AssertEqual(DataTable expectedResults, DataTable actualResults)
+
+        private static void AssertEqual(DataTable expectedResults, DataTable actualResults, bool isOrdered)
         {
             if (expectedResults == null)
             {
@@ -124,10 +132,14 @@ namespace NQuery.Tests.Legacy
             Assert.Equal(expectedResults.Rows.Count, actualResults.Rows.Count);
             Assert.Equal(expectedResults.Columns.Count, actualResults.Columns.Count);
 
-            for (var rowIndex = 0; rowIndex < expectedResults.Rows.Count; rowIndex++)
+            var expectedRows = GetRows(expectedResults, isOrdered);
+            var actualRows = GetRows(actualResults, isOrdered);
+
+            var rows = expectedRows.Zip(actualRows, ValueTuple.Create);
+            foreach (var tuple in rows)
             {
-                var expectedRow = expectedResults.Rows[rowIndex];
-                var actualRow = actualResults.Rows[rowIndex];
+                var expectedRow = tuple.Item1;
+                var actualRow = tuple.Item2;
 
                 for (var colIndex = 0; colIndex < expectedResults.Columns.Count; colIndex++)
                 {
@@ -138,6 +150,46 @@ namespace NQuery.Tests.Legacy
                 }
             }
         }
+
+        private static IEnumerable<DataRow> GetRows(DataTable dataTable, bool isOrdered)
+        {
+            if (isOrdered)
+                return dataTable.Rows.Cast<DataRow>();
+
+            var comparison = new Comparison<DataRow>((x, y) =>
+            {
+                foreach (DataColumn column in dataTable.Columns)
+                {
+                    var cellX = x[column];
+                    var cellY = y[column];
+
+                    var xIsNull = x.IsNull(column);
+                    var yIsNull = y.IsNull(column);
+
+                    if (xIsNull && yIsNull)
+                        continue;
+
+                    if (xIsNull)
+                        return -1;
+
+                    if (yIsNull)
+                        return 1;
+
+                    var result = Comparer.Default.Compare(cellX, cellY);
+                    if (result != 0)
+                        return result;
+                }
+
+                return 0;
+            });
+
+
+            var comparer = Comparer<DataRow>.Create(comparison);
+            var rows = dataTable.Rows.Cast<DataRow>().ToArray();
+            Array.Sort(rows, comparer);
+
+            return rows;
+        } 
 
         private static void AssertEqual(object expectedValue, object actualValue)
         {
