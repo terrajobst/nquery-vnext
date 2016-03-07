@@ -14,79 +14,79 @@ FROM	MyEmps D1
 </sql>
   <expectedResults>
     <NewDataSet>
-  <xs:schema id="NewDataSet" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
-      <xs:complexType>
-        <xs:choice minOccurs="0" maxOccurs="unbounded">
-          <xs:element name="Table1">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="D1.EmployeeID" type="xs:int" minOccurs="0" />
-                <xs:element name="D1.FullName" type="xs:string" minOccurs="0" />
-                <xs:element name="D2.EmployeeID" type="xs:int" minOccurs="0" />
-                <xs:element name="D2.FullName" type="xs:string" minOccurs="0" />
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-        </xs:choice>
-      </xs:complexType>
-    </xs:element>
-  </xs:schema>
-  <Table1>
-    <D1.EmployeeID>1</D1.EmployeeID>
-    <D1.FullName>Nancy Davolio</D1.FullName>
-    <D2.EmployeeID>1</D2.EmployeeID>
-    <D2.FullName>Nancy Davolio</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>2</D1.EmployeeID>
-    <D1.FullName>Andrew Fuller</D1.FullName>
-    <D2.EmployeeID>2</D2.EmployeeID>
-    <D2.FullName>Andrew Fuller</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>3</D1.EmployeeID>
-    <D1.FullName>Janet Leverling</D1.FullName>
-    <D2.EmployeeID>3</D2.EmployeeID>
-    <D2.FullName>Janet Leverling</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>4</D1.EmployeeID>
-    <D1.FullName>Margaret Peacock</D1.FullName>
-    <D2.EmployeeID>4</D2.EmployeeID>
-    <D2.FullName>Margaret Peacock</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>5</D1.EmployeeID>
-    <D1.FullName>Steven Buchanan</D1.FullName>
-    <D2.EmployeeID>5</D2.EmployeeID>
-    <D2.FullName>Steven Buchanan</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>6</D1.EmployeeID>
-    <D1.FullName>Michael Suyama</D1.FullName>
-    <D2.EmployeeID>6</D2.EmployeeID>
-    <D2.FullName>Michael Suyama</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>7</D1.EmployeeID>
-    <D1.FullName>Robert King</D1.FullName>
-    <D2.EmployeeID>7</D2.EmployeeID>
-    <D2.FullName>Robert King</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>8</D1.EmployeeID>
-    <D1.FullName>Laura Callahan</D1.FullName>
-    <D2.EmployeeID>8</D2.EmployeeID>
-    <D2.FullName>Laura Callahan</D2.FullName>
-  </Table1>
-  <Table1>
-    <D1.EmployeeID>9</D1.EmployeeID>
-    <D1.FullName>Anne Dodsworth</D1.FullName>
-    <D2.EmployeeID>9</D2.EmployeeID>
-    <D2.FullName>Anne Dodsworth</D2.FullName>
-  </Table1>
-</NewDataSet>
+      <xs:schema id="NewDataSet" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+          <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+              <xs:element name="Table1" msdata:Locale="en-US">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="D1.EmployeeID" type="xs:double" minOccurs="0" />
+                    <xs:element name="D1.FullName" type="xs:string" minOccurs="0" />
+                    <xs:element name="D2.EmployeeID" type="xs:double" minOccurs="0" />
+                    <xs:element name="D2.FullName" type="xs:string" minOccurs="0" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:choice>
+          </xs:complexType>
+        </xs:element>
+      </xs:schema>
+      <Table1>
+        <D1.EmployeeID>2</D1.EmployeeID>
+        <D1.FullName>Nancy Davolio</D1.FullName>
+        <D2.EmployeeID>2</D2.EmployeeID>
+        <D2.FullName>Nancy Davolio</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>4</D1.EmployeeID>
+        <D1.FullName>Andrew Fuller</D1.FullName>
+        <D2.EmployeeID>4</D2.EmployeeID>
+        <D2.FullName>Andrew Fuller</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>6</D1.EmployeeID>
+        <D1.FullName>Janet Leverling</D1.FullName>
+        <D2.EmployeeID>6</D2.EmployeeID>
+        <D2.FullName>Janet Leverling</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>8</D1.EmployeeID>
+        <D1.FullName>Margaret Peacock</D1.FullName>
+        <D2.EmployeeID>8</D2.EmployeeID>
+        <D2.FullName>Margaret Peacock</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>10</D1.EmployeeID>
+        <D1.FullName>Steven Buchanan</D1.FullName>
+        <D2.EmployeeID>10</D2.EmployeeID>
+        <D2.FullName>Steven Buchanan</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>12</D1.EmployeeID>
+        <D1.FullName>Michael Suyama</D1.FullName>
+        <D2.EmployeeID>12</D2.EmployeeID>
+        <D2.FullName>Michael Suyama</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>14</D1.EmployeeID>
+        <D1.FullName>Robert King</D1.FullName>
+        <D2.EmployeeID>14</D2.EmployeeID>
+        <D2.FullName>Robert King</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>16</D1.EmployeeID>
+        <D1.FullName>Laura Callahan</D1.FullName>
+        <D2.EmployeeID>16</D2.EmployeeID>
+        <D2.FullName>Laura Callahan</D2.FullName>
+      </Table1>
+      <Table1>
+        <D1.EmployeeID>18</D1.EmployeeID>
+        <D1.FullName>Anne Dodsworth</D1.FullName>
+        <D2.EmployeeID>18</D2.EmployeeID>
+        <D2.FullName>Anne Dodsworth</D2.FullName>
+      </Table1>
+    </NewDataSet>
   </expectedResults>
   <expectedPlan>
     <executionPlan>
