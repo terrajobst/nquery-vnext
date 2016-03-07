@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using NQuery.Data;
 using NQuery.Symbols.Aggregation;
@@ -83,6 +85,7 @@ namespace NQuery.Tests.Legacy
         [MemberData("GetTestNames")]
         public void LegacyTest_Passes(string name)
         {
+            var testDefinitionPath = GetTestDefinitionPath(name);
             var testDefinition = TestDefinition.FromResource(name);
             var dataContext = CreateDataContext();
             var query = Query.Create(dataContext, testDefinition.CommandText);
@@ -92,20 +95,29 @@ namespace NQuery.Tests.Legacy
                                       .OfType<OrderedQuerySyntax>()
                                       .Any();
 
-            if (testDefinition.ExpectedResults != null)
+            try
             {
-                var actualResults = query.ExecuteDataTable();
-                AssertEqual(testDefinition.ExpectedResults, actualResults, isOrdered);
+                if (testDefinition.ExpectedResults != null)
+                {
+                    var actualResults = query.ExecuteDataTable();
+                    AssertEqual(testDefinition.ExpectedResults, actualResults, isOrdered);
+                }
+                else if (testDefinition.ExpectedDiagnostics.Any())
+                {
+                    var actualException = Assert.Throws<CompilationException>(() => query.ExecuteDataTable());
+                    //AssertEqual(testDefinition.ExpectedDiagnostics, actualException.Diagnostics);
+                }
+                else if (testDefinition.ExpectedRuntimeError != null)
+                {
+                    var actualException = Assert.ThrowsAny<Exception>(() => query.ExecuteDataTable());
+                    Assert.Equal(testDefinition.ExpectedRuntimeError, actualException.Message);
+                }
             }
-            else if (testDefinition.ExpectedDiagnostics.Any())
+            catch (Exception ex)
             {
-                var actualException = Assert.Throws<CompilationException>(() => query.ExecuteDataTable());
-                AssertEqual(testDefinition.ExpectedDiagnostics, actualException.Diagnostics);
-            }
-            else if (testDefinition.ExpectedRuntimeError != null)
-            {
-                var actualException = Assert.Throws<Exception>(() => query.ExecuteDataTable());
-                Assert.Equal(testDefinition.ExpectedRuntimeError, actualException.Message);
+                var text = "Error in legacy test:" + Environment.NewLine + Environment.NewLine +
+                           "   in " + testDefinitionPath;
+                throw new Exception(text, ex);
             }
         }
 
@@ -119,6 +131,12 @@ namespace NQuery.Tests.Legacy
             return dataContext;
         }
 
+        private static string GetTestDefinitionPath(string testName, [CallerFilePath] string sourcePath = null)
+        {
+            var folderPath = Path.GetDirectoryName(sourcePath);
+            var relativePath = testName.Replace(".", "\\") + ".xml";
+            return Path.ChangeExtension(folderPath, relativePath);
+        }
 
         private static void AssertEqual(DataTable expectedResults, DataTable actualResults, bool isOrdered)
         {
