@@ -203,8 +203,6 @@
     <EmbeddedResource Include="Legacy\ErrorTests\AggregateInGroupBy.xml" />
     <EmbeddedResource Include="Legacy\ErrorTests\AggregateInOn.xml" />
     <EmbeddedResource Include="Legacy\ErrorTests\AggregateInWhere.xml" />
-    <EmbeddedResource Include="Legacy\ErrorTests\AsteriskModifierNotAllowed.xml" />
-    <EmbeddedResource Include="Legacy\ErrorTests\CannotLoadTypeAssembly.xml" />
     <EmbeddedResource Include="Legacy\ErrorTests\ConstantExpressionInOrderBy.xml" />
     <EmbeddedResource Include="Legacy\ErrorTests\CteContainsDistinct.xml" />
     <EmbeddedResource Include="Legacy\ErrorTests\CteContainsGroupByHavingOrAggregate.xml" />
