@@ -31,6 +31,17 @@ namespace NQuery.Tests
         }
 
         [Fact]
+        public void Expression_Queries_Exists_NoFilter()
+        {
+            var dataContext = NorthwindDataContext.Instance;
+            var text = "EXISTS (SELECT * FROM Employees)";
+            var expression = Expression<bool>.Create(dataContext, text);
+            var result = expression.Evaluate();
+
+            Assert.True(result);
+        }
+
+        [Fact]
         public void Expression_Queries_All()
         {
             var dataContext = NorthwindDataContext.Instance;

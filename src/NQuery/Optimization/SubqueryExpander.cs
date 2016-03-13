@@ -131,7 +131,13 @@ namespace NQuery.Optimization
         {
             var relation = RewriteRelation(node.Relation);
 
-            var facory = node.Relation.GetOutputValues().First().Factory;
+            // TODO: This isn't ideal. In many cases, the relation will not have any output values.
+            //       This means, we've to create a new value slot factory which in turn means that
+            //       we have create multiple slots with the same name. It seems we should think of
+            //       a better way to carry the factories. Maybe we should just expose on specific
+            //       bound nodes?
+
+            var facory = node.Relation.GetOutputValues().FirstOrDefault()?.Factory ?? new ValueSlotFactory();
 
             var valueSlot = facory.CreateTemporary(typeof(bool));
             var subquery = new Subquery(SubqueryKind.Exists, valueSlot, relation, CurrentPassthru);
