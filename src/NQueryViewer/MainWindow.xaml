@@ -33,6 +33,16 @@
                           Header="Ex_plain"
                           InputGestureText="Ctrl+L"
                           Click="QueryExplainMenuItem_OnClick" />
+                <Separator />
+                <MenuItem Header="Mode">
+                    <MenuItem x:Name="QueryModeQueryMenuItem"
+                              Header="_Query"
+                              IsChecked="True"
+                              Click="QueryModeQueryMenuItem_OnClick"/>
+                    <MenuItem x:Name="QueryModeExpressionMenuItem"
+                              Header="_Expression"
+                              Click="QueryModeExpressionMenuItem_OnClick"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Tools">
                 <MenuItem x:Name="ToolsViewSyntaxMenuItem"

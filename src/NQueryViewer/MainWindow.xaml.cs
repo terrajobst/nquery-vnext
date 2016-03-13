@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 
 using NQuery;
+using NQuery.Authoring;
 using NQuery.Data;
 
 using NQueryViewer.Editor;
@@ -166,6 +167,40 @@ namespace NQueryViewer
             BottomToolWindowTabControl.SelectedItem = ExecutionPlanTabItem;
         }
 
+        private void SetDocumentKind(DocumentKind kind)
+        {
+            if (CurrentEditorView != null)
+                CurrentEditorView.Workspace.DocumentKind = kind;
+        }
+
+        private DocumentKind GetDocumentKind()
+        {
+            return CurrentEditorView?.Workspace.DocumentKind ?? DocumentKind.Query;
+        }
+
+        private void UpdateEditorState()
+        {
+            UpdateDocumentState();
+
+            if (CurrentEditorView != null)
+                CurrentEditorView.Focus();
+        }
+
+        private void UpdateDocumentState()
+        {
+            UpdateTree();
+            UpdateDiagnostics();
+            UpdateShowPlan();
+            UpdateDocumentKind();
+        }
+
+        private void UpdateDocumentKind()
+        {
+            var currentKind = GetDocumentKind();
+            QueryModeQueryMenuItem.IsChecked = currentKind == DocumentKind.Query;
+            QueryModeExpressionMenuItem.IsChecked = currentKind == DocumentKind.Expression;
+        }
+
         private async void UpdateTree()
         {
             var isVisible = ToolsViewSyntaxMenuItem.IsChecked;
@@ -294,6 +329,16 @@ namespace NQueryViewer
             ExplainQuery();
         }
 
+        private void QueryModeQueryMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetDocumentKind(DocumentKind.Query);
+        }
+
+        private void QueryModeExpressionMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            SetDocumentKind(DocumentKind.Expression);
+        }
+
         private void ToolsViewSyntaxMenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             ToolsViewSyntaxMenuItem.IsChecked = !ToolsViewSyntaxMenuItem.IsChecked;
@@ -319,15 +364,7 @@ namespace NQueryViewer
 
         private void TabControlOnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
-            {
-                UpdateTree();
-                UpdateDiagnostics();
-                UpdateShowPlan();
-
-                if (CurrentEditorView != null)
-                    CurrentEditorView.Focus();
-            }));
+            Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(UpdateEditorState));
 
             DocumentTabControl.Visibility = DocumentTabControl.Items.Count > 0
                                         ? Visibility.Visible
@@ -358,9 +395,7 @@ namespace NQueryViewer
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateTree();
-            UpdateDiagnostics();
-            UpdateShowPlan();
+            UpdateDocumentState();
         }
 
         private void DiagnosticGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
