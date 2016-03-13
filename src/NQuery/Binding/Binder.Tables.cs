@@ -142,6 +142,9 @@ namespace NQuery.Binding
             var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((ti, c) => valueSlotFromColumn[c]);
             var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
             var boundTableReference = new BoundDerivedTableRelation(derivedTableInstance, query.Relation);
+
+            QueryState.IntroducedTables.Add(derivedTableInstance, node.Name);
+
             return boundTableReference;
         }
     }

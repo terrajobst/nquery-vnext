@@ -1,7 +1,5 @@
 ﻿using System;
-
 using NQuery.Binding;
-
 using Xunit;
 
 namespace NQuery.Tests.Binding

@@ -124,5 +124,33 @@ namespace NQuery.Tests.Binding
             Assert.Equal(0, diagnostics.Length);
             Assert.Equal(tableColumnNames.AsEnumerable(), selectStarColumnNames.AsEnumerable());
         }
+
+        [Fact]
+        public void SelectStar_HasAssociatedDerivedTableColumns()
+        {
+            var syntaxTree = SyntaxTree.ParseQuery("SELECT * FROM (SELECT Id, Name FROM Table) t");
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
+            var selectStar = compilation.SyntaxTree.Root
+                                        .DescendantNodes()
+                                        .OfType<WildcardSelectColumnSyntax>()
+                                        .Single();
+            var tableInstance = compilation.SyntaxTree.Root
+                                           .DescendantNodes()
+                                           .OfType<DerivedTableReferenceSyntax>()
+                                           .Single();
+            var semanticModel = compilation.GetSemanticModel();
+            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+
+            var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)
+                                                .ColumnInstances
+                                                .Select(c => c.Name)
+                                                .ToImmutableArray();
+            var selectStarColumnNames = semanticModel.GetDeclaredSymbols(selectStar)
+                                                     .Select(qc => qc.Name)
+                                                     .ToImmutableArray();
+
+            Assert.Equal(0, diagnostics.Length);
+            Assert.Equal(tableColumnNames.AsEnumerable(), selectStarColumnNames.AsEnumerable());
+        }
     }
 }
