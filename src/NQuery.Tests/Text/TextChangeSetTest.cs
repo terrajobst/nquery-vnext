@@ -74,5 +74,34 @@ namespace NQuery.Tests.Text
 
             Assert.Equal("Cannot apply change '[5,5) => {abc}' because it intersects with another pending change.", ex.Message);
         }
+
+        [Theory]
+        [InlineData("lorem *ipsum{:xyz}")]
+        [InlineData("lorem ipsum{:xyz}*")]
+        [InlineData("lorem *{ipsum:xyz}")]
+        [InlineData("lorem {ipsum:xyz}*")]
+        [InlineData("lorem *{ipsum:}")]
+        [InlineData("lorem {ipsum:}*")]
+        [InlineData("lorem {ip*sum:xy*z}")]
+        [InlineData("lorem {ips*um:xyz*}")]
+        [InlineData("lorem {ipsu*m:xyz*}")]
+        [InlineData("lorem {ipsum*:xyz*}")]
+        public void TextChangeSet_TranslatesPosition(string text)
+        {
+            var annotatedText = AnnotatedText.Parse(text);
+            var change = Assert.Single(annotatedText.Changes);
+            Assert.Empty(annotatedText.Spans);
+
+            var oldText = annotatedText.Text;
+            var oldPosition = oldText.IndexOf("*");
+            Assert.True(oldPosition >= 0);
+
+            var changeSet = new TextChangeSet();
+            changeSet.Add(change);
+
+            var newText = SourceText.From(oldText).WithChanges(change).GetText();
+            var newPosition = changeSet.TranslatePosition(oldPosition);
+            Assert.Equal('*', newText[newPosition]);
+        }
     }
 }
