@@ -420,7 +420,7 @@ namespace NQuery
                        : GetParenthesizedIdentifier(name);
         }
 
-        public static bool IsValidIdentifier(string name)
+        public static bool IsValidIdentifierOrKeyword(string name)
         {
             if (name == null)
                 throw new ArgumentNullException(nameof(name));
@@ -435,7 +435,16 @@ namespace NQuery
             if (!name.Skip(1).All(c => char.IsLetterOrDigit(c) || c == '_' || c == '$'))
                 return false;
 
-            return GetKeywordKind(name) == SyntaxKind.IdentifierToken;
+            return true;
+        }
+
+        public static bool IsValidIdentifier(string name)
+        {
+            if (name == null)
+                throw new ArgumentNullException(nameof(name));
+
+            return IsValidIdentifierOrKeyword(name) &&
+                   GetKeywordKind(name) == SyntaxKind.IdentifierToken;
         }
 
         public static string GetParenthesizedIdentifier(string name)

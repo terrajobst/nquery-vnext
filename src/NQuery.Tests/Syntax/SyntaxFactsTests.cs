@@ -365,6 +365,30 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void SyntaxFacts_Identifier_IsValidIdentifierOrKeyword_ReturnsTrue_ForReservedKeywords()
+        {
+            foreach (var keywordKind in SyntaxFacts.GetReservedKeywordKinds())
+            {
+                var text = keywordKind.GetText();
+                var isValid = SyntaxFacts.IsValidIdentifierOrKeyword(text);
+
+                Assert.True(isValid);
+            }
+        }
+
+        [Fact]
+        public void SyntaxFacts_Identifier_IsValidIdentifierOrKeyword_ReturnsTrue_ForContextualKeywords()
+        {
+            foreach (var keywordKind in SyntaxFacts.GetContextualKeywordKinds())
+            {
+                var text = keywordKind.GetText();
+                var isValid = SyntaxFacts.IsValidIdentifierOrKeyword(text);
+
+                Assert.True(isValid);
+            }
+        }
+
+        [Fact]
         public void SyntaxFacts_Identifier_GetParenthesizedIdentifier_ReturnsIdentifier()
         {
             const string text = "lorem ipsum";
