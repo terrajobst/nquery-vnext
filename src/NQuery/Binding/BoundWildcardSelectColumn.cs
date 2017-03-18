@@ -15,7 +15,7 @@ namespace NQuery.Binding
         {
             Table = table;
             _tableColumns = columns.ToImmutableArray();
-            QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlot)).ToImmutableArray();
+            QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Column, c.Name, c.ValueSlot)).ToImmutableArray();
         }
 
         public override BoundNodeKind Kind

@@ -577,7 +577,7 @@ namespace NQuery.Binding
 
                 var resultColumn = queryColum.ValueSlot == valueSlot
                     ? queryColum
-                    : new QueryColumnInstanceSymbol(queryColum.Name, valueSlot);
+                    : new QueryColumnInstanceSymbol(queryColum.Column, queryColum.Name, valueSlot);
 
                 result.Add(resultColumn);
             }
@@ -880,7 +880,8 @@ namespace NQuery.Binding
                 : specifiedColumnNames.Select(t => t.Identifier.ValueText);
 
             var columns = queryColumns.Take(columnCount)
-                                      .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
+                                      .Zip(columnNames, (c, n) => new QueryColumnSymbol(n, c))
+                                      .Cast<ColumnSymbol>()
                                       .Where(c => !string.IsNullOrEmpty(c.Name))
                                       .ToImmutableArray();
 
@@ -1089,7 +1090,7 @@ namespace NQuery.Binding
                 QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
             }
 
-            var queryColumn = new QueryColumnInstanceSymbol(name, valueSlot);
+            var queryColumn = new QueryColumnInstanceSymbol(null, name, valueSlot);
 
             return new BoundSelectColumn(queryColumn);
         }

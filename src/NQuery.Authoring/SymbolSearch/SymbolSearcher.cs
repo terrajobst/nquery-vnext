@@ -1,11 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using NQuery.Symbols;
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.SymbolSearch
 {
+    // These should be unit tests:
+    //
+    //  SELECT d.FullName
+    //  FROM    (
+    //              SELECT e.*,
+    //                      e.FirstName + ' ' + e.LastName AS FullName
+    //              FROM    Employees e
+    //              ORDER BY FullName
+    //          ) d
+    //
+    //  ----
+    //
+    //  WITH LondonEmps AS
+    //  (
+    //      SELECT e.FirstName
+    //      FROM    Employees e
+    //      HAVING City = 'London'
+    //      ORDER BY FirstName
+    //  )
+    //  SELECT d.FirstName
+    //  FROM LondonEmps d
+    //
+    //  ----
+    //
+    //  WITH LondonEmps(FirstName) AS
+    //  (
+    //      SELECT e.FirstName
+    //      FROM    Employees e
+    //      HAVING City = 'London'
+    //      ORDER BY FirstName
+    //  )
+    //  SELECT d.FirstName
+    //  FROM LondonEmps d
+
     public static class SymbolSearcher
     {
         public static SymbolSpan? FindSymbol(this SemanticModel semanticModel, int position)
@@ -32,56 +66,68 @@ namespace NQuery.Authoring.SymbolSearch
 
             return from n in syntaxTree.Root.DescendantNodes()
                    from s in GetSymbolSpans(semanticModel, n)
-                   where s.Symbol == symbol
+                   where IsMatch(s.Symbol, symbol) ||
+                         IsMatch(symbol, s.Symbol)
                    select s;
+        }
+
+        private static bool IsMatch(Symbol symbol1, Symbol symbol2)
+        {
+            if (symbol1 == symbol2)
+                return true;
+
+            if (symbol1 is QueryColumnSymbol queryColumnSymbol && queryColumnSymbol.QueryOutput == symbol2)
+                return true;
+
+            if (symbol1 is TableColumnInstanceSymbol tci && tci.Column == symbol2)
+                return true;
+
+            if (symbol1 is TableColumnInstanceSymbol x && x.Column is QueryColumnSymbol y && y.QueryOutput == symbol2)
+                return true;
+
+            return false;
         }
 
         private static IEnumerable<SymbolSpan> GetSymbolSpans(SemanticModel semanticModel, SyntaxNode node)
         {
-            switch (node.Kind)
+            switch (node)
             {
-                case SyntaxKind.NameExpression:
+                case NameExpressionSyntax expression:
                 {
-                    var expression = (NameExpressionSyntax) node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol != null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
-                case SyntaxKind.PropertyAccessExpression:
+                case PropertyAccessExpressionSyntax expression:
                 {
-                    var expression = (PropertyAccessExpressionSyntax) node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol != null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
-                case SyntaxKind.MethodInvocationExpression:
+                case MethodInvocationExpressionSyntax expression:
                 {
-                    var expression = (MethodInvocationExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol != null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
-                case SyntaxKind.FunctionInvocationExpression:
+                case FunctionInvocationExpressionSyntax expression:
                 {
-                    var expression = (FunctionInvocationExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol != null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
-                case SyntaxKind.CountAllExpression:
+                case CountAllExpressionSyntax expression:
                 {
-                    var countAllExpression = (CountAllExpressionSyntax)node;
-                    var symbol = semanticModel.GetSymbol(countAllExpression);
-                    yield return SymbolSpan.CreateReference(symbol, countAllExpression.Name.Span);
+                    var symbol = semanticModel.GetSymbol(expression);
+                    yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
-                case SyntaxKind.ExpressionSelectColumn:
+                case ExpressionSelectColumnSyntax selectColumn:
                 {
-                    var selectColumn = (ExpressionSelectColumnSyntax)node;
                     if (selectColumn.Alias != null)
                     {
                         var symbol = semanticModel.GetDeclaredSymbol(selectColumn);
@@ -89,9 +135,8 @@ namespace NQuery.Authoring.SymbolSearch
                     }
                     break;
                 }
-                case SyntaxKind.CommonTableExpression:
+                case CommonTableExpressionSyntax commonTableExpression:
                 {
-                    var commonTableExpression = (CommonTableExpressionSyntax)node;
                     var symbol = semanticModel.GetDeclaredSymbol(commonTableExpression);
                     yield return SymbolSpan.CreateDefinition(symbol, commonTableExpression.Name.Span);
 
@@ -106,16 +151,14 @@ namespace NQuery.Authoring.SymbolSearch
                     }
                     break;
                 }
-                case SyntaxKind.DerivedTableReference:
+                case DerivedTableReferenceSyntax derivedTable:
                 {
-                    var derivedTable = (DerivedTableReferenceSyntax)node;
                     var symbol = semanticModel.GetDeclaredSymbol(derivedTable);
                     yield return SymbolSpan.CreateDefinition(symbol, derivedTable.Name.Span);
                     break;
                 }
-                case SyntaxKind.NamedTableReference:
+                case NamedTableReferenceSyntax namedTable:
                 {
-                    var namedTable = (NamedTableReferenceSyntax)node;
                     var tableInstanceSymbol = semanticModel.GetDeclaredSymbol(namedTable);
                     if (tableInstanceSymbol != null)
                     {

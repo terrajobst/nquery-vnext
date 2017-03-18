@@ -2,7 +2,7 @@ using System;
 
 namespace NQuery.Symbols
 {
-    public class ColumnSymbol : Symbol
+    public abstract class ColumnSymbol : Symbol
     {
         internal ColumnSymbol(string name, Type type)
             : base(name)

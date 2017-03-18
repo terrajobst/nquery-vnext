@@ -6,9 +6,10 @@ namespace NQuery.Symbols
 {
     public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
     {
-        internal QueryColumnInstanceSymbol(string name, ValueSlot valueSlot)
+        internal QueryColumnInstanceSymbol(ColumnSymbol column, string name, ValueSlot valueSlot)
             : base(name)
         {
+            Column = column;
             ValueSlot = valueSlot;
         }
 
@@ -16,6 +17,8 @@ namespace NQuery.Symbols
         {
             get { return SymbolKind.QueryColumnInstance; }
         }
+
+        public ColumnSymbol Column { get; }
 
         internal override ValueSlot ValueSlot { get; }
     }
