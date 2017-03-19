@@ -110,7 +110,17 @@ namespace NQuery.Syntax
 
         public bool Contains(TNode item)
         {
-            return _entries.Any(e => e.Node == item);
+            return IndexOf(item) >= 0;
+        }
+
+        public bool Contains(SyntaxToken separator)
+        {
+            return IndexOf(separator) >= 0;
+        }
+
+        public bool Contains(SyntaxNodeOrToken itemOrSeparator)
+        {
+            return IndexOf(itemOrSeparator) >= 0;
         }
 
         void ICollection<TNode>.Clear()
@@ -123,9 +133,40 @@ namespace NQuery.Syntax
             throw new NotSupportedException();
         }
 
-        int IList<TNode>.IndexOf(TNode item)
+        public int IndexOf(TNode item)
         {
-            throw new NotSupportedException();
+            for (int i = 0; i < _entries.Length; i++)
+            {
+                if (_entries[i].Node == item)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public int IndexOf(SyntaxToken separator)
+        {
+            for (int i = 0; i < _entries.Length; i++)
+            {
+                if (_entries[i].Separator == separator)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public int IndexOf(SyntaxNodeOrToken itemOrSeparator)
+        {
+            if (itemOrSeparator.IsNode)
+            {
+                var node = itemOrSeparator.AsNode() as TNode;
+                if (node == null)
+                    return -1;
+
+                return IndexOf(node);
+            }
+
+            return IndexOf(itemOrSeparator.AsToken());
         }
 
         void IList<TNode>.Insert(int index, TNode item)
