@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NQuery.Authoring.Renaming;
 using NQuery.Text;
 using Xunit;
@@ -29,8 +30,8 @@ namespace NQuery.Authoring.Tests.Renaming
             var expectedQuery = expectedQueryWithSpans.NormalizeCode().ParseSpans(out var expectedSpans);
 
             Assert.True(result.IsRenamed);
-            Assert.Equal(expectedQuery, result.Document.Text.GetText());
-            Assert.Equal(expectedSpans, result.Spans);
+            Assert.Equal(expectedQuery, result.NewDocument.Text.GetText());
+            Assert.Equal((IEnumerable<TextSpan>)expectedSpans, result.NewSpans);
         }
 
         private async Task AssertIsInvalid(string queryWithEdit)

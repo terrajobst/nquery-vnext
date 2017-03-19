@@ -12,18 +12,20 @@ namespace NQuery.Authoring.Renaming
     {
         private RenamedDocument(Document document)
         {
-            IsRenamed = false;
-            Document = Document;
-            EditSpan = default(TextSpan);
-            OtherSpans = ImmutableArray<TextSpan>.Empty;
+            OldDocument = document;
+            NewDocument = document;
+            OldSpans = ImmutableArray<TextSpan>.Empty;
+            NewSpans = ImmutableArray<TextSpan>.Empty;
+            Changes = ImmutableArray<TextChange>.Empty;
         }
 
-        private RenamedDocument(Document document, TextSpan editSpan, ImmutableArray<TextSpan> otherSpans)
+        private RenamedDocument(Document oldDocument, Document newDocument, ImmutableArray<TextSpan> oldSpans, ImmutableArray<TextSpan> newSpans, ImmutableArray<TextChange> changes)
         {
-            IsRenamed = true;
-            Document = document;
-            EditSpan = editSpan;
-            OtherSpans = otherSpans;
+            OldDocument = oldDocument;
+            NewDocument = newDocument;
+            OldSpans = oldSpans;
+            NewSpans = newSpans;
+            Changes = changes;
         }
 
         public static async Task<RenamedDocument> CreateAsync(Document document, TextChange change)
@@ -46,14 +48,35 @@ namespace NQuery.Authoring.Renaming
             var changeSet = TextChangeSet.Create(resultingChanges);
 
             var newLength = newIdentifer.Length;
-            var allSpans = symbolSpans.Select(ss => new TextSpan(changeSet.TranslatePosition(ss.Span.Start), newLength)).ToImmutableArray();
-            var editSpan = new TextSpan(changeSet.TranslatePosition(symbolSpan.Value.Span.Start), newLength);
-            var otherSpans = allSpans.Where(s => s != editSpan).ToImmutableArray();
+            var oldSpans = symbolSpans.Select(ss => ss.Span).ToImmutableArray();
+            var newSpans = symbolSpans.Select(ss => new TextSpan(changeSet.TranslatePosition(ss.Span.Start), newLength)).ToImmutableArray();
 
             var newText = document.Text.WithChanges(resultingChanges);
             var newDocument = document.WithText(newText);
 
-            return new RenamedDocument(newDocument, editSpan, otherSpans);
+            return new RenamedDocument(document, newDocument, oldSpans, newSpans, resultingChanges);
+        }
+
+        public async Task<RenamedDocument> ApplyAsync(TextChange change)
+        {
+            var newSyntaxTree = await NewDocument.GetSyntaxTreeAsync();
+
+            for (int i = 0; i < NewSpans.Length; i++)
+            {
+                var oldSpan = OldSpans[i];
+                var newSpan = OldSpans[i];
+
+                if (newSpan.IntersectsWith(change.Span))
+                {
+                    if (TryApplyIdentifierEdit(newSyntaxTree, change, out var token, out var s, out var newIdentifier))
+                    {
+                        var modifiedChange = TextChange.ForReplacement(oldSpan, newIdentifier);
+                        return await CreateAsync(OldDocument, modifiedChange);
+                    }
+                }
+            }
+
+            return new RenamedDocument(NewDocument);
         }
 
         private static bool TryApplyIdentifierEdit(SyntaxTree syntaxTree, TextChange change, out SyntaxToken token, out TextSpan newSpan, out string newIdentifier)
@@ -128,14 +151,16 @@ namespace NQuery.Authoring.Renaming
             return null;
         }
 
-        public bool IsRenamed { get; }
+        public bool IsRenamed => Changes.Any();
 
-        public Document Document { get; }
+        public Document OldDocument { get; }
 
-        public TextSpan EditSpan { get; }
+        public Document NewDocument { get; }
+       
+        public ImmutableArray<TextSpan> OldSpans { get; }
 
-        public ImmutableArray<TextSpan> OtherSpans { get; }
+        public ImmutableArray<TextSpan> NewSpans { get; }
 
-        public IEnumerable<TextSpan> Spans => new[] { EditSpan }.Concat(OtherSpans).OrderBy(s => s.Start);
+        public ImmutableArray<TextChange> Changes { get; }
     }
 }
