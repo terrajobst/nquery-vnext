@@ -85,7 +85,7 @@ namespace NQuery.Text
 
                     if (oldLocation >= newSpan.End)
                     {
-                        var adjustedLocation = newSpan.End - 1;
+                        var adjustedLocation = newSpan.End;
                         var delta = adjustedLocation - oldLocation;
                         accumulativeDelta += delta;
                     }

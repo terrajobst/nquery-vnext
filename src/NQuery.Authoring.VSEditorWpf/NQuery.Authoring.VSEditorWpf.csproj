@@ -114,6 +114,7 @@
     <Compile Include="Renaming\RenameKeyProcessorProvider.cs" />
     <Compile Include="Renaming\RenameMarkerClassifier.cs" />
     <Compile Include="Renaming\RenameMarkerClassifierProvider.cs" />
+    <Compile Include="Renaming\RenameSelectionTracker.cs" />
     <Compile Include="Renaming\RenameService.cs" />
     <Compile Include="Renaming\RenameService.RenameSession.cs" />
     <Compile Include="Renaming\RenameService.RenameStartMarker.cs" />

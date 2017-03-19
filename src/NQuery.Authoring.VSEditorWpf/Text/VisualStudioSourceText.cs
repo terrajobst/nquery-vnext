@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Microsoft.VisualStudio.Text;
 
 using NQuery.Text;
@@ -45,6 +45,38 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         public override TextLineCollection Lines
         {
             get { return _lines; }
+        }
+
+        public override IEnumerable<TextChange> GetChanges(SourceText oldText)
+        {
+            if (oldText is VisualStudioSourceText vsOldText)
+            {
+                var oldSnapshot = vsOldText.Snapshot;
+                var newSnapshot = Snapshot;
+
+                var current = oldSnapshot.Version;
+                var changes = new List<TextChange>();
+
+                while (current != null)
+                {
+                    if (current == newSnapshot.Version)
+                        return changes;
+
+                    if (current.Changes == null)
+                        break;
+
+                    foreach (var vsChange in current.Changes)
+                    {
+                        var span = new TextSpan(vsChange.OldPosition, vsChange.OldLength);
+                        var change = new TextChange(span, vsChange.NewText);
+                        changes.Add(change);
+                    }
+
+                    current = current.Next;
+                }
+            }
+
+            return base.GetChanges(oldText);
         }
     }
 }

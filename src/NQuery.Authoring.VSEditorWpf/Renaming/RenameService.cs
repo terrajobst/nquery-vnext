@@ -27,14 +27,9 @@ namespace NQuery.Authoring.VSEditorWpf.Renaming
             var workspace = _textBuffer.GetWorkspace();
             var document = workspace.CurrentDocument;
             var position = point.TranslateTo(document.GetTextSnapshot(), PointTrackingMode.Negative).Position;
+            var renamedDocument = await RenamedDocument.CreateAsync(document, position);
 
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var token = syntaxTree.Root.FindToken(position);
-            var change = TextChange.ForReplacement(token.Span, token.Text);
-
-            var renamedDocument = await RenamedDocument.CreateAsync(document, change);
-
-            if (!renamedDocument.IsRenamed)
+            if (!renamedDocument.IsValid)
                 return;
 
             ActiveSession = new RenameSession(this, _textBuffer, _textBufferUndoManager, renamedDocument);

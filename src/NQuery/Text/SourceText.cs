@@ -151,7 +151,7 @@ namespace NQuery.Text
             return false;
         }
 
-        public IEnumerable<TextChange> GetChanges(SourceText oldText)
+        public virtual IEnumerable<TextChange> GetChanges(SourceText oldText)
         {
             if (oldText == null)
                 throw new ArgumentNullException(nameof(oldText));

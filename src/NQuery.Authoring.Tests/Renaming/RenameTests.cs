@@ -15,13 +15,13 @@ namespace NQuery.Authoring.Tests.Renaming
             var change = Assert.Single(annotatedText.Changes);
             var query = annotatedText.Text;
 
-            var text = SourceText.From(query);
-            var workspace = new Workspace(text.Container)
-            {
-                DataContext = NorthwindDataContext.Instance,
-                DocumentKind = DocumentKind.Query
-            };
-            return RenamedDocument.CreateAsync(workspace.CurrentDocument, change);
+            var oldText = SourceText.From(query);
+            var oldDocument = new Document(DocumentKind.Query, NorthwindDataContext.Instance, oldText);
+
+            var newText = oldText.WithChanges(change);
+            var newDocument = oldDocument.WithText(newText);
+
+            return RenamedDocument.CreateAsync(oldDocument, newDocument);
         }
 
         private async Task AssertIsMatch(string queryWithEdit, string expectedQueryWithSpans)
@@ -29,15 +29,15 @@ namespace NQuery.Authoring.Tests.Renaming
             var result = await Create(queryWithEdit.NormalizeCode());
             var expectedQuery = expectedQueryWithSpans.NormalizeCode().ParseSpans(out var expectedSpans);
 
-            Assert.True(result.IsRenamed);
+            Assert.True(result.IsValid);
             Assert.Equal(expectedQuery, result.NewDocument.Text.GetText());
-            Assert.Equal((IEnumerable<TextSpan>)expectedSpans, result.NewSpans);
+            Assert.Equal((IEnumerable<TextSpan>)expectedSpans, result.Spans);
         }
 
         private async Task AssertIsInvalid(string queryWithEdit)
         {
             var result = await Create(queryWithEdit.NormalizeCode());
-            Assert.False(result.IsRenamed);
+            Assert.False(result.IsValid);
         }
 
         [Fact]

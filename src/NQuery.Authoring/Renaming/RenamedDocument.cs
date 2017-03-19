@@ -14,69 +14,118 @@ namespace NQuery.Authoring.Renaming
         {
             OldDocument = document;
             NewDocument = document;
-            OldSpans = ImmutableArray<TextSpan>.Empty;
-            NewSpans = ImmutableArray<TextSpan>.Empty;
+            Spans = ImmutableArray<TextSpan>.Empty;
             Changes = ImmutableArray<TextChange>.Empty;
         }
 
-        private RenamedDocument(Document oldDocument, Document newDocument, ImmutableArray<TextSpan> oldSpans, ImmutableArray<TextSpan> newSpans, ImmutableArray<TextChange> changes)
+        private RenamedDocument(Document oldDocument, Document newDocument, ImmutableArray<TextSpan> newSpans, ImmutableArray<TextChange> changes)
         {
             OldDocument = oldDocument;
             NewDocument = newDocument;
-            OldSpans = oldSpans;
-            NewSpans = newSpans;
+            Spans = newSpans;
             Changes = changes;
         }
 
-        public static async Task<RenamedDocument> CreateAsync(Document document, TextChange change)
+        public static async Task<RenamedDocument> CreateAsync(Document document, int position)
         {
             var semanticModel = await document.GetSemanticModelAsync();
 
-            if (!TryApplyIdentifierEdit(semanticModel.SyntaxTree, change, out var token, out var newSpan, out var newIdentifer))
-                return new RenamedDocument(document);
+            var symbolSpan = semanticModel.FindSymbol(position);
+            if (symbolSpan != null)
+            {
+                var symbolSpans = semanticModel.FindUsages(symbolSpan.Value.Symbol).ToImmutableArray();
+                if (symbolSpans.Any(ss => ss.Kind == SymbolSpanKind.Definition))
+                {
+                    var resultSpans = symbolSpans.Select(ss => ss.Span).ToImmutableArray();
+                    var renames = ImmutableArray<TextChange>.Empty;
 
-            var symbolSpan = semanticModel.FindSymbol(token.Span.Start);
-            if (symbolSpan == null)
-                return new RenamedDocument(document);
+                    return new RenamedDocument(document, document, resultSpans, renames);
+                }
+            }
 
-            var symbolSpans = semanticModel.FindUsages(symbolSpan.Value.Symbol).ToImmutableArray();
-            if (!symbolSpans.Any(ss => ss.Kind == SymbolSpanKind.Definition))
-                return new RenamedDocument(document);
-
-            var resultingChanges = symbolSpans.Select(ss => new TextChange(ss.Span, newIdentifer)).ToImmutableArray();
-
-            var changeSet = TextChangeSet.Create(resultingChanges);
-
-            var newLength = newIdentifer.Length;
-            var oldSpans = symbolSpans.Select(ss => ss.Span).ToImmutableArray();
-            var newSpans = symbolSpans.Select(ss => new TextSpan(changeSet.TranslatePosition(ss.Span.Start), newLength)).ToImmutableArray();
-
-            var newText = document.Text.WithChanges(resultingChanges);
-            var newDocument = document.WithText(newText);
-
-            return new RenamedDocument(document, newDocument, oldSpans, newSpans, resultingChanges);
+            return new RenamedDocument(document);
         }
 
-        public async Task<RenamedDocument> ApplyAsync(TextChange change)
+        public static async Task<RenamedDocument> CreateAsync(Document oldDocument, Document newDocument)
         {
-            var newSyntaxTree = await NewDocument.GetSyntaxTreeAsync();
-
-            for (int i = 0; i < NewSpans.Length; i++)
+            if (TryGetChange(oldDocument, newDocument, out var change))
             {
-                var oldSpan = OldSpans[i];
-                var newSpan = OldSpans[i];
-
-                if (newSpan.IntersectsWith(change.Span))
+                if (TryApplyIdentifierEdit(await oldDocument.GetSyntaxTreeAsync(), change, out var token, out var newIdentifierSpan, out var newIdentifer) ||
+                    TryPostIdentifierEdit(await newDocument.GetSyntaxTreeAsync(), change, out token, out newIdentifierSpan, out newIdentifer))
                 {
-                    if (TryApplyIdentifierEdit(newSyntaxTree, change, out var token, out var s, out var newIdentifier))
+                    var semanticModel = await oldDocument.GetSemanticModelAsync();
+                    var symbolSpan = semanticModel.FindSymbol(token.Span.Start);
+                    if (symbolSpan != null)
                     {
-                        var modifiedChange = TextChange.ForReplacement(oldSpan, newIdentifier);
-                        return await CreateAsync(OldDocument, modifiedChange);
+                        var symbolSpans = semanticModel.FindUsages(symbolSpan.Value.Symbol).ToImmutableArray();
+                        if (symbolSpans.Any(ss => ss.Kind == SymbolSpanKind.Definition))
+                        {
+                            var oldToNewChangeSet = TextChangeSet.Create(new[] { change });
+                            var newDocumentSpans = symbolSpans.Select(ss => new TextSpan(oldToNewChangeSet.TranslatePosition(ss.Span.Start), ss.Span.Length))
+                                                              .ToImmutableArray();
+
+                            var renames = newDocumentSpans.Where(s => !newIdentifierSpan.IntersectsWith(s))
+                                                          .Select(s => TextChange.ForReplacement(s, newIdentifer))
+                                                          .ToImmutableArray();
+
+                            var resultText = newDocument.Text.WithChanges(renames);
+                            var resultDocument = newDocument.WithText(resultText);
+
+                            var renameSet = TextChangeSet.Create(renames);
+
+                            var resultSpans = newDocumentSpans.Select(s => new TextSpan(renameSet.TranslatePosition(s.Start), newIdentifer.Length))
+                                                              .ToImmutableArray();
+
+                            return new RenamedDocument(newDocument, resultDocument, resultSpans, renames);
+                        }
+                    }
+                }
+            }
+
+            return new RenamedDocument(newDocument);
+        }
+
+        public Task<RenamedDocument> ApplyAsync(TextChange change)
+        {
+            var newText = NewDocument.Text.WithChanges(change);
+            var newDocument = NewDocument.WithText(newText);
+            return ApplyAsync(newDocument);
+        }
+
+        public async Task<RenamedDocument> ApplyAsync(Document document)
+        {
+            if (TryGetChange(NewDocument, document, out var change))
+            {
+                var newSyntaxTree = await NewDocument.GetSyntaxTreeAsync();
+
+                foreach (var newSpan in Spans)
+                {
+                    if (newSpan.IntersectsWith(change.Span))
+                    {
+                        if (TryApplyIdentifierEdit(newSyntaxTree, change, out var token, out var s, out var newIdentifier))
+                            return await CreateAsync(NewDocument, document);
                     }
                 }
             }
 
             return new RenamedDocument(NewDocument);
+        }
+
+        private static bool TryGetChange(Document oldDocument, Document newDocument, out TextChange change)
+        {
+            change = default(TextChange);
+
+            var changes = newDocument.Text.GetChanges(oldDocument.Text).GetEnumerator();
+            if (!changes.MoveNext())
+                return false;
+
+            var first = changes.Current;
+
+            if (changes.MoveNext())
+                return false;
+
+            change = first;
+            return true;
         }
 
         private static bool TryApplyIdentifierEdit(SyntaxTree syntaxTree, TextChange change, out SyntaxToken token, out TextSpan newSpan, out string newIdentifier)
@@ -99,7 +148,27 @@ namespace NQuery.Authoring.Renaming
             newSpan = TextSpan.FromBounds(start, end);
             newIdentifier = newText.GetText(newSpan);
 
-            return SyntaxFacts.IsValidIdentifierOrKeyword(newIdentifier);
+            return newIdentifier.Length == 0 ||
+                   SyntaxFacts.IsValidIdentifierOrKeyword(newIdentifier);
+        }
+
+        private static bool TryPostIdentifierEdit(SyntaxTree syntaxTree, TextChange change, out SyntaxToken token, out TextSpan newSpan, out string newIdentifier)
+        {
+            token = null;
+            newSpan = default(TextSpan);
+            newIdentifier = null;
+
+            var span = new TextSpan(change.Span.Start, change.NewText.Length);
+
+            token = FindOverlappingIdentifierOrKeyword(syntaxTree, span);
+            if (token == null)
+                return false;
+
+            newSpan = token.Span;
+            newIdentifier = syntaxTree.Text.GetText(newSpan);
+
+            return newIdentifier.Length == 0 ||
+                   SyntaxFacts.IsValidIdentifierOrKeyword(newIdentifier);
         }
 
         private static SyntaxToken FindOverlappingIdentifierOrKeyword(SyntaxTree syntaxTree, TextSpan span)
@@ -151,15 +220,13 @@ namespace NQuery.Authoring.Renaming
             return null;
         }
 
-        public bool IsRenamed => Changes.Any();
+        public bool IsValid => Spans.Any();
 
         public Document OldDocument { get; }
 
         public Document NewDocument { get; }
        
-        public ImmutableArray<TextSpan> OldSpans { get; }
-
-        public ImmutableArray<TextSpan> NewSpans { get; }
+        public ImmutableArray<TextSpan> Spans { get; }
 
         public ImmutableArray<TextChange> Changes { get; }
     }
