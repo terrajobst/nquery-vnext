@@ -149,7 +149,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Selection\ISelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\ArgumentListSelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\CommonTableExpressionColumnNameListSelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\CommonTableExpressionQuerySelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\FromClauseSelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\GroupByClauseSelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\OrderedQuerySelectionSpanProvider.cs" />
+    <Compile Include="Selection\Providers\SelectClauseSelectionSpanProvider.cs" />
     <Compile Include="Selection\SelectionExtensions.cs" />
+    <Compile Include="Selection\SelectionSpanProvider.cs" />
+    <Compile Include="Selection\SeparatedSyntaxListSelectionSpanProvider.cs" />
     <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProvider.cs" />
     <Compile Include="SignatureHelp\Providers\CountAllSignatureHelpModelProvider.cs" />

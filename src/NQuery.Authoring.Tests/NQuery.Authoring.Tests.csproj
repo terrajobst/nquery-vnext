@@ -150,7 +150,15 @@
     <Compile Include="QuickInfo\Providers\WildcardSelectColumnQuickInfoModelProviderTests.cs" />
     <Compile Include="QuickInfo\QuickInfoExtensionsTests.cs" />
     <Compile Include="QuickInfo\QuickInfoModelProviderTests.cs" />
+    <Compile Include="Selection\Providers\ArgumentListSelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\CommonTableExpressionColumnNameListSelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\CommonTableExpressionQuerySelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\FromClauseSelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\GroupByClauseSelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\OrderedQuerySelectionSpanProviderTests.cs" />
+    <Compile Include="Selection\Providers\SelectClauseSelectionSpanProviderTests.cs" />
     <Compile Include="Selection\SelectionExtensionsTests.cs" />
+    <Compile Include="Selection\SelectionSpanProviderTests.cs" />
     <Compile Include="SignatureHelp\Providers\CastSignatureHelpModelProviderTests.cs" />
     <Compile Include="SignatureHelp\Providers\CoalesceSignatureHelpModelProviderTests.cs" />
     <Compile Include="SignatureHelp\Providers\CountAllSignatureHelpModelProviderTests.cs" />

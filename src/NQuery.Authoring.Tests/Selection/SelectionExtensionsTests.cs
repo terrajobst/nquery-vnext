@@ -1,14 +1,17 @@
-﻿using System;
-
-using NQuery.Authoring.Selection;
+﻿using NQuery.Authoring.Selection;
 using NQuery.Text;
-
 using Xunit;
 
 namespace NQuery.Authoring.Tests.Selection
 {
-    public class SelectionExtensionsTests
+    public class SelectionExtensionsTests : ExtensionTests
     {
+        [Fact]
+        public void SelectionExtensions_ReturnsAllProviders()
+        {
+            AssertAllProvidersAreExposed(SelectionExtensions.GetStandardSelectionSpanProviders);
+        }
+
         [Fact]
         public void SelectionExtensions_Grows()
         {
