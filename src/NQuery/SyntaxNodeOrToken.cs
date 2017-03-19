@@ -40,7 +40,9 @@ namespace NQuery
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
 
-        public SyntaxTree SyntaxTree => IsNode ? AsNode().SyntaxTree: AsToken().Parent.SyntaxTree;
+        public SyntaxNode Parent => IsNode ? AsNode().Parent : AsToken().Parent;
+
+        public SyntaxTree SyntaxTree => Parent.SyntaxTree;
 
         public SyntaxKind Kind => IsNode ? AsNode().Kind : AsToken().Kind;
 
