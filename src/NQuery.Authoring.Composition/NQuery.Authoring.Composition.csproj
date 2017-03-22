@@ -59,6 +59,8 @@
     </Compile>
     <Compile Include="QuickInfo\IQuickInfoModelProviderService.cs" />
     <Compile Include="QuickInfo\QuickInfoModelProviderService.cs" />
+    <Compile Include="Selection\ISelectionSpanProviderService.cs" />
+    <Compile Include="Selection\SelectionSpanProviderService.cs" />
     <Compile Include="SignatureHelp\ISignatureHelpModelProviderService.cs" />
     <Compile Include="SignatureHelp\SignatureHelpModelProviderService.cs" />
   </ItemGroup>

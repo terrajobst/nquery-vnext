@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
-
+using NQuery.Authoring.Composition.Selection;
 using NQuery.Authoring.Selection;
 using NQuery.Text;
 
@@ -12,12 +12,14 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
     internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
     {
         private readonly ITextView _textView;
+        private readonly ISelectionSpanProviderService _selectionSpanProviderService;
         private readonly Workspace _workspace;
         private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
 
-        public NQuerySelectionProvider(ITextView textView)
+        public NQuerySelectionProvider(ITextView textView, ISelectionSpanProviderService selectionSpanProviderService)
         {
             _textView = textView;
+            _selectionSpanProviderService = selectionSpanProviderService;
             _workspace = textView.TextBuffer.GetWorkspace();
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;
@@ -29,7 +31,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
             var document = documentView.Document;
             var currentSelection = documentView.Selection;
             var syntaxTree = await document.GetSyntaxTreeAsync();
-            var extendedSelection = syntaxTree.ExtendSelection(currentSelection);
+            var extendedSelection = syntaxTree.ExtendSelection(currentSelection, _selectionSpanProviderService.Providers);
 
             if (currentSelection == extendedSelection)
                 return;
@@ -46,7 +48,6 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
             var selection = _selectionStack.Pop();
             Select(selection);
         }
-
 
         private void Select(TextSpan textSpan)
         {
