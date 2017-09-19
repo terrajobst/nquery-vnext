@@ -39,6 +39,8 @@ namespace NQuery.Symbols
 
         private static bool Like(string str, string expr)
         {
+            expr = Regex.Escape(expr);
+
             var sb = new StringBuilder();
 
             sb.Append('^');

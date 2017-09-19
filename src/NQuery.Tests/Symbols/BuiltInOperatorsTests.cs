@@ -14,6 +14,7 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("'ab' LIKE 'b'", false);
             AssertEvaluatesTo("'abc' LIKE '_b_'", true);
             AssertEvaluatesTo("'abcde' LIKE '%c%'", true);
+            AssertEvaluatesTo("'2.10.1' LIKE '2.1.%'", false);
         }
     }
 }
