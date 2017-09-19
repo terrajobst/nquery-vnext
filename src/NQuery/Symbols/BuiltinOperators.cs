@@ -39,8 +39,6 @@ namespace NQuery.Symbols
 
         private static bool Like(string str, string expr)
         {
-            str = str.ToUpper(CultureInfo.CurrentCulture);
-
             var sb = new StringBuilder();
 
             sb.Append('^');
@@ -58,14 +56,14 @@ namespace NQuery.Symbols
                         break;
 
                     default:
-                        sb.Append(char.ToUpper(c, CultureInfo.CurrentCulture));
+                        sb.Append(c);
                         break;
                 }
             }
 
             sb.Append('$');
 
-            var r = new Regex(sb.ToString(), RegexOptions.Singleline);
+            var r = new Regex(sb.ToString(), RegexOptions.Singleline | RegexOptions.IgnoreCase);
             return r.IsMatch(str);
         }
 

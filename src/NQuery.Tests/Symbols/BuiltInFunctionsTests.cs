@@ -3,15 +3,8 @@ using Xunit;
 
 namespace NQuery.Tests.Symbols
 {
-    public class BuiltInFunctionsTests
+    public class BuiltInFunctionsTests : BuiltInSymbolsTests
     {
-        private static void AssertEvaluatesTo(string text, object expectedValue)
-        {
-            var actualValue = Compute(text);
-
-            Assert.Equal(expectedValue, actualValue);
-        }
-
         private static void AssertEvaluatesToDouble(string text, double expectedValue)
         {
             var untypedActualValue = Compute(text);
@@ -35,13 +28,6 @@ namespace NQuery.Tests.Symbols
         private static DateTime TruncateSeconds(DateTime value)
         {
             return new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, 0);
-        }
-
-        private static object Compute(string text)
-        {
-            var dataContext = DataContext.Default;
-            var expression = Expression<object>.Create(dataContext, text);
-            return expression.Evaluate();
         }
 
         [Fact]
