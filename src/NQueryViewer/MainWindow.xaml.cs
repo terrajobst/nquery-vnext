@@ -441,8 +441,8 @@ namespace NQueryViewer
             //
             // To fix this, we force the path to be escaped.
 
-            var gridColumn = (DataGridBoundColumn) e.Column;
-            gridColumn.Binding = new Binding("[" + e.PropertyName + "]");
+            if (e.Column is DataGridBoundColumn gridColumn)
+                gridColumn.Binding = new Binding("[" + e.PropertyName + "]");
         }
     }
 }
