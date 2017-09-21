@@ -32,7 +32,8 @@ namespace NQuery.Iterators
         {
             if (_limitReached)
             {
-                Input.Read();
+                if (!Input.Read())
+                    return false;
             }
             else
             {

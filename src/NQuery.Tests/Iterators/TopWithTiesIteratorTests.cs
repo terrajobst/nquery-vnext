@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Linq;
 
 using NQuery.Iterators;
 
@@ -95,6 +94,20 @@ namespace NQuery.Tests.Iterators
         public void Iterators_TopWithTies_LimitsRows_AndBreaksTies()
         {
             var rows = new object[] {1, 2, 3, 3, 4};
+            var expected = new object[] {1, 2, 3, 3};
+            const int limit = 3;
+
+            using (var input = new MockedIterator(rows))
+            using (var iterator = CreateIterator(input, limit))
+            {
+                AssertProduces(iterator, expected);
+            }
+        }
+
+        [Fact]
+        public void Iterators_TopWithTies_LimitsRows_AndStopsWhenLastRowIsInTie()
+        {
+            var rows = new object[] {1, 2, 3, 3};
             var expected = new object[] {1, 2, 3, 3};
             const int limit = 3;
 
