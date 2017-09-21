@@ -17,7 +17,7 @@
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
       CustomAfterMicrosoftCSharpTargets=$(CustomAfterMicrosoftCSharpTargets);
-      NuProjPath=$(PackagesDir)NuProj.0.10.4-beta-gf7fc34e7d8\tools\;
+      NuProjPath=$(PackagesDir)NuProj.0.20.4-beta\tools\;
     </ProjectProperties>
   </PropertyGroup>
 
