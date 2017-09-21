@@ -120,6 +120,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryTests.cs" />
     <Compile Include="Symbols\BuiltInFunctionsTests.cs" />
+    <Compile Include="Symbols\BuiltInOperatorsTests.cs" />
+    <Compile Include="Symbols\BuiltInSymbolsTests.cs" />
     <Compile Include="Symbols\EumerableTableDefinitionTests.cs" />
     <Compile Include="Syntax\IdentifierTests.cs" />
     <Compile Include="Syntax\LexerTests.cs" />
