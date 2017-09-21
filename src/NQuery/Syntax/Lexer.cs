@@ -519,7 +519,9 @@ namespace NQuery.Syntax
 
                         var peek1 = _charReader.Peek(1);
                         var peek2 = _charReader.Peek(2);
-                        if ((peek1 == 'e' || peek1 == 'E') && peek2 != '-' && peek2 != '+' && !char.IsDigit(peek2))
+                        var startsFloatingPoint = char.IsDigit(peek1) ||
+                                                  ((peek1 == 'e' || peek1 == 'E') && (peek2 == '+' || peek2 == '-' || char.IsDigit(peek2)));
+                        if (!startsFloatingPoint)
                             goto ExitLoop;
 
                         sb.Append(_charReader.Current);

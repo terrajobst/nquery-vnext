@@ -1179,6 +1179,21 @@ namespace NQuery.Tests.Syntax
         }
 
         [Fact]
+        public void Parser_Parse_Expression_Literal_WithNumericLiteralWithMember()
+        {
+            const string text = @"10.Property";
+
+            using (var enumerator = AssertingEnumerator.ForExpression(text))
+            {
+                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+                enumerator.AssertNode(SyntaxKind.LiteralExpression);
+                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
+                enumerator.AssertToken(SyntaxKind.DotToken, @".");
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Property");
+            }
+        }
+
+        [Fact]
         public void Parser_Parse_Expression_Literal_WithNumericLiteralWithMemberInvocation()
         {
             const string text = @"1.0.EqMethod";
