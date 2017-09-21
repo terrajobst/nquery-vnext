@@ -1178,6 +1178,21 @@ namespace NQuery.Tests.Syntax
             }
         }
 
+        [Fact]
+        public void Parser_Parse_Expression_Literal_WithNumericLiteralWithMemberInvocation()
+        {
+            const string text = @"1.0.EqMethod";
+
+            using (var enumerator = AssertingEnumerator.ForExpression(text))
+            {
+                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+                enumerator.AssertNode(SyntaxKind.LiteralExpression);
+                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1.0");
+                enumerator.AssertToken(SyntaxKind.DotToken, @".");
+                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EqMethod");
+            }
+        }
+
         [Theory]
         [MemberData("GetContextualKeywords")]
         public void Parser_Parse_Expression_MethodInvocation_WithContextualKeyword(SyntaxKind kind)

@@ -33,7 +33,7 @@ namespace NQuery.Syntax
             return Peek(1);
         }
 
-        private char Peek(int offset)
+        public char Peek(int offset)
         {
             var index = Position + offset;
             return index < _text.Length
