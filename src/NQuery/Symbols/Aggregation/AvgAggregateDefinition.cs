@@ -99,7 +99,11 @@ namespace NQuery.Symbols.Aggregation
 
             public object GetResult()
             {
-                _sumArgument.Value = Convert.ChangeType(_sumAggregator.GetResult(), _sumArgument.Type);
+                var sum = _sumAggregator.GetResult();
+                if (sum == null)
+                    return null;
+
+                _sumArgument.Value = Convert.ChangeType(sum, _sumArgument.Type);
                 _countArgument.Value = Convert.ChangeType(_countAggregator.GetResult(), _countArgument.Type);
                 return _divisionExpression.Evaluate();
             }
