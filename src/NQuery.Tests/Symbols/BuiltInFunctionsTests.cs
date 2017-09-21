@@ -1,4 +1,6 @@
 using System;
+using System.Globalization;
+using System.Threading;
 using Xunit;
 
 namespace NQuery.Tests.Symbols
@@ -138,7 +140,20 @@ namespace NQuery.Tests.Symbols
         [Fact]
         public void BuiltInFunctions_Format()
         {
-            AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 %");
+            var oldCulture = Thread.CurrentThread.CurrentCulture;
+
+            try
+            {
+                var newCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+                newCulture.NumberFormat.PercentSymbol = "#";
+
+                Thread.CurrentThread.CurrentCulture = newCulture;
+                AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 #");
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = oldCulture;
+            }
         }
 
         [Fact]
