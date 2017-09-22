@@ -10,13 +10,11 @@
     -->
 
   <PropertyGroup>
-    <CustomAfterMicrosoftCSharpTargets>$(ToolsDir)compile.targets</CustomAfterMicrosoftCSharpTargets>
     <ProjectProperties>
       Configuration=$(Configuration);
       Platform=$(Platform);
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
-      CustomAfterMicrosoftCSharpTargets=$(CustomAfterMicrosoftCSharpTargets);
       NuProjPath=$(PackagesDir)NuProj.0.20.4-beta\tools\;
     </ProjectProperties>
   </PropertyGroup>

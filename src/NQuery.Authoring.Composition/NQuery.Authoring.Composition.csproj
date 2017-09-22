@@ -17,6 +17,4 @@
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
   </ItemGroup>
 
-  <Import Project="..\NQuery.Shared\NQuery.Shared.projitems" Label="Shared" />
-
 </Project>
