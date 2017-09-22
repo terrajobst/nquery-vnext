@@ -1,42 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8BF37DF9-E023-4FDE-B062-80B5BE837412}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Tests</RootNamespace>
-    <AssemblyName>NQuery.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="xunit" Version="2.0.0" />
@@ -46,117 +13,11 @@
     <PackageReference Include="xunit.extensibility.core" Version="2.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.0.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AnnotatedTextTests.cs" />
-    <Compile Include="Binding\AggregateTests.cs" />
-    <Compile Include="Binding\AllAnySubselectExressionTests.cs" />
-    <Compile Include="Binding\BetweenExpressionTests.cs" />
-    <Compile Include="Binding\BinaryOperatorExpressionTests.cs" />
-    <Compile Include="Binding\CaseExpressionTests.cs" />
-    <Compile Include="Binding\CastExpressionTests.cs" />
-    <Compile Include="Binding\CoalesceExpressionTests.cs" />
-    <Compile Include="Binding\CombinedQueryTest.cs" />
-    <Compile Include="Binding\CommonTableExpressions.cs" />
-    <Compile Include="Binding\ComparerTests.cs" />
-    <Compile Include="Binding\DerivedTableTests.cs" />
-    <Compile Include="Binding\FunctionInvocationExressionTests.cs" />
-    <Compile Include="Binding\GroupByAndAggregationTests.cs" />
-    <Compile Include="Binding\InExpressionTests.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.BinaryTestCases.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.cs" />
-    <Compile Include="Binding\IntrinsicOperatorTests.UnaryTestCases.cs" />
-    <Compile Include="Binding\MethodInvocationExressionTests.cs" />
-    <Compile Include="Binding\NameExpressionTests.cs" />
-    <Compile Include="Binding\NullIfExpressionTests.cs" />
-    <Compile Include="Binding\NullTests.cs" />
-    <Compile Include="Binding\OrderByTests.cs" />
-    <Compile Include="Binding\PropertyAccessExressionTests.cs" />
-    <Compile Include="Binding\SelectStarTests.cs" />
-    <Compile Include="Binding\SoundexTests.cs" />
-    <Compile Include="Binding\TableRelationTests.cs" />
-    <Compile Include="Binding\UnaryOperatorExpressionTests.cs" />
-    <Compile Include="CompilationExtensions.cs" />
-    <Compile Include="ConversionTests.cs" />
-    <Compile Include="DataContextTests.cs" />
-    <Compile Include="ExpressionTests.Queries.cs" />
-    <Compile Include="ExpressionTests.Types.cs" />
-    <Compile Include="ExpressionTests.Operators.Binary.cs" />
-    <Compile Include="ExpressionTests.Operators.Unary.cs" />
-    <Compile Include="ExpressionTests.cs" />
-    <Compile Include="Iterators\AssertIteratorTests.cs" />
-    <Compile Include="Iterators\ComputeScalarIteratorTests.cs" />
-    <Compile Include="Iterators\ConcatenationIteratorTests.cs" />
-    <Compile Include="Iterators\ConstantIteratorTests.cs" />
-    <Compile Include="Iterators\DistinctSortIteratorTests.cs" />
-    <Compile Include="Iterators\EmptyIteratorTests.cs" />
-    <Compile Include="Iterators\FilterIteratorTests.cs" />
-    <Compile Include="Iterators\HashMatchIteratorTests.cs" />
-    <Compile Include="Iterators\InnerNestedLoopsIteratorTests.cs" />
-    <Compile Include="Iterators\IteratorTests.cs" />
-    <Compile Include="Iterators\LeftAntiSemiNestedLoopsIteratorTests.cs" />
-    <Compile Include="Iterators\LeftOuterNestedLoopsIteratorTests.cs" />
-    <Compile Include="Iterators\LeftSemiNestedLoopsIteratorTests.cs" />
-    <Compile Include="Iterators\MockedIterator.cs" />
-    <Compile Include="Iterators\MockedRowBuffer.cs" />
-    <Compile Include="Iterators\ProbingLeftSemiNestedLoopsIteratorTests.cs" />
-    <Compile Include="Iterators\ProjectedIteratorTests.cs" />
-    <Compile Include="Iterators\SortIteratorTests.cs" />
-    <Compile Include="Iterators\StreamAggregateIteratorTests.cs" />
-    <Compile Include="Iterators\TableIteratorTests.cs" />
-    <Compile Include="Iterators\TableSpoolIteratorTests.cs" />
-    <Compile Include="Iterators\TableSpoolRefIterator.cs" />
-    <Compile Include="Iterators\TopIteratorTests.cs" />
-    <Compile Include="Iterators\TopWithTiesIteratorTests.cs" />
-    <Compile Include="MockedOperatorClass.cs" />
-    <Compile Include="MockedOperatorStruct.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryTests.cs" />
-    <Compile Include="Symbols\Aggregation\AggregateTests.cs" />
-    <Compile Include="Symbols\Aggregation\AvgAggregateTests.cs" />
-    <Compile Include="Symbols\BuiltInFunctionsTests.cs" />
-    <Compile Include="Symbols\BuiltInOperatorsTests.cs" />
-    <Compile Include="Symbols\BuiltInSymbolsTests.cs" />
-    <Compile Include="Symbols\EumerableTableDefinitionTests.cs" />
-    <Compile Include="Syntax\IdentifierTests.cs" />
-    <Compile Include="Syntax\LexerTests.cs" />
-    <Compile Include="Syntax\ParserTests.AssertingEnumerator.cs" />
-    <Compile Include="Syntax\ParserTests.Queries.cs" />
-    <Compile Include="Syntax\ParserTests.Expressions.cs" />
-    <Compile Include="Syntax\ParserTests.Tables.cs" />
-    <Compile Include="Syntax\ParserTests.cs" />
-    <Compile Include="Syntax\SeparatedSyntaxListTests.cs" />
-    <Compile Include="Syntax\SyntaxFactsTests.cs" />
-    <Compile Include="TestData.cs" />
-    <Compile Include="Text\SourceTextTests.cs" />
-    <Compile Include="Text\TextChangeSetTest.cs" />
-    <Compile Include="Text\TextSpanTests.cs" />
+    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj" />
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
-      <Project>{d93d9870-4e7a-4bec-aa4e-dacbf8616c29}</Project>
-      <Name>NQuery.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj">
-      <Project>{6BAA666C-D4F5-47C6-A942-276A18BB9A41}</Project>
-      <Name>NQuery.Testing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery\NQuery.csproj">
-      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

@@ -1,40 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A621477D-650C-49C1-8F44-A8ACBA8280AA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Dynamic.Tests</RootNamespace>
-    <AssemblyName>NQuery.Dynamic.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
     <PackageReference Include="xunit" Version="2.0.0" />
@@ -43,37 +16,12 @@
     <PackageReference Include="xunit.core" Version="2.0.0" />
     <PackageReference Include="xunit.extensibility.core" Version="2.0.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.0.1" />
-  </ItemGroup>  
-  <ItemGroup>
-    <Compile Include="DynamicTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\NQuery.Dynamic\NQuery.Dynamic.csproj" />
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NQuery.Dynamic\NQuery.Dynamic.csproj">
-      <Project>{ae03cbad-43e7-4ed4-83ef-e0826eca344f}</Project>
-      <Name>NQuery.Dynamic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj">
-      <Project>{6BAA666C-D4F5-47C6-A942-276A18BB9A41}</Project>
-      <Name>NQuery.Testing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery\NQuery.csproj">
-      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
