@@ -10,12 +10,21 @@
     <DefineConstants>$(DefineConstants);SIGNED</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="!$(AssemblyName.EndsWith('.Tests'))">
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageOutputPath>$(OutDir)</PackageOutputPath>
+    <Authors>$(Company)</Authors>
+    <RepositoryUrl>https://github.com/terrajobst/nquery-vnext</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageLicenseUrl>$(RepositoryUrl)/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <PackageTags>NQuery SQL</PackageTags>
+    <Description>$(Product)</Description>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)\CommonAssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)\ExceptionBuilder.cs" />
   </ItemGroup>
-
-  <!-- Required for NuProj to get the project clojure -->
-  <Import Project="$(MSBuildThisFileDirectory)..\packages\NuProj.0.20.4-beta\tools\Microsoft.Common.NuProj.targets" />
 
 </Project>

@@ -15,7 +15,6 @@
       Platform=$(Platform);
       OutDir=$(OutDir);
       IntermediateOutputPath=$(IntermediateOutputPath);
-      NuProjPath=$(PackagesDir)NuProj.0.20.4-beta\tools\;
     </ProjectProperties>
   </PropertyGroup>
 
