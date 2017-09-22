@@ -9,7 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Package Include="$(SourceDir)*\packages.config" />
+    <Package Include="$(SourceDir)packages.config" />
+    <RestoreProjects Include="$(SourceDir)**\*.csproj" />
   </ItemGroup>
 
   <UsingTask TaskName="DownloadFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
@@ -40,7 +41,9 @@
     <DownloadFile Condition="!Exists($(NuGetToolPath))"
                   Address="http://nuget.org/nuget.exe"
                   FileName="$(NuGetToolPath)" />
-    <Exec Command="$(NuGetToolPath) restore &quot;%(Package.FullPath)&quot; -o &quot;$(PackagesDir)\&quot; -c &quot;$(SourceDir)\.nuget\nuget.config&quot;" />
+    <Exec Command="$(NuGetToolPath) restore &quot;%(Package.FullPath)&quot; -o &quot;$(PackagesDir)\&quot; -c &quot;$(SourceDir)\nuget.config&quot;" />
+    <MSBuild Projects="@(RestoreProjects)"
+             Targets="Restore" />
   </Target>
 
   <Target Name="Rebuild"

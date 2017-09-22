@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.VSEditorWpf", "NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring.VSEditorWpf", "NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj", "{A3B82430-E8ED-4177-B097-3A82748EDAEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring", "NQuery.Authoring\NQuery.Authoring.csproj", "{5F76C1EB-9EEE-4046-9664-A4123984EEF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring", "NQuery.Authoring\NQuery.Authoring.csproj", "{5F76C1EB-9EEE-4046-9664-A4123984EEF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.ActiproWpf", "NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring.ActiproWpf", "NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj", "{A3309669-818F-47A9-B0F8-734AF347FEBC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}"
 EndProject
@@ -21,59 +21,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services Common", "Services
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Viewers", "Viewers", "{01914E91-C990-4D8C-9890-B6C69006F596}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.Wpf", "NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj", "{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring.Wpf", "NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj", "{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Data", "NQuery.Data\NQuery.Data.csproj", "{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Data", "NQuery.Data\NQuery.Data.csproj", "{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DA8727CD-B429-44D7-972F-A08A34E2DF1E}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\nuget.config = .nuget\nuget.config
-		.nuget\packages.config = .nuget\packages.config
+		.nuget\nuget.config = nuget.config
+		.nuget\packages.config = packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Dynamic", "NQuery.Dynamic\NQuery.Dynamic.csproj", "{AE03CBAD-43E7-4ED4-83EF-E0826ECA344F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Dynamic", "NQuery.Dynamic\NQuery.Dynamic.csproj", "{AE03CBAD-43E7-4ED4-83EF-E0826ECA344F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.Composition", "NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj", "{203BF9C4-4D04-4B4E-BE6C-1100EFCAF525}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring.Composition", "NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj", "{203BF9C4-4D04-4B4E-BE6C-1100EFCAF525}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core Tests", "Core Tests", "{1C557AF5-0788-4DBC-8CC6-85F8C9913DF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Tests", "NQuery.Tests\NQuery.Tests.csproj", "{8BF37DF9-E023-4FDE-B062-80B5BE837412}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Tests", "NQuery.Tests\NQuery.Tests.csproj", "{8BF37DF9-E023-4FDE-B062-80B5BE837412}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Dynamic.Tests", "NQuery.Dynamic.Tests\NQuery.Dynamic.Tests.csproj", "{A621477D-650C-49C1-8F44-A8ACBA8280AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Dynamic.Tests", "NQuery.Dynamic.Tests\NQuery.Dynamic.Tests.csproj", "{A621477D-650C-49C1-8F44-A8ACBA8280AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Authoring.Tests", "NQuery.Authoring.Tests\NQuery.Authoring.Tests.csproj", "{51636E36-613A-46A4-BD49-8FBCE543F0F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Authoring.Tests", "NQuery.Authoring.Tests\NQuery.Authoring.Tests.csproj", "{51636E36-613A-46A4-BD49-8FBCE543F0F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQuery.Testing", "NQuery.Testing\NQuery.Testing.csproj", "{6BAA666C-D4F5-47C6-A942-276A18BB9A41}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery", ".nupkg\NQuery\NQuery.nuproj", "{1288A461-3D99-4265-8AA6-5D66EB6FB7B6}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Data", ".nupkg\NQuery.Data\NQuery.Data.nuproj", "{EE7E349C-0C9F-4237-95FD-4AB154D0E21E}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Dynamic", ".nupkg\NQuery.Dynamic\NQuery.Dynamic.nuproj", "{F6D57446-A20E-4964-B543-C68C450C08CC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nupkg", ".nupkg", "{A585A31E-F2FA-46EA-9227-390D695FF749}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring", ".nupkg\NQuery.Authoring\NQuery.Authoring.nuproj", "{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.Composition", ".nupkg\NQuery.Authoring.Composition\NQuery.Authoring.Composition.nuproj", "{14741539-D3BD-453C-9B8D-D4F3330838F4}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.Wpf", ".nupkg\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.nuproj", "{FE591D60-4109-4EE7-A36B-BEF9E83E62B8}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.ActiproWpf", ".nupkg\NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.nuproj", "{A88F184C-F86D-4738-9035-CB35BBAACA5B}"
-EndProject
-Project("{FF286327-C783-4F7A-AB73-9BCBAD0D4460}") = "NQuery.Authoring.VSEditorWpf", ".nupkg\NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.nuproj", "{D312166F-6E89-47C7-9D7F-D556FB29F325}"
-EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NQuery.Shared", "NQuery.Shared\NQuery.Shared.shproj", "{951E09AD-A6A0-411C-8DCE-3BCD2651CC30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Testing", "NQuery.Testing\NQuery.Testing.csproj", "{6BAA666C-D4F5-47C6-A942-276A18BB9A41}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		NQuery.Shared\NQuery.Shared.projitems*{52f5cd8b-2ff7-4087-b9f7-c1269c48f06f}*SharedItemsImports = 4
-		NQuery.Shared\NQuery.Shared.projitems*{951e09ad-a6a0-411c-8dce-3bcd2651cc30}*SharedItemsImports = 13
-		NQuery.Shared\NQuery.Shared.projitems*{a3309669-818f-47a9-b0f8-734af347febc}*SharedItemsImports = 4
-		NQuery.Shared\NQuery.Shared.projitems*{bf5539f1-3476-4ed7-89da-d9446b46eeeb}*SharedItemsImports = 4
-		NQuery.Shared\NQuery.Shared.projitems*{5f76c1eb-9eee-4046-9664-a4123984eef3}*SharedItemsImports = 4
-		NQuery.Shared\NQuery.Shared.projitems*{a3b82430-e8ed-4177-b097-3a82748edaef}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -131,38 +103,6 @@ Global
 		{6BAA666C-D4F5-47C6-A942-276A18BB9A41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BAA666C-D4F5-47C6-A942-276A18BB9A41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BAA666C-D4F5-47C6-A942-276A18BB9A41}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1288A461-3D99-4265-8AA6-5D66EB6FB7B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1288A461-3D99-4265-8AA6-5D66EB6FB7B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1288A461-3D99-4265-8AA6-5D66EB6FB7B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1288A461-3D99-4265-8AA6-5D66EB6FB7B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE7E349C-0C9F-4237-95FD-4AB154D0E21E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE7E349C-0C9F-4237-95FD-4AB154D0E21E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE7E349C-0C9F-4237-95FD-4AB154D0E21E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE7E349C-0C9F-4237-95FD-4AB154D0E21E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F6D57446-A20E-4964-B543-C68C450C08CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F6D57446-A20E-4964-B543-C68C450C08CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F6D57446-A20E-4964-B543-C68C450C08CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F6D57446-A20E-4964-B543-C68C450C08CC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{14741539-D3BD-453C-9B8D-D4F3330838F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{14741539-D3BD-453C-9B8D-D4F3330838F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{14741539-D3BD-453C-9B8D-D4F3330838F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{14741539-D3BD-453C-9B8D-D4F3330838F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A88F184C-F86D-4738-9035-CB35BBAACA5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A88F184C-F86D-4738-9035-CB35BBAACA5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A88F184C-F86D-4738-9035-CB35BBAACA5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A88F184C-F86D-4738-9035-CB35BBAACA5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D312166F-6E89-47C7-9D7F-D556FB29F325}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D312166F-6E89-47C7-9D7F-D556FB29F325}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D312166F-6E89-47C7-9D7F-D556FB29F325}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D312166F-6E89-47C7-9D7F-D556FB29F325}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,14 +121,8 @@ Global
 		{A621477D-650C-49C1-8F44-A8ACBA8280AA} = {1C557AF5-0788-4DBC-8CC6-85F8C9913DF5}
 		{51636E36-613A-46A4-BD49-8FBCE543F0F8} = {538E2C6E-31A4-4AFE-B0FE-2A65473CBC3E}
 		{6BAA666C-D4F5-47C6-A942-276A18BB9A41} = {1C557AF5-0788-4DBC-8CC6-85F8C9913DF5}
-		{1288A461-3D99-4265-8AA6-5D66EB6FB7B6} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{EE7E349C-0C9F-4237-95FD-4AB154D0E21E} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{F6D57446-A20E-4964-B543-C68C450C08CC} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{CAD3D40A-9907-4BF9-9F2E-0B6F8343257F} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{14741539-D3BD-453C-9B8D-D4F3330838F4} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{FE591D60-4109-4EE7-A36B-BEF9E83E62B8} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{A88F184C-F86D-4738-9035-CB35BBAACA5B} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{D312166F-6E89-47C7-9D7F-D556FB29F325} = {A585A31E-F2FA-46EA-9227-390D695FF749}
-		{951E09AD-A6A0-411C-8DCE-3BCD2651CC30} = {841E718A-5A7C-4F0A-BC03-FCD085FCE5BA}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68F9921D-8291-4831-85A4-1743DE68EE0A}
 	EndGlobalSection
 EndGlobal

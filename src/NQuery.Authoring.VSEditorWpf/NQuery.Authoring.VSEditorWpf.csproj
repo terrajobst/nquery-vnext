@@ -1,219 +1,40 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A3B82430-E8ED-4177-B097-3A82748EDAEF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Authoring.VSEditorWpf</RootNamespace>
-    <AssemblyName>NQuery.Authoring.VSEditorWpf</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.CoreUtility, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.CoreUtility.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Language.Intellisense, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Language.Intellisense.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Language.StandardClassification, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Language.StandardClassification.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Platform.VSEditor, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Platform.VSEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Platform.VSEditor.Interop">
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Platform.VSEditor.Interop.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.Data, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Text.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.Internal, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Text.Internal.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.Logic, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Text.Logic.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.UI, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Text.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Text.UI.Wpf, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.Text.UI.Wpf.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.UI.Text.Wpf.KeyProcessor.Implementation">
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\Microsoft.VisualStudio.UI.Text.Wpf.KeyProcessor.Implementation.dll</HintPath>
-    </Reference>
-    <Reference Include="StandaloneUndo">
-      <HintPath>..\packages\Microsoft.VisualStudio.VSEditor.Standalone.10.1.0.0\lib\net40\StandaloneUndo.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.1.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.Bcl.Immutable.1.1.20-beta\lib\portable-net45+win8\System.Collections.Immutable.dll</HintPath>
-    </Reference>
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AsyncTagger.cs" />
-    <Compile Include="BraceMatching\NQueryBraceTagger.cs" />
-    <Compile Include="BraceMatching\NQueryBraceTaggerProvider.cs" />
-    <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
-    <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
-    <Compile Include="CodeActions\TextBufferCodeActionModel.cs" />
-    <Compile Include="Commenting\CommentOperations.cs" />
-    <Compile Include="Commenting\CommentOperationsProvider.cs" />
-    <Compile Include="Commenting\ICommentOperations.cs" />
-    <Compile Include="Commenting\ICommentOperationsProvider.cs" />
-    <Compile Include="Completion\CompletionModelManager.cs" />
-    <Compile Include="Completion\CompletionModelManagerProvider.cs" />
-    <Compile Include="Completion\ICompletionModelManager.cs" />
-    <Compile Include="Completion\ICompletionModelManagerProvider.cs" />
-    <Compile Include="NQueryExensions.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <PackageReference Include="Microsoft.VisualStudio.VSEditor.Standalone.10" Version="1.0.0" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.0.41" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Text\VisualStudioTextExtensions.cs" />
-    <Compile Include="Text\VisualStudioSourceTextContainer.cs" />
-    <Compile Include="Highlighting\HighlightingNavigationManager.cs" />
-    <Compile Include="Highlighting\HighlightingNavigationManagerProvider.cs" />
-    <Compile Include="Highlighting\HighlightTag.cs" />
-    <Compile Include="Highlighting\IHighlightingNavigationManager.cs" />
-    <Compile Include="Highlighting\IHighlightingNavigationManagerProvider.cs" />
-    <Compile Include="Highlighting\NQueryHighlightingTagger.cs" />
-    <Compile Include="Highlighting\NQueryHighlightingTaggerProvider.cs" />
-    <Compile Include="CodeActions\CodeActionGlyphBroker.cs" />
-    <Compile Include="CodeActions\ICodeActionGlyphBroker.cs" />
-    <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
-    <Compile Include="Margins\NQueryCodeActionsMargin.cs" />
-    <Compile Include="Margins\NQueryCodeActionsMarginProvider.cs" />
-    <Compile Include="Selection\INQuerySelectionProvider.cs" />
-    <Compile Include="Selection\INQuerySelectionProviderService.cs" />
-    <Compile Include="Classification\INQueryClassificationService.cs" />
-    <Compile Include="Classification\NQuerySyntaxClassifier.cs" />
-    <Compile Include="Classification\NQuerySyntaxClassifierProvider.cs" />
-    <Compile Include="Completion\NQueryCompletionSet.cs" />
-    <Compile Include="Completion\NQueryCompletionSource.cs" />
-    <Compile Include="Completion\NQueryCompletionSourceProvider.cs" />
-    <Compile Include="NQueryContentTypeProvider.cs" />
-    <Compile Include="Squiggles\NQueryCodeIssueTagger.cs" />
-    <Compile Include="Squiggles\NQueryCodeIssueTaggerProvider.cs" />
-    <Compile Include="Squiggles\NQueryErrorTagger.cs" />
-    <Compile Include="NQueryKeyProcessor.cs" />
-    <Compile Include="NQueryKeyProcessorProvider.cs" />
-    <Compile Include="QuickInfo\NQueryQuickInfoTrigger.cs" />
-    <Compile Include="Selection\NQuerySelectionProvider.cs" />
-    <Compile Include="Selection\NQuerySelectionProviderService.cs" />
-    <Compile Include="Classification\NQuerySemanticClassifier.cs" />
-    <Compile Include="Classification\NQuerySemanticClassifierProvider.cs" />
-    <Compile Include="Squiggles\NQuerySemanticErrorTagger.cs" />
-    <Compile Include="Outlining\NQueryOutliningTagger.cs" />
-    <Compile Include="Outlining\NQueryOutliningTaggerProvider.cs" />
-    <Compile Include="QuickInfo\IQuickInfoManager.cs" />
-    <Compile Include="QuickInfo\IQuickInfoManagerProvider.cs" />
-    <Compile Include="QuickInfo\NQueryQuickInfoSource.cs" />
-    <Compile Include="QuickInfo\NQueryQuickInfoSourceProvider.cs" />
-    <Compile Include="Squiggles\NQuerySemanticErrorTaggerProvider.cs" />
-    <Compile Include="Classification\NQuerySemanticClassificationMetadata.cs" />
-    <Compile Include="Classification\NQueryClassificationService.cs" />
-    <Compile Include="Squiggles\NQuerySyntaxErrorTagger.cs" />
-    <Compile Include="Squiggles\NQuerySyntaxErrorTaggerProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuickInfo\NQueryQuickInfoTriggerProvider.cs" />
-    <Compile Include="QuickInfo\QuickInfoManager.cs" />
-    <Compile Include="QuickInfo\QuickInfoManagerProvider.cs" />
-    <Compile Include="SignatureHelp\NQueryParameter.cs" />
-    <Compile Include="SignatureHelp\ISignatureHelpManager.cs" />
-    <Compile Include="SignatureHelp\ISignatureHelpManagerProvider.cs" />
-    <Compile Include="SignatureHelp\SignatureHelpManager.cs" />
-    <Compile Include="SignatureHelp\SignatureHelpManagerProvider.cs" />
-    <Compile Include="SignatureHelp\NQuerySignature.cs" />
-    <Compile Include="SignatureHelp\NQuerySignatureHelpSource.cs" />
-    <Compile Include="SignatureHelp\NQuerySignatureHelpSourceProvider.cs" />
-    <Compile Include="Text\VisualStudioSourceText.cs" />
-    <Compile Include="Text\VisualStudioTextLineCollection.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NQuery.Authoring.Composition\NQuery.Authoring.Composition.csproj">
-      <Project>{203BF9C4-4D04-4B4E-BE6C-1100EFCAF525}</Project>
-      <Name>NQuery.Authoring.Composition</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
-      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
-      <Name>NQuery.Authoring</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj">
-      <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
-      <Name>NQuery.Authoring.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery\NQuery.csproj">
-      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="..\NQuery.Shared\NQuery.Shared.projitems" Label="Shared" />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Nerdbank.GitVersioning.1.3.13\build\dotnet\Nerdbank.GitVersioning.targets" Condition="Exists('..\packages\Nerdbank.GitVersioning.1.3.13\build\dotnet\Nerdbank.GitVersioning.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Nerdbank.GitVersioning.1.3.13\build\dotnet\Nerdbank.GitVersioning.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Nerdbank.GitVersioning.1.3.13\build\dotnet\Nerdbank.GitVersioning.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
