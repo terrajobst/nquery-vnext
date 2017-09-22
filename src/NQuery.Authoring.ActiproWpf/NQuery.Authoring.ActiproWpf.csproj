@@ -1,42 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A3309669-818F-47A9-B0F8-734AF347FEBC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQuery.Authoring.ActiproWpf</RootNamespace>
-    <AssemblyName>NQuery.Authoring.ActiproWpf</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" />
     <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" />
@@ -44,98 +18,23 @@
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.0.41" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="BraceMatching\INQueryBraceMatcher.cs" />
-    <Compile Include="Classification\NQueryUnnecessaryCodeClassifier.cs" />
-    <Compile Include="Classification\NQueryUnnecessaryCodeClassifierProvider.cs" />
-    <Compile Include="CodeActions\CodeActionExtensions.cs" />
-    <Compile Include="CodeActions\ExpandCodeActionListEditAction.cs" />
-    <Compile Include="CodeActions\ICodeActionGlyphController.cs" />
-    <Compile Include="Commenting\CommentingExtensions.cs" />
-    <Compile Include="Commenting\ToggleCommentAction.cs" />
-    <Compile Include="Commenting\ToggleMultiLineCommentAction.cs" />
-    <Compile Include="Commenting\ToggleSingleLineCommentAction.cs" />
-    <Compile Include="Margins\NQueryEditorViewCodeActionMargin.cs" />
-    <Compile Include="Margins\NQueryEditorViewMarginKeys.cs" />
-    <Compile Include="CodeActions\TextDocumentCodeActionModel.cs" />
-    <Compile Include="Margins\NQueryCodeActionMarginProvider.cs" />
-    <Compile Include="Completion\INQueryCompletionProvider.cs" />
-    <Compile Include="Completion\NQueryCompletionController.cs" />
-    <Compile Include="Completion\NQueryCompletionSession.cs" />
-    <Compile Include="NQueryParseDataSynchronizer.cs" />
-    <Compile Include="Outlining\INQueryOutliner.cs" />
-    <Compile Include="QuickInfo\INQueryQuickInfoProvider.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Selection\ExtendSelectionAction.cs" />
-    <Compile Include="Selection\SelectionAction.cs" />
-    <Compile Include="Selection\SelectionExtensions.cs" />
-    <Compile Include="Selection\ShrinkSelectionAction.cs" />
-    <Compile Include="SignatureHelp\INQuerySignatureHelpProvider.cs" />
-    <Compile Include="SignatureHelp\NQuerySignatureHelpController.cs" />
-    <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifier.cs" />
-    <Compile Include="Squiggles\NQuerySemanticErrorSquiggleClassifierProvider.cs" />
-    <Compile Include="Squiggles\NQuerySemanticIssueSquiggleClassifier.cs" />
-    <Compile Include="Squiggles\NQuerySemanticIssueSquiggleClassifierProvider.cs" />
-    <Compile Include="Squiggles\NQuerySquiggleClassifier.cs" />
-    <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifier.cs" />
-    <Compile Include="Squiggles\NQuerySyntaxErrorSquiggleClassifierProvider.cs" />
-    <Compile Include="SymbolContent\HtmlContentProviderWithGlyph.cs" />
-    <Compile Include="SymbolContent\HtmlMarkupEmitter.cs" />
-    <Compile Include="SymbolContent\INQuerySymbolContentProvider.cs" />
-    <Compile Include="SymbolContent\GlyphImageProvider.cs" />
-    <Compile Include="Classification\INQueryClassificationTypes.cs" />
-    <Compile Include="BraceMatching\NQueryBraceMatcher.cs" />
-    <Compile Include="Classification\NQueryClassificationTypes.cs" />
-    <Compile Include="Classification\NQueryClassificationTypesExtensions.cs" />
-    <Compile Include="NQueryExtensions.cs" />
-    <Compile Include="NQueryLanguage.cs" />
-    <Compile Include="Outlining\NQueryOutliner.cs" />
-    <Compile Include="Outlining\NQueryOutliningSource.cs" />
-    <Compile Include="NQueryParseData.cs" />
-    <Compile Include="Completion\NQueryCompletionProvider.cs" />
-    <Compile Include="QuickInfo\NQueryQuickInfoProvider.cs" />
-    <Compile Include="Classification\NQuerySemanticClassifier.cs" />
-    <Compile Include="Classification\NQuerySyntacticClassifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classification\NQuerySemanticClassifierProvider.cs" />
-    <Compile Include="Classification\NQuerySyntacticClassifierProvider.cs" />
-    <Compile Include="SignatureHelp\NQuerySignatureContentProvider.cs" />
-    <Compile Include="SignatureHelp\NQuerySignatureHelpProvider.cs" />
-    <Compile Include="SymbolContent\NQuerySymbolContentProvider.cs" />
-    <Compile Include="Text\ActiproSourceText.cs" />
-    <Compile Include="Text\ActiproSourceTextContainer.cs" />
-    <Compile Include="Text\ActiproTextExtensions.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
-      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
-      <Name>NQuery.Authoring</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj">
-      <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
-      <Name>NQuery.Authoring.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery\NQuery.csproj">
-      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
+    <EmbeddedResource Update="Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
