@@ -27,8 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Data", "NQuery.Data\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DA8727CD-B429-44D7-972F-A08A34E2DF1E}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\nuget.config = nuget.config
-		.nuget\packages.config = packages.config
+		nuget.config = nuget.config
+		packages.config = packages.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Dynamic", "NQuery.Dynamic\NQuery.Dynamic.csproj", "{AE03CBAD-43E7-4ED4-83EF-E0826ECA344F}"
