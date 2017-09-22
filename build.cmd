@@ -12,4 +12,4 @@ set MSBUILD_PATH=%VSPATH%\MSBuild\15.0\Bin\MSBuild.exe
 ::       assembly.
 
 if not exist bin mkdir bin
-"%MSBUILD_PATH%" /nologo /m /v:m /nr:false /flp:verbosity=normal;LogFile=bin\msbuild.log %*
+"%MSBUILD_PATH%" /nologo /m /v:m /nr:false /bl:bin\msbuild.binlog %*
