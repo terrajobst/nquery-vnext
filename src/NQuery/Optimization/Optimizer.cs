@@ -37,7 +37,11 @@ namespace NQuery.Optimization
             // Expand subqueries
             yield return new SubqueryExpander();
 
-            // TODO: semi join simplification
+            // Semi join simplification (i.e. replacing right joins by equivalent left joins)
+            // is not necessary, because we don't generate Right (Anti) Semi Joins in the first place.
+            // There could be Right Outer joins to simplify, though.
+            yield return new OuterJoinSimplifier();
+
             // TODO: decorrelation
 
             yield return new OuterJoinRemover();
