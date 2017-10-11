@@ -156,7 +156,7 @@ namespace NQuery.Syntax
             //
             // The easiest is to use the line information -- if the current token is on the
             // same line as the previous, then we skip (second case). Otherwise we insert
-            // a new token (frist case).
+            // a new token (first case).
 
             if (kind == SyntaxKind.IdentifierToken && Current.Kind.IsKeyword() && IsPreviousTokenOnSameLine())
                 return SkipAndInsertMissingToken(SyntaxKind.IdentifierToken);
