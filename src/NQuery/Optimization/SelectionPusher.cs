@@ -121,21 +121,21 @@ namespace NQuery.Optimization
 
         private BoundRelation PushOverProject(BoundFilterRelation node, BoundProjectRelation input)
         {
-            var newFilter = RewriteRelation(node.Update(input.Input, node.Condition));
+            var newFilter = RewriteRelation(node.WithInput(input.Input));
             var newInput = input.Update(newFilter, input.Outputs);
             return newInput;
         }
 
         private BoundRelation PushOverSort(BoundFilterRelation node, BoundSortRelation input)
         {
-            var newFilter = RewriteRelation(node.Update(input.Input, node.Condition));
+            var newFilter = RewriteRelation(node.WithInput(input.Input));
             var newInput = input.Update(input.IsDistinct, newFilter, input.SortedValues);
             return newInput;
         }
 
         private BoundRelation PushOverTop(BoundFilterRelation node, BoundTopRelation input)
         {
-            var newFilter = RewriteRelation(node.Update(input.Input, node.Condition));
+            var newFilter = RewriteRelation(node.WithInput(input.Input));
             var newInput = input.Update(newFilter, input.Limit, input.TieEntries);
             return newInput;
         }
@@ -143,7 +143,7 @@ namespace NQuery.Optimization
         private BoundRelation MergeWithFilter(BoundFilterRelation node, BoundFilterRelation input)
         {
             var mergedCondition = Expression.And(input.Condition, node.Condition);
-            var newInput = RewriteRelation(input.Update(input.Input, mergedCondition));
+            var newInput = RewriteRelation(input.WithCondition(mergedCondition));
             return newInput;
         }
 
@@ -233,12 +233,12 @@ namespace NQuery.Optimization
             //       * pushing to the right is OK if it's a right (anti) semi join
 
             if (input.Probe != null)
-                return node.Update(RewriteRelation(input), node.Condition);
+                return node.WithInput(RewriteRelation(input));
 
             if (AllowsMerge(input.JoinType))
             {
                 var newCondition = Expression.And(input.Condition, node.Condition);
-                var newInput = input.Update(input.JoinType, input.Left, input.Right, newCondition, null, null);
+                var newInput = input.WithCondition(newCondition);
                 return RewriteRelation(newInput);
             }
             else

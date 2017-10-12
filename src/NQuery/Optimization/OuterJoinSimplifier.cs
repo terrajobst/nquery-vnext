@@ -10,7 +10,9 @@ namespace NQuery.Optimization
         {
             if (node.JoinType == BoundJoinType.RightOuter)
             {
-                node = node.Update(BoundJoinType.LeftOuter, node.Right, node.Left, node.Condition, node.Probe, node.PassthruPredicate);
+                var newLeft = node.Right;
+                var newRight = node.Left;
+                node = node.Update(BoundJoinType.LeftOuter, newLeft, newRight, node.Condition, node.Probe, node.PassthruPredicate);
             }
 
             return base.RewriteJoinRelation(node);

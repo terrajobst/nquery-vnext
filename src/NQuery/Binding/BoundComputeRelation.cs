@@ -41,5 +41,10 @@ namespace NQuery.Binding
 
             return new BoundComputeRelation(input, newDefinedValues);
         }
+
+        public BoundRelation WithInput(BoundRelation input)
+        {
+            return Update(input, DefinedValues);
+        }
     }
 }

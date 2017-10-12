@@ -35,6 +35,11 @@ namespace NQuery.Binding
             return new BoundSortRelation(isDistinct, input, newSortedValues);
         }
 
+        public BoundSortRelation WithInput(BoundRelation input)
+        {
+            return Update(IsDistinct, input, SortedValues);
+        }
+
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
             return Input.GetDefinedValues();
