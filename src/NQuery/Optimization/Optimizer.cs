@@ -42,6 +42,11 @@ namespace NQuery.Optimization
             // There could be Right Outer joins to simplify, though.
             yield return new OuterJoinSimplifier();
 
+            // We need to eliminate projection nodes before we can decorrelate
+
+            yield return new SemiJoinSimplifier();
+            yield return new UnusedValueSlotRemover();
+
             // TODO: decorrelation
 
             yield return new OuterJoinRemover();
