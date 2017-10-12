@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-
 using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
+
     internal static class Optimizer
     {
         public static BoundQuery Optimize(BoundQuery query)
@@ -47,7 +47,9 @@ namespace NQuery.Optimization
             yield return new SemiJoinSimplifier();
             yield return new UnusedValueSlotRemover();
 
-            // TODO: decorrelation
+            // Decorrelation
+
+            yield return new Decorrelator();
 
             yield return new OuterJoinRemover();
 
