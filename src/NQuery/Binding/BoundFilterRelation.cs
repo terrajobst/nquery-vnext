@@ -29,6 +29,16 @@ namespace NQuery.Binding
             return new BoundFilterRelation(input, condition);
         }
 
+        public BoundFilterRelation WithInput(BoundRelation input)
+        {
+            return Update(input, Condition);
+        }
+
+        public BoundFilterRelation WithCondition(BoundExpression condition)
+        {
+            return Update(Input, condition);
+        }
+
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
             return Input.GetDefinedValues();

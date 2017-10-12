@@ -41,6 +41,26 @@ namespace NQuery.Binding
             return new BoundJoinRelation(joinType, left, right, condition, probe, passthruPredicate);
         }
 
+        public BoundJoinRelation WithJoinType(BoundJoinType joinType)
+        {
+            return Update(joinType, Left, Right, Condition, Probe, PassthruPredicate);
+        }
+
+        public BoundJoinRelation WithLeft(BoundRelation left)
+        {
+            return Update(JoinType, left, Right, Condition, Probe, PassthruPredicate);
+        }
+
+        public BoundJoinRelation WithRight(BoundRelation right)
+        {
+            return Update(JoinType, Left, right, Condition, Probe, PassthruPredicate);
+        }
+
+        public BoundJoinRelation WithCondition(BoundExpression condition)
+        {
+            return Update(JoinType, Left, Right, condition, Probe, PassthruPredicate);
+        }
+
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
             var probe = Probe == null

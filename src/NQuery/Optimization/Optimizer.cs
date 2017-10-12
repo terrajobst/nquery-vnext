@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-
 using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
+
     internal static class Optimizer
     {
         public static BoundQuery Optimize(BoundQuery query)
@@ -42,7 +42,14 @@ namespace NQuery.Optimization
             // There could be Right Outer joins to simplify, though.
             yield return new OuterJoinSimplifier();
 
-            // TODO: decorrelation
+            // We need to eliminate projection nodes before we can decorrelate
+
+            yield return new SemiJoinSimplifier();
+            yield return new UnusedValueSlotRemover();
+
+            // Decorrelation
+
+            yield return new Decorrelator();
 
             yield return new OuterJoinRemover();
 

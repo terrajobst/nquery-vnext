@@ -186,7 +186,7 @@ namespace NQuery.Optimization
             {
                 // We might have residual subqueries that couldn't be
                 // converted to semi joins.
-                return RewriteRelation(node.Update(node.JoinType, left, rewrittenRight, null, null, null));
+                return RewriteRelation(node.Update(node.JoinType, left, rewrittenRight, null, node.Probe, node.PassthruPredicate));
             }
 
             // There were no subqueries that could be expressed as semi joins.
@@ -195,7 +195,7 @@ namespace NQuery.Optimization
 
             var condition = RewriteExpression(node.Condition);
             var rightWithProbes = RewriteInputWithSubqueries(right);
-            return node.Update(node.JoinType, left, rightWithProbes, condition, null, null);
+            return node.Update(node.JoinType, left, rightWithProbes, condition, node.Probe, node.PassthruPredicate);
         }
 
         private BoundRelation RewriteInputWithSubqueries(BoundRelation input)
