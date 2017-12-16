@@ -91,7 +91,7 @@ namespace NQuery.Symbols
         }
 
         public FunctionSymbol(string name, string parameterName1, string parameterName2, string parameterName3, Func<T1, T2, T3, TResult> function)
-            : base(name, typeof(TResult), new ParameterSymbol(parameterName1, typeof(T1)), new ParameterSymbol(parameterName2, typeof(T2)), new ParameterSymbol(parameterName3, typeof(T2)))
+            : base(name, typeof(TResult), new ParameterSymbol(parameterName1, typeof(T1)), new ParameterSymbol(parameterName2, typeof(T2)), new ParameterSymbol(parameterName3, typeof(T3)))
         {
             Function = function;
         }
