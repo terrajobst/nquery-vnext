@@ -58,8 +58,8 @@ namespace NQuery
             return from token in Root.DescendantTokens(descendIntoTrivia: true)
                    let leadingDiagnostics = token.LeadingTrivia.SelectMany(t => t.Diagnostics)
                    let tokenDiagnostics = token.Diagnostics
-                   let trailingDianostics = token.TrailingTrivia.SelectMany(t => t.Diagnostics)
-                   from d in leadingDiagnostics.Concat(tokenDiagnostics).Concat(trailingDianostics)
+                   let trailingDiagnostics = token.TrailingTrivia.SelectMany(t => t.Diagnostics)
+                   from d in leadingDiagnostics.Concat(tokenDiagnostics).Concat(trailingDiagnostics)
                    select d;
         }
 

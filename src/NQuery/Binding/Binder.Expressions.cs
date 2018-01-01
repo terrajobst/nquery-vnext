@@ -106,12 +106,12 @@ namespace NQuery.Binding
             return BindToCommonType(boundExpressions, i => expressions[i].Span);
         }
 
-        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, TextSpan dianosticSpan)
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, TextSpan diagnosticSpan)
         {
-            return BindToCommonType(boundExpressions, i => dianosticSpan);
+            return BindToCommonType(boundExpressions, i => diagnosticSpan);
         }
 
-        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> dianosticSpanProvider)
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> diagnosticSpanProvider)
         {
             // To avoid cascading errors as let's first see whether we couldn't resolve
             // any of the expressions. If that's the case, we'll simply return them as-is.
@@ -138,7 +138,7 @@ namespace NQuery.Binding
             if (commonType == null)
                 commonType = boundExpressions.First().Type;
 
-            return boundExpressions.Select((e, i) => BindConversion(dianosticSpanProvider(i), e, commonType)).ToImmutableArray();
+            return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
         }
 
         private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
