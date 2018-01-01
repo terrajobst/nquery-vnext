@@ -196,8 +196,7 @@ namespace NQuery.Binding
             // If we've already allocated a value slot for the given expression,
             // we want our caller to refer to this value slot.
 
-            ValueSlot valueSlot;
-            if (TryReplaceExpression(node, result, out valueSlot))
+            if (TryReplaceExpression(node, result, out ValueSlot valueSlot))
                 return new BoundValueSlotExpression(valueSlot);
 
             return result;
