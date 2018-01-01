@@ -715,8 +715,7 @@ namespace NQuery.Binding
             // For cases like Foo.Bar we check whether 'Foo' was resolved to a table instance.
             // If that's the case we bind a column otherwise we bind a normal expression.
 
-            var boundTable = target as BoundTableExpression;
-            if (boundTable != null)
+            if (target is BoundTableExpression boundTable)
             {
                 // In Foo.Bar, Foo was resolved to a table. Bind Bar as column.
                 var tableInstance = boundTable.Symbol;
