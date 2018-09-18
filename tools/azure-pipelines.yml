@@ -20,3 +20,7 @@ steps:
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     codeCoverageEnabled: true
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '.\bin'
