@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
     <Copyright>Copyright (c) Immo Landwerth</Copyright>
     <Company>Immo Landwerth</Company>
     <Product>NQuery</Product>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\NQuery.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)\Common\NQuery.snk</AssemblyOriginatorKeyFile>
     <DefineConstants>$(DefineConstants);SIGNED</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="!$(AssemblyName.EndsWith('.Tests'))">
+  <PropertyGroup Condition="!$(MSBuildProjectName.EndsWith('.Tests'))">
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(OutDir)</PackageOutputPath>
     <Authors>$(Company)</Authors>
@@ -21,10 +21,5 @@
     <PackageTags>NQuery SQL</PackageTags>
     <Description>$(Product)</Description>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)\CommonAssemblyInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)\ExceptionBuilder.cs" />
-  </ItemGroup>
 
 </Project>
