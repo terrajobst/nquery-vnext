@@ -19,7 +19,7 @@ If you want to play with the bits, you need to add the following feed to your
 NuGet configuration:
 
 ```
-https://ci.appveyor.com/nuget/nquery-vnext
+https://www.myget.org/F/nquery-ci/api/v3/index.json
 ```
 
 You can do this by using the [package manager dialog](http://docs.nuget.org/consume/package-manager-dialog#package-sources).
