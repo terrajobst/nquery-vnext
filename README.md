@@ -1,6 +1,6 @@
 # NQuery vNext
 
-[![dev version](http://img.shields.io/appveyor/ci/terrajobst/nquery-vnext.svg?style=flat)](https://ci.appveyor.com/project/terrajobst/nquery-vnext)
+[![Build Status](https://terrajobst.visualstudio.com/NQuery/_apis/build/status/NQuery%20CI)](https://terrajobst.visualstudio.com/NQuery/_build/latest?definitionId=11)
 
 This is a Roslyn inspired rewrite of [NQuery][nquery]. The goals are:
 
