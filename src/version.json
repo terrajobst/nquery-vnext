@@ -1,9 +1,6 @@
 {
-    "version": "2.0.0-alpha",
+    "version": "2.0-alpha",
     "publicReleaseRefSpec": [
       "^refs/heads/master$"
-    ],
-    "nugetPackageVersion":{
-      "semVer": 2
-    }
+    ]
   }
