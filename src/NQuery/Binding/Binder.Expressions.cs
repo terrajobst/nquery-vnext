@@ -106,12 +106,12 @@ namespace NQuery.Binding
             return BindToCommonType(boundExpressions, i => expressions[i].Span);
         }
 
-        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, TextSpan dianosticSpan)
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, TextSpan diagnosticSpan)
         {
-            return BindToCommonType(boundExpressions, i => dianosticSpan);
+            return BindToCommonType(boundExpressions, i => diagnosticSpan);
         }
 
-        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> dianosticSpanProvider)
+        private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> diagnosticSpanProvider)
         {
             // To avoid cascading errors as let's first see whether we couldn't resolve
             // any of the expressions. If that's the case, we'll simply return them as-is.
@@ -138,7 +138,7 @@ namespace NQuery.Binding
             if (commonType == null)
                 commonType = boundExpressions.First().Type;
 
-            return boundExpressions.Select((e, i) => BindConversion(dianosticSpanProvider(i), e, commonType)).ToImmutableArray();
+            return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
         }
 
         private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
@@ -196,8 +196,7 @@ namespace NQuery.Binding
             // If we've already allocated a value slot for the given expression,
             // we want our caller to refer to this value slot.
 
-            ValueSlot valueSlot;
-            if (TryReplaceExpression(node, result, out valueSlot))
+            if (TryReplaceExpression(node, result, out ValueSlot valueSlot))
                 return new BoundValueSlotExpression(valueSlot);
 
             return result;
@@ -716,8 +715,7 @@ namespace NQuery.Binding
             // For cases like Foo.Bar we check whether 'Foo' was resolved to a table instance.
             // If that's the case we bind a column otherwise we bind a normal expression.
 
-            var boundTable = target as BoundTableExpression;
-            if (boundTable != null)
+            if (target is BoundTableExpression boundTable)
             {
                 // In Foo.Bar, Foo was resolved to a table. Bind Bar as column.
                 var tableInstance = boundTable.Symbol;
