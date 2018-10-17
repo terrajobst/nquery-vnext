@@ -596,7 +596,8 @@ namespace NQuery.Binding
                                    let boundComparision = BindBinaryExpression(a.Span, BinaryOperatorKind.Equal, boundExpression, boundArgument)
                                    select boundComparision;
 
-            return boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c == null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
+            var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c == null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
+            return BindOptionalNegation(node.Span, node.NotKeyword, inExpressionsAggregate);
         }
 
         private BoundExpression BindInQueryExpression(InQueryExpressionSyntax node)
