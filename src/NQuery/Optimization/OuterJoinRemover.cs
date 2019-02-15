@@ -9,16 +9,21 @@ namespace NQuery.Optimization
 {
     internal sealed class OuterJoinRemover : BoundTreeRewriter
     {
-        private readonly HashSet<ValueSlot> _nullRejectedRowBufferEntries = new HashSet<ValueSlot>();
+        private readonly Stack<HashSet<ValueSlot>> _nullRejectedRowBufferEntries = new Stack<HashSet<ValueSlot>>();
+
+        public OuterJoinRemover()
+        {
+            _nullRejectedRowBufferEntries.Push(new HashSet<ValueSlot>());
+        }
 
         private void AddNullRejectedTable(ValueSlot valueSlot)
         {
-            _nullRejectedRowBufferEntries.Add(valueSlot);
+            _nullRejectedRowBufferEntries.Peek().Add(valueSlot);
         }
 
         private bool IsAnyNullRejected(ImmutableArray<ValueSlot> valueSlots)
         {
-            return valueSlots.Any(_nullRejectedRowBufferEntries.Contains);
+            return valueSlots.Any(_nullRejectedRowBufferEntries.Peek().Contains);
         }
 
         private static BoundRelation WrapWithFilter(BoundRelation input, BoundExpression predicate)
@@ -51,50 +56,16 @@ namespace NQuery.Optimization
 
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
+            // Visit children
+
+            _nullRejectedRowBufferEntries.Push(new HashSet<ValueSlot>());
+
+            node = (BoundJoinRelation) base.RewriteJoinRelation(node);
+
             // Get declared tables of left and right
 
             var leftDefinedValues = node.Left.GetDefinedValues().ToImmutableArray();
             var rightDefinedValues = node.Right.GetDefinedValues().ToImmutableArray();
-
-            // Replace outer joins by left-/right-/inner joins
-
-            if (node.JoinType == BoundJoinType.RightOuter ||
-                node.JoinType == BoundJoinType.FullOuter)
-            {
-                if (IsAnyNullRejected(leftDefinedValues))
-                {
-                    var newType = node.JoinType == BoundJoinType.RightOuter
-                        ? BoundJoinType.Inner
-                        : BoundJoinType.LeftOuter;
-
-                    node = node.WithJoinType(newType);
-                }
-            }
-
-            if (node.JoinType == BoundJoinType.LeftOuter ||
-                node.JoinType == BoundJoinType.FullOuter)
-            {
-                if (IsAnyNullRejected(rightDefinedValues))
-                {
-                    var newType = node.JoinType == BoundJoinType.LeftOuter
-                        ? BoundJoinType.Inner
-                        : BoundJoinType.RightOuter;
-
-                    node = node.WithJoinType(newType);
-                }
-            }
-
-            // After converting an outer join to an inner one we can
-            // sometimes eliminate the whole join.
-
-            if (node.JoinType == BoundJoinType.Inner)
-            {
-                if (node.Left is BoundConstantRelation && !node.Left.GetDefinedValues().Any())
-                    return RewriteRelation(WrapWithFilter(node.Right, node.Condition));
-
-                if (node.Right is BoundConstantRelation && !node.Right.GetDefinedValues().Any())
-                    return RewriteRelation(WrapWithFilter(node.Left, node.Condition));
-            }
 
             // Analyze AND-parts of Condition
 
@@ -127,9 +98,52 @@ namespace NQuery.Optimization
                 }
             }
 
-            // Visit children
+            // Replace outer joins by left-/right-/inner joins
 
-            return base.RewriteJoinRelation(node);
+            if (node.JoinType == BoundJoinType.RightOuter ||
+                node.JoinType == BoundJoinType.FullOuter)
+            {
+                if (IsAnyNullRejected(leftDefinedValues))
+                {
+                    var newType = node.JoinType == BoundJoinType.RightOuter
+                        ? BoundJoinType.Inner
+                        : BoundJoinType.LeftOuter;
+
+                    node = node.WithJoinType(newType);
+                }
+            }
+
+            if (node.JoinType == BoundJoinType.LeftOuter ||
+                node.JoinType == BoundJoinType.FullOuter)
+            {
+                if (IsAnyNullRejected(rightDefinedValues))
+                {
+                    var newType = node.JoinType == BoundJoinType.LeftOuter
+                        ? BoundJoinType.Inner
+                        : BoundJoinType.RightOuter;
+
+                    node = node.WithJoinType(newType);
+                }
+            }
+
+            // As we're done with the main logic it's time to merge the stack
+
+            var childrenNullRejectedRowBufferEntries = _nullRejectedRowBufferEntries.Pop();
+            _nullRejectedRowBufferEntries.Peek().UnionWith(childrenNullRejectedRowBufferEntries);
+
+            // After converting an outer join to an inner one we can
+            // sometimes eliminate the whole join.
+
+            if (node.JoinType == BoundJoinType.Inner)
+            {
+                if (node.Left is BoundConstantRelation && !node.Left.GetDefinedValues().Any())
+                    return RewriteRelation(WrapWithFilter(node.Right, node.Condition));
+
+                if (node.Right is BoundConstantRelation && !node.Right.GetDefinedValues().Any())
+                    return RewriteRelation(WrapWithFilter(node.Left, node.Condition));
+            }
+
+            return node;
         }
     }
 }
