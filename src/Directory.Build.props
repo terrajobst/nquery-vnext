@@ -20,6 +20,7 @@
     <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
     <PackageTags>NQuery SQL</PackageTags>
     <Description>$(Product)</Description>
+    <NoWarn>$(NoWarn);NU5125</NoWarn>
   </PropertyGroup>
 
 </Project>
