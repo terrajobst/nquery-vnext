@@ -53,7 +53,7 @@
     <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" />
     <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" />
     <PackageReference Include="Microsoft.VisualStudio.VSEditor.Standalone.10" Version="1.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.6.0-preview3.19128.7" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
