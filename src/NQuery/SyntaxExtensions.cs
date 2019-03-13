@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,7 +76,7 @@ namespace NQuery
             return token;
         }
 
-        public static SyntaxToken GetPreviousIfCurrentContainsOrTouchesPosition(this SyntaxToken token, int position)
+        public static SyntaxToken? GetPreviousIfCurrentContainsOrTouchesPosition(this SyntaxToken token, int position)
         {
             return token != null && token.Span.ContainsOrTouches(position)
                        ? token.GetPreviousToken()
@@ -212,7 +214,7 @@ namespace NQuery
             return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
-        public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)
+        public static SelectQuerySyntax? GetAppliedSelectQuery(this OrderedQuerySyntax query)
         {
             if (query == null)
                 throw new ArgumentNullException(nameof(query));

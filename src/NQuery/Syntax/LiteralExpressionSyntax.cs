@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
-        internal LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken token, object value)
+        internal LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken token, object? value)
             : base(syntaxTree)
         {
             Token = token;
@@ -24,6 +26,6 @@ namespace NQuery.Syntax
 
         public SyntaxToken Token { get; }
 
-        public object Value { get; }
+        public object? Value { get; }
     }
 }

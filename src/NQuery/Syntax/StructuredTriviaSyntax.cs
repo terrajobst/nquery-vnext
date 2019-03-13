@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Syntax
@@ -9,9 +11,9 @@ namespace NQuery.Syntax
         {
         }
 
-        public SyntaxTrivia ParentTrivia
+        public SyntaxTrivia? ParentTrivia
         {
-            get { return SyntaxTree == null ? null : SyntaxTree.GetParentTrivia(this); }
+            get { return SyntaxTree?.GetParentTrivia(this); }
         }
     }
 }

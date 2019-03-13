@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -6,7 +8,7 @@ namespace NQuery.Syntax
 {
     public sealed class CaseExpressionSyntax : ExpressionSyntax
     {
-        internal CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax elseLabel, SyntaxToken endKeyword)
+        internal CaseExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken caseKeyword, ExpressionSyntax? inputExpression, IEnumerable<CaseLabelSyntax> caseLabels, CaseElseLabelSyntax? elseLabel, SyntaxToken endKeyword)
             : base(syntaxTree)
         {
             CaseKeyword = caseKeyword;
@@ -39,11 +41,11 @@ namespace NQuery.Syntax
 
         public SyntaxToken CaseKeyword { get; }
 
-        public ExpressionSyntax InputExpression { get; }
+        public ExpressionSyntax? InputExpression { get; }
 
         public ImmutableArray<CaseLabelSyntax> CaseLabels { get; }
 
-        public CaseElseLabelSyntax ElseLabel { get; }
+        public CaseElseLabelSyntax? ElseLabel { get; }
 
         public SyntaxToken EndKeyword { get; }
     }

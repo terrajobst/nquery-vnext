@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -10,9 +12,9 @@ namespace NQuery
 {
     public sealed class SyntaxTrivia
     {
-        private readonly SyntaxTree _syntaxTree;
+        private readonly SyntaxTree? _syntaxTree;
 
-        internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IEnumerable<Diagnostic> diagnostics)
+        internal SyntaxTrivia(SyntaxTree? syntaxTree, SyntaxKind kind, string? text, TextSpan span, StructuredTriviaSyntax? structure, IEnumerable<Diagnostic> diagnostics)
         {
             _syntaxTree = syntaxTree;
             Kind = kind;
@@ -22,15 +24,15 @@ namespace NQuery
             Diagnostics = diagnostics.ToImmutableArray();
         }
 
-        public SyntaxToken Parent => _syntaxTree?.GetParentToken(this);
+        public SyntaxToken Parent => _syntaxTree?.GetParentToken(this)!;
 
         public SyntaxKind Kind { get; }
 
-        public string Text { get; }
+        public string? Text { get; }
 
         public TextSpan Span { get; }
 
-        public StructuredTriviaSyntax Structure { get; }
+        public StructuredTriviaSyntax? Structure { get; }
 
         public ImmutableArray<Diagnostic> Diagnostics { get; }
 

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class ExpressionSelectColumnSyntax : SelectColumnSyntax
     {
-        internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
+        internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax? alias)
             : base(syntaxTree)
         {
             Expression = expression;
@@ -26,6 +28,6 @@ namespace NQuery.Syntax
 
         public ExpressionSyntax Expression { get; }
 
-        public AliasSyntax Alias { get; }
+        public AliasSyntax? Alias { get; }
     }
 }

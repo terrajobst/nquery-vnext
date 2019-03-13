@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class WildcardSelectColumnSyntax : SelectColumnSyntax
     {
-        internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, SyntaxToken dotToken, SyntaxToken asteriskToken)
+        internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken)
             : base(syntaxTree)
         {
             TableName = tableName;
@@ -27,9 +29,9 @@ namespace NQuery.Syntax
             yield return AsteriskToken;
         }
 
-        public SyntaxToken TableName { get; }
+        public SyntaxToken? TableName { get; }
 
-        public SyntaxToken DotToken { get; }
+        public SyntaxToken? DotToken { get; }
 
         public SyntaxToken AsteriskToken { get; }
     }

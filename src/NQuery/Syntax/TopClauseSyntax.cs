@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class TopClauseSyntax : SyntaxNode
     {
-        internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken withKeyword, SyntaxToken tiesKeyword)
+        internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
             : base(syntaxTree)
         {
             TopKeyword = topKeyword;
@@ -33,8 +35,8 @@ namespace NQuery.Syntax
 
         public SyntaxToken Value { get; }
 
-        public SyntaxToken WithKeyword { get; }
+        public SyntaxToken? WithKeyword { get; }
 
-        public SyntaxToken TiesKeyword { get; }
+        public SyntaxToken? TiesKeyword { get; }
     }
 }

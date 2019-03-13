@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class SelectQuerySyntax : QuerySyntax
     {
-        internal SelectQuerySyntax(SyntaxTree syntaxTree, SelectClauseSyntax selectClause, FromClauseSyntax fromClause, WhereClauseSyntax whereClause, GroupByClauseSyntax groupByClause, HavingClauseSyntax havingClause)
+        internal SelectQuerySyntax(SyntaxTree syntaxTree, SelectClauseSyntax selectClause, FromClauseSyntax? fromClause, WhereClauseSyntax? whereClause, GroupByClauseSyntax? groupByClause, HavingClauseSyntax? havingClause)
             : base(syntaxTree)
         {
             SelectClause = selectClause;
@@ -35,12 +37,12 @@ namespace NQuery.Syntax
 
         public SelectClauseSyntax SelectClause { get; }
 
-        public FromClauseSyntax FromClause { get; }
+        public FromClauseSyntax? FromClause { get; }
 
-        public WhereClauseSyntax WhereClause { get; }
+        public WhereClauseSyntax? WhereClause { get; }
 
-        public GroupByClauseSyntax GroupByClause { get; }
+        public GroupByClauseSyntax? GroupByClause { get; }
 
-        public HavingClauseSyntax HavingClause { get; }
+        public HavingClauseSyntax? HavingClause { get; }
     }
 }

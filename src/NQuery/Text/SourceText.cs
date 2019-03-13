@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,14 +11,14 @@ namespace NQuery.Text
 {
     public abstract class SourceText
     {
-        private SourceTextContainer _container;
+        private SourceTextContainer? _container;
 
         protected SourceText()
             : this(null)
         {
         }
 
-        protected SourceText(SourceTextContainer container)
+        protected SourceText(SourceTextContainer? container)
         {
             _container = container;
         }
@@ -38,7 +40,7 @@ namespace NQuery.Text
                     var container = new StaticSourceTextContainer(this);
                     Interlocked.CompareExchange(ref _container, container, null);
                 }
-                return _container;
+                return _container!;
             }
         }
 
@@ -160,7 +162,7 @@ namespace NQuery.Text
                 return Enumerable.Empty<TextChange>();
 
             var rootFound = false;
-            var candidate = this;
+            SourceText? candidate = this;
             var path = new Stack<ChangedSourceText>();
 
             while (candidate != null && !rootFound)

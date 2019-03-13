@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -45,12 +47,14 @@ namespace NQuery
 
         public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
         {
-            var node = this;
+            SyntaxNode? node = this;
+
             while (node != null)
             {
                 yield return node;
 
-                StructuredTriviaSyntax structuredTrivia;
+                StructuredTriviaSyntax? structuredTrivia;
+
                 if (!ascendOutOfTrivia || (structuredTrivia = node as StructuredTriviaSyntax) == null)
                 {
                     node = node.Parent;
@@ -62,9 +66,7 @@ namespace NQuery
                     // So in order to ascend out of those, we need to navgiate from
                     // the structure to its containing token which we can then use
                     // to return the logical parent.
-                    var parentTrivia = structuredTrivia.ParentTrivia;
-                    var parentToken = parentTrivia.Parent;
-                    node = parentToken.Parent;
+                    node = structuredTrivia.ParentTrivia?.Parent.Parent;
                 }
             }
         }
@@ -145,12 +147,12 @@ namespace NQuery
                    select n.AsToken();
         }
 
-        public SyntaxToken FirstToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+        public SyntaxToken? FirstToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
             return SyntaxTreeNavigation.GetFirstToken(this, includeZeroLength, includeSkippedTokens);
         }
 
-        public SyntaxToken LastToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+        public SyntaxToken? LastToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
             return SyntaxTreeNavigation.GetLastToken(this, includeZeroLength, includeSkippedTokens);
         }
@@ -201,7 +203,7 @@ namespace NQuery
 
         public SyntaxNode Parent
         {
-            get { return SyntaxTree.GetParentNode(this); }
+            get { return SyntaxTree.GetParentNode(this)!; }
         }
 
         public abstract SyntaxKind Kind { get; }

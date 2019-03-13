@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +35,7 @@ namespace NQuery
             return Conversion.Classify(sourceType, targetType);
         }
 
-        public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax selectColumn)
+        public TableInstanceSymbol? GetTableInstance(WildcardSelectColumnSyntax selectColumn)
         {
             if (selectColumn == null)
                 throw new ArgumentNullException(nameof(selectColumn));
@@ -60,7 +62,7 @@ namespace NQuery
             return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
         }
 
-        public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
+        public QueryColumnInstanceSymbol? GetSymbol(OrderByColumnSyntax orderByColumn)
         {
             if (orderByColumn == null)
                 throw new ArgumentNullException(nameof(orderByColumn));
@@ -69,7 +71,7 @@ namespace NQuery
             return boundOrderByColumn?.QueryColumn;
         }
 
-        public Symbol GetSymbol(ExpressionSyntax expression)
+        public Symbol? GetSymbol(ExpressionSyntax expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
@@ -78,7 +80,7 @@ namespace NQuery
             return boundExpression == null ? null : GetSymbol(boundExpression);
         }
 
-        private static Symbol GetSymbol(BoundExpression expression)
+        private static Symbol? GetSymbol(BoundExpression expression)
         {
             switch (expression.Kind)
             {
@@ -116,7 +118,7 @@ namespace NQuery
             return expression.Symbol;
         }
 
-        private static Symbol GetSymbol(BoundFunctionInvocationExpression expression)
+        private static Symbol? GetSymbol(BoundFunctionInvocationExpression expression)
         {
             return expression.Symbol;
         }
@@ -131,12 +133,12 @@ namespace NQuery
             return expression.Symbol;
         }
 
-        private static Symbol GetSymbol(BoundMethodInvocationExpression expression)
+        private static Symbol? GetSymbol(BoundMethodInvocationExpression expression)
         {
             return expression.Symbol;
         }
 
-        public Type GetExpressionType(ExpressionSyntax expression)
+        public Type? GetExpressionType(ExpressionSyntax expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
@@ -145,7 +147,7 @@ namespace NQuery
             return boundExpression?.Type;
         }
 
-        public Conversion GetConversion(CastExpressionSyntax expression)
+        public Conversion? GetConversion(CastExpressionSyntax expression)
         {
             if (expression == null)
                 throw new ArgumentNullException(nameof(expression));
@@ -154,7 +156,7 @@ namespace NQuery
             return boundExpression?.Conversion;
         }
 
-        private BoundExpression GetBoundExpression(ExpressionSyntax expression)
+        private BoundExpression? GetBoundExpression(ExpressionSyntax expression)
         {
             return _bindingResult.GetBoundNode(expression) as BoundExpression;
         }
@@ -165,10 +167,10 @@ namespace NQuery
                 throw new ArgumentNullException(nameof(tableReference));
 
             var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
-            return result?.GetDeclaredTableInstances().AsEnumerable();
+            return result?.GetDeclaredTableInstances().AsEnumerable() ?? Enumerable.Empty<TableInstanceSymbol>();
         }
 
-        public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
+        public CommonTableExpressionSymbol? GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
         {
             if (commonTableExpression == null)
                 throw new ArgumentNullException(nameof(commonTableExpression));
@@ -177,7 +179,7 @@ namespace NQuery
             return result?.TableSymbol;
         }
 
-        public ColumnSymbol GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
+        public ColumnSymbol? GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
         {
             if (commonTableExpressionColumnName == null)
                 throw new ArgumentNullException(nameof(commonTableExpressionColumnName));
@@ -209,7 +211,7 @@ namespace NQuery
             return null;
         }
 
-        public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
+        public TableInstanceSymbol? GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
         {
             if (tableReference == null)
                 throw new ArgumentNullException(nameof(tableReference));
@@ -218,7 +220,7 @@ namespace NQuery
             return result?.TableInstance;
         }
 
-        public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
+        public TableInstanceSymbol? GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
         {
             if (tableReference == null)
                 throw new ArgumentNullException(nameof(tableReference));
@@ -227,7 +229,7 @@ namespace NQuery
             return result?.TableInstance;
         }
 
-        public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
+        public QueryColumnInstanceSymbol? GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
         {
             if (selectColumn == null)
                 throw new ArgumentNullException(nameof(selectColumn));

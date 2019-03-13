@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -40,7 +42,7 @@ namespace NQuery
             return new ExpressionEvaluator(expressionType, expression);
         }
 
-        private Func<object> CreateExpression()
+        private Func<object?> CreateExpression()
         {
             // In the general case evaluating an expression means evaluating the query.
             // That's because an expression might contain sub queries.
@@ -68,13 +70,13 @@ namespace NQuery
             return EvaluteQueryAsExpression;
         }
 
-        private static Func<object> CreateTrivialExpression(BoundComputeRelation computeRelation)
+        private static Func<object?> CreateTrivialExpression(BoundComputeRelation computeRelation)
         {
             var computedValue = computeRelation.DefinedValues.First();
             return ExpressionBuilder.BuildFunction(computedValue.Expression);
         }
 
-        private object EvaluteQueryAsExpression()
+        private object? EvaluteQueryAsExpression()
         {
             using (var reader = CreateReader())
             {

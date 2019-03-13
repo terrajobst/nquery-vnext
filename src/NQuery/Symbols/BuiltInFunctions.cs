@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -25,7 +27,7 @@ namespace NQuery.Symbols
                 new FunctionSymbol<object, long>(@"TO_INT64", @"value", ToInt64),
                 new FunctionSymbol<object, sbyte>(@"TO_SBYTE", @"value", ToSByte),
                 new FunctionSymbol<object, float>(@"TO_SINGLE", @"value", ToSingle),
-                new FunctionSymbol<object, string>(@"TO_STRING", @"value", ToString),
+                new FunctionSymbol<object, string?>(@"TO_STRING", @"value", ToString),
                 new FunctionSymbol<object, ushort>(@"TO_UINT16", @"value", ToUInt16),
                 new FunctionSymbol<object, uint>(@"TO_UINT32", @"value", ToUInt32),
                 new FunctionSymbol<object, ulong>(@"TO_UINT64", @"value", ToUInt64),
@@ -68,29 +70,29 @@ namespace NQuery.Symbols
                 new FunctionSymbol<short, int>(@"SIGN", @"basis", Math.Sign),
                 new FunctionSymbol<sbyte, int>(@"SIGN", @"basis", Math.Sign),
 
-                new FunctionSymbol<string, string>(@"SOUNDEX", @"text", GetSoundexCode),
+                new FunctionSymbol<string, string?>(@"SOUNDEX", @"text", GetSoundexCode),
                 new FunctionSymbol<string, int>(@"LEN", @"text", StringLength),
                 new FunctionSymbol<string, string, int>(@"CHARINDEX", @"chars", @"text", CharIndex),
-                new FunctionSymbol<string, int, int, string>(@"SUBSTRING", @"text", @"start", @"length", Substring),
-                new FunctionSymbol<string, int, string>(@"SUBSTRING", @"text", @"start", Substring),
-                new FunctionSymbol<string, string>(@"UPPER", @"text", Upper),
-                new FunctionSymbol<string, string>(@"LOWER", @"text", Lower),
-                new FunctionSymbol<string, string>(@"TRIM", @"text", Trim),
-                new FunctionSymbol<string, string>(@"LTRIM", @"text", LTrim),
-                new FunctionSymbol<string, string>(@"RTRIM", @"text", RTrim),
-                new FunctionSymbol<string, string, string, string>(@"REPLACE", @"text", @"oldValue", @"newValue", Replace),
-                new FunctionSymbol<string, string, string, string>(@"REGEX_REPLACE", @"text", @"pattern", @"replacementPattern", RegexReplace),
+                new FunctionSymbol<string, int, int, string?>(@"SUBSTRING", @"text", @"start", @"length", Substring),
+                new FunctionSymbol<string, int, string?>(@"SUBSTRING", @"text", @"start", Substring),
+                new FunctionSymbol<string, string?>(@"UPPER", @"text", Upper),
+                new FunctionSymbol<string, string?>(@"LOWER", @"text", Lower),
+                new FunctionSymbol<string, string?>(@"TRIM", @"text", Trim),
+                new FunctionSymbol<string, string?>(@"LTRIM", @"text", LTrim),
+                new FunctionSymbol<string, string?>(@"RTRIM", @"text", RTrim),
+                new FunctionSymbol<string, string, string, string?>(@"REPLACE", @"text", @"oldValue", @"newValue", Replace),
+                new FunctionSymbol<string, string, string, string?>(@"REGEX_REPLACE", @"text", @"pattern", @"replacementPattern", RegexReplace),
                 new FunctionSymbol<string, string, bool>(@"REGEX_MATCH", @"text", @"pattern", RegexMatch),
-                new FunctionSymbol<string, string>(@"REGEX_ESCAPE", @"text", RegexEscape),
-                new FunctionSymbol<string, string>(@"REGEX_UNESCAPE", @"text", RegexUnescape),
+                new FunctionSymbol<string, string?>(@"REGEX_ESCAPE", @"text", RegexEscape),
+                new FunctionSymbol<string, string?>(@"REGEX_UNESCAPE", @"text", RegexUnescape),
                 new FunctionSymbol<object, string, string>(@"FORMAT", @"value", @"format", Format),
-                new FunctionSymbol<string, int, string>(@"REPLICATE", @"text", @"count", Replicate),
-                new FunctionSymbol<string, string>(@"REVERSE", @"text", Reverse),
-                new FunctionSymbol<string, int, string>(@"LEFT", @"text", @"numberOfChars", Left),
-                new FunctionSymbol<string, int, string>(@"RIGHT", @"text", @"numberOfChars", Right),
-                new FunctionSymbol<int, string>(@"SPACE", @"numberOfSpaces", Space),
-                new FunctionSymbol<string, int, string>(@"LPAD", @"text", @"totalWidth", LPad),
-                new FunctionSymbol<string, int, string>(@"RPAD", @"text", @"totalWidth", RPad),
+                new FunctionSymbol<string, int, string?>(@"REPLICATE", @"text", @"count", Replicate),
+                new FunctionSymbol<string, string?>(@"REVERSE", @"text", Reverse),
+                new FunctionSymbol<string, int, string?>(@"LEFT", @"text", @"numberOfChars", Left),
+                new FunctionSymbol<string, int, string?>(@"RIGHT", @"text", @"numberOfChars", Right),
+                new FunctionSymbol<int, string?>(@"SPACE", @"numberOfSpaces", Space),
+                new FunctionSymbol<string, int, string?>(@"LPAD", @"text", @"totalWidth", LPad),
+                new FunctionSymbol<string, int, string?>(@"RPAD", @"text", @"totalWidth", RPad),
 
                 new FunctionSymbol<DateTime>(@"GETDATE", GetDate),
                 new FunctionSymbol<DateTime>(@"GETUTCDATE", GetUtcDate),
@@ -188,7 +190,7 @@ namespace NQuery.Symbols
             return Convert.ToSingle(value, CultureInfo.InvariantCulture);
         }
 
-        private static string ToString(object value)
+        private static string? ToString(object value)
         {
             if (value == null)
                 return null;
@@ -240,7 +242,7 @@ namespace NQuery.Symbols
             return Math.Round(v, decimals, MidpointRounding.AwayFromZero);
         }
 
-        private static string GetSoundexCode(string text)
+        private static string? GetSoundexCode(string text)
         {
             if (text == null)
                 return null;
@@ -267,7 +269,7 @@ namespace NQuery.Symbols
             return text.IndexOf(chars, StringComparison.CurrentCulture) + 1;
         }
 
-        private static string Substring(string text, int start, int length)
+        private static string? Substring(string text, int start, int length)
         {
             if (text == null)
                 return null;
@@ -284,7 +286,7 @@ namespace NQuery.Symbols
             return text.Substring(start - 1, length);
         }
 
-        private static string Substring(string text, int start)
+        private static string? Substring(string text, int start)
         {
             if (text == null)
                 return null;
@@ -292,7 +294,7 @@ namespace NQuery.Symbols
             return Substring(text, start, text.Length);
         }
 
-        private static string Upper(string text)
+        private static string? Upper(string text)
         {
             if (text == null)
                 return null;
@@ -300,7 +302,7 @@ namespace NQuery.Symbols
             return text.ToUpper(CultureInfo.CurrentCulture);
         }
 
-        private static string Lower(string text)
+        private static string? Lower(string text)
         {
             if (text == null)
                 return null;
@@ -308,7 +310,7 @@ namespace NQuery.Symbols
             return text.ToLower(CultureInfo.CurrentCulture);
         }
 
-        private static string Trim(string text)
+        private static string? Trim(string text)
         {
             if (text == null)
                 return null;
@@ -316,7 +318,7 @@ namespace NQuery.Symbols
             return text.Trim();
         }
 
-        private static string LTrim(string text)
+        private static string? LTrim(string text)
         {
             if (text == null)
                 return null;
@@ -324,7 +326,7 @@ namespace NQuery.Symbols
             return text.TrimStart(' ', '\t');
         }
 
-        private static string RTrim(string text)
+        private static string? RTrim(string text)
         {
             if (text == null)
                 return null;
@@ -332,7 +334,7 @@ namespace NQuery.Symbols
             return text.TrimEnd(' ', '\t');
         }
 
-        private static string Replace(string text, string oldValue, string newValue)
+        private static string? Replace(string text, string oldValue, string newValue)
         {
             if (text == null || oldValue == null || newValue == null)
                 return null;
@@ -340,7 +342,7 @@ namespace NQuery.Symbols
             return text.Replace(oldValue, newValue);
         }
 
-        private static string RegexReplace(string text, string pattern, string replacementPattern)
+        private static string? RegexReplace(string text, string pattern, string replacementPattern)
         {
             if (text == null || pattern == null || replacementPattern == null)
                 return null;
@@ -356,7 +358,7 @@ namespace NQuery.Symbols
             return Regex.IsMatch(text, pattern);
         }
 
-        private static string RegexEscape(string text)
+        private static string? RegexEscape(string text)
         {
             if (text == null)
                 return null;
@@ -364,7 +366,7 @@ namespace NQuery.Symbols
             return Regex.Escape(text);
         }
 
-        private static string RegexUnescape(string text)
+        private static string? RegexUnescape(string text)
         {
             if (text == null)
                 return null;
@@ -378,7 +380,7 @@ namespace NQuery.Symbols
             return string.Format(CultureInfo.CurrentCulture, embeddedFormatString, value);
         }
 
-        private static string Replicate(string text, int count)
+        private static string? Replicate(string text, int count)
         {
             if (text == null)
                 return null;
@@ -389,7 +391,7 @@ namespace NQuery.Symbols
             return sb.ToString();
         }
 
-        private static string Reverse(string text)
+        private static string? Reverse(string text)
         {
             if (text == null)
                 return null;
@@ -400,7 +402,7 @@ namespace NQuery.Symbols
             return sb.ToString();
         }
 
-        private static string Left(string text, int numberOfChars)
+        private static string? Left(string text, int numberOfChars)
         {
             if (text == null)
                 return null;
@@ -411,7 +413,7 @@ namespace NQuery.Symbols
             return text.Substring(0, numberOfChars);
         }
 
-        private static string Right(string text, int numberOfChars)
+        private static string? Right(string text, int numberOfChars)
         {
             if (text == null)
                 return null;
@@ -422,7 +424,7 @@ namespace NQuery.Symbols
             return text.Substring(text.Length - numberOfChars, numberOfChars);
         }
 
-        private static string Space(int numberOfSpaces)
+        private static string? Space(int numberOfSpaces)
         {
             if (numberOfSpaces <= 0)
                 return string.Empty;
@@ -430,7 +432,7 @@ namespace NQuery.Symbols
             return Replicate(@" ", numberOfSpaces);
         }
 
-        private static string LPad(string text, int totalWidth)
+        private static string? LPad(string text, int totalWidth)
         {
             if (text == null)
                 return null;
@@ -438,7 +440,7 @@ namespace NQuery.Symbols
             return text.PadLeft(totalWidth);
         }
 
-        private static string RPad(string text, int totalWidth)
+        private static string? RPad(string text, int totalWidth)
         {
             if (text == null)
                 return null;

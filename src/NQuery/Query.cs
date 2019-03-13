@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Threading;
 
@@ -5,7 +7,7 @@ namespace NQuery
 {
     public sealed class Query
     {
-        private CompiledQuery _query;
+        private CompiledQuery? _query;
 
         private Query(DataContext dataContext, string text)
         {
@@ -34,7 +36,7 @@ namespace NQuery
             Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
         }
 
-        public object ExecuteScalar()
+        public object? ExecuteScalar()
         {
             using (var reader = ExecuteReader())
             {
@@ -46,19 +48,19 @@ namespace NQuery
 
         public T ExecuteScalar<T>()
         {
-            return (T) ExecuteScalar();
+            return (T) ExecuteScalar()!;
         }
 
         public QueryReader ExecuteReader()
         {
             EnsureCompiled();
-            return _query.CreateReader();
+            return _query!.CreateReader();
         }
 
         public QueryReader ExecuteSchemaReader()
         {
             EnsureCompiled();
-            return _query.CreateSchemaReader();
+            return _query!.CreateSchemaReader();
         }
 
         public DataContext DataContext { get; }

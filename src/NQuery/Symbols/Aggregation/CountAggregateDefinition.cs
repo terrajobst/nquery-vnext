@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Symbols.Aggregation
@@ -9,7 +11,7 @@ namespace NQuery.Symbols.Aggregation
             get { return @"COUNT"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             return new CountAggregatable();
         }
@@ -36,13 +38,13 @@ namespace NQuery.Symbols.Aggregation
                 _count = 0;
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 if (value != null)
                     _count++;
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 return _count;
             }

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class IsNullExpressionSyntax : ExpressionSyntax
     {
-        internal IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken notKeyword, SyntaxToken nullKeyword)
+        internal IsNullExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken isKeyword, SyntaxToken? notKeyword, SyntaxToken nullKeyword)
             : base(syntaxTree)
         {
             Expression = expression;
@@ -32,7 +34,7 @@ namespace NQuery.Syntax
 
         public SyntaxToken IsKeyword { get; }
 
-        public SyntaxToken NotKeyword { get; }
+        public SyntaxToken? NotKeyword { get; }
 
         public SyntaxToken NullKeyword { get; }
     }

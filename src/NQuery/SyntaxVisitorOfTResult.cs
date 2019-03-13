@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 using NQuery.Syntax;
@@ -205,7 +207,7 @@ namespace NQuery
 
         public virtual TResult DefaultVisit(SyntaxNode node)
         {
-            return default(TResult);
+            return default(TResult)!;
         }
 
         public virtual TResult VisitAlias(AliasSyntax node)

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -91,9 +93,6 @@ namespace NQuery
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)
         {
-            if (boundRoot == null)
-                return null;
-
             var query = boundRoot as BoundQuery;
             if (query != null)
                 return query;

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -319,7 +321,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Arguments.Select(Build);
-            return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
+            return new ShowPlanNode(node.Symbol?.ToString() ?? "?", properties, children, true);
         }
 
         private static ShowPlanNode BuildPropertyAccessExpression(BoundPropertyAccessExpression node)
@@ -333,7 +335,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = new[] {Build(node.Target)}.Concat(node.Arguments.Select(Build));
-            return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
+            return new ShowPlanNode(node.Symbol?.ToString() ?? "?", properties, children, true);
         }
 
         private static ShowPlanNode BuildConversionExpression(BoundConversionExpression node)

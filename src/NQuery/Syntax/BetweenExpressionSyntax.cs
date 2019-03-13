@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class BetweenExpressionSyntax : ExpressionSyntax
     {
-        internal BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
+        internal BetweenExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken betweenKeyword, ExpressionSyntax lowerBound, SyntaxToken andKeyword, ExpressionSyntax upperBound)
             : base(syntaxTree)
         {
             Left = left;
@@ -34,7 +36,7 @@ namespace NQuery.Syntax
 
         public ExpressionSyntax Left { get; }
 
-        public SyntaxToken NotKeyword { get; }
+        public SyntaxToken? NotKeyword { get; }
 
         public SyntaxToken BetweenKeyword { get; }
 

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Threading;
 
@@ -5,7 +7,7 @@ namespace NQuery
 {
     public sealed class Expression<T>
     {
-        private ExpressionEvaluator _expressionEvaluator;
+        private ExpressionEvaluator? _expressionEvaluator;
 
         private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
         {
@@ -32,7 +34,7 @@ namespace NQuery
 
         public static Expression<T> Create(DataContext dataContext, string text)
         {
-            return Create(dataContext, text, default(T));
+            return Create(dataContext, text, default(T)!);
         }
 
         public static Expression<T> Create(DataContext dataContext, string text, T nullValue)
@@ -60,13 +62,13 @@ namespace NQuery
         public Type Resolve()
         {
             EnsureCompiled();
-            return _expressionEvaluator.Type;
+            return _expressionEvaluator!.Type;
         }
 
         public T Evaluate()
         {
             EnsureCompiled();
-            var result = _expressionEvaluator.Evalutate();
+            var result = _expressionEvaluator!.Evalutate();
             return result == null
                 ? NullValue
                 : (T) result;

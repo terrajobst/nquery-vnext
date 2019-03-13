@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class AliasSyntax : SyntaxNode
     {
-        internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken asKeyword, SyntaxToken identifier)
+        internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifier)
             : base(syntaxTree)
         {
             AsKeyword = asKeyword;
@@ -24,7 +26,7 @@ namespace NQuery.Syntax
             yield return Identifier;
         }
 
-        public SyntaxToken AsKeyword { get; }
+        public SyntaxToken? AsKeyword { get; }
 
         public SyntaxToken Identifier { get; }
     }

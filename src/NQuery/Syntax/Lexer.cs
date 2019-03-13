@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
@@ -10,7 +12,7 @@ namespace NQuery.Syntax
 {
     internal sealed class Lexer
     {
-        private readonly SyntaxTree _syntaxTree;
+        private readonly SyntaxTree? _syntaxTree;
         private readonly SourceText _text;
         private readonly CharReader _charReader;
         private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
@@ -19,10 +21,10 @@ namespace NQuery.Syntax
 
         private SyntaxKind _kind;
         private SyntaxKind _contextualKind;
-        private object _value;
+        private object? _value;
         private int _start;
 
-        public Lexer(SyntaxTree syntaxTree, SourceText text)
+        public Lexer(SyntaxTree? syntaxTree, SourceText text)
         {
             _syntaxTree = syntaxTree;
             _text = text;

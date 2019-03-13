@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class InQueryExpressionSyntax : ExpressionSyntax
     {
-        internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+        internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
             : base(syntaxTree)
         {
             Expression = expression;
@@ -34,7 +36,7 @@ namespace NQuery.Syntax
 
         public ExpressionSyntax Expression { get; }
 
-        public SyntaxToken NotKeyword { get; }
+        public SyntaxToken? NotKeyword { get; }
 
         public SyntaxToken InKeyword { get; }
 

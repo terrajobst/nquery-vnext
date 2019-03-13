@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +13,7 @@ namespace NQuery.Symbols.Aggregation
             get { return @"CONCAT"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             return new ConcatAggregatable();
         }
@@ -38,7 +40,7 @@ namespace NQuery.Symbols.Aggregation
                 _valueList.Clear();
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 if (value == null)
                     return;
@@ -51,7 +53,7 @@ namespace NQuery.Symbols.Aggregation
                 _valueList.Add(strValue);
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 var sb = new StringBuilder(_valueList.Count * 8);
 

@@ -5,6 +5,8 @@ using System.Linq;
 
 using NQuery.Text;
 
+#nullable enable
+
 namespace NQuery.Syntax
 {
     internal sealed class Parser
@@ -67,7 +69,7 @@ namespace NQuery.Syntax
             return _tokens[i];
         }
 
-        private SyntaxToken GetPreviousToken()
+        private SyntaxToken? GetPreviousToken()
         {
             var previousIndex = _tokenIndex - 1;
             return previousIndex < 0
@@ -90,7 +92,7 @@ namespace NQuery.Syntax
                        : result.WithKind(result.ContextualKind);
         }
 
-        private SyntaxToken NextTokenIf(SyntaxKind kind)
+        private SyntaxToken? NextTokenIf(SyntaxKind kind)
         {
             return Current.Kind == kind
                        ? NextToken()
@@ -290,7 +292,7 @@ namespace NQuery.Syntax
             return ParseSubExpression(null, 0);
         }
 
-        private ExpressionSyntax ParseSubExpression(ExpressionSyntax left, int precedence)
+        private ExpressionSyntax ParseSubExpression(ExpressionSyntax? left, int precedence)
         {
             if (left == null)
             {
@@ -352,7 +354,7 @@ namespace NQuery.Syntax
             return new UnaryExpressionSyntax(_syntaxTree, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
+        private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
         {
             var operatorToken = NextToken();
 
@@ -383,7 +385,7 @@ namespace NQuery.Syntax
             return new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken notKeyword)
+        private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken? notKeyword)
         {
             var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
             var betweenKeyword = NextToken();
@@ -393,27 +395,27 @@ namespace NQuery.Syntax
             return new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
         }
 
-        private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
         {
             var toKeyword = Match(SyntaxKind.ToKeyword);
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
         }
 
-        private ExpressionSyntax ParseSoundsLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
+        private ExpressionSyntax ParseSoundsLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
         {
             var likeKeyword = Match(SyntaxKind.LikeKeyword);
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new SoundsLikeExpressionSyntax(_syntaxTree, left, notKeyword, soundsKeywordToken, likeKeyword, expression);
         }
 
-        private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
         {
             var expression = ParseSubExpression(null, operatorPrecedence);
             return new LikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
         }
 
-        private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken operatorToken)
+        private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken operatorToken)
         {
             var isQuery = CurrentIsStartingQuery();
             if (!isQuery)
@@ -585,7 +587,7 @@ namespace NQuery.Syntax
             return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseLabel, endKeyword);
         }
 
-        private ExpressionSyntax ParseOptionalCaseInputExpression()
+        private ExpressionSyntax? ParseOptionalCaseInputExpression()
         {
             var hasInput = Current.Kind != SyntaxKind.WhenKeyword &&
                            Current.Kind != SyntaxKind.ElseKeyword &&
@@ -615,7 +617,7 @@ namespace NQuery.Syntax
             return new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
         }
 
-        private CaseElseLabelSyntax ParseOptionalCaseElseLabel()
+        private CaseElseLabelSyntax? ParseOptionalCaseElseLabel()
         {
             return Current.Kind != SyntaxKind.ElseKeyword
                        ? null
@@ -782,7 +784,7 @@ namespace NQuery.Syntax
             return new CommonTableExpressionSyntax(_syntaxTree, recursiveKeyword, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
         }
 
-        private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
+        private CommonTableExpressionColumnNameListSyntax? ParseCommonTableExpressionColumnNameList()
         {
             if (Current.Kind != SyntaxKind.LeftParenthesisToken)
                 return null;
@@ -850,7 +852,7 @@ namespace NQuery.Syntax
         private OrderByColumnSyntax ParseOrderByColumn()
         {
             var expression = ParseExpression();
-            SyntaxToken modifier;
+            SyntaxToken? modifier;
 
             if (Current.Kind == SyntaxKind.AscKeyword)
             {
@@ -872,9 +874,6 @@ namespace NQuery.Syntax
         private QuerySyntax ParseUnifiedOrExceptionalQuery()
         {
             var leftQuery = ParseIntersectionalQuery();
-
-            if (leftQuery == null)
-                return null;
 
             while (Current.Kind == SyntaxKind.UnionKeyword ||
                    Current.Kind == SyntaxKind.ExceptKeyword)
@@ -901,16 +900,10 @@ namespace NQuery.Syntax
         {
             var leftQuery = ParseSelectQuery();
 
-            if (leftQuery == null)
-                return null;
-
             while (Current.Kind == SyntaxKind.IntersectKeyword)
             {
                 var intersectKeyword = Match(SyntaxKind.IntersectKeyword);
                 var rightQuery = ParseSelectQuery();
-
-                if (rightQuery == null)
-                    return null;
 
                 leftQuery = new IntersectQuerySyntax(_syntaxTree, leftQuery, intersectKeyword, rightQuery);
             }
@@ -1042,7 +1035,7 @@ namespace NQuery.Syntax
             return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
         }
 
-        private AliasSyntax ParseOptionalColumnAlias()
+        private AliasSyntax? ParseOptionalColumnAlias()
         {
             var isAlias = Peek(0).Kind == SyntaxKind.AsKeyword ||
                           Peek(0).Kind == SyntaxKind.IdentifierToken && SyntaxFacts.CanFollowSelectColumn(Peek(1).Kind);
@@ -1216,7 +1209,7 @@ namespace NQuery.Syntax
             return new SeparatedSyntaxList<GroupByColumnSyntax>(columnsWithCommas);
         }
 
-        private AliasSyntax ParseOptionalAlias()
+        private AliasSyntax? ParseOptionalAlias()
         {
             return Current.Kind == SyntaxKind.AsKeyword || Current.Kind == SyntaxKind.IdentifierToken
                        ? ParseAlias()

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 using NQuery.Text;
@@ -6,8 +8,8 @@ namespace NQuery
 {
     public struct SyntaxNodeOrToken
     {
-        private readonly SyntaxNode _syntaxNode;
-        private readonly SyntaxToken _syntaxToken;
+        private readonly SyntaxNode? _syntaxNode;
+        private readonly SyntaxToken? _syntaxToken;
 
         internal SyntaxNodeOrToken(SyntaxToken syntaxToken)
         {
@@ -27,12 +29,12 @@ namespace NQuery
 
         public SyntaxToken AsToken()
         {
-            return _syntaxToken;
+            return _syntaxToken!;
         }
 
         public SyntaxNode AsNode()
         {
-            return _syntaxNode;
+            return _syntaxNode!;
         }
 
         public bool IsEquivalentTo(SyntaxNodeOrToken other)

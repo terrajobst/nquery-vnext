@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class SoundsLikeExpressionSyntax : ExpressionSyntax
     {
-        internal SoundsLikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken soundsKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
+        internal SoundsLikeExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken soundsKeyword, SyntaxToken likeKeyword, ExpressionSyntax right)
             : base(syntaxTree)
         {
             Left = left;
@@ -32,7 +34,7 @@ namespace NQuery.Syntax
 
         public ExpressionSyntax Left { get; }
 
-        public SyntaxToken NotKeyword { get; }
+        public SyntaxToken? NotKeyword { get; }
 
         public SyntaxToken SoundsKeyword { get; }
 

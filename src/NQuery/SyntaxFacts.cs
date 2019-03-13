@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -721,7 +723,7 @@ namespace NQuery
             switch (trivia.Kind)
             {
                 case SyntaxKind.MultiLineCommentTrivia:
-                    return trivia.Text.Length >= 4 && trivia.Text.EndsWith(@"*/");
+                    return trivia.Text!.Length >= 4 && trivia.Text.EndsWith(@"*/");
                 default:
                     return true;
             }

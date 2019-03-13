@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Symbols.Aggregation
@@ -16,7 +18,7 @@ namespace NQuery.Symbols.Aggregation
             get { return _isMin ? @"MIN" : @"MAX"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             return typeof(IComparable).IsAssignableFrom(argumentType)
                 ? new MinMaxAggregatable(argumentType, _isMin)
@@ -45,7 +47,7 @@ namespace NQuery.Symbols.Aggregation
         {
             private readonly bool _isMin;
 
-            private IComparable _result;
+            private IComparable? _result;
 
             public MinMaxAggregator(bool isMin)
             {
@@ -57,7 +59,7 @@ namespace NQuery.Symbols.Aggregation
                 _result = null;
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 var comparable = value as IComparable;
                 if (comparable == null)
@@ -84,7 +86,7 @@ namespace NQuery.Symbols.Aggregation
                 }
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 return _result;
             }

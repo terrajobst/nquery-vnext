@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Symbols.Aggregation
@@ -9,7 +11,7 @@ namespace NQuery.Symbols.Aggregation
             get { return @"SUM"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             // Create an expression to determine the type of inputType + inputType
 
@@ -103,7 +105,7 @@ namespace NQuery.Symbols.Aggregation
             private readonly Expression<object> _convertInputToSumExpression;
             private readonly VariableSymbol _conversionInputVariable;
 
-            private object _sum;
+            private object? _sum;
 
             public SumAggregator(Expression<object> addExpression, VariableSymbol leftParameter, VariableSymbol rightParameter, Expression<object> convertInputToSumExpression, VariableSymbol conversionInputVariable)
             {
@@ -119,7 +121,7 @@ namespace NQuery.Symbols.Aggregation
                 _sum = null;
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 if (value != null)
                 {
@@ -137,7 +139,7 @@ namespace NQuery.Symbols.Aggregation
                 }
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 return _sum;
             }

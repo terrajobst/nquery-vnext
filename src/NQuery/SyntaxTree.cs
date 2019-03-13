@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace NQuery
 {
     public sealed class SyntaxTree
     {
-        private Dictionary<object, object> _parentFromChild;
+        private Dictionary<object, object>? _parentFromChild;
 
         private SyntaxTree(SourceText text, Func<Parser, CompilationUnitSyntax> parseMethod)
         {
@@ -63,32 +65,32 @@ namespace NQuery
                    select d;
         }
 
-        private T GetParent<T>(object child)
+        private T? GetParent<T>(object child)
              where T: class
         {
             if (_parentFromChild == null)
                 Interlocked.CompareExchange(ref _parentFromChild, GetParents(Root), null);
 
-            _parentFromChild.TryGetValue(child, out object parent);
+            _parentFromChild!.TryGetValue(child, out object parent);
             return parent as T;
         }
 
-        internal SyntaxNode GetParentNode(SyntaxNode node)
+        internal SyntaxNode? GetParentNode(SyntaxNode node)
         {
             return GetParent<SyntaxNode>(node);
         }
 
-        internal SyntaxNode GetParentNode(SyntaxToken token)
+        internal SyntaxNode? GetParentNode(SyntaxToken token)
         {
             return GetParent<SyntaxNode>(token);
         }
 
-        internal SyntaxToken GetParentToken(SyntaxTrivia trivia)
+        internal SyntaxToken? GetParentToken(SyntaxTrivia trivia)
         {
             return GetParent<SyntaxToken>(trivia);
         }
 
-        internal SyntaxTrivia GetParentTrivia(StructuredTriviaSyntax structuredTrivia)
+        internal SyntaxTrivia? GetParentTrivia(StructuredTriviaSyntax structuredTrivia)
         {
             return GetParent<SyntaxTrivia>(structuredTrivia);
         }

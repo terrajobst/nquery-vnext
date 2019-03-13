@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -9,10 +11,10 @@ namespace NQuery
 {
     public sealed class SyntaxToken
     {
-        private readonly SyntaxTree _syntaxTree;
-        private readonly string _text;
+        private readonly SyntaxTree? _syntaxTree;
+        private readonly string? _text;
 
-        internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
+        internal SyntaxToken(SyntaxTree? syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string? text, object? value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
         {
             _syntaxTree = syntaxTree;
             Kind = kind;
@@ -26,7 +28,7 @@ namespace NQuery
             Diagnostics = diagnostics.ToImmutableArray();
         }
 
-        public SyntaxNode Parent => _syntaxTree?.GetParentNode(this);
+        public SyntaxNode Parent => _syntaxTree?.GetParentNode(this)!;
 
         public SyntaxKind Kind { get; }
 
@@ -36,7 +38,7 @@ namespace NQuery
 
         public string Text => _text ?? Kind.GetText();
 
-        public object Value { get; }
+        public object? Value { get; }
 
         public string ValueText => Value as string ?? Text;
 
@@ -62,12 +64,12 @@ namespace NQuery
 
         public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-        public SyntaxToken GetPreviousToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+        public SyntaxToken? GetPreviousToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
             return SyntaxTreeNavigation.GetPreviousToken(this, includeZeroLength, includeSkippedTokens);
         }
 
-        public SyntaxToken GetNextToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+        public SyntaxToken? GetNextToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
         {
             return SyntaxTreeNavigation.GetNextToken(this, includeZeroLength, includeSkippedTokens);
         }

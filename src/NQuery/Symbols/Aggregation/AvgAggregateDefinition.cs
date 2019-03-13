@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Symbols.Aggregation
@@ -9,7 +11,7 @@ namespace NQuery.Symbols.Aggregation
             get { return @"AVG"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             var sumAggregate = new SumAggregateDefinition();
             var sumAggregatable = sumAggregate.CreateAggregatable(argumentType);
@@ -91,13 +93,13 @@ namespace NQuery.Symbols.Aggregation
                 _countAggregator.Initialize();
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 _sumAggregator.Accumulate(value);
                 _countAggregator.Accumulate(value);
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 var sum = _sumAggregator.GetResult();
                 if (sum == null)

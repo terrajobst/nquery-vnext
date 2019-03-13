@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace NQuery
         private readonly ImmutableArray<Type> _columnTypes;
         private readonly bool _schemaOnly;
 
-        private Iterator _iterator;
+        private Iterator? _iterator;
         private bool _isBof;
 
         internal QueryReader(Iterator iterator, ImmutableArray<Tuple<string, Type>> columnNamesAndTypes, bool schemaOnly)
@@ -39,6 +41,9 @@ namespace NQuery
 
         public bool Read()
         {
+            if (_iterator == null)
+                throw new ObjectDisposedException(nameof(QueryReader));
+
             if (_schemaOnly)
                 return false;
 
@@ -65,7 +70,10 @@ namespace NQuery
         {
             get
             {
-                if (_isBof || _iterator == null)
+                if (_iterator == null)
+                    throw new ObjectDisposedException(nameof(QueryReader));
+
+                if (_isBof)
                     throw new InvalidOperationException(Resources.InvalidAttemptToRead);
 
                 return _iterator.RowBuffer[columnIndex];
@@ -74,7 +82,13 @@ namespace NQuery
 
         public int ColumnCount
         {
-            get { return _iterator.RowBuffer.Count; }
+            get
+            {
+                if (_iterator == null)
+                    throw new ObjectDisposedException(nameof(QueryReader));
+
+                return _iterator.RowBuffer.Count;
+            }
         }
     }
 }

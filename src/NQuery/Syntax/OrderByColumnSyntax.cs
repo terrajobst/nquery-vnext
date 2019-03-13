@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -5,7 +7,7 @@ namespace NQuery.Syntax
 {
     public sealed class OrderByColumnSyntax : SyntaxNode
     {
-        internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken modifier)
+        internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier)
             : base(syntaxTree)
         {
             ColumnSelector = columnSelector;
@@ -26,6 +28,6 @@ namespace NQuery.Syntax
 
         public ExpressionSyntax ColumnSelector { get; }
 
-        public SyntaxToken Modifier { get; }
+        public SyntaxToken? Modifier { get; }
     }
 }

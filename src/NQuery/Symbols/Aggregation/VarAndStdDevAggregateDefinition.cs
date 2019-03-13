@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Globalization;
 
@@ -17,7 +19,7 @@ namespace NQuery.Symbols.Aggregation
             get { return _isVar ? @"VAR" : @"STDEV"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             if (argumentType == typeof(byte) ||
                 argumentType == typeof(sbyte) ||
@@ -80,7 +82,7 @@ namespace NQuery.Symbols.Aggregation
                 _count = 0;
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 decimal valueAsDecimal = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 _sum += valueAsDecimal;
@@ -88,7 +90,7 @@ namespace NQuery.Symbols.Aggregation
                 _count++;
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 if (_count < 2)
                     return null;

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 
 namespace NQuery.Symbols.Aggregation
@@ -9,7 +11,7 @@ namespace NQuery.Symbols.Aggregation
             get { return @"ANY"; }
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public override IAggregatable? CreateAggregatable(Type argumentType)
         {
             return new AnyAggregatable(argumentType);
         }
@@ -31,19 +33,19 @@ namespace NQuery.Symbols.Aggregation
 
         private sealed class AnyAggregator : IAggregator
         {
-            private object _value;
+            private object? _value;
 
             public void Initialize()
             {
                 _value = null;
             }
 
-            public void Accumulate(object value)
+            public void Accumulate(object? value)
             {
                 _value = value;
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 return _value;
             }

@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,7 +83,7 @@ namespace NQuery.Syntax
             return GetEnumerator();
         }
 
-        public SyntaxToken GetSeparator(int index)
+        public SyntaxToken? GetSeparator(int index)
         {
             return _entries[index].Separator;
         }
@@ -205,7 +207,7 @@ namespace NQuery.Syntax
 
         private struct Entry
         {
-            public Entry(TNode node, SyntaxToken separator)
+            public Entry(TNode node, SyntaxToken? separator)
             {
                 Node = node;
                 Separator = separator;
@@ -213,7 +215,7 @@ namespace NQuery.Syntax
 
             public TNode Node { get; }
 
-            public SyntaxToken Separator { get; }
+            public SyntaxToken? Separator { get; }
         }
     }
 }

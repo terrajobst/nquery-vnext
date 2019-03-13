@@ -1,12 +1,14 @@
+#nullable enable
+
 using System;
 
 namespace NQuery
 {
     public sealed class ExpressionEvaluator
     {
-        private readonly Func<object> _evaluator;
+        private readonly Func<object?> _evaluator;
 
-        internal ExpressionEvaluator(Type type, Func<object> evaluator)
+        internal ExpressionEvaluator(Type type, Func<object?> evaluator)
         {
             Type = type;
             _evaluator = evaluator;
@@ -14,7 +16,7 @@ namespace NQuery
 
         public Type Type { get; }
 
-        public object Evalutate()
+        public object? Evalutate()
         {
             return _evaluator();
         }
