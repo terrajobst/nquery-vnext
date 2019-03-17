@@ -709,7 +709,7 @@ namespace NQuery.Binding
                 var binder = CreateLocalBinder(s);
                 var boundQuery = binder.BindQuery(commonTableExpression.Query);
                 var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundQuery);
-                return ValueTuple.Create(boundQuery, columns);
+                return (boundQuery, columns);
             });
 
             return new BoundCommonTableExpression(symbol);
@@ -765,7 +765,7 @@ namespace NQuery.Binding
                 var binder = CreateLocalBinder(s);
                 var boundAnchor = binder.BindCommonTableExpressionAnchorMember(commonTableExpression, anchorMembers);
                 var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundAnchor);
-                return ValueTuple.Create(boundAnchor, columns);
+                return (boundAnchor, columns);
             }, s =>
             {
                 var binder = CreateLocalBinder(s);
@@ -817,7 +817,7 @@ namespace NQuery.Binding
         {
             var symbol = new CommonTableExpressionSymbol(
                 commonTableExpression.Name.ValueText,
-                s => ValueTuple.Create((BoundQuery) null, ImmutableArray<ColumnSymbol>.Empty),
+                s => ((BoundQuery) null, ImmutableArray<ColumnSymbol>.Empty),
                 s => ImmutableArray<BoundQuery>.Empty
             );
 

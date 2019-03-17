@@ -71,7 +71,7 @@ namespace NQuery.Optimization
             var nodeByRelation = relations.Select(r => new JoinNode(r)).ToDictionary(n => n.Relation);
             nodes = nodeByRelation.Values;
             edges = new List<JoinEdge>();
-            var edgeByNodes = new Dictionary<ValueTuple<JoinNode, JoinNode>, JoinEdge>();
+            var edgeByNodes = new Dictionary<(JoinNode, JoinNode), JoinEdge>();
 
             var relationByValueSlot = relations.SelectMany(r => r.GetDefinedValues(), ValueTuple.Create)
                                                .ToDictionary(t => t.Item2, t => t.Item1);
@@ -92,8 +92,8 @@ namespace NQuery.Optimization
                 {
                     var left = nodeByRelation[referencedRelations[0]];
                     var right = nodeByRelation[referencedRelations[1]];
-                    var leftRight = ValueTuple.Create(left, right);
-                    var rightLeft = ValueTuple.Create(right, left);
+                    var leftRight = (left, right);
+                    var rightLeft = (right, left);
 
                     JoinEdge edge;
                     if (!edgeByNodes.TryGetValue(leftRight, out edge))
