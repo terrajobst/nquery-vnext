@@ -9,7 +9,7 @@ namespace NQuery.Symbols
     {
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, ValueTuple<BoundQuery, ImmutableArray<ColumnSymbol>>> anchorBinder
+            Func<CommonTableExpressionSymbol, (BoundQuery, ImmutableArray<ColumnSymbol>)> anchorBinder
         )
             : this(name, anchorBinder, s => ImmutableArray<BoundQuery>.Empty)
         {
@@ -17,7 +17,7 @@ namespace NQuery.Symbols
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, ValueTuple<BoundQuery, ImmutableArray<ColumnSymbol>>> anchorBinder,
+            Func<CommonTableExpressionSymbol, (BoundQuery, ImmutableArray<ColumnSymbol>)> anchorBinder,
             Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> recursiveBinder
         )
             : base(name)

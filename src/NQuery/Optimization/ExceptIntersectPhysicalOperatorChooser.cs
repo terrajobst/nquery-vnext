@@ -27,7 +27,7 @@ namespace NQuery.Optimization
             return new BoundJoinRelation(joinOperator, sortedLeft, right, condition, null, null);
         }
 
-        private static BoundExpression CreatePredicate(IEnumerable<ValueTuple<ValueSlot, ValueSlot>> pairs)
+        private static BoundExpression CreatePredicate(IEnumerable<(ValueSlot, ValueSlot)> pairs)
         {
             BoundExpression result = null;
 
