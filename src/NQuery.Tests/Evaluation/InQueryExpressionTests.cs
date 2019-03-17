@@ -2,32 +2,32 @@ using Xunit;
 
 namespace NQuery.Tests.Evaluation
 {
-    public class InExpressionTests : EvaluationTest
+    public class InQueryExpressionTests : EvaluationTest
     {
         [Fact]
-        public void Evaluation_InExpression()
+        public void Evaluation_InQueryExpression()
         {
             var text = @"
                 SELECT  e.EmployeeID
                 FROM    Employees e
-                WHERE   e.EmployeeID IN (1, 2, 3)
+                WHERE   e.EmployeeID IN (SELECT 1 UNION ALL SELECT 8)
             ";
 
-            var expected = new[] { 1, 2, 3 };
+            var expected = new[] { 1, 8 };
 
             AssertProduces(text, expected);
         }
 
         [Fact]
-        public void Evaluation_InExpression_Negated()
+        public void Evaluation_InQueryExpression_Negated()
         {
             var text = @"
                 SELECT  e.EmployeeID
                 FROM    Employees e
-                WHERE   e.EmployeeID NOT IN (1, 2, 3)
+                WHERE   e.EmployeeID NOT IN (SELECT 1 UNION ALL SELECT 8)
             ";
 
-            var expected = new[] { 4, 5, 6, 7, 8, 9 };
+            var expected = new[] { 2, 3, 4, 5, 6, 7, 9 };
 
             AssertProduces(text, expected);
         }
