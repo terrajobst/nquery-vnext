@@ -8,12 +8,19 @@ namespace NQuery.Tests.Evaluation
         public void Evaluation_InQueryExpression()
         {
             var text = @"
-                SELECT  e.EmployeeID
-                FROM    Employees e
-                WHERE   e.EmployeeID IN (SELECT 1 UNION ALL SELECT 8)
+                SELECT	e.EmployeeID,
+                        e.ReportsTo
+                FROM	Employees e
+                WHERE	e.ReportsTo IN (SELECT RegionID FROM Region)
             ";
 
-            var expected = new[] { 1, 8 };
+            var expected = new[] {
+                (1, 2),
+                (3, 2),
+                (4, 2),
+                (5, 2),
+                (8, 2)
+            };
 
             AssertProduces(text, expected);
         }
@@ -22,12 +29,17 @@ namespace NQuery.Tests.Evaluation
         public void Evaluation_InQueryExpression_Negated()
         {
             var text = @"
-                SELECT  e.EmployeeID
-                FROM    Employees e
-                WHERE   e.EmployeeID NOT IN (SELECT 1 UNION ALL SELECT 8)
+                SELECT	e.EmployeeID,
+                        e.ReportsTo
+                FROM	Employees e
+                WHERE	e.ReportsTo NOT IN (SELECT RegionID FROM Region)
             ";
 
-            var expected = new[] { 2, 3, 4, 5, 6, 7, 9 };
+            var expected = new[] {
+                (6, 5),
+                (7, 5),
+                (9, 5)
+            };
 
             AssertProduces(text, expected);
         }

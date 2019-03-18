@@ -602,14 +602,32 @@ namespace NQuery.Binding
 
         private BoundExpression BindInQueryExpression(InQueryExpressionSyntax node)
         {
-            // left IN (SELECT right FROM ...)
-            //
-            // ==>
-            //
-            // left = ANY (SELECT right FROM ...)
+            // NOTE: It's tempting to bind this using BindAllAnySubselect and
+            //       BindOptionalNegation. However, that's not resulting in the
+            //       correct predicate as negated IN expressions have to handle
+            //       NULL values differently. We can, however, lower NOT IN using
+            //       != ALL, which will do exactly that.
 
-            var allAnySubselect = BindAllAnySubselect(node.Span, node.Expression, false, node.Query, BinaryOperatorKind.Equal);
-            return BindOptionalNegation(node.Span, node.NotKeyword, allAnySubselect);
+            if (node.NotKeyword == null)
+            {
+                // left IN (SELECT right FROM ...)
+                //
+                // ==>
+                //
+                // left = ANY (SELECT right FROM ...)
+
+                return BindAllAnySubselect(node.Span, node.Expression, false, node.Query, BinaryOperatorKind.Equal);
+            }
+            else
+            {
+                // left NOT IN (SELECT right FROM ...)
+                //
+                // ==>
+                //
+                // left != ALL (SELECT right FROM ...)
+
+                return BindAllAnySubselect(node.Span, node.Expression, true, node.Query, BinaryOperatorKind.NotEqual);
+            }
         }
 
         private static BoundExpression BindLiteralExpression(LiteralExpressionSyntax node)
