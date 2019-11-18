@@ -23,4 +23,4 @@ exit /B -1
 ::       assembly.
 
 if not exist bin mkdir bin
-%MSBUILD% /nologo /m /v:m /nr:false /bl:bin\msbuild.binlog %*
+%MSBUILD% /nologo /m /v:m /nr:false /bl:msbuild.binlog %*
