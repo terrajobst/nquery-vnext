@@ -14,7 +14,6 @@
       Configuration=$(Configuration);
       Platform=$(Platform);
       OutDir=$(OutDir);
-      IntermediateOutputPath=$(IntermediateOutputPath);
     </ProjectProperties>
   </PropertyGroup>
 
