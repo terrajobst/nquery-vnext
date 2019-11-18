@@ -1,6 +1,6 @@
 # NQuery vNext
 
-[![Build Status](https://terrajobst.visualstudio.com/NQuery/_apis/build/status/NQuery%20CI)](https://terrajobst.visualstudio.com/NQuery/_build/latest?definitionId=11)
+![](https://github.com/terrajobst/nquery-vnext/workflows/CI/badge.svg?event=push&branch=master)
 
 This is a Roslyn inspired rewrite of [NQuery][nquery]. The goals are:
 
@@ -19,7 +19,7 @@ If you want to play with the bits, you need to add the following feed to your
 NuGet configuration:
 
 ```
-https://www.myget.org/F/nquery-ci/api/v3/index.json
+https://nuget.pkg.github.com/terrajobst/index.json
 ```
 
 You can do this by using the [package manager dialog](http://docs.nuget.org/consume/package-manager-dialog#package-sources).

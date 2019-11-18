@@ -1,0 +1,30 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build
+        run: .\build.cmd
+      - name: Upload binaries
+        uses: actions/upload-artifact@v1
+        with:
+          name: bin
+          path: bin
+  push-to-myget:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v1
+        with:
+          name: bin
+      - name: Setup nuget
+        uses: warrenbuckley/Setup-Nuget@v1
+      - run: |
+          nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/terrajobst/index.json" -UserName terrajobst -Password ${{ secrets.GH_TOKEN }}
+          nuget push bin\*.nupkg -Source "GitHub"
