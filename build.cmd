@@ -1,10 +1,21 @@
 @echo off
 setlocal
 
-:: Find MSBuild to use
+:: Use vswhere to find an install of VS
 
-for /f "tokens=*" %%i in ('"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -property installationPath') do set VSPATH=%%i
-set MSBUILD_PATH=%VSPATH%\MSBuild\15.0\Bin\MSBuild.exe
+set VSWHERE="%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
+if not exist %VSWHERE% goto error
+for /f "tokens=*" %%i in ('%VSWHERE% -property installationPath -prerelease') do set VSINSTALLDIR=%%i
+
+set MSBUILD="%VSINSTALLDIR%\MSBuild\Current\Bin\MSBuild.exe"
+if exist %MSBUILD% goto build
+
+:error
+
+echo ERROR: You need Visual Studio 2019 to build.
+exit /B -1
+
+:build
 
 :: Note: We've disabled node reuse because it causes file locking issues.
 ::       The issue is that we extend the build with our own targets which
@@ -12,4 +23,4 @@ set MSBUILD_PATH=%VSPATH%\MSBuild\15.0\Bin\MSBuild.exe
 ::       assembly.
 
 if not exist bin mkdir bin
-"%MSBUILD_PATH%" /nologo /m /v:m /nr:false /bl:bin\msbuild.binlog %*
+%MSBUILD% /nologo /m /v:m /nr:false /bl:bin\msbuild.binlog %*
