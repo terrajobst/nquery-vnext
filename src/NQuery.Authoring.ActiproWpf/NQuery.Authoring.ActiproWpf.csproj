@@ -15,7 +15,7 @@
     <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" />
     <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" />
     <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
     <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
   </ItemGroup>
 
