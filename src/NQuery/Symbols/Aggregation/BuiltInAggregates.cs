@@ -20,7 +20,7 @@ namespace NQuery.Symbols.Aggregation
             };
         }
 
-        public static AggregateSymbol Count = new AggregateSymbol(new CountAggregateDefinition());
-        public static AggregateSymbol Any = new AggregateSymbol(new AnyAggregateDefinition());
+        public static readonly AggregateSymbol Count = new AggregateSymbol(new CountAggregateDefinition());
+        public static readonly AggregateSymbol Any = new AggregateSymbol(new AnyAggregateDefinition());
     }
 }

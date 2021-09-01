@@ -152,7 +152,7 @@ namespace NQuery
                 : ParseExpression(newText);
         }
 
-        public static SyntaxTree Empty = ParseQuery(string.Empty);
+        public static readonly SyntaxTree Empty = ParseQuery(string.Empty);
 
         public CompilationUnitSyntax Root { get; }
 
