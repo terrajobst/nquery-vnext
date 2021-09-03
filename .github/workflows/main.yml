@@ -28,4 +28,4 @@ jobs:
         with:
           nuget-api-key: ${{ secrets.GH_TOKEN }}
       - run: |
-          nuget push bin\*.nupkg -Source "https://nuget.pkg.github.com/terrajobst/index.json"
+          nuget push bin\*.nupkg -Source "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GH_TOKEN }}
