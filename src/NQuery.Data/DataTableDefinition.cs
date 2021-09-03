@@ -16,14 +16,24 @@ namespace NQuery.Data
                 throw new ArgumentNullException(nameof(dataTable));
 
             DataTable = dataTable;
+            Name = DataTable.TableName;
+        }
+
+        public DataTableDefinition(DataTable dataTable, string name)
+        {
+            if (dataTable == null)
+                throw new ArgumentNullException(nameof(dataTable));
+
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException(@"The table name must not be null or empty.", nameof(name));
+
+            DataTable = dataTable;
+            Name = name;
         }
 
         public DataTable DataTable { get; }
 
-        public override string Name
-        {
-            get { return DataTable.TableName; }
-        }
+        public override string Name { get; }
 
         public override Type RowType
         {
