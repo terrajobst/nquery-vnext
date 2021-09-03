@@ -15,7 +15,7 @@ jobs:
           name: bin
           path: bin
   push-to-github:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: windows-latest
     steps:

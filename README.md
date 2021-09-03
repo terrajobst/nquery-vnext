@@ -1,6 +1,6 @@
 # NQuery vNext
 
-![](https://github.com/terrajobst/nquery-vnext/workflows/CI/badge.svg?event=push&branch=master)
+![](https://github.com/terrajobst/nquery-vnext/workflows/CI/badge.svg?event=push&branch=main)
 
 This is a Roslyn inspired rewrite of [NQuery][nquery]. The goals are:
 
