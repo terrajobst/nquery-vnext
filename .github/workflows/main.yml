@@ -24,7 +24,7 @@ jobs:
         with:
           name: bin
       - name: Setup nuget
-        uses: warrenbuckley/Setup-Nuget@v1
+        uses: nuget/setup-nuget@v1
       - run: |
           nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/terrajobst/index.json" -UserName terrajobst -Password ${{ secrets.GH_TOKEN }}
           nuget push bin\*.nupkg -Source "GitHub"
