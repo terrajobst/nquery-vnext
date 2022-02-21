@@ -40,7 +40,7 @@ namespace NQuery.Tests
             Assert.False(conversion.IsBoxing);
             Assert.False(conversion.IsUnboxing);
             Assert.False(conversion.IsReference);
-            Assert.Equal(0, conversion.ConversionMethods.Length);
+            Assert.Empty(conversion.ConversionMethods);
         }
 
         private static void AssertHasImplicitIntrinsicConversion(Type souceType, Type targetType)
@@ -282,7 +282,7 @@ namespace NQuery.Tests
             Assert.True(conversion.IsBoxing);
             Assert.False(conversion.IsUnboxing);
             Assert.False(conversion.IsReference);
-            Assert.Equal(0, conversion.ConversionMethods.Length);
+            Assert.Empty(conversion.ConversionMethods);
         }
 
         [Fact]
@@ -297,7 +297,7 @@ namespace NQuery.Tests
             Assert.False(conversion.IsBoxing);
             Assert.True(conversion.IsUnboxing);
             Assert.False(conversion.IsReference);
-            Assert.Equal(0, conversion.ConversionMethods.Length);
+            Assert.Empty(conversion.ConversionMethods);
         }
 
         [Fact]
@@ -312,7 +312,7 @@ namespace NQuery.Tests
             Assert.False(conversion.IsBoxing);
             Assert.False(conversion.IsUnboxing);
             Assert.True(conversion.IsReference);
-            Assert.Equal(0, conversion.ConversionMethods.Length);
+            Assert.Empty(conversion.ConversionMethods);
         }
 
         [Fact]
@@ -327,7 +327,7 @@ namespace NQuery.Tests
             Assert.False(conversion.IsBoxing);
             Assert.False(conversion.IsUnboxing);
             Assert.True(conversion.IsReference);
-            Assert.Equal(0, conversion.ConversionMethods.Length);
+            Assert.Empty(conversion.ConversionMethods);
         }
     }
 }

@@ -1,0 +1,44 @@
+name: CICD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+env:
+  DOTNET_NOLOGO: true
+  SLN: ${{ github.workspace }}/src/NQuery.sln
+  BIN: ${{ github.workspace }}/bin/
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # We need the full history in order to use Git versioning
+      - name: Get .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.*'
+      - name: dotnet build
+        run: |
+          dotnet build ${env:SLN} -c Release --nologo -o ${env:BIN}
+      - name: Upload binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v1
+        with:
+          name: bin
+          path: bin
+  push-to-github:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v1
+        with:
+          name: bin
+      - run: |
+          dotnet nuget push bin\*.nupkg -s "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GH_TOKEN }}

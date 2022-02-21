@@ -19,7 +19,7 @@ namespace NQuery.Tests.Binding
 
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
 
@@ -32,7 +32,7 @@ namespace NQuery.Tests.Binding
 
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
 
@@ -42,7 +42,7 @@ namespace NQuery.Tests.Binding
             var syntaxTree = SyntaxTree.ParseExpression("'value' + ALL (SELECT foo)");
             var diagnostics = syntaxTree.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.InvalidOperatorForAllAny, diagnostics[0].DiagnosticId);
         }
 
@@ -56,7 +56,7 @@ namespace NQuery.Tests.Binding
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.Equal(typeof(bool), resultType);
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace NQuery.Tests.Binding
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
             Assert.Equal(typeof(bool), resultType);
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
     }
 }

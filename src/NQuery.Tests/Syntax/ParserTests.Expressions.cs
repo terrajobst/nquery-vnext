@@ -792,7 +792,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetContextualKeywords")]
+        [MemberData(nameof(GetContextualKeywords))]
         public void Parser_Parse_Expression_FunctionInvocation_WithContextualKeyword(SyntaxKind kind)
         {
             var kindText = kind.GetText();
@@ -1209,7 +1209,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetContextualKeywords")]
+        [MemberData(nameof(GetContextualKeywords))]
         public void Parser_Parse_Expression_MethodInvocation_WithContextualKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
@@ -1245,7 +1245,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetContextualKeywords")]
+        [MemberData(nameof(GetContextualKeywords))]
         public void Parser_Parse_Expression_Name_WithContextualKeyword(SyntaxKind kind)
         {
             var text = kind.GetText();
@@ -1313,7 +1313,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetContextualKeywords")]
+        [MemberData(nameof(GetContextualKeywords))]
         public void Parser_Parse_Expression_PropertyAccess_WithContextualKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
@@ -1640,7 +1640,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetContextualKeywords")]
+        [MemberData(nameof(GetContextualKeywords))]
         public void Parser_Parse_Expression_Variable_WithContextualKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();

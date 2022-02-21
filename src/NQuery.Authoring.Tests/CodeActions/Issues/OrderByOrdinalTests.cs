@@ -26,7 +26,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
              ";
 
             var issues = GetIssues(query);
-            Assert.Equal(0, issues.Length);
+            Assert.Empty(issues);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
              ";
 
             var issues = GetIssues(query);
-            Assert.Equal(0, issues.Length);
+            Assert.Empty(issues);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("2", query.Substring(issues[0].Span));
         }
@@ -77,7 +77,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace ordinal by named column reference", action.Description);

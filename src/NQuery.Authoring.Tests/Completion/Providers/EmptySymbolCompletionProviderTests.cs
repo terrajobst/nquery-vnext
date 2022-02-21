@@ -9,7 +9,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertIsEmpty(string query)
         {
             var completionModel = GetCompletionModel(query);
-            Assert.Equal(0, completionModel.Items.Length);
+            Assert.Empty(completionModel.Items);
         }
 
         [Fact]

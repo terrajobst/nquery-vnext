@@ -1,166 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{731E166C-3D27-47C6-9D0E-78845270C2B3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NQueryViewer</RootNamespace>
-    <AssemblyName>NQueryViewer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <ProjectReference Include="..\NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj" />
+    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj" />
+    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj" />
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" />
-    <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" />
-    <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" />
-    <PackageReference Include="Microsoft.VisualStudio.VSEditor.Standalone.10" Version="1.0.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="ActiproEditor\ActiproEditorView.xaml.cs">
-      <DependentUpon>ActiproEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ActiproEditor\ActiproEditorViewFactory.cs" />
-    <Compile Include="ActiproEditor\IActiproEditorView.cs" />
-    <Compile Include="ActiproEditor\IActiproEditorViewFactory.cs" />
-    <Compile Include="Editor\IEditorViewFactory.cs" />
-    <Compile Include="IMainWindowProvider.cs" />
-    <Compile Include="Editor\EditorView.cs" />
-    <Compile Include="Editor\IEditorView.cs" />
-    <Compile Include="VSEditor\IVSEditorView.cs" />
-    <Compile Include="VSEditor\IVSEditorViewFactory.cs" />
-    <Compile Include="VSEditor\VSEditorView.xaml.cs">
-      <DependentUpon>VSEditorView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="VSEditor\VSEditorViewFactory.cs" />
-    <Page Include="ActiproEditor\ActiproEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Page Include="VSEditor\VSEditorView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NQuery.Authoring.ActiproWpf\NQuery.Authoring.ActiproWpf.csproj">
-      <Project>{A3309669-818F-47A9-B0F8-734AF347FEBC}</Project>
-      <Name>NQuery.Authoring.ActiproWpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj">
-      <Project>{5F76C1EB-9EEE-4046-9664-A4123984EEF3}</Project>
-      <Name>NQuery.Authoring</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring.VSEditorWpf\NQuery.Authoring.VSEditorWpf.csproj">
-      <Project>{a3b82430-e8ed-4177-b097-3a82748edaef}</Project>
-      <Name>NQuery.Authoring.VSEditorWpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj">
-      <Project>{52F5CD8B-2FF7-4087-B9F7-C1269C48F06F}</Project>
-      <Name>NQuery.Authoring.Wpf</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj">
-      <Project>{D93D9870-4E7A-4BEC-AA4E-DACBF8616C29}</Project>
-      <Name>NQuery.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj">
-      <Project>{6BAA666C-D4F5-47C6-A942-276A18BB9A41}</Project>
-      <Name>NQuery.Testing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NQuery\NQuery.csproj">
-      <Project>{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}</Project>
-      <Name>NQuery</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

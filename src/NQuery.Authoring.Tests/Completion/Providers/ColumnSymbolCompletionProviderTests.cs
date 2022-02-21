@@ -33,8 +33,8 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
             Assert.Equal(Glyph.AmbiguousName, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);
-            Assert.True(columnItem.Description.StartsWith("Ambiguous Name:"));
-            Assert.Equal(null, columnItem.Symbol);
+            Assert.StartsWith("Ambiguous Name:", columnItem.Description);
+            Assert.Null(columnItem.Symbol);
         }
 
         private static void GetCompletionData(string query, string tableInstanceName, string columnName, out TableColumnInstanceSymbol column, out CompletionItem columnItem, out SymbolMarkup columnMarkup)

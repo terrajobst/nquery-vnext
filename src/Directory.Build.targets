@@ -6,4 +6,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)\Common\ExceptionBuilder.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
+    <None Include="$(MSBuildThisFileDirectory)\xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -107,7 +107,7 @@ namespace NQuery.Tests
             var query = Query.Create(dataContext, "SELECT * FROM Table WHERE FALSE");
             var result = query.ExecuteScalar();
 
-            Assert.Equal(null, result);
+            Assert.Null(result);
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace NQuery.Tests
                 Assert.Equal(typeof(object), queryReader.GetColumnType(0));
 
                 Assert.True(queryReader.Read());
-                Assert.Equal(null, queryReader[0]);
+                Assert.Null(queryReader[0]);
                 Assert.False(queryReader.Read());
             }
         }
@@ -188,7 +188,7 @@ namespace NQuery.Tests
                 Assert.Equal(typeof(double), queryReader.GetColumnType(0));
 
                 Assert.True(queryReader.Read());
-                Assert.Equal(null, queryReader[0]);
+                Assert.Null(queryReader[0]);
                 Assert.False(queryReader.Read());
             }
         }

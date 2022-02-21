@@ -14,7 +14,7 @@ namespace NQuery.Tests.Syntax
         {
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(new SyntaxNodeOrToken[0]);
 
-            Assert.Equal(0, list.Count);
+            Assert.Empty(list);
             Assert.False(list.Any());
         }
 
@@ -25,10 +25,10 @@ namespace NQuery.Tests.Syntax
             var nodeOrTokens = new SyntaxNodeOrToken[] { expression };
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 
-            Assert.Equal(1, list.Count);
+            Assert.Single(list);
             Assert.Equal(expression, Assert.Single(list));
             Assert.Empty(list.GetSeparators());
-            Assert.Equal(null, list.GetSeparator(0));
+            Assert.Null(list.GetSeparator(0));
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace NQuery.Tests.Syntax
             var nodeOrTokens = new SyntaxNodeOrToken[] { expression, comma };
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 
-            Assert.Equal(1, list.Count);
+            Assert.Single(list);
             Assert.Equal(expression, Assert.Single(list));
             Assert.Equal(new[] { comma }, list.GetSeparators());
             Assert.Equal(comma, list.GetSeparator(0));

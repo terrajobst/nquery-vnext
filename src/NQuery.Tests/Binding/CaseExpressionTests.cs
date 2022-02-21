@@ -46,7 +46,7 @@ namespace NQuery.Tests.Binding
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax) syntaxTree.Root.Root);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(int), type);
         }
 
@@ -60,7 +60,7 @@ namespace NQuery.Tests.Binding
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(double), type);
         }
 
@@ -100,7 +100,7 @@ namespace NQuery.Tests.Binding
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(int), type);
         }
 
@@ -114,7 +114,7 @@ namespace NQuery.Tests.Binding
 
             var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(double), type);
         }
     }

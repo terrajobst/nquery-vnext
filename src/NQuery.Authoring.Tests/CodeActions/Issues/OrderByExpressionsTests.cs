@@ -26,7 +26,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(0, issues.Length);
+            Assert.Empty(issues);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(0, issues.Length);
+            Assert.Empty(issues);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e.FirstName /* marker */ + ' ' + e.LastName", query.Substring(issues[0].Span));
         }
@@ -73,7 +73,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
@@ -92,7 +92,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e.FirstName /* marker */ + ' ' + e.LastName", query.Substring(issues[0].Span));
         }
@@ -113,7 +113,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
@@ -134,7 +134,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e.FirstName /* marker */ + ' ' + e.LastName", query.Substring(issues[0].Span));
         }
@@ -159,7 +159,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
@@ -180,7 +180,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e.FirstName /* marker */ + ' ' + e.LastName", query.Substring(issues[0].Span));
         }
@@ -205,7 +205,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
@@ -231,7 +231,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e1.FirstName /* marker */ + ' ' + e1.LastName", query.Substring(issues[0].Span));
         }
@@ -266,7 +266,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);
@@ -292,7 +292,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
             Assert.Equal("e1.FirstName /* marker */ + ' ' + e1.LastName", query.Substring(issues[0].Span));
         }
@@ -327,7 +327,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
             ";
 
             var issues = GetIssues(query);
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
 
             var action = issues.First().Actions.First();
             Assert.Equal("Replace expression by SELECT column reference", action.Description);

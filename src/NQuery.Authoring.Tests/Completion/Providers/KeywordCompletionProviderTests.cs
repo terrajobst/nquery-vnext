@@ -57,14 +57,14 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
             Assert.Equal(Glyph.Keyword, item.Glyph);
             Assert.Equal(keyword, item.DisplayText);
-            Assert.Equal(null, item.Description);
-            Assert.Equal(null, item.Symbol);
+            Assert.Null(item.Description);
+            Assert.Null(item.Symbol);
         }
 
         private static void AssertIsEmpty(string query)
         {
             var completionModel = GetCompletionModel(query);
-            Assert.Equal(0, completionModel.Items.Length);
+            Assert.Empty(completionModel.Items);
         }
 
         [Fact]

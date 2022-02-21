@@ -17,7 +17,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Theory]
-        [MemberData("GetBinaryOperatorTokensThatCanBeSwapped", true)]
+        [MemberData(nameof(GetBinaryOperatorTokensThatCanBeSwapped), true)]
         public void FlipBinaryOperatorSides_SwapsOperator_ToSelf(SyntaxKind kind)
         {
             var operatorText = kind.GetText();
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Theory]
-        [MemberData("GetBinaryOperatorTokensThatCanBeSwapped", false)]
+        [MemberData(nameof(GetBinaryOperatorTokensThatCanBeSwapped), false)]
         public void FlipBinaryOperatorSides_SwapsOperator_ToOther(SyntaxKind kind)
         {
             var operatorText = kind.GetText();
@@ -64,7 +64,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
         }
 
         [Theory]
-        [MemberData("GetBinaryOperatorTokensThatCannotBeSwapped")]
+        [MemberData(nameof(GetBinaryOperatorTokensThatCannotBeSwapped))]
         public void FlipBinaryOperatorSides_DoesNoTrigger_ForInvalidOperators(SyntaxKind kind)
         {
             var operatorText = kind.GetText();

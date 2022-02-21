@@ -98,7 +98,7 @@ namespace NQuery.Tests.Binding
             Assert.Equal(cteSymbols[0], tableInstances[1].Table);
             Assert.Equal(cteSymbols[1], tableInstances[2].Table);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace NQuery.Tests.Binding
 
             Assert.Equal(cteSymbol, tableInstance.Table);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -175,7 +175,7 @@ namespace NQuery.Tests.Binding
 
             Assert.Equal(cteSymbol, tableInstance.Table);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -199,10 +199,10 @@ namespace NQuery.Tests.Binding
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.NoColumnAliasSpecified);
 
-            Assert.Equal(1, cteSymbol.Columns.Length);
+            Assert.Single(cteSymbol.Columns);
             Assert.Equal("C2", cteSymbol.Columns[0].Name);
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal("No column name was specified for column 1 of 'MyCte'.", error.Message);
         }
 
@@ -233,7 +233,7 @@ namespace NQuery.Tests.Binding
             Assert.Equal("A", cteSymbol.Columns[1].Name);
             Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
         }
 
@@ -264,7 +264,7 @@ namespace NQuery.Tests.Binding
             Assert.Equal("A", cteSymbol.Columns[1].Name);
             Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
         }
 
@@ -322,10 +322,10 @@ namespace NQuery.Tests.Binding
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasFewerColumnsThanSpecified);
 
-            Assert.Equal(1, cteSymbol.Columns.Length);
+            Assert.Single(cteSymbol.Columns);
             Assert.Equal("A", cteSymbol.Columns[0].Name);
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal("'MyCte' has fewer columns than were specified in the column list.", error.Message);
         }
 
@@ -350,10 +350,10 @@ namespace NQuery.Tests.Binding
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
             var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasMoreColumnsThanSpecified);
 
-            Assert.Equal(1, cteSymbol.Columns.Length);
+            Assert.Single(cteSymbol.Columns);
             Assert.Equal("A", cteSymbol.Columns[0].Name);
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal("'MyCte' has more columns than were specified in the column list.", error.Message);
         }
 
