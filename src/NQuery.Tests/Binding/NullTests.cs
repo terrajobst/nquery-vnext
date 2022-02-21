@@ -20,7 +20,7 @@ namespace NQuery.Tests.Binding
             var query = (SelectQuerySyntax) syntaxTree.Root.Root;
             var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
-            Assert.Equal(1, columns.Length);
+            Assert.Single(columns);
             Assert.True(columns[0].Type.IsNull());
             Assert.Equal(string.Empty, columns[0].Name);
         }
@@ -35,7 +35,7 @@ namespace NQuery.Tests.Binding
             var query = (SelectQuerySyntax)syntaxTree.Root.Root;
             var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
-            Assert.Equal(1, columns.Length);
+            Assert.Single(columns);
             Assert.Equal(typeof(double), columns[0].Type);
             Assert.Equal(string.Empty, columns[0].Name);
         }
@@ -48,7 +48,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AmbiguousInvocation, diagnostics[0].DiagnosticId);
         }
 

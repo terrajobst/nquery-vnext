@@ -16,14 +16,14 @@ namespace NQuery.Authoring.Tests.CodeActions
         {
             var actions = GetActions(query);
 
-            Assert.Equal(0, actions.Length);
+            Assert.Empty(actions);
         }
 
         protected void AssertDoesNotTrigger(string query, string expectedActionDescription)
         {
             var actions = GetActions(query).Where(a => a.Description == expectedActionDescription).ToImmutableArray();
 
-            Assert.Equal(0, actions.Length);
+            Assert.Empty(actions);
         }
 
         protected void AssertFixes(string query, string expectedFixedQuery, string expectedActionDescription)

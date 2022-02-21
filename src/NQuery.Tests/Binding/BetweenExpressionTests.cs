@@ -16,7 +16,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
         }
 
@@ -28,7 +28,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
     }
 }

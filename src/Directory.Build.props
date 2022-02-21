@@ -10,7 +10,7 @@
     <DefineConstants>$(DefineConstants);SIGNED</DefineConstants>
   </PropertyGroup>
 
-  <PropertyGroup Condition="!$(MSBuildProjectName.EndsWith('.Tests'))">
+  <PropertyGroup Condition="$(MSBuildProjectName) != 'NQueryViewer' AND !$(MSBuildProjectName.EndsWith('.Tests'))">
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>$(OutDir)</PackageOutputPath>
     <Authors>$(Company)</Authors>

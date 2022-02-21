@@ -1,40 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" />
-    <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" />
-    <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.4.0" />
+    <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" NoWarn="NU1701" />
+    <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" NoWarn="NU1701" />
+    <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" NoWarn="NU1701" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
     <ProjectReference Include="..\NQuery.Authoring.Wpf\NQuery.Authoring.Wpf.csproj" />
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Update="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

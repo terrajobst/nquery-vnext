@@ -41,7 +41,7 @@ namespace NQuery.Tests.Iterators
                             logicalOperator == BoundHashMatchOperator.FullOuter)
                         {
                             Assert.True(iterator.Read());
-                            Assert.Equal(null, iterator.RowBuffer[0]);
+                            Assert.Null(iterator.RowBuffer[0]);
                             Assert.Equal(3, iterator.RowBuffer[1]);
                         }
 
@@ -50,7 +50,7 @@ namespace NQuery.Tests.Iterators
                         {
                             Assert.True(iterator.Read());
                             Assert.Equal(1, iterator.RowBuffer[0]);
-                            Assert.Equal(null, iterator.RowBuffer[1]);
+                            Assert.Null(iterator.RowBuffer[1]);
                         }
 
                         Assert.False(iterator.Read());
@@ -192,9 +192,9 @@ namespace NQuery.Tests.Iterators
                         logicalOperator == BoundHashMatchOperator.FullOuter)
                     {
                         Assert.True(iterator.Read());
-                        Assert.Equal(null, iterator.RowBuffer[0]);
-                        Assert.Equal(null, iterator.RowBuffer[1]);
-                        Assert.Equal(null, iterator.RowBuffer[2]);
+                        Assert.Null(iterator.RowBuffer[0]);
+                        Assert.Null(iterator.RowBuffer[1]);
+                        Assert.Null(iterator.RowBuffer[2]);
                         Assert.Equal("Bar", iterator.RowBuffer[3]);
                     }
 
@@ -202,10 +202,10 @@ namespace NQuery.Tests.Iterators
                         logicalOperator == BoundHashMatchOperator.FullOuter)
                     {
                         Assert.True(iterator.Read());
-                        Assert.Equal(null, iterator.RowBuffer[0]);
+                        Assert.Null(iterator.RowBuffer[0]);
                         Assert.Equal("Foo", iterator.RowBuffer[1]);
-                        Assert.Equal(null, iterator.RowBuffer[2]);
-                        Assert.Equal(null, iterator.RowBuffer[3]);
+                        Assert.Null(iterator.RowBuffer[2]);
+                        Assert.Null(iterator.RowBuffer[3]);
                     }
 
                     Assert.False(iterator.Read());
@@ -293,8 +293,8 @@ namespace NQuery.Tests.Iterators
                         logicalOperator == BoundHashMatchOperator.FullOuter)
                     {
                         Assert.True(iterator.Read());
-                        Assert.Equal(null, iterator.RowBuffer[0]);
-                        Assert.Equal(null, iterator.RowBuffer[1]);
+                        Assert.Null(iterator.RowBuffer[0]);
+                        Assert.Null(iterator.RowBuffer[1]);
                         Assert.Equal(0, iterator.RowBuffer[2]);
                         Assert.Equal(0, iterator.RowBuffer[3]);
                         Assert.Equal("Unmatched1", iterator.RowBuffer[4]);
@@ -318,8 +318,8 @@ namespace NQuery.Tests.Iterators
                         logicalOperator == BoundHashMatchOperator.FullOuter)
                     {
                         Assert.True(iterator.Read());
-                        Assert.Equal(null, iterator.RowBuffer[0]);
-                        Assert.Equal(null, iterator.RowBuffer[1]);
+                        Assert.Null(iterator.RowBuffer[0]);
+                        Assert.Null(iterator.RowBuffer[1]);
                         Assert.Equal(1, iterator.RowBuffer[2]);
                         Assert.Equal(3, iterator.RowBuffer[3]);
                         Assert.Equal("Unmatched2", iterator.RowBuffer[4]);
@@ -338,16 +338,16 @@ namespace NQuery.Tests.Iterators
                         Assert.True(iterator.Read());
                         Assert.Equal(2, iterator.RowBuffer[0]);
                         Assert.Equal(2, iterator.RowBuffer[1]);
-                        Assert.Equal(null, iterator.RowBuffer[2]);
-                        Assert.Equal(null, iterator.RowBuffer[3]);
-                        Assert.Equal(null, iterator.RowBuffer[4]);
+                        Assert.Null(iterator.RowBuffer[2]);
+                        Assert.Null(iterator.RowBuffer[3]);
+                        Assert.Null(iterator.RowBuffer[4]);
 
                         Assert.True(iterator.Read());
                         Assert.Equal(3, iterator.RowBuffer[0]);
                         Assert.Equal(1, iterator.RowBuffer[1]);
-                        Assert.Equal(null, iterator.RowBuffer[2]);
-                        Assert.Equal(null, iterator.RowBuffer[3]);
-                        Assert.Equal(null, iterator.RowBuffer[4]);
+                        Assert.Null(iterator.RowBuffer[2]);
+                        Assert.Null(iterator.RowBuffer[3]);
+                        Assert.Null(iterator.RowBuffer[4]);
                     }
 
                     Assert.False(iterator.Read());

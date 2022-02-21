@@ -39,7 +39,7 @@ namespace NQuery.Tests.Binding
                                            .Select(semanticModel.GetSymbol)
                                            .ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(selectColumns.AsEnumerable(), orderBySymbols.AsEnumerable());
         }
 
@@ -69,7 +69,7 @@ namespace NQuery.Tests.Binding
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
             var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.NotEqual(firstColumn, orderByColumn);
             Assert.Equal(unionColumn, orderByColumn);
         }
@@ -94,7 +94,7 @@ namespace NQuery.Tests.Binding
                                            .Select(c => semanticModel.GetSymbol(c.ColumnSelector))
                                            .FirstOrDefault();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(selectColumn, orderByColumn);
             Assert.Equal(selectColumn, orderByColumnSelector);
         }
@@ -125,7 +125,7 @@ namespace NQuery.Tests.Binding
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
             var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.NotEqual(firstColumn, orderByColumn);
             Assert.Equal(unionColumn, orderByColumn);
         }
@@ -146,7 +146,7 @@ namespace NQuery.Tests.Binding
                                            .Select(semanticModel.GetSymbol)
                                            .FirstOrDefault();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(selectColumn, orderByColumn);
         }
 
@@ -176,7 +176,7 @@ namespace NQuery.Tests.Binding
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
             var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.NotEqual(firstColumn, orderByColumn);
             Assert.Equal(unionColumn, orderByColumn);
         }
@@ -216,7 +216,7 @@ namespace NQuery.Tests.Binding
             var firstColumn = semanticModel.GetOutputColumns(firstQuery).Single();
             var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.NotEqual(firstColumn, orderByColumn);
             Assert.Equal(unionColumn, orderByColumn);
         }
@@ -233,8 +233,8 @@ namespace NQuery.Tests.Binding
                                           .Select(semanticModel.GetSymbol)
                                           .FirstOrDefault();
 
-            Assert.Equal(0, diagnostics.Length);
-            Assert.Equal(null, orderByColumn);
+            Assert.Empty(diagnostics);
+            Assert.Null(orderByColumn);
         }
 
         [Fact]
@@ -245,7 +245,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
         }
 
@@ -267,7 +267,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.OrderByItemsMustBeInSelectListIfUnionSpecified, diagnostics[0].DiagnosticId);
         }
     }

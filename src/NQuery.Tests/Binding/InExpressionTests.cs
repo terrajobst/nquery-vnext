@@ -18,7 +18,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.CannotApplyBinaryOperator, diagnostics[0].DiagnosticId);
         }
 
@@ -30,7 +30,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace NQuery.Tests.Binding
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
             var expression = syntaxTree.Root.DescendantNodes().OfType<InQueryExpressionSyntax>().Single();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(bool), semanticModel.GetExpressionType(expression));
         }
 
@@ -55,7 +55,7 @@ namespace NQuery.Tests.Binding
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
             var expression = syntaxTree.Root.DescendantNodes().OfType<InQueryExpressionSyntax>().Single();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(typeof(bool), semanticModel.GetExpressionType(expression));
         }
     }

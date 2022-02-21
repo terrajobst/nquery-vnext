@@ -37,7 +37,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 Assert.Equal(typeName, item.Description);
                 Assert.Equal(typeName, item.DisplayText);
                 Assert.Equal(typeName, item.InsertionText);
-                Assert.Equal(null, item.Symbol);
+                Assert.Null(item.Symbol);
             }
         }
 

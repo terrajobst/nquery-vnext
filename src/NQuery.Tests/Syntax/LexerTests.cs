@@ -219,7 +219,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetReservedKeywordKinds")]
+        [MemberData(nameof(GetReservedKeywordKinds))]
         public void Lexer_Lex_Identifier_Bracketed_WithReservedKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
@@ -340,7 +340,7 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetReservedKeywordKinds")]
+        [MemberData(nameof(GetReservedKeywordKinds))]
         public void Lexer_Lex_Identifier_Quoted_WithReservedKeyword(SyntaxKind kind)
         {
             var keyword = kind.GetText();
@@ -925,21 +925,21 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetPunctuationTokenKinds")]
+        [MemberData(nameof(GetPunctuationTokenKinds))]
         public void Lexer_Lex_Punctuation(SyntaxKind kind)
         {
             LexPunctuationOrOperator(kind);
         }
 
         [Theory]
-        [MemberData("GetUnaryOperatorTokenKinds")]
+        [MemberData(nameof(GetUnaryOperatorTokenKinds))]
         public void Lexer_Lex_Operator_Unary(SyntaxKind kind)
         {
             LexPunctuationOrOperator(kind);
         }
 
         [Theory]
-        [MemberData("GetBinaryOperatorTokenKinds")]
+        [MemberData(nameof(GetBinaryOperatorTokenKinds))]
         public void Lexer_Lex_Operator_Binary(SyntaxKind kind)
         {
             LexPunctuationOrOperator(kind);
@@ -963,14 +963,14 @@ namespace NQuery.Tests.Syntax
         }
 
         [Theory]
-        [MemberData("GetReservedKeywordKinds")]
+        [MemberData(nameof(GetReservedKeywordKinds))]
         public void Lexer_Lex_Keyword_Reserved(SyntaxKind kind)
         {
             LexKeyword(kind, isReserved:true);
         }
 
         [Theory]
-        [MemberData("GetContextualKeywordKinds")]
+        [MemberData(nameof(GetContextualKeywordKinds))]
         public void Lexer_Lex_Keyword_Contextual(SyntaxKind kind)
         {
             LexKeyword(kind, isReserved:false);

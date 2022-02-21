@@ -18,7 +18,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.MustSpecifyTableToSelectFrom, diagnostics[0].DiagnosticId);
         }
 
@@ -30,7 +30,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -52,7 +52,7 @@ namespace NQuery.Tests.Binding
             var tableReferenceSymbol = semanticModel.GetDeclaredSymbol(tableInstance);
             var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(tableReferenceSymbol, selectStarSymbol);
         }
 
@@ -70,8 +70,8 @@ namespace NQuery.Tests.Binding
 
             var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
 
-            Assert.Equal(0, diagnostics.Length);
-            Assert.Equal(null, selectStarSymbol);
+            Assert.Empty(diagnostics);
+            Assert.Null(selectStarSymbol);
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace NQuery.Tests.Binding
             var tableSymbols = semanticModel.GetDeclaredSymbol(tableInstance).ColumnInstances;
             var selectStartSymbols = semanticModel.GetColumnInstances(selectStar).ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(tableSymbols.AsEnumerable(), selectStartSymbols.AsEnumerable());
         }
 
@@ -121,7 +121,7 @@ namespace NQuery.Tests.Binding
                                                      .Select(qc => qc.Name)
                                                      .ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(tableColumnNames.AsEnumerable(), selectStarColumnNames.AsEnumerable());
         }
 
@@ -149,7 +149,7 @@ namespace NQuery.Tests.Binding
                                                      .Select(qc => qc.Name)
                                                      .ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(tableColumnNames.AsEnumerable(), selectStarColumnNames.AsEnumerable());
         }
     }

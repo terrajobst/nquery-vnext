@@ -32,7 +32,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
 
             var issues = GetIssues(query);
 
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
             Assert.Equal("Emps2", query.Substring(issues[0].Span));
         }
@@ -64,7 +64,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
 
             var issues = GetIssues(query);
 
-            Assert.Equal(1, issues.Length);
+            Assert.Single(issues);
             Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
             Assert.Equal("EmpsUnused", query.Substring(issues[0].Span));
         }

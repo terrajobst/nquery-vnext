@@ -53,7 +53,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
         }
 
@@ -69,7 +69,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AmbiguousReference, diagnostics[0].DiagnosticId);
         }
 
@@ -90,7 +90,7 @@ namespace NQuery.Tests.Binding
             var invocation = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Single();
             var symbol = semanticModel.GetSymbol(invocation);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(aggregate, symbol);
         }
 
@@ -108,7 +108,7 @@ namespace NQuery.Tests.Binding
             var invocation = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
             var symbol = semanticModel.GetSymbol(invocation);
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
             Assert.Equal(countAggregated, symbol);
         }
 
@@ -123,7 +123,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.UndeclaredAggregate, diagnostics[0].DiagnosticId);
         }
 
@@ -137,7 +137,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
         }
 
@@ -149,7 +149,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateInvalidInCurrentContext, diagnostics[0].DiagnosticId);
         }
     }

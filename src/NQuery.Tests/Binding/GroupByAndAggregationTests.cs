@@ -15,7 +15,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateCannotContainAggregate, diagnostics[0].DiagnosticId);
         }
 
@@ -27,7 +27,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateInWhere, diagnostics[0].DiagnosticId);
         }
 
@@ -39,7 +39,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateInGroupBy, diagnostics[0].DiagnosticId);
         }
 
@@ -51,7 +51,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateInOn, diagnostics[0].DiagnosticId);
         }
 
@@ -63,7 +63,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.GroupByCannotContainSubquery, diagnostics[0].DiagnosticId);
         }
 
@@ -75,7 +75,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateCannotContainSubquery, diagnostics[0].DiagnosticId);
         }
 
@@ -94,7 +94,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.AggregateContainsColumnsFromDifferentQueries, diagnostics[0].DiagnosticId);
         }
 
@@ -106,7 +106,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -122,7 +122,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -161,7 +161,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -173,7 +173,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
         }
 
@@ -196,7 +196,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.SelectExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
         }
 
@@ -215,7 +215,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -226,7 +226,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -243,7 +243,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -259,7 +259,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -270,7 +270,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -282,7 +282,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.HavingExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -294,7 +294,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedOrGrouped, diagnostics[0].DiagnosticId);
         }
 
@@ -311,7 +311,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -327,7 +327,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(0, diagnostics.Length);
+            Assert.Empty(diagnostics);
         }
 
         [Fact]
@@ -338,7 +338,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
         }
 
@@ -350,7 +350,7 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            Assert.Equal(1, diagnostics.Length);
+            Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.OrderByExpressionNotAggregatedAndNoGroupBy, diagnostics[0].DiagnosticId);
         }
     }

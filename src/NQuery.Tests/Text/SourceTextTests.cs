@@ -21,7 +21,7 @@ namespace NQuery.Tests.Text
         {
             var sourceText = SourceText.From(string.Empty);
             Assert.Equal(0, sourceText.Length);
-            Assert.Equal(1, sourceText.Lines.Count);
+            Assert.Single(sourceText.Lines);
             Assert.Equal(new TextSpan(0, 0), sourceText.Lines[0].Span);
             Assert.Equal(new TextSpan(0, 0), sourceText.Lines[0].SpanIncludingLineBreak);
         }
@@ -33,7 +33,7 @@ namespace NQuery.Tests.Text
             var sourceText = SourceText.From(text);
 
             Assert.Equal(text.Length, sourceText.Length);
-            Assert.Equal(1, sourceText.Lines.Count);
+            Assert.Single(sourceText.Lines);
 
             Assert.Equal(new TextSpan(0, text.Length), sourceText.Lines[0].Span);
             Assert.Equal(new TextSpan(0, text.Length), sourceText.Lines[0].SpanIncludingLineBreak);
@@ -113,7 +113,7 @@ namespace NQuery.Tests.Text
             var modified2 = modified1.Replace(7, 1, "Z");
 
             var lastChanges = modified2.GetChanges(modified1).ToImmutableArray();
-            Assert.Equal(1, lastChanges.Length);
+            Assert.Single(lastChanges);
             Assert.Equal(7, lastChanges[0].Span.Start);
             Assert.Equal(1, lastChanges[0].Span.Length);
             Assert.Equal("Z", lastChanges[0].NewText);
@@ -137,7 +137,7 @@ namespace NQuery.Tests.Text
             var sourceText2 = SourceText.From("XYZ");
 
             var allChanges = sourceText2.GetChanges(sourceText1).ToImmutableArray();
-            Assert.Equal(1, allChanges.Length);
+            Assert.Single(allChanges);
             Assert.Equal(0, allChanges[0].Span.Start);
             Assert.Equal(sourceText1.Length, allChanges[0].Span.Length);
             Assert.Equal(sourceText2.GetText(), allChanges[0].NewText);
