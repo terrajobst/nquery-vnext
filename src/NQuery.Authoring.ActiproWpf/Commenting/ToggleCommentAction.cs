@@ -10,6 +10,11 @@ namespace NQuery.Authoring.ActiproWpf.Commenting
 {
     public abstract class ToggleCommentAction : EditActionBase
     {
+        protected ToggleCommentAction(string text)
+            : base(text)
+        {
+        }
+
         protected abstract SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan textSpan);
 
         public override async void Execute(IEditorView view)

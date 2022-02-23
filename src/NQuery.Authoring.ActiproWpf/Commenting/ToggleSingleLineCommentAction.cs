@@ -12,6 +12,11 @@ namespace NQuery.Authoring.ActiproWpf.Commenting
     {
         private static readonly Lazy<RoutedCommand> LazyCommand = new Lazy<RoutedCommand>(() => new RoutedCommand("Toggle Single Line Comment", typeof(SyntaxEditor)));
 
+        public ToggleSingleLineCommentAction()
+            : base("Toggle Single Line Comment")
+        {
+        }
+
         public static RoutedCommand Command
         {
             get { return LazyCommand.Value; }

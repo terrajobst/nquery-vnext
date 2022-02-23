@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows.Media;
 
 using ActiproSoftware.Text;
+using ActiproSoftware.Windows.Controls.Rendering;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
@@ -104,7 +105,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             sb.AppendFontSize(@"font-size", highlightingStyle.FontSize);
             sb.AppendFontWeight(@"font-weight", highlightingStyle.Bold);
             sb.AppendFontStyle(@"font-style", highlightingStyle.Italic);
-            sb.AppendTextDecoration(@"text-decoration", highlightingStyle.UnderlineStyle);
+            sb.AppendTextDecoration(@"text-decoration", highlightingStyle.UnderlineKind);
         }
 
         private static void AppendFontFamiliy(this StringBuilder sb, string key, string fontFamilyName)
@@ -115,13 +116,12 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             sb.AppendKeyValue(key, fontFamilyName);
         }
 
-        private static void AppendColor(this StringBuilder sb, string key, Brush brush)
+        private static void AppendColor(this StringBuilder sb, string key, Color? color)
         {
-            var solidColorBrush = brush as SolidColorBrush;
-            if (solidColorBrush == null || solidColorBrush.Color == Colors.Black)
+            if (color == null)
                 return;
 
-            var value = solidColorBrush.Color.ToString();
+            var value = color.ToString();
             sb.AppendKeyValue(key, value);
         }
 
@@ -152,10 +152,9 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             sb.AppendKeyValue(key, value);
         }
 
-        private static void AppendTextDecoration(this StringBuilder sb, string key, HighlightingStyleLineStyle underlineStyle)
+        private static void AppendTextDecoration(this StringBuilder sb, string key, LineKind underlineKind)
         {
-            var hasUnderlineStyle = underlineStyle != HighlightingStyleLineStyle.None &&
-                                    underlineStyle != HighlightingStyleLineStyle.Default;
+            var hasUnderlineStyle = underlineKind != LineKind.None;
 
             if (!hasUnderlineStyle)
                 return;

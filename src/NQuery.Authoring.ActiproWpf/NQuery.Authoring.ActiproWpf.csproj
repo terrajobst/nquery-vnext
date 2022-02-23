@@ -6,9 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiproSoftware.Shared.Wpf" Version="14.2.0610" NoWarn="NU1701" />
-    <PackageReference Include="ActiproSoftware.SyntaxEditor.Wpf" Version="14.2.0610" NoWarn="NU1701" />
-    <PackageReference Include="ActiproSoftware.Text.Wpf" Version="14.2.0610" NoWarn="NU1701" />
+    <PackageReference Include="ActiproSoftware.Controls.WPF.SyntaxEditor" Version="22.1.0" />
     <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.255" PrivateAssets="all" />
   </ItemGroup>
 

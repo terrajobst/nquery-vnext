@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
+using ActiproSoftware.Windows.Controls.SyntaxEditor.Implementation;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
 
 using NQuery.Authoring.ActiproWpf.CodeActions;
@@ -118,6 +119,10 @@ namespace NQuery.Authoring.ActiproWpf.Margins
         {
             if (IsActive)
                 _glyphPopup.Collapse();
+        }
+
+        public void Draw(TextViewDrawContext context)
+        {
         }
 
         public string Key

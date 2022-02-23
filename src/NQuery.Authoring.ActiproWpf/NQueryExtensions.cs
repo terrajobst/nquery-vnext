@@ -38,7 +38,7 @@ namespace NQuery.Authoring.ActiproWpf
         {
             var document = syntaxEditor.Document.GetDocument();
             var snapshot = document.Text.ToTextSnapshot();
-            var offset = syntaxEditor.Caret.Offset;
+            var offset = syntaxEditor.ActiveView.Selection.CaretOffset;
             var selection = syntaxEditor.ActiveView.Selection.SnapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default).ToTextSpan();
             var position = new TextSnapshotOffset(snapshot, offset).ToOffset();
             return new DocumentView(document, position, selection);
