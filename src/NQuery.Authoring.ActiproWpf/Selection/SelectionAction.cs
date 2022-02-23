@@ -11,6 +11,11 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 {
     public abstract class SelectionAction : EditActionBase
     {
+        protected SelectionAction(string text)
+            : base(text)
+        {
+        }
+
         private sealed class SelectionHandler
         {
             private readonly IEditorView _editorView;

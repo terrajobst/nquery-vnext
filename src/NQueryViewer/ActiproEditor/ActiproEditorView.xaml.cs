@@ -31,7 +31,7 @@ namespace NQueryViewer.ActiproEditor
             var classificationTypes = language.GetService<INQueryClassificationTypes>();
             classificationTypes.RegisterAll();
 
-            AmbientHighlightingStyleRegistry.Instance.Register(ClassificationTypes.CompilerError, new HighlightingStyle(Brushes.Blue));
+            AmbientHighlightingStyleRegistry.Instance.Register(ClassificationTypes.CompilerError, new HighlightingStyle(Colors.Blue));
 
             _syntaxEditor = new SyntaxEditor();
             _syntaxEditor.IsIndicatorMarginVisible = true;
@@ -64,12 +64,12 @@ namespace NQueryViewer.ActiproEditor
 
         private int GetCaretPosition()
         {
-            return _syntaxEditor.Caret.Offset;
+            return _syntaxEditor.ActiveView.Selection.CaretOffset;
         }
 
         private void SetCaretPosition(int caretPosition)
         {
-            _syntaxEditor.Caret.Offset = caretPosition;
+            _syntaxEditor.ActiveView.Selection.CaretOffset = caretPosition;
         }
 
         private TextSpan GetSelection()
