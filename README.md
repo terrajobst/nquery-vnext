@@ -1,6 +1,6 @@
 # NQuery vNext
 
-![](https://github.com/terrajobst/nquery-vnext/workflows/CICD/badge.svg?event=push&branch=main)
+[![](https://github.com/terrajobst/nquery-vnext/workflows/CICD/badge.svg?event=push&branch=main)](https://github.com/terrajobst/nquery-vnext/actions/workflows/cicd.yml)
 
 This is a Roslyn inspired rewrite of [NQuery][nquery]. The goals are:
 
