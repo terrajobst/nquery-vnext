@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32218.330
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQueryViewer", "NQueryViewer\NQueryViewer.csproj", "{731E166C-3D27-47C6-9D0E-78845270C2B3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery", "NQuery\NQuery.csproj", "{BF5539F1-3476-4ED7-89DA-D9446B46EEEB}"
 EndProject
@@ -28,7 +28,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DA8727CD-B429-44D7-972F-A08A34E2DF1E}"
 	ProjectSection(SolutionItems) = preProject
 		nuget.config = nuget.config
-		packages.config = packages.config
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NQuery.Dynamic", "NQuery.Dynamic\NQuery.Dynamic.csproj", "{AE03CBAD-43E7-4ED4-83EF-E0826ECA344F}"
