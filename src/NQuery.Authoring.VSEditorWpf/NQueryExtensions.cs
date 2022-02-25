@@ -8,7 +8,7 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf
 {
-    public static class NQueryExensions
+    public static class NQueryExtensions
     {
         private static readonly object WorkspaceKey = new object();
 

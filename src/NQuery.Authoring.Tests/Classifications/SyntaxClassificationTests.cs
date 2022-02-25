@@ -54,10 +54,10 @@ namespace NQuery.Authoring.Tests.Classifications
 
             for (var i = 0; i < pieces.Length; i++)
             {
-                var piecce = pieces[i];
-                var pieceText = piecce.Item1;
+                var piece = pieces[i];
+                var pieceText = piece.Item1;
                 var pieceSpan = new TextSpan(position, pieceText.Length);
-                var classification = piecce.Item2;
+                var classification = piece.Item2;
 
                 Assert.Equal(pieceSpan, classificationSpans[i].Span);
                 Assert.Equal(classification, classificationSpans[i].Classification);

@@ -55,7 +55,7 @@ namespace NQuery.Authoring.Wpf
             set { SetValue(SyntaxTreeProperty, value); }
         }
 
-        private SyntaxTreeViewModel SynaxTreeViewModel
+        private SyntaxTreeViewModel SyntaxTreeViewModel
         {
             get { return DataContext as SyntaxTreeViewModel; }
         }
@@ -87,7 +87,7 @@ namespace NQuery.Authoring.Wpf
 
         public void SelectNode(int position)
         {
-            var model = SynaxTreeViewModel;
+            var model = SyntaxTreeViewModel;
             if (model == null)
                 return;
 

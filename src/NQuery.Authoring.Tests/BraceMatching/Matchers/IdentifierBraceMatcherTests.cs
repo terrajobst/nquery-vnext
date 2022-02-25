@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Tests.BraceMatching.Matchers
         }
 
         [Fact]
-        public void IdentifierBraceMatcher_DoestNotMatchRegularIdentifier()
+        public void IdentifierBraceMatcher_DoesNotMatchRegularIdentifier()
         {
             var query = @"
                 SELECT  {}FirstName{}

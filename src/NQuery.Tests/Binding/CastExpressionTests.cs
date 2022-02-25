@@ -15,10 +15,10 @@ namespace NQuery.Tests.Binding
         {
             var syntaxTree = SyntaxTree.ParseExpression("CAST(foo AS STRING)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticMoel = compilation.GetSemanticModel();
+            var semanticModel = compilation.GetSemanticModel();
 
-            var returnType = semanticMoel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
+            var returnType = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.Equal(typeof(string), returnType);
             Assert.Single(diagnostics);
@@ -30,9 +30,9 @@ namespace NQuery.Tests.Binding
         {
             var syntaxTree = SyntaxTree.ParseExpression("CAST(1.0 AS foo)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticMoel = compilation.GetSemanticModel();
+            var semanticModel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.UndeclaredType, diagnostics[0].DiagnosticId);

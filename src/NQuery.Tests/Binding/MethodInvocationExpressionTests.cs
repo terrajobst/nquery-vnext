@@ -6,16 +6,16 @@ using Xunit;
 
 namespace NQuery.Tests.Binding
 {
-    public sealed class MethodInvocationExressionTests
+    public sealed class MethodInvocationExpressionTests
     {
         [Fact]
         public void FunctionInvocation_DoesNotCauseCascadingErrors_WhenTargetIsUnresolved()
         {
             var syntaxTree = SyntaxTree.ParseExpression("x.Substring(1.0, 2)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticMoel = compilation.GetSemanticModel();
+            var semanticModel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
@@ -26,9 +26,9 @@ namespace NQuery.Tests.Binding
         {
             var syntaxTree = SyntaxTree.ParseExpression("'x'.Substring(1.0, bar)");
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticMoel = compilation.GetSemanticModel();
+            var semanticModel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticMoel.GetDiagnostics()).ToImmutableArray();
+            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
             Assert.Single(diagnostics);
             Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);

@@ -9,7 +9,7 @@ namespace NQuery.Tests.Text
     public sealed class TextSpanTests
     {
         [Fact]
-        public void TextSpan_IntializeStartAndLength()
+        public void TextSpan_InitializeStartAndLength()
         {
             var textSpan = new TextSpan(1, 2);
             Assert.Equal(1, textSpan.Start);
@@ -18,7 +18,7 @@ namespace NQuery.Tests.Text
         }
 
         [Fact]
-        public void TextSpan_IntializeStartAndEnd()
+        public void TextSpan_InitializeStartAndEnd()
         {
             var textSpan = TextSpan.FromBounds(1, 3);
             Assert.Equal(1, textSpan.Start);

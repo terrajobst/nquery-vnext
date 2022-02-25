@@ -8,8 +8,8 @@ namespace NQuery.Optimization
     {
         public static BoundQuery Optimize(BoundQuery query)
         {
-            var optmizedRelation = Optimize(query.Relation);
-            return new BoundQuery(optmizedRelation, query.OutputColumns);
+            var optimizedRelation = Optimize(query.Relation);
+            return new BoundQuery(optimizedRelation, query.OutputColumns);
         }
 
         private static BoundRelation Optimize(BoundRelation relation)

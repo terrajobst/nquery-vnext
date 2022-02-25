@@ -7,13 +7,13 @@ using NQuery.Hosting;
 
 namespace NQuery.Symbols
 {
-    internal sealed class EumerableTableDefinition : TableDefinition
+    internal sealed class EnumerableTableDefinition : TableDefinition
     {
         private readonly IEnumerable _source;
         private readonly Type _rowType;
         private readonly IPropertyProvider _propertyProvider;
 
-        public EumerableTableDefinition(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
+        public EnumerableTableDefinition(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
         {
             Name = name;
             _source = source;

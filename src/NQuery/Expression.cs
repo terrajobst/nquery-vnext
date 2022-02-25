@@ -66,7 +66,7 @@ namespace NQuery
         public T Evaluate()
         {
             EnsureCompiled();
-            var result = _expressionEvaluator.Evalutate();
+            var result = _expressionEvaluator.Evaluate();
             return result == null
                 ? NullValue
                 : (T) result;

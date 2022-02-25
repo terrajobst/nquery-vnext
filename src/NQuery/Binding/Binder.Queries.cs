@@ -388,9 +388,9 @@ namespace NQuery.Binding
             else
                 receiver.Add(node.LeftQuery);
 
-            var rigthAsUnion = node.RightQuery as UnionQuerySyntax;
-            if (rigthAsUnion != null && HasSameUnionKind(node, rigthAsUnion))
-                FlattenUnionQueries(receiver, rigthAsUnion);
+            var rightAsUnion = node.RightQuery as UnionQuerySyntax;
+            if (rightAsUnion != null && HasSameUnionKind(node, rightAsUnion))
+                FlattenUnionQueries(receiver, rightAsUnion);
             else
                 receiver.Add(node.RightQuery);
         }
@@ -572,12 +572,12 @@ namespace NQuery.Binding
                 if (i >= outputValues.Length)
                     break;
 
-                var queryColum = inputColumns[i];
+                var queryColumn = inputColumns[i];
                 var valueSlot = outputValues[i];
 
-                var resultColumn = queryColum.ValueSlot == valueSlot
-                    ? queryColum
-                    : new QueryColumnInstanceSymbol(queryColum.Name, valueSlot);
+                var resultColumn = queryColumn.ValueSlot == valueSlot
+                    ? queryColumn
+                    : new QueryColumnInstanceSymbol(queryColumn.Name, valueSlot);
 
                 result.Add(resultColumn);
             }
@@ -649,11 +649,11 @@ namespace NQuery.Binding
             // of the first query and the query columns of our input.
 
             var inputQueryColumns = firstQuery.OutputColumns;
-            var outputQueryCoumns = query.OutputColumns;
-            var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryCoumns);
+            var outputQueryColumns = query.OutputColumns;
+            var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryColumns);
 
             var relation = new BoundSortRelation(false, query.Relation, orderByClause.Columns.Select(c => c.ComparedValue).ToImmutableArray());
-            return new BoundQuery(relation, outputQueryCoumns);
+            return new BoundQuery(relation, outputQueryColumns);
         }
 
         private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
@@ -939,11 +939,11 @@ namespace NQuery.Binding
                 ? BindDistinctComparers(node.SelectClause.Columns, outputColumns)
                 : ImmutableArray<IComparer>.Empty;
 
-            ImmutableArray<BoundComparedValue> distincSortValues;
+            ImmutableArray<BoundComparedValue> distinctSortValues;
 
             if (!isDistinct || orderByClause == null)
             {
-                distincSortValues = ImmutableArray<BoundComparedValue>.Empty;
+                distinctSortValues = ImmutableArray<BoundComparedValue>.Empty;
             }
             else
             {
@@ -960,7 +960,7 @@ namespace NQuery.Binding
                 }
 
                 var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.ComparedValue.ValueSlot));
-                distincSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.ValueSlot, distinctComparer[i]))
+                distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.ValueSlot, distinctComparer[i]))
                                                  .Where(s => !orderByValueSet.Contains(s.ValueSlot))
                                                  .ToImmutableArray();
             }
@@ -1008,7 +1008,7 @@ namespace NQuery.Binding
 
             var sortedValues = orderByClause == null
                 ? ImmutableArray<BoundComparedValue>.Empty
-                : orderByClause.Columns.Select(c => c.ComparedValue).Concat(distincSortValues).ToImmutableArray();
+                : orderByClause.Columns.Select(c => c.ComparedValue).Concat(distinctSortValues).ToImmutableArray();
 
             var sortRelation = sortedValues.IsEmpty
                 ? selectComputeRelation
@@ -1184,7 +1184,7 @@ namespace NQuery.Binding
             var boundNode = BindFromClauseInternal(node);
             var binder = CreateLocalBinder(boundNode.GetDeclaredTableInstances());
 
-            _sharedBinderState.BoundNodeFromSynatxNode.Add(node, boundNode);
+            _sharedBinderState.BoundNodeFromSyntaxNode.Add(node, boundNode);
             _sharedBinderState.BinderFromBoundNode[boundNode] = binder;
 
             // Ensure that there are no duplicates.

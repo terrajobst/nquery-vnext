@@ -26,7 +26,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
         [Import]
         public IStandardClassificationService StandardClassificationService { get; set; }
 
-        private IClassificationType GetOrRetreiveClassification(ref IClassificationType target, string name)
+        private IClassificationType GetOrRetrieveClassification(ref IClassificationType target, string name)
         {
             return target ?? (target = ClassificationTypeRegistryService.GetClassificationType(name));
         }
@@ -53,7 +53,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
 
         public IClassificationType Punctuation
         {
-            get { return GetOrRetreiveClassification(ref _punctuation, NQuerySemanticClassificationMetadata.PunctuationClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _punctuation, NQuerySemanticClassificationMetadata.PunctuationClassificationTypeName); }
         }
 
         public IClassificationType NumberLiteral
@@ -68,52 +68,52 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
 
         public IClassificationType SchemaTable
         {
-            get { return GetOrRetreiveClassification(ref _schemaTable, NQuerySemanticClassificationMetadata.SchemaTableClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _schemaTable, NQuerySemanticClassificationMetadata.SchemaTableClassificationTypeName); }
         }
 
         public IClassificationType DerivedTable
         {
-            get { return GetOrRetreiveClassification(ref _derivedTable, NQuerySemanticClassificationMetadata.DerivedTableClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _derivedTable, NQuerySemanticClassificationMetadata.DerivedTableClassificationTypeName); }
         }
 
         public IClassificationType CommonTableExpression
         {
-            get { return GetOrRetreiveClassification(ref _cteTable, NQuerySemanticClassificationMetadata.CommonTableExpressionClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _cteTable, NQuerySemanticClassificationMetadata.CommonTableExpressionClassificationTypeName); }
         }
 
         public IClassificationType Column
         {
-            get { return GetOrRetreiveClassification(ref _column, NQuerySemanticClassificationMetadata.ColumnClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _column, NQuerySemanticClassificationMetadata.ColumnClassificationTypeName); }
         }
 
         public IClassificationType Method
         {
-            get { return GetOrRetreiveClassification(ref _method, NQuerySemanticClassificationMetadata.MethodClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _method, NQuerySemanticClassificationMetadata.MethodClassificationTypeName); }
         }
 
         public IClassificationType Property
         {
-            get { return GetOrRetreiveClassification(ref _property, NQuerySemanticClassificationMetadata.PropertyClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _property, NQuerySemanticClassificationMetadata.PropertyClassificationTypeName); }
         }
 
         public IClassificationType Function
         {
-            get { return GetOrRetreiveClassification(ref _function, NQuerySemanticClassificationMetadata.FunctionClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _function, NQuerySemanticClassificationMetadata.FunctionClassificationTypeName); }
         }
 
         public IClassificationType Aggregate
         {
-            get { return GetOrRetreiveClassification(ref _aggregate, NQuerySemanticClassificationMetadata.AggregateClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _aggregate, NQuerySemanticClassificationMetadata.AggregateClassificationTypeName); }
         }
 
         public IClassificationType Variable
         {
-            get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.VariableClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _variable, NQuerySemanticClassificationMetadata.VariableClassificationTypeName); }
         }
 
         public IClassificationType Unnecessary
         {
-            get { return GetOrRetreiveClassification(ref _variable, NQuerySemanticClassificationMetadata.UnnecessaryClassificationTypeName); }
+            get { return GetOrRetrieveClassification(ref _variable, NQuerySemanticClassificationMetadata.UnnecessaryClassificationTypeName); }
         }
     }
 }

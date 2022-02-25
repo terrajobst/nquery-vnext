@@ -562,8 +562,8 @@ namespace NQuery.Binding
                 caseLabels[i] = caseLabel;
             }
 
-            var elseExpresion = boundArguments.Last();
-            return new BoundCaseExpression(caseLabels, elseExpresion);
+            var elseExpression = boundArguments.Last();
+            return new BoundCaseExpression(caseLabels, elseExpression);
         }
 
         private BoundExpression BindNullIfExpression(NullIfExpressionSyntax node)
@@ -814,13 +814,13 @@ namespace NQuery.Binding
                 // Could be an aggregate or a function.
 
                 var aggregates = LookupAggregate(node.Name).ToImmutableArray();
-                var funcionCandidate = LookupFunctionWithSingleParameter(node.Name).FirstOrDefault();
+                var functionCandidate = LookupFunctionWithSingleParameter(node.Name).FirstOrDefault();
 
                 if (aggregates.Length > 0)
                 {
-                    if (funcionCandidate != null)
+                    if (functionCandidate != null)
                     {
-                        var symbols = new Symbol[] {aggregates[0], funcionCandidate};
+                        var symbols = new Symbol[] {aggregates[0], functionCandidate};
                         Diagnostics.ReportAmbiguousName(node.Name, symbols);
                     }
                     else
@@ -1119,8 +1119,8 @@ namespace NQuery.Binding
                 var comparison = new BoundBinaryExpression(convertedLeft, operatorKind, result, right);
                 var negatedComparison = BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, comparison);
                 var leftIsNull = new BoundIsNullExpression(convertedLeft);
-                var rightisNull = new BoundIsNullExpression(right);
-                var eitherSideIsNull = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, leftIsNull, rightisNull);
+                var rightIsNull = new BoundIsNullExpression(right);
+                var eitherSideIsNull = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, leftIsNull, rightIsNull);
                 var condition = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, negatedComparison, eitherSideIsNull);
                 var filter = new BoundFilterRelation(relation, condition);
                 var existsSubselect = new BoundExistsSubselect(filter);

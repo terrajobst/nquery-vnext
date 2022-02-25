@@ -32,8 +32,8 @@ namespace NQuery.Authoring.Tests.Selection
                 var childText = syntaxTree.Text.GetText(child);
                 var parentText = syntaxTree.Text.GetText(parent);
 
-                var acutal = syntaxTree.ExtendSelection(child, providers);
-                Assert.Equal(parent, acutal);
+                var actual = syntaxTree.ExtendSelection(child, providers);
+                Assert.Equal(parent, actual);
             }
         }
     }

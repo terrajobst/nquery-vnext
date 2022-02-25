@@ -137,9 +137,9 @@ namespace NQuery.Optimization
             //       a better way to carry the factories. Maybe we should just expose on specific
             //       bound nodes?
 
-            var facory = node.Relation.GetOutputValues().FirstOrDefault()?.Factory ?? new ValueSlotFactory();
+            var factory = node.Relation.GetOutputValues().FirstOrDefault()?.Factory ?? new ValueSlotFactory();
 
-            var valueSlot = facory.CreateTemporary(typeof(bool));
+            var valueSlot = factory.CreateTemporary(typeof(bool));
             var subquery = new Subquery(SubqueryKind.Exists, valueSlot, relation, CurrentPassthru);
             var subqueries = _subqueryStack.Peek();
             subqueries.Add(subquery);

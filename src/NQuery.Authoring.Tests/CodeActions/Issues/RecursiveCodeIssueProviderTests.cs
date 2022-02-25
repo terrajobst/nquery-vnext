@@ -62,7 +62,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
         }
 
         [Fact]
-        public void RecursiveCodeIssueProvider_FixesUnncessaryRecursive()
+        public void RecursiveCodeIssueProvider_FixesUnnecessaryRecursive()
         {
             var query = @"
                 WITH RECURSIVE Emps AS

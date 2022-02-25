@@ -11,11 +11,11 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Constant_ReturnsSingleRow()
         {
-            var exptected = new object[1, 0];
+            var expected = new object[1, 0];
 
             using (var iterator = new ConstantIterator())
             {
-                AssertProduces(iterator, exptected);
+                AssertProduces(iterator, expected);
             }
         }
     }

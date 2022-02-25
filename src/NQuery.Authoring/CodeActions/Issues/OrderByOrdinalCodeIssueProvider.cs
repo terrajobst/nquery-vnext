@@ -17,16 +17,16 @@ namespace NQuery.Authoring.CodeActions.Issues
                    let column = semanticModel.GetSymbol(orderByColumn)
                    where column != null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
-                   let action = new[] {new ReplaceOrdingalByNamedReferenceCodeAction(selector, namedReference)}
+                   let action = new[] {new ReplaceOrdinalByNamedReferenceCodeAction(selector, namedReference)}
                    select new CodeIssue(CodeIssueKind.Warning, selector.Span, action);
         }
 
-        private sealed class ReplaceOrdingalByNamedReferenceCodeAction : CodeAction
+        private sealed class ReplaceOrdinalByNamedReferenceCodeAction : CodeAction
         {
             private readonly ExpressionSyntax _selector;
             private readonly string _columnReference;
 
-            public ReplaceOrdingalByNamedReferenceCodeAction(ExpressionSyntax selector, string columnReference)
+            public ReplaceOrdinalByNamedReferenceCodeAction(ExpressionSyntax selector, string columnReference)
                 : base(selector.SyntaxTree)
             {
                 _selector = selector;

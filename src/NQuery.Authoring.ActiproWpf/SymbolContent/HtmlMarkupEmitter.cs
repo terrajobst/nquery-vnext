@@ -101,14 +101,14 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
         {
             sb.AppendColor(@"background-color", highlightingStyle.Background);
             sb.AppendColor(@"color", highlightingStyle.Foreground);
-            sb.AppendFontFamiliy(@"font-family", highlightingStyle.FontFamilyName);
+            sb.AppendFontFamily(@"font-family", highlightingStyle.FontFamilyName);
             sb.AppendFontSize(@"font-size", highlightingStyle.FontSize);
             sb.AppendFontWeight(@"font-weight", highlightingStyle.Bold);
             sb.AppendFontStyle(@"font-style", highlightingStyle.Italic);
             sb.AppendTextDecoration(@"text-decoration", highlightingStyle.UnderlineKind);
         }
 
-        private static void AppendFontFamiliy(this StringBuilder sb, string key, string fontFamilyName)
+        private static void AppendFontFamily(this StringBuilder sb, string key, string fontFamilyName)
         {
             if (string.IsNullOrEmpty(fontFamilyName))
                 return;

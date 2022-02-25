@@ -61,7 +61,7 @@ namespace NQuery.Authoring.Tests.QuickInfo.Providers
         }
 
         [Fact]
-        public void ExpressionSelectColumnQuickInfoModelProvider_DoesNotMatchForUnanmed()
+        public void ExpressionSelectColumnQuickInfoModelProvider_DoesNotMatchForUnnamed()
         {
             var query = @"
                 SELECT  {e.FirstName + ' ' + e.LastName}

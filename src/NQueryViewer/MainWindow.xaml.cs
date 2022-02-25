@@ -57,7 +57,7 @@ namespace NQueryViewer
                 menuItem.Tag = editorViewFactory;
                 menuItem.Click += delegate { NewEditor(editorViewFactory); };
 
-                FileMenuItem.Items.Insert(FileMenuItem.Items.IndexOf(FileNewSeperator), menuItem);
+                FileMenuItem.Items.Insert(FileMenuItem.Items.IndexOf(FileNewSeparator), menuItem);
             }
 
             NewEditor();
@@ -122,8 +122,8 @@ namespace NQueryViewer
 
             var syntaxTree = semanticModel.SyntaxTree;
             var syntaxDiagnostics = syntaxTree.GetDiagnostics();
-            var semanticModelDiagnostcics = semanticModel.GetDiagnostics();
-            var diagnostics = syntaxDiagnostics.Concat(semanticModelDiagnostcics);
+            var semanticModelDiagnostics = semanticModel.GetDiagnostics();
+            var diagnostics = syntaxDiagnostics.Concat(semanticModelDiagnostics);
             if (diagnostics.Any())
             {
                 BottomToolWindowTabControl.SelectedItem = ErrorListTabItem;

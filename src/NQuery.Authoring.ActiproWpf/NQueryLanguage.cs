@@ -52,8 +52,8 @@ namespace NQuery.Authoring.ActiproWpf
             RegisterService<INQueryBraceMatcher>(matcher);
             RegisterService<IStructureMatcher>(matcher);
 
-            var delimterHighlightingTagger = new TextViewTaggerProvider<DelimiterHighlightTagger>(typeof(DelimiterHighlightTagger));
-            RegisterService(delimterHighlightingTagger);
+            var delimiterHighlightingTagger = new TextViewTaggerProvider<DelimiterHighlightTagger>(typeof(DelimiterHighlightTagger));
+            RegisterService(delimiterHighlightingTagger);
         }
 
         private void RegisterClassificationTypes()

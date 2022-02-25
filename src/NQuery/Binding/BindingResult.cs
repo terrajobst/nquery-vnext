@@ -6,14 +6,14 @@ namespace NQuery.Binding
 {
     internal sealed class BindingResult
     {
-        private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSynatxNode;
+        private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSyntaxNode;
         private readonly IDictionary<BoundNode, Binder> _binderFromBoundNode;
 
-        public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSynatxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
+        public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSyntaxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
         {
             Root = root;
             BoundRoot = boundRoot;
-            _boundNodeFromSynatxNode = boundNodeFromSynatxNode;
+            _boundNodeFromSyntaxNode = boundNodeFromSyntaxNode;
             _binderFromBoundNode = binderFromBoundNode;
             Diagnostics = diagnostics.ToImmutableArray();
         }
@@ -32,7 +32,7 @@ namespace NQuery.Binding
         public BoundNode GetBoundNode(SyntaxNode syntaxNode)
         {
             BoundNode result;
-            _boundNodeFromSynatxNode.TryGetValue(syntaxNode, out result);
+            _boundNodeFromSyntaxNode.TryGetValue(syntaxNode, out result);
             return result;
         }
 

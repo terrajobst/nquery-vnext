@@ -8,7 +8,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Optimization
 {
-    internal static class Instatiator
+    internal static class Instantiator
     {
         public static BoundRelation Instantiate(BoundRelation relation)
         {

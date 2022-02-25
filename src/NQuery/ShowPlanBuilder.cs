@@ -195,8 +195,8 @@ namespace NQuery
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Inputs.Select(Build);
             var kind = node.IsUnionAll ? @"UnionAll" : @"Union";
-            var ouputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
-            var name = $"{kind} {ouputs}";
+            var outputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
+            var name = $"{kind} {outputs}";
             return new ShowPlanNode(name, properties, children);
         }
 
@@ -204,8 +204,8 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = node.Inputs.Select(Build);
-            var ouputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
-            var name = $"Concatenation {ouputs}";
+            var outputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
+            var name = $"Concatenation {outputs}";
             return new ShowPlanNode(name, properties, children);
         }
 
