@@ -1,7 +1,6 @@
 using System;
 
 using Microsoft.VisualStudio.Text;
-using Microsoft.VisualStudio.Text.Differencing;
 using Microsoft.VisualStudio.Text.Operations;
 
 using NQuery.Authoring.CodeActions;
