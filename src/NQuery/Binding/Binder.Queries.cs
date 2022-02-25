@@ -190,7 +190,7 @@ namespace NQuery.Binding
             //                  HAVING  SUM(od.UnitPrice * od.Quantity) > 12000
             //              )
             //
-            // This also includes the a qualified asterisk. For example, this query is also invalid:
+            // This also includes the qualified asterisk. For example, this query is also invalid:
             //
             //      SELECT  *
             //      FROM    Employees e
@@ -591,7 +591,7 @@ namespace NQuery.Binding
             // differ.
             //
             // (1) If the query is applied to a SELECT query, then ORDER BY may have
-            //     more expressions then the underlying SELECT list.
+            //     more expressions than the underlying SELECT list.
             //
             // (2) If the query is applied to a query combined with UNION, INTERSECT
             //     or EXCEPT all expressions must already be present in the underlying
@@ -752,7 +752,7 @@ namespace NQuery.Binding
                 }
             }
 
-            // Ensure we have at least one anchor
+            // Ensure we have at least one anchor.
 
             if (anchorMembers.Count == 0)
             {
@@ -966,7 +966,7 @@ namespace NQuery.Binding
             }
 
             // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
-            //       literal. Thuse, we can simply ignore the case where topClause.Value.Value cannot be casted
+            //       literal. Thus, we can simply ignore the case where topClause.Value.Value cannot be casted
             //       to an int -- the parser added the diagnostics already. However, we cannot perform a hard
             //       cast because we also bind input the parser reported errors for.
 
@@ -1187,7 +1187,7 @@ namespace NQuery.Binding
             _sharedBinderState.BoundNodeFromSynatxNode.Add(node, boundNode);
             _sharedBinderState.BinderFromBoundNode[boundNode] = binder;
 
-            // Ensure that there are no duplicates
+            // Ensure that there are no duplicates.
 
             var introducedTables = QueryState.IntroducedTables;
             var lookup = introducedTables.Values.ToLookup(t => t.ValueText, StringComparer.OrdinalIgnoreCase);
@@ -1257,7 +1257,7 @@ namespace NQuery.Binding
                 var boundExpression = groupByBinder.BindExpression(expression);
                 var expressionType = boundExpression.Type;
 
-                // TODO: We need to very expression references at least one column that is not an outer reference.
+                // TODO: We need to ensure every expression references at least one column that is not an outer reference.
 
                 var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
@@ -1309,7 +1309,7 @@ namespace NQuery.Binding
             // is actually applied to (such as a UNION query).
             //
             // We want to return a bound ORDER BY which has the columns bound against the
-            // actual query.In order map from the selectors to the result query columns
+            // actual query. In order to map from the selectors to the result query columns
             // we will use their ordinals.
 
             var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
@@ -1327,7 +1327,7 @@ namespace NQuery.Binding
                 var isAscending = column.Modifier == null ||
                                   column.Modifier.Kind == SyntaxKind.AscKeyword;
 
-                // Let's bind the select against the query columns of the first SELECT query
+                // Let's bind the selector against the query columns of the first SELECT query
                 // we are applied to.
 
                 var boundSelector = selectorBinder.BindOrderBySelector(selectorQueryColumns, column.ColumnSelector);
@@ -1384,7 +1384,7 @@ namespace NQuery.Binding
 
         private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
         {
-            // Although ORDER BY can contain abitrary expression, there are special rules to how those
+            // Although ORDER BY can contain arbitrary expressions, there are special rules to how those
             // expressions relate to the SELECT list of a query:
             //
             // (1) By position
@@ -1399,7 +1399,7 @@ namespace NQuery.Binding
             // If none of the above is true, ORDER BY may compute a new expression that will be used for
             // ordering the query, but this requires that the query it's applied to is a SELECT query.
             // In other words it can't be a query combined with UNION, EXCEPT, or INTERSECT. However,
-            // we don't have to check for that case, our caller is reponsible for doing it.
+            // we don't have to check for that case, our caller is responsible for doing it.
 
             // Case (1): Check for positional form.
 

@@ -46,10 +46,10 @@ namespace NQuery
             // That's because an expression might contain sub queries.
             //
             // However, in many cases expressions don't contain sub queries and
-            // evaluting a query is considerably more expensive than just evaluating an
+            // evaluating a query is considerably more expensive than just evaluating an
             // expression directly.
             //
-            // Thus, let's first check whether the query is trivia, i.e. only contains
+            // Thus, let's first check whether the query is trivial, i.e. only contains
             // a compute node whose input is a constant relation. That means we can
             // just evaluate the expression being defined.
 

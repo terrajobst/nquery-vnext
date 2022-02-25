@@ -58,8 +58,8 @@ namespace NQuery
                 else
                 {
                     // The parent of structured trivia is actually null, which is
-                    // argubaly the correct result for nodes that are trivia.
-                    // So in order to ascend out of those, we need to navgiate from
+                    // arguably the correct result for nodes that are trivia.
+                    // So in order to ascend out of those, we need to navigate from
                     // the structure to its containing token which we can then use
                     // to return the logical parent.
                     var parentTrivia = structuredTrivia.ParentTrivia;

@@ -113,14 +113,14 @@ namespace NQuery.Binding
 
         private ImmutableArray<BoundExpression> BindToCommonType(ImmutableArray<BoundExpression> boundExpressions, Func<int, TextSpan> diagnosticSpanProvider)
         {
-            // To avoid cascading errors as let's first see whether we couldn't resolve
+            // To avoid cascading errors let's first see whether we couldn't resolve
             // any of the expressions. If that's the case, we'll simply return them as-is.
 
             var hasAnyErrors = boundExpressions.Any(e => e.Type.IsError());
             if (hasAnyErrors)
                 return boundExpressions;
 
-            // Now let's see whether all expression already have the same type.
+            // Now let's see whether all expressions already have the same type.
             // In that case we can simply return the input as-is.
 
             var firstType = boundExpressions.Select(e => e.Type).First();
@@ -133,7 +133,7 @@ namespace NQuery.Binding
             var commonType = FindCommonType(boundExpressions);
 
             // If we couldn't find a common type, we'll just use the first expression's
-            // type -- this will cause BindConversion below to to report errors.
+            // type -- this will cause BindConversion below to report errors.
 
             if (commonType == null)
                 commonType = boundExpressions.First().Type;
@@ -691,9 +691,9 @@ namespace NQuery.Binding
                 case SymbolKind.TableInstance:
                 {
                     // If symbol refers to a table, we need to make sure that it's either not a derived table/CTE
-                    // or we are used in column access context (i.e. our parent is a a property access).
+                    // or we are used in column access context (i.e. our parent is a property access).
                     //
-                    // For example, the following query is invalid
+                    // For example, the following query is invalid:
                     //
                     //    SELECT  D -- ERROR
                     //    FROM    (
@@ -950,7 +950,7 @@ namespace NQuery.Binding
             var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToImmutableArray();
             var argumentTypes = arguments.Select(a => a.Type).ToImmutableArray();
 
-            // To avoid cascading errors, we'll return a node that insn't bound to
+            // To avoid cascading errors, we'll return a node that isn't bound to
             // any method if we couldn't resolve our target or any of our arguments.
 
             var anyErrors = target.Type.IsError() || argumentTypes.Any(a => a.IsError());
@@ -1070,7 +1070,7 @@ namespace NQuery.Binding
             var convertedLeft = BindArgument(left, result, 0);
             var convertedRight = BindArgument(right, result, 1);
 
-            // If we need to convert the right side, then we musy insert a BoundComputeRelation
+            // If we need to convert the right side, then we must insert a BoundComputeRelation
             // that produces a derived value.
 
             BoundRelation relation;
@@ -1090,8 +1090,8 @@ namespace NQuery.Binding
                 convertedRight = new BoundValueSlotExpression(outputValue);
             }
 
-            // In order to simplify later phases, we'll rewrite the the ALL/ANY subselect into
-            // a regular EXISTS subselect. ANY is fairly straight forward:
+            // In order to simplify later phases, we'll rewrite the ALL/ANY subselect into
+            // a regular EXISTS subselect. ANY is fairly straightforward:
             //
             //      left op ANY (SELECT right FROM ...)
             //

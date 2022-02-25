@@ -29,7 +29,7 @@ namespace NQuery.Symbols.Aggregation
             }
 
             // In some cases, the result of the adding both arguments might be different from
-            // arguments type, e.g. adding to bytes will result in an int.
+            // arguments type, e.g. adding two bytes will result in an int.
             //
             // In order to get the correct answer, let's compose a new expression.
 

@@ -57,12 +57,12 @@ namespace NQuery.Binding
             //
             // NOTE: We generally want to perform an overload resolution against the unified
             //       set of both, built-in signatures as well as user defined signatures.
-            //       However, if the type provides an operator that is applicable, we want to
+            //       However, if the type provides an operator that is applicable, we want
             //       to hide the built-in operators. In other words, in those cases the user
             //       defined operators shadows the built-in operators.
             //       Please note that we don't ask whether the overload resolution found a
             //       best match -- we just check if it has an applicable operator. This makes
-            //       sure that any any ambiguity errors will not include built-in operators
+            //       sure that any ambiguity errors will not include built-in operators
             //       in the output.
 
             var userDefinedSignatures = GetUserDefinedSignatures(kind, type);

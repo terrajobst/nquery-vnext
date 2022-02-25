@@ -7,7 +7,7 @@ using NQuery.Binding;
 namespace NQuery.Optimization
 {
     // The purpose of this rewriter is to replace FULL OUTER JOINS with
-    // a LEFT JOIN JOIN and LEFT ANTI SEMI JOIN:
+    // a LEFT SEMI JOIN and LEFT ANTI SEMI JOIN:
     //
     //      SELECT  *
     //      FROM    Table1 t1

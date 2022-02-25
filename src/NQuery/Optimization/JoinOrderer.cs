@@ -47,7 +47,7 @@ namespace NQuery.Optimization
                 if (join == null || join.JoinType != BoundJoinType.Inner)
                 {
                     // NOTE: We generally want to rewrite joins that we can't extract
-                    //       ourselves. However, we've to be careful not rewrite the
+                    //       ourselves. However, we've to be careful not to rewrite the
                     //       node that we started from -- otherwise we stack overflow.
                     var rewrittenCurrent = current == node ? current : RewriteRelation(current);
                     relations.Add(rewrittenCurrent);

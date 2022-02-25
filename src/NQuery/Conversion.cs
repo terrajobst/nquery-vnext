@@ -111,7 +111,7 @@ namespace NQuery
             if (!sourceType.IsValueType && !targetType.IsValueType)
             {
                 // If both are reference types, let's check whether target is a base type
-                // of source. In that case it's an implict upcast.
+                // of source. In that case it's an implicit upcast.
                 if (targetType.IsAssignableFrom(sourceType))
                     return UpCast;
 

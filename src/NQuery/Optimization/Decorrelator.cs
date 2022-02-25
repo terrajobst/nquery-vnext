@@ -67,7 +67,7 @@ namespace NQuery.Optimization
 
             var extractedConjunctions = new List<BoundExpression>();
 
-            // Try to pull up conjunctions that contain outer references from a left sided filter and combine 
+            // Try to pull up conjunctions that contain outer references from a left sided filter and combine
             // them with the join predicate.
             //
             // NOTE: This is only possible if the join is not a LEFT OUTER or FULL OUTER JOIN since this
@@ -116,7 +116,7 @@ namespace NQuery.Optimization
                 }
             }
 
-            // Try to pull up conjunctions that contain outer references from a right sided filter and combine 
+            // Try to pull up conjunctions that contain outer references from a right sided filter and combine
             // them with the join predicate.
             //
             // NOTE: This is only possible if the join is not a RIGHT OUTER or FULL OUTER JOIN since this

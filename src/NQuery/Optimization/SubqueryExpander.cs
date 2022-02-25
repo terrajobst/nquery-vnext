@@ -90,10 +90,10 @@ namespace NQuery.Optimization
 
             var factory = node.Value.Factory;
 
-            // TODO: If the query is guranteed to return a single, e.g. if it is a aggregated but not grouped,
+            // TODO: If the query is guaranteed to return a single, e.g. if it is a aggregated but not grouped,
             //       we should not emit the additional aggregation and assertion.
 
-            // 1. We need to know whether it returns more then one row.
+            // 1. We need to know whether it returns more than one row.
 
             var valueSlot = node.Value;
             var anyOutput = factory.CreateTemporary(valueSlot.Type);
@@ -133,7 +133,7 @@ namespace NQuery.Optimization
 
             // TODO: This isn't ideal. In many cases, the relation will not have any output values.
             //       This means, we've to create a new value slot factory which in turn means that
-            //       we have create multiple slots with the same name. It seems we should think of
+            //       we have to create multiple slots with the same name. It seems we should think of
             //       a better way to carry the factories. Maybe we should just expose on specific
             //       bound nodes?
 
@@ -267,7 +267,7 @@ namespace NQuery.Optimization
             if (scalarPredicates.Count == 0)
                 return current;
 
-            // Othwerwise We add a filter for the scalars.
+            // Otherwise we add a filter for the scalars.
 
             var predicate = Expression.And(scalarPredicates);
             return new BoundFilterRelation(current, predicate);

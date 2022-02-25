@@ -28,7 +28,7 @@ namespace NQuery.Tests
             };
         }
 
-        // All overloadable operators with custom structs and classses
+        // All overloadable operators with custom structs and classes
 
         [Theory]
         [MemberData(nameof(GetOverloadableUnaryOperators))]

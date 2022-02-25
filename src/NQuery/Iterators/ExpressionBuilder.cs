@@ -249,7 +249,7 @@ namespace NQuery.Iterators
                             )
                          );
 
-            // If this is is not a logical operator, we are done.
+            // If this is not a logical operator, we are done.
 
             if (signature.Kind != BinaryOperatorKind.LogicalAnd && signature.Kind != BinaryOperatorKind.LogicalOr)
                 return result;
@@ -258,9 +258,9 @@ namespace NQuery.Iterators
             //
             // Normally, a binary expression will yield NULL if any of the operands is NULL.
             //
-            // For conjuctions and disjunctions this is not true. For certain values these
+            // For conjunctions and disjunctions this is not true. For certain values these
             // operators will return TRUE or FALSE though an operand was null. The following
-            // truth table must hold, sepcial cases are marked in parentheses:
+            // truth table must hold, special cases are marked in parentheses:
             //
             //    AND |  F  |  T  |  N       OR |  F  |  T  |  N
             //    ----+-----+-----+----      ---+-----+-----+-----
@@ -268,7 +268,7 @@ namespace NQuery.Iterators
             //     T  |  F  |  T  |  N       T  |  T  |  T  | (T)
             //     N  | (F) |  N  |  N       N  |  N  | (T) |  N
             //
-            // The special cases for conjuctions and disjunctions are
+            // The special cases for conjunctions and disjunctions are
             // pretty much the same:
             //
             // Logical And --> If either side is FALSE, the result is FALSE.

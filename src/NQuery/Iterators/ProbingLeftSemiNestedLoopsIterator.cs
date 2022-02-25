@@ -65,7 +65,7 @@ namespace NQuery.Iterators
                 if (!_right.Read())
                 {
                     _advanceOuter = true;
-                    // We found no matching row. However, since this a probing iterator
+                    // We found no matching row. However, since this is a probing iterator
                     // we must return this row as well.
                     return true;
                 }
