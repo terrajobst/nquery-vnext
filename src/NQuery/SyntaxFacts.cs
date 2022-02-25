@@ -1354,7 +1354,7 @@ namespace NQuery
 
             if (childPrecedence == 0)
             {
-                // If the child expression doesn't have predence,
+                // If the child expression doesn't have precedence,
                 // then parentheses are redundant.
                 return true;
             }

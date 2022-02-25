@@ -8,7 +8,7 @@ namespace NQuery.Binding
     //    
     //             a, e, i, o, u, y, h, w
     //    
-    //    2. Replace consonants with digits as follows(after the first letter):
+    //    2. Replace consonants with digits as follows (after the first letter):
     //    
     //             b, f, p, v             -> 1
     //             c, g, j, k, q, s, x, z -> 2

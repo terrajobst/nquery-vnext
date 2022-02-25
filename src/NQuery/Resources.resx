@@ -154,7 +154,7 @@
     <value>Binary operator '{0}' invocation on types '{1}' and '{2}' is ambiguous.</value>
   </data>
   <data name="AmbiguousConversion" xml:space="preserve">
-    <value>Ambiguous conversions when converting from '{0}' to '{1}'</value>
+    <value>Ambiguous conversions when converting from '{0}' to '{1}'.</value>
   </data>
   <data name="AmbiguousColumnRef" xml:space="preserve">
     <value>Column ref name {0} is ambiguous between {1} and {2}.</value>
@@ -250,7 +250,7 @@
     <value>Outer join is not allowed in the recursive part of a recursive common table expression '{0}'.</value>
   </data>
   <data name="CteContainsRecursiveReferenceInSubquery" xml:space="preserve">
-    <value>Recursive references are not allowed in subqueries</value>
+    <value>Recursive references are not allowed in subqueries.</value>
   </data>
   <data name="CteContainsTop" xml:space="preserve">
     <value>TOP operator is not allowed in the recursive part of a recursive common table expression '{0}'.</value>
@@ -385,7 +385,7 @@
     <value>'{0}' is not a valid hex number.</value>
   </data>
   <data name="InvalidIdentifier" xml:space="preserve">
-    <value>The text '{0}' is not a valid identifier</value>
+    <value>The text '{0}' is not a valid identifier.</value>
   </data>
   <data name="InvalidInteger" xml:space="preserve">
     <value>'{0}' is not a valid integer.</value>
@@ -394,7 +394,7 @@
     <value>'{0}' is not a valid octal number.</value>
   </data>
   <data name="InvalidOperatorForAllAny" xml:space="preserve">
-    <value>SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=</value>
+    <value>SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=.</value>
   </data>
   <data name="InvalidRowReference" xml:space="preserve">
     <value>Row reference '{0}' is not valid since the table it is referring to is either a derived table, a common table expression (CTE) or doesn't have a row type.</value>
@@ -736,7 +736,7 @@
     <value>Aggregate '{0}' is not declared.</value>
   </data>
   <data name="GroupByCannotContainSubquery" xml:space="preserve">
-    <value>GROUP BY cannot contain subqueries</value>
+    <value>GROUP BY cannot contain subqueries.</value>
   </data>
   <data name="ShowPlanStepFmt" xml:space="preserve">
     <value>Optimization Step: {0}</value>

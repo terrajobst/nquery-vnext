@@ -127,7 +127,7 @@ namespace NQuery.Syntax
             //     SELECT   *
             //     FROM     Or|
             //
-            // In this case, the develope wants to type "Orders" but as soon as the "r" is
+            // In this case, the developer wants to type "Orders" but as soon as the "r" is
             // typed the completion will stop working because the context of the "Or"
             // keyword is no longer part of the table reference but part of the skipped
             // token trivia contained in the EOF token.
@@ -136,14 +136,14 @@ namespace NQuery.Syntax
             // token that contains the skipped token as trivia.
             //
             // You may wonder why we shouldn't do this for all cases where an identifier is
-            // expeted but a keyword is found.
+            // expected but a keyword is found.
             //
             // Consider this case:
             //
             //     SELECT   o.|
             //     FROM     Orders
             //
-            // If we were always eating the curent token, we would skip the FROM token which
+            // If we were always eating the current token, we would skip the FROM token which
             // would cause the completion provider to think we've typed "o.FROM|" which is not
             // what we want. So in essence we want to disambiguate this case:
             //
@@ -244,7 +244,7 @@ namespace NQuery.Syntax
         private bool CurrentIsStartingQuery()
         {
             // Current token indicates the start of a query if we see
-            // a SELECT keywordword preceeded by any number of open
+            // a SELECT keyword preceded by any number of open
             // parentheses.
 
             var peek = 0;

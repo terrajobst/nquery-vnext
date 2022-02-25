@@ -224,7 +224,7 @@ namespace NQuery.Optimization
         {
             // TODO: Right now, we're not pushing over a join if it has any probing.
             //
-            //       That might be too restristive. It should be OK to push a over
+            //       That might be too restrictive. It should be OK to push over
             //       a join to the side that isn't affecting the probe column.
             //
             //       In other words:

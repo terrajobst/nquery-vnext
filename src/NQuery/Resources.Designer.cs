@@ -187,7 +187,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ambiguous conversions when converting from &apos;{0}&apos; to &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Ambiguous conversions when converting from &apos;{0}&apos; to &apos;{1}&apos;..
         /// </summary>
         internal static string AmbiguousConversion {
             get {
@@ -484,7 +484,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Recursive references are not allowed in subqueries.
+        ///   Looks up a localized string similar to Recursive references are not allowed in subqueries..
         /// </summary>
         internal static string CteContainsRecursiveReferenceInSubquery {
             get {
@@ -700,7 +700,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to GROUP BY cannot contain subqueries.
+        ///   Looks up a localized string similar to GROUP BY cannot contain subqueries..
         /// </summary>
         internal static string GroupByCannotContainSubquery {
             get {
@@ -889,7 +889,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The text &apos;{0}&apos; is not a valid identifier.
+        ///   Looks up a localized string similar to The text &apos;{0}&apos; is not a valid identifier..
         /// </summary>
         internal static string InvalidIdentifier {
             get {
@@ -916,7 +916,7 @@ namespace NQuery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=.
+        ///   Looks up a localized string similar to SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=..
         /// </summary>
         internal static string InvalidOperatorForAllAny {
             get {

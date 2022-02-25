@@ -139,7 +139,7 @@ namespace NQuery.Iterators
                             _probeMatched = false;
                             var probeValue = _probe.RowBuffer[_probeIndex];
 
-                            // Seek first occurence of probe value
+                            // Seek first occurrence of probe value
 
                             if (probeValue != null)
                                 _hashTable.TryGetValue(probeValue, out _entry);

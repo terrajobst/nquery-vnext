@@ -59,7 +59,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         {
             // NOTE: We don't check the syntax because using the symbol allows
             //       to capture any syntax that would just resolve to column,
-            //       such "FirstName" or "e.FirstName".
+            //       such as "FirstName" or "e.FirstName".
 
             return semanticModel.GetSymbol(selector) is ColumnInstanceSymbol;
         }

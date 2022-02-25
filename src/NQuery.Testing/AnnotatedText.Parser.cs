@@ -68,7 +68,7 @@ namespace NQuery
 
             private void ParseSpanOrChange()
             {
-                // Skip intitial brace
+                // Skip initial brace
                 _position++;
 
                 var spanStart = _textBuilder.Length;

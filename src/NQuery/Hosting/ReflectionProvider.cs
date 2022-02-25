@@ -161,7 +161,7 @@ namespace NQuery.Hosting
 
             if (exisitingMemberEntry != null)
             {
-                // Ok we have one. Check if the existing member is not more specific.
+                // OK we have one. Check if the existing member is not more specific.
                 if (ExistingMemberIsMoreSpecific(declaringType, exisitingMemberEntry.MemberInfo, memberInfo))
                 {
                     // The existing member is more specific. So we don't add the new one.
@@ -173,7 +173,7 @@ namespace NQuery.Hosting
                 memberList.Remove(exisitingMemberEntry.PropertySymbol);
             }
 
-            // Either the new member is more specific or we don't had
+            // Either the new member is more specific or we didn't have
             // a member with same name.
             propertyTable.Add(memberBinding, memberInfo);
             memberList.Add(memberBinding);
@@ -186,7 +186,7 @@ namespace NQuery.Hosting
 
             if (exisitingMethodEntry != null)
             {
-                // Ok we have one. Check if the existing member is not more specific.
+                // OK we have one. Check if the existing member is not more specific.
                 if (ExistingMemberIsMoreSpecific(declaringType, exisitingMethodEntry.MethodInfo, methodInfo))
                 {
                     // The existing member is more specific. So we don't add the new one.
@@ -198,7 +198,7 @@ namespace NQuery.Hosting
                 methodList.Remove(exisitingMethodEntry.MethodSymbol);
             }
 
-            // Either the new member is more specific or we don't had
+            // Either the new member is more specific or we didn't have
             // a member with same name.
             methodTable.Add(methodSymbol, methodInfo);
             methodList.Add(methodSymbol);
@@ -308,8 +308,8 @@ namespace NQuery.Hosting
         /// <summary>
         /// Creates a method binding for the given <see cref="MethodInfo"/>.
         /// </summary>
-        /// <param name="methodInfo">The .NET framework property info.</param>
-        /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
+        /// <param name="methodInfo">The .NET method info.</param>
+        /// <returns>If the method should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual MethodSymbol CreateMethod(MethodInfo methodInfo)
         {
             if (methodInfo == null)
@@ -321,7 +321,7 @@ namespace NQuery.Hosting
         /// <summary>
         /// Creates a property binding for the given <see cref="PropertyInfo"/>.
         /// </summary>
-        /// <param name="propertyInfo">The .NET framework property info.</param>
+        /// <param name="propertyInfo">The .NET property info.</param>
         /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(PropertyInfo propertyInfo)
         {
@@ -334,7 +334,7 @@ namespace NQuery.Hosting
         /// <summary>
         /// Creates a property binding for the given <see cref="FieldInfo"/>.
         /// </summary>
-        /// <param name="fieldInfo">The .NET framework field info.</param>
+        /// <param name="fieldInfo">The .NET field info.</param>
         /// <returns>If the field should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(FieldInfo fieldInfo)
         {

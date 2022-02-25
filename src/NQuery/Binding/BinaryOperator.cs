@@ -262,7 +262,7 @@ namespace NQuery.Binding
             //       defined operators shadows the built-in operators.
             //       Please note that we don't ask whether the overload resolution found a
             //       best match -- we just check if it has an applicable operator. This makes
-            //       sure that any any ambiguity errors will not include built-in operators
+            //       sure that any ambiguity errors will not include built-in operators
             //       in the output.
 
             var userDefinedSignatures = GetUserDefinedSignatures(kind, leftOperandType, rightOperandType);

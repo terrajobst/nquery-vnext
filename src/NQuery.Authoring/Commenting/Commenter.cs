@@ -32,9 +32,9 @@ namespace NQuery.Authoring.Commenting
             var result = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
             // If we find any trivia between the comments that isn't a single
-            // line comment or a line break, they they aren't consecutive.
+            // line comment or a line break, they aren't consecutive.
             //
-            // NOTE: We include the start and end trivias because we haven't
+            // NOTE: We include the start and end trivia because we haven't
             //       yet verified whether they are actually single line comments.
 
             for (var i = startIndex; i <= endIndex; i++)
@@ -152,7 +152,7 @@ namespace NQuery.Authoring.Commenting
             var endToken = syntaxTree.Root.FindToken(textSpan.End, true)
                                           .GetPreviousIfCurrentContainsOrTouchesPosition(textSpan.End);
 
-            // If span is over different tokens, then the trivias cannot be
+            // If span is over different tokens, then the trivia cannot be
             // from the same collection.
 
             if (startToken != endToken)
@@ -160,7 +160,7 @@ namespace NQuery.Authoring.Commenting
 
             var token = startToken;
 
-            // In order for the trivias to come from the same collection they
+            // In order for the trivia to come from the same collection they
             // must both be leading or both be trailing.
 
             var spanIsBeforeToken = textSpan.End <= token.Span.Start;
@@ -172,7 +172,7 @@ namespace NQuery.Authoring.Commenting
 
             trivias = spanIsBeforeToken ? token.LeadingTrivia : token.TrailingTrivia;
 
-            // Find the indices of the trivias that contain the start and end positions.
+            // Find the indices of the trivia that contain the start and end positions.
 
             startIndex = FindCommentIndex(trivias, textSpan.Start);
             endIndex = FindCommentIndex(trivias, textSpan.End);

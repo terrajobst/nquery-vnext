@@ -32,7 +32,7 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var symbols = semanticModel.LookupSymbols(position);
 
-            // In the global context there two different cases:
+            // In the global context there are two different cases:
             //
             // (1) We are in a table reference context
             // (2) We are somewhere else

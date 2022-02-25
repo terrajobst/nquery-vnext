@@ -426,11 +426,11 @@ namespace NQuery.Data
         }
 
         /// <summary>
-        /// Gets the date and time data value of the spcified field.
+        /// Gets the date and time data value of the specified field.
         /// </summary>
         /// <param name="i">The index of the field to find.</param>
         /// <returns>
-        /// The date and time data value of the spcified field.
+        /// The date and time data value of the specified field.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />.</exception>
         public DateTime GetDateTime(int i)

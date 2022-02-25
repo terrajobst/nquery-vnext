@@ -146,7 +146,7 @@ namespace NQuery.Optimization
 
         private static CardinalityEstimate EstimateAssertRelation(BoundAssertRelation relation)
         {
-            // TODO: If we knew more about the asser (such as MAX(1) or MAX(100)) we'd be able to give better estimates.
+            // TODO: If we knew more about the assert (such as MAX(1) or MAX(100)) we'd be able to give better estimates.
             return Estimate(relation.Input);
         }
 
