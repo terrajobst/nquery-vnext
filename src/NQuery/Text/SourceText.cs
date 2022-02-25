@@ -101,7 +101,6 @@ namespace NQuery.Text
             var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
                                           .ToImmutableArray();
 
-
             var sb = new StringBuilder(GetText());
             var hasChanges = false;
             var previousStart = int.MaxValue;

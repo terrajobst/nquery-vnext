@@ -472,4 +472,3 @@ namespace NQuery.Symbols
         }
     }
 }
-

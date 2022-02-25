@@ -54,7 +54,6 @@ namespace NQuery.Authoring.Tests.Commenting
             AssertIsMatch(query, expectedQuery);
         }
 
-
         [Fact]
         public void ToggleMultiLineComment_UncommentsEmptyComment_WhenSelected()
         {

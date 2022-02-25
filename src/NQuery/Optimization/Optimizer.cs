@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
+
 using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
-
     internal static class Optimizer
     {
         public static BoundQuery Optimize(BoundQuery query)

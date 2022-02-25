@@ -169,6 +169,5 @@ namespace NQuery.Authoring.Tests.SymbolSearch
 
             AssertIsMatch(sql);
         }
-
     }
 }
