@@ -14,7 +14,7 @@ namespace NQuery
 
         public Type Type { get; }
 
-        public object Evalutate()
+        public object Evaluate()
         {
             return _evaluator();
         }

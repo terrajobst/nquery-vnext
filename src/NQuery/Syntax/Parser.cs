@@ -275,14 +275,14 @@ namespace NQuery.Syntax
             if (Current.Kind == SyntaxKind.EndOfFileToken)
                 return NextToken();
 
-            var firstUnexpecteToken = Current;
+            var firstUnexpectedToken = Current;
             SkipTokens(t => t.Kind == SyntaxKind.EndOfFileToken);
 
             var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
             var diagnostics = new List<Diagnostic>(1);
-            diagnostics.ReportTokenExpected(firstUnexpecteToken.Span, firstUnexpecteToken, SyntaxKind.EndOfFileToken);
-            return endOfFileToken.WithDiagnotics(diagnostics);
+            diagnostics.ReportTokenExpected(firstUnexpectedToken.Span, firstUnexpectedToken, SyntaxKind.EndOfFileToken);
+            return endOfFileToken.WithDiagnostics(diagnostics);
         }
 
         private ExpressionSyntax ParseExpression()
@@ -773,13 +773,13 @@ namespace NQuery.Syntax
         private CommonTableExpressionSyntax ParseCommonTableExpression()
         {
             var recursiveKeyword = NextTokenIf(SyntaxKind.RecursiveKeyword);
-            var identifer = Match(SyntaxKind.IdentifierToken);
+            var identifier = Match(SyntaxKind.IdentifierToken);
             var commonTableExpressionColumnNameList = ParseCommonTableExpressionColumnNameList();
             var asKeyword = Match(SyntaxKind.AsKeyword);
             var leftParenthesis = Match(SyntaxKind.LeftParenthesisToken);
             var query = ParseQuery();
             var rightParenthesis = Match(SyntaxKind.RightParenthesisToken);
-            return new CommonTableExpressionSyntax(_syntaxTree, recursiveKeyword, identifer, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
+            return new CommonTableExpressionSyntax(_syntaxTree, recursiveKeyword, identifier, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
         }
 
         private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
@@ -979,7 +979,7 @@ namespace NQuery.Syntax
             {
                 var diagnostics = new List<Diagnostic>();
                 diagnostics.ReportInvalidInteger(value.Span, value.ValueText);
-                value = value.WithDiagnotics(diagnostics);
+                value = value.WithDiagnostics(diagnostics);
             }
 
             var expectedWithTies = Current.Kind == SyntaxKind.WithKeyword ||

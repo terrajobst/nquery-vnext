@@ -13,11 +13,11 @@ namespace NQuery.Authoring.CodeActions.Issues
         protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, CommonTableExpressionQuerySyntax node)
         {
             var nodes = node.DescendantNodes().OfType<NamedTableReferenceSyntax>();
-            var referenedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
-                                       .Select(semanticModel.GetDeclaredSymbol)
-                                       .Where(s => s != null)
-                                       .Select(s => s.Table);
-            var referencedTableSet = new HashSet<TableSymbol>(referenedTables);
+            var referencedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
+                                        .Select(semanticModel.GetDeclaredSymbol)
+                                        .Where(s => s != null)
+                                        .Select(s => s.Table);
+            var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
 
             return from tableExpression in node.CommonTableExpressions
                    let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)

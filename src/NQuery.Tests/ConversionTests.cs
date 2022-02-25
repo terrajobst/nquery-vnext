@@ -6,16 +6,16 @@ namespace NQuery.Tests
 {
     public class ConversionTests
     {
-        private static Conversion ClassifyConversion(Type souceType, Type targetType)
+        private static Conversion ClassifyConversion(Type sourceType, Type targetType)
         {
             var semanticModel = Compilation.Empty.GetSemanticModel();
-            var conversion = semanticModel.ClassifyConversion(souceType, targetType);
+            var conversion = semanticModel.ClassifyConversion(sourceType, targetType);
             return conversion;
         }
 
-        private static void HasConversion(Type souceType, Type targetType, bool isImplicit, bool viaMethod)
+        private static void HasConversion(Type sourceType, Type targetType, bool isImplicit, bool viaMethod)
         {
-            var conversion = ClassifyConversion(souceType, targetType);
+            var conversion = ClassifyConversion(sourceType, targetType);
             var isExplicit = !isImplicit;
             var expectedMethodCount = viaMethod ? 1 : 0;
 
@@ -43,24 +43,24 @@ namespace NQuery.Tests
             Assert.Empty(conversion.ConversionMethods);
         }
 
-        private static void AssertHasImplicitIntrinsicConversion(Type souceType, Type targetType)
+        private static void AssertHasImplicitIntrinsicConversion(Type sourceType, Type targetType)
         {
-            HasConversion(souceType, targetType, true, false);
+            HasConversion(sourceType, targetType, true, false);
         }
 
-        private static void AssertHasExplicitIntrinsicConversion(Type souceType, Type targetType)
+        private static void AssertHasExplicitIntrinsicConversion(Type sourceType, Type targetType)
         {
-            HasConversion(souceType, targetType, false, false);
+            HasConversion(sourceType, targetType, false, false);
         }
 
-        private static void AssertHasImplicitConversionViaMethod(Type souceType, Type targetType)
+        private static void AssertHasImplicitConversionViaMethod(Type sourceType, Type targetType)
         {
-            HasConversion(souceType, targetType, true, true);
+            HasConversion(sourceType, targetType, true, true);
         }
 
-        private static void AssertHasExplicitConversionViaMethod(Type souceType, Type targetType)
+        private static void AssertHasExplicitConversionViaMethod(Type sourceType, Type targetType)
         {
-            HasConversion(souceType, targetType, false, true);
+            HasConversion(sourceType, targetType, false, true);
         }
 
         [Fact]

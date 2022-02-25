@@ -89,12 +89,12 @@ namespace NQuery.Authoring.VSEditorWpf
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && key == Key.Oem2)
             {
-                _commentOperations.ToogleSingleLineComment();
+                _commentOperations.ToggleSingleLineComment();
                 args.Handled = true;
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Oem2)
             {
-                _commentOperations.ToogleMultiLineComment();
+                _commentOperations.ToggleMultiLineComment();
                 args.Handled = true;
             }
             else if (modifiers == ModifierKeys.None)

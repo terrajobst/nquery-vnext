@@ -67,9 +67,9 @@ namespace NQuery.Tests.Syntax
                     return;
 
                 var diagnostics = _enumerator.Current.AsToken().Diagnostics;
-                var unexpectedDiangostics = diagnostics.Where(d => !_assertedDiagnostics.Contains(d));
+                var unexpectedDiagnostics = diagnostics.Where(d => !_assertedDiagnostics.Contains(d));
 
-                Assert.Empty(unexpectedDiangostics);
+                Assert.Empty(unexpectedDiagnostics);
 
                 _assertedDiagnostics.Clear();
             }

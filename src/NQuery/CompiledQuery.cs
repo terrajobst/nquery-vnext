@@ -65,7 +65,7 @@ namespace NQuery
             }
 
             // Too bad, we need to evaluate the expression as a regular query.
-            return EvaluteQueryAsExpression;
+            return EvaluateQueryAsExpression;
         }
 
         private static Func<object> CreateTrivialExpression(BoundComputeRelation computeRelation)
@@ -74,7 +74,7 @@ namespace NQuery
             return ExpressionBuilder.BuildFunction(computedValue.Expression);
         }
 
-        private object EvaluteQueryAsExpression()
+        private object EvaluateQueryAsExpression()
         {
             using (var reader = CreateReader())
             {

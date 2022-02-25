@@ -41,8 +41,8 @@ namespace NQuery.Optimization
             if (!needsRewriting)
                 return node;
 
-            var node1 = (BoundJoinRelation)Instatiator.Instantiate(node);
-            var node2 = (BoundJoinRelation)Instatiator.Instantiate(node);
+            var node1 = (BoundJoinRelation)Instantiator.Instantiate(node);
+            var node2 = (BoundJoinRelation)Instantiator.Instantiate(node);
 
             var leftOuterJoin = node1.Update(BoundJoinType.LeftOuter, node1.Left, node1.Right, node1.Condition, null, null);
             var leftAntiSemiJoin = node1.Update(BoundJoinType.LeftAntiSemi, node2.Right, node2.Left, node2.Condition, null, null);

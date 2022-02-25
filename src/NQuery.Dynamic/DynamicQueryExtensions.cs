@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NQuery.Dynamic
 {
-    public static class DyanmicQueryExtensions
+    public static class DynamicQueryExtensions
     {
         public static IEnumerable<dynamic> ExecuteDynamicSequence(this Query query)
         {

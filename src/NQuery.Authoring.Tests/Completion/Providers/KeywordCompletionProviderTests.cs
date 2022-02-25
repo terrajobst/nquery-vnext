@@ -45,13 +45,13 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertIsMatch(string query, string keyword)
         {
             var completionModel = GetCompletionModel(query);
-            AsserIsMatch(completionModel, keyword);
+            AssertIsMatch(completionModel, keyword);
 
             var completionModelWithFirstChar = GetCompletionModelWithFirstChar(query, keyword);
-            AsserIsMatch(completionModelWithFirstChar, keyword);
+            AssertIsMatch(completionModelWithFirstChar, keyword);
         }
 
-        private static void AsserIsMatch(CompletionModel completionModel, string keyword)
+        private static void AssertIsMatch(CompletionModel completionModel, string keyword)
         {
             var item = completionModel.Items.Single(i => i.InsertionText == keyword);
 
@@ -427,7 +427,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         }
 
         [Fact]
-        public void KeywordCompletionProvider_ReturnsAs_IfCommontTableExpressionName()
+        public void KeywordCompletionProvider_ReturnsAs_IfCommonTableExpressionName()
         {
             var query = @"
                 WITH MyCte |

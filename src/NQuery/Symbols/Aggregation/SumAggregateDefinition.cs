@@ -52,8 +52,8 @@ namespace NQuery.Symbols.Aggregation
             // Conversion from inputType to sumType
 
             var conversionInputVariable = new VariableSymbol(@"Input", argumentType);
-            var convertionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
-            var conversionExpression = Expression<object>.Create(convertionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
+            var conversionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
+            var conversionExpression = Expression<object>.Create(conversionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
 
             try
             {

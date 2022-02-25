@@ -91,7 +91,7 @@ namespace NQuery.Binding
             var sharedBinderState = new SharedBinderState();
             var binder = new GlobalBinder(sharedBinderState, dataContext);
             var boundRoot = binder.BindRoot(compilationUnit.Root);
-            return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSynatxNode, sharedBinderState.BinderFromBoundNode, sharedBinderState.Diagnostics);
+            return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSyntaxNode, sharedBinderState.BinderFromBoundNode, sharedBinderState.Diagnostics);
         }
 
         private BoundNode BindRoot(SyntaxNode root)
@@ -122,7 +122,7 @@ namespace NQuery.Binding
             where TInput : SyntaxNode
             where TResult : BoundNode
         {
-            _sharedBinderState.BoundNodeFromSynatxNode.Add(node, boundNode);
+            _sharedBinderState.BoundNodeFromSyntaxNode.Add(node, boundNode);
             if (!_sharedBinderState.BinderFromBoundNode.ContainsKey(boundNode))
                 _sharedBinderState.BinderFromBoundNode.Add(boundNode, this);
         }
@@ -131,7 +131,7 @@ namespace NQuery.Binding
             where T : BoundNode
         {
             BoundNode result;
-            _sharedBinderState.BoundNodeFromSynatxNode.TryGetValue(node, out result);
+            _sharedBinderState.BoundNodeFromSyntaxNode.TryGetValue(node, out result);
             return result as T;
         }
     }

@@ -209,8 +209,8 @@ namespace NQuery
 
         public static bool IsComparable(this Type type)
         {
-            var comarable = typeof (IComparable);
-            return comarable.IsAssignableFrom(type);
+            var comparable = typeof (IComparable);
+            return comparable.IsAssignableFrom(type);
         }
 
         public static bool CanBeNull(this Type type)

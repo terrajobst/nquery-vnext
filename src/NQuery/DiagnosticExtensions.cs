@@ -286,7 +286,7 @@ namespace NQuery
         {
             var operatorText = operatorToken.Kind.GetText();
             var diagnostic = Diagnostic.Format(operatorToken.Span, DiagnosticId.InvalidOperatorForAllAny, operatorText);
-            return operatorToken.WithDiagnotics(new[] {diagnostic});
+            return operatorToken.WithDiagnostics(new[] {diagnostic});
         }
 
         public static void ReportUndeclaredTable(this ICollection<Diagnostic> diagnostics, NamedTableReferenceSyntax namedTableReference)

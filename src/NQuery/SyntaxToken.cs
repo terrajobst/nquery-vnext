@@ -94,7 +94,7 @@ namespace NQuery
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
 
-        public SyntaxToken WithDiagnotics(IEnumerable<Diagnostic> diagnostics)
+        public SyntaxToken WithDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
             if (diagnostics == null)
                 throw new ArgumentNullException(nameof(diagnostics));

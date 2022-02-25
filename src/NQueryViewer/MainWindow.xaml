@@ -19,7 +19,7 @@
         <Menu Grid.Row="0">
             <MenuItem x:Name="FileMenuItem"
                       Header="_File">
-                <Separator x:Name="FileNewSeperator" />
+                <Separator x:Name="FileNewSeparator" />
                 <MenuItem x:Name="FileExitMenuItem"
                           Header="_Exit"
                           Click="FileExitMenuItem_OnClick" />

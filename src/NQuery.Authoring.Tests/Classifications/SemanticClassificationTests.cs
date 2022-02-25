@@ -69,9 +69,9 @@ namespace NQuery.Authoring.Tests.Classifications
 
             for (var i = 0; i < pieces.Length; i++)
             {
-                var piecce = pieces[i];
-                var pieceText = piecce.Item1;
-                var classification = piecce.Item2;
+                var piece = pieces[i];
+                var pieceText = piece.Item1;
+                var classification = piece.Item2;
                 var classificationText = query.Substring(classificationSpans[i].Span);
 
                 Assert.Equal(pieceText, classificationText);

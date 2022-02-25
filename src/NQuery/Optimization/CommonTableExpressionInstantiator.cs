@@ -91,7 +91,7 @@ namespace NQuery.Optimization
             var prototypeOutputValues = prototype.GetOutputValues();
             var mapping = outputValues.Zip(prototypeOutputValues, (v, k) => new KeyValuePair<ValueSlot, ValueSlot>(k, v));
 
-            var instantiatedRelation = Instatiator.Instantiate(prototype, mapping);
+            var instantiatedRelation = Instantiator.Instantiate(prototype, mapping);
             return RewriteRelation(instantiatedRelation);
         }
 
@@ -115,12 +115,12 @@ namespace NQuery.Optimization
 
             // Create output values
 
-            var unionRecusionSlot = valueSlotFactory.CreateTemporary(typeof(int));
-            var concatValueSlots = outputValues.Add(unionRecusionSlot);
+            var unionRecursionSlot = valueSlotFactory.CreateTemporary(typeof(int));
+            var concatValueSlots = outputValues.Add(unionRecursionSlot);
 
             // Create anchor
 
-            var anchor = RewriteRelation(Instatiator.Instantiate(symbol.Anchor.Relation));
+            var anchor = RewriteRelation(Instantiator.Instantiate(symbol.Anchor.Relation));
             var anchorValues = anchor.GetOutputValues().ToImmutableArray();
 
             var initRecursionSlot = valueSlotFactory.CreateTemporary(typeof(int));
@@ -153,7 +153,7 @@ namespace NQuery.Optimization
             {
                 var recursivePrototype = recursiveMember.Relation;
                 var mapping = CreateRecursiveMemberInstanceValueSlotMapping(symbol, anchorReferences, recursivePrototype);
-                var recursiveInstance = Instatiator.Instantiate(recursivePrototype, mapping);
+                var recursiveInstance = Instantiator.Instantiate(recursivePrototype, mapping);
                 var recursiveRelation = recursiveRewriter.RewriteRelation(recursiveInstance);
                 var recursiveRelationOutputs = recursiveRelation.GetOutputValues().ToImmutableArray();
                 recursiveMembers.Add(recursiveRelation);

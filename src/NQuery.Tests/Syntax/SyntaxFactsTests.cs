@@ -13,9 +13,9 @@ namespace NQuery.Tests.Syntax
         public void SyntaxFacts_Keyword_GetKeywords_ReturnsAllKindsNamedKeyword()
         {
             var expectedKeywords = GetAllKindsNamedKeyword().OrderBy(t => t);
-            var acutalKeywords = SyntaxFacts.GetKeywordKinds().OrderBy(t => t);
+            var actualKeywords = SyntaxFacts.GetKeywordKinds().OrderBy(t => t);
 
-            Assert.Equal(expectedKeywords, acutalKeywords);
+            Assert.Equal(expectedKeywords, actualKeywords);
         }
 
         [Fact]

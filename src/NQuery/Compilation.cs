@@ -85,8 +85,8 @@ namespace NQuery
                 relation = step;
             }
 
-            var ouputQuery = new BoundQuery(relation, inputQuery.OutputColumns);
-            yield return ShowPlanBuilder.Build(Resources.ShowPlanOptimized, ouputQuery);
+            var outputQuery = new BoundQuery(relation, inputQuery.OutputColumns);
+            yield return ShowPlanBuilder.Build(Resources.ShowPlanOptimized, outputQuery);
         }
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)

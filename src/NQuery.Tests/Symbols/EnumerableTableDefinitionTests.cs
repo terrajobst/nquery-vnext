@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NQuery.Tests.Symbols
 {
-    public class EumerableTableDefinitionTests
+    public class EnumerableTableDefinitionTests
     {
         private sealed class PropertyTableRow
         {
@@ -42,7 +42,7 @@ namespace NQuery.Tests.Symbols
         }
 
         [Fact]
-        public void EumerableTableDefinition_ReturnsPublicNonStaticProperties()
+        public void EnumerableTableDefinition_ReturnsPublicNonStaticProperties()
         {
             var rows = Enumerable.Empty<PropertyTableRow>();
             var table = TableDefinition.Create("Table", rows);
@@ -57,7 +57,7 @@ namespace NQuery.Tests.Symbols
         }
 
         [Fact]
-        public void EumerableTableDefinition_ReturnsPublicNonStaticFields()
+        public void EnumerableTableDefinition_ReturnsPublicNonStaticFields()
         {
             var rows = Enumerable.Empty<FieldTableRow>();
             var table = TableDefinition.Create("Table", rows);
@@ -72,7 +72,7 @@ namespace NQuery.Tests.Symbols
         }
 
         [Fact]
-        public void EumerableTableDefinition_ReturnsObjectValues()
+        public void EnumerableTableDefinition_ReturnsObjectValues()
         {
             var rows = new[]
             {

@@ -157,20 +157,20 @@ namespace NQuery.Hosting
         private static void AddProperty(PropertyTable propertyTable, ICollection<PropertySymbol> memberList, Type declaringType, PropertySymbol memberBinding, MemberInfo memberInfo)
         {
             // Check if we already have a member with the same name declared.
-            var exisitingMemberEntry = propertyTable[memberBinding.Name];
+            var existingMemberEntry = propertyTable[memberBinding.Name];
 
-            if (exisitingMemberEntry != null)
+            if (existingMemberEntry != null)
             {
                 // OK we have one. Check if the existing member is not more specific.
-                if (ExistingMemberIsMoreSpecific(declaringType, exisitingMemberEntry.MemberInfo, memberInfo))
+                if (ExistingMemberIsMoreSpecific(declaringType, existingMemberEntry.MemberInfo, memberInfo))
                 {
                     // The existing member is more specific. So we don't add the new one.
                     return;
                 }
 
                 // The new member is more specific. Remove the old one.
-                propertyTable.Remove(exisitingMemberEntry);
-                memberList.Remove(exisitingMemberEntry.PropertySymbol);
+                propertyTable.Remove(existingMemberEntry);
+                memberList.Remove(existingMemberEntry.PropertySymbol);
             }
 
             // Either the new member is more specific or we didn't have
@@ -182,20 +182,20 @@ namespace NQuery.Hosting
         private static void AddMethod(MethodTable methodTable, ICollection<MethodSymbol> methodList, Type declaringType, MethodSymbol methodSymbol, MethodInfo methodInfo)
         {
             // Check if we already have a method with the same name and parameters declared.
-            var exisitingMethodEntry = methodTable[methodSymbol.Name, methodSymbol.GetParameterTypes()];
+            var existingMethodEntry = methodTable[methodSymbol.Name, methodSymbol.GetParameterTypes()];
 
-            if (exisitingMethodEntry != null)
+            if (existingMethodEntry != null)
             {
                 // OK we have one. Check if the existing member is not more specific.
-                if (ExistingMemberIsMoreSpecific(declaringType, exisitingMethodEntry.MethodInfo, methodInfo))
+                if (ExistingMemberIsMoreSpecific(declaringType, existingMethodEntry.MethodInfo, methodInfo))
                 {
                     // The existing member is more specific. So we don't add the new one.
                     return;
                 }
 
                 // The new member is more specific. Remove the old one.
-                methodTable.Remove(exisitingMethodEntry);
-                methodList.Remove(exisitingMethodEntry.MethodSymbol);
+                methodTable.Remove(existingMethodEntry);
+                methodList.Remove(existingMethodEntry.MethodSymbol);
             }
 
             // Either the new member is more specific or we didn't have

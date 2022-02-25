@@ -4,7 +4,7 @@ namespace NQuery.Authoring.VSEditorWpf.Commenting
 {
     public interface ICommentOperations
     {
-        void ToogleSingleLineComment();
-        void ToogleMultiLineComment();
+        void ToggleSingleLineComment();
+        void ToggleMultiLineComment();
     }
 }

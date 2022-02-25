@@ -96,15 +96,15 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             private readonly BinaryExpressionSyntax _original;
             private readonly ExpressionSyntax _expression;
             private readonly ExpressionSyntax _lowerBound;
-            private readonly ExpressionSyntax _uppperBound;
+            private readonly ExpressionSyntax _upperBound;
 
-            public BetweenCodeAction(BinaryExpressionSyntax original, ExpressionSyntax expression, ExpressionSyntax lowerBound, ExpressionSyntax uppperBound)
+            public BetweenCodeAction(BinaryExpressionSyntax original, ExpressionSyntax expression, ExpressionSyntax lowerBound, ExpressionSyntax upperBound)
                 : base(original.SyntaxTree)
             {
                 _original = original;
                 _expression = expression;
                 _lowerBound = lowerBound;
-                _uppperBound = uppperBound;
+                _upperBound = upperBound;
             }
 
             public override string Description
@@ -117,7 +117,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 var text = _original.SyntaxTree.Text;
                 var expressionText = text.GetText(_expression.Span);
                 var lowerBoundText = text.GetText(_lowerBound.Span);
-                var upperBoundText = text.GetText(_uppperBound.Span);
+                var upperBoundText = text.GetText(_upperBound.Span);
                 var newText = $"{expressionText} BETWEEN {lowerBoundText} AND {upperBoundText}";
                 changeSet.ReplaceText(_original.Span, newText);
             }

@@ -68,7 +68,7 @@ namespace NQuery.Symbols
             if (propertyProvider == null)
                 throw new ArgumentNullException(nameof(propertyProvider));
 
-            return new EumerableTableDefinition(name, source, rowType, propertyProvider);
+            return new EnumerableTableDefinition(name, source, rowType, propertyProvider);
         }
     }
 }

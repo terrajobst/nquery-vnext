@@ -38,7 +38,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
         }
 
         [Fact]
-        public void UnusedCommonTableExpression_FindsUnuseRecursive()
+        public void UnusedCommonTableExpression_FindsUnusedRecursive()
         {
             var query = @"
                 WITH Emps AS (

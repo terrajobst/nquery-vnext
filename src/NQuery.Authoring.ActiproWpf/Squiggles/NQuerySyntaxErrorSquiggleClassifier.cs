@@ -28,7 +28,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             UpdateTags();
         }
 
-        protected override async Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAync()
+        protected override async Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAsync()
         {
             var document = _workspace.CurrentDocument;
             var syntaxTree = await document.GetSyntaxTreeAsync();
