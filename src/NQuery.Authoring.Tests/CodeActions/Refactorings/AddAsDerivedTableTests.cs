@@ -49,6 +49,5 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
 
             AssertFixes(query, fixedQuery, "Add 'AS' keyword");
         }
-
     }
 }

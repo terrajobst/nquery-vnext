@@ -145,7 +145,6 @@ namespace NQuery.Authoring.VSEditorWpf
             _signatureHelpManager.TriggerSignatureHelp();
         }
 
-
         private void NavigateToPreviousHighlight()
         {
             _highlightingNavigationManager.NavigateToPrevious();

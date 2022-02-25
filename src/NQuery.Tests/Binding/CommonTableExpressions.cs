@@ -69,7 +69,7 @@ namespace NQuery.Tests.Binding
                     FROM    MyCte1
                 ), MyCte3 AS
                 (
-                    SELECT 'x' AS C
+                    SELECT  'x' AS C
                     FROM    MyCte1
                                 CROSS JOIN MyCte2
                 )
@@ -107,17 +107,17 @@ namespace NQuery.Tests.Binding
             const string query = @"
                 WITH MyCte AS
                 (
-	                SELECT	1 AS Id,
-			                -1 AS ReportsTo
+                    SELECT  1 AS Id,
+                            -1 AS ReportsTo
 
-	                UNION ALL
+                    UNION ALL
 
-	                SELECT d.Id,
-		                   d.ReportsTo
-	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
-			                UNION ALL
-			                SELECT 3, 1) d
-				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
+                    SELECT  d.Id,
+                            d.ReportsTo
+                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                             UNION ALL
+                             SELECT 3, 1) d
+                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
                 )
                 SELECT  *
                 FROM    MyCte";
@@ -143,22 +143,22 @@ namespace NQuery.Tests.Binding
             const string query = @"
                 WITH MyCte AS
                 (
-	                SELECT	1 AS Id,
-			                -1 AS ReportsTo
+                    SELECT  1 AS Id,
+                            -1 AS ReportsTo
 
-	                UNION ALL
+                    UNION ALL
 
-	                SELECT	2 AS Id,
-			                -1 AS ReportsTo
+                    SELECT  2 AS Id,
+                            -1 AS ReportsTo
 
-	                UNION ALL
+                    UNION ALL
 
-	                SELECT d.Id,
-		                   d.ReportsTo
-	                FROM   (SELECT 3 AS Id, 1 AS ReportsTo
-			                UNION ALL
-			                SELECT 4, 1) d
-				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
+                    SELECT  d.Id,
+                            d.ReportsTo
+                    FROM    (SELECT 3 AS Id, 1 AS ReportsTo
+                             UNION ALL
+                             SELECT 4, 1) d
+                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
                 )
                 SELECT  *
                 FROM    MyCte";
@@ -383,21 +383,21 @@ namespace NQuery.Tests.Binding
             const string query = @"
                 WITH MyCte AS
                 (
-	                SELECT d.Id,
-		                   d.ReportsTo
-	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
-			                UNION ALL
-			                SELECT 3, 1) d
-				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
+                    SELECT  d.Id,
+                            d.ReportsTo
+                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                             UNION ALL
+                             SELECT 3, 1) d
+                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
 
-	                UNION
+                    UNION
 
-	                SELECT d.Id,
-		                   d.ReportsTo
-	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
-			                UNION ALL
-			                SELECT 3, 1) d
-				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
+                    SELECT  d.Id,
+                            d.ReportsTo
+                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                             UNION ALL
+                             SELECT 3, 1) d
+                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
                 )
                 SELECT  *
                 FROM    MyCte";
@@ -416,17 +416,17 @@ namespace NQuery.Tests.Binding
             const string query = @"
                 WITH MyCte AS
                 (
-	                SELECT	1 AS Id,
-			                -1 AS ReportsTo
+                    SELECT  1 AS Id,
+                            -1 AS ReportsTo
 
-	                UNION
+                    UNION
 
-	                SELECT d.Id,
-		                   d.ReportsTo
-	                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
-			                UNION ALL
-			                SELECT 3, 1) d
-				                INNER JOIN MyCte c ON c.Id = d.ReportsTo
+                    SELECT d.Id,
+                           d.ReportsTo
+                    FROM   (SELECT 2 AS Id, 1 AS ReportsTo
+                            UNION ALL
+                            SELECT 3, 1) d
+                                INNER JOIN MyCte c ON c.Id = d.ReportsTo
                 )
                 SELECT  *
                 FROM    MyCte";

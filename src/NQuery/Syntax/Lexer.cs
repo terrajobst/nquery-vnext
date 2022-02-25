@@ -830,7 +830,6 @@ namespace NQuery.Syntax
                         _charReader.NextChar();
                         break;
 
-
                     default:
                         sb.Append(_charReader.Current);
                         _charReader.NextChar();

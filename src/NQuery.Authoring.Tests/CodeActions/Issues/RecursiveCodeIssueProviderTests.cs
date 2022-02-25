@@ -48,7 +48,6 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Emps
             ";
 
-
             var issues = GetIssues(query);
 
             Assert.Single(issues);

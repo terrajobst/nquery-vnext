@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.Composition;
 
 using Microsoft.VisualStudio.Text.Editor;
+
 using NQuery.Authoring.Composition.Selection;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection
