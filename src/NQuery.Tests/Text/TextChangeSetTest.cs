@@ -1,7 +1,5 @@
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Tests.Text
 {
     public class TextChangeSetTest

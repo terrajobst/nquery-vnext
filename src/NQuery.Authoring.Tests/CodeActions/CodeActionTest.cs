@@ -2,8 +2,6 @@ using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.CodeActions
 {
     public abstract class CodeActionTest

@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.Commenting;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Commenting
 {
     public class ToggleMultiLineCommentCommenterTest : CommenterTests

@@ -3,8 +3,6 @@ using System.Collections.Immutable;
 using NQuery.Authoring.Classifications;
 using NQuery.Symbols;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Classifications
 {
     public class SemanticClassificationTests

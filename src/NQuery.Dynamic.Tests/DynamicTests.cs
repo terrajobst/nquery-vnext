@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-using Xunit;
-
 namespace NQuery.Dynamic.Tests
 {
     public class DynamicTests

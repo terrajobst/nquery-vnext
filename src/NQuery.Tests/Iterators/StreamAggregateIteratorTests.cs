@@ -4,8 +4,6 @@ using System.Collections.Immutable;
 using NQuery.Iterators;
 using NQuery.Symbols.Aggregation;
 
-using Xunit;
-
 namespace NQuery.Tests.Iterators
 {
     public class StreamAggregateIteratorTests : IteratorTests

@@ -2,8 +2,6 @@ using System.Collections.Immutable;
 
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Tests.Binding
 {
     public class TableRelationTests

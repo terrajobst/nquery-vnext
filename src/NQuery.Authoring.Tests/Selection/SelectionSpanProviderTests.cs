@@ -2,8 +2,6 @@
 
 using NQuery.Authoring.Selection;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Selection
 {
     public abstract class SelectionSpanProviderTests

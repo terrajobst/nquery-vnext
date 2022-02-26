@@ -1,7 +1,5 @@
 ﻿using NQuery.Authoring.BraceMatching;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.BraceMatching
 {
     public class BraceMatchingExtensionsTests : ExtensionTests

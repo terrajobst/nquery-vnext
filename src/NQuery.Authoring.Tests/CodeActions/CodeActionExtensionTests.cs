@@ -1,7 +1,5 @@
 ﻿using NQuery.Authoring.CodeActions;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.CodeActions
 {
     public class CodeActionExtensionTests : ExtensionTests

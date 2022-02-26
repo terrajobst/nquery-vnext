@@ -1,7 +1,5 @@
 ﻿using NQuery.Symbols;
 
-using Xunit;
-
 namespace NQuery.Tests.Symbols
 {
     public class EnumerableTableDefinitionTests

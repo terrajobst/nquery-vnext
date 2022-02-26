@@ -1,8 +1,6 @@
 ﻿using NQuery.Binding;
 using NQuery.Iterators;
 
-using Xunit;
-
 namespace NQuery.Tests.Iterators
 {
     public class HashMatchIteratorTests : IteratorTests

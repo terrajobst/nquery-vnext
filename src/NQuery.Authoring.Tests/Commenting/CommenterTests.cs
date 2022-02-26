@@ -1,7 +1,5 @@
 ﻿using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Commenting
 {
     public abstract class CommenterTests

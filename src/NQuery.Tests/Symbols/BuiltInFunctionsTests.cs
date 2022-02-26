@@ -1,7 +1,5 @@
 using System.Globalization;
 
-using Xunit;
-
 namespace NQuery.Tests.Symbols
 {
     public class BuiltInFunctionsTests : BuiltInSymbolsTests

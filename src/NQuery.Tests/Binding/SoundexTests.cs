@@ -1,7 +1,5 @@
 ﻿using NQuery.Binding;
 
-using Xunit;
-
 namespace NQuery.Tests.Binding
 {
     public class SoundexTests

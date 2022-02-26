@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace NQuery.Tests
+﻿namespace NQuery.Tests
 {
     public class DataContextTests
     {

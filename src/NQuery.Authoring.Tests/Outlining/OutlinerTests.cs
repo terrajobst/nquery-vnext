@@ -3,8 +3,6 @@
 using NQuery.Authoring.Outlining;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Outlining
 {
     public abstract class OutlinerTests

@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.QuickInfo;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.QuickInfo
 {
     public abstract class QuickInfoModelProviderTests

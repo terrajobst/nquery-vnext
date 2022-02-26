@@ -1,7 +1,5 @@
 ﻿using NQuery.Symbols.Aggregation;
 
-using Xunit;
-
 namespace NQuery.Tests.Symbols.Aggregation
 {
     public abstract class AggregateTests

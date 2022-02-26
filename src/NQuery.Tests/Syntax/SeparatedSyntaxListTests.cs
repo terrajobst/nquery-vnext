@@ -1,7 +1,5 @@
 using NQuery.Syntax;
 
-using Xunit;
-
 namespace NQuery.Tests.Syntax
 {
     public class SeparatedSyntaxListTests

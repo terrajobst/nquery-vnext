@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Fixes;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.CodeActions.Fixes
 {
     public class AddToGroupByTests : CodeFixTests

@@ -1,7 +1,5 @@
 using System.Text;
 
-using Xunit;
-
 namespace NQuery.Tests.Syntax
 {
     public class SyntaxFactsTests

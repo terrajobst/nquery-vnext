@@ -3,8 +3,6 @@
 using NQuery.Authoring.BraceMatching;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.BraceMatching
 {
     public abstract class BraceMatcherTests

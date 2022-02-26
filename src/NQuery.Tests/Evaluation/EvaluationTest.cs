@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace NQuery.Tests.Evaluation
 {
     public class EvaluationTest

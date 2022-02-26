@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.Classifications;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Classifications
 {
     public class SyntaxClassificationTests

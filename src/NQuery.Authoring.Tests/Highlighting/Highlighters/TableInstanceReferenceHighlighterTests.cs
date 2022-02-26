@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Highlighting.Highlighters
 {
     public class TableInstanceReferenceHighlighterTests : HighlighterTests

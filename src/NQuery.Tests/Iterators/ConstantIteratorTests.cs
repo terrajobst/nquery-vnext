@@ -1,7 +1,5 @@
 ﻿using NQuery.Iterators;
 
-using Xunit;
-
 namespace NQuery.Tests.Iterators
 {
     public class ConstantIteratorTests : IteratorTests

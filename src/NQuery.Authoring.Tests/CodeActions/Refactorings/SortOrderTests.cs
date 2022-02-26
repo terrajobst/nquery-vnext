@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.CodeActions.Refactorings
 {
     public class SortOrderTests : CodeRefactoringTests

@@ -2,8 +2,6 @@
 
 using NQuery.Syntax;
 
-using Xunit;
-
 namespace NQuery.Tests.Binding
 {
     public class SelectStarTests

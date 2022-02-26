@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.SignatureHelp.Providers
 {
     public class CoalesceSignatureHelpModelProviderTests : SignatureHelpModelProviderTests

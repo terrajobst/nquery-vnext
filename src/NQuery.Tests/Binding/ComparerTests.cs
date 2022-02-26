@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-using Xunit;
-
 namespace NQuery.Tests.Binding
 {
     public class ComparerTests

@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.CodeActions.Issues
 {
     public class ComparisonWithNullTests : CodeIssueTests

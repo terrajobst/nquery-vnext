@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace NQuery.Tests.Symbols
+﻿namespace NQuery.Tests.Symbols
 {
     public class BuiltInOperatorsTests : BuiltInSymbolsTests
     {
