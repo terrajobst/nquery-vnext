@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using NQuery.Syntax;
+﻿using NQuery.Syntax;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Selection

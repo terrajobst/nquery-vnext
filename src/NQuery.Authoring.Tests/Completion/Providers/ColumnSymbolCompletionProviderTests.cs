@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using NQuery.Authoring.Completion;
 using NQuery.Symbols;
 using NQuery.Syntax;

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using ActiproSoftware.Windows.Controls.SyntaxEditor;
+﻿using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Implementation;
 
 using NQuery.Authoring.Selection;

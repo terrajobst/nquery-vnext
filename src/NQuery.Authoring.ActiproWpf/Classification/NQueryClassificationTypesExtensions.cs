@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Media;
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;

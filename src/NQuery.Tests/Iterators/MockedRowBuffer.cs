@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Iterators;
 
 namespace NQuery.Tests.Iterators

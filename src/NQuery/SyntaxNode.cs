@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using NQuery.Syntax;
 using NQuery.Text;
 

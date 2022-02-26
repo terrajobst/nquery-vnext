@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Syntax
 {
     public abstract class TableReferenceSyntax : SyntaxNode

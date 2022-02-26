@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using NQuery.Binding;
+﻿using NQuery.Binding;
 
 namespace NQuery.Optimization
 {

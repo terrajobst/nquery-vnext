@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Binding
 {
     // From https://en.wikipedia.org/wiki/Soundex:

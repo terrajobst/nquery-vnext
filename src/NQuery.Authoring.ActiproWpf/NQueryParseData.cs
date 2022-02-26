@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Text.Parsing;
 
 namespace NQuery.Authoring.ActiproWpf

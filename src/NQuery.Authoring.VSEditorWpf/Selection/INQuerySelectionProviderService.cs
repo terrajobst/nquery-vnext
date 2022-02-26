@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.VisualStudio.Text.Editor;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection

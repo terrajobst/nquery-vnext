@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.CodeActions
 {
     public enum CodeIssueKind

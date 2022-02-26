@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using NQuery.Authoring.Outlining.Outliners;
 using NQuery.Text;
 

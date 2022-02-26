@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Symbols.Aggregation
+﻿namespace NQuery.Symbols.Aggregation
 {
     public abstract class AggregateDefinition
     {

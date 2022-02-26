@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Symbols
 {
     public sealed class SymbolMarkupToken : IEquatable<SymbolMarkupToken>

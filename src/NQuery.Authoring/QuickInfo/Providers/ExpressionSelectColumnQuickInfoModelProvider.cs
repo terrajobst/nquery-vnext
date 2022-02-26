@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Syntax;
+﻿using NQuery.Syntax;
 
 namespace NQuery.Authoring.QuickInfo.Providers
 {

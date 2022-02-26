@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using NQuery.Authoring.Highlighting.Highlighters;
+﻿using NQuery.Authoring.Highlighting.Highlighters;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Highlighting

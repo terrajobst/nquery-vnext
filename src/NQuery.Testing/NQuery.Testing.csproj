@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>NQuery</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>

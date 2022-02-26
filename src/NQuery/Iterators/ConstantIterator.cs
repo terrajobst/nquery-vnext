@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Iterators
+﻿namespace NQuery.Iterators
 {
     internal sealed class ConstantIterator : Iterator
     {

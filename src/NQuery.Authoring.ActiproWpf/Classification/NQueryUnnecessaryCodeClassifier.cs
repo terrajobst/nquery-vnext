@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
 
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Tagging;

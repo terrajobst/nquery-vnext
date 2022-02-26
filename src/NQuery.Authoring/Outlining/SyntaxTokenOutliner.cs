@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace NQuery.Authoring.Outlining
 {
     public abstract class SyntaxTokenOutliner : IOutliner

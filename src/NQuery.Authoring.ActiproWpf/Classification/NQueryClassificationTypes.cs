@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 

@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.VisualStudio.Text.Tagging;
 
 namespace NQuery.Authoring.VSEditorWpf.Highlighting

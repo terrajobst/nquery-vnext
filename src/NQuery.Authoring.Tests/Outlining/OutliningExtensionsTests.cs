@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.Outlining;
+﻿using NQuery.Authoring.Outlining;
 
 using Xunit;
 

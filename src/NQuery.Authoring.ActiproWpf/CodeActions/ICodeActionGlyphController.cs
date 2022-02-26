@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Authoring.ActiproWpf.CodeActions
+﻿namespace NQuery.Authoring.ActiproWpf.CodeActions
 {
     public interface ICodeActionGlyphController
     {

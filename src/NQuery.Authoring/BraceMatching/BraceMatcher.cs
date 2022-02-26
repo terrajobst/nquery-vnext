@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace NQuery.Authoring.BraceMatching
 {
     public abstract class BraceMatcher : IBraceMatcher

@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Authoring.Completion;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Binding
+﻿namespace NQuery.Binding
 {
     internal abstract class BoundNode
     {

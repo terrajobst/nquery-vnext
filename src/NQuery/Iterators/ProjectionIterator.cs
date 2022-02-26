@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NQuery.Iterators
+﻿namespace NQuery.Iterators
 {
     internal sealed class ProjectionIterator : Iterator
     {

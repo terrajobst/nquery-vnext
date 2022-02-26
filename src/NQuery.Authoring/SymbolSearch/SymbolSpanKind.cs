@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Authoring.SymbolSearch
+﻿namespace NQuery.Authoring.SymbolSearch
 {
     public enum SymbolSpanKind
     {

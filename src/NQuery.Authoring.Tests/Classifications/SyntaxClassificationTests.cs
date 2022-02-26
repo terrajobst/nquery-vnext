@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NQuery.Authoring.Classifications;
+﻿using NQuery.Authoring.Classifications;
 using NQuery.Text;
 
 using Xunit;

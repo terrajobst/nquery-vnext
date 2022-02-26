@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;

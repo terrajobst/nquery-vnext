@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.BraceMatching.Matchers;
 

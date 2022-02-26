@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using Microsoft.VisualStudio.Language.Intellisense;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion

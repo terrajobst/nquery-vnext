@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.SignatureHelp;
+﻿using NQuery.Authoring.SignatureHelp;
 
 using Xunit;
 

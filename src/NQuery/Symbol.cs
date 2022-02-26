@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Symbols;
+﻿using NQuery.Symbols;
 
 namespace NQuery
 {

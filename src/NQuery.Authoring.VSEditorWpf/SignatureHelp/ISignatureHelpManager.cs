@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Authoring.SignatureHelp;
 
 namespace NQuery.Authoring.VSEditorWpf.SignatureHelp

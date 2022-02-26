@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.QuickInfo;
+﻿using NQuery.Authoring.QuickInfo;
 using NQuery.Text;
 
 using Xunit;

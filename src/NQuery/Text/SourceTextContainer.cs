@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Text
 {
     public abstract class SourceTextContainer

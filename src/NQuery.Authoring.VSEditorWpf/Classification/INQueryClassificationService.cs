@@ -1,5 +1,3 @@
-using System;
-
 using Microsoft.VisualStudio.Text.Classification;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification

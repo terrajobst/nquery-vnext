@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Classification

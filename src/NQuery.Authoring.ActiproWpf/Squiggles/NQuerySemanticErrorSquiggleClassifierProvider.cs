@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Text.Tagging.Implementation;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles

@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Editor;
+
 using NQuery.Authoring.Composition.Selection;
 using NQuery.Authoring.Selection;
 using NQuery.Text;
