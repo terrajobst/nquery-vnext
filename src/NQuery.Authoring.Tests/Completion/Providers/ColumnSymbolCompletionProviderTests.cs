@@ -2,8 +2,6 @@ using NQuery.Authoring.Completion;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests

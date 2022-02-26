@@ -3,8 +3,6 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.QuickInfo.Providers
 {
     public class CastExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests

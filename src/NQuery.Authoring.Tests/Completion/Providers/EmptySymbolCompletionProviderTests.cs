@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class EmptySymbolCompletionProviderTests : SymbolCompletionProviderTests

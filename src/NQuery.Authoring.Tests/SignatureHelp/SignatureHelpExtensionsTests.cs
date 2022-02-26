@@ -1,7 +1,5 @@
 ﻿using NQuery.Authoring.SignatureHelp;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.SignatureHelp
 {
     public class SignatureHelpExtensionsTests : ExtensionTests

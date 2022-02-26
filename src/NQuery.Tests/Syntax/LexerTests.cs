@@ -1,7 +1,5 @@
 ﻿using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Tests.Syntax
 {
     public class LexerTests

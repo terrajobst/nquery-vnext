@@ -4,8 +4,6 @@ using NQuery.Hosting;
 using NQuery.Iterators;
 using NQuery.Symbols;
 
-using Xunit;
-
 namespace NQuery.Tests.Iterators
 {
     public class TableIteratorTests : IteratorTests

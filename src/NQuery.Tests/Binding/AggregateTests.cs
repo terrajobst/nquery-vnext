@@ -4,8 +4,6 @@ using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
-using Xunit;
-
 namespace NQuery.Tests.Binding
 {
     public class AggregateTests

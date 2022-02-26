@@ -3,8 +3,6 @@
 using NQuery.Authoring.SymbolSearch;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.SymbolSearch
 {
     public class SymbolSearcherTests

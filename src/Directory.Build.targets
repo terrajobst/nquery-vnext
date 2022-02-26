@@ -10,6 +10,7 @@
     <None Include="$(MSBuildThisFileDirectory)\xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Using Include="Xunit" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests
 {
     public abstract class ExtensionTests

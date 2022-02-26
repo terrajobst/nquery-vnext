@@ -2,8 +2,6 @@
 using NQuery.Authoring.Completion.Providers;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class JoinCompletionProviderTests

@@ -1,5 +1,3 @@
-using Xunit;
-
 namespace NQuery.Tests.Syntax
 {
     public class IdentifierTests

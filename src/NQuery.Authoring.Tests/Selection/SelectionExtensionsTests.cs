@@ -1,6 +1,5 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Text;
-using Xunit;
 
 namespace NQuery.Authoring.Tests.Selection
 {

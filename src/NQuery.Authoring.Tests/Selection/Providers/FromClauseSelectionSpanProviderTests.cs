@@ -1,6 +1,5 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Authoring.Selection.Providers;
-using Xunit;
 
 namespace NQuery.Authoring.Tests.Selection.Providers
 {

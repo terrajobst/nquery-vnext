@@ -1,8 +1,6 @@
 ﻿using NQuery.Authoring.Outlining;
 using NQuery.Authoring.Outlining.Outliners;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Outlining.Outliners
 {
     public class MultiLineCommentOutlinerTests : OutlinerTests

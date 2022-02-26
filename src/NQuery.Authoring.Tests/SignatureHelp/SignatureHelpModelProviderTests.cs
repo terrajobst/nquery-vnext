@@ -3,8 +3,6 @@ using System.Collections.Immutable;
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.SignatureHelp
 {
     public abstract class SignatureHelpModelProviderTests

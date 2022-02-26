@@ -1,7 +1,5 @@
 using NQuery.Symbols;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Completion.Providers
 {
     public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTests

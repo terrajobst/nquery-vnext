@@ -3,8 +3,6 @@
 using NQuery.Authoring.Highlighting;
 using NQuery.Text;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Highlighting
 {
     public abstract class HighlighterTests

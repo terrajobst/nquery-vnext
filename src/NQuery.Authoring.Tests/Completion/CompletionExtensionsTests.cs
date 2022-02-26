@@ -1,7 +1,5 @@
 ﻿using NQuery.Authoring.Completion;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.Completion
 {
     public class CompletionExtensionsTests : ExtensionTests

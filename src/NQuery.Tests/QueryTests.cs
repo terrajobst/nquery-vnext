@@ -2,8 +2,6 @@
 
 using NQuery.Data;
 
-using Xunit;
-
 namespace NQuery.Tests
 {
     public class QueryTests

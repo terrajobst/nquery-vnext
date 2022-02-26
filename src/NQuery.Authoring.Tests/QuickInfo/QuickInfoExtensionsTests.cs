@@ -1,7 +1,5 @@
 ﻿using NQuery.Authoring.QuickInfo;
 
-using Xunit;
-
 namespace NQuery.Authoring.Tests.QuickInfo
 {
     public class QuickInfoExtensionsTests : ExtensionTests
