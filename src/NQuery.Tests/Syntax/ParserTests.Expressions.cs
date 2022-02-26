@@ -1486,7 +1486,7 @@
                 enumerator.AssertNode(SyntaxKind.LiteralExpression);
                 enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
                 enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
-                enumerator.AssertDiagnostic(DiagnosticId.InvalidOperatorForAllAny, @"SOME, ANY and ALL can only be applied on =, <>, <, <=, >, or >=");
+                enumerator.AssertDiagnostic(DiagnosticId.InvalidOperatorForAllAny, @"SOME, ANY and ALL can only be applied on =, <>, <, <=, >, or >=.");
                 enumerator.AssertToken(SyntaxKind.SomeKeyword, @"SOME");
                 enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
                 enumerator.AssertNode(SyntaxKind.SelectQuery);
