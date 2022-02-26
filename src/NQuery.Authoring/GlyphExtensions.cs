@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring
 {
     public static class GlyphExtensions

@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
 using NQuery.Symbols;

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace NQuery.Binding
 {
     internal abstract class Signature

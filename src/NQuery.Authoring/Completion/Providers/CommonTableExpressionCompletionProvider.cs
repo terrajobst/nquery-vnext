@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers

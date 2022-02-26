@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using NQuery.Authoring.QuickInfo.Providers;
 
 namespace NQuery.Authoring.QuickInfo

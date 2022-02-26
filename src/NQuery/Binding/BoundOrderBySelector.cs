@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Binding
 {
     internal struct BoundOrderBySelector

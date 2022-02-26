@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace NQuery.Authoring.SignatureHelp
 {
     public abstract class SignatureHelpModelProvider<T> : ISignatureHelpModelProvider

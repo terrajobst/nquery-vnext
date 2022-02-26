@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NQuery.Authoring.QuickInfo;
+﻿using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;

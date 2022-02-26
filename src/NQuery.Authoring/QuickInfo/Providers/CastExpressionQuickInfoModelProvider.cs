@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Symbols;
 using NQuery.Syntax;
 

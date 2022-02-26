@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Iterators
+﻿namespace NQuery.Iterators
 {
     internal abstract class Iterator : IDisposable
     {

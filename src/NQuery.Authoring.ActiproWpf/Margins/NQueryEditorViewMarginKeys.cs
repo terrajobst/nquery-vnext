@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.ActiproWpf.Margins
 {
     public static class NQueryEditorViewMarginKeys

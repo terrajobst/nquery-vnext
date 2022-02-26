@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace NQuery.Authoring.CodeActions
 {
     public interface ICodeRefactoringProvider

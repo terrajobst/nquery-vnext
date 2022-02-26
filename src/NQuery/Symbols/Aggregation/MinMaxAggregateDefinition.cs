@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Symbols.Aggregation
 {
     public abstract class MinMaxAggregateDefinition : AggregateDefinition

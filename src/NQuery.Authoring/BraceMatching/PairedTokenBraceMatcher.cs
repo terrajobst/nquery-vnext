@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using NQuery.Text;
 
 namespace NQuery.Authoring.BraceMatching

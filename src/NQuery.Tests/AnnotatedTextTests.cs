@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Text;
+﻿using NQuery.Text;
 
 using Xunit;
 

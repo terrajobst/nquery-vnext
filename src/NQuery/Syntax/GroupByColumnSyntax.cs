@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace NQuery.Syntax
 {
     // TODO: Do we need this element at all?

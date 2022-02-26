@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Optimization
+﻿namespace NQuery.Optimization
 {
     internal struct CardinalityEstimate
     {

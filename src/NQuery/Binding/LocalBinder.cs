@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using NQuery.Symbols;
+﻿using NQuery.Symbols;
 
 namespace NQuery.Binding
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.Commenting;
+﻿using NQuery.Authoring.Commenting;
 using NQuery.Text;
 
 using Xunit;

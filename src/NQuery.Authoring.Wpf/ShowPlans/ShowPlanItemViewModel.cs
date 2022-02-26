@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace NQuery.Authoring.Wpf
 {
     internal abstract class ShowPlanItemViewModel

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NQuery.Authoring.Completion;
+﻿using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
 
 using Xunit;

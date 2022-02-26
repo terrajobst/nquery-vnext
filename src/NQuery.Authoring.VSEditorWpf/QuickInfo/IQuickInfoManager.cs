@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Authoring.QuickInfo;
 
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo

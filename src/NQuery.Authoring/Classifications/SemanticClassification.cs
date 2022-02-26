@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NQuery.Authoring.Classifications
+﻿namespace NQuery.Authoring.Classifications
 {
     public enum SemanticClassification
     {

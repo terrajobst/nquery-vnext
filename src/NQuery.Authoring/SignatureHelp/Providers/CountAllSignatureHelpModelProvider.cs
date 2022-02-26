@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Immutable;
-using System.Linq;
 
 using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;

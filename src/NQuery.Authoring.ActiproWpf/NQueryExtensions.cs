@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 

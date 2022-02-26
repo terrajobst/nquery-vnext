@@ -1,5 +1,3 @@
-using System;
-
 using ActiproSoftware.Text.Analysis;
 using ActiproSoftware.Text.Implementation;
 using ActiproSoftware.Text.Tagging.Implementation;

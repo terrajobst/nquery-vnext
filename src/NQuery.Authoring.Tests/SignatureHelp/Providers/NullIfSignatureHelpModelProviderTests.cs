@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using NQuery.Authoring.SignatureHelp;
+﻿using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
 
 using Xunit;

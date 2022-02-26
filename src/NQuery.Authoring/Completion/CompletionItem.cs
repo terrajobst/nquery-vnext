@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.Completion
 {
     public sealed class CompletionItem

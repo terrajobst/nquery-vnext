@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery
 {
     internal static class ExceptionBuilder

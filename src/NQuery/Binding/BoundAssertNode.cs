@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NQuery.Binding
+﻿namespace NQuery.Binding
 {
     internal sealed class BoundAssertRelation : BoundRelation
     {

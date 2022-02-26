@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace NQuery.Authoring.QuickInfo
 {
     public abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider

@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using NQuery.Symbols;
 
 using Xunit;

@@ -1,5 +1,3 @@
-using System;
-
 using NQuery.Binding;
 
 namespace NQuery.Optimization

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
+
 using NQuery.Authoring.Selection;
+
 using Xunit;
 
 namespace NQuery.Authoring.Tests.Selection

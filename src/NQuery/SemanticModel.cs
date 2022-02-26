@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using NQuery.Binding;
+﻿using NQuery.Binding;
 using NQuery.Symbols;
 using NQuery.Syntax;
 

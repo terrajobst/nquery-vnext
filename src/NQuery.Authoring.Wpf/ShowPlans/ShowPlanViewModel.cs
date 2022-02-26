@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.Wpf
 {
     internal sealed class ShowPlanViewModel

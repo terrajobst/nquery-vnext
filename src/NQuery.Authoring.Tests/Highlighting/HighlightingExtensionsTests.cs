@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.Highlighting;
+﻿using NQuery.Authoring.Highlighting;
 
 using Xunit;
 

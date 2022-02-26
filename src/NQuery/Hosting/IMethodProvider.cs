@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using NQuery.Symbols;
 
 namespace NQuery.Hosting

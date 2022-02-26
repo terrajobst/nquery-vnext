@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using NQuery.Authoring.CodeActions.Fixes;
+﻿using NQuery.Authoring.CodeActions.Fixes;
 using NQuery.Authoring.CodeActions.Issues;
 using NQuery.Authoring.CodeActions.Refactorings;
 

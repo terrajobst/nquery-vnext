@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NQuery.Iterators;
+﻿using NQuery.Iterators;
 
 using Xunit;
 

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Immutable;
-using System.Linq;
 
 using NQuery.Iterators;
 using NQuery.Symbols.Aggregation;

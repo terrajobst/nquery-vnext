@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery
 {
     public sealed class ExpressionEvaluator

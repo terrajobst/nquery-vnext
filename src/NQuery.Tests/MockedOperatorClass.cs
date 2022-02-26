@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Tests
 {
     public class MockedOperatorClass

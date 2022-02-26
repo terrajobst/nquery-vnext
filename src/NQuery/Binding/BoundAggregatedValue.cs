@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Symbols.Aggregation;
+﻿using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Binding
 {

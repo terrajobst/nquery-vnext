@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;

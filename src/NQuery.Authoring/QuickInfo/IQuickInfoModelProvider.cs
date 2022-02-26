@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.QuickInfo
 {
     public interface IQuickInfoModelProvider

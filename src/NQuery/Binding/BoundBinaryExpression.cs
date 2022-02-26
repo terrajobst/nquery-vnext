@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 namespace NQuery.Binding
 {
     internal sealed class BoundBinaryExpression : BoundExpression

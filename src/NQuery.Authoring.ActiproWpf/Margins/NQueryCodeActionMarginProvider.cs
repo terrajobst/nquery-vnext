@@ -1,6 +1,4 @@
-﻿using System;
-
-using ActiproSoftware.Windows.Controls.SyntaxEditor;
+﻿using ActiproSoftware.Windows.Controls.SyntaxEditor;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Margins.Implementation;
 

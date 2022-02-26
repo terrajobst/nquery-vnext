@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.CodeActions;
+﻿using NQuery.Authoring.CodeActions;
 
 using Xunit;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Data;
+﻿using NQuery.Data;
 
 namespace NQuery.Tests
 {

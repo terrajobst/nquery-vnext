@@ -1,5 +1,3 @@
-using System;
-
 namespace NQuery.Authoring.VSEditorWpf.CodeActions
 {
     public interface ICodeActionGlyphController

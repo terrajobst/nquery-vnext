@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using NQuery.Authoring.CodeActions;
+﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
 using Xunit;

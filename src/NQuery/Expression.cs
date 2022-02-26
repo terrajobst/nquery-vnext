@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-
 namespace NQuery
 {
     public sealed class Expression<T>

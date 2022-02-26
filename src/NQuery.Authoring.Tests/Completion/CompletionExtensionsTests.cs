@@ -1,6 +1,4 @@
-﻿using System;
-
-using NQuery.Authoring.Completion;
+﻿using NQuery.Authoring.Completion;
 
 using Xunit;
 

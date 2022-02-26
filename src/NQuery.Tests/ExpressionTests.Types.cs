@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NQuery.Tests
+﻿namespace NQuery.Tests
 {
     public partial class ExpressionTests
     {

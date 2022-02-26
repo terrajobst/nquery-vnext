@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 using ActiproSoftware.Text;
 using ActiproSoftware.Text.Parsing;
 using ActiproSoftware.Text.Tagging;

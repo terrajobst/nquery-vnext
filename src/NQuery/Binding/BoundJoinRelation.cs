@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace NQuery.Binding
 {
     internal sealed class BoundJoinRelation : BoundRelation

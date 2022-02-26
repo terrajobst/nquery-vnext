@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace NQuery.Syntax
 {
     public sealed class WhereClauseSyntax : SyntaxNode
