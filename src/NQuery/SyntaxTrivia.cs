@@ -33,7 +33,7 @@ namespace NQuery
 
         public void WriteTo(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
                 throw new ArgumentNullException(nameof(writer));
 
             writer.Write(Text);

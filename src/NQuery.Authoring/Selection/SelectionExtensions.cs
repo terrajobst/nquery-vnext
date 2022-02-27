@@ -35,7 +35,7 @@ namespace NQuery.Authoring.Selection
             }
 
             var node = token.Parent;
-            while (node != null)
+            while (node is not null)
             {
                 foreach (var span in GetNextSpans(node, providers))
                 {

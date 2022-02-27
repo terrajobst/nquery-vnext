@@ -75,7 +75,7 @@ namespace NQuery.Binding
             {
                 result = binder.LocalSymbols.Lookup(text, isCaseSensitive).Where(filter);
                 binder = binder.Parent;
-            } while (!result.Any() && binder != null);
+            } while (!result.Any() && binder is not null);
 
             return result;
         }
@@ -110,7 +110,7 @@ namespace NQuery.Binding
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return QueryState == null
+            return QueryState is null
                        ? Enumerable.Empty<TableInstanceSymbol>()
                        : QueryState.IntroducedTables.Keys;
         }
@@ -157,7 +157,7 @@ namespace NQuery.Binding
 
         private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, ImmutableArray<Type> argumentTypes)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (name is null) throw new ArgumentNullException(nameof(name));
             var signatures = from m in LookupMethod(type, name)
                              select new MethodSymbolSignature(m);
             return OverloadResolution.Perform(signatures, argumentTypes);

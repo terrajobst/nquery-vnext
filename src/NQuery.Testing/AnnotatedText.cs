@@ -15,7 +15,7 @@ namespace NQuery
 
         public static AnnotatedText Parse(string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var parser = new Parser(text);

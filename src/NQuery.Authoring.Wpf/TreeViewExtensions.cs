@@ -30,7 +30,7 @@ namespace NQuery.Authoring.Wpf
                 _next++;
 
                 var childNode = _parentGenerator.ContainerFromItem(item) as TreeViewItem;
-                if (childNode != null)
+                if (childNode is not null)
                 {
                     var generator = childNode.ItemContainerGenerator;
                     _parentGenerator = generator;
@@ -78,11 +78,11 @@ namespace NQuery.Authoring.Wpf
         public static void SelectNode<T>(this TreeView treeView, T node, Func<T, T> getParentNode, bool expandNode = false)
             where T : class
         {
-            if (node == null)
+            if (node is null)
                 return;
 
             var nodeStack = new Stack<object>();
-            while (node != null)
+            while (node is not null)
             {
                 nodeStack.Push(node);
                 node = getParentNode(node);

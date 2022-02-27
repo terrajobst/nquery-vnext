@@ -38,7 +38,7 @@ namespace NQuery.Symbols.Aggregation
 
             public void Accumulate(object value)
             {
-                if (value == null)
+                if (value is null)
                     return;
 
                 var strValue = value.ToString().Trim();

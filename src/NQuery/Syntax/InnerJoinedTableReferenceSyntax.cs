@@ -17,7 +17,7 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Left;
-            if (InnerKeyword != null)
+            if (InnerKeyword is not null)
                 yield return InnerKeyword;
             yield return JoinKeyword;
             yield return Right;

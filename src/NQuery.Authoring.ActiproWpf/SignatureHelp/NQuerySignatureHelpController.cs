@@ -7,7 +7,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
     {
         public void NotifyDocumentTextChanged(SyntaxEditor editor, EditorSnapshotChangedEventArgs e)
         {
-            var shouldStartSession = e.TypedText != null && e.TypedText.Any(IsTriggerChar);
+            var shouldStartSession = e.TypedText is not null && e.TypedText.Any(IsTriggerChar);
             var shouldUpdateSession = HasSignatureHelpSession(editor);
 
             if (shouldStartSession || shouldUpdateSession)

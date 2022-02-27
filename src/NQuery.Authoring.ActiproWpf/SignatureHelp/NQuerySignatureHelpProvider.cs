@@ -30,16 +30,16 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
             var existingSession = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<ParameterInfoSession>().FirstOrDefault();
 
-            if (model == null || model.Signatures.Length == 0)
+            if (model is null || model.Signatures.Length == 0)
             {
-                if (existingSession != null)
+                if (existingSession is not null)
                     existingSession.Close(true);
                 return;
             }
 
             var session = existingSession ?? new ParameterInfoSession();
 
-            var previousSelectedItem = existingSession == null
+            var previousSelectedItem = existingSession is null
                                            ? -1
                                            : existingSession.Items.IndexOf(existingSession.Selection);
 
@@ -58,13 +58,13 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
                                         ? model.Signatures[previousSelectedItem]
                                         : null;
 
-            var bestSignature = selectedSignature == null || parameterIndex >= selectedSignature.Parameters.Length
+            var bestSignature = selectedSignature is null || parameterIndex >= selectedSignature.Parameters.Length
                                     ? model.Signatures.FirstOrDefault(s => parameterIndex < s.Parameters.Length)
                                     : selectedSignature;
 
             session.Selection = session.Items.FirstOrDefault(i => i.Tag == bestSignature);
 
-            if (existingSession == null)
+            if (existingSession is null)
             {
                 var span = text.ToSnapshotRange(model.ApplicableSpan);
                 session.Open(view, span);

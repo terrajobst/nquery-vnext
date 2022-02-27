@@ -36,7 +36,7 @@ namespace NQuery.Authoring.QuickInfo
         {
             return (from p in providers
                     let m = p.GetModel(semanticModel, position)
-                    where m != null
+                    where m is not null
                     select m).FirstOrDefault();
         }
     }

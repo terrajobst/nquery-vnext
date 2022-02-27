@@ -21,7 +21,7 @@ namespace NQuery
 
         public bool IsToken => !IsNode;
 
-        public bool IsNode => _syntaxNode != null;
+        public bool IsNode => _syntaxNode is not null;
 
         public SyntaxToken AsToken()
         {

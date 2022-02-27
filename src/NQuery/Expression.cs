@@ -6,13 +6,13 @@ namespace NQuery
 
         private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            if (targetType == null)
+            if (targetType is null)
                 throw new ArgumentNullException(nameof(targetType));
 
             if (!typeof(T).IsAssignableFrom(targetType))
@@ -44,7 +44,7 @@ namespace NQuery
 
         private void EnsureCompiled()
         {
-            if (_expressionEvaluator != null)
+            if (_expressionEvaluator is not null)
                 return;
 
             var syntaxTree = SyntaxTree.ParseExpression(Text);
@@ -64,7 +64,7 @@ namespace NQuery
         {
             EnsureCompiled();
             var result = _expressionEvaluator.Evaluate();
-            return result == null
+            return result is null
                 ? NullValue
                 : (T) result;
         }

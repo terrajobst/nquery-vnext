@@ -20,7 +20,7 @@ namespace NQuery.Authoring.Completion.Providers
                 return Enumerable.Empty<CompletionItem>();
 
             var propertyAccessExpression = GetPropertyAccessExpression(root, position);
-            return propertyAccessExpression == null
+            return propertyAccessExpression is null
                        ? GetGlobalCompletions(semanticModel, position)
                        : GetMemberCompletions(semanticModel, propertyAccessExpression);
         }
@@ -53,11 +53,11 @@ namespace NQuery.Authoring.Completion.Providers
         private static IEnumerable<CompletionItem> GetMemberCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
         {
             var tableInstanceSymbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
-            if (tableInstanceSymbol != null)
+            if (tableInstanceSymbol is not null)
                 return GetTableCompletions(tableInstanceSymbol);
 
             var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);
-            if (targetType != null && !targetType.IsUnknown() && !targetType.IsError())
+            if (targetType is not null && !targetType.IsUnknown() && !targetType.IsError())
                 return GetTypeCompletions(semanticModel, targetType);
 
             return Enumerable.Empty<CompletionItem>();
@@ -80,13 +80,13 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var token = root.FindTokenOnLeft(position);
             var previous = token.GetPreviousToken(false, true);
-            var dot = previous != null && previous.Kind == SyntaxKind.DotToken
+            var dot = previous is not null && previous.Kind == SyntaxKind.DotToken
                           ? previous
                           : token;
 
             var p = dot.Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
 
-            if (p != null)
+            if (p is not null)
             {
                 var afterDot = p.Dot.Span.End <= position && position <= p.Name.Span.End;
                 if (afterDot)

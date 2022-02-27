@@ -100,7 +100,7 @@ namespace NQuery.Symbols
 
         private static bool ToBoolean(object value)
         {
-            if (value == null)
+            if (value is null)
                 return false;
 
             return Convert.ToBoolean(value, CultureInfo.InvariantCulture);
@@ -108,7 +108,7 @@ namespace NQuery.Symbols
 
         private static byte ToByte(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToByte(value, CultureInfo.InvariantCulture);
@@ -116,7 +116,7 @@ namespace NQuery.Symbols
 
         private static char ToChar(object value)
         {
-            if (value == null)
+            if (value is null)
                 return (char)0;
 
             return Convert.ToChar(value, CultureInfo.InvariantCulture);
@@ -124,7 +124,7 @@ namespace NQuery.Symbols
 
         private static DateTime ToDateTime(object value)
         {
-            if (value == null)
+            if (value is null)
                 return DateTime.MinValue;
 
             return Convert.ToDateTime(value, CultureInfo.InvariantCulture);
@@ -132,7 +132,7 @@ namespace NQuery.Symbols
 
         private static decimal ToDecimal(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToDecimal(value, CultureInfo.InvariantCulture);
@@ -140,7 +140,7 @@ namespace NQuery.Symbols
 
         private static double ToDouble(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToDouble(value, CultureInfo.InvariantCulture);
@@ -148,7 +148,7 @@ namespace NQuery.Symbols
 
         private static short ToInt16(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToInt16(value, CultureInfo.InvariantCulture);
@@ -156,7 +156,7 @@ namespace NQuery.Symbols
 
         private static int ToInt32(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToInt32(value, CultureInfo.InvariantCulture);
@@ -164,7 +164,7 @@ namespace NQuery.Symbols
 
         private static long ToInt64(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToInt64(value, CultureInfo.InvariantCulture);
@@ -172,7 +172,7 @@ namespace NQuery.Symbols
 
         private static sbyte ToSByte(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToSByte(value, CultureInfo.InvariantCulture);
@@ -180,7 +180,7 @@ namespace NQuery.Symbols
 
         private static float ToSingle(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToSingle(value, CultureInfo.InvariantCulture);
@@ -188,7 +188,7 @@ namespace NQuery.Symbols
 
         private static string ToString(object value)
         {
-            if (value == null)
+            if (value is null)
                 return null;
 
             return Convert.ToString(value, CultureInfo.InvariantCulture);
@@ -196,7 +196,7 @@ namespace NQuery.Symbols
 
         private static ushort ToUInt16(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToUInt16(value, CultureInfo.InvariantCulture);
@@ -204,7 +204,7 @@ namespace NQuery.Symbols
 
         private static uint ToUInt32(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToUInt32(value, CultureInfo.InvariantCulture);
@@ -212,7 +212,7 @@ namespace NQuery.Symbols
 
         private static ulong ToUInt64(object value)
         {
-            if (value == null)
+            if (value is null)
                 return 0;
 
             return Convert.ToUInt64(value, CultureInfo.InvariantCulture);
@@ -240,7 +240,7 @@ namespace NQuery.Symbols
 
         private static string GetSoundexCode(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return Soundex.GetCode(text);
@@ -248,7 +248,7 @@ namespace NQuery.Symbols
 
         private static int StringLength(string text)
         {
-            if (text == null)
+            if (text is null)
                 return 0;
 
             return text.Length;
@@ -256,7 +256,7 @@ namespace NQuery.Symbols
 
         private static int CharIndex(string chars, string text)
         {
-            if (chars == null || text == null)
+            if (chars is null || text is null)
                 return 0;
 
             if (chars.Length == 0 || text.Length == 0)
@@ -267,7 +267,7 @@ namespace NQuery.Symbols
 
         private static string Substring(string text, int start, int length)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             if (start == 0 || text.Length == 0)
@@ -284,7 +284,7 @@ namespace NQuery.Symbols
 
         private static string Substring(string text, int start)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return Substring(text, start, text.Length);
@@ -292,7 +292,7 @@ namespace NQuery.Symbols
 
         private static string Upper(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.ToUpper(CultureInfo.CurrentCulture);
@@ -300,7 +300,7 @@ namespace NQuery.Symbols
 
         private static string Lower(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.ToLower(CultureInfo.CurrentCulture);
@@ -308,7 +308,7 @@ namespace NQuery.Symbols
 
         private static string Trim(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.Trim();
@@ -316,7 +316,7 @@ namespace NQuery.Symbols
 
         private static string LTrim(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.TrimStart(' ', '\t');
@@ -324,7 +324,7 @@ namespace NQuery.Symbols
 
         private static string RTrim(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.TrimEnd(' ', '\t');
@@ -332,7 +332,7 @@ namespace NQuery.Symbols
 
         private static string Replace(string text, string oldValue, string newValue)
         {
-            if (text == null || oldValue == null || newValue == null)
+            if (text is null || oldValue is null || newValue is null)
                 return null;
 
             return text.Replace(oldValue, newValue);
@@ -340,7 +340,7 @@ namespace NQuery.Symbols
 
         private static string RegexReplace(string text, string pattern, string replacementPattern)
         {
-            if (text == null || pattern == null || replacementPattern == null)
+            if (text is null || pattern is null || replacementPattern is null)
                 return null;
 
             return Regex.Replace(text, pattern, replacementPattern);
@@ -348,7 +348,7 @@ namespace NQuery.Symbols
 
         private static bool RegexMatch(string text, string pattern)
         {
-            if (text == null || pattern == null)
+            if (text is null || pattern is null)
                 return false;
 
             return Regex.IsMatch(text, pattern);
@@ -356,7 +356,7 @@ namespace NQuery.Symbols
 
         private static string RegexEscape(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return Regex.Escape(text);
@@ -364,7 +364,7 @@ namespace NQuery.Symbols
 
         private static string RegexUnescape(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return Regex.Unescape(text);
@@ -378,7 +378,7 @@ namespace NQuery.Symbols
 
         private static string Replicate(string text, int count)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             var sb = new StringBuilder(text.Length * count);
@@ -389,7 +389,7 @@ namespace NQuery.Symbols
 
         private static string Reverse(string text)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             var sb = new StringBuilder(text.Length);
@@ -400,7 +400,7 @@ namespace NQuery.Symbols
 
         private static string Left(string text, int numberOfChars)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             if (numberOfChars > text.Length)
@@ -411,7 +411,7 @@ namespace NQuery.Symbols
 
         private static string Right(string text, int numberOfChars)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             if (numberOfChars > text.Length)
@@ -430,7 +430,7 @@ namespace NQuery.Symbols
 
         private static string LPad(string text, int totalWidth)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.PadLeft(totalWidth);
@@ -438,7 +438,7 @@ namespace NQuery.Symbols
 
         private static string RPad(string text, int totalWidth)
         {
-            if (text == null)
+            if (text is null)
                 return null;
 
             return text.PadRight(totalWidth);

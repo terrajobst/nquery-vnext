@@ -9,7 +9,7 @@ namespace NQuery.Optimization
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
             var op = GetLogicalOperator(node.JoinType);
-            if (op == null)
+            if (op is null)
                 return base.RewriteJoinRelation(node);
 
             // The optimizer already made sure that left usually contains the bigger
@@ -68,7 +68,7 @@ namespace NQuery.Optimization
             foreach (var conjunction in conjunctions)
             {
                 var equalPredicate = GetEqualPredicate(conjunction, leftValues, rightValues);
-                if (equalPredicate == null)
+                if (equalPredicate is null)
                     remainingConjunctions.Add(conjunction);
                 else
                     equalPredicates.Add(equalPredicate);
@@ -81,12 +81,12 @@ namespace NQuery.Optimization
         private static EqualPredicate GetEqualPredicate(BoundExpression predicate, ImmutableArray<ValueSlot> left, ImmutableArray<ValueSlot> right)
         {
             var binary = predicate as BoundBinaryExpression;
-            if (binary == null || binary.OperatorKind != BinaryOperatorKind.Equal)
+            if (binary is null || binary.OperatorKind != BinaryOperatorKind.Equal)
                 return null;
 
             var leftExpression = binary.Left as BoundValueSlotExpression;
             var rightExpression = binary.Right as BoundValueSlotExpression;
-            if (leftExpression == null || rightExpression == null)
+            if (leftExpression is null || rightExpression is null)
                 return null;
 
             var source = leftExpression.ValueSlot;

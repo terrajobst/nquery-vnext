@@ -79,12 +79,12 @@ namespace NQuery.Optimization
         private static bool CanBeUsedForHashMatch(ImmutableArray<ValueSlot> left, ImmutableArray<ValueSlot> right, BoundExpression condition)
         {
             var binary = condition as BoundBinaryExpression;
-            if (binary == null || binary.OperatorKind != BinaryOperatorKind.Equal)
+            if (binary is null || binary.OperatorKind != BinaryOperatorKind.Equal)
                 return false;
 
             var leftSlot = (binary.Left as BoundValueSlotExpression)?.ValueSlot;
             var rightSlot = (binary.Right as BoundValueSlotExpression)?.ValueSlot;
-            if (leftSlot == null || rightSlot == null)
+            if (leftSlot is null || rightSlot is null)
                 return false;
 
             return left.Contains(leftSlot) && right.Contains(rightSlot) ||

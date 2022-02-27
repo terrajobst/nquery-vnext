@@ -21,7 +21,7 @@ namespace NQuery.Symbols
         public override bool Equals(object obj)
         {
             var other = obj as SymbolMarkupToken;
-            return other != null && Equals(other);
+            return other is not null && Equals(other);
         }
 
         public override int GetHashCode()

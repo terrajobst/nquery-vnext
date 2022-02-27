@@ -20,7 +20,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
                                  .Where(n => n.Span.ContainsOrTouches(position))
                                  .FirstOrDefault(n => n is NameExpressionSyntax || n is PropertyAccessExpressionSyntax);
 
-            if (expression == null)
+            if (expression is null)
                 return Enumerable.Empty<ICodeAction>();
 
             return new[] {new AddParenthesesCodeAction(expression)};

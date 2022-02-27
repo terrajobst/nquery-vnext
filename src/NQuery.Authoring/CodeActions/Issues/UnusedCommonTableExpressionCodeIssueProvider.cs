@@ -11,13 +11,13 @@ namespace NQuery.Authoring.CodeActions.Issues
             var nodes = node.DescendantNodes().OfType<NamedTableReferenceSyntax>();
             var referencedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
                                         .Select(semanticModel.GetDeclaredSymbol)
-                                        .Where(s => s != null)
+                                        .Where(s => s is not null)
                                         .Select(s => s.Table);
             var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
 
             return from tableExpression in node.CommonTableExpressions
                    let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)
-                   where declaredTable != null && !referencedTableSet.Contains(declaredTable)
+                   where declaredTable is not null && !referencedTableSet.Contains(declaredTable)
                    let actions = new[] { new RemoveCommonTableExpressionCodeAction(tableExpression) }
                    select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Name.Span, actions);
         }
@@ -25,7 +25,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         private static bool IsRecursiveUsage(SemanticModel semanticModel, NamedTableReferenceSyntax tableReference)
         {
             var symbol = semanticModel.GetDeclaredSymbol(tableReference);
-            if (symbol == null)
+            if (symbol is null)
                 return false;
 
             var table = symbol.Table;

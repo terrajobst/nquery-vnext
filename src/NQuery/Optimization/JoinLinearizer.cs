@@ -12,7 +12,7 @@ namespace NQuery.Optimization
                 return base.RewriteJoinRelation(node);
 
             var rightSide = node.Right as BoundJoinRelation;
-            if (rightSide == null || rightSide.Probe != null || rightSide.PassthruPredicate != null)
+            if (rightSide is null || rightSide.Probe is not null || rightSide.PassthruPredicate is not null)
                 return base.RewriteJoinRelation(node);
 
             var leftSideLeft = RewriteRelation(node.Left);

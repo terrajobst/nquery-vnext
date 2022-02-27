@@ -13,7 +13,7 @@ namespace NQuery.Symbols
 
         private static string GetName(TableDefinition tableDefinition)
         {
-            if (tableDefinition == null)
+            if (tableDefinition is null)
                 throw new ArgumentNullException(nameof(tableDefinition));
 
             return tableDefinition.Name;

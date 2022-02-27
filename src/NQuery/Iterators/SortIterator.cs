@@ -87,7 +87,7 @@ namespace NQuery.Iterators
 
         public override bool Read()
         {
-            if (_spooledRowBuffer.Rows == null)
+            if (_spooledRowBuffer.Rows is null)
             {
                 _spooledRowBuffer.Rows = SortInput();
                 _spooledRowBuffer.RowIndex = -1;
@@ -152,13 +152,13 @@ namespace NQuery.Iterators
                     var value1 = x[valueIndex];
                     var value2 = y[valueIndex];
 
-                    if (value1 == null && value2 != null)
+                    if (value1 is null && value2 is not null)
                         return -1;
 
-                    if (value1 != null && value2 == null)
+                    if (value1 is not null && value2 is null)
                         return +1;
 
-                    if (value1 != null && value2 != null)
+                    if (value1 is not null && value2 is not null)
                     {
                         result = _comparers[index].Compare(value1, value2);
 

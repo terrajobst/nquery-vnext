@@ -19,7 +19,7 @@ namespace NQuery
             using (var stringReader = new StringReader(text))
             {
                 string line;
-                while ((line = stringReader.ReadLine()) != null)
+                while ((line = stringReader.ReadLine()) is not null)
                 {
                     if (string.IsNullOrWhiteSpace(line))
                         continue;
@@ -33,7 +33,7 @@ namespace NQuery
             using (var stringReader = new StringReader(text))
             {
                 string line;
-                while ((line = stringReader.ReadLine()) != null)
+                while ((line = stringReader.ReadLine()) is not null)
                 {
                     var unindentedLine = line.Length < minIndent
                         ? line

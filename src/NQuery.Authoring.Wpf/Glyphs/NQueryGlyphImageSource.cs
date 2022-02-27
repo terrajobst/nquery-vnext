@@ -50,7 +50,7 @@ namespace NQuery.Authoring.Wpf
         public static ImageSource Get(Glyph glyph)
         {
             var imageUri = FromGlyph(glyph);
-            if (imageUri == null)
+            if (imageUri is null)
                 return null;
 
             BitmapImage result;

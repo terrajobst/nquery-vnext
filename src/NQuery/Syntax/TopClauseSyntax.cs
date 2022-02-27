@@ -20,9 +20,9 @@ namespace NQuery.Syntax
         {
             yield return TopKeyword;
             yield return Value;
-            if (WithKeyword != null)
+            if (WithKeyword is not null)
                 yield return WithKeyword;
-            if (TiesKeyword != null)
+            if (TiesKeyword is not null)
                 yield return TiesKeyword;
         }
 

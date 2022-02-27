@@ -21,7 +21,7 @@ namespace NQuery.Authoring.Outlining.Outliners
                 switch (trivia.Kind)
                 {
                     case SyntaxKind.SingleLineCommentTrivia:
-                        if (firstComment == null)
+                        if (firstComment is null)
                             firstComment = trivia;
                         lastComment = trivia;
                         break;
@@ -30,7 +30,7 @@ namespace NQuery.Authoring.Outlining.Outliners
                         // Ignore
                         break;
                     default:
-                        if (firstComment != null)
+                        if (firstComment is not null)
                             yield return CreateRegionSpan(firstComment, lastComment);
 
                         firstComment = null;
@@ -39,7 +39,7 @@ namespace NQuery.Authoring.Outlining.Outliners
                 }
             }
 
-            if (firstComment != null)
+            if (firstComment is not null)
                 yield return CreateRegionSpan(firstComment, lastComment);
         }
 

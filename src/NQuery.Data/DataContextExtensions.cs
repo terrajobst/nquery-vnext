@@ -9,10 +9,10 @@ namespace NQuery.Data
     {
         public static DataContext AddTablesAndRelations(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataSet == null)
+            if (dataSet is null)
                 throw new ArgumentNullException(nameof(dataSet));
 
             return dataContext.AddTables(dataSet).AddRelations(dataSet);
@@ -20,10 +20,10 @@ namespace NQuery.Data
 
         public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataSet == null)
+            if (dataSet is null)
                 throw new ArgumentNullException(nameof(dataSet));
 
             var dataTables = dataSet.Tables.OfType<DataTable>();
@@ -32,10 +32,10 @@ namespace NQuery.Data
 
         public static DataContext AddTables(this DataContext dataContext, params DataTable[] dataTables)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataTables == null || dataTables.Length == 0)
+            if (dataTables is null || dataTables.Length == 0)
                 return dataContext;
 
             return dataContext.AddTables(dataTables.AsEnumerable());
@@ -43,10 +43,10 @@ namespace NQuery.Data
 
         public static DataContext AddTables(this DataContext dataContext, IEnumerable<DataTable> dataTables)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataTables == null)
+            if (dataTables is null)
                 throw new ArgumentNullException(nameof(dataTables));
 
             var tableSymbols = dataTables.Select(CreateTable);
@@ -55,10 +55,10 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataSet == null)
+            if (dataSet is null)
                 throw new ArgumentNullException(nameof(dataSet));
 
             var dataRelations = dataSet.Relations.OfType<DataRelation>();
@@ -67,10 +67,10 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, params DataRelation[] dataRelations)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataRelations == null || dataRelations.Length == 0)
+            if (dataRelations is null || dataRelations.Length == 0)
                 return dataContext;
 
             return dataContext.AddRelations(dataRelations.AsEnumerable());
@@ -78,10 +78,10 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (dataRelations == null)
+            if (dataRelations is null)
                 throw new ArgumentNullException(nameof(dataRelations));
 
             var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r));
@@ -99,7 +99,7 @@ namespace NQuery.Data
             var parentTable = ResolveTable(tables, dataRelation.ParentTable.TableName);
             var childTable = ResolveTable(tables, dataRelation.ChildTable.TableName);
 
-            if (parentTable == null || childTable == null)
+            if (parentTable is null || childTable is null)
                 return null;
 
             var parentColumns = ResolveColumns(parentTable.Columns, dataRelation.ParentColumns);
@@ -122,7 +122,7 @@ namespace NQuery.Data
             var columnByName = columns.ToLookup(c => c.Name, StringComparer.OrdinalIgnoreCase);
             return (from dc in dataColumns
                     let c = columnByName[dc.ColumnName].FirstOrDefault()
-                    where c != null
+                    where c is not null
                     select c).ToImmutableArray();
         }
     }

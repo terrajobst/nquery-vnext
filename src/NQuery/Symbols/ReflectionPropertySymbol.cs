@@ -13,7 +13,7 @@ namespace NQuery.Symbols
         public ReflectionPropertySymbol(PropertyInfo propertyInfo, string name)
             : base(name, propertyInfo?.PropertyType)
         {
-            if (propertyInfo == null)
+            if (propertyInfo is null)
                 throw new ArgumentNullException(nameof(propertyInfo));
 
             PropertyInfo = propertyInfo;

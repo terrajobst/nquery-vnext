@@ -15,7 +15,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             : base(typeof(NQuerySemanticIssueSquiggleClassifier).Name, null, document, true)
         {
             _workspace = document.GetWorkspace();
-            if (_workspace == null)
+            if (_workspace is null)
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
@@ -45,7 +45,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
                             ? ClassificationTypes.Warning
                             : null;
 
-                    if (classificationType == null)
+                    if (classificationType is null)
                         continue;
 
                     var snapshotRange = document.Text.ToSnapshotRange(codeIssue.Span);

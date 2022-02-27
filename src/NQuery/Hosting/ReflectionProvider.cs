@@ -31,13 +31,13 @@ namespace NQuery.Hosting
             var existingMemberDistance = 0;
             var newMemberDistance = 0;
 
-            while (existingMemberDeclaringType != null && existingMemberDeclaringType != type)
+            while (existingMemberDeclaringType is not null && existingMemberDeclaringType != type)
             {
                 existingMemberDistance++;
                 existingMemberDeclaringType = existingMemberDeclaringType.BaseType;
             }
 
-            while (newMemberDeclaringType != null && newMemberDeclaringType != type)
+            while (newMemberDeclaringType is not null && newMemberDeclaringType != type)
             {
                 newMemberDistance++;
                 newMemberDeclaringType = newMemberDeclaringType.BaseType;
@@ -156,7 +156,7 @@ namespace NQuery.Hosting
             // Check if we already have a member with the same name declared.
             var existingMemberEntry = propertyTable[memberBinding.Name];
 
-            if (existingMemberEntry != null)
+            if (existingMemberEntry is not null)
             {
                 // OK we have one. Check if the existing member is not more specific.
                 if (ExistingMemberIsMoreSpecific(declaringType, existingMemberEntry.MemberInfo, memberInfo))
@@ -181,7 +181,7 @@ namespace NQuery.Hosting
             // Check if we already have a method with the same name and parameters declared.
             var existingMethodEntry = methodTable[methodSymbol.Name, methodSymbol.GetParameterTypes()];
 
-            if (existingMethodEntry != null)
+            if (existingMethodEntry is not null)
             {
                 // OK we have one. Check if the existing member is not more specific.
                 if (ExistingMemberIsMoreSpecific(declaringType, existingMethodEntry.MethodInfo, methodInfo))
@@ -203,7 +203,7 @@ namespace NQuery.Hosting
 
         public IEnumerable<PropertySymbol> GetProperties(Type type)
         {
-            if (type == null)
+            if (type is null)
                 throw new ArgumentNullException(nameof(type));
 
             var propertyTable = new PropertyTable();
@@ -221,7 +221,7 @@ namespace NQuery.Hosting
                     continue;
 
                 var property = CreateProperty(currentPropertyInfo);
-                if (property != null)
+                if (property is not null)
                     AddProperty(propertyTable, propertyList, type, property, currentPropertyInfo);
             }
 
@@ -232,7 +232,7 @@ namespace NQuery.Hosting
             foreach (var currentFieldInfo in fieldInfos)
             {
                 var property = CreateProperty(currentFieldInfo);
-                if (property != null)
+                if (property is not null)
                     AddProperty(propertyTable, propertyList, type, property, currentFieldInfo);
             }
 
@@ -257,7 +257,7 @@ namespace NQuery.Hosting
         /// <param name="methodInfo">The method info to check.</param>
         public static bool IsInvocable(MethodInfo methodInfo)
         {
-            if (methodInfo == null)
+            if (methodInfo is null)
                 throw new ArgumentNullException(nameof(methodInfo));
 
             if (methodInfo.IsSpecialName ||
@@ -280,7 +280,7 @@ namespace NQuery.Hosting
 
         public IEnumerable<MethodSymbol> GetMethods(Type type)
         {
-            if (type == null)
+            if (type is null)
                 throw new ArgumentNullException(nameof(type));
 
             var methodTable = new MethodTable();
@@ -295,7 +295,7 @@ namespace NQuery.Hosting
                     continue;
 
                 var methodSymbol = CreateMethod(currentMethodInfo);
-                if (methodSymbol != null)
+                if (methodSymbol is not null)
                     AddMethod(methodTable, methodList, type, methodSymbol, currentMethodInfo);
             }
 
@@ -309,7 +309,7 @@ namespace NQuery.Hosting
         /// <returns>If the method should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual MethodSymbol CreateMethod(MethodInfo methodInfo)
         {
-            if (methodInfo == null)
+            if (methodInfo is null)
                 throw new ArgumentNullException(nameof(methodInfo));
 
             return new ReflectionMethodSymbol(methodInfo, methodInfo.Name);
@@ -322,7 +322,7 @@ namespace NQuery.Hosting
         /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(PropertyInfo propertyInfo)
         {
-            if (propertyInfo == null)
+            if (propertyInfo is null)
                 throw new ArgumentNullException(nameof(propertyInfo));
 
             return new ReflectionPropertySymbol(propertyInfo, propertyInfo.Name);
@@ -335,7 +335,7 @@ namespace NQuery.Hosting
         /// <returns>If the field should not be visible this method returns <see langword="null"/>.</returns>
         protected virtual PropertySymbol CreateProperty(FieldInfo fieldInfo)
         {
-            if (fieldInfo == null)
+            if (fieldInfo is null)
                 throw new ArgumentNullException(nameof(fieldInfo));
 
             return new ReflectionFieldSymbol(fieldInfo, fieldInfo.Name);

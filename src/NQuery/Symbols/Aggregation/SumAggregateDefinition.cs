@@ -119,9 +119,9 @@ namespace NQuery.Symbols.Aggregation
 
             public void Accumulate(object value)
             {
-                if (value != null)
+                if (value is not null)
                 {
-                    if (_sum == null)
+                    if (_sum is null)
                     {
                         _conversionInputVariable.Value = value;
                         _sum = _convertInputToSumExpression.Evaluate();

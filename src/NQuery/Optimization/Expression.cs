@@ -68,10 +68,10 @@ namespace NQuery.Optimization
 
         private static BoundExpression Merge(BoundExpression left, BoundExpression right, BinaryOperatorKind operatorKind)
         {
-            if (left == null)
+            if (left is null)
                 return right;
 
-            if (right == null)
+            if (right is null)
                 return left;
 
             var result = BinaryOperator.Resolve(operatorKind, left.Type, right.Type);
@@ -80,7 +80,7 @@ namespace NQuery.Optimization
 
         private static BoundExpression Merge(IEnumerable<BoundExpression> conditions, BinaryOperatorKind operatorKind)
         {
-            return conditions.Aggregate<BoundExpression, BoundExpression>(null, (c, n) => c == null ? n : Merge(c, n, operatorKind));
+            return conditions.Aggregate<BoundExpression, BoundExpression>(null, (c, n) => c is null ? n : Merge(c, n, operatorKind));
         }
 
         public static IEnumerable<BoundExpression> SplitConjunctions(BoundExpression expression)
@@ -95,7 +95,7 @@ namespace NQuery.Optimization
 
         private static IEnumerable<BoundExpression> Split(BoundExpression expression, BinaryOperatorKind operatorKind)
         {
-            if (expression == null)
+            if (expression is null)
                 yield break;
 
             var stack = new Stack<BoundExpression>();
@@ -105,7 +105,7 @@ namespace NQuery.Optimization
             {
                 var current = stack.Pop();
                 var binary = current as BoundBinaryExpression;
-                if (binary != null && binary.OperatorKind == operatorKind)
+                if (binary is not null && binary.OperatorKind == operatorKind)
                 {
                     stack.Push(binary.Left);
                     stack.Push(binary.Right);
@@ -130,7 +130,7 @@ namespace NQuery.Optimization
         private static bool IsBinaryOperator(BoundExpression condition, BinaryOperatorKind operatorKind)
         {
             var binary = condition as BoundBinaryExpression;
-            return binary != null && binary.OperatorKind == operatorKind;
+            return binary is not null && binary.OperatorKind == operatorKind;
         }
 
         public static bool DependsOnAny(this BoundExpression condition, IEnumerable<ValueSlot> valueSlots)

@@ -8,7 +8,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, CommonTableExpressionSyntax node)
         {
             var isRecursive = IsRecursive(semanticModel, node);
-            if (isRecursive && node.RecursiveKeyword == null)
+            if (isRecursive && node.RecursiveKeyword is null)
             {
                 return new[]
                 {
@@ -19,7 +19,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                 };
             }
 
-            if (!isRecursive && node.RecursiveKeyword != null)
+            if (!isRecursive && node.RecursiveKeyword is not null)
             {
                 return new[]
                 {
@@ -39,7 +39,7 @@ namespace NQuery.Authoring.CodeActions.Issues
             return node.DescendantNodes()
                 .OfType<NamedTableReferenceSyntax>()
                 .Select(semanticModel.GetDeclaredSymbol)
-                .Any(t => t != null && t.Table == symbol);
+                .Any(t => t is not null && t.Table == symbol);
         }
 
         private sealed class RemoveUnnecessaryRecursiveKeywordCodeAction : CodeAction

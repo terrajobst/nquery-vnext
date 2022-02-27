@@ -54,7 +54,7 @@ namespace NQuery.Authoring.Wpf
         {
             var children = new List<SyntaxNodeViewModel>();
 
-            if (trivia.Structure != null)
+            if (trivia.Structure is not null)
             {
                 var structureViewModel = ToViewModel(trivia.Structure);
                 children.Add(structureViewModel);

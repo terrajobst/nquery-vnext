@@ -79,7 +79,7 @@ namespace NQuery.Authoring.Wpf.CodeActions
         private void GlyphContextMenuOnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var menuItem = GlyphContextMenu.Items.OfType<MenuItem>().FirstOrDefault();
-            if (menuItem == null)
+            if (menuItem is null)
                 return;
 
             Dispatcher.BeginInvoke(new Action(() => menuItem.Focus()));

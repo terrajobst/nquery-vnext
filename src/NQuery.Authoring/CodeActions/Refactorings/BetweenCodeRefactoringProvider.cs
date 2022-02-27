@@ -12,11 +12,11 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 return Enumerable.Empty<ICodeAction>();
 
             var leftComparison = node.Left as BinaryExpressionSyntax;
-            if (leftComparison == null)
+            if (leftComparison is null)
                 return Enumerable.Empty<ICodeAction>();
 
             var rightComparison = node.Right as BinaryExpressionSyntax;
-            if (rightComparison == null)
+            if (rightComparison is null)
                 return Enumerable.Empty<ICodeAction>();
 
             // Let's bring the expression into the following form:

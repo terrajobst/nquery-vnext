@@ -8,7 +8,7 @@ namespace NQuery.Authoring.Outlining
         {
             var node = nodeOrToken.IsNode ? nodeOrToken.AsNode() : null;
             var typedNode = node as T;
-            return typedNode == null
+            return typedNode is null
                 ? Enumerable.Empty<OutliningRegionSpan>()
                 : FindRegions(typedNode);
         }

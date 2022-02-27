@@ -22,7 +22,7 @@ namespace NQuery.Syntax
             yield return LeftParenthesis;
             yield return Query;
             yield return RightParenthesis;
-            if (AsKeyword != null)
+            if (AsKeyword is not null)
                 yield return AsKeyword;
             yield return Name;
         }

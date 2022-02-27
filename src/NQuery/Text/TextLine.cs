@@ -7,7 +7,7 @@ namespace NQuery.Text
 
         public TextLine(SourceText text, int start, int length)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             Text = text;
@@ -32,7 +32,7 @@ namespace NQuery.Text
                                 : null;
                 var start = Span.Start;
                 var end = Span.End;
-                var nextStart = nextLine == null
+                var nextStart = nextLine is null
                                     ? end
                                     : nextLine.Value.Span.Start;
                 return TextSpan.FromBounds(start, nextStart);
@@ -64,14 +64,14 @@ namespace NQuery.Text
         public override bool Equals(object obj)
         {
             var other = obj as TextLine?;
-            return other != null && Equals(other.Value);
+            return other is not null && Equals(other.Value);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = (Text != null ? Text.GetHashCode() : 0);
+                var hashCode = (Text is not null ? Text.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ _start;
                 hashCode = (hashCode*397) ^ _length;
                 return hashCode;

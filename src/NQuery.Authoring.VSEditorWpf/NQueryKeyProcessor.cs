@@ -157,7 +157,7 @@ namespace NQuery.Authoring.VSEditorWpf
         private bool ExecuteKeyboardCommandIfSessionActive(IntellisenseKeyboardCommand command)
         {
             var stackForTextView = _intellisenseSessionStackMapService.GetStackForTextView(_textView);
-            if (stackForTextView != null)
+            if (stackForTextView is not null)
             {
                 var containsSigHelp = false;
                 foreach (var session in stackForTextView.Sessions)
@@ -176,7 +176,7 @@ namespace NQuery.Authoring.VSEditorWpf
             }
 
             var target = stackForTextView as IIntellisenseCommandTarget;
-            return target != null && target.ExecuteKeyboardCommand(command);
+            return target is not null && target.ExecuteKeyboardCommand(command);
         }
     }
 }

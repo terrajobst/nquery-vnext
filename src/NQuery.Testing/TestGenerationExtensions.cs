@@ -63,7 +63,7 @@ namespace NQuery
                         writer.Indent++;
 
                         string line;
-                        while ((line = stringReader.ReadLine()) != null)
+                        while ((line = stringReader.ReadLine()) is not null)
                         {
                             writer.WriteLine(line.Replace("\"", "\"\""));
                         }

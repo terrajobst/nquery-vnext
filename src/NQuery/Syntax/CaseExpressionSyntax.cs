@@ -23,13 +23,13 @@ namespace NQuery.Syntax
         {
             yield return CaseKeyword;
 
-            if (InputExpression != null)
+            if (InputExpression is not null)
                 yield return InputExpression;
 
             foreach (var caseLabel in CaseLabels)
                 yield return caseLabel;
 
-            if (ElseLabel != null)
+            if (ElseLabel is not null)
                 yield return ElseLabel;
 
             yield return EndKeyword;

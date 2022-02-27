@@ -39,7 +39,7 @@ namespace NQuery
             IsImplicit = isImplicit;
             _isBoxingOrUnboxing = isBoxingOrUnboxing;
             IsReference = isReference;
-            ConversionMethods = conversionMethods == null
+            ConversionMethods = conversionMethods is null
                 ? ImmutableArray<MethodInfo>.Empty
                 : conversionMethods.ToImmutableArray();
         }
@@ -78,7 +78,7 @@ namespace NQuery
             var knownSourceType = sourceType.GetKnownType();
             var knownTargetType = targetType.GetKnownType();
 
-            if (knownSourceType != null && knownTargetType != null)
+            if (knownSourceType is not null && knownTargetType is not null)
             {
                 if (HasImplicitNumericConversion(knownSourceType.Value, knownTargetType.Value))
                     return Implicit;
@@ -237,7 +237,7 @@ namespace NQuery
             var xKnown = xType.GetKnownType();
             var yKnown = yType.GetKnownType();
 
-            if (xKnown != null && yKnown != null)
+            if (xKnown is not null && yKnown is not null)
             {
                 var x = xKnown.Value;
                 var y = yKnown.Value;

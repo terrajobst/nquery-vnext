@@ -19,12 +19,12 @@ namespace NQuery.Binding
 
         public override Type Type
         {
-            get { return Symbol == null ? TypeFacts.Unknown : Symbol.Type; }
+            get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
         }
 
         public FunctionSymbol Symbol
         {
-            get { return Result.Selected == null ? null : Result.Selected.Signature.Symbol; }
+            get { return Result.Selected is null ? null : Result.Selected.Signature.Symbol; }
         }
 
         public ImmutableArray<BoundExpression> Arguments { get; }

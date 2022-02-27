@@ -79,10 +79,10 @@
             VisitRelation(node.Left);
             VisitRelation(node.Right);
 
-            if (node.Condition != null)
+            if (node.Condition is not null)
                 VisitExpression(node.Condition);
 
-            if (node.PassthruPredicate != null)
+            if (node.PassthruPredicate is not null)
                 VisitExpression(node.PassthruPredicate);
         }
 
@@ -91,7 +91,7 @@
             VisitRelation(node.Build);
             VisitRelation(node.Probe);
 
-            if (node.Remainder != null)
+            if (node.Remainder is not null)
                 VisitExpression(node.Remainder);
         }
 

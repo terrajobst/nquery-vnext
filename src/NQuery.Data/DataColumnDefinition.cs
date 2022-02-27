@@ -14,7 +14,7 @@ namespace NQuery.Data
 
         public DataColumnDefinition(DataColumn dataColumn)
         {
-            if (dataColumn == null)
+            if (dataColumn is null)
                 throw new ArgumentNullException(nameof(dataColumn));
 
             DataColumn = dataColumn;
@@ -39,7 +39,7 @@ namespace NQuery.Data
             // return
             //    v is DBNull
             //      ? null
-            //      : (n = v as INullable) != null && n.IsNull
+            //      : (n = v as INullable) is not null && n.IsNull
             //          ? null
             //          : v;
 

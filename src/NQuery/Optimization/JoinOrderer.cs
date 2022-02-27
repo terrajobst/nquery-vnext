@@ -41,7 +41,7 @@ namespace NQuery.Optimization
             {
                 var current = stack.Pop();
                 var join = current as BoundJoinRelation;
-                if (join == null || join.JoinType != BoundJoinType.Inner)
+                if (join is null || join.JoinType != BoundJoinType.Inner)
                 {
                     // NOTE: We generally want to rewrite joins that we can't extract
                     //       ourselves. However, we've to be careful not to rewrite the
@@ -51,7 +51,7 @@ namespace NQuery.Optimization
                 }
                 else
                 {
-                    if (join.Condition != null)
+                    if (join.Condition is not null)
                     {
                         var conjunctions = Expression.SplitConjunctions(join.Condition);
                         predicates.AddRange(conjunctions);
@@ -152,7 +152,7 @@ namespace NQuery.Optimization
                                               .OrderBy(n => n, nodeComparer)
                                               .FirstOrDefault();
 
-                    if (nextNode != null)
+                    if (nextNode is not null)
                     {
                         candidateNodes.Remove(nextNode);
                         candidateNodes.UnionWith(nextNode.Edges.Select(e => e.Other(nextNode)).Where(n => remainingNodes.Contains(n)));
@@ -170,7 +170,7 @@ namespace NQuery.Optimization
                     }
                 }
 
-                result = result == null
+                result = result is null
                     ? relation
                     : new BoundJoinRelation(BoundJoinType.Inner, result, relation, null, null, null);
             }
@@ -181,7 +181,7 @@ namespace NQuery.Optimization
 
             var remainingPredicates = remainingEdges.SelectMany(e => e.Conditions);
             var remainingCondition = Expression.And(remainingPredicates);
-            if (remainingCondition != null)
+            if (remainingCondition is not null)
                 result = new BoundFilterRelation(result, remainingCondition);
 
             return result;
@@ -192,13 +192,13 @@ namespace NQuery.Optimization
             var xEstimate = CardinalityEstimator.Estimate(x.Relation).Maximum;
             var yEstimate = CardinalityEstimator.Estimate(y.Relation).Maximum;
 
-            if (xEstimate == null && yEstimate == null)
+            if (xEstimate is null && yEstimate is null)
                 return 0;
 
-            if (xEstimate == null)
+            if (xEstimate is null)
                 return -1;
 
-            if (yEstimate == null)
+            if (yEstimate is null)
                 return 1;
 
             return -xEstimate.Value.CompareTo(yEstimate.Value);
@@ -207,13 +207,13 @@ namespace NQuery.Optimization
         private static bool IsRelation(BoundExpression condition)
         {
             var binary = condition as BoundBinaryExpression;
-            if (binary == null || binary.OperatorKind != BinaryOperatorKind.Equal)
+            if (binary is null || binary.OperatorKind != BinaryOperatorKind.Equal)
                 return false;
 
             var left = binary.Left as BoundValueSlotExpression;
             var right = binary.Right as BoundValueSlotExpression;
 
-            if (left == null || right == null)
+            if (left is null || right is null)
                 return false;
 
             // TODO: We should somehow compute from the actual data context

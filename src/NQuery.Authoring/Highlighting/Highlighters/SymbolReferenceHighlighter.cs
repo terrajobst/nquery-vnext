@@ -7,11 +7,11 @@ namespace NQuery.Authoring.Highlighting.Highlighters
     {
         public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
         {
-            if (semanticModel == null)
+            if (semanticModel is null)
                 throw new ArgumentNullException(nameof(semanticModel));
 
             var symbolAtPosition = semanticModel.FindSymbol(position);
-            if (symbolAtPosition == null)
+            if (symbolAtPosition is null)
                 return Enumerable.Empty<TextSpan>();
 
             return semanticModel.FindUsages(symbolAtPosition.Value.Symbol)

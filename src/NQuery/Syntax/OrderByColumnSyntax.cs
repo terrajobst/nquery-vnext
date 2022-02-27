@@ -17,7 +17,7 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return ColumnSelector;
-            if (Modifier != null)
+            if (Modifier is not null)
                 yield return Modifier;
         }
 

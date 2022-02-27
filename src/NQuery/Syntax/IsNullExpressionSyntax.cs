@@ -20,7 +20,7 @@ namespace NQuery.Syntax
         {
             yield return Expression;
             yield return IsKeyword;
-            if (NotKeyword != null)
+            if (NotKeyword is not null)
                 yield return NotKeyword;
             yield return NullKeyword;
         }

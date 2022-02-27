@@ -46,7 +46,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             var span = new Span(textSpan.Start, textSpan.Length);
             var currentSnapshot = session.TextView.TextBuffer.CurrentSnapshot;
             var content = GetContent(model);
-            if (content == null)
+            if (content is null)
                 return;
 
             applicableToSpan = currentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeNegative);
@@ -130,12 +130,12 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             var resourceDictionary = _editorFormatMap.GetProperties(editorFormatMapKey);
 
             var isItalicValue = resourceDictionary[ClassificationFormatDefinition.IsItalicId];
-            var fontStyle = isItalicValue != null && Convert.ToBoolean(isItalicValue)
+            var fontStyle = isItalicValue is not null && Convert.ToBoolean(isItalicValue)
                                 ? FontStyles.Italic
                                 : FontStyles.Normal;
 
             var isBoldValue = resourceDictionary[ClassificationFormatDefinition.IsBoldId];
-            var fontWeights = isBoldValue != null && Convert.ToBoolean(isBoldValue)
+            var fontWeights = isBoldValue is not null && Convert.ToBoolean(isBoldValue)
                                   ? FontWeights.Bold
                                   : FontWeights.Normal;
 

@@ -41,12 +41,12 @@ namespace NQuery
         public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
         {
             var node = this;
-            while (node != null)
+            while (node is not null)
             {
                 yield return node;
 
                 StructuredTriviaSyntax structuredTrivia;
-                if (!ascendOutOfTrivia || (structuredTrivia = node as StructuredTriviaSyntax) == null)
+                if (!ascendOutOfTrivia || (structuredTrivia = node as StructuredTriviaSyntax) is null)
                 {
                     node = node.Parent;
                 }
@@ -115,7 +115,7 @@ namespace NQuery
                     if (child.IsToken && descendIntoTrivia)
                     {
                         var token = child.AsToken();
-                        var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s is not null);
                         foreach (var structure in structures)
                             stack.Push(structure);
                     }
@@ -125,7 +125,7 @@ namespace NQuery
                     if (child.IsToken && descendIntoTrivia)
                     {
                         var token = child.AsToken();
-                        var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s != null);
+                        var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s is not null);
                         foreach (var structure in structures)
                             stack.Push(structure);
                     }
@@ -155,7 +155,7 @@ namespace NQuery
             if (FullSpan.End == position)
             {
                 var compilationUnit = this as CompilationUnitSyntax;
-                if (compilationUnit != null)
+                if (compilationUnit is not null)
                     return compilationUnit.EndOfFileToken;
             }
 
@@ -174,10 +174,10 @@ namespace NQuery
             if (descendIntoTrivia)
             {
                 var triviaStructure = (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
-                                       where t.Structure != null && t.Structure.FullSpan.Contains(position)
+                                       where t.Structure is not null && t.Structure.FullSpan.Contains(position)
                                        select t.Structure).FirstOrDefault();
 
-                if (triviaStructure != null)
+                if (triviaStructure is not null)
                     return triviaStructure.FindToken(position, true);
             }
 
@@ -186,7 +186,7 @@ namespace NQuery
 
         public bool IsEquivalentTo(SyntaxNode other)
         {
-            if (other == null)
+            if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
@@ -205,7 +205,7 @@ namespace NQuery
         {
             get
             {
-                if (_span == null)
+                if (_span is null)
                     _span = ComputeSpan();
 
                 return _span.Value;
@@ -216,7 +216,7 @@ namespace NQuery
         {
             get
             {
-                if (_fullSpan == null)
+                if (_fullSpan is null)
                     _fullSpan = ComputeFullSpan();
 
                 return _fullSpan.Value;
@@ -227,7 +227,7 @@ namespace NQuery
         {
             get
             {
-                if (_isMissing == null)
+                if (_isMissing is null)
                     _isMissing = ComputeIsMissing();
 
                 return _isMissing.Value;
@@ -236,7 +236,7 @@ namespace NQuery
 
         public void WriteTo(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
                 throw new ArgumentNullException(nameof(writer));
 
             foreach (var syntaxNode in ChildNodesAndTokens())

@@ -6,10 +6,10 @@ namespace NQuery.Symbols
     {
         public TableRelation(TableSymbol parentTable, IReadOnlyCollection<ColumnSymbol> parentColumns, TableSymbol childTable, IReadOnlyCollection<ColumnSymbol> childColumns)
         {
-            if (parentColumns == null)
+            if (parentColumns is null)
                 throw new ArgumentNullException(nameof(parentColumns));
 
-            if (childColumns == null)
+            if (childColumns is null)
                 throw new ArgumentNullException(nameof(childColumns));
 
             if (parentColumns.Count == 0)

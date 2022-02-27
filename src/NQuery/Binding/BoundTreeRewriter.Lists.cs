@@ -13,16 +13,16 @@ namespace NQuery.Binding
             {
                 var element = array[i];
                 var rewrittenElement = rewriter(element);
-                if (element == rewrittenElement && result == null)
+                if (element == rewrittenElement && result is null)
                     continue;
 
-                if (result == null)
+                if (result is null)
                 {
                     result = new List<T>(array.Length);
                     result.AddRange(array.Take(i));
                 }
 
-                if (rewrittenElement != null)
+                if (rewrittenElement is not null)
                     result.Add(rewrittenElement);
             }
 

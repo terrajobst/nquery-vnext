@@ -12,10 +12,10 @@ namespace NQuery.Authoring.Highlighting
             var syntaxTree = semanticModel.SyntaxTree;
             var token = syntaxTree.Root.FindToken(position);
 
-            for (var current = token.Parent; current != null; current = current.Parent)
+            for (var current = token.Parent; current is not null; current = current.Parent)
             {
                 var node = current as T;
-                if (node != null)
+                if (node is not null)
                 {
                     var textSpans = GetHighlights(semanticModel, node, position).ToImmutableArray();
                     if (textSpans.Any(s => s.ContainsOrTouches(position)))

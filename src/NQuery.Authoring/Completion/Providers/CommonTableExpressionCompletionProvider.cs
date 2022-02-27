@@ -6,7 +6,7 @@ namespace NQuery.Authoring.Completion.Providers
     {
         protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, CommonTableExpressionSyntax node)
         {
-            if (node.RecursiveKeyword != null ||
+            if (node.RecursiveKeyword is not null ||
                 node.Name.IsMissing ||
                 !node.Name.FullSpan.ContainsOrTouches(position))
             {

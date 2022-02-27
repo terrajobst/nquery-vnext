@@ -20,7 +20,7 @@ namespace NQuery.Binding
         {
             get
             {
-                return Aggregatable == null
+                return Aggregatable is null
                     ? TypeFacts.Unknown
                     : Aggregatable.ReturnType;
             }

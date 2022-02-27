@@ -134,7 +134,7 @@
                 VisitExpression(caseLabel.ThenExpression);
             }
 
-            if (node.ElseExpression != null)
+            if (node.ElseExpression is not null)
                 VisitExpression(node.ElseExpression);
         }
 

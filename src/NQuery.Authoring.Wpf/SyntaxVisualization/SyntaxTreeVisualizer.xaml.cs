@@ -16,7 +16,7 @@ namespace NQuery.Authoring.Wpf
         private static void PropertyChangedCallback(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             var sender = o as SyntaxTreeVisualizer;
-            if (sender != null)
+            if (sender is not null)
                 sender.UpdateViewModel();
         }
 
@@ -62,7 +62,7 @@ namespace NQuery.Authoring.Wpf
             get
             {
                 var viewModel = TreeView.SelectedItem as SyntaxNodeViewModel;
-                return viewModel == null ? (TextSpan?) null : viewModel.Span;
+                return viewModel is null ? (TextSpan?) null : viewModel.Span;
             }
         }
 
@@ -71,13 +71,13 @@ namespace NQuery.Authoring.Wpf
             get
             {
                 var viewModel = TreeView.SelectedItem as SyntaxNodeViewModel;
-                return viewModel == null ? (TextSpan?)null : viewModel.FullSpan;
+                return viewModel is null ? (TextSpan?)null : viewModel.FullSpan;
             }
         }
 
         private void UpdateViewModel()
         {
-            DataContext = SyntaxTree == null
+            DataContext = SyntaxTree is null
                               ? null
                               : SyntaxTreeViewModel.Create(SyntaxTree);
         }
@@ -85,11 +85,11 @@ namespace NQuery.Authoring.Wpf
         public void SelectNode(int position)
         {
             var model = SyntaxTreeViewModel;
-            if (model == null)
+            if (model is null)
                 return;
 
             var node = FindViewModelNode(model.Root, position);
-            if (node == null)
+            if (node is null)
                 return;
 
             TreeView.SelectNode(node, n => n.Parent, true);
@@ -103,7 +103,7 @@ namespace NQuery.Authoring.Wpf
         private void OnSelectedNodeChanged()
         {
             var handler = SelectedNodeChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, EventArgs.Empty);
         }
 

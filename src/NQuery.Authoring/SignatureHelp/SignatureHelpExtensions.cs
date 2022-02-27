@@ -33,7 +33,7 @@ namespace NQuery.Authoring.SignatureHelp
         {
             return (from p in providers
                     let m = p.GetModel(semanticModel, position)
-                    where m != null
+                    where m is not null
                     orderby m.ApplicableSpan.Start descending
                     select m).FirstOrDefault();
         }
@@ -47,7 +47,7 @@ namespace NQuery.Authoring.SignatureHelp
         internal static bool IsBetweenParentheses(this SyntaxNode node, int position)
         {
             var argumentList = node.ChildNodes().SingleOrDefault(n => n.Kind == SyntaxKind.ArgumentList);
-            if (argumentList != null)
+            if (argumentList is not null)
                 return argumentList.IsBetweenParentheses(position);
 
             var leftParenthesisToken = node.GetSingleChildToken(SyntaxKind.LeftParenthesisToken);

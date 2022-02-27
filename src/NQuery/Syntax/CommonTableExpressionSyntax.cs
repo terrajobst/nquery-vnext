@@ -21,10 +21,10 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            if (RecursiveKeyword != null)
+            if (RecursiveKeyword is not null)
                 yield return RecursiveKeyword;
             yield return Name;
-            if (ColumnNameList != null)
+            if (ColumnNameList is not null)
                 yield return ColumnNameList;
             yield return AsKeyword;
             yield return LeftParenthesis;

@@ -14,7 +14,7 @@ namespace NQuery.Symbols
         public ReflectionMethodSymbol(MethodInfo methodInfo, string name)
             : base(name, methodInfo?.ReturnType, ConvertParameters(methodInfo))
         {
-            if (methodInfo == null)
+            if (methodInfo is null)
                 throw new ArgumentNullException(nameof(methodInfo));
 
             MethodInfo = methodInfo;
@@ -22,7 +22,7 @@ namespace NQuery.Symbols
 
         private static IEnumerable<ParameterSymbol> ConvertParameters(MethodInfo methodInfo)
         {
-            return (methodInfo == null
+            return (methodInfo is null
                         ? Enumerable.Empty<ParameterSymbol>()
                         : methodInfo.GetParameters().Select(p => new ReflectionParameterSymbol(p))).ToImmutableArray();
         }

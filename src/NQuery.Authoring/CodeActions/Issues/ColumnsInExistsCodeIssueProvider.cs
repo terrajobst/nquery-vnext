@@ -9,7 +9,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         {
             var syntaxTree = node.SyntaxTree;
             var selectQuery = node.Query as SelectQuerySyntax;
-            if (selectQuery == null)
+            if (selectQuery is null)
                 return Enumerable.Empty<CodeIssue>();
 
             if (selectQuery.SelectClause.IsMissing)

@@ -20,7 +20,7 @@ namespace NQuery.Optimization
 
         private static BoundRelation WrapWithFilter(BoundRelation input, BoundExpression predicate)
         {
-            return predicate == null
+            return predicate is null
                 ? input
                 : new BoundFilterRelation(input, predicate);
         }

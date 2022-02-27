@@ -215,7 +215,7 @@ namespace NQuery.Binding
             var result = ResolveOverloads(kind, leftOperandType, rightOperandType);
 
             var signature = result.Best;
-            if (result.Best == null || !IsObjectComparison(signature.Signature))
+            if (result.Best is null || !IsObjectComparison(signature.Signature))
                 return result;
 
             // C# doesn't bind to reference equality unless both operands are considered reference types.
@@ -234,7 +234,7 @@ namespace NQuery.Binding
         private static bool IsObjectComparison(BinaryOperatorSignature signature)
         {
             return (signature.Kind == BinaryOperatorKind.Equal || signature.Kind == BinaryOperatorKind.NotEqual) &&
-                   signature.MethodInfo == null &&
+                   signature.MethodInfo is null &&
                    signature.ReturnType == typeof (bool) &&
                    signature.GetParameterType(0) == typeof (object) &&
                    signature.GetParameterType(1) == typeof (object);
@@ -276,8 +276,8 @@ namespace NQuery.Binding
 
         private static bool BothTypesBuiltIn(Type leftOperandType, Type rightOperandType)
         {
-            return leftOperandType.GetKnownType() != null &&
-                   rightOperandType.GetKnownType() != null;
+            return leftOperandType.GetKnownType() is not null &&
+                   rightOperandType.GetKnownType() is not null;
         }
 
         private static IEnumerable<BinaryOperatorSignature> GetBuiltInSignatures(BinaryOperatorKind kind)

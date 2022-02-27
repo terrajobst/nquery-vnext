@@ -16,7 +16,7 @@ namespace NQuery.Authoring.Selection
                 var separator = list.GetSeparator(index);
                 var node = list[index];
                 var start = node.Span.Start;
-                var end = separator == null ? node.Span.End : separator.Span.End;
+                var end = separator is null ? node.Span.End : separator.Span.End;
                 yield return TextSpan.FromBounds(start, end);
 
                 var first = list.GetWithSeparators().First();

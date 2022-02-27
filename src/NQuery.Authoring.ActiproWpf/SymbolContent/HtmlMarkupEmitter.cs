@@ -117,7 +117,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         private static void AppendColor(this StringBuilder sb, string key, Color? color)
         {
-            if (color == null)
+            if (color is null)
                 return;
 
             var value = color.ToString();
@@ -135,7 +135,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         private static void AppendFontWeight(this StringBuilder sb, string key, bool? isBold)
         {
-            if (isBold == null)
+            if (isBold is null)
                 return;
 
             var value = isBold.Value ? @"bold" : @"normal";
@@ -144,7 +144,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         private static void AppendFontStyle(this StringBuilder sb, string key, bool? isItalic)
         {
-            if (isItalic == null)
+            if (isItalic is null)
                 return;
 
             var value = isItalic.Value ? @"italic" : @"normal";

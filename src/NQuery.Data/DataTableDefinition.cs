@@ -9,7 +9,7 @@ namespace NQuery.Data
     {
         public DataTableDefinition(DataTable dataTable)
         {
-            if (dataTable == null)
+            if (dataTable is null)
                 throw new ArgumentNullException(nameof(dataTable));
 
             DataTable = dataTable;
@@ -18,7 +18,7 @@ namespace NQuery.Data
 
         public DataTableDefinition(DataTable dataTable, string name)
         {
-            if (dataTable == null)
+            if (dataTable is null)
                 throw new ArgumentNullException(nameof(dataTable));
 
             if (string.IsNullOrEmpty(name))

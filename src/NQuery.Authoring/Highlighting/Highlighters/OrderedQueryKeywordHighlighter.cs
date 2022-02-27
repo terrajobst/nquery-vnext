@@ -17,7 +17,7 @@ namespace NQuery.Authoring.Highlighting.Highlighters
                                   .SkipWhile(n => n is ParenthesizedQuerySyntax)
                                   .FirstOrDefault() as SelectQuerySyntax;
 
-            if (selectQuery == null)
+            if (selectQuery is null)
                 return Enumerable.Empty<TextSpan>();
 
             var selectQueryHighlights = GetSelectQueryHighlights(selectQuery);

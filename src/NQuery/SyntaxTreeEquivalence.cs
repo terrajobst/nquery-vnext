@@ -4,10 +4,10 @@ namespace NQuery
     {
         public static bool AreEquivalent(SyntaxNode left, SyntaxNode right)
         {
-            if (left == null && right == null)
+            if (left is null && right is null)
                 return true;
 
-            if (left == null || right == null)
+            if (left is null || right is null)
                 return false;
 
             if (left.Kind != right.Kind)
@@ -50,10 +50,10 @@ namespace NQuery
 
         public static bool AreEquivalent(SyntaxToken left, SyntaxToken right)
         {
-            if (left == null && right == null)
+            if (left is null && right is null)
                 return true;
 
-            if (left == null || right == null)
+            if (left is null || right is null)
                 return false;
 
             if (left.Kind != right.Kind)

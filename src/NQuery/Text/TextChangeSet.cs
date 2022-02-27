@@ -8,7 +8,7 @@ namespace NQuery.Text
 
         public void ReplaceText(TextSpan span, string newText)
         {
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
             var change = TextChange.ForReplacement(span, newText);
@@ -17,7 +17,7 @@ namespace NQuery.Text
 
         public void InsertText(int position, string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var change = TextChange.ForInsertion(position, text);

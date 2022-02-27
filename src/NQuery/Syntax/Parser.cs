@@ -164,7 +164,7 @@ namespace NQuery.Syntax
         private bool IsPreviousTokenOnSameLine()
         {
             var previous = GetPreviousToken();
-            if (previous == null)
+            if (previous is null)
                 return true;
 
             var previousLine = _text.GetLineNumberFromPosition(previous.Span.Start);
@@ -289,7 +289,7 @@ namespace NQuery.Syntax
 
         private ExpressionSyntax ParseSubExpression(ExpressionSyntax left, int precedence)
         {
-            if (left == null)
+            if (left is null)
             {
                 // No left operand, so we parse one and take care of leading unary operators
 
@@ -870,7 +870,7 @@ namespace NQuery.Syntax
         {
             var leftQuery = ParseIntersectionalQuery();
 
-            if (leftQuery == null)
+            if (leftQuery is null)
                 return null;
 
             while (Current.Kind == SyntaxKind.UnionKeyword ||
@@ -898,7 +898,7 @@ namespace NQuery.Syntax
         {
             var leftQuery = ParseSelectQuery();
 
-            if (leftQuery == null)
+            if (leftQuery is null)
                 return null;
 
             while (Current.Kind == SyntaxKind.IntersectKeyword)
@@ -906,7 +906,7 @@ namespace NQuery.Syntax
                 var intersectKeyword = Match(SyntaxKind.IntersectKeyword);
                 var rightQuery = ParseSelectQuery();
 
-                if (rightQuery == null)
+                if (rightQuery is null)
                     return null;
 
                 leftQuery = new IntersectQuerySyntax(_syntaxTree, leftQuery, intersectKeyword, rightQuery);

@@ -29,7 +29,7 @@ namespace NQuery.Tests.Binding
 
                 var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
                 var expressionType = semanticModel.GetExpressionType(expression);
-                var result = diagnostic == null
+                var result = diagnostic is null
                                  ? GetExpressionTypeString(expressionType)
                                  : GetErrorString(diagnostic.DiagnosticId);
 
@@ -78,7 +78,7 @@ namespace NQuery.Tests.Binding
 
                 var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
                 var expressionType = semanticModel.GetExpressionType(expression);
-                var result = diagnostic == null
+                var result = diagnostic is null
                                  ? GetExpressionTypeString(expressionType)
                                  : GetErrorString(diagnostic.DiagnosticId);
 

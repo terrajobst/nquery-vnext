@@ -76,7 +76,7 @@ namespace NQuery.Binding
 
         private static bool TypeBuiltIn(Type type)
         {
-            return type.GetKnownType() != null;
+            return type.GetKnownType() is not null;
         }
 
         private static IEnumerable<UnaryOperatorSignature> GetBuiltInSignatures(UnaryOperatorKind kind)

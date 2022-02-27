@@ -29,10 +29,10 @@ namespace NQuery.Symbols
 
         public static TableDefinition Create<T>(string name, IEnumerable<T> source)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             return Create(name, source, new ReflectionProvider());
@@ -40,13 +40,13 @@ namespace NQuery.Symbols
 
         public static TableDefinition Create<T>(string name, IEnumerable<T> source, IPropertyProvider propertyProvider)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (propertyProvider == null)
+            if (propertyProvider is null)
                 throw new ArgumentNullException(nameof(propertyProvider));
 
             return Create(name, source, typeof(T), propertyProvider);
@@ -54,16 +54,16 @@ namespace NQuery.Symbols
 
         public static TableDefinition Create(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            if (rowType == null)
+            if (rowType is null)
                 throw new ArgumentNullException(nameof(rowType));
 
-            if (propertyProvider == null)
+            if (propertyProvider is null)
                 throw new ArgumentNullException(nameof(propertyProvider));
 
             return new EnumerableTableDefinition(name, source, rowType, propertyProvider);

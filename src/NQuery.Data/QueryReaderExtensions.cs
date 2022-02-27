@@ -6,7 +6,7 @@ namespace NQuery.Data
     {
         public static QueryDataReader ToDataReader(this QueryReader queryReader)
         {
-            if (queryReader == null)
+            if (queryReader is null)
                 throw new ArgumentNullException(nameof(queryReader));
 
             return new QueryDataReader(queryReader);
@@ -14,7 +14,7 @@ namespace NQuery.Data
 
         public static DataTable ExecuteDataTable(this QueryReader queryReader)
         {
-            if (queryReader == null)
+            if (queryReader is null)
                 throw new ArgumentNullException(nameof(queryReader));
 
             var dataTable = queryReader.CreateSchemaTable();
@@ -33,7 +33,7 @@ namespace NQuery.Data
 
         public static DataTable CreateSchemaTable(this QueryReader queryReader)
         {
-            if (queryReader == null)
+            if (queryReader is null)
                 throw new ArgumentNullException(nameof(queryReader));
 
             var dataTable = new DataTable(@"Results");
@@ -68,7 +68,7 @@ namespace NQuery.Data
 
         public static QueryDataReader ExecuteDataReader(this Query query)
         {
-            if (query == null)
+            if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().ToDataReader();
@@ -76,7 +76,7 @@ namespace NQuery.Data
 
         public static DataTable ExecuteDataTable(this Query query)
         {
-            if (query == null)
+            if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().ExecuteDataTable();
@@ -84,7 +84,7 @@ namespace NQuery.Data
 
         public static DataTable ExecuteSchemaDataTable(this Query query)
         {
-            if (query == null)
+            if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
             return query.ExecuteReader().CreateSchemaTable();

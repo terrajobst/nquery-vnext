@@ -19,7 +19,7 @@ namespace NQuery.Iterators
 
         public override bool Read()
         {
-            if (_lastSpooledRow == null)
+            if (_lastSpooledRow is null)
             {
                 if (!base.Read())
                     return false;

@@ -10,17 +10,17 @@ namespace NQuery.Authoring.Highlighting
         {
             yield return node.SelectClause.SelectKeyword.Span;
 
-            if (node.FromClause != null)
+            if (node.FromClause is not null)
                 yield return node.FromClause.FromKeyword.Span;
 
-            if (node.WhereClause != null)
+            if (node.WhereClause is not null)
                 yield return node.WhereClause.WhereKeyword.Span;
 
-            if (node.GroupByClause != null)
+            if (node.GroupByClause is not null)
                 yield return TextSpan.FromBounds(node.GroupByClause.GroupKeyword.Span.Start,
                                                  node.GroupByClause.ByKeyword.Span.End);
 
-            if (node.HavingClause != null)
+            if (node.HavingClause is not null)
                 yield return node.HavingClause.HavingKeyword.Span;
         }
     }

@@ -16,10 +16,10 @@ namespace NQuery
 
         public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (syntaxTree == null)
+            if (syntaxTree is null)
                 throw new ArgumentNullException(nameof(syntaxTree));
 
             return new Compilation(dataContext, syntaxTree);
@@ -88,11 +88,11 @@ namespace NQuery
 
         private static BoundQuery GetBoundQuery(BoundNode boundRoot)
         {
-            if (boundRoot == null)
+            if (boundRoot is null)
                 return null;
 
             var query = boundRoot as BoundQuery;
-            if (query != null)
+            if (query is not null)
                 return query;
 
             var expression = (BoundExpression) boundRoot;
@@ -113,7 +113,7 @@ namespace NQuery
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
         {
-            if (syntaxTree == null)
+            if (syntaxTree is null)
                 throw new ArgumentNullException(nameof(syntaxTree));
 
             return SyntaxTree == syntaxTree ? this : Create(DataContext, syntaxTree);
@@ -121,7 +121,7 @@ namespace NQuery
 
         public Compilation WithDataContext(DataContext dataContext)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
             return DataContext == dataContext ? this : Create(dataContext, SyntaxTree);

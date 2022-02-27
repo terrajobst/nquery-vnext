@@ -4,7 +4,7 @@ namespace NQuery.Binding
     {
         public virtual BoundExpression RewriteExpression(BoundExpression node)
         {
-            if (node == null)
+            if (node is null)
                 return null;
 
             switch (node.Kind)

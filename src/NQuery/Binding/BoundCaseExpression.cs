@@ -48,7 +48,7 @@ namespace NQuery.Binding
                 sb.Append(boundCaseLabel.ThenExpression);
             }
 
-            if (ElseExpression != null)
+            if (ElseExpression is not null)
             {
                 sb.Append(@" ELSE ");
                 sb.Append(ElseExpression);

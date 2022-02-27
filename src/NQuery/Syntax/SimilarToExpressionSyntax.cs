@@ -20,7 +20,7 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Left;
-            if (NotKeyword != null)
+            if (NotKeyword is not null)
                 yield return NotKeyword;
             yield return SimilarKeyword;
             yield return ToKeyword;

@@ -16,7 +16,7 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var sourceText = SourceText.From(text);
@@ -25,7 +25,7 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(SourceText text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             return new SyntaxTree(text, p => p.ParseRootQuery());
@@ -33,7 +33,7 @@ namespace NQuery
 
         public static SyntaxTree ParseExpression(string source)
         {
-            if (source == null)
+            if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             var textBuffer = SourceText.From(source);
@@ -42,7 +42,7 @@ namespace NQuery
 
         public static SyntaxTree ParseExpression(SourceText sourceText)
         {
-            if (sourceText == null)
+            if (sourceText is null)
                 throw new ArgumentNullException(nameof(sourceText));
 
             return new SyntaxTree(sourceText, p => p.ParseRootExpression());
@@ -61,7 +61,7 @@ namespace NQuery
         private T GetParent<T>(object child)
              where T: class
         {
-            if (_parentFromChild == null)
+            if (_parentFromChild is null)
                 Interlocked.CompareExchange(ref _parentFromChild, GetParents(Root), null);
 
             _parentFromChild.TryGetValue(child, out object parent);
@@ -114,7 +114,7 @@ namespace NQuery
                     {
                         parents.Add(trivia, token);
                         var structure = trivia.Structure;
-                        if (structure != null)
+                        if (structure is not null)
                         {
                             parents.Add(structure, trivia);
                             GetParents(parents, structure);
@@ -126,7 +126,7 @@ namespace NQuery
 
         public SyntaxTree WithChanges(params TextChange[] textChanges)
         {
-            if (textChanges == null)
+            if (textChanges is null)
                 return this;
 
             return WithChanges(textChanges.AsEnumerable());
@@ -134,7 +134,7 @@ namespace NQuery
 
         public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
         {
-            if (textChanges == null)
+            if (textChanges is null)
                 throw new ArgumentNullException(nameof(textChanges));
 
             var newText = Text.WithChanges(textChanges);

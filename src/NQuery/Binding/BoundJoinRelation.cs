@@ -59,7 +59,7 @@ namespace NQuery.Binding
 
         public override IEnumerable<ValueSlot> GetDefinedValues()
         {
-            var probe = Probe == null
+            var probe = Probe is null
                 ? Enumerable.Empty<ValueSlot>()
                 : new[] {Probe};
             return Left.GetDefinedValues().Concat(Right.GetDefinedValues()).Concat(probe);
@@ -70,7 +70,7 @@ namespace NQuery.Binding
             var left = IncludeLeftValues() ? Left.GetOutputValues() : Enumerable.Empty<ValueSlot>();
             var right = IncludeRightValues() ? Right.GetOutputValues() : Enumerable.Empty<ValueSlot>();
             var leftAndRight = left.Concat(right);
-            return Probe == null
+            return Probe is null
                     ? leftAndRight
                     : leftAndRight.Concat(new[] {Probe});
         }

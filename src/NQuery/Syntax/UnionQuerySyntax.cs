@@ -20,7 +20,7 @@ namespace NQuery.Syntax
         {
             yield return LeftQuery;
             yield return UnionKeyword;
-            if (AllKeyword != null)
+            if (AllKeyword is not null)
                 yield return AllKeyword;
             yield return RightQuery;
         }

@@ -69,7 +69,7 @@ namespace NQueryViewer
         private void NewEditor(IEditorViewFactory editorViewFactory)
         {
             var editorView = editorViewFactory?.CreateEditorView();
-            if (editorView == null)
+            if (editorView is null)
                 return;
 
             editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
@@ -77,7 +77,7 @@ namespace NQueryViewer
             editorView.Workspace.DataContext = NorthwindDataContext.Instance;
             editorView.Workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
 
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 editorView.ZoomLevel = CurrentEditorView.ZoomLevel;
 
             var id = DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Tag).OfType<int>().DefaultIfEmpty().Max() + 1;
@@ -95,7 +95,7 @@ namespace NQueryViewer
         private void CloseEditor()
         {
             var editorView = CurrentEditorView;
-            if (editorView == null)
+            if (editorView is null)
                 return;
 
             editorView.CaretPositionChanged -= EditorViewOnCaretPositionChanged;
@@ -108,12 +108,12 @@ namespace NQueryViewer
         private async void ExecuteQuery()
         {
             var editorView = CurrentEditorView;
-            if (editorView == null)
+            if (editorView is null)
                 return;
 
             var document = editorView.Workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();
-            if (semanticModel == null)
+            if (semanticModel is null)
                 return;
 
             var syntaxTree = semanticModel.SyntaxTree;
@@ -154,7 +154,7 @@ namespace NQueryViewer
             BottomToolWindowTabControl.SelectedItem = ResultsTabItem;
             ExecutionTimeTextBlock.Text = $"Completed in {elapsed}";
 
-            if (exception != null)
+            if (exception is not null)
                 MessageBox.Show(exception.Message, Title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
@@ -165,7 +165,7 @@ namespace NQueryViewer
 
         private void SetDocumentKind(DocumentKind kind)
         {
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 CurrentEditorView.Workspace.DocumentKind = kind;
         }
 
@@ -178,7 +178,7 @@ namespace NQueryViewer
         {
             UpdateDocumentState();
 
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 CurrentEditorView.Focus();
         }
 
@@ -214,7 +214,7 @@ namespace NQueryViewer
                 return;
             }
 
-            SyntaxTreeVisualizer.SyntaxTree = CurrentEditorView == null
+            SyntaxTreeVisualizer.SyntaxTree = CurrentEditorView is null
                 ? null
                 : await CurrentEditorView.Workspace.CurrentDocument.GetSyntaxTreeAsync();
             UpdateTreeExpansion();
@@ -225,23 +225,23 @@ namespace NQueryViewer
             if (!ToolsViewSyntaxMenuItem.IsChecked)
                 return;
 
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 SyntaxTreeVisualizer.SelectNode(CurrentEditorView.CaretPosition);
         }
 
         private void UpdateSelectedText()
         {
             var span = SyntaxTreeVisualizer.SelectedSpan;
-            if (span == null)
+            if (span is null)
                 return;
 
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 CurrentEditorView.Selection = span.Value;
         }
 
         private async void UpdateDiagnostics()
         {
-            if (CurrentEditorView == null)
+            if (CurrentEditorView is null)
             {
                 DiagnosticGrid.UpdateGrid(null, null);
             }
@@ -249,17 +249,17 @@ namespace NQueryViewer
             {
                 var document = CurrentEditorView.Workspace.CurrentDocument;
                 var semanticModel = await document.GetSemanticModelAsync();
-                var syntaxTree = semanticModel == null
+                var syntaxTree = semanticModel is null
                     ? await document.GetSyntaxTreeAsync()
                     : semanticModel.SyntaxTree;
-                var syntaxTreeDiagnostics = syntaxTree == null
+                var syntaxTreeDiagnostics = syntaxTree is null
                     ? Enumerable.Empty<Diagnostic>()
                     : syntaxTree.GetDiagnostics();
-                var semanticModelDiagnostics = semanticModel == null
+                var semanticModelDiagnostics = semanticModel is null
                     ? Enumerable.Empty<Diagnostic>()
                     : semanticModel.GetDiagnostics();
                 var diagnostics = syntaxTreeDiagnostics.Concat(semanticModelDiagnostics);
-                var text = syntaxTree == null
+                var text = syntaxTree is null
                     ? null
                     : syntaxTree.Text;
                 DiagnosticGrid.UpdateGrid(diagnostics, text);
@@ -268,7 +268,7 @@ namespace NQueryViewer
 
         private async void UpdateShowPlan()
         {
-            if (CurrentEditorView == null)
+            if (CurrentEditorView is null)
             {
                 ShowPlanComboBox.ItemsSource = null;
             }
@@ -276,7 +276,7 @@ namespace NQueryViewer
             {
                 var document = CurrentEditorView.Workspace.CurrentDocument;
                 var semanticModel = await document.GetSemanticModelAsync();
-                var optimizationSteps = semanticModel == null
+                var optimizationSteps = semanticModel is null
                     ? ImmutableArray<ShowPlan>.Empty
                     : semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
                 ShowPlanComboBox.ItemsSource = optimizationSteps;
@@ -345,7 +345,7 @@ namespace NQueryViewer
         private async void ToolsGenerateParserTestMenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             var documentView = CurrentEditorView?.GetDocumentView();
-            if (documentView == null)
+            if (documentView is null)
                 return;
 
             var test = await documentView.GenerateParserTest();
@@ -369,14 +369,14 @@ namespace NQueryViewer
 
         private void EditorViewOnCaretPositionChanged(object sender, EventArgs e)
         {
-            if (CurrentEditorView != null && CurrentEditorView.Element.IsKeyboardFocusWithin)
+            if (CurrentEditorView is not null && CurrentEditorView.Element.IsKeyboardFocusWithin)
                 UpdateTreeExpansion();
         }
 
         private void EditorViewOnZoomLevelChanged(object sender, EventArgs e)
         {
             var changedView = sender as IEditorView;
-            if (changedView == null)
+            if (changedView is null)
                 return;
 
             var newZoomLevel = changedView.ZoomLevel;
@@ -397,10 +397,10 @@ namespace NQueryViewer
         private void DiagnosticGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var diagnostic = DiagnosticGrid.SelectedDiagnostic;
-            if (diagnostic == null)
+            if (diagnostic is null)
                 return;
 
-            if (CurrentEditorView != null)
+            if (CurrentEditorView is not null)
                 CurrentEditorView.Selection = diagnostic.Span;
         }
 
