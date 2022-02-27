@@ -1,5 +1,7 @@
 using NQuery.Syntax;
 
+using System.Collections.Immutable;
+
 namespace NQuery
 {
     internal static class SyntaxTreeNavigation
@@ -262,7 +264,7 @@ namespace NQuery
             return GetPreviousToken(trivia.Parent, false, tokenPredicate, triviaPredicate);
         }
 
-        private static SyntaxToken GetPreviousToken(IEnumerable<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+        private static SyntaxToken GetPreviousToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
         {
             var returnNext = false;
 
@@ -284,7 +286,7 @@ namespace NQuery
                 }
             }
 
-            var isTrailing = ReferenceEquals(triviaList, trivia.Parent.TrailingTrivia);
+            var isTrailing = triviaList == trivia.Parent.TrailingTrivia;
             if (returnNext && isTrailing && tokenPredicate(trivia.Parent))
                 return trivia.Parent;
 
@@ -389,7 +391,7 @@ namespace NQuery
             return GetNextToken(trivia.Parent, false, tokenPredicate, triviaPredicate);
         }
 
-        private static SyntaxToken GetNextToken(IEnumerable<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+        private static SyntaxToken GetNextToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
         {
             var returnNext = false;
 
@@ -411,7 +413,7 @@ namespace NQuery
                 }
             }
 
-            var isLeading = ReferenceEquals(triviaList, trivia.Parent.LeadingTrivia);
+            var isLeading = triviaList == trivia.Parent.LeadingTrivia;
             if (returnNext && isLeading && tokenPredicate(trivia.Parent))
                 return trivia.Parent;
 
