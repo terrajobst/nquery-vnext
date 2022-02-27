@@ -101,7 +101,7 @@ namespace NQuery.Optimization
                     else
                     {
                         var newCondition = Expression.And(remainingConjunctions);
-                        if (newCondition == null)
+                        if (newCondition is null)
                         {
                             node = node.WithLeft(leftAsFilter.Input);
                         }
@@ -150,7 +150,7 @@ namespace NQuery.Optimization
                     else
                     {
                         var newCondition = Expression.And(remainingConjunctions);
-                        if (newCondition == null)
+                        if (newCondition is null)
                         {
                             node = node.WithRight(rightAsFilter.Input);
                         }
@@ -182,7 +182,7 @@ namespace NQuery.Optimization
             if (node.JoinType != BoundJoinType.LeftOuter &&
                 node.JoinType != BoundJoinType.RightOuter &&
                 node.JoinType != BoundJoinType.FullOuter &&
-                node.Condition != null)
+                node.Condition is not null)
             {
                 var conjunctionsAboveJoin = new List<BoundExpression>();
                 var remainingConjunctions = new List<BoundExpression>();

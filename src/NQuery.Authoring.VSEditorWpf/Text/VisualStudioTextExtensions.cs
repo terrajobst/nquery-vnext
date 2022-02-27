@@ -13,7 +13,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static SourceTextContainer ToSourceTextContainer(this ITextBuffer textBuffer)
         {
-            if (textBuffer == null)
+            if (textBuffer is null)
                 throw new ArgumentNullException(nameof(textBuffer));
 
             return ProviderMap.GetValue(textBuffer, tb => new VisualStudioSourceTextContainer(tb));
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
         {
-            if (textSnapshot == null)
+            if (textSnapshot is null)
                 throw new ArgumentNullException(nameof(textSnapshot));
 
             var container = (VisualStudioSourceTextContainer)textSnapshot.TextBuffer.ToSourceTextContainer();
@@ -30,11 +30,11 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static ITextSnapshot ToTextSnapshot(this SourceText text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var visualStudioSourceText = text as VisualStudioSourceText;
-            if (visualStudioSourceText == null)
+            if (visualStudioSourceText is null)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(text));
 
             return visualStudioSourceText.Snapshot;
@@ -42,11 +42,11 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static ITextBuffer ToTextBuffer(this SourceTextContainer container)
         {
-            if (container == null)
+            if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
             var visualStudioSourceTextContainer = container as VisualStudioSourceTextContainer;
-            if (visualStudioSourceTextContainer == null)
+            if (visualStudioSourceTextContainer is null)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(container));
 
             return visualStudioSourceTextContainer.TextBuffer;

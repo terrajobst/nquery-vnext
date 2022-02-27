@@ -11,7 +11,7 @@ namespace NQuery.Authoring.Completion
                                    .OfType<T>()
                                    .FirstOrDefault();
 
-            return node == null
+            return node is null
                     ? Enumerable.Empty<CompletionItem>()
                     : GetItems(semanticModel, position, node);
         }

@@ -7,7 +7,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, OrderByColumnSyntax node)
         {
-            if (node.Modifier == null)
+            if (node.Modifier is null)
                 yield return new ToExplicitSortOrderCodeAction(node);
             else
                 yield return new ToImplicitSortOrderCodeAction(node);
@@ -72,7 +72,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             {
                 get
                 {
-                    return _node.Modifier == null || _node.Modifier.Kind == SyntaxKind.AscKeyword
+                    return _node.Modifier is null || _node.Modifier.Kind == SyntaxKind.AscKeyword
                                 ? Resources.CodeActionToDescending
                                 : Resources.CodeActionToAscending;
                 }
@@ -82,7 +82,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             {
                 var modifier = _node.Modifier;
 
-                if (modifier == null)
+                if (modifier is null)
                 {
                     changeSet.InsertText(_node.Span.End, @" DESC");
                 }

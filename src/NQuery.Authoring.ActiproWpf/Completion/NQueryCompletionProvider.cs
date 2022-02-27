@@ -68,17 +68,17 @@ namespace NQuery.Authoring.ActiproWpf.Completion
                 return;
             }
 
-            if (existingSession == null)
+            if (existingSession is null)
                 completionSession.Open(view);
         }
 
         private CompletionItem GetActiproCompletionItem(Authoring.Completion.CompletionItem completionItem)
         {
-            var imageSourceProvider = completionItem.Glyph == null
+            var imageSourceProvider = completionItem.Glyph is null
                                           ? null
                                           : SymbolContentProvider.GetImageSourceProvider(completionItem.Glyph.Value);
 
-            var contentProvider = completionItem.Symbol == null
+            var contentProvider = completionItem.Symbol is null
                                       ? null
                                       : SymbolContentProvider.GetContentProvider(completionItem.Symbol);
 

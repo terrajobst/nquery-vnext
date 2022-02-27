@@ -28,7 +28,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
                                 : null;
 
             var signatureText = _signatureItem.Content;
-            if (parameter == null)
+            if (parameter is null)
                 return new DirectContentProvider(signatureText);
 
             var start = parameter.Span.Start;

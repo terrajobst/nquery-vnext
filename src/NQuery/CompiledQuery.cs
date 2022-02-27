@@ -52,10 +52,10 @@ namespace NQuery
             // just evaluate the expression being defined.
 
             var projectRelation = _query.Relation as BoundProjectRelation;
-            if (projectRelation != null)
+            if (projectRelation is not null)
             {
                 var computeRelation = projectRelation.Input as BoundComputeRelation;
-                if (computeRelation != null && computeRelation.Input is BoundConstantRelation)
+                if (computeRelation is not null && computeRelation.Input is BoundConstantRelation)
                 {
                     // This means this is a trivial query.
                     return CreateTrivialExpression(computeRelation);

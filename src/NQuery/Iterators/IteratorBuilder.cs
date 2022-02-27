@@ -111,14 +111,14 @@ namespace NQuery.Iterators
             switch (relation.JoinType)
             {
                 case BoundJoinType.Inner:
-                    Debug.Assert(relation.Probe == null);
+                    Debug.Assert(relation.Probe is null);
                     return new InnerNestedLoopsIterator(left, right, predicate, passthruPredicate);
                 case BoundJoinType.LeftSemi:
-                    return relation.Probe == null
+                    return relation.Probe is null
                         ? (Iterator) new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
                         : new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
                 case BoundJoinType.LeftAntiSemi:
-                    Debug.Assert(relation.Probe == null);
+                    Debug.Assert(relation.Probe is null);
                     return new LeftAntiSemiNestedLoopsIterator(left, right, predicate, passthruPredicate);
                 case BoundJoinType.LeftOuter:
                     return new LeftOuterNestedLoopsIterator(left, right, predicate, passthruPredicate);

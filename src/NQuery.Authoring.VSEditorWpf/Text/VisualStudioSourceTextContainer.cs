@@ -20,7 +20,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
         private void OnCurrentChanged()
         {
             var handler = CurrentChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, EventArgs.Empty);
         }
 

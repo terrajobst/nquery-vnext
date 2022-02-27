@@ -20,7 +20,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
         public void NavigateToPrevious()
         {
             var currentTag = GetCurrentTag();
-            if (currentTag == null)
+            if (currentTag is null)
                 return;
 
             var start = currentTag.Value.Start;
@@ -30,7 +30,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
                                   .OfType<SnapshotSpan?>()
                                   .FirstOrDefault();
 
-            var tag = previousTag == null
+            var tag = previousTag is null
                           ? tags.Last()
                           : previousTag.Value;
 
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
         public void NavigateToNext()
         {
             var currentTag = GetCurrentTag();
-            if (currentTag == null)
+            if (currentTag is null)
                 return;
 
             var end = currentTag.Value.End;
@@ -49,7 +49,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
                               .OfType<SnapshotSpan?>()
                               .FirstOrDefault();
 
-            var tag = nextTag == null
+            var tag = nextTag is null
                           ? tags.First()
                           : nextTag.Value;
 

@@ -62,7 +62,7 @@ namespace NQuery.Authoring.Tests.QuickInfo
             TextSpan span;
             var compilation = CompilationFactory.CreateQuery(query, out span);
 
-            if (dataContextModifer != null)
+            if (dataContextModifer is not null)
                 compilation = compilation.WithDataContext(dataContextModifer(compilation.DataContext));
 
             semanticModel = compilation.GetSemanticModel();

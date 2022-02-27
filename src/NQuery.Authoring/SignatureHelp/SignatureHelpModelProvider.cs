@@ -12,7 +12,7 @@ namespace NQuery.Authoring.SignatureHelp
                             .OfType<T>()
                             .FirstOrDefault(c => c.IsBetweenParentheses(position));
 
-            return node == null
+            return node is null
                 ? null
                 : GetModel(semanticModel, node, position);
         }

@@ -7,13 +7,13 @@ namespace NQuery.Text
         public ChangedSourceText(SourceText oldText, SourceText newText, IEnumerable<TextChange> changes)
             : base(newText.Container)
         {
-            if (oldText == null)
+            if (oldText is null)
                 throw new ArgumentNullException(nameof(oldText));
 
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
-            if (changes == null)
+            if (changes is null)
                 throw new ArgumentNullException(nameof(changes));
 
             OldText = oldText;

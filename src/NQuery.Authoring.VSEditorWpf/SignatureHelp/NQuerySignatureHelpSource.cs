@@ -31,7 +31,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 return;
 
             var model = signatureHelpManager.Model;
-            if (model == null)
+            if (model is null)
                 return;
 
             var snapshot = _textBuffer.CurrentSnapshot;
@@ -63,10 +63,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 return null;
 
             var model = signatureHelpManager.Model;
-            if (model == null)
+            if (model is null)
                 return null;
 
-            if (model.Signature == null)
+            if (model.Signature is null)
                 return null;
 
             return signaturesMap[model.Signature];

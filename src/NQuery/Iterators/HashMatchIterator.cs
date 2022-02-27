@@ -72,7 +72,7 @@ namespace NQuery.Iterators
             HashMatchEntry entry;
             _hashTable.TryGetValue(keyValue, out entry);
 
-            if (entry == null)
+            if (entry is null)
             {
                 entry = new HashMatchEntry();
             }
@@ -97,10 +97,10 @@ namespace NQuery.Iterators
 
                     while (!matchFound)
                     {
-                        if (_entry != null)
+                        if (_entry is not null)
                             _entry = _entry.Next;
 
-                        if (_entry == null)
+                        if (_entry is null)
                         {
                             // All rows having the same key value are exhausted.
 
@@ -138,11 +138,11 @@ namespace NQuery.Iterators
 
                             // Seek first occurrence of probe value
 
-                            if (probeValue != null)
+                            if (probeValue is not null)
                                 _hashTable.TryGetValue(probeValue, out _entry);
                         }
 
-                        if (_entry != null)
+                        if (_entry is not null)
                         {
                             _rowBuffer.SetBuild(_entry);
 
@@ -165,12 +165,12 @@ namespace NQuery.Iterators
 
                     while (!unmatchedFound)
                     {
-                        if (_entry != null)
+                        if (_entry is not null)
                             _entry = _entry.Next;
 
-                        if (_entry == null)
+                        if (_entry is null)
                         {
-                            if (_entryEnumerator == null)
+                            if (_entryEnumerator is null)
                                 _entryEnumerator = _hashTable.Values.GetEnumerator();
 
                             // All rows having the same key value are exhausted.

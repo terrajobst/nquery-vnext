@@ -46,11 +46,11 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         public void HandleTextInput(string text)
         {
-            if (_session == null && text.Any(IsTriggerChar))
+            if (_session is null && text.Any(IsTriggerChar))
             {
                 TriggerCompletion(false);
             }
-            else if (_session != null)
+            else if (_session is not null)
             {
                 UpdateModel();
             }
@@ -58,19 +58,19 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         public void HandlePreviewTextInput(string text)
         {
-            if (_session != null && text.Any(IsCommitChar))
+            if (_session is not null && text.Any(IsCommitChar))
                 Commit();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            if (_session != null)
+            if (_session is not null)
                 UpdateModel();
         }
 
         public void TriggerCompletion(bool autoComplete)
         {
-            if (_session != null)
+            if (_session is not null)
                 _session.Dismiss();
             else
                 UpdateModel();
@@ -91,13 +91,13 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         public bool Commit()
         {
-            if (_session == null)
+            if (_session is null)
                 return false;
 
-            var isBuilder = _session.SelectedCompletionSet != null &&
-                            _session.SelectedCompletionSet.SelectionStatus != null &&
-                            _session.SelectedCompletionSet.SelectionStatus.Completion != null &&
-                            _session.SelectedCompletionSet.CompletionBuilders != null &&
+            var isBuilder = _session.SelectedCompletionSet is not null &&
+                            _session.SelectedCompletionSet.SelectionStatus is not null &&
+                            _session.SelectedCompletionSet.SelectionStatus.Completion is not null &&
+                            _session.SelectedCompletionSet.CompletionBuilders is not null &&
                             _session.SelectedCompletionSet.CompletionBuilders.Contains(_session.SelectedCompletionSet.SelectionStatus.Completion);
 
             // If it's a builder, we don't want to eat the enter key.
@@ -118,7 +118,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, e);
         }
 
@@ -130,9 +130,9 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 _model = value;
                 OnModelChanged(EventArgs.Empty);
 
-                var hasData = _model != null && _model.Items.Length > 0;
-                var showSession = _session == null && hasData;
-                var hideSession = _session != null && !hasData;
+                var hasData = _model is not null && _model.Items.Length > 0;
+                var showSession = _session is null && hasData;
+                var hideSession = _session is not null && !hasData;
 
                 if (hideSession)
                 {

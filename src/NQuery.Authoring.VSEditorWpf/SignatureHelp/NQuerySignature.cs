@@ -46,7 +46,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private void RaiseCurrentParameterChanged(IParameter prevCurrentParameter, IParameter newCurrentParameter)
         {
             var tempHandler = CurrentParameterChanged;
-            if (tempHandler != null)
+            if (tempHandler is not null)
                 tempHandler(this, new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
         }
 

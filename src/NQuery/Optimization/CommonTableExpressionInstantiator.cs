@@ -22,7 +22,7 @@ namespace NQuery.Optimization
         protected override BoundRelation RewriteTableRelation(BoundTableRelation node)
         {
             var symbol = node.TableInstance.Table as CommonTableExpressionSymbol;
-            if (symbol == null)
+            if (symbol is null)
                 return base.RewriteTableRelation(node);
 
             if (IsInstantiatedCommonTableExpression(node))
@@ -42,7 +42,7 @@ namespace NQuery.Optimization
             //       Otherwise the slots will not align.
 
             var projection = instantiatedQuery as BoundProjectRelation;
-            var result = projection == null ? instantiatedQuery : projection.Input;
+            var result = projection is null ? instantiatedQuery : projection.Input;
 
             return result;
         }
@@ -65,18 +65,18 @@ namespace NQuery.Optimization
 
             Debug.Assert(node.JoinType == BoundJoinType.Inner);
 
-            return node.Condition == null
+            return node.Condition is null
                 ? otherSide
                 : new BoundFilterRelation(otherSide, node.Condition);
         }
 
         private bool IsInstantiatedCommonTableExpression(BoundRelation boundRelation)
         {
-            if (_symbol == null)
+            if (_symbol is null)
                 return false;
 
             var tableRelation = boundRelation as BoundTableRelation;
-            if (tableRelation == null)
+            if (tableRelation is null)
                 return false;
 
             return tableRelation.TableInstance.Table == _symbol;
@@ -210,7 +210,7 @@ namespace NQuery.Optimization
             var finder = new CommonTableExpressionInstanceFinder(symbol);
             finder.VisitRelation(relation);
 
-            Debug.Assert(finder.Instance != null && finder.Instance.Table == symbol);
+            Debug.Assert(finder.Instance is not null && finder.Instance.Table == symbol);
             Debug.Assert(instanceSlots.Length == finder.Instance.ColumnInstances.Length);
 
             return instanceSlots.Zip(finder.Instance.ColumnInstances, (v, c) => new KeyValuePair<ValueSlot, ValueSlot>(c.ValueSlot, v))
@@ -236,7 +236,7 @@ namespace NQuery.Optimization
             {
                 if (node.TableInstance.Table == _symbol)
                 {
-                    Debug.Assert(_instance == null);
+                    Debug.Assert(_instance is null);
                     _instance = node.TableInstance;
                 }
                 base.VisitTableRelation(node);

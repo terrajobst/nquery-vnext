@@ -7,7 +7,7 @@ namespace NQuery.Authoring.Highlighting.Highlighters
     {
         protected override IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, InnerJoinedTableReferenceSyntax node, int position)
         {
-            if (node.InnerKeyword != null)
+            if (node.InnerKeyword is not null)
                 yield return node.InnerKeyword.Span;
             yield return node.JoinKeyword.Span;
             yield return node.OnKeyword.Span;

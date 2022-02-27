@@ -19,9 +19,9 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return SelectKeyword;
-            if (DistinctAllKeyword != null)
+            if (DistinctAllKeyword is not null)
                 yield return DistinctAllKeyword;
-            if (TopClause != null)
+            if (TopClause is not null)
                 yield return TopClause;
             foreach (var nodeOrToken in Columns.GetWithSeparators())
                 yield return nodeOrToken;

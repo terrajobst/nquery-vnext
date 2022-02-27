@@ -27,7 +27,7 @@ namespace NQuery.Iterators
 
         public override void Open()
         {
-            if (_rows != null)
+            if (_rows is not null)
                 Dispose();
 
             _rows = _table.GetRows().GetEnumerator();
@@ -36,7 +36,7 @@ namespace NQuery.Iterators
         public override void Dispose()
         {
             var disposable = _rows as IDisposable;
-            if (disposable != null)
+            if (disposable is not null)
                 disposable.Dispose();
 
             _rows = null;

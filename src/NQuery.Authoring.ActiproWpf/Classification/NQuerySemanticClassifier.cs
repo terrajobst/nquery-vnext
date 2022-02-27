@@ -17,7 +17,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
             _workspace = document.GetWorkspace();
-            if (_workspace == null)
+            if (_workspace is null)
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

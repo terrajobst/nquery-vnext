@@ -162,7 +162,7 @@ namespace NQuery
                 return Resources.TypeMissing;
 
             var knownType = type.GetKnownType();
-            return knownType == null ? type.Name : knownType.Value.ToDisplayName();
+            return knownType is null ? type.Name : knownType.Value.ToDisplayName();
         }
 
         private static string ToDisplayName(this KnownType type)

@@ -33,7 +33,7 @@ namespace NQuery.Symbols
             get { return _value; }
             set
             {
-                if (value != null && !_type.IsInstanceOfType(value))
+                if (value is not null && !_type.IsInstanceOfType(value))
                     throw new ArgumentException(string.Format(Resources.VariableValueTypeMismatch, value, _type), nameof(value));
 
                 _value = value;

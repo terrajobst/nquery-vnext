@@ -7,7 +7,7 @@ namespace NQuery.Authoring.QuickInfo.Providers
         protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionColumnNameSyntax node)
         {
             var symbol = semanticModel.GetDeclaredSymbol(node);
-            return symbol == null
+            return symbol is null
                 ? null
                 : QuickInfoModel.ForSymbol(semanticModel, node.Span, symbol);
         }

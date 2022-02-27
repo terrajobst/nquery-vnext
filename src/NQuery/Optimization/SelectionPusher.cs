@@ -38,7 +38,7 @@ namespace NQuery.Optimization
 
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
-            if (node.Condition != null && node.Probe == null)
+            if (node.Condition is not null && node.Probe is null)
             {
                 BoundExpression pushedLeft = null;
                 BoundExpression pushedRight = null;
@@ -60,11 +60,11 @@ namespace NQuery.Optimization
                     }
                 }
 
-                var newLeft = pushedLeft == null
+                var newLeft = pushedLeft is null
                     ? node.Left
                     : new BoundFilterRelation(node.Left, pushedLeft);
 
-                var newRight = pushedRight == null
+                var newRight = pushedRight is null
                     ? node.Right
                     : new BoundFilterRelation(node.Right, pushedRight);
 
@@ -162,13 +162,13 @@ namespace NQuery.Optimization
                 }
             }
 
-            var newInputInput = pushed == null
+            var newInputInput = pushed is null
                 ? input.Input
                 : new BoundFilterRelation(input.Input, pushed);
 
             var newInput = RewriteRelation(input.Update(newInputInput, input.DefinedValues));
 
-            var newNode = remainder == null
+            var newNode = remainder is null
                 ? newInput
                 : new BoundFilterRelation(newInput, remainder);
 
@@ -205,13 +205,13 @@ namespace NQuery.Optimization
                 }
             }
 
-            var newInputInput = pushed == null
+            var newInputInput = pushed is null
                 ? input.Input
                 : new BoundFilterRelation(input.Input, pushed);
 
             var newInput = RewriteRelation(input.Update(newInputInput, input.Groups, input.Aggregates));
 
-            var newNode = remainder == null
+            var newNode = remainder is null
                 ? newInput
                 : new BoundFilterRelation(newInput, remainder);
 
@@ -230,7 +230,7 @@ namespace NQuery.Optimization
             //       * pushing to the left is OK if it's a left (anti) semi join
             //       * pushing to the right is OK if it's a right (anti) semi join
 
-            if (input.Probe != null)
+            if (input.Probe is not null)
                 return node.WithInput(RewriteRelation(input));
 
             if (AllowsMerge(input.JoinType))
@@ -261,11 +261,11 @@ namespace NQuery.Optimization
                     }
                 }
 
-                var newLeft = pushedLeft == null
+                var newLeft = pushedLeft is null
                     ? input.Left
                     : new BoundFilterRelation(input.Left, pushedLeft);
 
-                var newRight = pushedRight == null
+                var newRight = pushedRight is null
                     ? input.Right
                     : new BoundFilterRelation(input.Right, pushedRight);
 
@@ -276,7 +276,7 @@ namespace NQuery.Optimization
                                             RewriteValueSlot(input.Probe),
                                             RewriteExpression(input.PassthruPredicate));
 
-                var newNode = remainder == null
+                var newNode = remainder is null
                     ? (BoundRelation)newInput
                     : node.Update(newInput, remainder);
 

@@ -9,9 +9,9 @@ namespace NQuery.Authoring.CodeActions.Issues
         {
             return from orderByColumn in node.Columns
                    let selector = orderByColumn.ColumnSelector as LiteralExpressionSyntax
-                   where selector != null && selector.Value is int
+                   where selector is not null && selector.Value is int
                    let column = semanticModel.GetSymbol(orderByColumn)
-                   where column != null && !string.IsNullOrEmpty(column.Name)
+                   where column is not null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
                    let action = new[] {new ReplaceOrdinalByNamedReferenceCodeAction(selector, namedReference)}
                    select new CodeIssue(CodeIssueKind.Warning, selector.Span, action);

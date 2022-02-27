@@ -17,15 +17,15 @@ namespace NQuery.Authoring.CodeActions.Fixes
         {
             var root = semanticModel.SyntaxTree.Root;
             var column = root.DescendantNodes().OfType<OrderByColumnSyntax>().FirstOrDefault(n => n.Span.ContainsOrTouches(position));
-            if (column == null)
+            if (column is null)
                 return Enumerable.Empty<ICodeAction>();
 
             var orderedQuery = column.Ancestors().OfType<OrderedQuerySyntax>().FirstOrDefault();
-            if (orderedQuery == null)
+            if (orderedQuery is null)
                 return Enumerable.Empty<ICodeAction>();
 
             var selectQuery = orderedQuery.GetAppliedSelectQuery();
-            if (selectQuery == null)
+            if (selectQuery is null)
                 return Enumerable.Empty<ICodeAction>();
 
             return new[] {new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector)};

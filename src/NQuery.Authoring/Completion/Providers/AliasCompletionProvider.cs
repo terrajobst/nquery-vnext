@@ -6,7 +6,7 @@ namespace NQuery.Authoring.Completion.Providers
     {
         protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, AliasSyntax node)
         {
-            if (node.AsKeyword != null ||
+            if (node.AsKeyword is not null ||
                 node.Identifier.IsMissing ||
                 !node.Span.ContainsOrTouches(position))
             {

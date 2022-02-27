@@ -16,7 +16,7 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            if (AsKeyword != null)
+            if (AsKeyword is not null)
                 yield return AsKeyword;
             yield return Identifier;
         }

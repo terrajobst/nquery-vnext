@@ -29,7 +29,7 @@ namespace NQuery.Binding
         public override IEnumerable<PropertySymbol> LookupProperties(Type type)
         {
             var propertyProvider = Lookup(_dataContext.PropertyProviders, type);
-            if (propertyProvider == null)
+            if (propertyProvider is null)
                 return Enumerable.Empty<PropertySymbol>();
 
             ImmutableArray<PropertySymbol> result;
@@ -45,7 +45,7 @@ namespace NQuery.Binding
         public override IEnumerable<MethodSymbol> LookupMethods(Type type)
         {
             var methodProvider = Lookup(_dataContext.MethodProviders, type);
-            if (methodProvider == null)
+            if (methodProvider is null)
                 return Enumerable.Empty<MethodSymbol>();
 
             ImmutableArray<MethodSymbol> result;
@@ -61,7 +61,7 @@ namespace NQuery.Binding
         public override IComparer LookupComparer(Type type)
         {
             var registeredComparer = Lookup(_dataContext.Comparers, type);
-            if (registeredComparer != null)
+            if (registeredComparer is not null)
                 return registeredComparer;
 
             return type.IsComparable() ? Comparer.Default : null;
@@ -69,7 +69,7 @@ namespace NQuery.Binding
 
         private static T Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type key) where T: class
         {
-            while (key != null)
+            while (key is not null)
             {
                 T value;
                 if (dictionary.TryGetValue(key, out value))

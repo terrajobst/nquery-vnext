@@ -55,11 +55,11 @@ namespace NQuery.Optimization
         private static CardinalityEstimate EstimateTableRelation(BoundTableRelation relation)
         {
             var tableSymbol = relation.TableInstance.Table as SchemaTableSymbol;
-            if (tableSymbol == null)
+            if (tableSymbol is null)
                 return CardinalityEstimate.Unknown;
 
             var collection = tableSymbol.Definition.GetRows() as ICollection;
-            if (collection == null)
+            if (collection is null)
                 return CardinalityEstimate.Unknown;
 
             return new CardinalityEstimate(0, collection.Count);

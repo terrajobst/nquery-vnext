@@ -19,7 +19,7 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return Expression;
-            if (NotKeyword != null)
+            if (NotKeyword is not null)
                 yield return NotKeyword;
             yield return InKeyword;
             yield return ArgumentList;

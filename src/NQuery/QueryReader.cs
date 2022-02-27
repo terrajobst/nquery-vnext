@@ -28,7 +28,7 @@ namespace NQuery
 
         public void Dispose()
         {
-            if (_iterator == null)
+            if (_iterator is null)
                 return;
 
             _iterator.Dispose();
@@ -63,7 +63,7 @@ namespace NQuery
         {
             get
             {
-                if (_isBof || _iterator == null)
+                if (_isBof || _iterator is null)
                     throw new InvalidOperationException(Resources.InvalidAttemptToRead);
 
                 return _iterator.RowBuffer[columnIndex];

@@ -7,7 +7,7 @@ namespace NQuery.Symbols
         public ReflectionParameterSymbol(ParameterInfo parameterInfo)
             : this(parameterInfo, parameterInfo?.Name)
         {
-            if (parameterInfo == null)
+            if (parameterInfo is null)
                 throw new ArgumentNullException(nameof(parameterInfo));
 
             ParameterInfo = parameterInfo;
@@ -16,7 +16,7 @@ namespace NQuery.Symbols
         public ReflectionParameterSymbol(ParameterInfo parameterInfo, string name)
             : base(name, parameterInfo?.ParameterType)
         {
-            if (parameterInfo == null)
+            if (parameterInfo is null)
                 throw new ArgumentNullException(nameof(parameterInfo));
 
             ParameterInfo = parameterInfo;

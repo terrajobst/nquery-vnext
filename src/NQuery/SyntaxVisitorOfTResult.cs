@@ -6,7 +6,7 @@ namespace NQuery
     {
         protected TResult Dispatch(SyntaxNode node)
         {
-            if (node == null)
+            if (node is null)
                 throw new ArgumentNullException(nameof(node));
 
             switch (node.Kind)

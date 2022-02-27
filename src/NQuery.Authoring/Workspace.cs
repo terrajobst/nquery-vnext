@@ -55,7 +55,7 @@ namespace NQuery.Authoring
         private void OnCurrentDocumentChanged()
         {
             var handler = CurrentDocumentChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, EventArgs.Empty);
         }
 

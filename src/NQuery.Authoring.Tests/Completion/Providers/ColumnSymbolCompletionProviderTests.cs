@@ -41,7 +41,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var tableReference = syntaxTree.Root.DescendantNodesAndSelf()
                 .OfType<NamedTableReferenceSyntax>()
                 .Select(semanticModel.GetDeclaredSymbol)
-                .Single(s => s != null && s.Name == tableInstanceName);
+                .Single(s => s is not null && s.Name == tableInstanceName);
 
             column = tableReference.ColumnInstances.Single(c => c.Name == columnName);
             columnItem = completionModel.Items.Single(i => i.InsertionText == columnName);

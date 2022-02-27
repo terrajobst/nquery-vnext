@@ -31,7 +31,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         private static bool IsNullLiteral(ExpressionSyntax node)
         {
             var literal = node as LiteralExpressionSyntax;
-            return literal != null && literal.Token.Kind == SyntaxKind.NullKeyword;
+            return literal is not null && literal.Token.Kind == SyntaxKind.NullKeyword;
         }
 
         private sealed class ConvertToIsNullCodeAction : CodeAction

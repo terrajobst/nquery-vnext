@@ -13,7 +13,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public static SourceTextContainer ToSourceTextContainer(this ITextDocument textDocument)
         {
-            if (textDocument == null)
+            if (textDocument is null)
                 throw new ArgumentNullException(nameof(textDocument));
 
             return ProviderMap.GetValue(textDocument, tb => new ActiproSourceTextContainer(tb));
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
         {
-            if (textSnapshot == null)
+            if (textSnapshot is null)
                 throw new ArgumentNullException(nameof(textSnapshot));
 
             var container = (ActiproSourceTextContainer)textSnapshot.Document.ToSourceTextContainer();
@@ -30,11 +30,11 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public static ITextSnapshot ToTextSnapshot(this SourceText text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var actiproSourceText = text as ActiproSourceText;
-            if (actiproSourceText == null)
+            if (actiproSourceText is null)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(text));
 
             return actiproSourceText.Snapshot;
@@ -42,11 +42,11 @@ namespace NQuery.Authoring.ActiproWpf.Text
 
         public static ITextDocument ToTextDocument(this SourceTextContainer container)
         {
-            if (container == null)
+            if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
             var actiproSourceTextContainer = container as ActiproSourceTextContainer;
-            if (actiproSourceTextContainer == null)
+            if (actiproSourceTextContainer is null)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(container));
 
             return actiproSourceTextContainer.TextDocument;

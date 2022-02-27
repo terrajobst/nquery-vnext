@@ -6,7 +6,7 @@ namespace NQuery
     {
         public static SyntaxToken FindTokenOnLeft(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindToken(position, descendIntoTrivia:true);
@@ -15,20 +15,20 @@ namespace NQuery
 
         public static IEnumerable<SyntaxToken> FindStartTokens(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindToken(position);
             yield return token;
 
             var previousToken = token.GetPreviousToken();
-            if (previousToken != null && previousToken.Span.End == position)
+            if (previousToken is not null && previousToken.Span.End == position)
                 yield return previousToken;
         }
 
         public static IEnumerable<SyntaxNode> FindNodes(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             // NOTE: We don't use Distinct() because we want to preserve the
@@ -42,7 +42,7 @@ namespace NQuery
         public static IEnumerable<T> FindNodes<T>(this SyntaxNode root, int position)
             where T: SyntaxNode
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             return root.FindNodes(position).OfType<T>();
@@ -50,7 +50,7 @@ namespace NQuery
 
         public static SyntaxToken GetPreviousTokenIfEndOfFile(this SyntaxToken token)
         {
-            if (token == null)
+            if (token is null)
                 throw new ArgumentNullException(nameof(token));
 
             return token.Kind != SyntaxKind.EndOfFileToken
@@ -61,7 +61,7 @@ namespace NQuery
         private static SyntaxToken GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(this SyntaxToken token, int position)
         {
             var previous = token.GetPreviousToken(includeZeroLength: false, includeSkippedTokens: true);
-            if (previous != null)
+            if (previous is not null)
             {
                 if (token.Kind == SyntaxKind.EndOfFileToken || previous.Span.End == position)
                     return previous;
@@ -72,14 +72,14 @@ namespace NQuery
 
         public static SyntaxToken GetPreviousIfCurrentContainsOrTouchesPosition(this SyntaxToken token, int position)
         {
-            return token != null && token.Span.ContainsOrTouches(position)
+            return token is not null && token.Span.ContainsOrTouches(position)
                        ? token.GetPreviousToken()
                        : token;
         }
 
         public static SyntaxToken FindTokenContext(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
@@ -91,12 +91,12 @@ namespace NQuery
             {
                 // token <missing> | token
                 var previousToken = token.GetPreviousToken(includeZeroLength: true);
-                if (previousToken != null && previousToken.IsMissing && previousToken.Span.End <= position)
+                if (previousToken is not null && previousToken.IsMissing && previousToken.Span.End <= position)
                     return previousToken;
 
                 // token | <missing> token
                 var nextToken = token.GetNextToken(includeZeroLength: true);
-                if (nextToken != null && nextToken.IsMissing && position <= nextToken.Span.Start)
+                if (nextToken is not null && nextToken.IsMissing && position <= nextToken.Span.Start)
                     return nextToken;
             }
 
@@ -105,7 +105,7 @@ namespace NQuery
 
         public static bool InComment(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
@@ -118,7 +118,7 @@ namespace NQuery
 
         public static bool InLiteral(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
@@ -127,7 +127,7 @@ namespace NQuery
 
         public static bool GuaranteedInUserGivenName(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             return root.GuaranteedInAlias(position) ||
@@ -138,7 +138,7 @@ namespace NQuery
 
         public static bool PossiblyInUserGivenName(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             return root.PossiblyInAlias(position) ||
@@ -149,47 +149,47 @@ namespace NQuery
 
         private static bool GuaranteedInAlias(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
             var node = token.Parent as AliasSyntax;
-            return node != null && node.AsKeyword != null && node.AsKeyword.Span.End <= position;
+            return node is not null && node.AsKeyword is not null && node.AsKeyword.Span.End <= position;
         }
 
         private static bool PossiblyInAlias(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
             var node = token.Parent as AliasSyntax;
-            return node != null && node.Span.ContainsOrTouches(position);
+            return node is not null && node.Span.ContainsOrTouches(position);
         }
 
         private static bool GuaranteedInCteName(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte != null && cte.RecursiveKeyword != null && cte.Name.Span.ContainsOrTouches(position);
+            return cte is not null && cte.RecursiveKeyword is not null && cte.Name.Span.ContainsOrTouches(position);
         }
 
         private static bool PossiblyInCteName(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte != null && cte.Name.Span.ContainsOrTouches(position);
+            return cte is not null && cte.Name.Span.ContainsOrTouches(position);
         }
 
         private static bool InCteColumnList(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var node = root.FindTokenOnLeft(position).Parent;
@@ -200,17 +200,17 @@ namespace NQuery
 
         private static bool InDerivedTableName(this SyntaxNode root, int position)
         {
-            if (root == null)
+            if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
             var syntaxToken = root.FindTokenOnLeft(position);
             var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
-            return derivedTable != null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
+            return derivedTable is not null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
         public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)
         {
-            if (query == null)
+            if (query is null)
                 throw new ArgumentNullException(nameof(query));
 
             var node = query.Query;

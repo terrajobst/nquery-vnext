@@ -58,10 +58,10 @@ namespace NQuery.Symbols.Aggregation
             public void Accumulate(object value)
             {
                 var comparable = value as IComparable;
-                if (comparable == null)
+                if (comparable is null)
                     return;
 
-                if (_result == null)
+                if (_result is null)
                 {
                     _result = comparable;
                 }

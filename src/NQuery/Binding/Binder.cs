@@ -26,22 +26,22 @@ namespace NQuery.Binding
 
         protected virtual bool InWhereClause
         {
-            get { return Parent != null && Parent.InWhereClause; }
+            get { return Parent is not null && Parent.InWhereClause; }
         }
 
         protected virtual bool InOnClause
         {
-            get { return Parent != null && Parent.InOnClause; }
+            get { return Parent is not null && Parent.InOnClause; }
         }
 
         protected virtual bool InGroupByClause
         {
-            get { return Parent != null && Parent.InGroupByClause; }
+            get { return Parent is not null && Parent.InGroupByClause; }
         }
 
         protected virtual bool InAggregateArgument
         {
-            get { return Parent != null && Parent.InAggregateArgument; }
+            get { return Parent is not null && Parent.InAggregateArgument; }
         }
 
         private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)
@@ -93,11 +93,11 @@ namespace NQuery.Binding
         private BoundNode BindRoot(SyntaxNode root)
         {
             var query = root as QuerySyntax;
-            if (query != null)
+            if (query is not null)
                 return BindQuery(query);
 
             var expression = root as ExpressionSyntax;
-            if (expression != null)
+            if (expression is not null)
                 return BindExpression(expression);
 
             throw ExceptionBuilder.UnexpectedValue(root);

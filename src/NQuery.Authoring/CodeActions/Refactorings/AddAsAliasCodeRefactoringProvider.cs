@@ -7,7 +7,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
     {
         protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, AliasSyntax node)
         {
-            return node.AsKeyword == null
+            return node.AsKeyword is null
                 ? new[] { new AddAsToAliasCodeAction(node) }
                 : Enumerable.Empty<ICodeAction>();
         }

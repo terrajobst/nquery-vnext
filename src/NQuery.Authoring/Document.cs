@@ -23,7 +23,7 @@ namespace NQuery.Authoring
 
         public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
         {
-            if (_syntaxTreeTask != null && _syntaxTreeTask.IsCompleted)
+            if (_syntaxTreeTask is not null && _syntaxTreeTask.IsCompleted)
             {
                 syntaxTree = _syntaxTreeTask.Result;
                 return true;
@@ -35,7 +35,7 @@ namespace NQuery.Authoring
 
         public bool TryGetCompilation(out Compilation compilation)
         {
-            if (_compilationTask != null && _compilationTask.IsCompleted)
+            if (_compilationTask is not null && _compilationTask.IsCompleted)
             {
                 compilation = _compilationTask.Result;
                 return true;
@@ -47,7 +47,7 @@ namespace NQuery.Authoring
 
         public bool TryGetSemanticModel(out SemanticModel semanticModel)
         {
-            if (_semanticModelTask != null && _semanticModelTask.IsCompleted)
+            if (_semanticModelTask is not null && _semanticModelTask.IsCompleted)
             {
                 semanticModel = _semanticModelTask.Result;
                 return true;
@@ -59,7 +59,7 @@ namespace NQuery.Authoring
 
         public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (_syntaxTreeTask != null)
+            if (_syntaxTreeTask is not null)
                 return _syntaxTreeTask;
 
             var task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
@@ -70,7 +70,7 @@ namespace NQuery.Authoring
 
         public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (_compilationTask!= null)
+            if (_compilationTask is not null)
                 return _compilationTask;
 
             var task = ComputeCompilationAsync(cancellationToken);
@@ -81,7 +81,7 @@ namespace NQuery.Authoring
 
         public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (_semanticModelTask != null)
+            if (_semanticModelTask is not null)
                 return _semanticModelTask;
 
             var task = ComputeSemanticModelAsync(cancellationToken);

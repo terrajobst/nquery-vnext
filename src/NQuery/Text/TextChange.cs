@@ -4,7 +4,7 @@ namespace NQuery.Text
     {
         public static TextChange ForReplacement(TextSpan span, string newText)
         {
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
             return new TextChange(span, newText);
@@ -12,7 +12,7 @@ namespace NQuery.Text
 
         public static TextChange ForInsertion(int position, string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             var span = new TextSpan(position, 0);
@@ -26,7 +26,7 @@ namespace NQuery.Text
 
         public TextChange(TextSpan span, string newText)
         {
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
             Span = span;
@@ -45,14 +45,14 @@ namespace NQuery.Text
         public override bool Equals(object obj)
         {
             var other = obj as TextChange?;
-            return other != null && Equals(other.Value);
+            return other is not null && Equals(other.Value);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (Span.GetHashCode()*397) ^ (NewText != null ? NewText.GetHashCode() : 0);
+                return (Span.GetHashCode()*397) ^ (NewText is not null ? NewText.GetHashCode() : 0);
             }
         }
 

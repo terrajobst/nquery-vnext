@@ -26,7 +26,7 @@ namespace NQuery.Authoring.ActiproWpf.Margins
             _view.SelectionChanged += ViewOnSelectionChanged;
             _view.TextAreaLayout += ViewOnTextAreaLayout;
             var workspace = _view.SyntaxEditor.Document.GetWorkspace();
-            if (workspace != null)
+            if (workspace is not null)
                 workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
             _view.SyntaxEditor.Document.Language.RegisterService(typeof(ICodeActionGlyphController), this);
 

@@ -37,7 +37,7 @@ namespace NQuery.Binding
         public Binder GetBinder(SyntaxNode syntaxNode)
         {
             var boundNode = GetBoundNode(syntaxNode);
-            return boundNode == null ? null : GetBinder(boundNode);
+            return boundNode is null ? null : GetBinder(boundNode);
         }
 
         public Binder GetBinder(BoundNode boundNode)

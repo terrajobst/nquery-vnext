@@ -33,7 +33,7 @@ namespace NQuery.Iterators
 
         public static IteratorPredicate BuildIteratorPredicate(BoundExpression predicate, bool nullValue, RowBufferAllocation allocation)
         {
-            if (predicate == null)
+            if (predicate is null)
                 return () => nullValue;
 
             return BuildExpression<IteratorPredicate>(predicate, typeof(bool), allocation);
@@ -93,7 +93,7 @@ namespace NQuery.Iterators
         {
             return expressions
                 .Select(BuildNullCheck)
-                .Aggregate<Expression, Expression>(null, (current, nullCheck) => current == null ? nullCheck : Expression.OrElse(current, nullCheck));
+                .Aggregate<Expression, Expression>(null, (current, nullCheck) => current is null ? nullCheck : Expression.OrElse(current, nullCheck));
         }
 
         private static Expression BuildNullCheck(Expression instance, IReadOnlyCollection<Expression> arguments)
@@ -453,7 +453,7 @@ namespace NQuery.Iterators
         private Expression BuildCaseLabel(BoundCaseExpression caseExpression, int caseLabelIndex)
         {
             if (caseLabelIndex == caseExpression.CaseLabels.Length)
-                return caseExpression.ElseExpression == null
+                return caseExpression.ElseExpression is null
                            ? BuildNullValue(caseExpression.Type)
                            : BuildLiftedExpression(caseExpression.ElseExpression);
 

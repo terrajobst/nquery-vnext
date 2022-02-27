@@ -116,7 +116,7 @@ namespace NQuery.Tests
         public override bool Equals(object obj)
         {
             var other = obj as MockedOperatorStruct?;
-            return other != null && string.Equals(_text, other.Value._text, StringComparison.Ordinal);
+            return other is not null && string.Equals(_text, other.Value._text, StringComparison.Ordinal);
         }
 
         public override int GetHashCode()

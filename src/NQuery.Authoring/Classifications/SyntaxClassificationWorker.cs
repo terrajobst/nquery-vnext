@@ -45,7 +45,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyNodeOrToken(SyntaxNodeOrToken nodeOrToken)
         {
             var asNode = nodeOrToken.AsNode();
-            if (asNode != null)
+            if (asNode is not null)
                 ClassifyNode(asNode);
             else
                 ClassifyToken(nodeOrToken.AsToken());
@@ -57,7 +57,7 @@ namespace NQuery.Authoring.Classifications
                 ClassifyTrivia(trivia);
 
             var kind = GetClassificationForToken(token);
-            if (kind != null)
+            if (kind is not null)
                 AddClassification(token, kind.Value);
 
             foreach (var trivia in token.TrailingTrivia)
@@ -70,7 +70,7 @@ namespace NQuery.Authoring.Classifications
                 AddClassification(trivia, SyntaxClassification.Whitespace);
             else if (trivia.Kind.IsComment())
                 AddClassification(trivia, SyntaxClassification.Comment);
-            else if (trivia.Structure != null)
+            else if (trivia.Structure is not null)
                 ClassifyNode(trivia.Structure);
         }
 

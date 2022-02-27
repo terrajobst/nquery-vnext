@@ -17,9 +17,9 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            if (TableName != null)
+            if (TableName is not null)
                 yield return TableName;
-            if (DotToken != null)
+            if (DotToken is not null)
                 yield return DotToken;
             yield return AsteriskToken;
         }

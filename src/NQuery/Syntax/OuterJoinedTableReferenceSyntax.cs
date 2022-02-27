@@ -19,7 +19,7 @@ namespace NQuery.Syntax
         {
             yield return Left;
             yield return TypeKeyword;
-            if (OuterKeyword != null)
+            if (OuterKeyword is not null)
                 yield return OuterKeyword;
             yield return JoinKeyword;
             yield return Right;

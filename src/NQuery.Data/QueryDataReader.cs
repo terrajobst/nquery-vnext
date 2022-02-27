@@ -21,7 +21,7 @@ namespace NQuery.Data
         /// </summary>
         public void Dispose()
         {
-            if (_queryReader == null)
+            if (_queryReader is null)
                 return;
 
             _queryReader.Dispose();
@@ -38,7 +38,7 @@ namespace NQuery.Data
 
         private void EnsureNotDisposed()
         {
-            if (_queryReader == null)
+            if (_queryReader is null)
                 throw new ObjectDisposedException(nameof(QueryDataReader));
         }
 
@@ -97,7 +97,7 @@ namespace NQuery.Data
         /// </summary>
         bool IDataReader.IsClosed
         {
-            get { return _queryReader == null; }
+            get { return _queryReader is null; }
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace NQuery.Data
         /// </returns>
         public int GetValues(object[] values)
         {
-            if (values == null)
+            if (values is null)
                 throw new ArgumentNullException(nameof(values));
 
             EnsureNotDisposed();
@@ -203,7 +203,7 @@ namespace NQuery.Data
         /// </returns>
         public int GetOrdinal(string name)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
             EnsureNotDisposed();
@@ -259,7 +259,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
-            if (buffer == null)
+            if (buffer is null)
                 throw new ArgumentNullException(nameof(buffer));
 
             var fieldData = (byte[])GetValue(i);
@@ -302,7 +302,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
         {
-            if (buffer == null)
+            if (buffer is null)
                 throw new ArgumentNullException(nameof(buffer));
 
             var fieldData = (char[])GetValue(i);
@@ -461,7 +461,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public bool IsDBNull(int i)
         {
-            return GetValue(i) == null;
+            return GetValue(i) is null;
         }
 
         /// <summary>

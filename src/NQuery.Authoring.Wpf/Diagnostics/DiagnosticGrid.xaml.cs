@@ -11,7 +11,7 @@ namespace NQuery.Authoring.Wpf
 
         public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
         {
-            DataContext = diagnostics == null || sourceText == null
+            DataContext = diagnostics is null || sourceText is null
                               ? null
                               : new DiagnosticsViewModel(diagnostics, sourceText);
         }
@@ -21,7 +21,7 @@ namespace NQuery.Authoring.Wpf
             get
             {
                 var viewModel = DiagnosticDataGrid.SelectedItem as DiagnosticViewModel;
-                return viewModel == null ? null : viewModel.Diagnostic;
+                return viewModel is null ? null : viewModel.Diagnostic;
             }
         }
     }

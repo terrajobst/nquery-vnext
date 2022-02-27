@@ -49,7 +49,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             var builderResult = MatchCompletionList(CompletionBuilders, CompletionMatchType.MatchDisplayText, false);
             var itemResult = MatchCompletionList(Completions, CompletionMatchType.MatchDisplayText, false);
 
-            if (builderResult == null || itemResult == null)
+            if (builderResult is null || itemResult is null)
             {
                 base.SelectBestMatch();
             }
@@ -137,7 +137,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 
         private static ImageSource ToImage(Glyph? glyph)
         {
-            return glyph == null ? null : NQueryGlyphImageSource.Get(glyph.Value);
+            return glyph is null ? null : NQueryGlyphImageSource.Get(glyph.Value);
         }
     }
 }

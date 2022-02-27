@@ -78,7 +78,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
         private static SelectionHandler GetSelectionHandler(ITextView textView)
         {
             var editorView = textView as IEditorView;
-            if (editorView == null)
+            if (editorView is null)
                 return null;
 
             var key = typeof(SelectionHandler);
@@ -95,14 +95,14 @@ namespace NQuery.Authoring.ActiproWpf.Selection
         protected static void ExtendSelection(ITextView textView)
         {
             var selectionHandler = GetSelectionHandler(textView);
-            if (selectionHandler != null)
+            if (selectionHandler is not null)
                 selectionHandler.ExtendSelection();
         }
 
         protected static void ShrinkSelection(ITextView textView)
         {
             var selectionHandler = GetSelectionHandler(textView);
-            if (selectionHandler != null)
+            if (selectionHandler is not null)
                 selectionHandler.ShrinkSelection();
         }
     }

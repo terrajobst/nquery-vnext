@@ -19,7 +19,7 @@ namespace NQuery.Text
 
         public static SourceText From(string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             return new StringText(text);
@@ -29,7 +29,7 @@ namespace NQuery.Text
         {
             get
             {
-                if (_container == null)
+                if (_container is null)
                 {
                     var container = new StaticSourceTextContainer(this);
                     Interlocked.CompareExchange(ref _container, container, null);
@@ -83,7 +83,7 @@ namespace NQuery.Text
 
         public SourceText WithChanges(params TextChange[] changes)
         {
-            if (changes == null || changes.Length == 0)
+            if (changes is null || changes.Length == 0)
                 return this;
 
             return WithChanges((IEnumerable<TextChange>) changes);
@@ -91,7 +91,7 @@ namespace NQuery.Text
 
         public SourceText WithChanges(IEnumerable<TextChange> changes)
         {
-            if (changes == null)
+            if (changes is null)
                 throw new ArgumentNullException(nameof(changes));
 
             var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
@@ -148,7 +148,7 @@ namespace NQuery.Text
 
         public IEnumerable<TextChange> GetChanges(SourceText oldText)
         {
-            if (oldText == null)
+            if (oldText is null)
                 throw new ArgumentNullException(nameof(oldText));
 
             if (oldText == this)
@@ -158,10 +158,10 @@ namespace NQuery.Text
             var candidate = this;
             var path = new Stack<ChangedSourceText>();
 
-            while (candidate != null && !rootFound)
+            while (candidate is not null && !rootFound)
             {
                 var changed = candidate as ChangedSourceText;
-                if (changed == null)
+                if (changed is null)
                 {
                     candidate = null;
                 }
@@ -195,7 +195,7 @@ namespace NQuery.Text
 
         public SourceText Replace(TextSpan span, string newText)
         {
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
             return WithChanges(new TextChange(span, newText));
@@ -203,7 +203,7 @@ namespace NQuery.Text
 
         public SourceText Replace(int start, int length, string newText)
         {
-            if (newText == null)
+            if (newText is null)
                 throw new ArgumentNullException(nameof(newText));
 
             var span = new TextSpan(start, length);

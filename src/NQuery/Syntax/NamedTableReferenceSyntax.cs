@@ -17,7 +17,7 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return TableName;
-            if (Alias != null)
+            if (Alias is not null)
                 yield return Alias;
         }
 

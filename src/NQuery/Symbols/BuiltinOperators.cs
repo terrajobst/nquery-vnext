@@ -69,7 +69,7 @@ namespace NQuery.Symbols
 
         private static bool SoundsLike(string left, string right)
         {
-            if (left == null || right == null)
+            if (left is null || right is null)
                 return false;
 
             return Soundex.GetCode(left) == Soundex.GetCode(right);

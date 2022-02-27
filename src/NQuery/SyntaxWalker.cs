@@ -4,7 +4,7 @@ namespace NQuery
     {
         public override void DefaultVisit(SyntaxNode node)
         {
-            if (node == null)
+            if (node is null)
                 throw new ArgumentNullException(nameof(node));
 
             foreach (var syntaxNodeOrToken in node.ChildNodesAndTokens())
@@ -37,7 +37,7 @@ namespace NQuery
         public virtual void VisitTrivia(SyntaxTrivia trivia)
         {
             var structure = trivia.Structure;
-            if (structure != null)
+            if (structure is not null)
                 Dispatch(structure);
         }
     }

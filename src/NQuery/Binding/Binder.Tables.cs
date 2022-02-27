@@ -53,7 +53,7 @@ namespace NQuery.Binding
                 Diagnostics.ReportUndeclaredTable(node);
 
                 var errorTable = new ErrorTableSymbol(node.TableName.ValueText);
-                var errorAlias = node.Alias == null
+                var errorAlias = node.Alias is null
                                    ? errorTable.Name
                                    : node.Alias.Identifier.ValueText;
                 var errorInstance = new TableInstanceSymbol(errorAlias, errorTable, ValueSlotFactory);
@@ -64,7 +64,7 @@ namespace NQuery.Binding
                 Diagnostics.ReportAmbiguousTable(node.TableName, symbols);
 
             var table = symbols[0];
-            var aliasIdentifier = node.Alias != null
+            var aliasIdentifier = node.Alias is not null
                 ? node.Alias.Identifier
                 : node.TableName;
 

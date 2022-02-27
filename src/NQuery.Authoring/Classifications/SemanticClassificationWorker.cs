@@ -23,7 +23,7 @@ namespace NQuery.Authoring.Classifications
                 return;
 
             var classification = GetClassification(symbol);
-            if (classification == null)
+            if (classification is null)
                 return;
 
             _result.Add(new SemanticClassificationSpan(textSpan, classification.Value));
@@ -130,7 +130,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyCommonTableExpression(CommonTableExpressionSyntax node)
         {
             var symbol = _semanticModel.GetDeclaredSymbol(node);
-            if (symbol != null)
+            if (symbol is not null)
                 AddClassification(node.Name, symbol);
 
             VisitChildren(node);
@@ -139,7 +139,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyCommonTableExpressionColumnName(CommonTableExpressionColumnNameSyntax node)
         {
             var symbol = _semanticModel.GetDeclaredSymbol(node);
-            if (symbol == null)
+            if (symbol is null)
                 return;
 
             AddClassification(node, symbol);
@@ -148,7 +148,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyExpression(ExpressionSyntax node, SyntaxNodeOrToken context)
         {
             var symbol = _semanticModel.GetSymbol(node);
-            if (symbol == null)
+            if (symbol is null)
                 return;
 
             AddClassification(context, symbol);
@@ -191,7 +191,7 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyWildcardSelectColumn(WildcardSelectColumnSyntax node)
         {
             var tableInstanceSymbol = _semanticModel.GetTableInstance(node);
-            if (tableInstanceSymbol == null)
+            if (tableInstanceSymbol is null)
                 return;
 
             AddClassification(node.TableName, tableInstanceSymbol);
@@ -201,7 +201,7 @@ namespace NQuery.Authoring.Classifications
         {
             ClassifyNode(node.Expression);
 
-            if (node.Alias == null)
+            if (node.Alias is null)
                 return;
 
             var queryColumnInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
@@ -211,12 +211,12 @@ namespace NQuery.Authoring.Classifications
         private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)
         {
             var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-            if (tableInstanceSymbol == null)
+            if (tableInstanceSymbol is null)
                 return;
 
             AddClassification(node.TableName, tableInstanceSymbol.Table);
 
-            if (node.Alias != null)
+            if (node.Alias is not null)
                 AddClassification(node.Alias.Identifier, tableInstanceSymbol);
         }
 
@@ -225,7 +225,7 @@ namespace NQuery.Authoring.Classifications
             ClassifyNode(node.Query);
 
             var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-            if (tableInstanceSymbol != null)
+            if (tableInstanceSymbol is not null)
                 AddClassification(node.Name, tableInstanceSymbol);
         }
     }

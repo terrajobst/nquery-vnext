@@ -148,7 +148,7 @@ namespace NQuery.Optimization
             var input = RewriteRelation(node.Input);
 
             var rewrittenRelation = RewriteConjunctions(input, node.Condition);
-            if (rewrittenRelation != null)
+            if (rewrittenRelation is not null)
             {
                 // We might have residual subqueries that couldn't be
                 // converted to semi joins.
@@ -178,7 +178,7 @@ namespace NQuery.Optimization
             var right = RewriteRelation(node.Right);
 
             var rewrittenRight = RewriteConjunctions(right, node.Condition);
-            if (rewrittenRight != null)
+            if (rewrittenRight is not null)
             {
                 // We might have residual subqueries that couldn't be
                 // converted to semi joins.
@@ -240,7 +240,7 @@ namespace NQuery.Optimization
                 else if (Expression.IsDisjunction(conjunction))
                 {
                     var relation = RewriteDisjunctions(conjunction);
-                    if (relation != null)
+                    if (relation is not null)
                         current = new BoundJoinRelation(BoundJoinType.LeftSemi, current, relation, null, null, null);
                     else
                         scalarPredicates.Add(conjunction);
@@ -295,7 +295,7 @@ namespace NQuery.Optimization
                 {
                     var constantRelation = new BoundConstantRelation();
                     var output = RewriteConjunctions(constantRelation, disjunction);
-                    if (output == null)
+                    if (output is null)
                     {
                         scalarPredicates.Add(disjunction);
                     }
@@ -328,7 +328,7 @@ namespace NQuery.Optimization
         private static bool TryGetExistsSubselect(BoundExpression expression, out BoundExistsSubselect existsSubselect, out bool isNegated)
         {
             var negation = expression as BoundUnaryExpression;
-            if (negation != null && negation.Result.Selected.Signature.Kind == UnaryOperatorKind.LogicalNot)
+            if (negation is not null && negation.Result.Selected.Signature.Kind == UnaryOperatorKind.LogicalNot)
             {
                 if (!TryGetExistsSubselect(negation.Expression, out existsSubselect, out isNegated))
                     return false;
@@ -339,7 +339,7 @@ namespace NQuery.Optimization
 
             isNegated = false;
             existsSubselect = expression as BoundExistsSubselect;
-            return existsSubselect != null;
+            return existsSubselect is not null;
         }
     }
 }

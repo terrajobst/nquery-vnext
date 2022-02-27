@@ -36,7 +36,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, e);
         }
 
@@ -50,9 +50,9 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                     _model = value;
                     OnModelChanged(EventArgs.Empty);
 
-                    var hasData = _model != null;
-                    var showSession = _session == null && hasData;
-                    var hideSession = _session != null && !hasData;
+                    var hasData = _model is not null;
+                    var showSession = _session is null && hasData;
+                    var hideSession = _session is not null && !hasData;
 
                     if (hideSession)
                     {

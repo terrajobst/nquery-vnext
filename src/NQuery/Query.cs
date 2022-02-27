@@ -12,10 +12,10 @@ namespace NQuery
 
         public static Query Create(DataContext dataContext, string text)
         {
-            if (dataContext == null)
+            if (dataContext is null)
                 throw new ArgumentNullException(nameof(dataContext));
 
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             return new Query(dataContext, text);
@@ -23,7 +23,7 @@ namespace NQuery
 
         private void EnsureCompiled()
         {
-            if (_query != null)
+            if (_query is not null)
                 return;
 
             var syntaxTree = SyntaxTree.ParseQuery(Text);

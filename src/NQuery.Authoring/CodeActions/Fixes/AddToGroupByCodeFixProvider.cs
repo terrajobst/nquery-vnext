@@ -21,11 +21,11 @@ namespace NQuery.Authoring.CodeActions.Fixes
         {
             var syntaxTree = semanticModel.SyntaxTree;
             var expression = syntaxTree.Root.DescendantNodes().OfType<ExpressionSyntax>().FirstOrDefault(e => e.Span == diagnostic.Span);
-            if (expression == null)
+            if (expression is null)
                 return Enumerable.Empty<ICodeAction>();
 
             var selectQuery = GetSelectQuery(expression);
-            if (selectQuery == null)
+            if (selectQuery is null)
                 return Enumerable.Empty<ICodeAction>();
 
             switch (diagnostic.DiagnosticId)
@@ -49,11 +49,11 @@ namespace NQuery.Authoring.CodeActions.Fixes
         private static SelectQuerySyntax GetSelectQuery(ExpressionSyntax expression)
         {
             var selectQuery = expression.Ancestors().OfType<SelectQuerySyntax>().FirstOrDefault();
-            if (selectQuery != null)
+            if (selectQuery is not null)
                 return selectQuery;
 
             var orderedQuery = expression.Ancestors().OfType<OrderedQuerySyntax>().FirstOrDefault();
-            if (orderedQuery != null)
+            if (orderedQuery is not null)
                 return orderedQuery.GetAppliedSelectQuery();
 
             return null;
@@ -62,7 +62,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
         private static IEnumerable<ICodeAction> GetSelectFixes(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
         {
             var selectColumn = expression.Ancestors().OfType<ExpressionSelectColumnSyntax>().FirstOrDefault();
-            if (selectColumn == null)
+            if (selectColumn is null)
                 return Enumerable.Empty<ICodeAction>();
 
             return GetExpressionFixes(selectQuery, selectColumn.Expression, expression);
@@ -76,7 +76,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
         private static IEnumerable<ICodeAction> GetOrderByFixes(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
         {
             var orderByColumn = expression.Ancestors().OfType<OrderByColumnSyntax>().FirstOrDefault();
-            if (orderByColumn == null)
+            if (orderByColumn is null)
                 return Enumerable.Empty<ICodeAction>();
 
             return GetExpressionFixes(selectQuery, orderByColumn.ColumnSelector, expression);
@@ -116,13 +116,13 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             private int GetInsertPosition()
             {
-                if (_selectQuery.GroupByClause != null)
+                if (_selectQuery.GroupByClause is not null)
                     return _selectQuery.GroupByClause.LastToken().Span.End;
 
-                if (_selectQuery.WhereClause != null)
+                if (_selectQuery.WhereClause is not null)
                     return _selectQuery.WhereClause.LastToken().Span.End;
 
-                if (_selectQuery.FromClause != null)
+                if (_selectQuery.FromClause is not null)
                     return _selectQuery.FromClause.LastToken().Span.End;
 
                 return _selectQuery.SelectClause.LastToken().Span.End;
@@ -130,7 +130,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
 
             private string GetTextToInsert()
             {
-                if (_selectQuery.GroupByClause != null)
+                if (_selectQuery.GroupByClause is not null)
                 {
                     if (_selectQuery.GroupByClause.Columns.Last().IsMissing)
                         return @" " + GetExpressionText();

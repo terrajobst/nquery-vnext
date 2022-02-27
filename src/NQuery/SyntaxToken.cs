@@ -71,7 +71,7 @@ namespace NQuery
 
         public void WriteTo(TextWriter writer)
         {
-            if (writer == null)
+            if (writer is null)
                 throw new ArgumentNullException(nameof(writer));
 
             foreach (var syntaxTrivia in LeadingTrivia)
@@ -85,7 +85,7 @@ namespace NQuery
 
         public bool IsEquivalentTo(SyntaxToken other)
         {
-            if (other == null)
+            if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
@@ -93,7 +93,7 @@ namespace NQuery
 
         public SyntaxToken WithDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            if (diagnostics == null)
+            if (diagnostics is null)
                 throw new ArgumentNullException(nameof(diagnostics));
 
             return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
@@ -106,7 +106,7 @@ namespace NQuery
 
         public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
-            if (trivia == null)
+            if (trivia is null)
                 throw new ArgumentNullException(nameof(trivia));
 
             return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, trivia, TrailingTrivia, Diagnostics);
@@ -114,7 +114,7 @@ namespace NQuery
 
         public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
         {
-            if (trivia == null)
+            if (trivia is null)
                 throw new ArgumentNullException(nameof(trivia));
 
             return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, trivia, Diagnostics);

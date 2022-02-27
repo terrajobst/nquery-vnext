@@ -22,7 +22,7 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
         public override void Execute(IEditorView view)
         {
             var controller = view.SyntaxEditor.Document.Language.GetService<ICodeActionGlyphController>();
-            if (controller != null)
+            if (controller is not null)
                 controller.Expand();
         }
     }

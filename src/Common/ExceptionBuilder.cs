@@ -4,7 +4,7 @@ namespace NQuery
     {
         public static Exception UnexpectedValue(object value)
         {
-            var message = value == null
+            var message = value is null
                 ? @"A null value was unexpected"
                 : $"The value '{value}' of type {value.GetType().Name} was unexpected";
 

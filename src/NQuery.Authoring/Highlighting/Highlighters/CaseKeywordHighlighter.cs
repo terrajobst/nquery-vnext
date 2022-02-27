@@ -15,7 +15,7 @@ namespace NQuery.Authoring.Highlighting.Highlighters
                 yield return caseLabel.ThenKeyword.Span;
             }
 
-            if (node.ElseLabel != null)
+            if (node.ElseLabel is not null)
                 yield return node.ElseLabel.ElseKeyword.Span;
 
             yield return node.EndKeyword.Span;

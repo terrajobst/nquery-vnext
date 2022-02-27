@@ -12,7 +12,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 return Enumerable.Empty<ICodeAction>();
 
             var column = semanticModel.GetSymbol(node) as TableColumnInstanceSymbol;
-            if (column == null)
+            if (column is null)
                 return Enumerable.Empty<ICodeAction>();
 
             return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };

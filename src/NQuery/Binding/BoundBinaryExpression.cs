@@ -19,7 +19,7 @@ namespace NQuery.Binding
         {
             get
             {
-                return Result.Selected == null
+                return Result.Selected is null
                            ? TypeFacts.Unknown
                            : Result.Selected.Signature.ReturnType;
             }

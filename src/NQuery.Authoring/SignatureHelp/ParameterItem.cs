@@ -16,7 +16,7 @@ namespace NQuery.Authoring.SignatureHelp
 
         public bool Equals(ParameterItem other)
         {
-            return other != null &&
+            return other is not null &&
                    Name == other.Name &&
                    Span == other.Span;
         }
@@ -24,14 +24,14 @@ namespace NQuery.Authoring.SignatureHelp
         public override bool Equals(object obj)
         {
             var other = obj as ParameterItem;
-            return other != null && Equals(other);
+            return other is not null && Equals(other);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                var hashCode = (Name != null ? Name.GetHashCode() : 0);
+                var hashCode = (Name is not null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode * 397) ^ Span.GetHashCode();
                 return hashCode;
             }

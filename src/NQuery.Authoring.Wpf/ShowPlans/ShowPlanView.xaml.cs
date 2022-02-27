@@ -21,7 +21,7 @@ namespace NQuery.Authoring.Wpf
         {
             var view = (ShowPlanView) sender;
             var model = (ShowPlanNode) e.NewValue;
-            var viewModel = model == null ? null : new ShowPlanViewModel(model);
+            var viewModel = model is null ? null : new ShowPlanViewModel(model);
 
             view._planTreeView.DataContext = viewModel;
         }

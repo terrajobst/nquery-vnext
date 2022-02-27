@@ -55,7 +55,7 @@ namespace NQuery.Binding
 
                 if (allOthersCanConvertToTarget)
                 {
-                    if (commonType == null)
+                    if (commonType is null)
                     {
                         commonType = target.Type;
                     }
@@ -74,7 +74,7 @@ namespace NQuery.Binding
         private Type BindType(SyntaxToken typeName)
         {
             var type = LookupType(typeName);
-            if (type != null)
+            if (type is not null)
                 return type;
 
             Diagnostics.ReportUndeclaredType(typeName);
@@ -84,7 +84,7 @@ namespace NQuery.Binding
         private static BoundExpression BindArgument<T>(BoundExpression expression, OverloadResolutionResult<T> result, int argumentIndex) where T : Signature
         {
             var selected = result.Selected;
-            if (selected == null)
+            if (selected is null)
                 return expression;
 
             var targetType = selected.Signature.GetParameterType(argumentIndex);
@@ -132,7 +132,7 @@ namespace NQuery.Binding
             // If we couldn't find a common type, we'll just use the first expression's
             // type -- this will cause BindConversion below to report errors.
 
-            if (commonType == null)
+            if (commonType is null)
                 commonType = boundExpressions.First().Type;
 
             return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
@@ -324,9 +324,9 @@ namespace NQuery.Binding
                 return new BoundUnaryExpression(operatorKind, OverloadResolutionResult<UnaryOperatorSignature>.None, expression);
 
             var result = LookupUnaryOperator(operatorKind, expression);
-            if (result.Best == null)
+            if (result.Best is null)
             {
-                if (result.Selected == null)
+                if (result.Selected is null)
                 {
                     Diagnostics.ReportCannotApplyUnaryOperator(diagnosticSpan, operatorKind, expression.Type);
                 }
@@ -345,7 +345,7 @@ namespace NQuery.Binding
 
         private BoundExpression BindOptionalNegation(TextSpan diagnosticSpan, SyntaxToken notKeyword, BoundExpression expression)
         {
-            return notKeyword == null
+            return notKeyword is null
                        ? expression
                        : BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, expression);
         }
@@ -379,9 +379,9 @@ namespace NQuery.Binding
             // The operation x || y is evaluated as T.true(x) ? x : T.|(x, y)
 
             var result = LookupBinaryOperator(operatorKind, left, right);
-            if (result.Best == null)
+            if (result.Best is null)
             {
-                if (result.Selected == null)
+                if (result.Selected is null)
                 {
                     Diagnostics.ReportCannotApplyBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
                 }
@@ -460,7 +460,7 @@ namespace NQuery.Binding
 
         private BoundExpression BindCaseExpression(CaseExpressionSyntax node)
         {
-            return node.InputExpression == null
+            return node.InputExpression is null
                        ? BindRegularCase(node)
                        : BindSearchedCase(node);
         }
@@ -476,7 +476,7 @@ namespace NQuery.Binding
 
             var boundResults = BindCaseResultExpressions(node);
             var boundCaseLabels = node.CaseLabels.Select((l, i) => new BoundCaseLabel(BindExpression(l.WhenExpression), boundResults[i])).ToImmutableArray();
-            var boundElse = node.ElseLabel == null
+            var boundElse = node.ElseLabel is null
                                 ? null
                                 : boundResults.Last();
 
@@ -514,7 +514,7 @@ namespace NQuery.Binding
                                    let boundThen = boundResults[i]
                                    select new BoundCaseLabel(boundCondition, boundThen)).ToImmutableArray();
 
-            var boundElse = node.ElseLabel == null
+            var boundElse = node.ElseLabel is null
                                 ? null
                                 : boundResults.Last();
 
@@ -525,7 +525,7 @@ namespace NQuery.Binding
 
         private ImmutableArray<BoundExpression> BindCaseResultExpressions(CaseExpressionSyntax node)
         {
-            var elseExpression = node.ElseLabel == null
+            var elseExpression = node.ElseLabel is null
                                      ? Enumerable.Empty<ExpressionSyntax>()
                                      : new[] {node.ElseLabel.Expression};
             var expressions = node.CaseLabels.Select(l => l.ThenExpression).Concat(elseExpression).ToImmutableArray();
@@ -593,7 +593,7 @@ namespace NQuery.Binding
                                    let boundComparision = BindBinaryExpression(a.Span, BinaryOperatorKind.Equal, boundExpression, boundArgument)
                                    select boundComparision;
 
-            var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c == null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
+            var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c is null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
             return BindOptionalNegation(node.Span, node.NotKeyword, inExpressionsAggregate);
         }
 
@@ -605,7 +605,7 @@ namespace NQuery.Binding
             //       NULL values differently. We can, however, lower NOT IN using
             //       != ALL, which will do exactly that.
 
-            if (node.NotKeyword == null)
+            if (node.NotKeyword is null)
             {
                 // left IN (SELECT right FROM ...)
                 //
@@ -701,7 +701,7 @@ namespace NQuery.Binding
                     // You cannot obtain a value for D itself.
 
                     var tableInstance = symbol as TableInstanceSymbol;
-                    if (tableInstance != null)
+                    if (tableInstance is not null)
                     {
                         // TODO: Fully support row access
                         //var isColumnAccess = node.Parent is PropertyAccessExpressionSyntax;
@@ -815,7 +815,7 @@ namespace NQuery.Binding
 
                 if (aggregates.Length > 0)
                 {
-                    if (functionCandidate != null)
+                    if (functionCandidate is not null)
                     {
                         var symbols = new Symbol[] {aggregates[0], functionCandidate};
                         Diagnostics.ReportAmbiguousName(node.Name, symbols);
@@ -844,9 +844,9 @@ namespace NQuery.Binding
 
             var result = LookupFunction(name, argumentTypes);
 
-            if (result.Best == null)
+            if (result.Best is null)
             {
-                if (result.Selected == null)
+                if (result.Selected is null)
                 {
                     Diagnostics.ReportUndeclaredFunction(node, argumentTypes);
                     return new BoundErrorExpression();
@@ -880,7 +880,7 @@ namespace NQuery.Binding
                 ? null
                 : aggregate.Definition.CreateAggregatable(boundArgument.Type);
 
-            if (!boundArgument.Type.IsError() && aggregatable == null)
+            if (!boundArgument.Type.IsError() && aggregatable is null)
                 Diagnostics.ReportAggregateDoesNotSupportType(errorSpan, aggregate, boundArgument.Type);
 
             return aggregatable;
@@ -890,7 +890,7 @@ namespace NQuery.Binding
         {
             var affectedQueryScopes = aggregate.DescendantNodes()
                                                .Select(GetBoundNode<BoundColumnExpression>)
-                                               .Where(n => n != null)
+                                               .Where(n => n is not null)
                                                .Select(b => b.Symbol)
                                                .OfType<TableColumnInstanceSymbol>()
                                                .Select(c => FindQueryState(c.TableInstance))
@@ -904,14 +904,14 @@ namespace NQuery.Binding
             var queryState = affectedQueryScopes.DefaultIfEmpty(QueryState)
                                                 .First();
 
-            if (queryState == null)
+            if (queryState is null)
             {
                 Diagnostics.ReportAggregateInvalidInCurrentContext(aggregate.Span);
             }
             else
             {
                 var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
-                if (existingSlot == null)
+                if (existingSlot is null)
                 {
                     var slot = ValueSlotFactory.CreateTemporary(boundAggregate.Type);
                     queryState.ComputedAggregates.Add(new BoundComputedValueWithSyntax(aggregate, boundAggregate, slot));
@@ -956,9 +956,9 @@ namespace NQuery.Binding
 
             var result = LookupMethod(target.Type, name, argumentTypes);
 
-            if (result.Best == null)
+            if (result.Best is null)
             {
-                if (result.Selected == null)
+                if (result.Selected is null)
                 {
                     Diagnostics.ReportUndeclaredMethod(node, target.Type, argumentTypes);
                     return new BoundErrorExpression();
@@ -1053,9 +1053,9 @@ namespace NQuery.Binding
                 return new BoundErrorExpression();
 
             var result = LookupBinaryOperator(operatorKind, left.Type, right.Type);
-            if (result.Best == null)
+            if (result.Best is null)
             {
-                if (result.Selected == null)
+                if (result.Selected is null)
                     Diagnostics.ReportCannotApplyBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);
                 else
                     Diagnostics.ReportAmbiguousBinaryOperator(diagnosticSpan, operatorKind, left.Type, right.Type);

@@ -6,7 +6,7 @@ namespace NQuery.Authoring.SymbolSearch
     {
         public static SymbolSpan? FindSymbol(this SemanticModel semanticModel, int position)
         {
-            if (semanticModel == null)
+            if (semanticModel is null)
                 throw new ArgumentNullException(nameof(semanticModel));
 
             var syntaxTree = semanticModel.SyntaxTree;
@@ -18,10 +18,10 @@ namespace NQuery.Authoring.SymbolSearch
 
         public static IEnumerable<SymbolSpan> FindUsages(this SemanticModel semanticModel, Symbol symbol)
         {
-            if (semanticModel == null)
+            if (semanticModel is null)
                 throw new ArgumentNullException(nameof(semanticModel));
 
-            if (symbol == null)
+            if (symbol is null)
                 throw new ArgumentNullException(nameof(symbol));
 
             var syntaxTree = semanticModel.SyntaxTree;
@@ -40,7 +40,7 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var expression = (NameExpressionSyntax) node;
                     var symbol = semanticModel.GetSymbol(expression);
-                    if (symbol != null)
+                    if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
@@ -48,7 +48,7 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var expression = (PropertyAccessExpressionSyntax) node;
                     var symbol = semanticModel.GetSymbol(expression);
-                    if (symbol != null)
+                    if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
@@ -56,7 +56,7 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var expression = (MethodInvocationExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
-                    if (symbol != null)
+                    if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
@@ -64,7 +64,7 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var expression = (FunctionInvocationExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
-                    if (symbol != null)
+                    if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
                     break;
                 }
@@ -78,7 +78,7 @@ namespace NQuery.Authoring.SymbolSearch
                 case SyntaxKind.ExpressionSelectColumn:
                 {
                     var selectColumn = (ExpressionSelectColumnSyntax)node;
-                    if (selectColumn.Alias != null)
+                    if (selectColumn.Alias is not null)
                     {
                         var symbol = semanticModel.GetDeclaredSymbol(selectColumn);
                         yield return SymbolSpan.CreateDefinition(symbol, selectColumn.Alias.Identifier.Span);
@@ -91,12 +91,12 @@ namespace NQuery.Authoring.SymbolSearch
                     var symbol = semanticModel.GetDeclaredSymbol(commonTableExpression);
                     yield return SymbolSpan.CreateDefinition(symbol, commonTableExpression.Name.Span);
 
-                    if (commonTableExpression.ColumnNameList != null)
+                    if (commonTableExpression.ColumnNameList is not null)
                     {
                         foreach (var columnName in commonTableExpression.ColumnNameList.ColumnNames)
                         {
                             var columnSymbol = semanticModel.GetDeclaredSymbol(columnName);
-                            if (columnSymbol != null)
+                            if (columnSymbol is not null)
                                 yield return SymbolSpan.CreateDefinition(columnSymbol, columnName.Span);
                         }
                     }
@@ -113,10 +113,10 @@ namespace NQuery.Authoring.SymbolSearch
                 {
                     var namedTable = (NamedTableReferenceSyntax)node;
                     var tableInstanceSymbol = semanticModel.GetDeclaredSymbol(namedTable);
-                    if (tableInstanceSymbol != null)
+                    if (tableInstanceSymbol is not null)
                     {
                         yield return SymbolSpan.CreateReference(tableInstanceSymbol.Table, namedTable.TableName.Span);
-                        if (namedTable.Alias != null)
+                        if (namedTable.Alias is not null)
                             yield return SymbolSpan.CreateDefinition(tableInstanceSymbol, namedTable.Alias.Identifier.Span);
                     }
                     break;

@@ -12,7 +12,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             : base(ClassificationTypes.CompilerError, typeof(NQuerySemanticErrorSquiggleClassifier).Name, null, document, true)
         {
             _workspace = document.GetWorkspace();
-            if (_workspace == null)
+            if (_workspace is null)
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

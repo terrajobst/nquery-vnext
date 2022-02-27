@@ -11,12 +11,12 @@ namespace NQuery.Symbols.Aggregation
         {
             var sumAggregate = new SumAggregateDefinition();
             var sumAggregatable = sumAggregate.CreateAggregatable(argumentType);
-            if (sumAggregatable == null)
+            if (sumAggregatable is null)
                 return null;
 
             var countAggregate = new CountAggregateDefinition();
             var countAggregatable = countAggregate.CreateAggregatable(argumentType);
-            if (countAggregatable == null)
+            if (countAggregatable is null)
                 return null;
 
             var sumVariable = new VariableSymbol(@"Sum", sumAggregatable.ReturnType);
@@ -98,7 +98,7 @@ namespace NQuery.Symbols.Aggregation
             public object GetResult()
             {
                 var sum = _sumAggregator.GetResult();
-                if (sum == null)
+                if (sum is null)
                     return null;
 
                 _sumArgument.Value = Convert.ChangeType(sum, _sumArgument.Type);

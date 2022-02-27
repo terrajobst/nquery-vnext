@@ -7,7 +7,7 @@ namespace NQuery.Text
 
         public StringText(string text)
         {
-            if (text == null)
+            if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
             _text = text;

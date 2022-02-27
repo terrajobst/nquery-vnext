@@ -6,7 +6,7 @@ namespace NQuery
     {
         internal Symbol(string name)
         {
-            if (name == null)
+            if (name is null)
                 throw new ArgumentNullException(nameof(name));
 
             Name = name;

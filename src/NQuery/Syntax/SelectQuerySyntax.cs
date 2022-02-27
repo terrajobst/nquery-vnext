@@ -20,13 +20,13 @@ namespace NQuery.Syntax
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
             yield return SelectClause;
-            if (FromClause != null)
+            if (FromClause is not null)
                 yield return FromClause;
-            if (WhereClause != null)
+            if (WhereClause is not null)
                 yield return WhereClause;
-            if (GroupByClause != null)
+            if (GroupByClause is not null)
                 yield return GroupByClause;
-            if (HavingClause != null)
+            if (HavingClause is not null)
                 yield return HavingClause;
         }
 

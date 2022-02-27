@@ -20,7 +20,7 @@ namespace NQuery.Text
         public override bool Equals(object obj)
         {
             var other = obj as TextLocation?;
-            return other != null && Equals(other.Value);
+            return other is not null && Equals(other.Value);
         }
 
         public override int GetHashCode()

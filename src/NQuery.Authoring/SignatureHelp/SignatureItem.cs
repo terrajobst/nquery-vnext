@@ -16,7 +16,7 @@ namespace NQuery.Authoring.SignatureHelp
 
         public bool Equals(SignatureItem other)
         {
-            return other != null &&
+            return other is not null &&
                    Content == other.Content &&
                    Parameters.SequenceEqual(other.Parameters);
         }
@@ -24,7 +24,7 @@ namespace NQuery.Authoring.SignatureHelp
         public override bool Equals(object obj)
         {
             var other = obj as SignatureItem;
-            return other != null && Equals(other);
+            return other is not null && Equals(other);
         }
 
         public override int GetHashCode()

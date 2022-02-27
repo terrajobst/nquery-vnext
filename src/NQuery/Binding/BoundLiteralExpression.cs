@@ -16,7 +16,7 @@ namespace NQuery.Binding
         {
             get
             {
-                return Value == null
+                return Value is null
                            ? TypeFacts.Null
                            : Value.GetType();
             }
@@ -26,7 +26,7 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            if (Value == null)
+            if (Value is null)
                 return @"NULL";
 
             if (Value is string)

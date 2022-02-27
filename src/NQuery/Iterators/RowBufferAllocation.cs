@@ -43,7 +43,7 @@ namespace NQuery.Iterators
         {
             get
             {
-                return !_mapping.ContainsKey(valueSlot) && Parent != null
+                return !_mapping.ContainsKey(valueSlot) && Parent is not null
                             ? Parent[valueSlot]
                             : new RowBufferEntry(RowBuffer, _mapping[valueSlot]);
             }

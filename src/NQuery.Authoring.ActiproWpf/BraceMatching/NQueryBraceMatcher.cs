@@ -15,7 +15,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
         {
             var snapshot = snapshotOffset.GetDocumentView();
-            if (snapshot == null)
+            if (snapshot is null)
                 return null;
 
             SyntaxTree syntaxTree;

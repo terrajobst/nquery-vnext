@@ -10,7 +10,7 @@ namespace NQuery.Authoring.QuickInfo.Providers
                 return null;
 
             var symbol = semanticModel.GetDeclaredSymbol(node);
-            return symbol == null
+            return symbol is null
                        ? null
                        : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
         }

@@ -40,7 +40,7 @@ namespace NQuery.Optimization
 
             protected override ValueSlot RewriteValueSlot(ValueSlot valueSlot)
             {
-                if (valueSlot == null)
+                if (valueSlot is null)
                     return null;
 
                 ValueSlot newSlot;

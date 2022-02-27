@@ -13,7 +13,7 @@ namespace NQuery.Symbols
         public ReflectionFieldSymbol(FieldInfo fieldInfo, string name)
             : base(name, fieldInfo?.FieldType)
         {
-            if (fieldInfo == null)
+            if (fieldInfo is null)
                 throw new ArgumentNullException(nameof(fieldInfo));
 
             FieldInfo = fieldInfo;

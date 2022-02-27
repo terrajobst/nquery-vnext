@@ -59,7 +59,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         public void HandleTextInput(string text)
         {
-            if (_session == null && text.Any(IsTriggerChar))
+            if (_session is null && text.Any(IsTriggerChar))
                 TriggerSignatureHelp();
         }
 
@@ -69,7 +69,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         public void TriggerSignatureHelp()
         {
-            if (_session != null)
+            if (_session is not null)
             {
                 _session.Dismiss();
             }
@@ -81,7 +81,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         private int? GetSelectedItemIndex()
         {
-            if (_session == null)
+            if (_session is null)
                 return null;
 
             int selectedIndex;
@@ -104,7 +104,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             // If we previously recorded a selected item and the index is still valid,
             // let's restore it.
 
-            if (model != null && selectedIndex != null && selectedIndex < model.Signatures.Length)
+            if (model is not null && selectedIndex is not null && selectedIndex < model.Signatures.Length)
             {
                 var selectedItem = model.Signatures[selectedIndex.Value];
                 if (selectedItem.Parameters.Length > model.SelectedParameter)
@@ -118,7 +118,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         private void UpdateSession()
         {
-            if (_session == null)
+            if (_session is null)
                 return;
 
             UpdateModel();
@@ -129,7 +129,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler != null)
+            if (handler is not null)
                 handler(this, e);
         }
 
@@ -141,9 +141,9 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 _model = value;
                 OnModelChanged(EventArgs.Empty);
 
-                var hasData = _model != null && _model.Signatures.Length > 0;
-                var showSession = _session == null && hasData;
-                var hideSession = _session != null && !hasData;
+                var hasData = _model is not null && _model.Signatures.Length > 0;
+                var showSession = _session is null && hasData;
+                var hideSession = _session is not null && !hasData;
 
                 if (hideSession)
                 {

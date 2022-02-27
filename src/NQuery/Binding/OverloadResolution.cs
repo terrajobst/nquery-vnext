@@ -109,7 +109,7 @@ namespace NQuery.Binding
 
             foreach (var candidate in candidates.Where(c => c.IsSuitable))
             {
-                if (best == null)
+                if (best is null)
                 {
                     best = selected = candidate;
                 }

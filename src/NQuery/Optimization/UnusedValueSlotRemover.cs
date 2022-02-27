@@ -10,7 +10,7 @@ namespace NQuery.Optimization
 
         public override BoundRelation RewriteRelation(BoundRelation node)
         {
-            if (_recorder == null)
+            if (_recorder is null)
             {
                 _recorder = new ValueSlotRecorder();
                 _recorder.Record(node.GetOutputValues());
@@ -41,13 +41,13 @@ namespace NQuery.Optimization
 
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
-            if (node.Condition != null)
+            if (node.Condition is not null)
                 _recorder.Record(node.Condition);
 
-            if (node.PassthruPredicate != null)
+            if (node.PassthruPredicate is not null)
                 _recorder.Record(node.PassthruPredicate);
 
-            if (node.Probe != null)
+            if (node.Probe is not null)
                 _recorder.Record(node.Probe);
 
             return base.RewriteJoinRelation(node);
@@ -58,7 +58,7 @@ namespace NQuery.Optimization
             _recorder.Record(node.BuildKey);
             _recorder.Record(node.ProbeKey);
 
-            if (node.Remainder != null)
+            if (node.Remainder is not null)
                 _recorder.Record(node.Remainder);
 
             return base.RewriteHashMatchRelation(node);

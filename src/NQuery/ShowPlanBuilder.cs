@@ -140,12 +140,12 @@ namespace NQuery
         private static ShowPlanNode BuildJoin(BoundJoinRelation node)
         {
             var outerReferences = GetOuterReferences(node);
-            var probe = node.Probe == null ? string.Empty : $", ProbeColumn := {node.Probe}";
-            var passthru = node.PassthruPredicate == null ? string.Empty : $", Passthru := {node.PassthruPredicate}";
+            var probe = node.Probe is null ? string.Empty : $", ProbeColumn := {node.Probe}";
+            var passthru = node.PassthruPredicate is null ? string.Empty : $", Passthru := {node.PassthruPredicate}";
             var name = $"{node.JoinType}Join{outerReferences}{probe}{passthru}";
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var leftAndRight = new[] { Build(node.Left), Build(node.Right) };
-            var children = node.Condition == null
+            var children = node.Condition is null
                                ? leftAndRight
                                : leftAndRight.Concat(new[] {Build(node.Condition)});
 
@@ -161,7 +161,7 @@ namespace NQuery
                                    Build(node.Probe)
                                };
 
-            var children = node.Remainder == null
+            var children = node.Remainder is null
                                ? leftAndRight
                                : leftAndRight.Concat(new[] { Build(node.Remainder) });
 
@@ -290,7 +290,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var children = Enumerable.Empty<ShowPlanNode>();
-            var value = node.Value == null
+            var value = node.Value is null
                             ? @"NULL"
                             : node.Value is string
                                   ? @"'" + node.Value.ToString().Replace(@"'", @"''") + @"'"
@@ -351,7 +351,7 @@ namespace NQuery
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
             var caseLabels = node.CaseLabels.Select(BuildCaseLabel);
-            var elseLabel = node.ElseExpression == null
+            var elseLabel = node.ElseExpression is null
                                 ? Enumerable.Empty<ShowPlanNode>()
                                 : new[] {Build(node.ElseExpression)};
             var children = caseLabels.Concat(elseLabel);

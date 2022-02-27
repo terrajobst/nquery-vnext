@@ -28,7 +28,7 @@ namespace NQuery.Syntax
                 //    * The last element was a separator
                 //    * The current element is a node
 
-                var requiresValidNode = (last == null ||
+                var requiresValidNode = (last is null ||
                                          !last.Value.IsNode ||
                                          nodeOrToken.IsNode);
                 if (requiresValidNode)
@@ -88,7 +88,7 @@ namespace NQuery.Syntax
             foreach (var entry in _entries)
             {
                 yield return entry.Node;
-                if (entry.Separator != null)
+                if (entry.Separator is not null)
                     yield return entry.Separator;
             }
         }
@@ -96,7 +96,7 @@ namespace NQuery.Syntax
         public IEnumerable<SyntaxToken> GetSeparators()
         {
             return from e in _entries
-                   where e.Separator != null
+                   where e.Separator is not null
                    select e.Separator;
         }
 
@@ -157,7 +157,7 @@ namespace NQuery.Syntax
             if (itemOrSeparator.IsNode)
             {
                 var node = itemOrSeparator.AsNode() as TNode;
-                if (node == null)
+                if (node is null)
                     return -1;
 
                 return IndexOf(node);
