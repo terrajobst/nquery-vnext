@@ -25,6 +25,9 @@ jobs:
       - name: dotnet build
         run: |
           dotnet build ${env:SLN} -c Release --nologo -o ${env:BIN}
+      - name: dotnet test
+        run: |
+          dotnet test ${env:SLN} --nologo
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v1
