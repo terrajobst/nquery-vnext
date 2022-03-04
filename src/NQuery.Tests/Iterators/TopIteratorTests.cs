@@ -8,7 +8,7 @@ namespace NQuery.Tests.Iterators
         public void Iterators_Top_ForwardsProperly()
         {
             var rows = new object[] { 1, 2 };
-            var expected = new object[] {1, 2};
+            var expected = new object[] { 1, 2 };
 
             using (var input = new MockedIterator(rows))
             {
@@ -41,7 +41,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Top_ReturnsEmpty_IfLimitIsZero()
         {
-            var rows = new object[] {1};
+            var rows = new object[] { 1 };
 
             using (var input = new MockedIterator(rows))
             using (var iterator = new TopIterator(input, 0))
@@ -53,7 +53,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Top_ReturnsAllRows_IfLimitIsLarger()
         {
-            var rows = new object[] {1, 2, 3};
+            var rows = new object[] { 1, 2, 3 };
             var expected = rows;
             var limit = rows.Length + 1;
 
@@ -67,8 +67,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Top_LimitsRows()
         {
-            var rows = new object[] {1, 2, 3};
-            var expected = new object[] {1, 2};
+            var rows = new object[] { 1, 2, 3 };
+            var expected = new object[] { 1, 2 };
             var limit = expected.Length;
 
             using (var input = new MockedIterator(rows))

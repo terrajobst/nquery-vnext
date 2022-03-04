@@ -11,7 +11,7 @@ namespace NQuery.Binding
 
         public override BoundNodeKind Kind
         {
-            get { return BoundNodeKind.ColumnExpression;  }
+            get { return BoundNodeKind.ColumnExpression; }
         }
 
         public override Type Type

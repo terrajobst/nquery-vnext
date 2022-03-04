@@ -37,9 +37,9 @@ namespace NQuery.Authoring.SymbolSearch
         {
             unchecked
             {
-                var hashCode = (int) Kind;
-                hashCode = (hashCode*397) ^ Symbol.GetHashCode();
-                hashCode = (hashCode*397) ^ Span.GetHashCode();
+                var hashCode = (int)Kind;
+                hashCode = (hashCode * 397) ^ Symbol.GetHashCode();
+                hashCode = (hashCode * 397) ^ Span.GetHashCode();
                 return hashCode;
             }
         }

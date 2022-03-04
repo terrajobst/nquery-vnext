@@ -78,7 +78,7 @@ namespace NQuery.Iterators
 
         private static Iterator BuildTable(BoundTableRelation relation)
         {
-            var schemaTableSymbol = (SchemaTableSymbol) relation.TableInstance.Table;
+            var schemaTableSymbol = (SchemaTableSymbol)relation.TableInstance.Table;
             var tableDefinition = schemaTableSymbol.Definition;
             var columnInstances = relation.DefinedValues;
             var definedValues = columnInstances.Select(ci => ci.Column)
@@ -115,7 +115,7 @@ namespace NQuery.Iterators
                     return new InnerNestedLoopsIterator(left, right, predicate, passthruPredicate);
                 case BoundJoinType.LeftSemi:
                     return relation.Probe is null
-                        ? (Iterator) new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
+                        ? (Iterator)new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
                         : new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
                 case BoundJoinType.LeftAntiSemi:
                     Debug.Assert(relation.Probe is null);

@@ -55,7 +55,7 @@ namespace NQuery.Authoring.Tests.Classifications
                          };
 
             var compilation = CompilationFactory.CreateQuery(query);
-            var dataContext = compilation.DataContext.AddVariables(new VariableSymbol("Manager", typeof (int)));
+            var dataContext = compilation.DataContext.AddVariables(new VariableSymbol("Manager", typeof(int)));
             compilation = compilation.WithDataContext(dataContext);
 
             var syntaxTree = compilation.SyntaxTree;

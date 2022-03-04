@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 namespace NQuery.Binding
 {
     internal sealed class OverloadResolutionResult<T>
-        where T: Signature
+        where T : Signature
     {
         public OverloadResolutionResult(OverloadResolutionCandidate<T> best, OverloadResolutionCandidate<T> selected, IEnumerable<OverloadResolutionCandidate<T>> candidates)
         {

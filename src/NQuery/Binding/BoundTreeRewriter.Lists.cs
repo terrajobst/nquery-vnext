@@ -5,7 +5,7 @@ namespace NQuery.Binding
     partial class BoundTreeRewriter
     {
         private static IEnumerable<T> RewriteArray<T>(ImmutableArray<T> array, Func<T, T> rewriter)
-            where T: class
+            where T : class
         {
             List<T> result = null;
 
@@ -26,7 +26,7 @@ namespace NQuery.Binding
                     result.Add(rewrittenElement);
             }
 
-            return (IEnumerable<T>) result ?? array;
+            return (IEnumerable<T>)result ?? array;
         }
 
         protected IEnumerable<BoundAggregatedValue> RewriteAggregatedValues(ImmutableArray<BoundAggregatedValue> list)

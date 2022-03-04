@@ -9,4 +9,3 @@ using System.Runtime.CompilerServices;
 #else
 [assembly: InternalsVisibleTo("NQuery.Tests")]
 #endif
-

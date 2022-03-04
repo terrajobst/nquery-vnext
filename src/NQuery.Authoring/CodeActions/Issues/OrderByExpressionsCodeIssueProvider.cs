@@ -42,7 +42,7 @@ namespace NQuery.Authoring.CodeActions.Issues
 
                 var columnReference = GetColumnReference(index, boundSymbol);
 
-                var codeAction = new[] {new ReplaceSelectorCodeAction(selector, columnReference)};
+                var codeAction = new[] { new ReplaceSelectorCodeAction(selector, columnReference) };
                 yield return new CodeIssue(CodeIssueKind.Warning, selector.Span, codeAction);
             }
         }

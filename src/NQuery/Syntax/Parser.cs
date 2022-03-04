@@ -1227,4 +1227,4 @@ namespace NQuery.Syntax
             return new AliasSyntax(_syntaxTree, asKeyword, identifier);
         }
     }
- }
+}

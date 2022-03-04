@@ -1,5 +1,5 @@
-﻿using NQuery.Syntax;
-using NQuery.Symbols;
+﻿using NQuery.Symbols;
+using NQuery.Syntax;
 using NQuery.Text;
 
 namespace NQuery.Authoring.CodeActions.Refactorings

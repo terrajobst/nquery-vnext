@@ -309,7 +309,7 @@ namespace NQuery
         {
             switch (kind)
             {
-                    // Keywords
+                // Keywords
 
                 case SyntaxKind.AndKeyword:
                 case SyntaxKind.OrKeyword:
@@ -334,7 +334,7 @@ namespace NQuery
                 case SyntaxKind.FalseKeyword:
                 case SyntaxKind.ToKeyword:
 
-                    // Contextual keywords
+                // Contextual keywords
 
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.TopKeyword:

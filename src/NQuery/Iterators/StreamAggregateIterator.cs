@@ -54,7 +54,7 @@ namespace NQuery.Iterators
             {
                 var aggregator = _aggregators[i];
                 var result = aggregator.GetResult();
-                _rowBuffer.Array[_groupEntries.Length+ i] = result;
+                _rowBuffer.Array[_groupEntries.Length + i] = result;
             }
         }
 

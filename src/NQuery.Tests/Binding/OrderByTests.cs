@@ -164,8 +164,8 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            var orderedQuery = (OrderedQuerySyntax) syntaxTree.Root.Root;
-            var unionQuery = (UnionQuerySyntax) orderedQuery.Query;
+            var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+            var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
             var firstQuery = unionQuery.LeftQuery;
 
             var unionColumn = semanticModel.GetOutputColumns(unionQuery).Single();
@@ -202,8 +202,8 @@ namespace NQuery.Tests.Binding
             var semanticModel = compilation.GetSemanticModel();
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            var orderedQuery = (OrderedQuerySyntax) syntaxTree.Root.Root;
-            var exceptQuery = (ExceptQuerySyntax) orderedQuery.Query;
+            var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+            var exceptQuery = (ExceptQuerySyntax)orderedQuery.Query;
             var parenthesizedQuery = (ParenthesizedQuerySyntax)exceptQuery.LeftQuery;
             var unionQuery = (UnionQuerySyntax)parenthesizedQuery.Query;
             var firstQuery = unionQuery.LeftQuery;

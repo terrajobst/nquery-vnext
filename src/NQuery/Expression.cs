@@ -66,7 +66,7 @@ namespace NQuery
             var result = _expressionEvaluator.Evaluate();
             return result is null
                 ? NullValue
-                : (T) result;
+                : (T)result;
         }
 
         public DataContext DataContext { get; }

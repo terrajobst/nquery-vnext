@@ -34,7 +34,7 @@ namespace NQuery.Data
 
         public override Type RowType
         {
-            get { return typeof (DataRow); }
+            get { return typeof(DataRow); }
         }
 
         protected override IEnumerable<ColumnDefinition> GetColumns()

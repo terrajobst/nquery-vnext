@@ -12,8 +12,8 @@ namespace NQuery.Tests.Iterators
         [InlineData(BoundHashMatchOperator.FullOuter)]
         internal void Iterators_HashMatch_ForwardsProperly(BoundHashMatchOperator logicalOperator)
         {
-            var buildRows = new object[] {1, 2};
-            var probeRows = new object[] {2, 3};
+            var buildRows = new object[] { 1, 2 };
+            var probeRows = new object[] { 2, 3 };
 
             using (var build = new MockedIterator(buildRows))
             using (var probe = new MockedIterator(probeRows))
@@ -53,7 +53,7 @@ namespace NQuery.Tests.Iterators
                     }
                 }
 
-                var inputs = new[] {build, probe};
+                var inputs = new[] { build, probe };
 
                 foreach (var input in inputs)
                 {
@@ -216,7 +216,7 @@ namespace NQuery.Tests.Iterators
         [InlineData(BoundHashMatchOperator.FullOuter)]
         internal void Iterators_HashMatch_MatchesDuplicates(BoundHashMatchOperator logicalOperator)
         {
-            var buildRows = new object[] {1, 2, 3};
+            var buildRows = new object[] { 1, 2, 3 };
             var probeRows = new object[,]
             {
                 {1, "First"},

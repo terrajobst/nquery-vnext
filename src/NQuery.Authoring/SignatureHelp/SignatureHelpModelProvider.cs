@@ -1,7 +1,7 @@
 namespace NQuery.Authoring.SignatureHelp
 {
     public abstract class SignatureHelpModelProvider<T> : ISignatureHelpModelProvider
-        where T: SyntaxNode
+        where T : SyntaxNode
     {
         public SignatureHelpModel GetModel(SemanticModel semanticModel, int position)
         {

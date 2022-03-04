@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
     internal sealed class NQueryCompletionSourceProvider : ICompletionSourceProvider
     {
         [Import]
-        public ICompletionModelManagerProvider CompletionModelManagerProvider  { get; set; }
+        public ICompletionModelManagerProvider CompletionModelManagerProvider { get; set; }
 
         public ICompletionSource TryCreateCompletionSource(ITextBuffer textBuffer)
         {

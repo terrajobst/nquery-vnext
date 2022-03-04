@@ -6,7 +6,7 @@ using NQuery.Authoring.Classifications;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
 {
-    internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,SemanticClassificationSpan>
+    internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag, SemanticClassificationSpan>
     {
         private readonly INQueryClassificationService _classificationService;
         private readonly Workspace _workspace;

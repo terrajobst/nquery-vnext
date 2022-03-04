@@ -7,8 +7,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_LeftAntiSemiNestedLoops_ForwardsProperly()
         {
-            var leftRows = new object[] {1, 2};
-            var rightRows = new object[] {3, 4};
+            var leftRows = new object[] { 1, 2 };
+            var rightRows = new object[] { 3, 4 };
 
             using (var left = new MockedIterator(leftRows))
             using (var right = new MockedIterator(rightRows))
@@ -34,9 +34,9 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_LeftAntiSemiNestedLoops_NoReadsOnRight_WhenPassthruIsTrue()
         {
-            var leftRows = new object[] {1, 2, 3, 4, 5};
-            var rightRows = new object[] {1, 2, 3};
-            var expected = new object[] {2, 4, 5};
+            var leftRows = new object[] { 1, 2, 3, 4, 5 };
+            var rightRows = new object[] { 1, 2, 3 };
+            var expected = new object[] { 2, 4, 5 };
 
             using (var left = new MockedIterator(leftRows))
             using (var right = new MockedIterator(rightRows))
@@ -63,7 +63,7 @@ namespace NQuery.Tests.Iterators
         public void Iterators_LeftAntiSemiNestedLoops_ReturnsEmpty_WhenLeftAndRightIsEmpty()
         {
             var leftRows = new object[0];
-            var rightRows = new object[] {1, 2, 3};
+            var rightRows = new object[] { 1, 2, 3 };
 
             using (var left = new MockedIterator(leftRows))
             using (var right = new MockedIterator(rightRows))
@@ -100,8 +100,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_LeftAntiSemiNestedLoops_ReturnsEmpty_WhenRightIsNonEmpty()
         {
-            var leftRows = new object[] {1, 2, 3};
-            var rightRows = new object[] {1};
+            var leftRows = new object[] { 1, 2, 3 };
+            var rightRows = new object[] { 1 };
 
             using (var left = new MockedIterator(leftRows))
             using (var right = new MockedIterator(rightRows))
@@ -119,7 +119,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_LeftAntiSemiNestedLoops_ReturnsLeft_WhenRightEmpty()
         {
-            var leftRows = new object[] {1, 2, 3};
+            var leftRows = new object[] { 1, 2, 3 };
             var rightRows = new object[0];
             var expected = leftRows;
 
@@ -139,9 +139,9 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_LeftAntiSemiNestedLoops_ReturnsLeft_WhenRightIsNonEmpty_UnlessPassthruIsTrue()
         {
-            var leftRows = new object[] {1, 2, 3};
-            var rightRows = new object[] {1};
-            var expected = new object[] {2};
+            var leftRows = new object[] { 1, 2, 3 };
+            var rightRows = new object[] { 1 };
+            var expected = new object[] { 2 };
 
             using (var left = new MockedIterator(leftRows))
             using (var right = new MockedIterator(rightRows))
@@ -170,7 +170,7 @@ namespace NQuery.Tests.Iterators
                 {5, "5-Left"}
             };
 
-            var rightRows = new object[] {1, 3, 5};
+            var rightRows = new object[] { 1, 3, 5 };
 
             var expected = new object[,]
             {

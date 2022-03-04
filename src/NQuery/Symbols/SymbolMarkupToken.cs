@@ -28,7 +28,7 @@ namespace NQuery.Symbols
         {
             unchecked
             {
-                return ((int) Kind*397) ^ Text.GetHashCode();
+                return ((int)Kind * 397) ^ Text.GetHashCode();
             }
         }
     }

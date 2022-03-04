@@ -36,7 +36,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = new AliasCompletionProvider();
-            var providers = new[] {provider};
+            var providers = new[] { provider };
 
             var completionModel = semanticModel.GetCompletionModel(position, providers);
             return completionModel;

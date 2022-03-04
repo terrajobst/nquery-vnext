@@ -207,7 +207,7 @@ namespace NQuery.Binding
                 case SyntaxKind.IdentityExpression:
                 case SyntaxKind.NegationExpression:
                 case SyntaxKind.LogicalNotExpression:
-                    return BindUnaryExpression((UnaryExpressionSyntax) node);
+                    return BindUnaryExpression((UnaryExpressionSyntax)node);
 
                 case SyntaxKind.BitwiseAndExpression:
                 case SyntaxKind.BitwiseOrExpression:
@@ -230,73 +230,73 @@ namespace NQuery.Binding
                 case SyntaxKind.RightShiftExpression:
                 case SyntaxKind.LogicalAndExpression:
                 case SyntaxKind.LogicalOrExpression:
-                    return BindBinaryExpression((BinaryExpressionSyntax) node);
+                    return BindBinaryExpression((BinaryExpressionSyntax)node);
 
                 case SyntaxKind.LikeExpression:
-                    return BindLikeExpression((LikeExpressionSyntax) node);
+                    return BindLikeExpression((LikeExpressionSyntax)node);
 
                 case SyntaxKind.SoundsLikeExpression:
-                    return BindSoundsLikeExpression((SoundsLikeExpressionSyntax) node);
+                    return BindSoundsLikeExpression((SoundsLikeExpressionSyntax)node);
 
                 case SyntaxKind.SimilarToExpression:
-                    return BindSimilarToExpression((SimilarToExpressionSyntax) node);
+                    return BindSimilarToExpression((SimilarToExpressionSyntax)node);
 
                 case SyntaxKind.ParenthesizedExpression:
-                    return BindParenthesizedExpression((ParenthesizedExpressionSyntax) node);
+                    return BindParenthesizedExpression((ParenthesizedExpressionSyntax)node);
 
                 case SyntaxKind.BetweenExpression:
-                    return BindBetweenExpression((BetweenExpressionSyntax) node);
+                    return BindBetweenExpression((BetweenExpressionSyntax)node);
 
                 case SyntaxKind.IsNullExpression:
-                    return BindIsNullExpression((IsNullExpressionSyntax) node);
+                    return BindIsNullExpression((IsNullExpressionSyntax)node);
 
                 case SyntaxKind.CastExpression:
-                    return BindCastExpression((CastExpressionSyntax) node);
+                    return BindCastExpression((CastExpressionSyntax)node);
 
                 case SyntaxKind.CaseExpression:
-                    return BindCaseExpression((CaseExpressionSyntax) node);
+                    return BindCaseExpression((CaseExpressionSyntax)node);
 
                 case SyntaxKind.CoalesceExpression:
-                    return BindCoalesceExpression((CoalesceExpressionSyntax) node);
+                    return BindCoalesceExpression((CoalesceExpressionSyntax)node);
 
                 case SyntaxKind.NullIfExpression:
-                    return BindNullIfExpression((NullIfExpressionSyntax) node);
+                    return BindNullIfExpression((NullIfExpressionSyntax)node);
 
                 case SyntaxKind.InExpression:
-                    return BindInExpression((InExpressionSyntax) node);
+                    return BindInExpression((InExpressionSyntax)node);
 
                 case SyntaxKind.InQueryExpression:
                     return BindInQueryExpression((InQueryExpressionSyntax)node);
 
                 case SyntaxKind.LiteralExpression:
-                    return BindLiteralExpression((LiteralExpressionSyntax) node);
+                    return BindLiteralExpression((LiteralExpressionSyntax)node);
 
                 case SyntaxKind.VariableExpression:
-                    return BindVariableExpression((VariableExpressionSyntax) node);
+                    return BindVariableExpression((VariableExpressionSyntax)node);
 
                 case SyntaxKind.NameExpression:
-                    return BindNameExpression((NameExpressionSyntax) node);
+                    return BindNameExpression((NameExpressionSyntax)node);
 
                 case SyntaxKind.PropertyAccessExpression:
-                    return BindPropertyAccessExpression((PropertyAccessExpressionSyntax) node);
+                    return BindPropertyAccessExpression((PropertyAccessExpressionSyntax)node);
 
                 case SyntaxKind.CountAllExpression:
                     return BindCountAllExpression((CountAllExpressionSyntax)node);
 
                 case SyntaxKind.FunctionInvocationExpression:
-                    return BindFunctionInvocationExpression((FunctionInvocationExpressionSyntax) node);
+                    return BindFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
 
                 case SyntaxKind.MethodInvocationExpression:
-                    return BindMethodInvocationExpression((MethodInvocationExpressionSyntax) node);
+                    return BindMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
 
                 case SyntaxKind.SingleRowSubselect:
-                    return BindSingleRowSubselect((SingleRowSubselectSyntax) node);
+                    return BindSingleRowSubselect((SingleRowSubselectSyntax)node);
 
                 case SyntaxKind.ExistsSubselect:
-                    return BindExistsSubselect((ExistsSubselectSyntax) node);
+                    return BindExistsSubselect((ExistsSubselectSyntax)node);
 
                 case SyntaxKind.AllAnySubselect:
-                    return BindAllAnySubselect((AllAnySubselectSyntax) node);
+                    return BindAllAnySubselect((AllAnySubselectSyntax)node);
 
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
@@ -527,7 +527,7 @@ namespace NQuery.Binding
         {
             var elseExpression = node.ElseLabel is null
                                      ? Enumerable.Empty<ExpressionSyntax>()
-                                     : new[] {node.ElseLabel.Expression};
+                                     : new[] { node.ElseLabel.Expression };
             var expressions = node.CaseLabels.Select(l => l.ThenExpression).Concat(elseExpression).ToImmutableArray();
             return BindToCommonType(expressions);
         }
@@ -571,7 +571,7 @@ namespace NQuery.Binding
             //
             // CASE WHEN left != right THEN left END
 
-            var expressions = BindToCommonType(new[] {node.LeftExpression, node.RightExpression});
+            var expressions = BindToCommonType(new[] { node.LeftExpression, node.RightExpression });
             var boundLeft = expressions[0];
             var boundRight = expressions[1];
             var boundComparison = BindBinaryExpression(node.Span, BinaryOperatorKind.NotEqual, boundLeft, boundRight);
@@ -684,7 +684,7 @@ namespace NQuery.Binding
                 case SymbolKind.TableColumnInstance:
                     return new BoundColumnExpression((ColumnInstanceSymbol)symbol);
                 case SymbolKind.Variable:
-                    return new BoundVariableExpression((VariableSymbol) symbol);
+                    return new BoundVariableExpression((VariableSymbol)symbol);
                 case SymbolKind.TableInstance:
                 {
                     // If symbol refers to a table, we need to make sure that it's either not a derived table/CTE
@@ -817,7 +817,7 @@ namespace NQuery.Binding
                 {
                     if (functionCandidate is not null)
                     {
-                        var symbols = new Symbol[] {aggregates[0], functionCandidate};
+                        var symbols = new Symbol[] { aggregates[0], functionCandidate };
                         Diagnostics.ReportAmbiguousName(node.Name, symbols);
                     }
                     else
@@ -1079,9 +1079,9 @@ namespace NQuery.Binding
             else
             {
                 var outputValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
-                var outputValues = new[] {outputValue};
+                var outputValues = new[] { outputValue };
                 var computedValue = new BoundComputedValue(convertedRight, outputValue);
-                var computedValues = new[] {computedValue};
+                var computedValues = new[] { computedValue };
                 var computeRelation = new BoundComputeRelation(boundQuery.Relation, computedValues);
                 relation = new BoundProjectRelation(computeRelation, outputValues);
                 convertedRight = new BoundValueSlotExpression(outputValue);

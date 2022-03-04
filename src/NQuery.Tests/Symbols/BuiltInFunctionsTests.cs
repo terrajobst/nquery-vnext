@@ -541,10 +541,10 @@ namespace NQuery.Tests.Symbols
         [Fact]
         public void BuiltInFunctions_ToUInt64()
         {
-            AssertEvaluatesTo("TO_UINT64(0)", (ulong) 0);
+            AssertEvaluatesTo("TO_UINT64(0)", (ulong)0);
             AssertEvaluatesTo("TO_UINT64(123456789)", (ulong)123456789);
 
-            AssertEvaluatesTo("TO_UINT64('0')", (ulong) 0);
+            AssertEvaluatesTo("TO_UINT64('0')", (ulong)0);
             AssertEvaluatesTo("TO_UINT64('9999999999123456789')", 9999999999123456789);
         }
 

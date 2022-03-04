@@ -12,7 +12,7 @@ namespace NQuery.Authoring.Tests.Completion
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = new SymbolCompletionProvider();
-            var providers = new[] {provider};
+            var providers = new[] { provider };
 
             return semanticModel.GetCompletionModel(position, providers);
         }

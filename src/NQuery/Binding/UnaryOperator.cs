@@ -129,7 +129,7 @@ namespace NQuery.Binding
 
         private static bool HasOperatorSignature(MethodInfo methodInfo)
         {
-            return methodInfo.ReturnType != typeof (void) &&
+            return methodInfo.ReturnType != typeof(void) &&
                    methodInfo.GetParameters().Length == 1;
         }
     }

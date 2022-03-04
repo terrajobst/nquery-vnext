@@ -37,7 +37,7 @@ namespace NQuery.Authoring.Wpf.CodeActions
         private ImageSource GetImageSource(CodeActionKind kind)
         {
             var resourceKey = GetGlyphResourceKey(kind);
-            return (ImageSource) TryFindResource(resourceKey);
+            return (ImageSource)TryFindResource(resourceKey);
         }
 
         private static string GetGlyphResourceKey(CodeActionKind kind)

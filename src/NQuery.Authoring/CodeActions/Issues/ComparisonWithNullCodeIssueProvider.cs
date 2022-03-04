@@ -23,7 +23,7 @@ namespace NQuery.Authoring.CodeActions.Issues
             }
             else
             {
-                var action = new[] {new ConvertToIsNullCodeAction(node, isEquals)};
+                var action = new[] { new ConvertToIsNullCodeAction(node, isEquals) };
                 yield return new CodeIssue(CodeIssueKind.Warning, node.Span, Resources.CodeIssueComparsionWithNullIsAlwaysNull, action);
             }
         }

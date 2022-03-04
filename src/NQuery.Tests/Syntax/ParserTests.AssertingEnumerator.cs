@@ -106,7 +106,7 @@
                     Assert.True(_enumerator.Current.IsNode);
                     Assert.Equal(isMissing, _enumerator.Current.IsMissing);
                 }
-                catch when(MarkHasErrors())
+                catch when (MarkHasErrors())
                 {
                 }
             }

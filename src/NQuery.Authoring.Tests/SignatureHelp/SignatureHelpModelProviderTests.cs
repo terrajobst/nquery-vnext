@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Tests.SignatureHelp
             {
                 var parameterSpan = parameterSpans[i];
                 var start = parameterSpan.Start;
-                var middle = parameterSpan.Start + parameterSpan.Length/2;
+                var middle = parameterSpan.Start + parameterSpan.Length / 2;
                 var end = parameterSpan.Start;
 
                 AssertIsMatch(semanticModel, start, providers, applicableSpan, i);

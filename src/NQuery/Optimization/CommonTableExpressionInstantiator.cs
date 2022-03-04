@@ -197,7 +197,7 @@ namespace NQuery.Optimization
                 return new BoundUnifiedValue(v, slots);
             });
 
-            var concatInputs = new BoundRelation[] { initRecursion , assert};
+            var concatInputs = new BoundRelation[] { initRecursion, assert };
             var concat = new BoundConcatenationRelation(concatInputs, concatValues);
 
             var tableSpoolPusher = new BoundTableSpoolPusher(concat);

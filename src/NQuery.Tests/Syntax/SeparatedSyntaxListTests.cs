@@ -50,7 +50,7 @@ namespace NQuery.Tests.Syntax
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 
             Assert.Equal(2, list.Count);
-            Assert.Equal(new[] {expression1, expression2}, list);
+            Assert.Equal(new[] { expression1, expression2 }, list);
             Assert.Equal(new[] { comma }, list.GetSeparators());
             Assert.Equal(comma, list.GetSeparator(0));
         }
@@ -66,7 +66,7 @@ namespace NQuery.Tests.Syntax
             var list = new SeparatedSyntaxList<NameExpressionSyntax>(nodeOrTokens);
 
             Assert.Equal(2, list.Count);
-            Assert.Equal(new[] {expression1, expression2}, list);
+            Assert.Equal(new[] { expression1, expression2 }, list);
             Assert.Equal(new[] { comma1, comma2 }, list.GetSeparators());
             Assert.Equal(comma1, list.GetSeparator(0));
             Assert.Equal(comma2, list.GetSeparator(1));

@@ -9,8 +9,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Sort_ForwardsProperly()
         {
-            var rows = new object[] {1, 2};
-            var expected = new object[] {1, 2};
+            var rows = new object[] { 1, 2 };
+            var expected = new object[] { 1, 2 };
 
             using (var input = new MockedIterator(rows))
             {
@@ -51,8 +51,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Sort_Sorts_SingleEntry()
         {
-            var rows = new object[] {null, 1, 2, 1};
-            var expected = new object[] {null, 2, 1, 1};
+            var rows = new object[] { null, 1, 2, 1 };
+            var expected = new object[] { null, 2, 1, 1 };
 
             using (var input = new MockedIterator(rows))
             {
@@ -130,8 +130,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Sort_Sorts_WithOuterEntries()
         {
-            var rows = new object[] {null, 1, 2, 1};
-            var expected = new object[] {null, 1, 1, 2};
+            var rows = new object[] { null, 1, 2, 1 };
+            var expected = new object[] { null, 1, 1, 2 };
 
             var outerRowBuffer = new MockedRowBuffer(new object[] { "Outer Reference" });
 

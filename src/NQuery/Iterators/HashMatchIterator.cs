@@ -12,7 +12,7 @@ namespace NQuery.Iterators
         private readonly IteratorPredicate _remainder;
         private readonly HashMatchRowBuffer _rowBuffer;
 
-        private Dictionary<object,HashMatchEntry> _hashTable;
+        private Dictionary<object, HashMatchEntry> _hashTable;
         private HashMatchEntry _entry;
         private IEnumerator<HashMatchEntry> _entryEnumerator;
         private Phase _currentPhase;
@@ -78,7 +78,7 @@ namespace NQuery.Iterators
             }
             else
             {
-                var newEntry = new HashMatchEntry {Next = entry};
+                var newEntry = new HashMatchEntry { Next = entry };
                 entry = newEntry;
             }
 

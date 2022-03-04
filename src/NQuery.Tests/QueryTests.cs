@@ -110,7 +110,7 @@ namespace NQuery.Tests
         public void Query_ExecuteReaderReturnsAllRows()
         {
             var dataTable = new DataTable("Table");
-            dataTable.Columns.Add("Value", typeof (int));
+            dataTable.Columns.Add("Value", typeof(int));
             dataTable.Rows.Add(1);
             dataTable.Rows.Add(42);
 
@@ -124,7 +124,7 @@ namespace NQuery.Tests
                 Assert.Equal(typeof(int), reader.GetColumnType(0));
 
                 Assert.True(reader.Read());
-                var first = (int) reader[0];
+                var first = (int)reader[0];
                 Assert.Equal(1, first);
 
                 Assert.True(reader.Read());
@@ -139,7 +139,7 @@ namespace NQuery.Tests
         public void Query_ExecuteSchemaReaderReturnsNoRows()
         {
             var dataTable = new DataTable("Table");
-            dataTable.Columns.Add("Value", typeof (int));
+            dataTable.Columns.Add("Value", typeof(int));
             dataTable.Rows.Add(1);
             dataTable.Rows.Add(42);
 

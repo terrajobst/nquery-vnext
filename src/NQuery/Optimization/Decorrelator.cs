@@ -56,7 +56,7 @@ namespace NQuery.Optimization
         {
             // First, let's rewrite our inputs
 
-            node = (BoundJoinRelation) base.RewriteJoinRelation(node);
+            node = (BoundJoinRelation)base.RewriteJoinRelation(node);
 
             // Get defined values of left and right
 

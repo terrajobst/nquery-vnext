@@ -79,7 +79,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
                               .Where(SyntaxFacts.CanSwapBinaryExpressionTokenKind)
                               .Where(k => self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) == k ||
                                           !self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) != k)
-                              .Select(k => new object[] {k});
+                              .Select(k => new object[] { k });
         }
 
         public static IEnumerable<object[]> GetBinaryOperatorTokensThatCannotBeSwapped()

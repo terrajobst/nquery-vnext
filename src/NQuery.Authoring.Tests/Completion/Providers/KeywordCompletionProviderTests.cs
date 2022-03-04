@@ -8,7 +8,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static CompletionModel CreateCompletionModel(SemanticModel semanticModel, int position)
         {
             var provider = new KeywordCompletionProvider();
-            var providers = new[] {provider};
+            var providers = new[] { provider };
             return semanticModel.GetCompletionModel(position, providers);
         }
 

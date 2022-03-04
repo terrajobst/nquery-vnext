@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Utilities;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
 {
-    [Export(typeof (ITaggerProvider))]
+    [Export(typeof(ITaggerProvider))]
     [TagType(typeof(IClassificationTag))]
     [ContentType(@"NQuery")]
     [Name(@"NQuerySyntaxClassifier")]

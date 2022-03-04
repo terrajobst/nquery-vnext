@@ -7,7 +7,7 @@ namespace NQuery.Binding
             switch (node.Kind)
             {
                 case BoundNodeKind.TableRelation:
-                    return RewriteTableRelation((BoundTableRelation) node);
+                    return RewriteTableRelation((BoundTableRelation)node);
                 case BoundNodeKind.DerivedTableRelation:
                     return RewriteDerivedTableRelation((BoundDerivedTableRelation)node);
                 case BoundNodeKind.JoinRelation:
@@ -167,5 +167,5 @@ namespace NQuery.Binding
         {
             return node.Update(RewriteValueSlots(node.Outputs));
         }
-   }
+    }
 }

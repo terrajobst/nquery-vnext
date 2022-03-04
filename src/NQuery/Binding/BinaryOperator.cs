@@ -235,9 +235,9 @@ namespace NQuery.Binding
         {
             return (signature.Kind == BinaryOperatorKind.Equal || signature.Kind == BinaryOperatorKind.NotEqual) &&
                    signature.MethodInfo is null &&
-                   signature.ReturnType == typeof (bool) &&
-                   signature.GetParameterType(0) == typeof (object) &&
-                   signature.GetParameterType(1) == typeof (object);
+                   signature.ReturnType == typeof(bool) &&
+                   signature.GetParameterType(0) == typeof(object) &&
+                   signature.GetParameterType(1) == typeof(object);
         }
 
         private static OverloadResolutionResult<BinaryOperatorSignature> ResolveOverloads(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
@@ -409,7 +409,7 @@ namespace NQuery.Binding
 
         private static bool HasOperatorSignature(MethodInfo methodInfo)
         {
-            return methodInfo.ReturnType != typeof (void) &&
+            return methodInfo.ReturnType != typeof(void) &&
                    methodInfo.GetParameters().Length == 2;
         }
     }

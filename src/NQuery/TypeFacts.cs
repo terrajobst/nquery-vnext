@@ -34,7 +34,7 @@ namespace NQuery
 
         internal static Type ToOutputType(this Type type)
         {
-            return type.IsNull() ? typeof (object) : type;
+            return type.IsNull() ? typeof(object) : type;
         }
 
         internal static bool IsNonBoolean(this Type type)
@@ -206,7 +206,7 @@ namespace NQuery
 
         public static bool IsComparable(this Type type)
         {
-            var comparable = typeof (IComparable);
+            var comparable = typeof(IComparable);
             return comparable.IsAssignableFrom(type);
         }
 
@@ -221,7 +221,7 @@ namespace NQuery
         {
             return type.IsValueType &&
                    type.IsGenericType &&
-                   type.GetGenericTypeDefinition() == typeof (Nullable<>);
+                   type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         public static Type GetNonNullableType(this Type type)
@@ -235,7 +235,7 @@ namespace NQuery
         {
             return type.CanBeNull()
                        ? type
-                       : typeof (Nullable<>).MakeGenericType(type);
+                       : typeof(Nullable<>).MakeGenericType(type);
         }
     }
 }

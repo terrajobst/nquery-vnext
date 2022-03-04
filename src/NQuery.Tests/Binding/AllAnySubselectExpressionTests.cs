@@ -46,7 +46,7 @@ namespace NQuery.Tests.Binding
         public void AllAnySubselect_ConvertsLeftSide()
         {
             var compilation = CompilationFactory.CreateExpression("1 >= ALL (SELECT EmployeeId * 2.0 FROM Employees)");
-            var expression = (ExpressionSyntax) compilation.SyntaxTree.Root.Root;
+            var expression = (ExpressionSyntax)compilation.SyntaxTree.Root.Root;
             var semanticModel = compilation.GetSemanticModel();
             var resultType = semanticModel.GetExpressionType(expression);
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -59,7 +59,7 @@ namespace NQuery.Tests.Binding
         public void AllAnySubselect_ConvertsRightSide()
         {
             var compilation = CompilationFactory.CreateExpression("1.0 >= ALL (SELECT EmployeeId FROM Employees)");
-            var expression = (ExpressionSyntax) compilation.SyntaxTree.Root.Root;
+            var expression = (ExpressionSyntax)compilation.SyntaxTree.Root.Root;
             var semanticModel = compilation.GetSemanticModel();
             var resultType = semanticModel.GetExpressionType(expression);
             var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();

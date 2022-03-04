@@ -2,7 +2,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed class BoundVariableExpression :  BoundExpression
+    internal sealed class BoundVariableExpression : BoundExpression
     {
         public BoundVariableExpression(VariableSymbol variableSymbol)
         {

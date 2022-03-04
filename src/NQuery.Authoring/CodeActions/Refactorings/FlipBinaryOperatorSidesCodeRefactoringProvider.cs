@@ -11,7 +11,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             var canSwap = operatorToken.Span.ContainsOrTouches(position) &&
                           SyntaxFacts.CanSwapBinaryExpressionTokenKind(operatorToken.Kind);
             return canSwap
-                    ? new[] {new FlipBinaryOperatorSidesCodeAction(node)}
+                    ? new[] { new FlipBinaryOperatorSidesCodeAction(node) }
                     : Enumerable.Empty<ICodeAction>();
         }
 

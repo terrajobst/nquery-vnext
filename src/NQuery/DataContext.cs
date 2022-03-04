@@ -65,9 +65,9 @@ namespace NQuery
             var aggregates = BuiltInAggregates.GetAggregates().ToImmutableList();
             var reflectionProvider = new ReflectionProvider();
             var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
-                                                       .Add(typeof (object), reflectionProvider);
+                                                       .Add(typeof(object), reflectionProvider);
             var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
-                                                     .Add(typeof (object), reflectionProvider);
+                                                     .Add(typeof(object), reflectionProvider);
             var comparers = ImmutableDictionary.Create<Type, IComparer>();
             return new DataContext(ImmutableList.Create<TableSymbol>(),
                                    ImmutableList.Create<TableRelation>(),

@@ -6,7 +6,7 @@ using NQuery.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification
 {
-    internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag,TextSpan>
+    internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag, TextSpan>
     {
         private readonly INQueryClassificationService _classificationService;
         private readonly Workspace _workspace;

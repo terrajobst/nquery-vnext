@@ -37,7 +37,7 @@
         {
             Assert.Throws<ArgumentException>(() =>
             {
-                Expression<bool>.Create(DataContext.Empty, "", false, typeof (int));
+                Expression<bool>.Create(DataContext.Empty, "", false, typeof(int));
             });
         }
 

@@ -19,8 +19,8 @@ namespace NQuery.Authoring.Wpf
 
         private static void ShowPlanNodeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var view = (ShowPlanView) sender;
-            var model = (ShowPlanNode) e.NewValue;
+            var view = (ShowPlanView)sender;
+            var model = (ShowPlanNode)e.NewValue;
             var viewModel = model is null ? null : new ShowPlanViewModel(model);
 
             view._planTreeView.DataContext = viewModel;

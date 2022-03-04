@@ -81,7 +81,7 @@ namespace NQuery.Binding
         }
 
         private IEnumerable<T> LookupSymbols<T>(SyntaxToken name)
-            where T: Symbol
+            where T : Symbol
         {
             return LookupSymbols(name, s => s is T).OfType<T>();
         }

@@ -1,6 +1,5 @@
-using NQuery.Syntax;
-
 using System.Collections.Immutable;
+using NQuery.Syntax;
 
 namespace NQuery
 {

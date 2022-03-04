@@ -140,14 +140,14 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
                                   : FontWeights.Normal;
 
             return new Run(text)
-                       {
-                           Foreground = properties.ForegroundBrush,
-                           Background = properties.BackgroundBrush,
-                           FontStyle = fontStyle,
-                           FontWeight = fontWeights,
-                           TextEffects = properties.TextEffects,
-                           TextDecorations = properties.TextDecorations
-                       };
+            {
+                Foreground = properties.ForegroundBrush,
+                Background = properties.BackgroundBrush,
+                FontStyle = fontStyle,
+                FontWeight = fontWeights,
+                TextEffects = properties.TextEffects,
+                TextDecorations = properties.TextDecorations
+            };
         }
     }
 }

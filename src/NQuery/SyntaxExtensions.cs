@@ -9,7 +9,7 @@ namespace NQuery
             if (root is null)
                 throw new ArgumentNullException(nameof(root));
 
-            var token = root.FindToken(position, descendIntoTrivia:true);
+            var token = root.FindToken(position, descendIntoTrivia: true);
             return token.GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(position);
         }
 
@@ -40,7 +40,7 @@ namespace NQuery
         }
 
         public static IEnumerable<T> FindNodes<T>(this SyntaxNode root, int position)
-            where T: SyntaxNode
+            where T : SyntaxNode
         {
             if (root is null)
                 throw new ArgumentNullException(nameof(root));

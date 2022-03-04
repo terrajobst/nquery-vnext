@@ -11,7 +11,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_StreamAggregate_ForwardsProperly()
         {
-            var rows = new object[] {1, 2};
+            var rows = new object[] { 1, 2 };
             var expected = new object[1, 0];
 
             using (var input = new MockedIterator(rows))
@@ -42,7 +42,7 @@ namespace NQuery.Tests.Iterators
 
             using (var input = new MockedIterator(rows))
             {
-                var groupEntries = new [] { new RowBufferEntry(input.RowBuffer, 0) };
+                var groupEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
                 var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
                 var aggregators = Enumerable.Empty<IAggregator>();
                 var argumentFunctions = Enumerable.Empty<IteratorFunction>();
@@ -77,7 +77,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_StreamAggregate_ComputeAggregates_WhenNotGrouped()
         {
-            var rows = new object[] {1, 2, 3};
+            var rows = new object[] { 1, 2, 3 };
             var expected = new object[,]
             {
                 {3, 1}
@@ -87,7 +87,7 @@ namespace NQuery.Tests.Iterators
             {
                 var groupEntries = Enumerable.Empty<RowBufferEntry>();
                 var comparers = ImmutableArray<IComparer>.Empty;
-                var aggregators = new []
+                var aggregators = new[]
                 {
                     new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
                     new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
@@ -122,12 +122,12 @@ namespace NQuery.Tests.Iterators
 
             using (var input = new MockedIterator(rows))
             {
-                var groupEntries = new []
+                var groupEntries = new[]
                 {
                     new RowBufferEntry(input.RowBuffer, 0)
                 };
                 var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
-                var aggregators = new []
+                var aggregators = new[]
                 {
                     new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
                     new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()

@@ -62,7 +62,7 @@ namespace NQuery
 
         public bool IsExplicit => Exists && !IsImplicit;
 
-        public bool IsBoxing => _isBoxingOrUnboxing &&  IsImplicit;
+        public bool IsBoxing => _isBoxingOrUnboxing && IsImplicit;
 
         public bool IsUnboxing => _isBoxingOrUnboxing && IsExplicit;
 
@@ -174,8 +174,8 @@ namespace NQuery
         {
             if (sourceType.IsIntrinsicNumericType() && targetType.IsIntrinsicNumericType())
             {
-                var sourceIndex = (int) sourceType;
-                var targetIndex = (int) targetType;
+                var sourceIndex = (int)sourceType;
+                var targetIndex = (int)targetType;
                 return ImplicitNumericConversions[sourceIndex, targetIndex];
             }
 

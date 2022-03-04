@@ -7,7 +7,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Projection_ForwardsProperly()
         {
-            var rows = new object[] {1, 2};
+            var rows = new object[] { 1, 2 };
             var expected = rows;
 
             using (var input = new MockedIterator(rows))
@@ -82,7 +82,7 @@ namespace NQuery.Tests.Iterators
                 {2, "Two"}
             };
 
-            var expected = new object[] {"One", "Two"};
+            var expected = new object[] { "One", "Two" };
 
             using (var input = new MockedIterator(rows))
             {

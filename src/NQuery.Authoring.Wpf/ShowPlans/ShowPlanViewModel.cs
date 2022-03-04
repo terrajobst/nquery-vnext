@@ -5,7 +5,7 @@ namespace NQuery.Authoring.Wpf
         public ShowPlanViewModel(ShowPlanNode model)
         {
             Model = model;
-            Root = new[] {new ShowPlanNodeViewModel(model)};
+            Root = new[] { new ShowPlanNodeViewModel(model) };
         }
 
         public ShowPlanNode Model { get; }

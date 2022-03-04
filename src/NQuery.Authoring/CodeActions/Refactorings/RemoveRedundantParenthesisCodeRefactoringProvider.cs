@@ -15,7 +15,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             if (!SyntaxFacts.ParenthesisIsRedundant(node))
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new RemoveRedundantParenthesisCodeAction(node)};
+            return new[] { new RemoveRedundantParenthesisCodeAction(node) };
         }
 
         private sealed class RemoveRedundantParenthesisCodeAction : CodeAction

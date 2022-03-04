@@ -53,7 +53,7 @@ namespace NQuery.Tests.Binding
         {
             var issues = new List<string>();
 
-            foreach(var testCase in BinaryTestCases)
+            foreach (var testCase in BinaryTestCases)
             {
                 var opText = testCase.Op;
                 var left = GetValue(testCase.Left);
@@ -64,7 +64,7 @@ namespace NQuery.Tests.Binding
                 if (syntaxTreeSource != source)
                     Assert.True(false, $"Source should have been {syntaxTreeSource} but is {source}");
 
-                var expression = (BinaryExpressionSyntax) syntaxTree.Root.Root;
+                var expression = (BinaryExpressionSyntax)syntaxTree.Root.Root;
                 var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
                 var semanticModel = compilation.GetSemanticModel();
 

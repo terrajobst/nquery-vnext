@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 namespace NQuery.Syntax
 {
     public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNode>
-        where TNode: SyntaxNode
+        where TNode : SyntaxNode
     {
         private readonly ImmutableArray<Entry> _entries;
 
@@ -44,7 +44,7 @@ namespace NQuery.Syntax
 
         private static ImmutableArray<Entry> ReadEntries(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
         {
-            var entryCount = (nodeOrTokens.Count + 1)/2;
+            var entryCount = (nodeOrTokens.Count + 1) / 2;
             var entries = new Entry[entryCount];
 
             var entryIndex = 0;
@@ -60,7 +60,7 @@ namespace NQuery.Syntax
                 }
                 else
                 {
-                    var node = (TNode) nodeOrToken.AsNode();
+                    var node = (TNode)nodeOrToken.AsNode();
                     entries[entryIndex] = new Entry(node, null);
                     entryIndex++;
                 }

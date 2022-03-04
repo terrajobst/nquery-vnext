@@ -33,7 +33,7 @@ namespace NQuery.Optimization
     {
         protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
         {
-            node = (BoundJoinRelation) base.RewriteJoinRelation(node);
+            node = (BoundJoinRelation)base.RewriteJoinRelation(node);
 
             var needsRewriting = NeedsRewriting(node);
             if (!needsRewriting)
@@ -56,7 +56,7 @@ namespace NQuery.Optimization
             var unifiedValues = new BoundUnifiedValue[concatValueSlots.Length];
 
             for (var i = 0; i < unifiedValues.Length; i++)
-                unifiedValues[i] = new BoundUnifiedValue(concatValueSlots[i], new[] {firstOutputs[i], secondOutputs[i]});
+                unifiedValues[i] = new BoundUnifiedValue(concatValueSlots[i], new[] { firstOutputs[i], secondOutputs[i] });
 
             return new BoundConcatenationRelation(new BoundRelation[] { leftOuterJoin, project }, unifiedValues);
         }

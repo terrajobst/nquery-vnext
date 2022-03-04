@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Windows;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 using Microsoft.VisualStudio.Text;
@@ -114,7 +115,7 @@ namespace NQueryViewer.VSEditor
         public override int CaretPosition
         {
             get { return GetCaretPosition(); }
-            set {  SetCaretPosition(value); }
+            set { SetCaretPosition(value); }
         }
 
         public override TextSpan Selection

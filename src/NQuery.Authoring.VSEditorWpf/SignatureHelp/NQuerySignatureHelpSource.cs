@@ -39,7 +39,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             var trackingSpan = snapshot.CreateTrackingSpan(span.Start, span.Length, SpanTrackingMode.EdgeExclusive);
 
             var signaturesMap = ToSignatures(trackingSpan, model.Signatures, model.SelectedParameter);
-            var signatureMapKey = typeof (Dictionary<SignatureItem, ISignature>);
+            var signatureMapKey = typeof(Dictionary<SignatureItem, ISignature>);
             session.Properties.RemoveProperty(signatureMapKey);
             session.Properties.AddProperty(signatureMapKey, signaturesMap);
 

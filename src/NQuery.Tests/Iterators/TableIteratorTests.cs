@@ -83,7 +83,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Table_ReturnsRows()
         {
-            var expected = new object[] {0, 10, 20};
+            var expected = new object[] { 0, 10, 20 };
 
             using (var iterator = CreateIterator(3))
             {

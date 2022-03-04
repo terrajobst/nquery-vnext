@@ -79,19 +79,19 @@ namespace NQuery
             switch (expression.Kind)
             {
                 case BoundNodeKind.TableExpression:
-                    return GetSymbol((BoundTableExpression) expression);
+                    return GetSymbol((BoundTableExpression)expression);
                 case BoundNodeKind.ColumnExpression:
-                    return GetSymbol((BoundColumnExpression) expression);
+                    return GetSymbol((BoundColumnExpression)expression);
                 case BoundNodeKind.VariableExpression:
-                    return GetSymbol((BoundVariableExpression) expression);
+                    return GetSymbol((BoundVariableExpression)expression);
                 case BoundNodeKind.FunctionInvocationExpression:
-                    return GetSymbol((BoundFunctionInvocationExpression) expression);
+                    return GetSymbol((BoundFunctionInvocationExpression)expression);
                 case BoundNodeKind.AggregateExpression:
-                    return GetSymbol((BoundAggregateExpression) expression);
+                    return GetSymbol((BoundAggregateExpression)expression);
                 case BoundNodeKind.PropertyAccessExpression:
-                    return GetSymbol((BoundPropertyAccessExpression) expression);
+                    return GetSymbol((BoundPropertyAccessExpression)expression);
                 case BoundNodeKind.MethodInvocationExpression:
-                    return GetSymbol(((BoundMethodInvocationExpression) expression));
+                    return GetSymbol(((BoundMethodInvocationExpression)expression));
                 default:
                     return null;
             }

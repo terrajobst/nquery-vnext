@@ -16,7 +16,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             if (!isRedundant)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new RemoveRedundantBracketsCodeAction(token)};
+            return new[] { new RemoveRedundantBracketsCodeAction(token) };
         }
 
         private sealed class RemoveRedundantBracketsCodeAction : CodeAction

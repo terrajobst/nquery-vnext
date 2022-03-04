@@ -32,7 +32,7 @@ namespace NQuery.Authoring.SignatureHelp
             unchecked
             {
                 var hashCode = Content.GetHashCode();
-                hashCode = (hashCode*397) ^ Parameters.GetHashCode();
+                hashCode = (hashCode * 397) ^ Parameters.GetHashCode();
                 return hashCode;
             }
         }

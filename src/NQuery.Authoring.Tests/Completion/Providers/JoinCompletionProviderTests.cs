@@ -20,7 +20,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = new JoinCompletionProvider();
-            var providers = new[] {provider};
+            var providers = new[] { provider };
 
             var completionModel = semanticModel.GetCompletionModel(position, providers);
             var item = completionModel.Items.Single(i => i.InsertionText == condition);

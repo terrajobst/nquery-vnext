@@ -59,7 +59,7 @@ namespace NQuery
         }
 
         private T GetParent<T>(object child)
-             where T: class
+             where T : class
         {
             if (_parentFromChild is null)
                 Interlocked.CompareExchange(ref _parentFromChild, GetParents(Root), null);
@@ -88,7 +88,7 @@ namespace NQuery
             return GetParent<SyntaxTrivia>(structuredTrivia);
         }
 
-        private static Dictionary<object,object> GetParents(SyntaxNode compilationUnit)
+        private static Dictionary<object, object> GetParents(SyntaxNode compilationUnit)
         {
             var result = new Dictionary<object, object>();
             GetParents(result, compilationUnit);

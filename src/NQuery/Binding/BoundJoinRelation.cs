@@ -61,7 +61,7 @@ namespace NQuery.Binding
         {
             var probe = Probe is null
                 ? Enumerable.Empty<ValueSlot>()
-                : new[] {Probe};
+                : new[] { Probe };
             return Left.GetDefinedValues().Concat(Right.GetDefinedValues()).Concat(probe);
         }
 
@@ -72,7 +72,7 @@ namespace NQuery.Binding
             var leftAndRight = left.Concat(right);
             return Probe is null
                     ? leftAndRight
-                    : leftAndRight.Concat(new[] {Probe});
+                    : leftAndRight.Concat(new[] { Probe });
         }
 
         private bool IncludeLeftValues()

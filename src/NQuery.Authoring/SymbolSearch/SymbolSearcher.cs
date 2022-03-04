@@ -38,7 +38,7 @@ namespace NQuery.Authoring.SymbolSearch
             {
                 case SyntaxKind.NameExpression:
                 {
-                    var expression = (NameExpressionSyntax) node;
+                    var expression = (NameExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
@@ -46,7 +46,7 @@ namespace NQuery.Authoring.SymbolSearch
                 }
                 case SyntaxKind.PropertyAccessExpression:
                 {
-                    var expression = (PropertyAccessExpressionSyntax) node;
+                    var expression = (PropertyAccessExpressionSyntax)node;
                     var symbol = semanticModel.GetSymbol(expression);
                     if (symbol is not null)
                         yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);

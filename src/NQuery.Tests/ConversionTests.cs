@@ -269,7 +269,7 @@
         [Fact]
         public void Conversion_ClassifiesBoxingCorrectly()
         {
-            var conversion = ClassifyConversion(typeof (int), typeof (object));
+            var conversion = ClassifyConversion(typeof(int), typeof(object));
 
             Assert.True(conversion.Exists);
             Assert.True(conversion.IsImplicit);

@@ -8,15 +8,15 @@ namespace NQuery.Tests.Iterators
     {
         private static Iterator CreateIterator(Iterator input, int maxValue)
         {
-            var entries = new[] {new RowBufferEntry(input.RowBuffer, 0)};
-            var comparers = new[] {Comparer.Default};
+            var entries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+            var comparers = new[] { Comparer.Default };
             return new TopWithTiesIterator(input, maxValue, entries, comparers);
         }
 
         [Fact]
         public void Iterators_TopWithTies_ForwardsProperly()
         {
-            var rows = new object[] {1, 2};
+            var rows = new object[] { 1, 2 };
             var expected = rows;
 
             using (var input = new MockedIterator(rows))
@@ -50,7 +50,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TopWithTies_ReturnsEmpty_IfLimitIsZero()
         {
-            var rows = new object[] {1};
+            var rows = new object[] { 1 };
 
             using (var input = new MockedIterator(rows))
             using (var iterator = CreateIterator(input, 0))
@@ -62,7 +62,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TopWithTies_ReturnsAllRows_IfLimitIsLarger()
         {
-            var rows = new object[] {1, 2, 3};
+            var rows = new object[] { 1, 2, 3 };
             var expected = rows;
             var limit = expected.Length + 1;
 
@@ -77,7 +77,7 @@ namespace NQuery.Tests.Iterators
         public void Iterators_TopWithTies_LimitsRows_WhenNoTies()
         {
             var rows = new object[] { 1, 2, 3 };
-            var expected = new object[] {1, 2};
+            var expected = new object[] { 1, 2 };
             var limit = expected.Length;
 
             using (var input = new MockedIterator(rows))
@@ -90,8 +90,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TopWithTies_LimitsRows_AndBreaksTies()
         {
-            var rows = new object[] {1, 2, 3, 3, 4};
-            var expected = new object[] {1, 2, 3, 3};
+            var rows = new object[] { 1, 2, 3, 3, 4 };
+            var expected = new object[] { 1, 2, 3, 3 };
             const int limit = 3;
 
             using (var input = new MockedIterator(rows))
@@ -104,8 +104,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TopWithTies_LimitsRows_AndStopsWhenLastRowIsInTie()
         {
-            var rows = new object[] {1, 2, 3, 3};
-            var expected = new object[] {1, 2, 3, 3};
+            var rows = new object[] { 1, 2, 3, 3 };
+            var expected = new object[] { 1, 2, 3, 3 };
             const int limit = 3;
 
             using (var input = new MockedIterator(rows))

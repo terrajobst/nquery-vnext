@@ -1,7 +1,7 @@
 namespace NQuery.Authoring.Completion
 {
     public abstract class CompletionProvider<T> : ICompletionProvider
-        where T: SyntaxNode
+        where T : SyntaxNode
     {
         public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
         {

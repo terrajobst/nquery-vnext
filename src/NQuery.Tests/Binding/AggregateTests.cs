@@ -29,7 +29,7 @@ namespace NQuery.Tests.Binding
                     throw new NotImplementedException();
                 }
 
-                public Type ReturnType { get { return typeof (object); } }
+                public Type ReturnType { get { return typeof(object); } }
             }
         }
 

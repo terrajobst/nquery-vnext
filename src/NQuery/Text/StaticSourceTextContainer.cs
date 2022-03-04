@@ -14,8 +14,8 @@ namespace NQuery.Text
 
         public override event EventHandler<EventArgs> CurrentChanged
         {
-            add {}
-            remove {}
+            add { }
+            remove { }
         }
     }
 }

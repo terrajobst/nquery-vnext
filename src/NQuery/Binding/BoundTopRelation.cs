@@ -13,7 +13,7 @@ namespace NQuery.Binding
 
         public override BoundNodeKind Kind
         {
-            get { return BoundNodeKind.TopRelation;  }
+            get { return BoundNodeKind.TopRelation; }
         }
 
         public BoundRelation Input { get; }

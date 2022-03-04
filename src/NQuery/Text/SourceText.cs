@@ -86,7 +86,7 @@ namespace NQuery.Text
             if (changes is null || changes.Length == 0)
                 return this;
 
-            return WithChanges((IEnumerable<TextChange>) changes);
+            return WithChanges((IEnumerable<TextChange>)changes);
         }
 
         public SourceText WithChanges(IEnumerable<TextChange> changes)

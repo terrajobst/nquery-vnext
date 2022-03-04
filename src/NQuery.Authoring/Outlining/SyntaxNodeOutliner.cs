@@ -1,7 +1,7 @@
 namespace NQuery.Authoring.Outlining
 {
     public abstract class SyntaxNodeOutliner<T> : IOutliner
-        where T: SyntaxNode
+        where T : SyntaxNode
     {
 
         public IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken)

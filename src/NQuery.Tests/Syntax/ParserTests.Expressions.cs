@@ -4,7 +4,7 @@
     {
         public static IEnumerable<object[]> GetContextualKeywords()
         {
-            return SyntaxFacts.GetContextualKeywordKinds().Select(k => new object[] {k});
+            return SyntaxFacts.GetContextualKeywordKinds().Select(k => new object[] { k });
         }
 
         [Fact]

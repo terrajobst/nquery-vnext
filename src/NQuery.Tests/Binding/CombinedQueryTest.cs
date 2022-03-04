@@ -7,7 +7,7 @@ namespace NQuery.Tests.Binding
     public class CombinedQueryTest
     {
         private static void AssertBindsToCommonTypes<T>(string queryCombinator)
-            where T: QuerySyntax
+            where T : QuerySyntax
         {
             var query = $@"
                 SELECT  e.EmployeeID * 2.0,
@@ -32,10 +32,10 @@ namespace NQuery.Tests.Binding
             var columns = semanticModel.GetOutputColumns(combinedQuery).ToImmutableArray();
 
             Assert.Equal(4, columns.Length);
-            Assert.Equal(typeof (double), columns[0].Type);
-            Assert.Equal(typeof (string), columns[1].Type);
-            Assert.Equal(typeof (string), columns[2].Type);
-            Assert.Equal(typeof (double), columns[3].Type);
+            Assert.Equal(typeof(double), columns[0].Type);
+            Assert.Equal(typeof(string), columns[1].Type);
+            Assert.Equal(typeof(string), columns[2].Type);
+            Assert.Equal(typeof(double), columns[3].Type);
         }
 
         [Fact]

@@ -23,7 +23,7 @@ namespace NQuery.Tests.Iterators
                 ImmutableArray.Create(new RowBufferEntry(inputs[2].RowBuffer, 0))
             };
 
-            var expected = new object[] {1, 2, 3, 4, 5, 6};
+            var expected = new object[] { 1, 2, 3, 4, 5, 6 };
 
             using (var iterator = new ConcatenationIterator(inputs, entries))
             {
@@ -67,7 +67,7 @@ namespace NQuery.Tests.Iterators
                 new MockedIterator(new object[] {5, 6})
             };
 
-            var expected = new object[] {5, 6};
+            var expected = new object[] { 5, 6 };
 
             var entries = inputs.Select(i => ImmutableArray.Create(new RowBufferEntry(i.RowBuffer, 0)));
 

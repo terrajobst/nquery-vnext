@@ -157,7 +157,7 @@ namespace NQuery.Tests
         {
             var left = new MockedOperatorStruct("left");
             var leftType = left.GetType();
-            var rightType = typeof (int);
+            var rightType = typeof(int);
             var result = EvaluateBinary(op, leftType, rightType, left, null);
             Assert.Null(result);
         }
@@ -167,7 +167,7 @@ namespace NQuery.Tests
         public void Expression_Binary_Overloadable_Shifting_Struct_Null_Both(string op)
         {
             var leftType = typeof(MockedOperatorStruct);
-            var rightType = typeof (int);
+            var rightType = typeof(int);
             var result = EvaluateBinary(op, leftType, rightType, null, null);
             Assert.Null(result);
         }

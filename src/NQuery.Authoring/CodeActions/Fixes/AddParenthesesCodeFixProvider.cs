@@ -23,7 +23,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
             if (expression is null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new AddParenthesesCodeAction(expression)};
+            return new[] { new AddParenthesesCodeAction(expression) };
         }
 
         private sealed class AddParenthesesCodeAction : CodeAction

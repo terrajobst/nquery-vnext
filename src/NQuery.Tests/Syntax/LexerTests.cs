@@ -960,14 +960,14 @@ namespace NQuery.Tests.Syntax
         [MemberData(nameof(GetReservedKeywordKinds))]
         public void Lexer_Lex_Keyword_Reserved(SyntaxKind kind)
         {
-            LexKeyword(kind, isReserved:true);
+            LexKeyword(kind, isReserved: true);
         }
 
         [Theory]
         [MemberData(nameof(GetContextualKeywordKinds))]
         public void Lexer_Lex_Keyword_Contextual(SyntaxKind kind)
         {
-            LexKeyword(kind, isReserved:false);
+            LexKeyword(kind, isReserved: false);
         }
 
         private static void LexKeyword(SyntaxKind kind, bool isReserved)
@@ -999,11 +999,11 @@ namespace NQuery.Tests.Syntax
 
         public static IEnumerable<object[]> GetPunctuationTokenKinds()
         {
-            yield return new object[] {SyntaxKind.CommaToken};
-            yield return new object[] {SyntaxKind.AtToken};
-            yield return new object[] {SyntaxKind.DotToken};
-            yield return new object[] {SyntaxKind.LeftParenthesisToken};
-            yield return new object[] {SyntaxKind.RightParenthesisToken};
+            yield return new object[] { SyntaxKind.CommaToken };
+            yield return new object[] { SyntaxKind.AtToken };
+            yield return new object[] { SyntaxKind.DotToken };
+            yield return new object[] { SyntaxKind.LeftParenthesisToken };
+            yield return new object[] { SyntaxKind.RightParenthesisToken };
         }
 
         public static IEnumerable<object[]> GetUnaryOperatorTokenKinds()

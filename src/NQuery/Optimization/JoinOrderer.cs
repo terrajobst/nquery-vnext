@@ -147,7 +147,7 @@ namespace NQuery.Optimization
                                                     .ToImmutableArray();
                     }
 
-                    var nextNode = usableEdges.SelectMany(e => new[] {e.Left, e.Right})
+                    var nextNode = usableEdges.SelectMany(e => new[] { e.Left, e.Right })
                                               .Where(candidateNodes.Contains)
                                               .OrderBy(n => n, nodeComparer)
                                               .FirstOrDefault();

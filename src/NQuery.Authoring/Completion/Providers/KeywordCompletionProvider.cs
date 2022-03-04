@@ -314,7 +314,7 @@ namespace NQuery.Authoring.Completion.Providers
         }
 
         private static bool IsAfterNode<T>(SyntaxTree syntaxTree, int position)
-            where T: SyntaxNode
+            where T : SyntaxNode
         {
             var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
             if (token is null)
@@ -328,7 +328,7 @@ namespace NQuery.Authoring.Completion.Providers
         }
 
         private static bool IsBeforeNode<T>(SyntaxTree syntaxTree, int position)
-            where T: SyntaxNode
+            where T : SyntaxNode
         {
             var token = syntaxTree.Root.FindTokenContext(position);
             if (token is null)
@@ -425,7 +425,7 @@ namespace NQuery.Authoring.Completion.Providers
                 return false;
 
             var previousClause = selectQuery.FromClause ??
-                                 (SyntaxNode) selectQuery.SelectClause;
+                                 (SyntaxNode)selectQuery.SelectClause;
 
             var lastTokenInSelect = previousClause.LastToken();
             return token == lastTokenInSelect ||
@@ -448,7 +448,7 @@ namespace NQuery.Authoring.Completion.Providers
 
             var previousClause = selectQuery.WhereClause ??
                                  selectQuery.FromClause ??
-                                 (SyntaxNode) selectQuery.SelectClause;
+                                 (SyntaxNode)selectQuery.SelectClause;
 
             var lastTokenInSelect = previousClause.LastToken();
             return token == lastTokenInSelect ||
@@ -472,7 +472,7 @@ namespace NQuery.Authoring.Completion.Providers
             var previousClause = selectQuery.GroupByClause ??
                                  selectQuery.WhereClause ??
                                  selectQuery.FromClause ??
-                                 (SyntaxNode) selectQuery.SelectClause;
+                                 (SyntaxNode)selectQuery.SelectClause;
 
             var lastTokenInSelect = previousClause.LastToken();
             return token == lastTokenInSelect ||

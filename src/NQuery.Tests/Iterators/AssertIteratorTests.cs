@@ -29,7 +29,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Assert_DoesNotTriggerAssert_WhenTrue()
         {
-            var rows = new object[] {1};
+            var rows = new object[] { 1 };
             var expected = rows;
 
             using (var input = new MockedIterator(rows))
@@ -57,7 +57,7 @@ namespace NQuery.Tests.Iterators
         {
             const string message = "This should be detected";
 
-            var rows = new object[] {1};
+            var rows = new object[] { 1 };
 
             using (var input = new MockedIterator(rows))
             using (var iterator = new AssertIterator(input, () => false, message))

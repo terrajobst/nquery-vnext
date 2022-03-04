@@ -51,8 +51,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_DistinctSort_Sorts_SingleEntry()
         {
-            var rows = new object[] {null, 1, 2, 1};
-            var expected = new object[] {null, 2, 1};
+            var rows = new object[] { null, 1, 2, 1 };
+            var expected = new object[] { null, 2, 1 };
 
             using (var input = new MockedIterator(rows))
             {

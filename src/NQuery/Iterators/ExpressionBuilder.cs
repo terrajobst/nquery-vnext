@@ -148,7 +148,7 @@ namespace NQuery.Iterators
         {
             var actualExpression = BuildCachedExpression(expression);
             var coalescedExpression = targetType.CanBeNull()
-                                          ? (Expression) actualExpression
+                                          ? (Expression)actualExpression
                                           : Expression.Coalesce(actualExpression, Expression.Default(targetType));
             var resultExpression = Expression.Convert(coalescedExpression, targetType);
             var expressions = _assignments.Concat(new[] { resultExpression });
@@ -162,7 +162,7 @@ namespace NQuery.Iterators
             switch (expression.Kind)
             {
                 case BoundNodeKind.UnaryExpression:
-                    return BuildUnaryExpression((BoundUnaryExpression) expression);
+                    return BuildUnaryExpression((BoundUnaryExpression)expression);
                 case BoundNodeKind.BinaryExpression:
                     return BuildBinaryExpression((BoundBinaryExpression)expression);
                 case BoundNodeKind.LiteralExpression:
@@ -272,7 +272,7 @@ namespace NQuery.Iterators
             // Logical Or  --> If either side is TRUE, the result is TRUE.
 
             var specialValue = signature.Kind == BinaryOperatorKind.LogicalOr;
-            var constant = Expression.Convert(Expression.Constant(specialValue), typeof (bool?));
+            var constant = Expression.Convert(Expression.Constant(specialValue), typeof(bool?));
 
             return
                 Expression.Condition(

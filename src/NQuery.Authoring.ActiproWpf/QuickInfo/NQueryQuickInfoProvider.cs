@@ -64,7 +64,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
 
         protected override IEnumerable<Type> ContextTypes
         {
-            get { return new[] {typeof (QuickInfoModel)}; }
+            get { return new[] { typeof(QuickInfoModel) }; }
         }
     }
 }

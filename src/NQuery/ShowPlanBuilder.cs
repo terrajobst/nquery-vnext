@@ -127,7 +127,7 @@ namespace NQuery
         private static ShowPlanNode BuildCompute(BoundComputeRelation node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var input = new[] {Build(node.Input)};
+            var input = new[] { Build(node.Input) };
             var aggregates = from d in node.DefinedValues
                              let dName = d.ValueSlot.Name
                              let dProperties = Enumerable.Empty<KeyValuePair<string, string>>()
@@ -147,7 +147,7 @@ namespace NQuery
             var leftAndRight = new[] { Build(node.Left), Build(node.Right) };
             var children = node.Condition is null
                                ? leftAndRight
-                               : leftAndRight.Concat(new[] {Build(node.Condition)});
+                               : leftAndRight.Concat(new[] { Build(node.Condition) });
 
             return new ShowPlanNode(name, properties, children);
         }
@@ -221,7 +221,7 @@ namespace NQuery
             var aggregates = from a in node.Aggregates
                              let aName = $"{a.Output} = {a.Aggregate.Name}"
                              let aProperties = Enumerable.Empty<KeyValuePair<string, string>>()
-                             let aChildren = new[] {Build(a.Argument)}
+                             let aChildren = new[] { Build(a.Argument) }
                              select new ShowPlanNode(aName, aProperties, aChildren);
             var children = input.Concat(aggregates);
             var slots = string.Join(@", ", node.Groups.Select(g => g.ValueSlot.Name));
@@ -275,7 +275,7 @@ namespace NQuery
         private static ShowPlanNode BuildUnaryExpression(BoundUnaryExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] {Build(node.Expression)};
+            var children = new[] { Build(node.Expression) };
             return new ShowPlanNode(node.OperatorKind.ToString(), properties, children, true);
         }
 
@@ -329,7 +329,7 @@ namespace NQuery
         private static ShowPlanNode BuildMethodInvocationExpression(BoundMethodInvocationExpression node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] {Build(node.Target)}.Concat(node.Arguments.Select(Build));
+            var children = new[] { Build(node.Target) }.Concat(node.Arguments.Select(Build));
             return new ShowPlanNode(node.Symbol.ToString(), properties, children, true);
         }
 
@@ -353,7 +353,7 @@ namespace NQuery
             var caseLabels = node.CaseLabels.Select(BuildCaseLabel);
             var elseLabel = node.ElseExpression is null
                                 ? Enumerable.Empty<ShowPlanNode>()
-                                : new[] {Build(node.ElseExpression)};
+                                : new[] { Build(node.ElseExpression) };
             var children = caseLabels.Concat(elseLabel);
             return new ShowPlanNode(@"Case", properties, children, true);
         }
@@ -372,7 +372,7 @@ namespace NQuery
         private static ShowPlanNode BuildSingleRowSubselect(BoundSingleRowSubselect node)
         {
             var properties = Enumerable.Empty<KeyValuePair<string, string>>();
-            var children = new[] { Build(node.Relation)};
+            var children = new[] { Build(node.Relation) };
             return new ShowPlanNode(@"Subselect", properties, children, true);
         }
 

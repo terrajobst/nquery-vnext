@@ -1,7 +1,7 @@
 namespace NQuery.Authoring.QuickInfo
 {
     public abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider
-        where T: SyntaxNode
+        where T : SyntaxNode
     {
         public QuickInfoModel GetModel(SemanticModel semanticModel, int position)
         {

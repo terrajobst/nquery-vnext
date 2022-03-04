@@ -13,7 +13,7 @@ namespace NQuery.Authoring.CodeActions.Issues
                    let column = semanticModel.GetSymbol(orderByColumn)
                    where column is not null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
-                   let action = new[] {new ReplaceOrdinalByNamedReferenceCodeAction(selector, namedReference)}
+                   let action = new[] { new ReplaceOrdinalByNamedReferenceCodeAction(selector, namedReference) }
                    select new CodeIssue(CodeIssueKind.Warning, selector.Span, action);
         }
 

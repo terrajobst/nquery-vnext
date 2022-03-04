@@ -74,13 +74,13 @@ namespace NQuery.Syntax
                 {
                     case '\n':
                     case '\r':
-                        {
-                            ReadEndOfLine();
-                            AddTrivia(target, SyntaxKind.EndOfLineTrivia);
-                            if (isTrailing)
-                                return;
-                        }
-                        break;
+                    {
+                        ReadEndOfLine();
+                        AddTrivia(target, SyntaxKind.EndOfLineTrivia);
+                        if (isTrailing)
+                            return;
+                    }
+                    break;
                     case '-':
                         if (_charReader.Peek() == '-')
                         {
@@ -317,7 +317,7 @@ namespace NQuery.Syntax
                         _charReader.NextChar();
                         _charReader.NextChar();
                     }
-                    else if (_charReader.Peek()== '>')
+                    else if (_charReader.Peek() == '>')
                     {
                         _kind = SyntaxKind.ExclamationGreaterToken;
                         _charReader.NextChar();
@@ -551,7 +551,7 @@ namespace NQuery.Syntax
                 }
             }
 
-            ExitLoop:
+        ExitLoop:
 
             var text = sb.ToString();
             _value = hasDotModifier || hasExponentialModifier

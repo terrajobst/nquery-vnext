@@ -9,7 +9,7 @@ using NQuery.Authoring.VSEditorWpf.Classification;
 
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 {
-    [Export(typeof (IQuickInfoSourceProvider))]
+    [Export(typeof(IQuickInfoSourceProvider))]
     [Name(@"NQueryQuickInfoSourceProvider")]
     [ContentType(@"NQuery")]
     internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider

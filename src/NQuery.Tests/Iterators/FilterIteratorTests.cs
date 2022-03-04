@@ -51,8 +51,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Filter_Filters()
         {
-            var rows = new object[] {1, 2, 3, 4};
-            var expected = new object[] {2, 4};
+            var rows = new object[] { 1, 2, 3, 4 };
+            var expected = new object[] { 2, 4 };
 
             using (var input = new MockedIterator(rows))
             using (var iterator = new FilterIterator(input, () => (int)input.RowBuffer[0] % 2 == 0))

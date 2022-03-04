@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Tests.Highlighting
         private static void AssertIsMatch(SemanticModel semanticModel, TextSpan span, ImmutableArray<IHighlighter> highlighters, ImmutableArray<TextSpan> expectedSpans)
         {
             var start = span.Start;
-            var middle = span.Start + span.Length/2;
+            var middle = span.Start + span.Length / 2;
             var end = span.End;
 
             AssertMatches(semanticModel, start, highlighters, expectedSpans);

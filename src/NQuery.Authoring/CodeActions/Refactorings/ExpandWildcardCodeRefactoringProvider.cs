@@ -15,7 +15,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             if (!columnInstances.Any())
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new ExpandWildcardCodeAction(node, columnInstances)};
+            return new[] { new ExpandWildcardCodeAction(node, columnInstances) };
         }
 
         private sealed class ExpandWildcardCodeAction : CodeAction

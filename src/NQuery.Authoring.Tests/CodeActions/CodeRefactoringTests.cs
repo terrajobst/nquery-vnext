@@ -13,7 +13,7 @@ namespace NQuery.Authoring.Tests.CodeActions
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = CreateProvider();
-            var providers = new[] {provider};
+            var providers = new[] { provider };
             return semanticModel.GetRefactorings(position, providers).ToImmutableArray();
         }
 

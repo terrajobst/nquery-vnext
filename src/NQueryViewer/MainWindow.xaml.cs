@@ -42,7 +42,7 @@ namespace NQueryViewer
         private IEnumerable<IEditorView> EditorViews
         {
             get { return DocumentTabControl.Items.OfType<TabItem>().Select(t => t.Content).OfType<IEditorView>(); }
-        } 
+        }
 
         public void OnImportsSatisfied()
         {
@@ -406,7 +406,7 @@ namespace NQueryViewer
 
         private void DataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            var dataView = (DataView) DataGrid.ItemsSource;
+            var dataView = (DataView)DataGrid.ItemsSource;
             var dataTable = dataView.Table;
             var dataColumn = dataTable.Columns[e.PropertyName];
             var columnName = string.IsNullOrWhiteSpace(dataColumn.Caption)
@@ -414,9 +414,9 @@ namespace NQueryViewer
                                  : dataColumn.Caption;
             var columnType = dataColumn.DataType.Name;
             var header = new StackPanel
-                             {
-                                 Orientation = Orientation.Vertical,
-                                 Children =
+            {
+                Orientation = Orientation.Vertical,
+                Children =
                                      {
                                          new TextBlock(new Run(columnName)),
                                          new TextBlock(new Run(columnType))
@@ -424,7 +424,7 @@ namespace NQueryViewer
                                                  Foreground = Brushes.Gray
                                              }
                                      }
-                             };
+            };
             e.Column.Header = header;
 
             // For some reason, the WPF DataGrid doesn't escape property names containing

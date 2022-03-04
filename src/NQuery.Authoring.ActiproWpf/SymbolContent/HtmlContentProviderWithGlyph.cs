@@ -26,12 +26,12 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
             var imageSource = NQueryGlyphImageSource.Get(glyph);
             return new Image
-                       {
-                           Margin = new Thickness(0, 0, 4, 0),
-                           Source = imageSource,
-                           Stretch = Stretch.None,
-                           UseLayoutRounding = true
-                       };
+            {
+                Margin = new Thickness(0, 0, 4, 0),
+                Source = imageSource,
+                Stretch = Stretch.None,
+                UseLayoutRounding = true
+            };
         }
 
         public static HtmlContentProvider Create(Glyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)

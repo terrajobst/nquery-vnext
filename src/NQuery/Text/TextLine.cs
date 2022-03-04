@@ -28,7 +28,7 @@ namespace NQuery.Text
             {
                 var nextLineIndex = LineNumber + 1;
                 var nextLine = nextLineIndex < Text.Lines.Count
-                                ? (TextLine?) Text.Lines[nextLineIndex]
+                                ? (TextLine?)Text.Lines[nextLineIndex]
                                 : null;
                 var start = Span.Start;
                 var end = Span.End;
@@ -72,8 +72,8 @@ namespace NQuery.Text
             unchecked
             {
                 var hashCode = (Text is not null ? Text.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ _start;
-                hashCode = (hashCode*397) ^ _length;
+                hashCode = (hashCode * 397) ^ _start;
+                hashCode = (hashCode * 397) ^ _length;
                 return hashCode;
             }
         }

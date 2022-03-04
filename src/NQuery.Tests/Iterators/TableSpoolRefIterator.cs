@@ -19,8 +19,8 @@ namespace NQuery.Tests.Iterators
         public void Iterators_TableSpoolRef_ReturnsStack_AndPops()
         {
             var stack = new TableSpoolStack(2);
-            stack.Push(new MockedRowBuffer(new object[] {1, "One"}));
-            stack.Push(new MockedRowBuffer(new object[] {2, "Two"}));
+            stack.Push(new MockedRowBuffer(new object[] { 1, "One" }));
+            stack.Push(new MockedRowBuffer(new object[] { 2, "Two" }));
 
             var expected = new object[,]
             {

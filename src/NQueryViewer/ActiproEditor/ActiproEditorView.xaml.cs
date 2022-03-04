@@ -108,7 +108,7 @@ namespace NQueryViewer.ActiproEditor
         public override int CaretPosition
         {
             get { return GetCaretPosition(); }
-            set {  SetCaretPosition(value); }
+            set { SetCaretPosition(value); }
         }
 
         public override TextSpan Selection

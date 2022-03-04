@@ -63,7 +63,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
                 return Enumerable.Empty<ICodeAction>();
             }
 
-            return new[] {new BetweenCodeAction(node, expression1, lowerBound, upperBound) };
+            return new[] { new BetweenCodeAction(node, expression1, lowerBound, upperBound) };
         }
 
         private static bool TryGetLessThanBounds(BinaryExpressionSyntax expression, out ExpressionSyntax lowerBound, out ExpressionSyntax upperBound)

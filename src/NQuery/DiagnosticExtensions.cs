@@ -283,7 +283,7 @@ namespace NQuery
         {
             var operatorText = operatorToken.Kind.GetText();
             var diagnostic = Diagnostic.Format(operatorToken.Span, DiagnosticId.InvalidOperatorForAllAny, operatorText);
-            return operatorToken.WithDiagnostics(new[] {diagnostic});
+            return operatorToken.WithDiagnostics(new[] { diagnostic });
         }
 
         public static void ReportUndeclaredTable(this ICollection<Diagnostic> diagnostics, NamedTableReferenceSyntax namedTableReference)
@@ -452,7 +452,7 @@ namespace NQuery
 
         public static void ReportWhenMustEvaluateToBool(this ICollection<Diagnostic> diagnostics, TextSpan span)
         {
-            var typeName = typeof (bool).ToDisplayName();
+            var typeName = typeof(bool).ToDisplayName();
             diagnostics.Report(span, DiagnosticId.WhenMustEvaluateToBool, typeName);
         }
 

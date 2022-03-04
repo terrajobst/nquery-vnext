@@ -52,7 +52,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
                     return _classificationService.Comment;
                 case SyntaxClassification.Keyword:
                     return _classificationService.Keyword;
-                 case SyntaxClassification.Punctuation:
+                case SyntaxClassification.Punctuation:
                     return _classificationService.Punctuation;
                 case SyntaxClassification.Identifier:
                     return _classificationService.Identifier;

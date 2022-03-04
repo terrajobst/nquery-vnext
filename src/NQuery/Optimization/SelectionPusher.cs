@@ -99,7 +99,7 @@ namespace NQuery.Optimization
         private static bool AllowsLeftPushOver(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.LeftOuter||
+                   type == BoundJoinType.LeftOuter ||
                    type == BoundJoinType.LeftSemi ||
                    type == BoundJoinType.LeftAntiSemi;
         }
@@ -107,7 +107,7 @@ namespace NQuery.Optimization
         private static bool AllowsRightPushOver(BoundJoinType type)
         {
             return type == BoundJoinType.Inner ||
-                   type == BoundJoinType.RightOuter||
+                   type == BoundJoinType.RightOuter ||
                    type == BoundJoinType.LeftSemi ||
                    type == BoundJoinType.LeftAntiSemi;
         }

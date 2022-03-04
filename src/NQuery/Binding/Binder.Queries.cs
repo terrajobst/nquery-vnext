@@ -37,7 +37,7 @@ namespace NQuery.Binding
             if (o is not null)
                 return GetFirstSelectQuery(o.Query);
 
-            return (SelectQuerySyntax) node;
+            return (SelectQuerySyntax)node;
         }
 
         private static bool IsRecursive(CommonTableExpressionSyntax commonTableExpression)
@@ -233,7 +233,7 @@ namespace NQuery.Binding
                                        where e is not null
                                        let c = e.Symbol as TableColumnInstanceSymbol
                                        where c is not null
-                                       select Tuple.Create((SyntaxNode) n, c);
+                                       select Tuple.Create((SyntaxNode)n, c);
 
             var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
                                           where QueryState.IntroducedTables.ContainsKey(t.Item2.TableInstance)
@@ -814,7 +814,7 @@ namespace NQuery.Binding
         {
             var symbol = new CommonTableExpressionSymbol(
                 commonTableExpression.Name.ValueText,
-                s => ((BoundQuery) null, ImmutableArray<ColumnSymbol>.Empty),
+                s => ((BoundQuery)null, ImmutableArray<ColumnSymbol>.Empty),
                 s => ImmutableArray<BoundQuery>.Empty
             );
 

@@ -27,7 +27,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (Line*397) ^ Column;
+                return (Line * 397) ^ Column;
             }
         }
 

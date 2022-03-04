@@ -31,7 +31,7 @@ namespace NQuery.Binding
             if (string.IsNullOrEmpty(text))
                 return "0000";
 
-            var result = new[] { char.ToUpperInvariant(text[0]), '0', '0', '0'};
+            var result = new[] { char.ToUpperInvariant(text[0]), '0', '0', '0' };
             var count = 1;
             var lastCode = Encode(result[0]);
             var lastLetter = result[0];

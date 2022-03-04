@@ -28,7 +28,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
             if (selectQuery is null)
                 return Enumerable.Empty<ICodeAction>();
 
-            return new[] {new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector)};
+            return new[] { new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector) };
         }
 
         private sealed class AddOrderByToSelectDistinctCodeAction : CodeAction

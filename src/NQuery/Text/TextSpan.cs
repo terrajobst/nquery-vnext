@@ -72,7 +72,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (Start*397) ^ Length;
+                return (Start * 397) ^ Length;
             }
         }
 

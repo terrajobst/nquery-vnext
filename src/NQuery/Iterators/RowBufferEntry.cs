@@ -28,14 +28,14 @@ namespace NQuery.Iterators
             if (ReferenceEquals(null, obj))
                 return false;
 
-            return obj is RowBufferEntry && Equals((RowBufferEntry) obj);
+            return obj is RowBufferEntry && Equals((RowBufferEntry)obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (RowBuffer.GetHashCode()*397) ^ Index;
+                return (RowBuffer.GetHashCode() * 397) ^ Index;
             }
         }
 

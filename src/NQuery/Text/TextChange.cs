@@ -52,7 +52,7 @@ namespace NQuery.Text
         {
             unchecked
             {
-                return (Span.GetHashCode()*397) ^ (NewText is not null ? NewText.GetHashCode() : 0);
+                return (Span.GetHashCode() * 397) ^ (NewText is not null ? NewText.GetHashCode() : 0);
             }
         }
 

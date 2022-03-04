@@ -21,7 +21,7 @@ namespace NQuery
                 case SyntaxKind.IdentityExpression:
                 case SyntaxKind.NegationExpression:
                 case SyntaxKind.LogicalNotExpression:
-                     return VisitUnaryExpression((UnaryExpressionSyntax)node);
+                    return VisitUnaryExpression((UnaryExpressionSyntax)node);
 
                 case SyntaxKind.BitwiseAndExpression:
                 case SyntaxKind.BitwiseOrExpression:
@@ -44,157 +44,157 @@ namespace NQuery
                 case SyntaxKind.RightShiftExpression:
                 case SyntaxKind.LogicalAndExpression:
                 case SyntaxKind.LogicalOrExpression:
-                     return VisitBinaryExpression((BinaryExpressionSyntax)node);
+                    return VisitBinaryExpression((BinaryExpressionSyntax)node);
 
                 case SyntaxKind.LikeExpression:
-                     return VisitLikeExpression((LikeExpressionSyntax)node);
+                    return VisitLikeExpression((LikeExpressionSyntax)node);
 
                 case SyntaxKind.SoundsLikeExpression:
-                     return VisitSoundsLikeExpression((SoundsLikeExpressionSyntax)node);
+                    return VisitSoundsLikeExpression((SoundsLikeExpressionSyntax)node);
 
                 case SyntaxKind.SimilarToExpression:
-                     return VisitSimilarToExpression((SimilarToExpressionSyntax)node);
+                    return VisitSimilarToExpression((SimilarToExpressionSyntax)node);
 
                 case SyntaxKind.ParenthesizedExpression:
-                     return VisitParenthesizedExpression((ParenthesizedExpressionSyntax)node);
+                    return VisitParenthesizedExpression((ParenthesizedExpressionSyntax)node);
 
                 case SyntaxKind.BetweenExpression:
-                     return VisitBetweenExpression((BetweenExpressionSyntax)node);
+                    return VisitBetweenExpression((BetweenExpressionSyntax)node);
 
                 case SyntaxKind.IsNullExpression:
-                     return VisitIsNullExpression((IsNullExpressionSyntax)node);
+                    return VisitIsNullExpression((IsNullExpressionSyntax)node);
 
                 case SyntaxKind.CastExpression:
-                     return VisitCastExpression((CastExpressionSyntax)node);
+                    return VisitCastExpression((CastExpressionSyntax)node);
 
                 case SyntaxKind.CaseExpression:
-                     return VisitCaseExpression((CaseExpressionSyntax)node);
+                    return VisitCaseExpression((CaseExpressionSyntax)node);
 
                 case SyntaxKind.CaseLabel:
-                     return VisitCaseLabel((CaseLabelSyntax)node);
+                    return VisitCaseLabel((CaseLabelSyntax)node);
 
                 case SyntaxKind.CoalesceExpression:
-                     return VisitCoalesceExpression((CoalesceExpressionSyntax)node);
+                    return VisitCoalesceExpression((CoalesceExpressionSyntax)node);
 
                 case SyntaxKind.NullIfExpression:
-                     return VisitNullIfExpression((NullIfExpressionSyntax)node);
+                    return VisitNullIfExpression((NullIfExpressionSyntax)node);
 
                 case SyntaxKind.InExpression:
-                     return VisitInExpression((InExpressionSyntax)node);
+                    return VisitInExpression((InExpressionSyntax)node);
 
                 case SyntaxKind.LiteralExpression:
-                     return VisitLiteralExpression((LiteralExpressionSyntax)node);
+                    return VisitLiteralExpression((LiteralExpressionSyntax)node);
 
                 case SyntaxKind.VariableExpression:
-                     return VisitParameterExpression((VariableExpressionSyntax)node);
+                    return VisitParameterExpression((VariableExpressionSyntax)node);
 
                 case SyntaxKind.NameExpression:
-                     return VisitNameExpression((NameExpressionSyntax)node);
+                    return VisitNameExpression((NameExpressionSyntax)node);
 
                 case SyntaxKind.PropertyAccessExpression:
-                     return VisitPropertyAccessExpression((PropertyAccessExpressionSyntax)node);
+                    return VisitPropertyAccessExpression((PropertyAccessExpressionSyntax)node);
 
                 case SyntaxKind.CountAllExpression:
-                     return VisitCountAllExpression((CountAllExpressionSyntax)node);
+                    return VisitCountAllExpression((CountAllExpressionSyntax)node);
 
                 case SyntaxKind.FunctionInvocationExpression:
-                     return VisitFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
+                    return VisitFunctionInvocationExpression((FunctionInvocationExpressionSyntax)node);
 
                 case SyntaxKind.MethodInvocationExpression:
-                     return VisitMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
+                    return VisitMethodInvocationExpression((MethodInvocationExpressionSyntax)node);
 
                 case SyntaxKind.ArgumentList:
-                     return VisitArgumentList((ArgumentListSyntax)node);
+                    return VisitArgumentList((ArgumentListSyntax)node);
 
                 case SyntaxKind.SingleRowSubselect:
-                     return VisitSingleRowSubselect((SingleRowSubselectSyntax)node);
+                    return VisitSingleRowSubselect((SingleRowSubselectSyntax)node);
 
                 case SyntaxKind.ExistsSubselect:
-                     return VisitExistsSubselect((ExistsSubselectSyntax)node);
+                    return VisitExistsSubselect((ExistsSubselectSyntax)node);
 
                 case SyntaxKind.AllAnySubselect:
-                     return VisitAllAnySubselect((AllAnySubselectSyntax)node);
+                    return VisitAllAnySubselect((AllAnySubselectSyntax)node);
 
                 case SyntaxKind.ParenthesizedTableReference:
-                     return VisitParenthesizedTableReference((ParenthesizedTableReferenceSyntax)node);
+                    return VisitParenthesizedTableReference((ParenthesizedTableReferenceSyntax)node);
 
                 case SyntaxKind.NamedTableReference:
-                     return VisitNamedTableReference((NamedTableReferenceSyntax)node);
+                    return VisitNamedTableReference((NamedTableReferenceSyntax)node);
 
                 case SyntaxKind.CrossJoinedTableReference:
-                     return VisitCrossJoinedTableReference((CrossJoinedTableReferenceSyntax)node);
+                    return VisitCrossJoinedTableReference((CrossJoinedTableReferenceSyntax)node);
 
                 case SyntaxKind.InnerJoinedTableReference:
-                     return VisitInnerJoinedTableReference((InnerJoinedTableReferenceSyntax)node);
+                    return VisitInnerJoinedTableReference((InnerJoinedTableReferenceSyntax)node);
 
                 case SyntaxKind.OuterJoinedTableReference:
-                     return VisitOuterJoinedTableReference((OuterJoinedTableReferenceSyntax)node);
+                    return VisitOuterJoinedTableReference((OuterJoinedTableReferenceSyntax)node);
 
                 case SyntaxKind.DerivedTableReference:
-                     return VisitDerivedTableReference((DerivedTableReferenceSyntax)node);
+                    return VisitDerivedTableReference((DerivedTableReferenceSyntax)node);
 
                 case SyntaxKind.ExceptQuery:
-                     return VisitExceptQuery((ExceptQuerySyntax)node);
+                    return VisitExceptQuery((ExceptQuerySyntax)node);
 
                 case SyntaxKind.UnionQuery:
-                     return VisitUnionQuery((UnionQuerySyntax)node);
+                    return VisitUnionQuery((UnionQuerySyntax)node);
 
                 case SyntaxKind.IntersectQuery:
-                     return VisitIntersectQuery((IntersectQuerySyntax)node);
+                    return VisitIntersectQuery((IntersectQuerySyntax)node);
 
                 case SyntaxKind.OrderedQuery:
-                     return VisitOrderedQuery((OrderedQuerySyntax)node);
+                    return VisitOrderedQuery((OrderedQuerySyntax)node);
 
                 case SyntaxKind.OrderByColumn:
-                     return VisitOrderByColumn((OrderByColumnSyntax)node);
+                    return VisitOrderByColumn((OrderByColumnSyntax)node);
 
                 case SyntaxKind.ParenthesizedQuery:
-                     return VisitParenthesizedQuery((ParenthesizedQuerySyntax)node);
+                    return VisitParenthesizedQuery((ParenthesizedQuerySyntax)node);
 
                 case SyntaxKind.CommonTableExpressionQuery:
-                     return VisitCommonTableExpressionQuery((CommonTableExpressionQuerySyntax)node);
+                    return VisitCommonTableExpressionQuery((CommonTableExpressionQuerySyntax)node);
 
                 case SyntaxKind.CommonTableExpression:
-                     return VisitCommonTableExpression((CommonTableExpressionSyntax)node);
+                    return VisitCommonTableExpression((CommonTableExpressionSyntax)node);
 
                 case SyntaxKind.CommonTableExpressionColumnName:
-                     return VisitCommonTableExpressionColumnName((CommonTableExpressionColumnNameSyntax)node);
+                    return VisitCommonTableExpressionColumnName((CommonTableExpressionColumnNameSyntax)node);
 
                 case SyntaxKind.CommonTableExpressionColumnNameList:
-                     return VisitCommonTableExpressionColumnNameList((CommonTableExpressionColumnNameListSyntax)node);
+                    return VisitCommonTableExpressionColumnNameList((CommonTableExpressionColumnNameListSyntax)node);
 
                 case SyntaxKind.SelectQuery:
-                     return VisitSelectQuery((SelectQuerySyntax)node);
+                    return VisitSelectQuery((SelectQuerySyntax)node);
 
                 case SyntaxKind.TopClause:
-                     return VisitTopClause((TopClauseSyntax)node);
+                    return VisitTopClause((TopClauseSyntax)node);
 
                 case SyntaxKind.WildcardSelectColumn:
-                     return VisitWildcardSelectColumn((WildcardSelectColumnSyntax)node);
+                    return VisitWildcardSelectColumn((WildcardSelectColumnSyntax)node);
 
                 case SyntaxKind.ExpressionSelectColumn:
-                     return VisitExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
+                    return VisitExpressionSelectColumn((ExpressionSelectColumnSyntax)node);
 
                 case SyntaxKind.SelectClause:
-                     return VisitSelectClause((SelectClauseSyntax)node);
+                    return VisitSelectClause((SelectClauseSyntax)node);
 
                 case SyntaxKind.FromClause:
-                     return VisitFromClause((FromClauseSyntax)node);
+                    return VisitFromClause((FromClauseSyntax)node);
 
                 case SyntaxKind.WhereClause:
-                     return VisitWhereClause((WhereClauseSyntax)node);
+                    return VisitWhereClause((WhereClauseSyntax)node);
 
                 case SyntaxKind.GroupByClause:
-                     return VisitGroupByClause((GroupByClauseSyntax)node);
+                    return VisitGroupByClause((GroupByClauseSyntax)node);
 
                 case SyntaxKind.GroupByColumn:
-                     return VisitGroupByColumn((GroupByColumnSyntax)node);
+                    return VisitGroupByColumn((GroupByColumnSyntax)node);
 
                 case SyntaxKind.HavingClause:
-                     return VisitHavingClause((HavingClauseSyntax)node);
+                    return VisitHavingClause((HavingClauseSyntax)node);
 
                 case SyntaxKind.Alias:
-                     return VisitAlias((AliasSyntax)node);
+                    return VisitAlias((AliasSyntax)node);
 
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
