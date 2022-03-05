@@ -5,6 +5,37 @@ namespace NQuery.Tests.Syntax
     public class SyntaxFactsTests
     {
         [Fact]
+        public void SyntaxFacts_ParseToken_ReturnsActualToken()
+        {
+            var token = SyntaxFacts.ParseToken("a");
+
+            Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+            Assert.Equal("a", token.ValueText);
+            Assert.NotNull(token.Parent.SyntaxTree);
+        }
+
+        [Fact]
+        public void SyntaxFacts_ParseToken_FailsForMultipleTokens()
+        {
+            Assert.Throws<InvalidOperationException>(() => SyntaxFacts.ParseToken("+-"));
+        }
+
+        [Fact]
+        public void SyntaxFacts_ParseTokens_ReturnsMultipleTokens()
+        {
+            var tokens = SyntaxFacts.ParseTokens("+-").ToArray();
+
+            Assert.Equal(3, tokens.Length);
+            Assert.Equal(SyntaxKind.PlusToken, tokens[0].Kind);
+            Assert.Equal(SyntaxKind.MinusToken, tokens[1].Kind);
+            Assert.Equal(SyntaxKind.EndOfFileToken, tokens[2].Kind);
+
+            Assert.NotNull(tokens[0].Parent.SyntaxTree);
+            Assert.NotNull(tokens[1].Parent.SyntaxTree);
+            Assert.NotNull(tokens[2].Parent.SyntaxTree);
+        }
+
+        [Fact]
         public void SyntaxFacts_Keyword_GetKeywords_ReturnsAllKindsNamedKeyword()
         {
             var expectedKeywords = GetAllKindsNamedKeyword().OrderBy(t => t);

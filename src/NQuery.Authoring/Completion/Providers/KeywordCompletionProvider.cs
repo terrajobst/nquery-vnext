@@ -493,7 +493,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsBeforeQuery(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindToken(position);
-            if (token is not null && token.Kind == SyntaxKind.EndOfFileToken && syntaxTree.Root.Root is QuerySyntax)
+            if (token is not null && token.Kind == SyntaxKind.EndOfFileToken && syntaxTree.Root.Root is not ExpressionSyntax)
                 return true;
 
             return IsBeforeNode<QuerySyntax>(syntaxTree, position);

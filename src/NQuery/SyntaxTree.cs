@@ -48,6 +48,23 @@ namespace NQuery
             return new SyntaxTree(sourceText, p => p.ParseRootExpression());
         }
 
+        public static SyntaxTree ParseTokens(string source)
+        {
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            var textBuffer = SourceText.From(source);
+            return ParseTokens(textBuffer);
+        }
+
+        public static SyntaxTree ParseTokens(SourceText sourceText)
+        {
+            if (sourceText is null)
+                throw new ArgumentNullException(nameof(sourceText));
+
+            return new SyntaxTree(sourceText, p => p.ParseRootTokens());
+        }
+
         public IEnumerable<Diagnostic> GetDiagnostics()
         {
             return from token in Root.DescendantTokens(descendIntoTrivia: true)
@@ -141,10 +158,10 @@ namespace NQuery
             if (newText == Text)
                 return this;
 
-            var isQuery = Root.Root is QuerySyntax;
-            return isQuery
-                ? ParseQuery(newText)
-                : ParseExpression(newText);
+            var isExpression = Root.Root is ExpressionSyntax;
+            return isExpression
+                ? ParseExpression(newText)
+                : ParseQuery(newText);
         }
 
         public static readonly SyntaxTree Empty = ParseQuery(string.Empty);

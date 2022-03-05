@@ -33,6 +33,10 @@ namespace NQuery
 
         public ExpressionEvaluator CreateExpressionEvaluator()
         {
+            // If the query is empty, just return null
+            if (_query.OutputColumns.Length == 0)
+                return new ExpressionEvaluator(typeof(object), () => null);
+
             var expressionType = _query.OutputColumns.First().ValueSlot.Type;
             var expression = CreateExpression();
             return new ExpressionEvaluator(expressionType, expression);
