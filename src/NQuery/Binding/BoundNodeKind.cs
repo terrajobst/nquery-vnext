@@ -22,6 +22,7 @@ namespace NQuery.Binding
         ValueSlotExpression,
 
         // Relations
+        EmptyRelation,
         TableRelation,
         DerivedTableRelation,
         JoinRelation,

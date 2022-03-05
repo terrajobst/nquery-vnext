@@ -333,11 +333,9 @@ namespace NQuery.Binding
 
         private BoundNode BindEmptyQuery()
         {
-            var constantRelation = new BoundConstantRelation();
-            var alwaysFalse = new BoundLiteralExpression(false);
-            var filterRelation = new BoundFilterRelation(constantRelation, alwaysFalse);
+            var relation = new BoundEmptyRelation();
             var output = Enumerable.Empty<QueryColumnInstanceSymbol>();
-            return new BoundQuery(filterRelation, output);
+            return new BoundQuery(relation, output);
         }
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
