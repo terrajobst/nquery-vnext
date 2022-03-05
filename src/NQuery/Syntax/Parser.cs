@@ -255,7 +255,7 @@ namespace NQuery.Syntax
 
         public CompilationUnitSyntax ParseRootQuery()
         {
-            var query = ParseQueryWithOptionalCte();
+            var query = ParseOptionalQueryWithOptionalCte();
             var endOfFileToken = ParseEndOfFileToken();
             return new CompilationUnitSyntax(_syntaxTree, query, endOfFileToken);
         }
@@ -265,6 +265,16 @@ namespace NQuery.Syntax
             var expression = ParseExpression();
             var endOfFileToken = ParseEndOfFileToken();
             return new CompilationUnitSyntax(_syntaxTree, expression, endOfFileToken);
+        }
+
+        public CompilationUnitSyntax ParseRootTokens()
+        {
+            if (Current.Kind != SyntaxKind.EndOfFileToken)
+                SkipTokens(t => t.Kind == SyntaxKind.EndOfFileToken);
+
+            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+
+            return new CompilationUnitSyntax(_syntaxTree, null, endOfFileToken);
         }
 
         private SyntaxToken ParseEndOfFileToken()
@@ -737,8 +747,11 @@ namespace NQuery.Syntax
             return new SeparatedSyntaxList<ExpressionSyntax>(expressionsWithCommas);
         }
 
-        private QuerySyntax ParseQueryWithOptionalCte()
+        private QuerySyntax ParseOptionalQueryWithOptionalCte()
         {
+            if (Current.Kind == SyntaxKind.EndOfFileToken)
+                return null;
+
             if (Current.Kind != SyntaxKind.WithKeyword)
                 return ParseQuery();
 

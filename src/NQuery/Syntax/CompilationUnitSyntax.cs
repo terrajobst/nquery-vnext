@@ -16,7 +16,8 @@ namespace NQuery.Syntax
 
         public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
         {
-            yield return Root;
+            if (Root is not null)
+                yield return Root;
             yield return EndOfFileToken;
         }
 

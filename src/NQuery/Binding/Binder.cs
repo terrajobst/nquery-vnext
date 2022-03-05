@@ -92,6 +92,9 @@ namespace NQuery.Binding
 
         private BoundNode BindRoot(SyntaxNode root)
         {
+            if (root is null)
+                return BindEmptyQuery();
+
             var query = root as QuerySyntax;
             if (query is not null)
                 return BindQuery(query);

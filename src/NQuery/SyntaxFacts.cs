@@ -13,9 +13,20 @@ namespace NQuery
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            var sourceText = SourceText.From(text);
-            var lexer = new Lexer(null, sourceText);
-            return lexer.Lex();
+            var tokens = ParseTokens(text).ToArray();
+            if (tokens.Length == 1 || tokens.Length == 2)
+                return tokens[0];
+
+            throw new InvalidOperationException($"The text '{text}' produces more than one token.");
+        }
+
+        public static IEnumerable<SyntaxToken> ParseTokens(string text)
+        {
+            if (text is null)
+                throw new ArgumentNullException(nameof(text));
+
+            var syntaxTree = SyntaxTree.ParseTokens(text);
+            return syntaxTree.Root.DescendantTokens(descendIntoTrivia: true);
         }
 
         public static ExpressionSyntax ParseExpression(string text)
