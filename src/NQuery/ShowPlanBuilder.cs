@@ -19,6 +19,8 @@ namespace NQuery
             {
                 case BoundNodeKind.Query:
                     return BuildQueryRelation((BoundQuery)node);
+                case BoundNodeKind.EmptyRelation:
+                    return BuildEmpty((BoundEmptyRelation)node);
                 case BoundNodeKind.ConstantRelation:
                     return BuildConstant((BoundConstantRelation)node);
                 case BoundNodeKind.TableRelation:
@@ -92,6 +94,13 @@ namespace NQuery
             var children = new[] { Build(node.Relation) };
             var slots = string.Join(@", ", node.OutputColumns.Select(v => v.Name));
             return new ShowPlanNode(@"Query " + slots, properties, children);
+        }
+
+        private static ShowPlanNode BuildEmpty(BoundEmptyRelation node)
+        {
+            var properties = Enumerable.Empty<KeyValuePair<string, string>>();
+            var children = Enumerable.Empty<ShowPlanNode>();
+            return new ShowPlanNode(@"Empty", properties, children);
         }
 
         private static ShowPlanNode BuildConstant(BoundConstantRelation node)

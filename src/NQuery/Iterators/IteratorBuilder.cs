@@ -38,6 +38,8 @@ namespace NQuery.Iterators
         {
             switch (relation.Kind)
             {
+                case BoundNodeKind.EmptyRelation:
+                    return BuildEmpty();
                 case BoundNodeKind.ConstantRelation:
                     return BuildConstant();
                 case BoundNodeKind.TableRelation:
@@ -69,6 +71,11 @@ namespace NQuery.Iterators
                 default:
                     throw ExceptionBuilder.UnexpectedValue(relation.Kind);
             }
+        }
+
+        private static Iterator BuildEmpty()
+        {
+            return new EmptyIterator();
         }
 
         private static Iterator BuildConstant()

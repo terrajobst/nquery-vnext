@@ -6,6 +6,9 @@
         {
             switch (node.Kind)
             {
+                case BoundNodeKind.EmptyRelation:
+                    VisitEmptyRelation((BoundEmptyRelation)node);
+                    break;
                 case BoundNodeKind.TableRelation:
                     VisitTableRelation((BoundTableRelation)node);
                     break;
@@ -63,6 +66,10 @@
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
+        }
+
+        protected virtual void VisitEmptyRelation(BoundEmptyRelation node)
+        {
         }
 
         protected virtual void VisitTableRelation(BoundTableRelation node)

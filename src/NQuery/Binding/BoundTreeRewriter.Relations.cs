@@ -6,6 +6,8 @@ namespace NQuery.Binding
         {
             switch (node.Kind)
             {
+                case BoundNodeKind.EmptyRelation:
+                    return RewriteEmptyRelation((BoundEmptyRelation)node);
                 case BoundNodeKind.TableRelation:
                     return RewriteTableRelation((BoundTableRelation)node);
                 case BoundNodeKind.DerivedTableRelation:
@@ -45,6 +47,11 @@ namespace NQuery.Binding
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
+        }
+
+        protected virtual BoundRelation RewriteEmptyRelation(BoundEmptyRelation node)
+        {
+            return node;
         }
 
         protected virtual BoundRelation RewriteTableRelation(BoundTableRelation node)
