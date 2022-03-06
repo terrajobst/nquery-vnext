@@ -485,8 +485,7 @@ namespace NQuery.Authoring.Completion.Providers
             if (token is null)
                 return false;
 
-            var topClause = token.Parent as TopClauseSyntax;
-            return topClause is not null &&
+            return token.Parent is TopClauseSyntax topClause &&
                    topClause.Value == token;
         }
 
@@ -505,8 +504,7 @@ namespace NQuery.Authoring.Completion.Providers
             if (token is null)
                 return false;
 
-            var isNullExpression = token.Parent as IsNullExpressionSyntax;
-            return isNullExpression is not null &&
+            return token.Parent is IsNullExpressionSyntax isNullExpression &&
                    isNullExpression.IsKeyword == token;
         }
 
@@ -558,8 +556,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInAliasAndNoAs(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            var node = token.Parent as AliasSyntax;
-            return node is not null && node.AsKeyword is null;
+            return token.Parent is AliasSyntax node && node.AsKeyword is null;
         }
 
         private static bool IsInCastAfterExpression(SyntaxTree syntaxTree, int position)

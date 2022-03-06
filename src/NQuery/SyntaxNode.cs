@@ -153,8 +153,7 @@ namespace NQuery
         {
             if (FullSpan.End == position)
             {
-                var compilationUnit = this as CompilationUnitSyntax;
-                if (compilationUnit is not null)
+                if (this is CompilationUnitSyntax compilationUnit)
                     return compilationUnit.EndOfFileToken;
             }
 

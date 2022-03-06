@@ -52,8 +52,7 @@ namespace NQuery.Authoring.Completion.Providers
 
         private static IEnumerable<CompletionItem> GetMemberCompletions(SemanticModel semanticModel, PropertyAccessExpressionSyntax propertyAccessExpression)
         {
-            var tableInstanceSymbol = semanticModel.GetSymbol(propertyAccessExpression.Target) as TableInstanceSymbol;
-            if (tableInstanceSymbol is not null)
+            if (semanticModel.GetSymbol(propertyAccessExpression.Target) is TableInstanceSymbol tableInstanceSymbol)
                 return GetTableCompletions(tableInstanceSymbol);
 
             var targetType = semanticModel.GetExpressionType(propertyAccessExpression.Target);

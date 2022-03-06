@@ -28,8 +28,7 @@ namespace NQuery.Authoring.SymbolSearch
 
         public override bool Equals(object obj)
         {
-            var other = obj as SymbolSpan?;
-            return other.HasValue && Equals(other.Value);
+            return obj is SymbolSpan other && Equals(other);
         }
 
         public override int GetHashCode()

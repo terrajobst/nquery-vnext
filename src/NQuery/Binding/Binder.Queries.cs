@@ -17,24 +17,19 @@ namespace NQuery.Binding
 
         private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
         {
-            var p = node as ParenthesizedQuerySyntax;
-            if (p is not null)
+            if (node is ParenthesizedQuerySyntax p)
                 return GetFirstSelectQuery(p.Query);
 
-            var u = node as UnionQuerySyntax;
-            if (u is not null)
+            if (node is UnionQuerySyntax u)
                 return GetFirstSelectQuery(u.LeftQuery);
 
-            var e = node as ExceptQuerySyntax;
-            if (e is not null)
+            if (node is ExceptQuerySyntax e)
                 return GetFirstSelectQuery(e.LeftQuery);
 
-            var i = node as IntersectQuerySyntax;
-            if (i is not null)
+            if (node is IntersectQuerySyntax i)
                 return GetFirstSelectQuery(i.LeftQuery);
 
-            var o = node as OrderedQuerySyntax;
-            if (o is not null)
+            if (node is OrderedQuerySyntax o)
                 return GetFirstSelectQuery(o.Query);
 
             return (SelectQuerySyntax)node;
@@ -383,14 +378,12 @@ namespace NQuery.Binding
 
         private static void FlattenUnionQueries(ICollection<QuerySyntax> receiver, UnionQuerySyntax node)
         {
-            var leftAsUnion = node.LeftQuery as UnionQuerySyntax;
-            if (leftAsUnion is not null && HasSameUnionKind(node, leftAsUnion))
+            if (node.LeftQuery is UnionQuerySyntax leftAsUnion && HasSameUnionKind(node, leftAsUnion))
                 FlattenUnionQueries(receiver, leftAsUnion);
             else
                 receiver.Add(node.LeftQuery);
 
-            var rightAsUnion = node.RightQuery as UnionQuerySyntax;
-            if (rightAsUnion is not null && HasSameUnionKind(node, rightAsUnion))
+            if (node.RightQuery is UnionQuerySyntax rightAsUnion && HasSameUnionKind(node, rightAsUnion))
                 FlattenUnionQueries(receiver, rightAsUnion);
             else
                 receiver.Add(node.RightQuery);
@@ -1393,19 +1386,17 @@ namespace NQuery.Binding
 
             // Case (1): Check for positional form.
 
-            var selectorAsLiteral = selector as LiteralExpressionSyntax;
-            if (selectorAsLiteral is not null)
+            if (selector is LiteralExpressionSyntax selectorAsLiteral)
             {
-                var position = selectorAsLiteral.Value as int?;
-                if (position is not null)
+                if (selectorAsLiteral.Value is int position)
                 {
-                    var index = position.Value - 1;
+                    var index = position - 1;
                     var indexValid = 0 <= index && index < queryColumns.Length;
                     if (indexValid)
                         return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
 
                     // Report that the given position isn't valid.
-                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position.Value, queryColumns.Length);
+                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position, queryColumns.Length);
 
                     // And to avoid cascading errors, we'll fake up an invalid slot.
                     var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
@@ -1415,8 +1406,7 @@ namespace NQuery.Binding
 
             // Case (2): Check for query column name.
 
-            var selectorAsName = selector as NameExpressionSyntax;
-            if (selectorAsName is not null)
+            if (selector is NameExpressionSyntax selectorAsName)
             {
                 var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToImmutableArray();
                 if (columnSymbols.Length > 0)

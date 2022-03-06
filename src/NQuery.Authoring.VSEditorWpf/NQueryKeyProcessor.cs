@@ -175,8 +175,7 @@ namespace NQuery.Authoring.VSEditorWpf
                 }
             }
 
-            var target = stackForTextView as IIntellisenseCommandTarget;
-            return target is not null && target.ExecuteKeyboardCommand(command);
+            return stackForTextView is IIntellisenseCommandTarget target && target.ExecuteKeyboardCommand(command);
         }
     }
 }

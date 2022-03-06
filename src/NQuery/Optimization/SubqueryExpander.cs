@@ -323,8 +323,7 @@ namespace NQuery.Optimization
 
         private static bool TryGetExistsSubselect(BoundExpression expression, out BoundExistsSubselect existsSubselect, out bool isNegated)
         {
-            var negation = expression as BoundUnaryExpression;
-            if (negation is not null && negation.Result.Selected.Signature.Kind == UnaryOperatorKind.LogicalNot)
+            if (expression is BoundUnaryExpression negation && negation.Result.Selected.Signature.Kind == UnaryOperatorKind.LogicalNot)
             {
                 if (!TryGetExistsSubselect(negation.Expression, out existsSubselect, out isNegated))
                     return false;

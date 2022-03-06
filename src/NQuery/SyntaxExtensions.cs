@@ -151,8 +151,7 @@ namespace NQuery
             ArgumentNullException.ThrowIfNull(root);
 
             var token = root.FindTokenOnLeft(position);
-            var node = token.Parent as AliasSyntax;
-            return node is not null && node.Span.ContainsOrTouches(position);
+            return token.Parent is AliasSyntax node && node.Span.ContainsOrTouches(position);
         }
 
         private static bool GuaranteedInCteName(this SyntaxNode root, int position)
@@ -169,8 +168,7 @@ namespace NQuery
             ArgumentNullException.ThrowIfNull(root);
 
             var token = root.FindTokenOnLeft(position);
-            var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte is not null && cte.Name.Span.ContainsOrTouches(position);
+            return token.Parent is CommonTableExpressionSyntax cte && cte.Name.Span.ContainsOrTouches(position);
         }
 
         private static bool InCteColumnList(this SyntaxNode root, int position)
@@ -188,8 +186,7 @@ namespace NQuery
             ArgumentNullException.ThrowIfNull(root);
 
             var syntaxToken = root.FindTokenOnLeft(position);
-            var derivedTable = syntaxToken.Parent as DerivedTableReferenceSyntax;
-            return derivedTable is not null && derivedTable.Name.FullSpan.ContainsOrTouches(position);
+            return syntaxToken.Parent is DerivedTableReferenceSyntax derivedTable && derivedTable.Name.FullSpan.ContainsOrTouches(position);
         }
 
         public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)

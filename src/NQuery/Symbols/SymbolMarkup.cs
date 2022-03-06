@@ -13,8 +13,7 @@ namespace NQuery.Symbols
 
         public override bool Equals(object obj)
         {
-            var other = obj as SymbolMarkup;
-            return other is not null && Equals(other);
+            return obj is SymbolMarkup other && Equals(other);
         }
 
         public bool Equals(SymbolMarkup other)

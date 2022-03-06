@@ -62,8 +62,7 @@ namespace NQuery.Text
 
         public override bool Equals(object obj)
         {
-            var other = obj as TextLine?;
-            return other is not null && Equals(other.Value);
+            return obj is TextLine other && Equals(other);
         }
 
         public override int GetHashCode()

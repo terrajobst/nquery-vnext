@@ -95,12 +95,10 @@ namespace NQuery.Binding
             if (root is null)
                 return BindEmptyQuery();
 
-            var query = root as QuerySyntax;
-            if (query is not null)
+            if (root is QuerySyntax query)
                 return BindQuery(query);
 
-            var expression = root as ExpressionSyntax;
-            if (expression is not null)
+            if (root is ExpressionSyntax expression)
                 return BindExpression(expression);
 
             throw ExceptionBuilder.UnexpectedValue(root);
