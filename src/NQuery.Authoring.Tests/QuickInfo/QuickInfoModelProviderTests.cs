@@ -32,7 +32,7 @@ namespace NQuery.Authoring.Tests.QuickInfo
 
         protected void AssertIsNotMatch(string query, Func<DataContext, DataContext> dataContextModifer)
         {
-            GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
+            GetModels(query, dataContextModifer, out _, out var startModel, out var middleModel, out var endModel);
 
             Assert.Null(startModel);
             Assert.Null(middleModel);
