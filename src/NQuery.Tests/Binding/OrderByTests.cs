@@ -213,8 +213,8 @@ namespace NQuery.Tests.Binding
             var orderByColumn = semanticModel.GetSymbol(orderedQuery.Columns.Single());
 
             Assert.Empty(diagnostics);
-            Assert.NotEqual(firstColumn, orderByColumn);
-            Assert.Equal(unionColumn, orderByColumn);
+            Assert.NotEqual(firstColumn.ValueSlot, orderByColumn.ValueSlot);
+            Assert.Equal(unionColumn.ValueSlot, orderByColumn.ValueSlot);
         }
 
         [Fact]

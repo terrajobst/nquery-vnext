@@ -348,7 +348,7 @@ namespace NQuery.Binding
                 .Select(v => ValueSlotFactory.CreateTemporary(v.Type))
                 .ToImmutableArray();
             var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.GetOutputValues().ElementAt(columnIndex))));
-            var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
+            var outputColumns = BindOutputColumns(queries, outputValues);
             var comparers = isUnionAll
                 ? Enumerable.Empty<IComparer>()
                 : outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, DiagnosticId.InvalidDataTypeInUnion));
@@ -411,7 +411,7 @@ namespace NQuery.Binding
             BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput, out var leftValues, out _);
 
             var outputValues = leftValues;
-            var outputColumns = BindOutputColumns(columns, outputValues);
+            var outputColumns = BindOutputColumns(boundLeft, boundRight, outputValues);
 
             var diagnosticId = isIntersect
                 ? DiagnosticId.InvalidDataTypeInIntersect
@@ -538,22 +538,36 @@ namespace NQuery.Binding
             return result.ToImmutableArray();
         }
 
-        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<ValueSlot> outputValues)
+        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(
+            BoundQuery left,
+            BoundQuery right,
+            ImmutableArray<ValueSlot> outputValues)
         {
-            var result = new List<QueryColumnInstanceSymbol>(inputColumns.Length);
+            var queries = ImmutableArray.Create(left, right);
+            return BindOutputColumns(queries, outputValues);
+        }
 
-            for (var i = 0; i < inputColumns.Length; i++)
+        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(
+            ImmutableArray<BoundQuery> queries,
+            ImmutableArray<ValueSlot> outputValues)
+        {
+            var result = new List<QueryColumnInstanceSymbol>(outputValues.Length);
+            var primaryColumns = queries.First().OutputColumns;
+
+            var joinedColumnsBuilder = new List<QueryColumnInstanceSymbol>(queries.Length);
+
+            for (var i = 0; i < outputValues.Length; i++)
             {
-                if (i >= outputValues.Length)
-                    break;
-
-                var queryColumn = inputColumns[i];
+                var name = primaryColumns[i].Name;
                 var valueSlot = outputValues[i];
 
-                var resultColumn = queryColumn.ValueSlot == valueSlot
-                    ? queryColumn
-                    : new QueryColumnInstanceSymbol(queryColumn.Name, valueSlot);
+                joinedColumnsBuilder.Clear();
+                foreach (var query in queries)
+                    joinedColumnsBuilder.Add(query.OutputColumns[i]);
 
+                var joinedColumns = joinedColumnsBuilder.ToImmutableArray();
+
+                var resultColumn = new QueryColumnInstanceSymbol(name, valueSlot, joinedColumns);
                 result.Add(resultColumn);
             }
 
@@ -855,9 +869,9 @@ namespace NQuery.Binding
                 : specifiedColumnNames.Select(t => t.Identifier.ValueText);
 
             var columns = queryColumns.Take(columnCount)
-                                      .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
+                                      .Zip(columnNames, (c, n) => new QueryColumnSymbol(n, c))
                                       .Where(c => !string.IsNullOrEmpty(c.Name))
-                                      .ToImmutableArray();
+                                      .ToImmutableArray<ColumnSymbol>();
 
             var uniqueColumnNames = new HashSet<string>();
             foreach (var column in columns.Where(c => !uniqueColumnNames.Add(c.Name)))
