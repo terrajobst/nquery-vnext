@@ -143,7 +143,7 @@ namespace NQuery
 
             var token = root.FindTokenOnLeft(position);
             var node = token.Parent as AliasSyntax;
-            return node is not null && node.AsKeyword is not null && node.AsKeyword.Span.End <= position;
+            return node?.AsKeyword is not null && node.AsKeyword.Span.End <= position;
         }
 
         private static bool PossiblyInAlias(this SyntaxNode root, int position)
@@ -161,7 +161,7 @@ namespace NQuery
 
             var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte is not null && cte.RecursiveKeyword is not null && cte.Name.Span.ContainsOrTouches(position);
+            return cte?.RecursiveKeyword is not null && cte.Name.Span.ContainsOrTouches(position);
         }
 
         private static bool PossiblyInCteName(this SyntaxNode root, int position)

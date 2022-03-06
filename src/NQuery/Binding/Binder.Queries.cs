@@ -719,7 +719,7 @@ namespace NQuery.Binding
             //    {One or more recursive members}
 
             var rootQuery = commonTableExpression.Query as UnionQuerySyntax;
-            if (rootQuery is null || rootQuery.AllKeyword is null)
+            if (rootQuery?.AllKeyword is null)
             {
                 Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
 
@@ -965,7 +965,7 @@ namespace NQuery.Binding
 
             var topClause = node.SelectClause.TopClause;
             var top = topClause?.Value.Value as int?;
-            var withTies = topClause is not null && topClause.WithKeyword is not null;
+            var withTies = topClause?.WithKeyword is not null;
 
             if (withTies && orderedQueryNode is null)
                 Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause.Span);

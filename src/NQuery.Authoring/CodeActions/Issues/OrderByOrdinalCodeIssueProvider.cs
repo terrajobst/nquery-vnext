@@ -9,7 +9,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         {
             return from orderByColumn in node.Columns
                    let selector = orderByColumn.ColumnSelector as LiteralExpressionSyntax
-                   where selector is not null && selector.Value is int
+                   where selector?.Value is int
                    let column = semanticModel.GetSymbol(orderByColumn)
                    where column is not null && !string.IsNullOrEmpty(column.Name)
                    let namedReference = SyntaxFacts.GetValidIdentifier(column.Name)
