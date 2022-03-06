@@ -556,7 +556,7 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInAliasAndNoAs(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            return token.Parent is AliasSyntax node && node.AsKeyword is null;
+            return token.Parent is AliasSyntax { AsKeyword: null };
         }
 
         private static bool IsInCastAfterExpression(SyntaxTree syntaxTree, int position)

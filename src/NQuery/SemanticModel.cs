@@ -165,10 +165,7 @@ namespace NQuery
         {
             ArgumentNullException.ThrowIfNull(commonTableExpressionColumnName);
 
-            if (commonTableExpressionColumnName.Parent is not CommonTableExpressionColumnNameListSyntax columnList)
-                return null;
-
-            if (columnList.Parent is not CommonTableExpressionSyntax commonTableExpression)
+            if (commonTableExpressionColumnName.Parent is not CommonTableExpressionColumnNameListSyntax { Parent: CommonTableExpressionSyntax commonTableExpression } columnList)
                 return null;
 
             var symbol = GetDeclaredSymbol(commonTableExpression);
