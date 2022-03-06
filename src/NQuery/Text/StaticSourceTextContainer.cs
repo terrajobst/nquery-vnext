@@ -4,8 +4,8 @@ namespace NQuery.Text
     {
         public StaticSourceTextContainer(SourceText current)
         {
-            if (current is null)
-                throw new ArgumentNullException(nameof(current));
+            ArgumentNullException.ThrowIfNull(current);
+            ArgumentNullException.ThrowIfNull(current);
 
             Current = current;
         }

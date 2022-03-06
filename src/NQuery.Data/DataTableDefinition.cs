@@ -9,8 +9,7 @@ namespace NQuery.Data
     {
         public DataTableDefinition(DataTable dataTable)
         {
-            if (dataTable is null)
-                throw new ArgumentNullException(nameof(dataTable));
+            ArgumentNullException.ThrowIfNull(dataTable);
 
             DataTable = dataTable;
             Name = DataTable.TableName;
@@ -18,8 +17,7 @@ namespace NQuery.Data
 
         public DataTableDefinition(DataTable dataTable, string name)
         {
-            if (dataTable is null)
-                throw new ArgumentNullException(nameof(dataTable));
+            ArgumentNullException.ThrowIfNull(dataTable);
 
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException(@"The table name must not be null or empty.", nameof(name));

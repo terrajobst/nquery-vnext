@@ -10,8 +10,7 @@ namespace NQuery.Hosting
         {
             public IEnumerable<PropertySymbol> GetProperties(Type type)
             {
-                if (type is null)
-                    throw new ArgumentNullException(nameof(type));
+                ArgumentNullException.ThrowIfNull(type);
 
                 return Enumerable.Empty<PropertySymbol>();
             }
@@ -21,8 +20,7 @@ namespace NQuery.Hosting
         {
             public IEnumerable<MethodSymbol> GetMethods(Type type)
             {
-                if (type is null)
-                    throw new ArgumentNullException(nameof(type));
+                ArgumentNullException.ThrowIfNull(type);
 
                 return Enumerable.Empty<MethodSymbol>();
             }

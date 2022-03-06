@@ -7,8 +7,7 @@ namespace NQuery.Text
 
         public TextLine(SourceText text, int start, int length)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             Text = text;
             _start = start;

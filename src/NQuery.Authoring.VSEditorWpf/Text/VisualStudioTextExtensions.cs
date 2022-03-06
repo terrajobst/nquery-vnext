@@ -13,16 +13,14 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static SourceTextContainer ToSourceTextContainer(this ITextBuffer textBuffer)
         {
-            if (textBuffer is null)
-                throw new ArgumentNullException(nameof(textBuffer));
+            ArgumentNullException.ThrowIfNull(textBuffer);
 
             return ProviderMap.GetValue(textBuffer, tb => new VisualStudioSourceTextContainer(tb));
         }
 
         public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
         {
-            if (textSnapshot is null)
-                throw new ArgumentNullException(nameof(textSnapshot));
+            ArgumentNullException.ThrowIfNull(textSnapshot);
 
             var container = (VisualStudioSourceTextContainer)textSnapshot.TextBuffer.ToSourceTextContainer();
             return SnapshotMap.GetValue(textSnapshot, ts => new VisualStudioSourceText(container, ts));
@@ -30,8 +28,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static ITextSnapshot ToTextSnapshot(this SourceText text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             if (text is not VisualStudioSourceText visualStudioSourceText)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(text));
@@ -41,8 +38,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 
         public static ITextBuffer ToTextBuffer(this SourceTextContainer container)
         {
-            if (container is null)
-                throw new ArgumentNullException(nameof(container));
+            ArgumentNullException.ThrowIfNull(container);
 
             if (container is not VisualStudioSourceTextContainer visualStudioSourceTextContainer)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(container));

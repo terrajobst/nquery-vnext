@@ -6,8 +6,7 @@ namespace NQuery.Authoring.SymbolSearch
     {
         public static SymbolSpan? FindSymbol(this SemanticModel semanticModel, int position)
         {
-            if (semanticModel is null)
-                throw new ArgumentNullException(nameof(semanticModel));
+            ArgumentNullException.ThrowIfNull(semanticModel);
 
             var syntaxTree = semanticModel.SyntaxTree;
             return syntaxTree.Root.FindNodes(position)
@@ -18,11 +17,8 @@ namespace NQuery.Authoring.SymbolSearch
 
         public static IEnumerable<SymbolSpan> FindUsages(this SemanticModel semanticModel, Symbol symbol)
         {
-            if (semanticModel is null)
-                throw new ArgumentNullException(nameof(semanticModel));
-
-            if (symbol is null)
-                throw new ArgumentNullException(nameof(symbol));
+            ArgumentNullException.ThrowIfNull(semanticModel);
+            ArgumentNullException.ThrowIfNull(symbol);
 
             var syntaxTree = semanticModel.SyntaxTree;
 

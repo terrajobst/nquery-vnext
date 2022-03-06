@@ -91,8 +91,7 @@ namespace NQuery
 
         public DataContext AddTables(IEnumerable<TableSymbol> tables)
         {
-            if (tables is null)
-                throw new ArgumentNullException(nameof(tables));
+            ArgumentNullException.ThrowIfNull(tables);
 
             var newTables = Tables.AddRange(tables);
             return WithTables(newTables);
@@ -108,8 +107,7 @@ namespace NQuery
 
         public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
         {
-            if (tables is null)
-                throw new ArgumentNullException(nameof(tables));
+            ArgumentNullException.ThrowIfNull(tables);
 
             var newTables = Tables.RemoveRange(tables);
             return WithTables(newTables);
@@ -123,8 +121,7 @@ namespace NQuery
 
         public DataContext WithTables(IEnumerable<TableSymbol> tables)
         {
-            if (tables is null)
-                throw new ArgumentNullException(nameof(tables));
+            ArgumentNullException.ThrowIfNull(tables);
 
             if (ReferenceEquals(tables, Tables))
                 return this;
@@ -145,8 +142,7 @@ namespace NQuery
 
         public DataContext AddRelations(IEnumerable<TableRelation> relations)
         {
-            if (relations is null)
-                throw new ArgumentNullException(nameof(relations));
+            ArgumentNullException.ThrowIfNull(relations);
 
             var newRelations = Relations.AddRange(relations);
             return WithRelations(newRelations);
@@ -162,8 +158,7 @@ namespace NQuery
 
         public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
         {
-            if (relations is null)
-                throw new ArgumentNullException(nameof(relations));
+            ArgumentNullException.ThrowIfNull(relations);
 
             var newRelations = Relations.RemoveRange(relations);
             return WithRelations(newRelations);
@@ -177,8 +172,7 @@ namespace NQuery
 
         public DataContext WithRelations(IEnumerable<TableRelation> relations)
         {
-            if (relations is null)
-                throw new ArgumentNullException(nameof(relations));
+            ArgumentNullException.ThrowIfNull(relations);
 
             if (ReferenceEquals(relations, Relations))
                 return this;
@@ -199,8 +193,7 @@ namespace NQuery
 
         public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            if (functions is null)
-                throw new ArgumentNullException(nameof(functions));
+            ArgumentNullException.ThrowIfNull(functions);
 
             var newFunctions = Functions.AddRange(functions);
             return WithFunctions(newFunctions);
@@ -216,8 +209,7 @@ namespace NQuery
 
         public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            if (functions is null)
-                throw new ArgumentNullException(nameof(functions));
+            ArgumentNullException.ThrowIfNull(functions);
 
             var newFunctions = Functions.RemoveRange(functions);
             return WithFunctions(newFunctions);
@@ -231,8 +223,7 @@ namespace NQuery
 
         public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
         {
-            if (functions is null)
-                throw new ArgumentNullException(nameof(functions));
+            ArgumentNullException.ThrowIfNull(functions);
 
             if (ReferenceEquals(functions, Functions))
                 return this;
@@ -253,8 +244,7 @@ namespace NQuery
 
         public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            if (aggregates is null)
-                throw new ArgumentNullException(nameof(aggregates));
+            ArgumentNullException.ThrowIfNull(aggregates);
 
             var newAggregates = Aggregates.AddRange(aggregates);
             return WithAggregates(newAggregates);
@@ -270,8 +260,7 @@ namespace NQuery
 
         public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            if (aggregates is null)
-                throw new ArgumentNullException(nameof(aggregates));
+            ArgumentNullException.ThrowIfNull(aggregates);
 
             var newAggregates = Aggregates.RemoveRange(aggregates);
             return WithAggregates(newAggregates);
@@ -285,8 +274,7 @@ namespace NQuery
 
         public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
         {
-            if (aggregates is null)
-                throw new ArgumentNullException(nameof(aggregates));
+            ArgumentNullException.ThrowIfNull(aggregates);
 
             if (ReferenceEquals(aggregates, Aggregates))
                 return this;
@@ -307,8 +295,7 @@ namespace NQuery
 
         public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
         {
-            if (variables is null)
-                throw new ArgumentNullException(nameof(variables));
+            ArgumentNullException.ThrowIfNull(variables);
 
             var newVariables = Variables.AddRange(variables);
             return WithVariables(newVariables);
@@ -324,8 +311,7 @@ namespace NQuery
 
         public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
         {
-            if (variables is null)
-                throw new ArgumentNullException(nameof(variables));
+            ArgumentNullException.ThrowIfNull(variables);
 
             var newVariables = Variables.RemoveRange(variables);
             return WithVariables(newVariables);
@@ -339,8 +325,7 @@ namespace NQuery
 
         public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
         {
-            if (variables is null)
-                throw new ArgumentNullException(nameof(variables));
+            ArgumentNullException.ThrowIfNull(variables);
 
             if (ReferenceEquals(variables, Variables))
                 return this;
@@ -353,11 +338,8 @@ namespace NQuery
 
         public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
         {
-            if (type is null)
-                throw new ArgumentNullException(nameof(type));
-
-            if (provider is null)
-                throw new ArgumentNullException(nameof(provider));
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(provider);
 
             var newProviders = PropertyProviders.Add(type, provider);
             return WithPropertyProviders(newProviders);
@@ -365,8 +347,7 @@ namespace NQuery
 
         public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
         {
-            if (providers is null)
-                throw new ArgumentNullException(nameof(providers));
+            ArgumentNullException.ThrowIfNull(providers);
 
             var newProviders = PropertyProviders.AddRange(providers);
             return WithPropertyProviders(newProviders);
@@ -382,8 +363,7 @@ namespace NQuery
 
         public DataContext RemovePropertyProviders(IEnumerable<Type> types)
         {
-            if (types is null)
-                throw new ArgumentNullException(nameof(types));
+            ArgumentNullException.ThrowIfNull(types);
 
             var newProviders = PropertyProviders.RemoveRange(types);
             return WithPropertyProviders(newProviders);
@@ -397,8 +377,7 @@ namespace NQuery
 
         public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
         {
-            if (providers is null)
-                throw new ArgumentNullException(nameof(providers));
+            ArgumentNullException.ThrowIfNull(providers);
 
             if (ReferenceEquals(PropertyProviders, providers))
                 return this;
@@ -410,11 +389,8 @@ namespace NQuery
 
         public DataContext AddMethodProvider(Type type, IMethodProvider provider)
         {
-            if (type is null)
-                throw new ArgumentNullException(nameof(type));
-
-            if (provider is null)
-                throw new ArgumentNullException(nameof(provider));
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(provider);
 
             var newProviders = MethodProviders.Add(type, provider);
             return WithMethodProviders(newProviders);
@@ -422,8 +398,7 @@ namespace NQuery
 
         public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
         {
-            if (providers is null)
-                throw new ArgumentNullException(nameof(providers));
+            ArgumentNullException.ThrowIfNull(providers);
 
             var newProviders = MethodProviders.AddRange(providers);
             return WithMethodProviders(newProviders);
@@ -439,8 +414,7 @@ namespace NQuery
 
         public DataContext RemoveMethodProviders(IEnumerable<Type> types)
         {
-            if (types is null)
-                throw new ArgumentNullException(nameof(types));
+            ArgumentNullException.ThrowIfNull(types);
 
             var newProviders = MethodProviders.RemoveRange(types);
             return WithMethodProviders(newProviders);
@@ -454,8 +428,7 @@ namespace NQuery
 
         public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
         {
-            if (providers is null)
-                throw new ArgumentNullException(nameof(providers));
+            ArgumentNullException.ThrowIfNull(providers);
 
             if (ReferenceEquals(MethodProviders, providers))
                 return this;
@@ -467,11 +440,8 @@ namespace NQuery
 
         public DataContext AddComparer(Type type, IComparer comparer)
         {
-            if (type is null)
-                throw new ArgumentNullException(nameof(type));
-
-            if (comparer is null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var newProviders = Comparers.Add(type, comparer);
             return WithComparers(newProviders);
@@ -479,8 +449,7 @@ namespace NQuery
 
         public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
         {
-            if (comparer is null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
             var newProviders = Comparers.AddRange(comparer);
             return WithComparers(newProviders);
@@ -496,8 +465,7 @@ namespace NQuery
 
         public DataContext RemoveComparers(IEnumerable<Type> types)
         {
-            if (types is null)
-                throw new ArgumentNullException(nameof(types));
+            ArgumentNullException.ThrowIfNull(types);
 
             var newProviders = Comparers.RemoveRange(types);
             return WithComparers(newProviders);
@@ -511,8 +479,7 @@ namespace NQuery
 
         public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
         {
-            if (comparers is null)
-                throw new ArgumentNullException(nameof(comparers));
+            ArgumentNullException.ThrowIfNull(comparers);
 
             if (ReferenceEquals(Comparers, comparers))
                 return this;

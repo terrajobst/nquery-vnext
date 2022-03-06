@@ -5,8 +5,7 @@ namespace NQuery.Symbols
         internal ColumnSymbol(string name, Type type)
             : base(name)
         {
-            if (type is null)
-                throw new ArgumentNullException(nameof(type));
+            ArgumentNullException.ThrowIfNull(type);
 
             Type = type;
         }

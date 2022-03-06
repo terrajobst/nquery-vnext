@@ -16,11 +16,8 @@ namespace NQuery
 
         public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (syntaxTree is null)
-                throw new ArgumentNullException(nameof(syntaxTree));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(syntaxTree);
 
             return new Compilation(dataContext, syntaxTree);
         }
@@ -113,16 +110,14 @@ namespace NQuery
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
         {
-            if (syntaxTree is null)
-                throw new ArgumentNullException(nameof(syntaxTree));
+            ArgumentNullException.ThrowIfNull(syntaxTree);
 
             return SyntaxTree == syntaxTree ? this : Create(DataContext, syntaxTree);
         }
 
         public Compilation WithDataContext(DataContext dataContext)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
+            ArgumentNullException.ThrowIfNull(dataContext);
 
             return DataContext == dataContext ? this : Create(dataContext, SyntaxTree);
         }

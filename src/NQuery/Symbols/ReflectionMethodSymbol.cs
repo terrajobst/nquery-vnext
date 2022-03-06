@@ -14,8 +14,7 @@ namespace NQuery.Symbols
         public ReflectionMethodSymbol(MethodInfo methodInfo, string name)
             : base(name, methodInfo?.ReturnType, ConvertParameters(methodInfo))
         {
-            if (methodInfo is null)
-                throw new ArgumentNullException(nameof(methodInfo));
+            ArgumentNullException.ThrowIfNull(methodInfo);
 
             MethodInfo = methodInfo;
         }

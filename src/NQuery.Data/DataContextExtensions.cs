@@ -9,22 +9,16 @@ namespace NQuery.Data
     {
         public static DataContext AddTablesAndRelations(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (dataSet is null)
-                throw new ArgumentNullException(nameof(dataSet));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(dataSet);
 
             return dataContext.AddTables(dataSet).AddRelations(dataSet);
         }
 
         public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (dataSet is null)
-                throw new ArgumentNullException(nameof(dataSet));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(dataSet);
 
             var dataTables = dataSet.Tables.OfType<DataTable>();
             return dataContext.AddTables(dataTables);
@@ -32,8 +26,7 @@ namespace NQuery.Data
 
         public static DataContext AddTables(this DataContext dataContext, params DataTable[] dataTables)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
+            ArgumentNullException.ThrowIfNull(dataContext);
 
             if (dataTables is null || dataTables.Length == 0)
                 return dataContext;
@@ -43,11 +36,8 @@ namespace NQuery.Data
 
         public static DataContext AddTables(this DataContext dataContext, IEnumerable<DataTable> dataTables)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (dataTables is null)
-                throw new ArgumentNullException(nameof(dataTables));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(dataTables);
 
             var tableSymbols = dataTables.Select(CreateTable);
             return dataContext.AddTables(tableSymbols);
@@ -55,11 +45,8 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (dataSet is null)
-                throw new ArgumentNullException(nameof(dataSet));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(dataSet);
 
             var dataRelations = dataSet.Relations.OfType<DataRelation>();
             return dataContext.AddRelations(dataRelations);
@@ -67,8 +54,7 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, params DataRelation[] dataRelations)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
+            ArgumentNullException.ThrowIfNull(dataContext);
 
             if (dataRelations is null || dataRelations.Length == 0)
                 return dataContext;
@@ -78,11 +64,8 @@ namespace NQuery.Data
 
         public static DataContext AddRelations(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (dataRelations is null)
-                throw new ArgumentNullException(nameof(dataRelations));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(dataRelations);
 
             var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r));
             return dataContext.AddRelations(tableRelations);

@@ -11,8 +11,7 @@ namespace NQuery.Authoring
 
         public DocumentView(Document document, int position, TextSpan selection)
         {
-            if (document is null)
-                throw new ArgumentNullException(nameof(document));
+            ArgumentNullException.ThrowIfNull(document);
 
             if (position < 0 || position > document.Text.Length)
                 throw new ArgumentOutOfRangeException(nameof(position));

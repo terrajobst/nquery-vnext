@@ -16,8 +16,7 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             var sourceText = SourceText.From(text);
             return ParseQuery(sourceText);
@@ -25,16 +24,14 @@ namespace NQuery
 
         public static SyntaxTree ParseQuery(SourceText text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             return new SyntaxTree(text, p => p.ParseRootQuery());
         }
 
         public static SyntaxTree ParseExpression(string source)
         {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
             var textBuffer = SourceText.From(source);
             return ParseExpression(textBuffer);
@@ -42,16 +39,14 @@ namespace NQuery
 
         public static SyntaxTree ParseExpression(SourceText sourceText)
         {
-            if (sourceText is null)
-                throw new ArgumentNullException(nameof(sourceText));
+            ArgumentNullException.ThrowIfNull(sourceText);
 
             return new SyntaxTree(sourceText, p => p.ParseRootExpression());
         }
 
         public static SyntaxTree ParseTokens(string source)
         {
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
             var textBuffer = SourceText.From(source);
             return ParseTokens(textBuffer);
@@ -59,8 +54,7 @@ namespace NQuery
 
         public static SyntaxTree ParseTokens(SourceText sourceText)
         {
-            if (sourceText is null)
-                throw new ArgumentNullException(nameof(sourceText));
+            ArgumentNullException.ThrowIfNull(sourceText);
 
             return new SyntaxTree(sourceText, p => p.ParseRootTokens());
         }
@@ -151,8 +145,7 @@ namespace NQuery
 
         public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
         {
-            if (textChanges is null)
-                throw new ArgumentNullException(nameof(textChanges));
+            ArgumentNullException.ThrowIfNull(textChanges);
 
             var newText = Text.WithChanges(textChanges);
             if (newText == Text)

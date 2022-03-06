@@ -12,11 +12,8 @@ namespace NQuery
 
         public static Query Create(DataContext dataContext, string text)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(text);
 
             return new Query(dataContext, text);
         }
