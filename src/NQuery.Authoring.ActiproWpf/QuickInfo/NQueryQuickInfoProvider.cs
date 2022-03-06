@@ -25,7 +25,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
         }
 
-        public Collection<IQuickInfoModelProvider> Providers { get; } = new Collection<IQuickInfoModelProvider>();
+        public Collection<IQuickInfoModelProvider> Providers { get; } = new();
 
         public override object GetContext(IEditorView view, int offset)
         {

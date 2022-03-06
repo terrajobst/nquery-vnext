@@ -12,16 +12,16 @@ namespace NQuery.Binding
 
         public BoundQueryState Parent { get; }
 
-        public Dictionary<TableInstanceSymbol, SyntaxToken> IntroducedTables { get; } = new Dictionary<TableInstanceSymbol, SyntaxToken>();
+        public Dictionary<TableInstanceSymbol, SyntaxToken> IntroducedTables { get; } = new();
 
-        public List<BoundComputedValueWithSyntax> AccessibleComputedValues { get; } = new List<BoundComputedValueWithSyntax>();
+        public List<BoundComputedValueWithSyntax> AccessibleComputedValues { get; } = new();
 
-        public List<BoundComputedValueWithSyntax> ComputedGroupings { get; } = new List<BoundComputedValueWithSyntax>();
+        public List<BoundComputedValueWithSyntax> ComputedGroupings { get; } = new();
 
-        public List<BoundComputedValueWithSyntax> ComputedAggregates { get; } = new List<BoundComputedValueWithSyntax>();
+        public List<BoundComputedValueWithSyntax> ComputedAggregates { get; } = new();
 
-        public List<BoundComputedValueWithSyntax> ComputedProjections { get; } = new List<BoundComputedValueWithSyntax>();
+        public List<BoundComputedValueWithSyntax> ComputedProjections { get; } = new();
 
-        public Dictionary<ExpressionSyntax, ValueSlot> ReplacedExpression { get; } = new Dictionary<ExpressionSyntax, ValueSlot>();
+        public Dictionary<ExpressionSyntax, ValueSlot> ReplacedExpression { get; } = new();
     }
 }

@@ -10,7 +10,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
 {
     internal sealed class NQueryBraceMatcher : INQueryBraceMatcher
     {
-        public Collection<IBraceMatcher> Matchers { get; } = new Collection<IBraceMatcher>();
+        public Collection<IBraceMatcher> Matchers { get; } = new();
 
         public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
         {

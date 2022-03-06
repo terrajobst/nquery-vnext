@@ -9,205 +9,205 @@ namespace NQuery.Binding
     {
         private static readonly BinaryOperatorSignature[] BuiltInMultiplySignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Multiply, BuiltInOperators.DecimalMultiplyMethod)
+            new(BinaryOperatorKind.Multiply, typeof(int)),
+            new(BinaryOperatorKind.Multiply, typeof(uint)),
+            new(BinaryOperatorKind.Multiply, typeof(long)),
+            new(BinaryOperatorKind.Multiply, typeof(ulong)),
+            new(BinaryOperatorKind.Multiply, typeof(float)),
+            new(BinaryOperatorKind.Multiply, typeof(double)),
+            new(BinaryOperatorKind.Multiply, BuiltInOperators.DecimalMultiplyMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInDivideSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Divide, BuiltInOperators.DecimalDivideMethod)
+            new(BinaryOperatorKind.Divide, typeof(int)),
+            new(BinaryOperatorKind.Divide, typeof(uint)),
+            new(BinaryOperatorKind.Divide, typeof(long)),
+            new(BinaryOperatorKind.Divide, typeof(ulong)),
+            new(BinaryOperatorKind.Divide, typeof(float)),
+            new(BinaryOperatorKind.Divide, typeof(double)),
+            new(BinaryOperatorKind.Divide, BuiltInOperators.DecimalDivideMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInModulusSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Modulus, BuiltInOperators.DecimalModulusMethod)
+            new(BinaryOperatorKind.Modulus, typeof(int)),
+            new(BinaryOperatorKind.Modulus, typeof(uint)),
+            new(BinaryOperatorKind.Modulus, typeof(long)),
+            new(BinaryOperatorKind.Modulus, typeof(ulong)),
+            new(BinaryOperatorKind.Modulus, typeof(float)),
+            new(BinaryOperatorKind.Modulus, typeof(double)),
+            new(BinaryOperatorKind.Modulus, BuiltInOperators.DecimalModulusMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInAddSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, BuiltInOperators.StringConcatStringStringMethod),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(string), typeof(string), typeof(object), BuiltInOperators.StringConcatObjectObjectMethod),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, typeof(string), typeof(object), typeof(string), BuiltInOperators.StringConcatObjectObjectMethod),
-            new BinaryOperatorSignature(BinaryOperatorKind.Add, BuiltInOperators.DecimalAddMethod)
+            new(BinaryOperatorKind.Add, typeof(int)),
+            new(BinaryOperatorKind.Add, typeof(uint)),
+            new(BinaryOperatorKind.Add, typeof(long)),
+            new(BinaryOperatorKind.Add, typeof(ulong)),
+            new(BinaryOperatorKind.Add, typeof(float)),
+            new(BinaryOperatorKind.Add, typeof(double)),
+            new(BinaryOperatorKind.Add, BuiltInOperators.StringConcatStringStringMethod),
+            new(BinaryOperatorKind.Add, typeof(string), typeof(string), typeof(object), BuiltInOperators.StringConcatObjectObjectMethod),
+            new(BinaryOperatorKind.Add, typeof(string), typeof(object), typeof(string), BuiltInOperators.StringConcatObjectObjectMethod),
+            new(BinaryOperatorKind.Add, BuiltInOperators.DecimalAddMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInSubSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Sub, BuiltInOperators.DecimalSubtractMethod)
+            new(BinaryOperatorKind.Sub, typeof(int)),
+            new(BinaryOperatorKind.Sub, typeof(uint)),
+            new(BinaryOperatorKind.Sub, typeof(long)),
+            new(BinaryOperatorKind.Sub, typeof(ulong)),
+            new(BinaryOperatorKind.Sub, typeof(float)),
+            new(BinaryOperatorKind.Sub, typeof(double)),
+            new(BinaryOperatorKind.Sub, BuiltInOperators.DecimalSubtractMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLeftShiftSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.LeftShift, typeof(int), typeof(int), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LeftShift, typeof(uint), typeof(uint), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LeftShift, typeof(long), typeof(long), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LeftShift, typeof(ulong), typeof(ulong), typeof(int))
+            new(BinaryOperatorKind.LeftShift, typeof(int), typeof(int), typeof(int)),
+            new(BinaryOperatorKind.LeftShift, typeof(uint), typeof(uint), typeof(int)),
+            new(BinaryOperatorKind.LeftShift, typeof(long), typeof(long), typeof(int)),
+            new(BinaryOperatorKind.LeftShift, typeof(ulong), typeof(ulong), typeof(int))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInRightShiftSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.RightShift, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.RightShift, typeof(uint), typeof(uint), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.RightShift, typeof(long), typeof(long), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.RightShift, typeof(ulong), typeof(ulong), typeof(int))
+            new(BinaryOperatorKind.RightShift, typeof(int)),
+            new(BinaryOperatorKind.RightShift, typeof(uint), typeof(uint), typeof(int)),
+            new(BinaryOperatorKind.RightShift, typeof(long), typeof(long), typeof(int)),
+            new(BinaryOperatorKind.RightShift, typeof(ulong), typeof(ulong), typeof(int))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInEqualSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(object)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, typeof(bool), typeof(string)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Equal, BuiltInOperators.DecimalEqualsMethod)
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.Equal, typeof(bool)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(object)),
+            new(BinaryOperatorKind.Equal, typeof(bool), typeof(string)),
+            new(BinaryOperatorKind.Equal, BuiltInOperators.DecimalEqualsMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInNotEqualSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(object)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, typeof(bool), typeof(string)),
-            new BinaryOperatorSignature(BinaryOperatorKind.NotEqual, BuiltInOperators.DecimalNotEqualsMethod)
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(object)),
+            new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(string)),
+            new(BinaryOperatorKind.NotEqual, BuiltInOperators.DecimalNotEqualsMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLessSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Less, BuiltInOperators.DecimalLessMethod)
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.Less, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.Less, BuiltInOperators.DecimalLessMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInGreaterSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.Greater, BuiltInOperators.DecimalGreaterMethod)
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.Greater, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.Greater, BuiltInOperators.DecimalGreaterMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLessOrEqualSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.LessOrEqual, BuiltInOperators.DecimalLessOrEqualMethod)
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.DecimalLessOrEqualMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInGreaterOrEqualSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(float)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(double)),
-            new BinaryOperatorSignature(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.DecimalGreaterOrEqualMethod)
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(int)),
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(uint)),
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(long)),
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(ulong)),
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(float)),
+            new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(double)),
+            new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.DecimalGreaterOrEqualMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInBitAndSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.BitAnd, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitAnd, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitAnd, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitAnd, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitAnd, typeof(bool))
+            new(BinaryOperatorKind.BitAnd, typeof(int)),
+            new(BinaryOperatorKind.BitAnd, typeof(uint)),
+            new(BinaryOperatorKind.BitAnd, typeof(long)),
+            new(BinaryOperatorKind.BitAnd, typeof(ulong)),
+            new(BinaryOperatorKind.BitAnd, typeof(bool))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInBitOrSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.BitOr, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitOr, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitOr, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitOr, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitOr, typeof(bool))
+            new(BinaryOperatorKind.BitOr, typeof(int)),
+            new(BinaryOperatorKind.BitOr, typeof(uint)),
+            new(BinaryOperatorKind.BitOr, typeof(long)),
+            new(BinaryOperatorKind.BitOr, typeof(ulong)),
+            new(BinaryOperatorKind.BitOr, typeof(bool))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInBitXorSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.BitXor, typeof(int)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitXor, typeof(uint)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitXor, typeof(long)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitXor, typeof(ulong)),
-            new BinaryOperatorSignature(BinaryOperatorKind.BitXor, typeof(bool))
+            new(BinaryOperatorKind.BitXor, typeof(int)),
+            new(BinaryOperatorKind.BitXor, typeof(uint)),
+            new(BinaryOperatorKind.BitXor, typeof(long)),
+            new(BinaryOperatorKind.BitXor, typeof(ulong)),
+            new(BinaryOperatorKind.BitXor, typeof(bool))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLogicalAndSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.LogicalAnd, typeof(bool))
+            new(BinaryOperatorKind.LogicalAnd, typeof(bool))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLogicalOrSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.LogicalOr, typeof(bool))
+            new(BinaryOperatorKind.LogicalOr, typeof(bool))
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInLikeSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Like, BuiltInOperators.LikeMethod)
+            new(BinaryOperatorKind.Like, BuiltInOperators.LikeMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInPowerSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.Power, BuiltInOperators.PowerMethod)
+            new(BinaryOperatorKind.Power, BuiltInOperators.PowerMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInSimilarToSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.SimilarTo, BuiltInOperators.SimilarToMethod)
+            new(BinaryOperatorKind.SimilarTo, BuiltInOperators.SimilarToMethod)
         };
 
         private static readonly BinaryOperatorSignature[] BuiltInSoundsLikeSignatures =
         {
-            new BinaryOperatorSignature(BinaryOperatorKind.SoundsLike, BuiltInOperators.SoundsLikeMethod)
+            new(BinaryOperatorKind.SoundsLike, BuiltInOperators.SoundsLikeMethod)
         };
 
         internal static OverloadResolutionResult<BinaryOperatorSignature> Resolve(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)

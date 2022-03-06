@@ -10,7 +10,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
 {
     internal sealed class NQueryOutliner : INQueryOutliner
     {
-        public Collection<IAuthoringOutliner> Outliners { get; } = new Collection<IAuthoringOutliner>();
+        public Collection<IAuthoringOutliner> Outliners { get; } = new();
 
         public IOutliningSource GetOutliningSource(ITextSnapshot snapshot)
         {

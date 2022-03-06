@@ -22,7 +22,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
             _serviceLocator = serviceLocator;
         }
 
-        public Collection<NQueryICompletionProvider> Providers { get; } = new Collection<NQueryICompletionProvider>();
+        public Collection<NQueryICompletionProvider> Providers { get; } = new();
 
         private INQuerySymbolContentProvider SymbolContentProvider
         {

@@ -11,7 +11,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 {
     internal sealed class NQuerySignatureHelpProvider : ParameterInfoProviderBase, INQuerySignatureHelpProvider
     {
-        public Collection<ISignatureHelpModelProvider> Providers { get; } = new Collection<ISignatureHelpModelProvider>();
+        public Collection<ISignatureHelpModelProvider> Providers { get; } = new();
 
         public override bool RequestSession(IEditorView view)
         {
