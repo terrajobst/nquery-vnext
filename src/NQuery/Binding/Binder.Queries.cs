@@ -76,8 +76,7 @@ namespace NQuery.Binding
 
             // If the expression refers to a column we already know the value slot.
 
-            var columnExpression = boundExpression as BoundColumnExpression;
-            var columnInstance = columnExpression is null ? null : columnExpression.Symbol;
+            var columnInstance = boundExpression is not BoundColumnExpression columnExpression ? null : columnExpression.Symbol;
             if (columnInstance is not null && queryState is not null)
             {
                 valueSlot = columnInstance.ValueSlot;
@@ -109,8 +108,7 @@ namespace NQuery.Binding
 
         private static bool TryGetExistingValue(BoundExpression boundExpression, out ValueSlot valueSlot)
         {
-            var boundValueSlot = boundExpression as BoundValueSlotExpression;
-            if (boundValueSlot is null)
+            if (boundExpression is not BoundValueSlotExpression boundValueSlot)
             {
                 valueSlot = null;
                 return false;

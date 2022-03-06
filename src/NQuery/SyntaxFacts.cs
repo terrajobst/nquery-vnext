@@ -1346,12 +1346,11 @@ namespace NQuery
             if (expression is null)
                 throw new ArgumentNullException(nameof(expression));
 
-            var parentExpression = expression.Parent as ExpressionSyntax;
             var childExpression = expression.Expression;
 
             // If the parent isn't an expression, the parentheses are definitely
             // redundant.
-            if (parentExpression is null)
+            if (expression.Parent is not ExpressionSyntax parentExpression)
                 return true;
 
             var parentPrecedence = GetPrecedence(parentExpression);

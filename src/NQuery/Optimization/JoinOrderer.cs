@@ -40,8 +40,7 @@ namespace NQuery.Optimization
             while (stack.Count > 0)
             {
                 var current = stack.Pop();
-                var join = current as BoundJoinRelation;
-                if (join is null || join.JoinType != BoundJoinType.Inner)
+                if (current is not BoundJoinRelation join || join.JoinType != BoundJoinType.Inner)
                 {
                     // NOTE: We generally want to rewrite joins that we can't extract
                     //       ourselves. However, we've to be careful not to rewrite the
@@ -206,14 +205,10 @@ namespace NQuery.Optimization
 
         private static bool IsRelation(BoundExpression condition)
         {
-            var binary = condition as BoundBinaryExpression;
-            if (binary is null || binary.OperatorKind != BinaryOperatorKind.Equal)
+            if (condition is not BoundBinaryExpression binary || binary.OperatorKind != BinaryOperatorKind.Equal)
                 return false;
 
-            var left = binary.Left as BoundValueSlotExpression;
-            var right = binary.Right as BoundValueSlotExpression;
-
-            if (left is null || right is null)
+            if (binary.Left is not BoundValueSlotExpression left || binary.Right is not BoundValueSlotExpression right)
                 return false;
 
             // TODO: We should somehow compute from the actual data context

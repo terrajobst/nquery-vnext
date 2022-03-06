@@ -7,8 +7,7 @@ namespace NQuery.Authoring.Selection
     {
         public IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken)
         {
-            var parent = nodeOrToken.Parent as T;
-            if (parent is null)
+            if (nodeOrToken.Parent is not T parent)
                 return Enumerable.Empty<TextSpan>();
 
             return Provide(nodeOrToken, parent);

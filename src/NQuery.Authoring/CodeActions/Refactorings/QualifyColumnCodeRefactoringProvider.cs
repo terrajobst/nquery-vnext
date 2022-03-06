@@ -11,8 +11,7 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             if (node.Parent is PropertyAccessExpressionSyntax)
                 return Enumerable.Empty<ICodeAction>();
 
-            var column = semanticModel.GetSymbol(node) as TableColumnInstanceSymbol;
-            if (column is null)
+            if (semanticModel.GetSymbol(node) is not TableColumnInstanceSymbol column)
                 return Enumerable.Empty<ICodeAction>();
 
             return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };

@@ -21,8 +21,7 @@ namespace NQuery.Optimization
 
         protected override BoundRelation RewriteTableRelation(BoundTableRelation node)
         {
-            var symbol = node.TableInstance.Table as CommonTableExpressionSymbol;
-            if (symbol is null)
+            if (node.TableInstance.Table is not CommonTableExpressionSymbol symbol)
                 return base.RewriteTableRelation(node);
 
             if (IsInstantiatedCommonTableExpression(node))
@@ -41,8 +40,7 @@ namespace NQuery.Optimization
             // NOTE: We need to keep this after we added the output slot mapping.
             //       Otherwise the slots will not align.
 
-            var projection = instantiatedQuery as BoundProjectRelation;
-            var result = projection is null ? instantiatedQuery : projection.Input;
+            var result = instantiatedQuery is not BoundProjectRelation projection ? instantiatedQuery : projection.Input;
 
             return result;
         }
@@ -75,8 +73,7 @@ namespace NQuery.Optimization
             if (_symbol is null)
                 return false;
 
-            var tableRelation = boundRelation as BoundTableRelation;
-            if (tableRelation is null)
+            if (boundRelation is not BoundTableRelation tableRelation)
                 return false;
 
             return tableRelation.TableInstance.Table == _symbol;

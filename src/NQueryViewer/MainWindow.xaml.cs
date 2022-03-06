@@ -375,8 +375,7 @@ namespace NQueryViewer
 
         private void EditorViewOnZoomLevelChanged(object sender, EventArgs e)
         {
-            var changedView = sender as IEditorView;
-            if (changedView is null)
+            if (sender is not IEditorView changedView)
                 return;
 
             var newZoomLevel = changedView.ZoomLevel;

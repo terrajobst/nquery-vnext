@@ -8,8 +8,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, ExistsSubselectSyntax node)
         {
             var syntaxTree = node.SyntaxTree;
-            var selectQuery = node.Query as SelectQuerySyntax;
-            if (selectQuery is null)
+            if (node.Query is not SelectQuerySyntax selectQuery)
                 return Enumerable.Empty<CodeIssue>();
 
             if (selectQuery.SelectClause.IsMissing)

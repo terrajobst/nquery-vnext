@@ -11,8 +11,7 @@ namespace NQuery.Optimization
             if (node.JoinType != BoundJoinType.Inner)
                 return base.RewriteJoinRelation(node);
 
-            var rightSide = node.Right as BoundJoinRelation;
-            if (rightSide is null || rightSide.Probe is not null || rightSide.PassthruPredicate is not null)
+            if (node.Right is not BoundJoinRelation rightSide || rightSide.Probe is not null || rightSide.PassthruPredicate is not null)
                 return base.RewriteJoinRelation(node);
 
             var leftSideLeft = RewriteRelation(node.Left);

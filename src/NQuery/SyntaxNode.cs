@@ -45,8 +45,7 @@ namespace NQuery
             {
                 yield return node;
 
-                StructuredTriviaSyntax structuredTrivia;
-                if (!ascendOutOfTrivia || (structuredTrivia = node as StructuredTriviaSyntax) is null)
+                if (!ascendOutOfTrivia || node is not StructuredTriviaSyntax structuredTrivia)
                 {
                     node = node.Parent;
                 }

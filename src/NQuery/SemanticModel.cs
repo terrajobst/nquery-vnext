@@ -178,12 +178,10 @@ namespace NQuery
             if (commonTableExpressionColumnName is null)
                 throw new ArgumentNullException(nameof(commonTableExpressionColumnName));
 
-            var columnList = commonTableExpressionColumnName.Parent as CommonTableExpressionColumnNameListSyntax;
-            if (columnList is null)
+            if (commonTableExpressionColumnName.Parent is not CommonTableExpressionColumnNameListSyntax columnList)
                 return null;
 
-            var commonTableExpression = columnList.Parent as CommonTableExpressionSyntax;
-            if (commonTableExpression is null)
+            if (columnList.Parent is not CommonTableExpressionSyntax commonTableExpression)
                 return null;
 
             var symbol = GetDeclaredSymbol(commonTableExpression);
