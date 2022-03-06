@@ -18,11 +18,7 @@ namespace NQuery.Authoring.Commenting
 
         private static ImmutableArray<SyntaxTrivia> GetConsecutiveSingleLineComments(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
-            ImmutableArray<SyntaxTrivia> trivias;
-            int startIndex;
-            int endIndex;
-
-            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out trivias, out startIndex, out endIndex))
+            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
                 return ImmutableArray<SyntaxTrivia>.Empty;
 
             var result = ImmutableArray.CreateBuilder<SyntaxTrivia>();
@@ -83,11 +79,7 @@ namespace NQuery.Authoring.Commenting
 
         private static SyntaxTrivia GetMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
-            ImmutableArray<SyntaxTrivia> trivias;
-            int startIndex;
-            int endIndex;
-
-            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out trivias, out startIndex, out endIndex))
+            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
                 return null;
 
             // Is it a single comment?

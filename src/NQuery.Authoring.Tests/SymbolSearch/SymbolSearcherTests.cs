@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 
 using NQuery.Authoring.SymbolSearch;
-using NQuery.Text;
 
 namespace NQuery.Authoring.Tests.SymbolSearch
 {
@@ -9,8 +8,7 @@ namespace NQuery.Authoring.Tests.SymbolSearch
     {
         private static void AssertIsMatch(string sql)
         {
-            ImmutableArray<TextSpan> textSpans;
-            var query = sql.ParseSpans(out textSpans);
+            var query = sql.ParseSpans(out var textSpans);
 
             var compilation = CompilationFactory.CreateQuery(query);
             var semanticModel = compilation.GetSemanticModel();

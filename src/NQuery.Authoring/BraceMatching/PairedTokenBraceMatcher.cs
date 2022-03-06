@@ -23,16 +23,14 @@ namespace NQuery.Authoring.BraceMatching
 
             if (isLeft)
             {
-                TextSpan left = token.Span;
-                TextSpan right;
-                if (FindMatchingBrace(position, 1, token.Parent, _rightKind, out right))
+                var left = token.Span;
+                if (FindMatchingBrace(position, 1, token.Parent, _rightKind, out var right))
                     return new BraceMatchingResult(left, right);
             }
             else if (isRight)
             {
-                TextSpan left;
-                TextSpan right = token.Span;
-                if (FindMatchingBrace(position, -1, token.Parent, _leftKind, out left))
+                var right = token.Span;
+                if (FindMatchingBrace(position, -1, token.Parent, _leftKind, out var left))
                     return new BraceMatchingResult(left, right);
             }
 

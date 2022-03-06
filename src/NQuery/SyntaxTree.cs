@@ -75,7 +75,7 @@ namespace NQuery
             if (_parentFromChild is null)
                 Interlocked.CompareExchange(ref _parentFromChild, GetParents(Root), null);
 
-            _parentFromChild.TryGetValue(child, out object parent);
+            _parentFromChild.TryGetValue(child, out var parent);
             return parent as T;
         }
 

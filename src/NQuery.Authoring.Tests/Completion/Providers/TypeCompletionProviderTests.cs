@@ -9,8 +9,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         {
             var normalized = queryWithJoinMarker.NormalizeCode();
 
-            int position;
-            var compilation = CompilationFactory.CreateQuery(normalized, out position);
+            var compilation = CompilationFactory.CreateQuery(normalized, out int position);
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = new TypeCompletionProvider();

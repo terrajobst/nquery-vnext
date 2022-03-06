@@ -16,8 +16,7 @@ namespace NQuery.Authoring.ActiproWpf.Outlining
         {
             var document = snapshot.ToDocument();
 
-            SyntaxTree syntaxTree;
-            if (!document.TryGetSyntaxTree(out syntaxTree))
+            if (!document.TryGetSyntaxTree(out var syntaxTree))
                 return null;
 
             return new NQueryOutliningSource(snapshot, syntaxTree, Outliners.ToImmutableArray());

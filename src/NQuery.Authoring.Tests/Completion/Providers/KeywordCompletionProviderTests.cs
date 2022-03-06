@@ -14,8 +14,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
         private static CompletionModel GetCompletionModel(string query)
         {
-            int position;
-            var actualQuery = query.ParseSinglePosition(out position);
+            var actualQuery = query.ParseSinglePosition(out var position);
 
             var compilation = CompilationFactory.CreateQuery(actualQuery);
             var semanticModel = compilation.GetSemanticModel();
@@ -25,8 +24,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
         private static CompletionModel GetCompletionModelWithFirstChar(string query, string keyword)
         {
-            int position;
-            var actualQuery = query.ParseSinglePosition(out position);
+            var actualQuery = query.ParseSinglePosition(out var position);
 
             var modifiedQuery = actualQuery.Insert(position, keyword.Substring(0, 1));
             position++;

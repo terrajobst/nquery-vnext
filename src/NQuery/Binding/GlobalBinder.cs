@@ -32,8 +32,7 @@ namespace NQuery.Binding
             if (propertyProvider is null)
                 return Enumerable.Empty<PropertySymbol>();
 
-            ImmutableArray<PropertySymbol> result;
-            if (!_propertySymbols.TryGetValue(type, out result))
+            if (!_propertySymbols.TryGetValue(type, out var result))
             {
                 result = propertyProvider.GetProperties(type).ToImmutableArray();
                 _propertySymbols.Add(type, result);
@@ -48,8 +47,7 @@ namespace NQuery.Binding
             if (methodProvider is null)
                 return Enumerable.Empty<MethodSymbol>();
 
-            ImmutableArray<MethodSymbol> result;
-            if (!_methodSymbols.TryGetValue(type, out result))
+            if (!_methodSymbols.TryGetValue(type, out var result))
             {
                 result = methodProvider.GetMethods(type).ToImmutableArray();
                 _methodSymbols.Add(type, result);
@@ -71,8 +69,7 @@ namespace NQuery.Binding
         {
             while (key is not null)
             {
-                T value;
-                if (dictionary.TryGetValue(key, out value))
+                if (dictionary.TryGetValue(key, out var value))
                     return value;
 
                 key = key.BaseType;

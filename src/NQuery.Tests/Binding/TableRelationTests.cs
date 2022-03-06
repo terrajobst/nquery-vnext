@@ -8,8 +8,7 @@ namespace NQuery.Tests.Binding
     {
         private static void AssertHasErrors(string query)
         {
-            ImmutableArray<TextSpan> spans;
-            var compilation = CompilationFactory.CreateQuery(query, out spans);
+            var compilation = CompilationFactory.CreateQuery(query, out ImmutableArray<TextSpan> spans);
 
             var semanticModel = compilation.GetSemanticModel();
             var syntaxTree = semanticModel.SyntaxTree;

@@ -250,8 +250,7 @@ namespace NQuery.Binding
             if (QueryState is null)
                 return false;
 
-            ValueSlot valueSlot;
-            if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out valueSlot))
+            if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out var valueSlot))
                 return false;
 
             return IsGroupedOrAggregated(valueSlot);
@@ -427,12 +426,8 @@ namespace NQuery.Binding
             if (boundLeft.OutputColumns.Length != boundRight.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
 
-            BoundRelation leftInput;
-            BoundRelation rightInput;
-            ImmutableArray<ValueSlot> leftValues;
-            ImmutableArray<ValueSlot> rightValues;
-            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out leftInput, out rightInput, out leftValues,
-                out rightValues);
+            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput, out var leftValues,
+                out var rightValues);
 
             var outputValues = leftValues;
             var outputColumns = BindOutputColumns(columns, outputValues);
@@ -462,9 +457,7 @@ namespace NQuery.Binding
                 var leftValue = left.OutputColumns[i].ValueSlot;
                 var rightValue = right.OutputColumns[i].ValueSlot;
 
-                BoundExpression convertedLeft;
-                BoundExpression convertedRight;
-                BindToCommonType(diagnosticSpan, leftValue, rightValue, out convertedLeft, out convertedRight);
+                BindToCommonType(diagnosticSpan, leftValue, rightValue, out var convertedLeft, out var convertedRight);
 
                 if (convertedLeft is null)
                 {
@@ -1084,8 +1077,7 @@ namespace NQuery.Binding
                            ? node.Alias.Identifier.ValueText
                            : InferColumnName(expression);
 
-            ValueSlot valueSlot;
-            if (!TryGetExistingValue(boundExpression, out valueSlot))
+            if (!TryGetExistingValue(boundExpression, out var valueSlot))
             {
                 valueSlot = ValueSlotFactory.CreateTemporary(boundExpression.Type);
                 QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
@@ -1263,8 +1255,7 @@ namespace NQuery.Binding
 
                 var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
-                ValueSlot valueSlot;
-                if (!TryGetExistingValue(boundExpression, out valueSlot))
+                if (!TryGetExistingValue(boundExpression, out var valueSlot))
                     valueSlot = ValueSlotFactory.CreateTemporary(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
@@ -1352,8 +1343,7 @@ namespace NQuery.Binding
                 // However, if the query we are applied to is a combined query, it must exist
                 // in the input.
 
-                int columnOrdinal;
-                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.ValueSlot, out columnOrdinal))
+                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.ValueSlot, out var columnOrdinal))
                 {
                     columnOrdinal = -1;
                     if (selectorsMustBeInInput)
@@ -1453,9 +1443,7 @@ namespace NQuery.Binding
             if (boundSelector is BoundLiteralExpression)
                 Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
 
-            ValueSlot valueSlot;
-
-            if (TryGetExistingValue(boundSelector, out valueSlot))
+            if (TryGetExistingValue(boundSelector, out var valueSlot))
                 return new BoundOrderBySelector(valueSlot, null);
 
             valueSlot = ValueSlotFactory.CreateTemporary(boundSelector.Type);

@@ -8,9 +8,8 @@ namespace NQuery.Authoring.Tests.Commenting
 
         protected void AssertIsMatch(string queryWithMarkers, string expectedQuery)
         {
-            TextSpan selection;
             var query = queryWithMarkers.NormalizeCode()
-                                        .ParseSingleSpan(out selection);
+                                        .ParseSingleSpan(out var selection);
 
             var syntaxTree = SyntaxTree.ParseQuery(query);
             var actualTree = ToggleComment(syntaxTree, selection);

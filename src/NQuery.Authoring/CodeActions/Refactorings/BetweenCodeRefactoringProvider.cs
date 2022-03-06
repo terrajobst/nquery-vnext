@@ -21,13 +21,8 @@ namespace NQuery.Authoring.CodeActions.Refactorings
             //
             // lowerBound <= expression1 AND expression2 <= upperBound
 
-            ExpressionSyntax lowerBound;
-            ExpressionSyntax expression1;
-            ExpressionSyntax expression2;
-            ExpressionSyntax upperBound;
-
-            if (!TryGetLessThanBounds(leftComparison, out lowerBound, out expression1) ||
-                !TryGetLessThanBounds(rightComparison, out expression2, out upperBound))
+            if (!TryGetLessThanBounds(leftComparison, out var lowerBound, out var expression1) ||
+                !TryGetLessThanBounds(rightComparison, out var expression2, out var upperBound))
             {
                 return Enumerable.Empty<ICodeAction>();
             }

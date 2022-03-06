@@ -37,8 +37,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         {
             applicableToSpan = null;
 
-            IQuickInfoManager quickInfoManager;
-            if (!session.Properties.TryGetProperty(typeof(IQuickInfoManager), out quickInfoManager))
+            if (!session.Properties.TryGetProperty(typeof(IQuickInfoManager), out IQuickInfoManager quickInfoManager))
                 return;
 
             var model = quickInfoManager.Model;

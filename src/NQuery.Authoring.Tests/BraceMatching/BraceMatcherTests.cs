@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-using NQuery.Authoring.BraceMatching;
+﻿using NQuery.Authoring.BraceMatching;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Tests.BraceMatching
@@ -11,9 +9,7 @@ namespace NQuery.Authoring.Tests.BraceMatching
 
         protected void AssertIsMatch(string queryWithMarkers)
         {
-            TextSpan expectedLeft;
-            TextSpan expectedRight;
-            var query = ParseExpectedLeftAndRight(queryWithMarkers, out expectedLeft, out expectedRight);
+            var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
 
             var startOfLeft = Match(query, expectedLeft.Start);
             AssertIsMatch(startOfLeft, expectedLeft, expectedRight);
@@ -30,9 +26,7 @@ namespace NQuery.Authoring.Tests.BraceMatching
 
         protected void AssertIsNoMatch(string queryWithMarkers)
         {
-            TextSpan expectedLeft;
-            TextSpan expectedRight;
-            var query = ParseExpectedLeftAndRight(queryWithMarkers, out expectedLeft, out expectedRight);
+            var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
 
             var startOfLeft = Match(query, expectedLeft.Start);
             AssertIsNoMatch(startOfLeft);
@@ -64,8 +58,7 @@ namespace NQuery.Authoring.Tests.BraceMatching
 
         private static string ParseExpectedLeftAndRight(string queryWithMarkers, out TextSpan expectedLeft, out TextSpan expectedRight)
         {
-            ImmutableArray<TextSpan> spans;
-            var query = queryWithMarkers.ParseSpans(out spans);
+            var query = queryWithMarkers.ParseSpans(out var spans);
 
             Assert.True(spans.Length == 2, "The query is malformed -- you need to mark two spans.");
 

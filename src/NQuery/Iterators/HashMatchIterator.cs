@@ -69,8 +69,7 @@ namespace NQuery.Iterators
 
         private void AddToHashtable(object keyValue, object[] values)
         {
-            HashMatchEntry entry;
-            _hashTable.TryGetValue(keyValue, out entry);
+            _hashTable.TryGetValue(keyValue, out var entry);
 
             if (entry is null)
             {

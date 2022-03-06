@@ -8,10 +8,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
     {
         private static void AssertIsMatch(string query, string tableInstanceName, string columnName)
         {
-            TableColumnInstanceSymbol column;
-            CompletionItem columnItem;
-            SymbolMarkup columnMarkup;
-            GetCompletionData(query, tableInstanceName, columnName, out column, out columnItem, out columnMarkup);
+            GetCompletionData(query, tableInstanceName, columnName, out var column, out var columnItem, out var columnMarkup);
 
             Assert.Equal(Glyph.Column, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);
@@ -21,10 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
         private static void AssertIsAmbiguousMatch(string query, string tableInstanceName, string columnName)
         {
-            TableColumnInstanceSymbol column;
-            CompletionItem columnItem;
-            SymbolMarkup columnMarkup;
-            GetCompletionData(query, tableInstanceName, columnName, out column, out columnItem, out columnMarkup);
+            GetCompletionData(query, tableInstanceName, columnName, out var column, out var columnItem, out var columnMarkup);
 
             Assert.Equal(Glyph.AmbiguousName, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);

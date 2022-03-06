@@ -11,16 +11,12 @@ namespace NQuery.Optimization
         {
             // Extract relations and predicates
 
-            List<BoundRelation> relations;
-            List<BoundExpression> predicates;
-            ExtractRelationsAndPredicates(node, out relations, out predicates);
+            ExtractRelationsAndPredicates(node, out var relations, out var predicates);
 
             // Build a graph where the nodes are relations and edges are the predicates
             // connecting them.
 
-            ICollection<JoinNode> nodes;
-            ICollection<JoinEdge> edges;
-            BuildGraph(relations, predicates, out nodes, out edges);
+            BuildGraph(relations, predicates, out var nodes, out var edges);
 
             // Given the graph, compute a join order that uses the predicates.
 
@@ -91,8 +87,7 @@ namespace NQuery.Optimization
                     var leftRight = (left, right);
                     var rightLeft = (right, left);
 
-                    JoinEdge edge;
-                    if (!edgeByNodes.TryGetValue(leftRight, out edge))
+                    if (!edgeByNodes.TryGetValue(leftRight, out var edge))
                     {
                         if (!edgeByNodes.TryGetValue(rightLeft, out edge))
                         {

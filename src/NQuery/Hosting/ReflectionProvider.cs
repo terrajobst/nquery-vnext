@@ -76,8 +76,7 @@ namespace NQuery.Hosting
             {
                 get
                 {
-                    Entry result;
-                    _table.TryGetValue(propertyName, out result);
+                    _table.TryGetValue(propertyName, out var result);
                     return result;
                 }
             }
@@ -142,8 +141,7 @@ namespace NQuery.Hosting
                 get
                 {
                     var key = GenerateKey(methodName, parameterTypes);
-                    Entry result;
-                    _table.TryGetValue(key, out result);
+                    _table.TryGetValue(key, out var result);
                     return result;
                 }
             }

@@ -7,8 +7,7 @@ namespace NQuery.Authoring.Tests.Completion
     {
         protected static CompletionModel GetCompletionModel(string query)
         {
-            int position;
-            var compilation = CompilationFactory.CreateQuery(query, out position);
+            var compilation = CompilationFactory.CreateQuery(query, out int position);
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = new SymbolCompletionProvider();

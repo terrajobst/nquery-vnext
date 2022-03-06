@@ -129,8 +129,7 @@ namespace NQuery.Binding
         private T GetBoundNode<T>(SyntaxNode node)
             where T : BoundNode
         {
-            BoundNode result;
-            _sharedBinderState.BoundNodeFromSyntaxNode.TryGetValue(node, out result);
+            _sharedBinderState.BoundNodeFromSyntaxNode.TryGetValue(node, out var result);
             return result as T;
         }
     }

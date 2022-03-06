@@ -228,9 +228,7 @@ namespace NQuery.Optimization
 
             foreach (var conjunction in conjunctions)
             {
-                BoundExistsSubselect exists;
-                bool isNegated;
-                if (TryGetExistsSubselect(conjunction, out exists, out isNegated))
+                if (TryGetExistsSubselect(conjunction, out var exists, out var isNegated))
                 {
                     var joinType = isNegated
                         ? BoundJoinType.LeftAntiSemi
@@ -276,9 +274,7 @@ namespace NQuery.Optimization
 
             foreach (var disjunction in Expression.SplitDisjunctions(condition))
             {
-                BoundExistsSubselect exists;
-                bool isNegated;
-                if (TryGetExistsSubselect(disjunction, out exists, out isNegated))
+                if (TryGetExistsSubselect(disjunction, out var exists, out var isNegated))
                 {
                     if (!isNegated)
                     {

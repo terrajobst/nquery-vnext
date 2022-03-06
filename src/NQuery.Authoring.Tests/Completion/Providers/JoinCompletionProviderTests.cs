@@ -1,6 +1,5 @@
 ﻿using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
-using NQuery.Text;
 
 namespace NQuery.Authoring.Tests.Completion.Providers
 {
@@ -10,8 +9,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         {
             var normalized = queryWithJoinMarker.NormalizeCode();
 
-            TextSpan span;
-            var queryWithJoin = normalized.ParseSingleSpan(out span);
+            var queryWithJoin = normalized.ParseSingleSpan(out var span);
             var condition = queryWithJoin.Substring(span);
             var query = queryWithJoin.Remove(span.Start, span.Length);
             var position = span.Start;

@@ -488,8 +488,7 @@ namespace NQuery.Syntax
 
         ExitLoop:
             var text = sb.ToString();
-            DateTime result;
-            if (!DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out result))
+            if (!DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
                 _diagnostics.ReportInvalidDate(CurrentSpan, text);
 
             _value = result;

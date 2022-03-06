@@ -84,8 +84,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             if (_session is null)
                 return null;
 
-            int selectedIndex;
-            if (!_session.Properties.TryGetProperty(_selectedItemIndexKey, out selectedIndex))
+            if (!_session.Properties.TryGetProperty(_selectedItemIndexKey, out int selectedIndex))
                 return null;
 
             return selectedIndex;
