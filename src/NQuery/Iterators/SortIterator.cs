@@ -143,9 +143,8 @@ namespace NQuery.Iterators
             {
                 // Compare all columns
 
-                var result = 0;
                 var index = 0;
-                while (index < _sortEntries.Length && result == 0)
+                while (index < _sortEntries.Length)
                 {
                     var valueIndex = _sortEntries[index];
 
@@ -160,7 +159,7 @@ namespace NQuery.Iterators
 
                     if (value1 is not null && value2 is not null)
                     {
-                        result = _comparers[index].Compare(value1, value2);
+                        var result = _comparers[index].Compare(value1, value2);
 
                         if (result != 0)
                             return result;
