@@ -202,9 +202,7 @@ namespace NQuery
         {
             get
             {
-                if (_span is null)
-                    _span = ComputeSpan();
-
+                _span ??= ComputeSpan();
                 return _span.Value;
             }
         }
@@ -213,9 +211,7 @@ namespace NQuery
         {
             get
             {
-                if (_fullSpan is null)
-                    _fullSpan = ComputeFullSpan();
-
+                _fullSpan ??= ComputeFullSpan();
                 return _fullSpan.Value;
             }
         }
@@ -224,9 +220,7 @@ namespace NQuery
         {
             get
             {
-                if (_isMissing is null)
-                    _isMissing = ComputeIsMissing();
-
+                _isMissing ??= ComputeIsMissing();
                 return _isMissing.Value;
             }
         }

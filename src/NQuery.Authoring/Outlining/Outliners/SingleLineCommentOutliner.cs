@@ -21,8 +21,7 @@ namespace NQuery.Authoring.Outlining.Outliners
                 switch (trivia.Kind)
                 {
                     case SyntaxKind.SingleLineCommentTrivia:
-                        if (firstComment is null)
-                            firstComment = trivia;
+                        firstComment ??= trivia;
                         lastComment = trivia;
                         break;
                     case SyntaxKind.WhitespaceTrivia:

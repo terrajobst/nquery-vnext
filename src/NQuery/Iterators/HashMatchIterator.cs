@@ -169,8 +169,7 @@ namespace NQuery.Iterators
 
                         if (_entry is null)
                         {
-                            if (_entryEnumerator is null)
-                                _entryEnumerator = _hashTable.Values.GetEnumerator();
+                            _entryEnumerator ??= _hashTable.Values.GetEnumerator();
 
                             // All rows having the same key value are exhausted.
                             // Read next key from build input.
