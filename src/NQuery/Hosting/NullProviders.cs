@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 using NQuery.Symbols;
 
 namespace NQuery.Hosting

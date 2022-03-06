@@ -2,7 +2,6 @@ using System.Text;
 
 using NQuery.Binding;
 using NQuery.Syntax;
-using NQuery.Text;
 
 namespace NQuery
 {
