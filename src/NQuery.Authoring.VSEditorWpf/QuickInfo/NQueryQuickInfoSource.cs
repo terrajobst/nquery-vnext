@@ -66,7 +66,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             return stackPanel;
         }
 
-        private Image GetGlyph(Glyph glyph)
+        private static Image GetGlyph(Glyph glyph)
         {
             return new Image
             {
