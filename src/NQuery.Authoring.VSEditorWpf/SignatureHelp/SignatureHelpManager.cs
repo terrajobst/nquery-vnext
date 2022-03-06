@@ -128,8 +128,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler is not null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         public SignatureHelpModel Model

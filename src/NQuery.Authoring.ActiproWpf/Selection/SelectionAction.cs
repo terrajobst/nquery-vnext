@@ -93,15 +93,13 @@ namespace NQuery.Authoring.ActiproWpf.Selection
         protected static void ExtendSelection(ITextView textView)
         {
             var selectionHandler = GetSelectionHandler(textView);
-            if (selectionHandler is not null)
-                selectionHandler.ExtendSelection();
+            selectionHandler?.ExtendSelection();
         }
 
         protected static void ShrinkSelection(ITextView textView)
         {
             var selectionHandler = GetSelectionHandler(textView);
-            if (selectionHandler is not null)
-                selectionHandler.ShrinkSelection();
+            selectionHandler?.ShrinkSelection();
         }
     }
 }

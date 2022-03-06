@@ -46,8 +46,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private void RaiseCurrentParameterChanged(IParameter prevCurrentParameter, IParameter newCurrentParameter)
         {
             var tempHandler = CurrentParameterChanged;
-            if (tempHandler is not null)
-                tempHandler(this, new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
+            tempHandler?.Invoke(this, new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
         }
 
         public ITrackingSpan ApplicableToSpan { get; private set; }

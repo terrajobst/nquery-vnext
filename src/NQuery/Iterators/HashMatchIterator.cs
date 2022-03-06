@@ -96,8 +96,7 @@ namespace NQuery.Iterators
 
                     while (!matchFound)
                     {
-                        if (_entry is not null)
-                            _entry = _entry.Next;
+                        _entry = _entry?.Next;
 
                         if (_entry is null)
                         {
@@ -164,8 +163,7 @@ namespace NQuery.Iterators
 
                     while (!unmatchedFound)
                     {
-                        if (_entry is not null)
-                            _entry = _entry.Next;
+                        _entry = _entry?.Next;
 
                         if (_entry is null)
                         {

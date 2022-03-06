@@ -20,8 +20,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
         private void OnCurrentChanged()
         {
             var handler = CurrentChanged;
-            if (handler is not null)
-                handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         public override SourceText Current

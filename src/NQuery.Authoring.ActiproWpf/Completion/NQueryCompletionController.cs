@@ -30,8 +30,7 @@ namespace NQuery.Authoring.ActiproWpf.Completion
         private static void Commit(IEditorView view)
         {
             var session = view.SyntaxEditor.IntelliPrompt.Sessions.OfType<CompletionSession>().FirstOrDefault();
-            if (session is not null)
-                session.Commit();
+            session?.Commit();
         }
 
         private static bool IsTriggerChar(char c)

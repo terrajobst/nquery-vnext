@@ -36,22 +36,19 @@ namespace NQueryViewer.Editor
         protected virtual void OnCaretPositionChanged()
         {
             var handler = CaretPositionChanged;
-            if (handler is not null)
-                handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual void OnSelectionChanged()
         {
             var handler = SelectionChanged;
-            if (handler is not null)
-                handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual void OnZoomLevelChanged()
         {
             var handler = ZoomLevelChanged;
-            if (handler is not null)
-                handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler CaretPositionChanged;

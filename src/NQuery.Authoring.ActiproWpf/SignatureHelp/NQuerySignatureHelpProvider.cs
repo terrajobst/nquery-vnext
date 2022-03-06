@@ -32,8 +32,7 @@ namespace NQuery.Authoring.ActiproWpf.SignatureHelp
 
             if (model is null || model.Signatures.Length == 0)
             {
-                if (existingSession is not null)
-                    existingSession.Close(true);
+                existingSession?.Close(true);
                 return;
             }
 

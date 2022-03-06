@@ -100,8 +100,7 @@ namespace NQuery.Authoring.Wpf
         private void OnSelectedNodeChanged()
         {
             var handler = SelectedNodeChanged;
-            if (handler is not null)
-                handler(this, EventArgs.Empty);
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         public event EventHandler SelectedNodeChanged;

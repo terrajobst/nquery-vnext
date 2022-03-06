@@ -395,10 +395,8 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
-            var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+            var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
             if (selectQuery is null)
                 return false;
 
@@ -414,10 +412,8 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
-            var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+            var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
             if (selectQuery is null)
                 return false;
 
@@ -436,10 +432,8 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
-            var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+            var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
             if (selectQuery is null)
                 return false;
 
@@ -459,10 +453,8 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
-            var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+            var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
             if (selectQuery is null)
                 return false;
 
@@ -511,10 +503,8 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInOrderByAfterExpression(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
-            var orderByColumn = token.Parent.AncestorsAndSelf().OfType<OrderByColumnSyntax>().FirstOrDefault();
+            var orderByColumn = token?.Parent.AncestorsAndSelf().OfType<OrderByColumnSyntax>().FirstOrDefault();
             if (orderByColumn is null)
                 return false;
 
@@ -573,10 +563,8 @@ namespace NQuery.Authoring.Completion.Providers
         private static bool IsInCommonTableExpressionAfterNameOrColumnList(SyntaxTree syntaxTree, int position)
         {
             var token = syntaxTree.Root.FindTokenContext(position);
-            if (token is null)
-                return false;
 
-            var expression = token.Parent.AncestorsAndSelf().OfType<CommonTableExpressionSyntax>().FirstOrDefault();
+            var expression = token?.Parent.AncestorsAndSelf().OfType<CommonTableExpressionSyntax>().FirstOrDefault();
             if (expression is null)
                 return false;
 
@@ -610,13 +598,11 @@ namespace NQuery.Authoring.Completion.Providers
         {
             var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
             var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
-            if (token is null)
-                return false;
 
             // JOIN foo f |
 
-            var join = token.Parent.AncestorsAndSelf().OfType<ConditionedJoinedTableReferenceSyntax>().FirstOrDefault();
-            if (join is null)
+            var join = token?.Parent.AncestorsAndSelf().OfType<ConditionedJoinedTableReferenceSyntax>().FirstOrDefault();
+            if (@join is null)
                 return false;
 
             var lastOfRight = join.Right.LastToken();
