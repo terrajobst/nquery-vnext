@@ -136,7 +136,7 @@ namespace NQuery.Binding
             }
 
             var derivedTable = new DerivedTableSymbol(columns);
-            var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((ti, c) => valueSlotFromColumn[c]);
+            var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((_, c) => valueSlotFromColumn[c]);
             var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
             var boundTableReference = new BoundDerivedTableRelation(derivedTableInstance, query.Relation);
 

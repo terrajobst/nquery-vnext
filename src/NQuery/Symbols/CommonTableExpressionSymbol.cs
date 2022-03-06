@@ -10,7 +10,7 @@ namespace NQuery.Symbols
             string name,
             Func<CommonTableExpressionSymbol, (BoundQuery, ImmutableArray<ColumnSymbol>)> anchorBinder
         )
-            : this(name, anchorBinder, s => ImmutableArray<BoundQuery>.Empty)
+            : this(name, anchorBinder, _ => ImmutableArray<BoundQuery>.Empty)
         {
         }
 

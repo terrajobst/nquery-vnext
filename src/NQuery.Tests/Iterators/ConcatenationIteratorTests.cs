@@ -50,7 +50,7 @@ namespace NQuery.Tests.Iterators
                 new MockedIterator(new object[0])
             };
 
-            var entries = inputs.Select(i => ImmutableArray<RowBufferEntry>.Empty);
+            var entries = inputs.Select(_ => ImmutableArray<RowBufferEntry>.Empty);
 
             using (var iterator = new ConcatenationIterator(inputs, entries))
             {
