@@ -42,7 +42,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Assert_DoesNotTriggerAssert_WhenFalseAndInputEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
             var expected = rows;
 
             using (var input = new MockedIterator(rows))

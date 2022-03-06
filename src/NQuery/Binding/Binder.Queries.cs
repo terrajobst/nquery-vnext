@@ -1096,7 +1096,7 @@ namespace NQuery.Binding
             if (symbols.Length == 0)
             {
                 Diagnostics.ReportUndeclaredTableInstance(tableName);
-                return new BoundWildcardSelectColumn(null, new TableColumnInstanceSymbol[0]);
+                return new BoundWildcardSelectColumn(null, Array.Empty<TableColumnInstanceSymbol>());
             }
 
             if (symbols.Length > 1)

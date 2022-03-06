@@ -12,7 +12,7 @@ namespace NQuery.Binding
             Candidates = candidates.ToImmutableArray();
         }
 
-        public static readonly OverloadResolutionResult<T> None = new(null, null, new OverloadResolutionCandidate<T>[0]);
+        public static readonly OverloadResolutionResult<T> None = new(null, null, Array.Empty<OverloadResolutionCandidate<T>>());
 
         public OverloadResolutionCandidate<T> Best { get; }
 

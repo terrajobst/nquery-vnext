@@ -69,7 +69,7 @@ namespace NQuery.Tests.Iterators
         [InlineData(BoundHashMatchOperator.LeftOuter)]
         internal void Iterators_HashMatch_ReturnsEmpty_IfBuildIsEmpty(BoundHashMatchOperator logicalOperator)
         {
-            var buildRows = new object[0];
+            var buildRows = Array.Empty<object>();
             var probeRows = new object[] { 2, 3 };
 
             using (var build = new MockedIterator(buildRows))
@@ -90,7 +90,7 @@ namespace NQuery.Tests.Iterators
         [InlineData(BoundHashMatchOperator.FullOuter)]
         internal void Iterators_HashMatch_ReturnsProbe_IfBuildIsEmpty(BoundHashMatchOperator logicalOperator)
         {
-            var buildRows = new object[0];
+            var buildRows = Array.Empty<object>();
             var probeRows = new object[] { 2, 3 };
             var expected = new object[,]
             {
@@ -117,7 +117,7 @@ namespace NQuery.Tests.Iterators
         internal void Iterators_HashMatch_ReturnsEmpty_IfProbeIsEmpty(BoundHashMatchOperator logicalOperator)
         {
             var buildRows = new object[] { 1, 2 };
-            var probeRows = new object[0];
+            var probeRows = Array.Empty<object>();
 
             using (var build = new MockedIterator(buildRows))
             using (var probe = new MockedIterator(probeRows))
@@ -138,7 +138,7 @@ namespace NQuery.Tests.Iterators
         internal void Iterators_HashMatch_ReturnsBuild_IfProbeIsEmpty(BoundHashMatchOperator logicalOperator)
         {
             var buildRows = new object[] { 1, 2 };
-            var probeRows = new object[0];
+            var probeRows = Array.Empty<object>();
             var expected = new object[,]
             {
                 {1, null},

@@ -34,7 +34,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Projection_ReturnsEmpty_IfInputEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
 
             using (var input = new MockedIterator(rows))
             using (var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>()))

@@ -38,7 +38,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TopWithTies_ReturnsEmpty_IfInputIsEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
 
             using (var input = new MockedIterator(rows))
             using (var iterator = CreateIterator(input, 1))
