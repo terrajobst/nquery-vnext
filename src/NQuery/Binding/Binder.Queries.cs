@@ -517,8 +517,7 @@ namespace NQuery.Binding
                     }
                     else
                     {
-                        if (computations[queryIndex] is null)
-                            computations[queryIndex] = new List<BoundComputedValue>();
+                        computations[queryIndex] ??= new List<BoundComputedValue>();
 
                         var computedValueSlot = ValueSlotFactory.CreateTemporary(converted.Type);
                         var computedValue = new BoundComputedValue(converted, computedValueSlot);
