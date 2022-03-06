@@ -9,7 +9,7 @@ namespace NQuery.Syntax
 
         public SyntaxTrivia ParentTrivia
         {
-            get { return SyntaxTree is null ? null : SyntaxTree.GetParentTrivia(this); }
+            get { return SyntaxTree?.GetParentTrivia(this); }
         }
     }
 }

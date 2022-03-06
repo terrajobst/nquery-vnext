@@ -12,7 +12,7 @@ namespace NQuery.Binding
     {
         public virtual BoundQueryState QueryState
         {
-            get { return Parent is null ? null : Parent.QueryState; }
+            get { return Parent?.QueryState; }
         }
 
         private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
@@ -919,9 +919,7 @@ namespace NQuery.Binding
                               let expression = (BoundAggregateExpression)t.Expression
                               select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Aggregatable, expression.Argument)).ToImmutableArray();
 
-            var groups = groupByClause is null
-                ? ImmutableArray<BoundComparedValue>.Empty
-                : groupByClause.Groups;
+            var groups = groupByClause?.Groups ?? ImmutableArray<BoundComparedValue>.Empty;
 
             var projections = (from t in queryBinder.QueryState.ComputedProjections
                                select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
@@ -966,7 +964,7 @@ namespace NQuery.Binding
             //       cast because we also bind input the parser reported errors for.
 
             var topClause = node.SelectClause.TopClause;
-            var top = topClause is null ? null : topClause.Value.Value as int?;
+            var top = topClause?.Value.Value as int?;
             var withTies = topClause is not null && topClause.WithKeyword is not null;
 
             if (withTies && orderedQueryNode is null)

@@ -21,9 +21,7 @@ namespace NQuery.Symbols
 
         private static IEnumerable<ParameterSymbol> ConvertParameters(MethodInfo methodInfo)
         {
-            return (methodInfo is null
-                        ? Enumerable.Empty<ParameterSymbol>()
-                        : methodInfo.GetParameters().Select(p => new ReflectionParameterSymbol(p))).ToImmutableArray();
+            return (methodInfo?.GetParameters().Select(p => new ReflectionParameterSymbol(p)) ?? Enumerable.Empty<ParameterSymbol>()).ToImmutableArray();
         }
 
         public override Expression CreateInvocation(Expression instance, IEnumerable<Expression> arguments)

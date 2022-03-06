@@ -30,7 +30,7 @@ namespace NQuery.Authoring.Completion
         {
             var syntaxTree = semanticModel.SyntaxTree;
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
-            var applicableSpan = token is null ? new TextSpan(position, 0) : token.Span;
+            var applicableSpan = token?.Span ?? new TextSpan(position, 0);
 
             var items = providers.SelectMany(p => p.GetItems(semanticModel, position));
             var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();

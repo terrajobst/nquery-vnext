@@ -110,9 +110,7 @@ namespace NQuery.Binding
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstances()
         {
-            return QueryState is null
-                       ? Enumerable.Empty<TableInstanceSymbol>()
-                       : QueryState.IntroducedTables.Keys;
+            return QueryState?.IntroducedTables.Keys ?? Enumerable.Empty<TableInstanceSymbol>();
         }
 
         private IEnumerable<TableInstanceSymbol> LookupTableInstance(SyntaxToken name)
