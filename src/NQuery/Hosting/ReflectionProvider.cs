@@ -14,13 +14,11 @@ namespace NQuery.Hosting
         {
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public ReflectionProvider(BindingFlags bindingFlags)
         {
             BindingFlags = bindingFlags;
         }
 
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms", MessageId = "Flags")]
         public BindingFlags BindingFlags { get; }
 
         private static bool ExistingMemberIsMoreSpecific(Type type, MemberInfo existingMember, MemberInfo newMember)

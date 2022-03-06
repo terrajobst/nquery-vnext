@@ -445,7 +445,6 @@ namespace NQuery.Data
         /// An <see cref="T:System.Data.IDataReader" /> to be used when the field points to more remote structured data.
         /// </returns>
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />.</exception>
-        [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         IDataReader IDataRecord.GetData(int i)
         {
             throw new IndexOutOfRangeException();
@@ -491,8 +490,6 @@ namespace NQuery.Data
         /// </summary>
         /// <param name="name">The name of the column to find.</param>
         /// <exception cref="T:System.IndexOutOfRangeException">No column with the specified name was found.</exception>
-        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
-        [SuppressMessage("Microsoft.Usage", "CA2201:DoNotRaiseReservedExceptionTypes")]
         public object this[string name]
         {
             get

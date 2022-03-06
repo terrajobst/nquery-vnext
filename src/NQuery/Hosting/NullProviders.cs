@@ -28,10 +28,7 @@ namespace NQuery.Hosting
             }
         }
 
-        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly IPropertyProvider PropertyProvider = new NullPropertyProvider();
-
-        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
         public static readonly IMethodProvider MethodProvider = new NullMethodProvider();
     }
 }
