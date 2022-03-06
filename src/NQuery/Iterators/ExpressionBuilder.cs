@@ -85,7 +85,7 @@ namespace NQuery.Iterators
         private static Expression BuildNullCheck(Expression expression)
         {
             return expression.Type.IsNullableOfT()
-                       ? (Expression)Expression.Not(Expression.Property(expression, nameof(Nullable<bool>.HasValue)))
+                       ? Expression.Not(Expression.Property(expression, nameof(Nullable<bool>.HasValue)))
                        : Expression.ReferenceEqual(expression, Expression.Constant(null, expression.Type));
         }
 

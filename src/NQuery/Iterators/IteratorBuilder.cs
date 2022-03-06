@@ -122,7 +122,7 @@ namespace NQuery.Iterators
                     return new InnerNestedLoopsIterator(left, right, predicate, passthruPredicate);
                 case BoundJoinType.LeftSemi:
                     return relation.Probe is null
-                        ? (Iterator)new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
+                        ? new LeftSemiNestedLoopsIterator(left, right, predicate, passthruPredicate)
                         : new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
                 case BoundJoinType.LeftAntiSemi:
                     Debug.Assert(relation.Probe is null);
