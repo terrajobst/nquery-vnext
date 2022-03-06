@@ -68,7 +68,7 @@ namespace NQuery.Optimization
                 var original = node.TableInstance;
                 var valueSlotMapping = original.ColumnInstances.ToDictionary(c => c.Column, c => _valueSlotMapping[c.ValueSlot]);
                 var instanceName = factory.CreateNamed(original.Name, typeof(int)).Name;
-                var instance = new TableInstanceSymbol(instanceName, original.Table, (t, c) => valueSlotMapping[c]);
+                var instance = new TableInstanceSymbol(instanceName, original.Table, (_, c) => valueSlotMapping[c]);
                 var columnMapping = instance.ColumnInstances.ToDictionary(c => c.Column);
                 var definedValues = node.DefinedValues.Select(d => columnMapping[d.Column]).ToImmutableArray();
                 return node.Update(instance, definedValues);

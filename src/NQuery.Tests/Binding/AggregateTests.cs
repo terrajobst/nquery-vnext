@@ -74,7 +74,7 @@ namespace NQuery.Tests.Binding
         {
             var dataContext = DataContext.Default
                                          .AddAggregates(CreateAggregate("AGG"))
-                                         .AddFunctions(new FunctionSymbol<string, string, string>("AGG", (x, y) => x));
+                                         .AddFunctions(new FunctionSymbol<string, string, string>("AGG", (x, _) => x));
 
             var aggregate = dataContext.Aggregates.Last();
 

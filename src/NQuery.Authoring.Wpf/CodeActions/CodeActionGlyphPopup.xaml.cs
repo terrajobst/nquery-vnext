@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Wpf.CodeActions
                 var menuItem = new MenuItem();
                 menuItem.Icon = new Image { Source = GetImageSource(model.Kind) };
                 menuItem.Header = model.Description;
-                menuItem.Click += (s, e) => model.Invoke();
+                menuItem.Click += (_, _) => model.Invoke();
                 GlyphContextMenu.Items.Add(menuItem);
             }
         }

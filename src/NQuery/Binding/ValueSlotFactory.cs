@@ -14,7 +14,7 @@ namespace NQuery.Binding
 
         public ValueSlot Create(string formatString, Type type)
         {
-            var number = ImmutableInterlocked.AddOrUpdate(ref _usedNames, formatString, 1, (k, v) => v + 1);
+            var number = ImmutableInterlocked.AddOrUpdate(ref _usedNames, formatString, 1, (_, v) => v + 1);
             return new ValueSlot(this, formatString, number, type);
         }
 

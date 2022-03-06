@@ -5,10 +5,10 @@ namespace NQuery
 {
     internal static class SyntaxTreeNavigation
     {
-        private static readonly Func<SyntaxToken, bool> AnyTokenPredicate = t => true;
+        private static readonly Func<SyntaxToken, bool> AnyTokenPredicate = _ => true;
         private static readonly Func<SyntaxToken, bool> NonZeroLengthTokenPredicate = t => t.Span.Length > 0;
 
-        private static readonly Func<SyntaxTrivia, bool> NoTriviaPredicate = t => false;
+        private static readonly Func<SyntaxTrivia, bool> NoTriviaPredicate = _ => false;
         private static readonly Func<SyntaxTrivia, bool> SkippedTokensTriviaPredicate = t => t.Kind == SyntaxKind.SkippedTokensTrivia;
 
         private static Func<SyntaxToken, bool> GetTokenPredicate(bool includeZeroLength)
