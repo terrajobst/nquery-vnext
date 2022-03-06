@@ -178,8 +178,7 @@ namespace NQueryViewer
         {
             UpdateDocumentState();
 
-            if (CurrentEditorView is not null)
-                CurrentEditorView.Focus();
+            CurrentEditorView?.Focus();
         }
 
         private void UpdateDocumentState()

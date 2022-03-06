@@ -88,10 +88,7 @@ namespace NQuery
                 return token;
 
             var tt = GetFirstToken(token.TrailingTrivia, tokenPredicate, triviaPredicate);
-            if (tt is not null)
-                return tt;
-
-            return null;
+            return tt;
         }
 
         private static SyntaxToken GetFirstToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
@@ -140,10 +137,7 @@ namespace NQuery
                 return token;
 
             var lt = GetLastToken(token.LeadingTrivia, tokenPredicate, triviaPredicate);
-            if (lt is not null)
-                return lt;
-
-            return null;
+            return lt;
         }
 
         private static SyntaxToken GetLastToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)

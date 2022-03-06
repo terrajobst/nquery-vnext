@@ -60,10 +60,8 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 return null;
 
             var model = signatureHelpManager.Model;
-            if (model is null)
-                return null;
 
-            if (model.Signature is null)
+            if (model?.Signature is null)
                 return null;
 
             return signaturesMap[model.Signature];

@@ -53,10 +53,7 @@ namespace NQuery.Authoring.CodeActions.Fixes
                 return selectQuery;
 
             var orderedQuery = expression.Ancestors().OfType<OrderedQuerySyntax>().FirstOrDefault();
-            if (orderedQuery is not null)
-                return orderedQuery.GetAppliedSelectQuery();
-
-            return null;
+            return orderedQuery?.GetAppliedSelectQuery();
         }
 
         private static IEnumerable<ICodeAction> GetSelectFixes(SelectQuerySyntax selectQuery, ExpressionSyntax expression)

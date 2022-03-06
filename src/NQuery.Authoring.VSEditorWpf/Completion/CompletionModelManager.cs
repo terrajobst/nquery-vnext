@@ -116,8 +116,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler is not null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         public CompletionModel Model

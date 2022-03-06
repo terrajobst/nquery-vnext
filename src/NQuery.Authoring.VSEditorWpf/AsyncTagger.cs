@@ -31,8 +31,7 @@ namespace NQuery.Authoring.VSEditorWpf
         private void OnTagsChanged(SnapshotSpanEventArgs e)
         {
             var handler = TagsChanged;
-            if (handler is not null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         public event EventHandler<SnapshotSpanEventArgs> TagsChanged;

@@ -36,8 +36,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
         private void OnModelChanged(EventArgs e)
         {
             var handler = ModelChanged;
-            if (handler is not null)
-                handler(this, e);
+            handler?.Invoke(this, e);
         }
 
         public QuickInfoModel Model

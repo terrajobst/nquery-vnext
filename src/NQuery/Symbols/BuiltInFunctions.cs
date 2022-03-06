@@ -292,42 +292,27 @@ namespace NQuery.Symbols
 
         private static string Upper(string text)
         {
-            if (text is null)
-                return null;
-
-            return text.ToUpper(CultureInfo.CurrentCulture);
+            return text?.ToUpper(CultureInfo.CurrentCulture);
         }
 
         private static string Lower(string text)
         {
-            if (text is null)
-                return null;
-
-            return text.ToLower(CultureInfo.CurrentCulture);
+            return text?.ToLower(CultureInfo.CurrentCulture);
         }
 
         private static string Trim(string text)
         {
-            if (text is null)
-                return null;
-
-            return text.Trim();
+            return text?.Trim();
         }
 
         private static string LTrim(string text)
         {
-            if (text is null)
-                return null;
-
-            return text.TrimStart(' ', '\t');
+            return text?.TrimStart(' ', '\t');
         }
 
         private static string RTrim(string text)
         {
-            if (text is null)
-                return null;
-
-            return text.TrimEnd(' ', '\t');
+            return text?.TrimEnd(' ', '\t');
         }
 
         private static string Replace(string text, string oldValue, string newValue)
@@ -430,18 +415,12 @@ namespace NQuery.Symbols
 
         private static string LPad(string text, int totalWidth)
         {
-            if (text is null)
-                return null;
-
-            return text.PadLeft(totalWidth);
+            return text?.PadLeft(totalWidth);
         }
 
         private static string RPad(string text, int totalWidth)
         {
-            if (text is null)
-                return null;
-
-            return text.PadRight(totalWidth);
+            return text?.PadRight(totalWidth);
         }
 
         private static DateTime GetDate()
