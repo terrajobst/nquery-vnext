@@ -15,52 +15,51 @@ namespace NQuery.Tests.Iterators
             var buildRows = new object[] { 1, 2 };
             var probeRows = new object[] { 2, 3 };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            const int passCount = 2;
+
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
             {
-                const int passCount = 2;
-
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
-
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
+                for (var i = 0; i < passCount; i++)
                 {
-                    for (var i = 0; i < passCount; i++)
+                    iterator.Open();
+
+                    Assert.True(iterator.Read());
+                    Assert.Equal(2, iterator.RowBuffer[0]);
+                    Assert.Equal(2, iterator.RowBuffer[1]);
+
+                    if (logicalOperator == BoundHashMatchOperator.RightOuter ||
+                        logicalOperator == BoundHashMatchOperator.FullOuter)
                     {
-                        iterator.Open();
-
                         Assert.True(iterator.Read());
-                        Assert.Equal(2, iterator.RowBuffer[0]);
-                        Assert.Equal(2, iterator.RowBuffer[1]);
-
-                        if (logicalOperator == BoundHashMatchOperator.RightOuter ||
-                            logicalOperator == BoundHashMatchOperator.FullOuter)
-                        {
-                            Assert.True(iterator.Read());
-                            Assert.Null(iterator.RowBuffer[0]);
-                            Assert.Equal(3, iterator.RowBuffer[1]);
-                        }
-
-                        if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
-                            logicalOperator == BoundHashMatchOperator.FullOuter)
-                        {
-                            Assert.True(iterator.Read());
-                            Assert.Equal(1, iterator.RowBuffer[0]);
-                            Assert.Null(iterator.RowBuffer[1]);
-                        }
-
-                        Assert.False(iterator.Read());
+                        Assert.Null(iterator.RowBuffer[0]);
+                        Assert.Equal(3, iterator.RowBuffer[1]);
                     }
-                }
 
-                var inputs = new[] { build, probe };
+                    if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
+                        logicalOperator == BoundHashMatchOperator.FullOuter)
+                    {
+                        Assert.True(iterator.Read());
+                        Assert.Equal(1, iterator.RowBuffer[0]);
+                        Assert.Null(iterator.RowBuffer[1]);
+                    }
 
-                foreach (var input in inputs)
-                {
-                    Assert.Equal(passCount, input.TotalOpenCount);
-                    Assert.Equal(passCount * 2, input.TotalReadCount);
-                    Assert.Equal(1, input.DisposalCount);
+                    Assert.False(iterator.Read());
                 }
+            }
+
+            var inputs = new[] { build, probe };
+
+            foreach (var input in inputs)
+            {
+                Assert.Equal(passCount, input.TotalOpenCount);
+                Assert.Equal(passCount * 2, input.TotalReadCount);
+                Assert.Equal(1, input.DisposalCount);
             }
         }
 
@@ -72,17 +71,14 @@ namespace NQuery.Tests.Iterators
             var buildRows = Array.Empty<object>();
             var probeRows = new object[] { 2, 3 };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
-            {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
 
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            AssertEmpty(iterator);
         }
 
         [Theory]
@@ -98,17 +94,14 @@ namespace NQuery.Tests.Iterators
                 {null, 3}
             };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
-            {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
 
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            AssertProduces(iterator, expected);
         }
 
         [Theory]
@@ -119,17 +112,14 @@ namespace NQuery.Tests.Iterators
             var buildRows = new object[] { 1, 2 };
             var probeRows = Array.Empty<object>();
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
-            {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
 
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            AssertEmpty(iterator);
         }
 
         [Theory]
@@ -145,17 +135,14 @@ namespace NQuery.Tests.Iterators
                 {2, null}
             };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
-            {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
 
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            AssertProduces(iterator, expected);
         }
 
         [Theory]
@@ -174,39 +161,36 @@ namespace NQuery.Tests.Iterators
                 {null, "Bar"}
             };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            iterator.Open();
+
+            if (logicalOperator == BoundHashMatchOperator.RightOuter ||
+                logicalOperator == BoundHashMatchOperator.FullOuter)
             {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
-
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    iterator.Open();
-
-                    if (logicalOperator == BoundHashMatchOperator.RightOuter ||
-                        logicalOperator == BoundHashMatchOperator.FullOuter)
-                    {
-                        Assert.True(iterator.Read());
-                        Assert.Null(iterator.RowBuffer[0]);
-                        Assert.Null(iterator.RowBuffer[1]);
-                        Assert.Null(iterator.RowBuffer[2]);
-                        Assert.Equal("Bar", iterator.RowBuffer[3]);
-                    }
-
-                    if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
-                        logicalOperator == BoundHashMatchOperator.FullOuter)
-                    {
-                        Assert.True(iterator.Read());
-                        Assert.Null(iterator.RowBuffer[0]);
-                        Assert.Equal("Foo", iterator.RowBuffer[1]);
-                        Assert.Null(iterator.RowBuffer[2]);
-                        Assert.Null(iterator.RowBuffer[3]);
-                    }
-
-                    Assert.False(iterator.Read());
-                }
+                Assert.True(iterator.Read());
+                Assert.Null(iterator.RowBuffer[0]);
+                Assert.Null(iterator.RowBuffer[1]);
+                Assert.Null(iterator.RowBuffer[2]);
+                Assert.Equal("Bar", iterator.RowBuffer[3]);
             }
+
+            if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
+                logicalOperator == BoundHashMatchOperator.FullOuter)
+            {
+                Assert.True(iterator.Read());
+                Assert.Null(iterator.RowBuffer[0]);
+                Assert.Equal("Foo", iterator.RowBuffer[1]);
+                Assert.Null(iterator.RowBuffer[2]);
+                Assert.Null(iterator.RowBuffer[3]);
+            }
+
+            Assert.False(iterator.Read());
         }
 
         [Theory]
@@ -232,17 +216,14 @@ namespace NQuery.Tests.Iterators
                 {3, 3, "Third"}
             };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
-            {
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => true);
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
 
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => true);
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            AssertProduces(iterator, expected);
         }
 
         [Theory]
@@ -270,85 +251,82 @@ namespace NQuery.Tests.Iterators
                 {2, 1, "Project2-Task-1"},
             };
 
-            using (var build = new MockedIterator(buildRows))
-            using (var probe = new MockedIterator(probeRows))
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            // Layout:
+            // 0               | 1            | 2               | 3            | 4
+            // ----------------+--------------+-----------------+--------------+---------------
+            // build.ProjectId | build.TaskId | probe.ProjectId | probe.TaskId | probe.TaskName
+
+            var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+            var remainder = new IteratorPredicate(() => Equals(rowBuffer[1], rowBuffer[3]));
+
+            using var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer);
+            iterator.Open();
+
+            if (logicalOperator == BoundHashMatchOperator.RightOuter ||
+                logicalOperator == BoundHashMatchOperator.FullOuter)
             {
-                // Layout:
-                // 0               | 1            | 2               | 3            | 4
-                // ----------------+--------------+-----------------+--------------+---------------
-                // build.ProjectId | build.TaskId | probe.ProjectId | probe.TaskId | probe.TaskName
-
-                var rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
-                var remainder = new IteratorPredicate(() => Equals(rowBuffer[1], rowBuffer[3]));
-
-                using (var iterator = new HashMatchIterator(logicalOperator, build, probe, 0, 0, remainder, rowBuffer))
-                {
-                    iterator.Open();
-
-                    if (logicalOperator == BoundHashMatchOperator.RightOuter ||
-                        logicalOperator == BoundHashMatchOperator.FullOuter)
-                    {
-                        Assert.True(iterator.Read());
-                        Assert.Null(iterator.RowBuffer[0]);
-                        Assert.Null(iterator.RowBuffer[1]);
-                        Assert.Equal(0, iterator.RowBuffer[2]);
-                        Assert.Equal(0, iterator.RowBuffer[3]);
-                        Assert.Equal("Unmatched1", iterator.RowBuffer[4]);
-                    }
-
-                    Assert.True(iterator.Read());
-                    Assert.Equal(1, iterator.RowBuffer[0]);
-                    Assert.Equal(1, iterator.RowBuffer[1]);
-                    Assert.Equal(1, iterator.RowBuffer[2]);
-                    Assert.Equal(1, iterator.RowBuffer[3]);
-                    Assert.Equal("Project1-Task-1", iterator.RowBuffer[4]);
-
-                    Assert.True(iterator.Read());
-                    Assert.Equal(1, iterator.RowBuffer[0]);
-                    Assert.Equal(2, iterator.RowBuffer[1]);
-                    Assert.Equal(1, iterator.RowBuffer[2]);
-                    Assert.Equal(2, iterator.RowBuffer[3]);
-                    Assert.Equal("Project1-Task-2", iterator.RowBuffer[4]);
-
-                    if (logicalOperator == BoundHashMatchOperator.RightOuter ||
-                        logicalOperator == BoundHashMatchOperator.FullOuter)
-                    {
-                        Assert.True(iterator.Read());
-                        Assert.Null(iterator.RowBuffer[0]);
-                        Assert.Null(iterator.RowBuffer[1]);
-                        Assert.Equal(1, iterator.RowBuffer[2]);
-                        Assert.Equal(3, iterator.RowBuffer[3]);
-                        Assert.Equal("Unmatched2", iterator.RowBuffer[4]);
-                    }
-
-                    Assert.True(iterator.Read());
-                    Assert.Equal(2, iterator.RowBuffer[0]);
-                    Assert.Equal(1, iterator.RowBuffer[1]);
-                    Assert.Equal(2, iterator.RowBuffer[2]);
-                    Assert.Equal(1, iterator.RowBuffer[3]);
-                    Assert.Equal("Project2-Task-1", iterator.RowBuffer[4]);
-
-                    if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
-                        logicalOperator == BoundHashMatchOperator.FullOuter)
-                    {
-                        Assert.True(iterator.Read());
-                        Assert.Equal(2, iterator.RowBuffer[0]);
-                        Assert.Equal(2, iterator.RowBuffer[1]);
-                        Assert.Null(iterator.RowBuffer[2]);
-                        Assert.Null(iterator.RowBuffer[3]);
-                        Assert.Null(iterator.RowBuffer[4]);
-
-                        Assert.True(iterator.Read());
-                        Assert.Equal(3, iterator.RowBuffer[0]);
-                        Assert.Equal(1, iterator.RowBuffer[1]);
-                        Assert.Null(iterator.RowBuffer[2]);
-                        Assert.Null(iterator.RowBuffer[3]);
-                        Assert.Null(iterator.RowBuffer[4]);
-                    }
-
-                    Assert.False(iterator.Read());
-                }
+                Assert.True(iterator.Read());
+                Assert.Null(iterator.RowBuffer[0]);
+                Assert.Null(iterator.RowBuffer[1]);
+                Assert.Equal(0, iterator.RowBuffer[2]);
+                Assert.Equal(0, iterator.RowBuffer[3]);
+                Assert.Equal("Unmatched1", iterator.RowBuffer[4]);
             }
+
+            Assert.True(iterator.Read());
+            Assert.Equal(1, iterator.RowBuffer[0]);
+            Assert.Equal(1, iterator.RowBuffer[1]);
+            Assert.Equal(1, iterator.RowBuffer[2]);
+            Assert.Equal(1, iterator.RowBuffer[3]);
+            Assert.Equal("Project1-Task-1", iterator.RowBuffer[4]);
+
+            Assert.True(iterator.Read());
+            Assert.Equal(1, iterator.RowBuffer[0]);
+            Assert.Equal(2, iterator.RowBuffer[1]);
+            Assert.Equal(1, iterator.RowBuffer[2]);
+            Assert.Equal(2, iterator.RowBuffer[3]);
+            Assert.Equal("Project1-Task-2", iterator.RowBuffer[4]);
+
+            if (logicalOperator == BoundHashMatchOperator.RightOuter ||
+                logicalOperator == BoundHashMatchOperator.FullOuter)
+            {
+                Assert.True(iterator.Read());
+                Assert.Null(iterator.RowBuffer[0]);
+                Assert.Null(iterator.RowBuffer[1]);
+                Assert.Equal(1, iterator.RowBuffer[2]);
+                Assert.Equal(3, iterator.RowBuffer[3]);
+                Assert.Equal("Unmatched2", iterator.RowBuffer[4]);
+            }
+
+            Assert.True(iterator.Read());
+            Assert.Equal(2, iterator.RowBuffer[0]);
+            Assert.Equal(1, iterator.RowBuffer[1]);
+            Assert.Equal(2, iterator.RowBuffer[2]);
+            Assert.Equal(1, iterator.RowBuffer[3]);
+            Assert.Equal("Project2-Task-1", iterator.RowBuffer[4]);
+
+            if (logicalOperator == BoundHashMatchOperator.LeftOuter ||
+                logicalOperator == BoundHashMatchOperator.FullOuter)
+            {
+                Assert.True(iterator.Read());
+                Assert.Equal(2, iterator.RowBuffer[0]);
+                Assert.Equal(2, iterator.RowBuffer[1]);
+                Assert.Null(iterator.RowBuffer[2]);
+                Assert.Null(iterator.RowBuffer[3]);
+                Assert.Null(iterator.RowBuffer[4]);
+
+                Assert.True(iterator.Read());
+                Assert.Equal(3, iterator.RowBuffer[0]);
+                Assert.Equal(1, iterator.RowBuffer[1]);
+                Assert.Null(iterator.RowBuffer[2]);
+                Assert.Null(iterator.RowBuffer[3]);
+                Assert.Null(iterator.RowBuffer[4]);
+            }
+
+            Assert.False(iterator.Read());
         }
     }
 }

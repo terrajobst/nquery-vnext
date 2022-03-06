@@ -10,25 +10,23 @@ namespace NQuery.Tests.Iterators
             var leftRows = new object[] { 1, 2 };
             var rightRows = new object[] { 3, 4 };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, () => true, () => false))
             {
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, () => true, () => false))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertEmpty(iterator);
-                    }
+                    AssertEmpty(iterator);
                 }
-
-                Assert.Equal(2, left.TotalOpenCount);
-                Assert.Equal(4, left.TotalReadCount);
-                Assert.Equal(1, left.DisposalCount);
-
-                Assert.Equal(4, right.TotalOpenCount);
-                Assert.Equal(4, right.TotalReadCount);
-                Assert.Equal(1, right.DisposalCount);
             }
+
+            Assert.Equal(2, left.TotalOpenCount);
+            Assert.Equal(4, left.TotalReadCount);
+            Assert.Equal(1, left.DisposalCount);
+
+            Assert.Equal(4, right.TotalOpenCount);
+            Assert.Equal(4, right.TotalReadCount);
+            Assert.Equal(1, right.DisposalCount);
         }
 
         [Fact]
@@ -38,25 +36,23 @@ namespace NQuery.Tests.Iterators
             var rightRows = new object[] { 1, 2, 3 };
             var expected = new object[] { 2, 4, 5 };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => Equals(left.RowBuffer[0], right.RowBuffer[0]));
+            var passthru = new IteratorPredicate(() => (int)left.RowBuffer[0] % 2 == 0);
+
+            using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
             {
-                var iteratorPredicate = new IteratorPredicate(() => Equals(left.RowBuffer[0], right.RowBuffer[0]));
-                var passthru = new IteratorPredicate(() => (int)left.RowBuffer[0] % 2 == 0);
-
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertProduces(iterator, expected);
-                }
-
-                Assert.Equal(1, left.TotalOpenCount);
-                Assert.Equal(5, left.TotalReadCount);
-                Assert.Equal(1, left.DisposalCount);
-
-                Assert.Equal(3, right.TotalOpenCount);
-                Assert.Equal(7, right.TotalReadCount);
-                Assert.Equal(1, right.DisposalCount);
+                AssertProduces(iterator, expected);
             }
+
+            Assert.Equal(1, left.TotalOpenCount);
+            Assert.Equal(5, left.TotalReadCount);
+            Assert.Equal(1, left.DisposalCount);
+
+            Assert.Equal(3, right.TotalOpenCount);
+            Assert.Equal(7, right.TotalReadCount);
+            Assert.Equal(1, right.DisposalCount);
         }
 
         [Fact]
@@ -65,17 +61,13 @@ namespace NQuery.Tests.Iterators
             var leftRows = Array.Empty<object>();
             var rightRows = new object[] { 1, 2, 3 };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => true);
-                var passthru = new IteratorPredicate(() => false);
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => true);
+            var passthru = new IteratorPredicate(() => false);
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -84,17 +76,13 @@ namespace NQuery.Tests.Iterators
             var leftRows = Array.Empty<object>();
             var rightRows = Array.Empty<object>();
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => true);
-                var passthru = new IteratorPredicate(() => false);
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => true);
+            var passthru = new IteratorPredicate(() => false);
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -103,17 +91,13 @@ namespace NQuery.Tests.Iterators
             var leftRows = new object[] { 1, 2, 3 };
             var rightRows = new object[] { 1 };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => true);
-                var passthru = new IteratorPredicate(() => false);
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => true);
+            var passthru = new IteratorPredicate(() => false);
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -123,17 +107,13 @@ namespace NQuery.Tests.Iterators
             var rightRows = Array.Empty<object>();
             var expected = leftRows;
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => true);
-                var passthru = new IteratorPredicate(() => false);
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => true);
+            var passthru = new IteratorPredicate(() => false);
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -143,17 +123,13 @@ namespace NQuery.Tests.Iterators
             var rightRows = new object[] { 1 };
             var expected = new object[] { 2 };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => true);
-                var passthru = new IteratorPredicate(() => Equals(left.RowBuffer[0], 2));
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => true);
+            var passthru = new IteratorPredicate(() => Equals(left.RowBuffer[0], 2));
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -179,17 +155,13 @@ namespace NQuery.Tests.Iterators
                 {4, "4-Left"}
             };
 
-            using (var left = new MockedIterator(leftRows))
-            using (var right = new MockedIterator(rightRows))
-            {
-                var iteratorPredicate = new IteratorPredicate(() => Equals(left.RowBuffer[0], right.RowBuffer[0]));
-                var passthru = new IteratorPredicate(() => false);
+            using var left = new MockedIterator(leftRows);
+            using var right = new MockedIterator(rightRows);
+            var iteratorPredicate = new IteratorPredicate(() => Equals(left.RowBuffer[0], right.RowBuffer[0]));
+            var passthru = new IteratorPredicate(() => false);
 
-                using (var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new LeftAntiSemiNestedLoopsIterator(left, right, iteratorPredicate, passthru);
+            AssertProduces(iterator, expected);
         }
     }
 }

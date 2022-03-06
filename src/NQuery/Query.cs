@@ -30,12 +30,10 @@ namespace NQuery
 
         public object ExecuteScalar()
         {
-            using (var reader = ExecuteReader())
-            {
-                return !reader.Read() || reader.ColumnCount == 0
-                           ? null
-                           : reader[0];
-            }
+            using var reader = ExecuteReader();
+            return !reader.Read() || reader.ColumnCount == 0
+                ? null
+                : reader[0];
         }
 
         public T ExecuteScalar<T>()

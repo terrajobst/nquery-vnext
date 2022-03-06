@@ -12,23 +12,21 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = new object[] { 1, 2 };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+            var comparers = new[] { Comparer.Default };
+
+            using (var iterator = new SortIterator(input, sortEntries, comparers))
             {
-                var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
-                var comparers = new[] { Comparer.Default };
-
-                using (var iterator = new SortIterator(input, sortEntries, comparers))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -36,16 +34,12 @@ namespace NQuery.Tests.Iterators
         {
             var rows = Array.Empty<object>();
 
-            using (var input = new MockedIterator(rows))
-            {
-                var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
-                var comparers = new[] { Comparer.Default };
+            using var input = new MockedIterator(rows);
+            var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+            var comparers = new[] { Comparer.Default };
 
-                using (var iterator = new SortIterator(input, sortEntries, comparers))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            using var iterator = new SortIterator(input, sortEntries, comparers);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -54,23 +48,19 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { null, 1, 2, 1 };
             var expected = new object[] { null, 2, 1, 1 };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var sortEntries = new[]
             {
-                var sortEntries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
 
-                var comparers = new[]
-                {
-                    Comparer<int>.Create((x, y) => y.CompareTo(x))
-                };
+            var comparers = new[]
+            {
+                Comparer<int>.Create((x, y) => y.CompareTo(x))
+            };
 
-                using (var iterator = new SortIterator(input, sortEntries, comparers))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new SortIterator(input, sortEntries, comparers);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -106,25 +96,21 @@ namespace NQuery.Tests.Iterators
                 {"London", "UK"}
             };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var sortEntries = new[]
             {
-                var sortEntries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 1),
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
+                new RowBufferEntry(input.RowBuffer, 1),
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
 
-                var comparers = new[]
-                {
-                    Comparer<string>.Create((x, y) => y.CompareTo(x)),
-                    Comparer<string>.Create((x, y) => x.CompareTo(y))
-                };
+            var comparers = new[]
+            {
+                Comparer<string>.Create((x, y) => y.CompareTo(x)),
+                Comparer<string>.Create((x, y) => x.CompareTo(y))
+            };
 
-                using (var iterator = new SortIterator(input, sortEntries, comparers))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new SortIterator(input, sortEntries, comparers);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -135,25 +121,21 @@ namespace NQuery.Tests.Iterators
 
             var outerRowBuffer = new MockedRowBuffer(new object[] { "Outer Reference" });
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var sortEntries = new[]
             {
-                var sortEntries = new[]
-                {
-                    new RowBufferEntry(outerRowBuffer, 0),
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
+                new RowBufferEntry(outerRowBuffer, 0),
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
 
-                var comparers = new[]
-                {
-                    Comparer.Default,
-                    Comparer.Default
-                };
+            var comparers = new[]
+            {
+                Comparer.Default,
+                Comparer.Default
+            };
 
-                using (var iterator = new SortIterator(input, sortEntries, comparers))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new SortIterator(input, sortEntries, comparers);
+            AssertProduces(iterator, expected);
         }
     }
 }

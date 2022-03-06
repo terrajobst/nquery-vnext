@@ -4,13 +4,11 @@
     {
         public static IEnumerable<dynamic> ExecuteDynamicSequence(this Query query)
         {
-            using (var reader = query.ExecuteReader())
+            using var reader = query.ExecuteReader();
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    var values = reader.GetValues();
-                    yield return new DynamicRow(values);
-                }
+                var values = reader.GetValues();
+                yield return new DynamicRow(values);
             }
         }
 

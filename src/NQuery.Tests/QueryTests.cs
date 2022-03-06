@@ -117,22 +117,20 @@ namespace NQuery.Tests
             var dataContext = DataContext.Default.AddTables(dataTable);
 
             var query = Query.Create(dataContext, "SELECT * FROM Table");
-            using (var reader = query.ExecuteReader())
-            {
-                Assert.Equal(1, reader.ColumnCount);
-                Assert.Equal("Value", reader.GetColumnName(0));
-                Assert.Equal(typeof(int), reader.GetColumnType(0));
+            using var reader = query.ExecuteReader();
+            Assert.Equal(1, reader.ColumnCount);
+            Assert.Equal("Value", reader.GetColumnName(0));
+            Assert.Equal(typeof(int), reader.GetColumnType(0));
 
-                Assert.True(reader.Read());
-                var first = (int)reader[0];
-                Assert.Equal(1, first);
+            Assert.True(reader.Read());
+            var first = (int)reader[0];
+            Assert.Equal(1, first);
 
-                Assert.True(reader.Read());
-                var second = (int)reader[0];
-                Assert.Equal(42, second);
+            Assert.True(reader.Read());
+            var second = (int)reader[0];
+            Assert.Equal(42, second);
 
-                Assert.False(reader.Read());
-            }
+            Assert.False(reader.Read());
         }
 
         [Fact]
@@ -146,13 +144,11 @@ namespace NQuery.Tests
             var dataContext = DataContext.Default.AddTables(dataTable);
 
             var query = Query.Create(dataContext, "SELECT * FROM Table");
-            using (var reader = query.ExecuteSchemaReader())
-            {
-                Assert.Equal(1, reader.ColumnCount);
-                Assert.Equal("Value", reader.GetColumnName(0));
-                Assert.Equal(typeof(int), reader.GetColumnType(0));
-                Assert.False(reader.Read());
-            }
+            using var reader = query.ExecuteSchemaReader();
+            Assert.Equal(1, reader.ColumnCount);
+            Assert.Equal("Value", reader.GetColumnName(0));
+            Assert.Equal(typeof(int), reader.GetColumnType(0));
+            Assert.False(reader.Read());
         }
 
         [Fact]
@@ -161,15 +157,13 @@ namespace NQuery.Tests
             var text = "SELECT NULL";
             var query = Query.Create(DataContext.Default, text);
 
-            using (var queryReader = query.ExecuteReader())
-            {
-                Assert.Equal(1, queryReader.ColumnCount);
-                Assert.Equal(typeof(object), queryReader.GetColumnType(0));
+            using var queryReader = query.ExecuteReader();
+            Assert.Equal(1, queryReader.ColumnCount);
+            Assert.Equal(typeof(object), queryReader.GetColumnType(0));
 
-                Assert.True(queryReader.Read());
-                Assert.Null(queryReader[0]);
-                Assert.False(queryReader.Read());
-            }
+            Assert.True(queryReader.Read());
+            Assert.Null(queryReader[0]);
+            Assert.False(queryReader.Read());
         }
 
         [Fact]
@@ -178,15 +172,13 @@ namespace NQuery.Tests
             var text = "SELECT 1.0 + NULL";
             var query = Query.Create(DataContext.Default, text);
 
-            using (var queryReader = query.ExecuteReader())
-            {
-                Assert.Equal(1, queryReader.ColumnCount);
-                Assert.Equal(typeof(double), queryReader.GetColumnType(0));
+            using var queryReader = query.ExecuteReader();
+            Assert.Equal(1, queryReader.ColumnCount);
+            Assert.Equal(typeof(double), queryReader.GetColumnType(0));
 
-                Assert.True(queryReader.Read());
-                Assert.Null(queryReader[0]);
-                Assert.False(queryReader.Read());
-            }
+            Assert.True(queryReader.Read());
+            Assert.Null(queryReader[0]);
+            Assert.False(queryReader.Read());
         }
 
         [Fact]
@@ -195,15 +187,13 @@ namespace NQuery.Tests
             var text = "SELECT NULL IS NULL";
             var query = Query.Create(DataContext.Default, text);
 
-            using (var queryReader = query.ExecuteReader())
-            {
-                Assert.Equal(1, queryReader.ColumnCount);
-                Assert.Equal(typeof(bool), queryReader.GetColumnType(0));
+            using var queryReader = query.ExecuteReader();
+            Assert.Equal(1, queryReader.ColumnCount);
+            Assert.Equal(typeof(bool), queryReader.GetColumnType(0));
 
-                Assert.True(queryReader.Read());
-                Assert.Equal(true, queryReader[0]);
-                Assert.False(queryReader.Read());
-            }
+            Assert.True(queryReader.Read());
+            Assert.Equal(true, queryReader[0]);
+            Assert.False(queryReader.Read());
         }
     }
 }

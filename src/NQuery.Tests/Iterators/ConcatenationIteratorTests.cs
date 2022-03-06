@@ -52,10 +52,8 @@ namespace NQuery.Tests.Iterators
 
             var entries = inputs.Select(_ => ImmutableArray<RowBufferEntry>.Empty);
 
-            using (var iterator = new ConcatenationIterator(inputs, entries))
-            {
-                AssertEmpty(iterator);
-            }
+            using var iterator = new ConcatenationIterator(inputs, entries);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -71,10 +69,8 @@ namespace NQuery.Tests.Iterators
 
             var entries = inputs.Select(i => ImmutableArray.Create(new RowBufferEntry(i.RowBuffer, 0)));
 
-            using (var iterator = new ConcatenationIterator(inputs, entries))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var iterator = new ConcatenationIterator(inputs, entries);
+            AssertProduces(iterator, expected);
         }
     }
 }

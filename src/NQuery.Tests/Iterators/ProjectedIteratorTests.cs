@@ -10,25 +10,23 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = rows;
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var entries = new[]
             {
-                var entries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
 
-                using (var iterator = new ProjectionIterator(input, entries))
+            using (var iterator = new ProjectionIterator(input, entries))
+            {
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -36,11 +34,9 @@ namespace NQuery.Tests.Iterators
         {
             var rows = Array.Empty<object>();
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>()))
-            {
-                AssertEmpty(iterator);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>());
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -58,19 +54,15 @@ namespace NQuery.Tests.Iterators
                 {"Two", 2}
             };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var entries = new[]
             {
-                var entries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 1),
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
+                new RowBufferEntry(input.RowBuffer, 1),
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
 
-                using (var iterator = new ProjectionIterator(input, entries))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new ProjectionIterator(input, entries);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -84,18 +76,14 @@ namespace NQuery.Tests.Iterators
 
             var expected = new object[] { "One", "Two" };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var entries = new[]
             {
-                var entries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 1)
-                };
+                new RowBufferEntry(input.RowBuffer, 1)
+            };
 
-                using (var iterator = new ProjectionIterator(input, entries))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new ProjectionIterator(input, entries);
+            AssertProduces(iterator, expected);
         }
     }
 }

@@ -74,10 +74,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Table_ReturnsEmpty_IfInputEmpty()
         {
-            using (var iterator = CreateIterator(0))
-            {
-                AssertEmpty(iterator);
-            }
+            using var iterator = CreateIterator(0);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -85,10 +83,8 @@ namespace NQuery.Tests.Iterators
         {
             var expected = new object[] { 0, 10, 20 };
 
-            using (var iterator = CreateIterator(3))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var iterator = CreateIterator(3);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -109,11 +105,9 @@ namespace NQuery.Tests.Iterators
         {
             var mockedEnumerable = new NonDisposableEnumerable();
 
-            using (var iterator = CreateIterator(mockedEnumerable))
-            {
-                iterator.Open();
-                iterator.Open();
-            }
+            using var iterator = CreateIterator(mockedEnumerable);
+            iterator.Open();
+            iterator.Open();
         }
     }
 }

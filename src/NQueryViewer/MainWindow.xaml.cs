@@ -139,8 +139,8 @@ namespace NQueryViewer
             {
                 dataTable = await Task.Run(() =>
                 {
-                    using (var reader = query.CreateReader())
-                        return reader.ExecuteDataTable();
+                    using var reader = query.CreateReader();
+                    return reader.ExecuteDataTable();
                 });
             }
             catch (Exception ex)

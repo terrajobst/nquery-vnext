@@ -240,11 +240,9 @@ namespace NQuery
 
         public override string ToString()
         {
-            using (var writer = new StringWriter())
-            {
-                WriteTo(writer);
-                return writer.ToString();
-            }
+            using var writer = new StringWriter();
+            WriteTo(writer);
+            return writer.ToString();
         }
     }
 }

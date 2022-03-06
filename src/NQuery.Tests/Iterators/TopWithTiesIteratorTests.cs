@@ -19,20 +19,18 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = rows;
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            using (var iterator = CreateIterator(input, int.MaxValue))
             {
-                using (var iterator = CreateIterator(input, int.MaxValue))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -40,11 +38,9 @@ namespace NQuery.Tests.Iterators
         {
             var rows = Array.Empty<object>();
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, 1))
-            {
-                AssertEmpty(iterator);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, 1);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -52,11 +48,9 @@ namespace NQuery.Tests.Iterators
         {
             var rows = new object[] { 1 };
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, 0))
-            {
-                AssertEmpty(iterator);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, 0);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -66,11 +60,9 @@ namespace NQuery.Tests.Iterators
             var expected = rows;
             var limit = expected.Length + 1;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -80,11 +72,9 @@ namespace NQuery.Tests.Iterators
             var expected = new object[] { 1, 2 };
             var limit = expected.Length;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -94,11 +84,9 @@ namespace NQuery.Tests.Iterators
             var expected = new object[] { 1, 2, 3, 3 };
             const int limit = 3;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -108,11 +96,9 @@ namespace NQuery.Tests.Iterators
             var expected = new object[] { 1, 2, 3, 3 };
             const int limit = 3;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = CreateIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = CreateIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
     }
 }

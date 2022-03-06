@@ -14,25 +14,23 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = new object[1, 0];
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var groupEntries = Enumerable.Empty<RowBufferEntry>();
+            var comparers = ImmutableArray<IComparer>.Empty;
+            var aggregators = Enumerable.Empty<IAggregator>();
+            var argumentFunctions = Enumerable.Empty<IteratorFunction>();
+
+            using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
             {
-                var groupEntries = Enumerable.Empty<RowBufferEntry>();
-                var comparers = ImmutableArray<IComparer>.Empty;
-                var aggregators = Enumerable.Empty<IAggregator>();
-                var argumentFunctions = Enumerable.Empty<IteratorFunction>();
-
-                using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -40,18 +38,14 @@ namespace NQuery.Tests.Iterators
         {
             var rows = Array.Empty<object>();
 
-            using (var input = new MockedIterator(rows))
-            {
-                var groupEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
-                var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
-                var aggregators = Enumerable.Empty<IAggregator>();
-                var argumentFunctions = Enumerable.Empty<IteratorFunction>();
+            using var input = new MockedIterator(rows);
+            var groupEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+            var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
+            var aggregators = Enumerable.Empty<IAggregator>();
+            var argumentFunctions = Enumerable.Empty<IteratorFunction>();
 
-                using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
-                {
-                    AssertEmpty(iterator);
-                }
-            }
+            using var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -60,18 +54,14 @@ namespace NQuery.Tests.Iterators
             var rows = Array.Empty<object>();
             var expected = new object[1, 0];
 
-            using (var input = new MockedIterator(rows))
-            {
-                var groupEntries = Enumerable.Empty<RowBufferEntry>();
-                var comparers = ImmutableArray<IComparer>.Empty;
-                var aggregators = Enumerable.Empty<IAggregator>();
-                var argumentFunctions = Enumerable.Empty<IteratorFunction>();
+            using var input = new MockedIterator(rows);
+            var groupEntries = Enumerable.Empty<RowBufferEntry>();
+            var comparers = ImmutableArray<IComparer>.Empty;
+            var aggregators = Enumerable.Empty<IAggregator>();
+            var argumentFunctions = Enumerable.Empty<IteratorFunction>();
 
-                using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -83,25 +73,21 @@ namespace NQuery.Tests.Iterators
                 {3, 1}
             };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var groupEntries = Enumerable.Empty<RowBufferEntry>();
+            var comparers = ImmutableArray<IComparer>.Empty;
+            var aggregators = new[]
             {
-                var groupEntries = Enumerable.Empty<RowBufferEntry>();
-                var comparers = ImmutableArray<IComparer>.Empty;
-                var aggregators = new[]
-                {
-                    new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-                    new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
-                };
+                new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
+                new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
+            };
 
-                var function = new IteratorFunction(() => input.RowBuffer[0]);
+            var function = new IteratorFunction(() => input.RowBuffer[0]);
 
-                var argumentFunctions = new[] { function, function };
+            var argumentFunctions = new[] { function, function };
 
-                using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -120,28 +106,24 @@ namespace NQuery.Tests.Iterators
                 {"Two", 3, 3}
             };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var groupEntries = new[]
             {
-                var groupEntries = new[]
-                {
-                    new RowBufferEntry(input.RowBuffer, 0)
-                };
-                var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
-                var aggregators = new[]
-                {
-                    new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-                    new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
-                };
+                new RowBufferEntry(input.RowBuffer, 0)
+            };
+            var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
+            var aggregators = new[]
+            {
+                new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
+                new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
+            };
 
-                var function = new IteratorFunction(() => input.RowBuffer[1]);
+            var function = new IteratorFunction(() => input.RowBuffer[1]);
 
-                var argumentFunctions = new[] { function, function };
+            var argumentFunctions = new[] { function, function };
 
-                using (var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions))
-                {
-                    AssertProduces(iterator, expected);
-                }
-            }
+            using var iterator = new StreamAggregateIterator(input, groupEntries, comparers, aggregators, argumentFunctions);
+            AssertProduces(iterator, expected);
         }
     }
 }
