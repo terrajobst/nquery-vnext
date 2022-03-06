@@ -980,7 +980,7 @@ namespace NQuery.Binding
 
             var computedGroups = queryBinder.QueryState
                                             .ComputedGroupings
-                                            .Where(g => !(g.Expression is BoundValueSlotExpression))
+                                            .Where(g => g.Expression is not BoundValueSlotExpression)
                                             .Select(g => new BoundComputedValue(g.Expression, g.Result))
                                             .ToImmutableArray();
             var groupComputeRelation = !computedGroups.Any()

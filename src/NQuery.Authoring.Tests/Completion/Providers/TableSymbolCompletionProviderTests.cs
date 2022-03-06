@@ -29,7 +29,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         private static void AssertReturnsOnlyTables(string query)
         {
             var completionModel = GetCompletionModel(query);
-            var hasNonTables = completionModel.Items.Any(i => !(i.Symbol is TableSymbol) || i.Glyph != Glyph.Table);
+            var hasNonTables = completionModel.Items.Any(i => i.Symbol is not TableSymbol || i.Glyph != Glyph.Table);
             Assert.False(hasNonTables);
         }
 
