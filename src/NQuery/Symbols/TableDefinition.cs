@@ -29,42 +29,27 @@ namespace NQuery.Symbols
 
         public static TableDefinition Create<T>(string name, IEnumerable<T> source)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
-
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
 
             return Create(name, source, new ReflectionProvider());
         }
 
         public static TableDefinition Create<T>(string name, IEnumerable<T> source, IPropertyProvider propertyProvider)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
-
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (propertyProvider is null)
-                throw new ArgumentNullException(nameof(propertyProvider));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(propertyProvider);
 
             return Create(name, source, typeof(T), propertyProvider);
         }
 
         public static TableDefinition Create(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
-
-            if (source is null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (rowType is null)
-                throw new ArgumentNullException(nameof(rowType));
-
-            if (propertyProvider is null)
-                throw new ArgumentNullException(nameof(propertyProvider));
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(rowType);
+            ArgumentNullException.ThrowIfNull(propertyProvider);
 
             return new EnumerableTableDefinition(name, source, rowType, propertyProvider);
         }

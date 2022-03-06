@@ -6,14 +6,9 @@ namespace NQuery
 
         private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
         {
-            if (dataContext is null)
-                throw new ArgumentNullException(nameof(dataContext));
-
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
-
-            if (targetType is null)
-                throw new ArgumentNullException(nameof(targetType));
+            ArgumentNullException.ThrowIfNull(dataContext);
+            ArgumentNullException.ThrowIfNull(text);
+            ArgumentNullException.ThrowIfNull(targetType);
 
             if (!typeof(T).IsAssignableFrom(targetType))
             {

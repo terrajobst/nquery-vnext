@@ -8,8 +8,7 @@ namespace NQuery
     {
         public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
         {
-            if (message is null)
-                throw new ArgumentNullException(nameof(message));
+            ArgumentNullException.ThrowIfNull(message);
 
             Span = textSpan;
             DiagnosticId = diagnosticId;

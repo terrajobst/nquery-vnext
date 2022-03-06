@@ -6,8 +6,7 @@ namespace NQuery.Text
 
         public StringTextLineCollection(IReadOnlyList<TextLine> lines)
         {
-            if (lines is null)
-                throw new ArgumentNullException(nameof(lines));
+            ArgumentNullException.ThrowIfNull(lines);
 
             _lines = lines;
         }

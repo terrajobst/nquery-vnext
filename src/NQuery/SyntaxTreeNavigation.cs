@@ -23,8 +23,7 @@ namespace NQuery
 
         public static SyntaxToken GetFirstToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
         {
-            if (node is null)
-                throw new ArgumentNullException(nameof(node));
+            ArgumentNullException.ThrowIfNull(node);
 
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -33,8 +32,7 @@ namespace NQuery
 
         public static SyntaxToken GetLastToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
         {
-            if (node is null)
-                throw new ArgumentNullException(nameof(node));
+            ArgumentNullException.ThrowIfNull(node);
 
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -43,8 +41,7 @@ namespace NQuery
 
         public static SyntaxToken GetPreviousToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -53,8 +50,7 @@ namespace NQuery
 
         public static SyntaxToken GetNextToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             var tokenPredicate = GetTokenPredicate(includeZeroLength);
             var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);

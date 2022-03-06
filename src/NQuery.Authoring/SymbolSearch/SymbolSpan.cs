@@ -6,8 +6,7 @@ namespace NQuery.Authoring.SymbolSearch
     {
         public SymbolSpan(SymbolSpanKind kind, Symbol symbol, TextSpan span)
         {
-            if (symbol is null)
-                throw new ArgumentNullException(nameof(symbol));
+            ArgumentNullException.ThrowIfNull(symbol);
 
             Kind = kind;
             Symbol = symbol;

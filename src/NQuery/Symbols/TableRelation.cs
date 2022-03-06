@@ -6,11 +6,8 @@ namespace NQuery.Symbols
     {
         public TableRelation(TableSymbol parentTable, IReadOnlyCollection<ColumnSymbol> parentColumns, TableSymbol childTable, IReadOnlyCollection<ColumnSymbol> childColumns)
         {
-            if (parentColumns is null)
-                throw new ArgumentNullException(nameof(parentColumns));
-
-            if (childColumns is null)
-                throw new ArgumentNullException(nameof(childColumns));
+            ArgumentNullException.ThrowIfNull(parentColumns);
+            ArgumentNullException.ThrowIfNull(childColumns);
 
             if (parentColumns.Count == 0)
                 throw new ArgumentException(Resources.ParentColumnsMustContainAtLeastOneColumn, nameof(parentColumns));

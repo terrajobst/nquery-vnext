@@ -7,8 +7,7 @@ namespace NQuery.Text
 
         public StringText(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             _text = text;
             _lines = Parse(this, text);

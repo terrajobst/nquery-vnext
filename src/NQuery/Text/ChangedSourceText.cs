@@ -7,14 +7,9 @@ namespace NQuery.Text
         public ChangedSourceText(SourceText oldText, SourceText newText, IEnumerable<TextChange> changes)
             : base(newText.Container)
         {
-            if (oldText is null)
-                throw new ArgumentNullException(nameof(oldText));
-
-            if (newText is null)
-                throw new ArgumentNullException(nameof(newText));
-
-            if (changes is null)
-                throw new ArgumentNullException(nameof(changes));
+            ArgumentNullException.ThrowIfNull(oldText);
+            ArgumentNullException.ThrowIfNull(newText);
+            ArgumentNullException.ThrowIfNull(changes);
 
             OldText = oldText;
             NewText = newText;

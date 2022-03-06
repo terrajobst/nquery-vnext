@@ -8,8 +8,7 @@ namespace NQuery.Authoring.Commenting
     {
         public static SyntaxTree ToggleSingleLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
-            if (syntaxTree is null)
-                throw new ArgumentNullException(nameof(syntaxTree));
+            ArgumentNullException.ThrowIfNull(syntaxTree);
 
             var comments = syntaxTree.GetConsecutiveSingleLineComments(textSpan);
             return comments.IsDefaultOrEmpty
@@ -74,8 +73,7 @@ namespace NQuery.Authoring.Commenting
 
         public static SyntaxTree ToggleMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
         {
-            if (syntaxTree is null)
-                throw new ArgumentNullException(nameof(syntaxTree));
+            ArgumentNullException.ThrowIfNull(syntaxTree);
 
             var comment = syntaxTree.GetMultiLineComment(textSpan);
             return comment is not null

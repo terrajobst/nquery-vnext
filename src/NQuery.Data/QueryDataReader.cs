@@ -181,8 +181,7 @@ namespace NQuery.Data
         /// </returns>
         public int GetValues(object[] values)
         {
-            if (values is null)
-                throw new ArgumentNullException(nameof(values));
+            ArgumentNullException.ThrowIfNull(values);
 
             EnsureNotDisposed();
 
@@ -203,8 +202,7 @@ namespace NQuery.Data
         /// </returns>
         public int GetOrdinal(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             EnsureNotDisposed();
 
@@ -259,8 +257,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
-            if (buffer is null)
-                throw new ArgumentNullException(nameof(buffer));
+            ArgumentNullException.ThrowIfNull(buffer);
 
             var fieldData = (byte[])GetValue(i);
 
@@ -302,8 +299,7 @@ namespace NQuery.Data
         /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
         public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
         {
-            if (buffer is null)
-                throw new ArgumentNullException(nameof(buffer));
+            ArgumentNullException.ThrowIfNull(buffer);
 
             var fieldData = (char[])GetValue(i);
 

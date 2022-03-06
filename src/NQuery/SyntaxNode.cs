@@ -185,8 +185,7 @@ namespace NQuery
 
         public bool IsEquivalentTo(SyntaxNode other)
         {
-            if (other is null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
             return SyntaxTreeEquivalence.AreEquivalent(this, other);
         }
@@ -235,8 +234,7 @@ namespace NQuery
 
         public void WriteTo(TextWriter writer)
         {
-            if (writer is null)
-                throw new ArgumentNullException(nameof(writer));
+            ArgumentNullException.ThrowIfNull(writer);
 
             foreach (var syntaxNode in ChildNodesAndTokens())
             {

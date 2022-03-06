@@ -10,8 +10,7 @@ namespace NQuery
     {
         public static SyntaxToken ParseToken(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             var tokens = ParseTokens(text).ToArray();
             if (tokens.Length == 1 || tokens.Length == 2)
@@ -22,8 +21,7 @@ namespace NQuery
 
         public static IEnumerable<SyntaxToken> ParseTokens(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             var syntaxTree = SyntaxTree.ParseTokens(text);
             return syntaxTree.Root.DescendantTokens(descendIntoTrivia: true);
@@ -31,8 +29,7 @@ namespace NQuery
 
         public static ExpressionSyntax ParseExpression(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             var tree = SyntaxTree.ParseExpression(text);
             return (ExpressionSyntax)tree.Root.Root;
@@ -304,8 +301,7 @@ namespace NQuery
 
         public static string GetDisplayText(this SyntaxToken token)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             var result = token.Text;
             return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
@@ -420,8 +416,7 @@ namespace NQuery
 
         public static string GetValidIdentifier(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             return IsValidIdentifier(name)
                        ? name
@@ -430,8 +425,7 @@ namespace NQuery
 
         public static bool IsValidIdentifier(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             if (name.Length == 0)
                 return false;
@@ -448,8 +442,7 @@ namespace NQuery
 
         public static string GetParenthesizedIdentifier(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             var sb = new StringBuilder();
 
@@ -469,8 +462,7 @@ namespace NQuery
 
         public static string GetQuotedIdentifier(string name)
         {
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             var sb = new StringBuilder();
 
@@ -490,8 +482,7 @@ namespace NQuery
 
         public static SyntaxKind GetKeywordKind(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             switch (text.ToUpper())
             {
@@ -649,8 +640,7 @@ namespace NQuery
 
         public static SyntaxKind GetContextualKeywordKind(string text)
         {
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(text);
 
             switch (text.ToUpper())
             {
@@ -667,8 +657,7 @@ namespace NQuery
 
         public static bool IsQuotedIdentifier(this SyntaxToken token)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             return token.Kind == SyntaxKind.IdentifierToken &&
                    token.Text.Length > 0 &&
@@ -677,8 +666,7 @@ namespace NQuery
 
         public static bool IsParenthesizedIdentifier(this SyntaxToken token)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             return token.Kind == SyntaxKind.IdentifierToken &&
                    token.Text.Length > 0 &&
@@ -687,11 +675,8 @@ namespace NQuery
 
         public static bool Matches(this SyntaxToken token, string text)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
-
-            if (text is null)
-                throw new ArgumentNullException(nameof(text));
+            ArgumentNullException.ThrowIfNull(token);
+            ArgumentNullException.ThrowIfNull(text);
 
             var comparison = token.IsQuotedIdentifier()
                                  ? StringComparison.Ordinal
@@ -701,8 +686,7 @@ namespace NQuery
 
         public static bool IsTerminated(this SyntaxToken token)
         {
-            if (token is null)
-                throw new ArgumentNullException(nameof(token));
+            ArgumentNullException.ThrowIfNull(token);
 
             switch (token.Kind)
             {
@@ -723,8 +707,7 @@ namespace NQuery
 
         public static bool IsTerminated(this SyntaxTrivia trivia)
         {
-            if (trivia is null)
-                throw new ArgumentNullException(nameof(trivia));
+            ArgumentNullException.ThrowIfNull(trivia);
 
             switch (trivia.Kind)
             {
@@ -1343,8 +1326,7 @@ namespace NQuery
 
         public static bool ParenthesisIsRedundant(ParenthesizedExpressionSyntax expression)
         {
-            if (expression is null)
-                throw new ArgumentNullException(nameof(expression));
+            ArgumentNullException.ThrowIfNull(expression);
 
             var childExpression = expression.Expression;
 
