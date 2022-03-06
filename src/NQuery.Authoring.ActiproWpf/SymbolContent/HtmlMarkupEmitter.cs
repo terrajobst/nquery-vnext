@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Windows.Media;
 
@@ -129,7 +130,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
             if (size == 0.0)
                 return;
 
-            var value = size.ToString();
+            var value = size.ToString(CultureInfo.InvariantCulture);
             sb.AppendKeyValue(key, value);
         }
 
