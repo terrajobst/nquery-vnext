@@ -16,7 +16,7 @@ namespace NQuery.Optimization
             if (joinType == BoundJoinType.LeftSemi ||
                 joinType == BoundJoinType.LeftAntiSemi)
             {
-                return !Expression.DependsOnAny(conjunction, rightDefinedValues);
+                return !conjunction.DependsOnAny(rightDefinedValues);
             }
 
             return true;
