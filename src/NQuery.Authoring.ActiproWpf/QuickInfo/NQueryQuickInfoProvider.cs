@@ -32,8 +32,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
             var documentView = view.SyntaxEditor.GetDocumentView();
             var document = documentView.Document;
 
-            SemanticModel semanticModel;
-            if (!document.TryGetSemanticModel(out semanticModel))
+            if (!document.TryGetSemanticModel(out var semanticModel))
                 return null;
 
             var snapshot = document.Text.ToTextSnapshot();

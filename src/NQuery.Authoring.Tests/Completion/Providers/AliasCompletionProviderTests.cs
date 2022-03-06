@@ -29,8 +29,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
         {
             var normalized = queryWithPosition.NormalizeCode();
 
-            int position;
-            var query = normalized.ParseSinglePosition(out position);
+            var query = normalized.ParseSinglePosition(out var position);
 
             var compilation = CompilationFactory.CreateQuery(query);
             var semanticModel = compilation.GetSemanticModel();

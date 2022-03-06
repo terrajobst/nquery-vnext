@@ -43,8 +43,7 @@ namespace NQuery.Optimization
                 if (valueSlot is null)
                     return null;
 
-                ValueSlot newSlot;
-                return _valueSlotMapping.TryGetValue(valueSlot, out newSlot) ? newSlot : valueSlot;
+                return _valueSlotMapping.TryGetValue(valueSlot, out var newSlot) ? newSlot : valueSlot;
             }
 
             public override BoundRelation RewriteRelation(BoundRelation node)

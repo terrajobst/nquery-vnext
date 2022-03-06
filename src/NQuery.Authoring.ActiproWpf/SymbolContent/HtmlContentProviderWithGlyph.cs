@@ -20,8 +20,7 @@ namespace NQuery.Authoring.ActiproWpf.SymbolContent
 
         protected override Image GetImage(string source)
         {
-            Glyph glyph;
-            if (!Enum.TryParse(source, out glyph))
+            if (!Enum.TryParse(source, out Glyph glyph))
                 return null;
 
             var imageSource = NQueryGlyphImageSource.Get(glyph);

@@ -81,8 +81,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
                 return null;
 
             var key = typeof(SelectionHandler);
-            SelectionHandler value;
-            if (!textView.Properties.TryGetValue(key, out value))
+            if (!textView.Properties.TryGetValue(key, out SelectionHandler value))
             {
                 value = new SelectionHandler(editorView);
                 textView.Properties.Add(key, value);

@@ -24,8 +24,7 @@ namespace NQuery.Authoring.Tests.Outlining
 
         protected void AssertIsMatch(string queryWithMarkers, string expectedText)
         {
-            TextSpan expectedSpan;
-            var query = queryWithMarkers.ParseSingleSpan(out expectedSpan);
+            var query = queryWithMarkers.ParseSingleSpan(out var expectedSpan);
 
             var compilation = CompilationFactory.CreateQuery(query);
             var root = compilation.SyntaxTree.Root;

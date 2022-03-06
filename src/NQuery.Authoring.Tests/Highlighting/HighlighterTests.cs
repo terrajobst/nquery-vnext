@@ -11,8 +11,7 @@ namespace NQuery.Authoring.Tests.Highlighting
 
         protected void AssertIsMatch(string queryWithMarkers)
         {
-            ImmutableArray<TextSpan> expectedSpans;
-            var query = queryWithMarkers.ParseSpans(out expectedSpans);
+            var query = queryWithMarkers.ParseSpans(out var expectedSpans);
 
             var compilation = CompilationFactory.CreateQuery(query);
             var semanticModel = compilation.GetSemanticModel();

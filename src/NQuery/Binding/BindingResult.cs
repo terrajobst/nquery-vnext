@@ -29,8 +29,7 @@ namespace NQuery.Binding
 
         public BoundNode GetBoundNode(SyntaxNode syntaxNode)
         {
-            BoundNode result;
-            _boundNodeFromSyntaxNode.TryGetValue(syntaxNode, out result);
+            _boundNodeFromSyntaxNode.TryGetValue(syntaxNode, out var result);
             return result;
         }
 
@@ -42,8 +41,7 @@ namespace NQuery.Binding
 
         public Binder GetBinder(BoundNode boundNode)
         {
-            Binder result;
-            _binderFromBoundNode.TryGetValue(boundNode, out result);
+            _binderFromBoundNode.TryGetValue(boundNode, out var result);
             return result;
         }
     }

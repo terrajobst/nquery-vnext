@@ -53,8 +53,7 @@ namespace NQuery.Authoring.Wpf
             if (imageUri is null)
                 return null;
 
-            BitmapImage result;
-            if (!Images.TryGetValue(imageUri, out result))
+            if (!Images.TryGetValue(imageUri, out var result))
             {
                 result = new BitmapImage(new Uri(imageUri));
                 Images.Add(imageUri, result);

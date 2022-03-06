@@ -20,9 +20,7 @@ namespace NQuery.Binding
             MarkApplicableCandidates(candidates, argumentTypes.Count);
             MarkCandidatesWithBetterAlternative(candidates, argumentTypes.Count);
 
-            OverloadResolutionCandidate<T> best;
-            OverloadResolutionCandidate<T> selected;
-            GetBestAndSelectedCandidate(candidates, out best, out selected);
+            GetBestAndSelectedCandidate(candidates, out var best, out var selected);
 
             return new OverloadResolutionResult<T>(best, selected, candidates);
         }

@@ -8,8 +8,7 @@ namespace NQuery.Authoring.Tests.CodeActions
     {
         protected override ImmutableArray<ICodeAction> GetActions(string query)
         {
-            int position;
-            var compilation = CompilationFactory.CreateQuery(query, out position);
+            var compilation = CompilationFactory.CreateQuery(query, out int position);
             var semanticModel = compilation.GetSemanticModel();
 
             var provider = CreateProvider();

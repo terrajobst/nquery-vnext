@@ -19,8 +19,7 @@ namespace NQuery.Authoring.Tests.Selection
                 FROM    Employees e
             ";
 
-            int position;
-            var compilation = CompilationFactory.CreateQuery(query, out position);
+            var compilation = CompilationFactory.CreateQuery(query, out int position);
             var syntaxTree = compilation.SyntaxTree;
             var text = syntaxTree.Text;
             var start = new TextSpan(position, 0);

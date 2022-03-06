@@ -69,8 +69,7 @@ namespace NQuery
 
         public static string ParseSingleSpan(this string text, out TextSpan span)
         {
-            ImmutableArray<TextSpan> spans;
-            var result = text.ParseSpans(out spans);
+            var result = text.ParseSpans(out var spans);
 
             if (spans.Length != 1)
                 throw new ArgumentException(@"The span must be marked with braces, such as 'SELECT {e.EmployeeId}'", nameof(text));

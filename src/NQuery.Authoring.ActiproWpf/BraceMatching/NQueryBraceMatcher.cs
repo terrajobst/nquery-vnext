@@ -18,8 +18,7 @@ namespace NQuery.Authoring.ActiproWpf.BraceMatching
             if (snapshot is null)
                 return null;
 
-            SyntaxTree syntaxTree;
-            if (!snapshot.Document.TryGetSyntaxTree(out syntaxTree))
+            if (!snapshot.Document.TryGetSyntaxTree(out var syntaxTree))
                 return null;
 
             var position = snapshot.Position;

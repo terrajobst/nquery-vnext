@@ -13,8 +13,7 @@ namespace NQuery.Authoring.Tests.SignatureHelp
 
         protected void AssertIsMatch(string queryWithMarkers)
         {
-            ImmutableArray<TextSpan> spans;
-            var query = queryWithMarkers.ParseSpans(out spans);
+            var query = queryWithMarkers.ParseSpans(out var spans);
 
             var applicableSpan = spans[0];
             var parameterSpans = spans.Skip(1).ToImmutableArray();

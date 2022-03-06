@@ -26,8 +26,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         public void AugmentSignatureHelpSession(ISignatureHelpSession session, IList<ISignature> signatures)
         {
-            ISignatureHelpManager signatureHelpManager;
-            if (!session.Properties.TryGetProperty(typeof(ISignatureHelpManager), out signatureHelpManager))
+            if (!session.Properties.TryGetProperty(typeof(ISignatureHelpManager), out ISignatureHelpManager signatureHelpManager))
                 return;
 
             var model = signatureHelpManager.Model;
@@ -54,12 +53,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         public ISignature GetBestMatch(ISignatureHelpSession session)
         {
-            ISignatureHelpManager signatureHelpManager;
-            if (!session.Properties.TryGetProperty(typeof(ISignatureHelpManager), out signatureHelpManager))
+            if (!session.Properties.TryGetProperty(typeof(ISignatureHelpManager), out ISignatureHelpManager signatureHelpManager))
                 return null;
 
-            Dictionary<SignatureItem, ISignature> signaturesMap;
-            if (!session.Properties.TryGetProperty(typeof(Dictionary<SignatureItem, ISignature>), out signaturesMap))
+            if (!session.Properties.TryGetProperty(typeof(Dictionary<SignatureItem, ISignature>), out Dictionary<SignatureItem, ISignature> signaturesMap))
                 return null;
 
             var model = signatureHelpManager.Model;

@@ -16,11 +16,7 @@ namespace NQuery.Authoring.Tests.QuickInfo
 
         protected void AssertIsMatch(string query, Func<DataContext, DataContext> dataContextModifer)
         {
-            SemanticModel semanticModel;
-            QuickInfoModel startModel;
-            QuickInfoModel middleModel;
-            QuickInfoModel endModel;
-            GetModels(query, dataContextModifer, out semanticModel, out startModel, out middleModel, out endModel);
+            GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
 
             var expectedModel = CreateExpectedModel(semanticModel);
 
@@ -36,11 +32,7 @@ namespace NQuery.Authoring.Tests.QuickInfo
 
         protected void AssertIsNotMatch(string query, Func<DataContext, DataContext> dataContextModifer)
         {
-            SemanticModel semanticModel;
-            QuickInfoModel startModel;
-            QuickInfoModel middleModel;
-            QuickInfoModel endModel;
-            GetModels(query, dataContextModifer, out semanticModel, out startModel, out middleModel, out endModel);
+            GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
 
             Assert.Null(startModel);
             Assert.Null(middleModel);
@@ -59,8 +51,7 @@ namespace NQuery.Authoring.Tests.QuickInfo
 
         private void GetModels(string query, Func<DataContext, DataContext> dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel startModel, out QuickInfoModel middleModel, out QuickInfoModel endModel)
         {
-            TextSpan span;
-            var compilation = CompilationFactory.CreateQuery(query, out span);
+            var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
 
             if (dataContextModifer is not null)
                 compilation = compilation.WithDataContext(dataContextModifer(compilation.DataContext));
