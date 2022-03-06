@@ -183,7 +183,7 @@ namespace NQuery.Optimization
                 _finder = new ValueSlotDependencyFinder(UsedValueSlots);
             }
 
-            public HashSet<ValueSlot> UsedValueSlots { get; } = new HashSet<ValueSlot>();
+            public HashSet<ValueSlot> UsedValueSlots { get; } = new();
 
             public void Record(BoundExpression expression)
             {

@@ -2,12 +2,12 @@ namespace NQuery.Binding
 {
     internal sealed class SharedBinderState
     {
-        public Dictionary<SyntaxNode, BoundNode> BoundNodeFromSyntaxNode { get; } = new Dictionary<SyntaxNode, BoundNode>();
+        public Dictionary<SyntaxNode, BoundNode> BoundNodeFromSyntaxNode { get; } = new();
 
-        public Dictionary<BoundNode, Binder> BinderFromBoundNode { get; } = new Dictionary<BoundNode, Binder>();
+        public Dictionary<BoundNode, Binder> BinderFromBoundNode { get; } = new();
 
-        public List<Diagnostic> Diagnostics { get; } = new List<Diagnostic>();
+        public List<Diagnostic> Diagnostics { get; } = new();
 
-        public ValueSlotFactory ValueSlotFactory { get; } = new ValueSlotFactory();
+        public ValueSlotFactory ValueSlotFactory { get; } = new();
     }
 }

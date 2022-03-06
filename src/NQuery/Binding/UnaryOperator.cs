@@ -9,35 +9,35 @@ namespace NQuery.Binding
     {
         private static readonly UnaryOperatorSignature[] BuiltInIdentitySignatures =
         {
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(int), typeof(int)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(uint), typeof(uint)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(long), typeof(long)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(ulong), typeof(ulong)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(float), typeof(float)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, typeof(double), typeof(double)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Identity, BuiltInOperators.DecimalUnaryIdentityMethod)
+            new(UnaryOperatorKind.Identity, typeof(int), typeof(int)),
+            new(UnaryOperatorKind.Identity, typeof(uint), typeof(uint)),
+            new(UnaryOperatorKind.Identity, typeof(long), typeof(long)),
+            new(UnaryOperatorKind.Identity, typeof(ulong), typeof(ulong)),
+            new(UnaryOperatorKind.Identity, typeof(float), typeof(float)),
+            new(UnaryOperatorKind.Identity, typeof(double), typeof(double)),
+            new(UnaryOperatorKind.Identity, BuiltInOperators.DecimalUnaryIdentityMethod)
         };
 
         private static readonly UnaryOperatorSignature[] BuiltInNegationSignatures =
         {
-            new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(int), typeof(int)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(long), typeof(long)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(float), typeof(float)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Negation, typeof(double), typeof(double)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Negation, BuiltInOperators.DecimalUnaryNegationMethod)
+            new(UnaryOperatorKind.Negation, typeof(int), typeof(int)),
+            new(UnaryOperatorKind.Negation, typeof(long), typeof(long)),
+            new(UnaryOperatorKind.Negation, typeof(float), typeof(float)),
+            new(UnaryOperatorKind.Negation, typeof(double), typeof(double)),
+            new(UnaryOperatorKind.Negation, BuiltInOperators.DecimalUnaryNegationMethod)
         };
 
         private static readonly UnaryOperatorSignature[] BuiltInComplementSignatures =
         {
-            new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(int), typeof(int)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(uint), typeof(uint)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(long), typeof(long)),
-            new UnaryOperatorSignature(UnaryOperatorKind.Complement, typeof(ulong), typeof(ulong))
+            new(UnaryOperatorKind.Complement, typeof(int), typeof(int)),
+            new(UnaryOperatorKind.Complement, typeof(uint), typeof(uint)),
+            new(UnaryOperatorKind.Complement, typeof(long), typeof(long)),
+            new(UnaryOperatorKind.Complement, typeof(ulong), typeof(ulong))
         };
 
         private static readonly UnaryOperatorSignature[] BuiltInLogicalNotSignatures =
         {
-            new UnaryOperatorSignature(UnaryOperatorKind.LogicalNot, typeof(bool), typeof(bool))
+            new(UnaryOperatorKind.LogicalNot, typeof(bool), typeof(bool))
         };
 
         internal static OverloadResolutionResult<UnaryOperatorSignature> Resolve(UnaryOperatorKind kind, Type type)

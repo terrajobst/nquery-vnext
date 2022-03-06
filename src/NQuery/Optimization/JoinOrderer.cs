@@ -219,7 +219,7 @@ namespace NQuery.Optimization
             }
 
             public BoundRelation Relation { get; }
-            public List<JoinEdge> Edges { get; } = new List<JoinEdge>();
+            public List<JoinEdge> Edges { get; } = new();
 
             public override string ToString()
             {
@@ -237,7 +237,7 @@ namespace NQuery.Optimization
 
             public JoinNode Left { get; }
             public JoinNode Right { get; }
-            public List<BoundExpression> Conditions { get; } = new List<BoundExpression>();
+            public List<BoundExpression> Conditions { get; } = new();
 
             public JoinNode Other(JoinNode node)
             {
