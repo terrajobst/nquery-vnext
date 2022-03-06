@@ -23,8 +23,7 @@ namespace NQuery.Authoring.ActiproWpf
 
         public static Document GetDocument(this ITextDocument textDocument)
         {
-            var codeDocument = textDocument as ICodeDocument;
-            if (codeDocument is null)
+            if (textDocument is not ICodeDocument codeDocument)
                 return null;
 
             var workspace = codeDocument.GetWorkspace();

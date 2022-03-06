@@ -46,8 +46,7 @@ namespace NQuery.Authoring.ActiproWpf.QuickInfo
 
         protected override bool RequestSession(IEditorView view, object context)
         {
-            var model = context as QuickInfoModel;
-            if (model is null)
+            if (context is not QuickInfoModel model)
                 return false;
 
             var text = model.SemanticModel.SyntaxTree.Text;

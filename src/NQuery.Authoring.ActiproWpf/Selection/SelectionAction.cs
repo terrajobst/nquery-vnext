@@ -77,8 +77,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 
         private static SelectionHandler GetSelectionHandler(ITextView textView)
         {
-            var editorView = textView as IEditorView;
-            if (editorView is null)
+            if (textView is not IEditorView editorView)
                 return null;
 
             var key = typeof(SelectionHandler);

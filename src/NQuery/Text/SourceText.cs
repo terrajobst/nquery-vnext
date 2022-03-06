@@ -160,8 +160,7 @@ namespace NQuery.Text
 
             while (candidate is not null && !rootFound)
             {
-                var changed = candidate as ChangedSourceText;
-                if (changed is null)
+                if (candidate is not ChangedSourceText changed)
                 {
                     candidate = null;
                 }

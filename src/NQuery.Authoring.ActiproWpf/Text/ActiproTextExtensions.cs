@@ -33,8 +33,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            var actiproSourceText = text as ActiproSourceText;
-            if (actiproSourceText is null)
+            if (text is not ActiproSourceText actiproSourceText)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(text));
 
             return actiproSourceText.Snapshot;
@@ -45,8 +44,7 @@ namespace NQuery.Authoring.ActiproWpf.Text
             if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
-            var actiproSourceTextContainer = container as ActiproSourceTextContainer;
-            if (actiproSourceTextContainer is null)
+            if (container is not ActiproSourceTextContainer actiproSourceTextContainer)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(container));
 
             return actiproSourceTextContainer.TextDocument;

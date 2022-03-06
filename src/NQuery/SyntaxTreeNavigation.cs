@@ -237,8 +237,7 @@ namespace NQuery
                 return GetPreviousToken(node.Parent, tokenPredicate, triviaPredicate);
             }
 
-            var structuredTrivia = node as StructuredTriviaSyntax;
-            if (structuredTrivia is null)
+            if (node is not StructuredTriviaSyntax structuredTrivia)
                 return null;
 
             var trivia = structuredTrivia.ParentTrivia;
@@ -364,8 +363,7 @@ namespace NQuery
                 return GetNextToken(node.Parent, tokenPredicate, triviaPredicate);
             }
 
-            var structuredTrivia = node as StructuredTriviaSyntax;
-            if (structuredTrivia is null)
+            if (node is not StructuredTriviaSyntax structuredTrivia)
                 return null;
 
             var trivia = structuredTrivia.ParentTrivia;

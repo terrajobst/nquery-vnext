@@ -20,8 +20,7 @@ namespace NQuery.Authoring.Wpf
         {
             get
             {
-                var viewModel = DiagnosticDataGrid.SelectedItem as DiagnosticViewModel;
-                return viewModel is null ? null : viewModel.Diagnostic;
+                return DiagnosticDataGrid.SelectedItem is not DiagnosticViewModel viewModel ? null : viewModel.Diagnostic;
             }
         }
     }

@@ -33,8 +33,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
             if (text is null)
                 throw new ArgumentNullException(nameof(text));
 
-            var visualStudioSourceText = text as VisualStudioSourceText;
-            if (visualStudioSourceText is null)
+            if (text is not VisualStudioSourceText visualStudioSourceText)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(text));
 
             return visualStudioSourceText.Snapshot;
@@ -45,8 +44,7 @@ namespace NQuery.Authoring.VSEditorWpf.Text
             if (container is null)
                 throw new ArgumentNullException(nameof(container));
 
-            var visualStudioSourceTextContainer = container as VisualStudioSourceTextContainer;
-            if (visualStudioSourceTextContainer is null)
+            if (container is not VisualStudioSourceTextContainer visualStudioSourceTextContainer)
                 throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(container));
 
             return visualStudioSourceTextContainer.TextBuffer;

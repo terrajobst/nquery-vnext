@@ -61,8 +61,7 @@ namespace NQuery.Authoring.Wpf
         {
             get
             {
-                var viewModel = TreeView.SelectedItem as SyntaxNodeViewModel;
-                return viewModel is null ? (TextSpan?)null : viewModel.Span;
+                return TreeView.SelectedItem is not SyntaxNodeViewModel viewModel ? (TextSpan?)null : viewModel.Span;
             }
         }
 
@@ -70,8 +69,7 @@ namespace NQuery.Authoring.Wpf
         {
             get
             {
-                var viewModel = TreeView.SelectedItem as SyntaxNodeViewModel;
-                return viewModel is null ? (TextSpan?)null : viewModel.FullSpan;
+                return TreeView.SelectedItem is not SyntaxNodeViewModel viewModel ? (TextSpan?)null : viewModel.FullSpan;
             }
         }
 

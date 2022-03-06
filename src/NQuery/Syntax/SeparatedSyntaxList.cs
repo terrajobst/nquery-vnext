@@ -156,8 +156,7 @@ namespace NQuery.Syntax
         {
             if (itemOrSeparator.IsNode)
             {
-                var node = itemOrSeparator.AsNode() as TNode;
-                if (node is null)
+                if (itemOrSeparator.AsNode() is not TNode node)
                     return -1;
 
                 return IndexOf(node);
