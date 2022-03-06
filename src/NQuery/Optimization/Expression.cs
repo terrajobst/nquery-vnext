@@ -104,8 +104,7 @@ namespace NQuery.Optimization
             while (stack.Count > 0)
             {
                 var current = stack.Pop();
-                var binary = current as BoundBinaryExpression;
-                if (binary is not null && binary.OperatorKind == operatorKind)
+                if (current is BoundBinaryExpression binary && binary.OperatorKind == operatorKind)
                 {
                     stack.Push(binary.Left);
                     stack.Push(binary.Right);
@@ -129,8 +128,7 @@ namespace NQuery.Optimization
 
         private static bool IsBinaryOperator(BoundExpression condition, BinaryOperatorKind operatorKind)
         {
-            var binary = condition as BoundBinaryExpression;
-            return binary is not null && binary.OperatorKind == operatorKind;
+            return condition is BoundBinaryExpression binary && binary.OperatorKind == operatorKind;
         }
 
         public static bool DependsOnAny(this BoundExpression condition, IEnumerable<ValueSlot> valueSlots)

@@ -29,8 +29,7 @@ namespace NQuery.Authoring.Wpf
                 var item = _items[_next];
                 _next++;
 
-                var childNode = _parentGenerator.ContainerFromItem(item) as TreeViewItem;
-                if (childNode is not null)
+                if (_parentGenerator.ContainerFromItem(item) is TreeViewItem childNode)
                 {
                     var generator = childNode.ItemContainerGenerator;
                     _parentGenerator = generator;

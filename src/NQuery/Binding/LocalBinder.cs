@@ -18,8 +18,7 @@ namespace NQuery.Binding
             {
                 yield return symbol;
 
-                var table = symbol as TableInstanceSymbol;
-                if (table is not null)
+                if (symbol is TableInstanceSymbol table)
                 {
                     foreach (var columnInstance in table.ColumnInstances)
                         yield return columnInstance;

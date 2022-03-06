@@ -55,8 +55,7 @@ namespace NQuery
             // a compute node whose input is a constant relation. That means we can
             // just evaluate the expression being defined.
 
-            var projectRelation = _query.Relation as BoundProjectRelation;
-            if (projectRelation is not null)
+            if (_query.Relation is BoundProjectRelation projectRelation)
             {
                 var computeRelation = projectRelation.Input as BoundComputeRelation;
                 if (computeRelation?.Input is BoundConstantRelation)

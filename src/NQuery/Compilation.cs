@@ -88,8 +88,7 @@ namespace NQuery
             if (boundRoot is null)
                 return null;
 
-            var query = boundRoot as BoundQuery;
-            if (query is not null)
+            if (boundRoot is BoundQuery query)
                 return query;
 
             var expression = (BoundExpression)boundRoot;

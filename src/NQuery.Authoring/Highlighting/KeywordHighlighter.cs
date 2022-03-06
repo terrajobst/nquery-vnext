@@ -14,8 +14,7 @@ namespace NQuery.Authoring.Highlighting
 
             for (var current = token.Parent; current is not null; current = current.Parent)
             {
-                var node = current as T;
-                if (node is not null)
+                if (current is T node)
                 {
                     var textSpans = GetHighlights(semanticModel, node, position).ToImmutableArray();
                     if (textSpans.Any(s => s.ContainsOrTouches(position)))

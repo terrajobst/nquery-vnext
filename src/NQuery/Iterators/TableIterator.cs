@@ -35,8 +35,7 @@ namespace NQuery.Iterators
 
         public override void Dispose()
         {
-            var disposable = _rows as IDisposable;
-            if (disposable is not null)
+            if (_rows is IDisposable disposable)
                 disposable.Dispose();
 
             _rows = null;

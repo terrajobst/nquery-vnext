@@ -64,8 +64,7 @@ namespace NQuery.Text
 
         public override bool Equals(object obj)
         {
-            var other = obj as TextSpan?;
-            return other is not null && Equals(other.Value);
+            return obj is TextSpan other && Equals(other);
         }
 
         public override int GetHashCode()

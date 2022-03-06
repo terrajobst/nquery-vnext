@@ -15,8 +15,7 @@ namespace NQuery.Authoring.Wpf
 
         private static void PropertyChangedCallback(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
-            var sender = o as SyntaxTreeVisualizer;
-            if (sender is not null)
+            if (o is SyntaxTreeVisualizer sender)
                 sender.UpdateViewModel();
         }
 

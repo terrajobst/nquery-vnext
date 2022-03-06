@@ -23,8 +23,7 @@ namespace NQuery.Authoring.SignatureHelp
 
         public override bool Equals(object obj)
         {
-            var other = obj as ParameterItem;
-            return other is not null && Equals(other);
+            return obj is ParameterItem other && Equals(other);
         }
 
         public override int GetHashCode()

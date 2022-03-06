@@ -115,8 +115,7 @@ namespace NQuery.Tests
 
         public override bool Equals(object obj)
         {
-            var other = obj as MockedOperatorClass;
-            return !ReferenceEquals(other, null) &&
+            return !(obj is not MockedOperatorClass other) &&
                    string.Equals(_text, other._text, StringComparison.Ordinal);
         }
 

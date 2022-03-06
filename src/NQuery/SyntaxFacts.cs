@@ -1355,8 +1355,7 @@ namespace NQuery
                 return !parentRequiresPrimary;
             }
 
-            var parentBinary = parentExpression as BinaryExpressionSyntax;
-            var childIsOnRight = parentBinary is not null && parentBinary.Right == expression;
+            var childIsOnRight = parentExpression is BinaryExpressionSyntax parentBinary && parentBinary.Right == expression;
 
             // NOTE: All expressions are left associative.
 
