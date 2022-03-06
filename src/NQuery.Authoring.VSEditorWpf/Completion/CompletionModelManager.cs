@@ -94,9 +94,7 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
             if (_session is null)
                 return false;
 
-            var isBuilder = _session.SelectedCompletionSet is not null &&
-                            _session.SelectedCompletionSet.SelectionStatus is not null &&
-                            _session.SelectedCompletionSet.SelectionStatus.Completion is not null &&
+            var isBuilder = _session.SelectedCompletionSet?.SelectionStatus?.Completion is not null &&
                             _session.SelectedCompletionSet.CompletionBuilders is not null &&
                             _session.SelectedCompletionSet.CompletionBuilders.Contains(_session.SelectedCompletionSet.SelectionStatus.Completion);
 

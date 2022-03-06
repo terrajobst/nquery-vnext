@@ -59,7 +59,7 @@ namespace NQuery
             if (projectRelation is not null)
             {
                 var computeRelation = projectRelation.Input as BoundComputeRelation;
-                if (computeRelation is not null && computeRelation.Input is BoundConstantRelation)
+                if (computeRelation?.Input is BoundConstantRelation)
                 {
                     // This means this is a trivial query.
                     return CreateTrivialExpression(computeRelation);

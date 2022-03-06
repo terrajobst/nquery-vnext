@@ -65,7 +65,7 @@ namespace NQuery.Authoring.CodeActions.Issues
         private static bool IsOrdinalColumnReference(ExpressionSyntax selector)
         {
             var literal = selector as LiteralExpressionSyntax;
-            return literal is not null && literal.Value is int;
+            return literal?.Value is int;
         }
 
         private static string GetColumnReference(int index, QueryColumnInstanceSymbol column)
