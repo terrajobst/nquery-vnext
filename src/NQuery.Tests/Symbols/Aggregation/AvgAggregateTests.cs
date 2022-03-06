@@ -7,7 +7,7 @@ namespace NQuery.Tests.Symbols.Aggregation
         [Fact]
         public void Aggregates_Avg_ReturnsNull_IfInputIsEmpty()
         {
-            var values = new object[0];
+            var values = Array.Empty<object>();
             AssertProduces(null, typeof(int), values);
         }
 

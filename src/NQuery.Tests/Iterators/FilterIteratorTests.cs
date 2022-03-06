@@ -29,7 +29,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Filter_ReturnsEmpty_IfInputIsEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
 
             using (var input = new MockedIterator(rows))
             using (var iterator = new FilterIterator(input, () => true))

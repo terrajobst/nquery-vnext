@@ -7,7 +7,7 @@ namespace NQuery.Tests.Syntax
         [Fact]
         public void SeparatedSyntaxList_Empty()
         {
-            var list = new SeparatedSyntaxList<NameExpressionSyntax>(new SyntaxNodeOrToken[0]);
+            var list = new SeparatedSyntaxList<NameExpressionSyntax>(Array.Empty<SyntaxNodeOrToken>());
 
             Assert.Empty(list);
             Assert.False(list.Any());

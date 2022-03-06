@@ -199,7 +199,7 @@ namespace NQuery.Syntax
             var diagnosticSpan = GetDiagnosticSpanForMissingToken();
             var diagnostics = new List<Diagnostic>(1);
             diagnostics.ReportTokenExpected(diagnosticSpan, Current, kind);
-            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, new SyntaxTrivia[0], new SyntaxTrivia[0], diagnostics);
+            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, Array.Empty<SyntaxTrivia>(), Array.Empty<SyntaxTrivia>(), diagnostics);
         }
 
         private SyntaxToken SkipAndInsertMissingToken(SyntaxKind kind)
@@ -212,7 +212,7 @@ namespace NQuery.Syntax
             var diagnosticSpan = GetDiagnosticSpanForMissingToken();
             var diagnostics = new List<Diagnostic>(1);
             diagnostics.ReportTokenExpected(diagnosticSpan, skippedToken, kind);
-            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, skippedTokensTrivia, new SyntaxTrivia[0], diagnostics);
+            return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, skippedTokensTrivia, Array.Empty<SyntaxTrivia>(), diagnostics);
         }
 
         private TextSpan GetDiagnosticSpanForMissingToken()
@@ -235,7 +235,7 @@ namespace NQuery.Syntax
             var end = tokens.Last().FullSpan.End;
             var span = TextSpan.FromBounds(start, end);
             var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-            return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, new Diagnostic[0]);
+            return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, Array.Empty<Diagnostic>());
         }
 
         private bool CurrentIsStartingQuery()

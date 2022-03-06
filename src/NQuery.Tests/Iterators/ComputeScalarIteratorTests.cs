@@ -31,7 +31,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_ComputeScalar_ReturnsEmpty_IfInputIsEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
             var values = new IteratorFunction[]
             {
                 () => 1

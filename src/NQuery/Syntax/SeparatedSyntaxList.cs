@@ -8,7 +8,7 @@ namespace NQuery.Syntax
     {
         private readonly ImmutableArray<Entry> _entries;
 
-        public static readonly SeparatedSyntaxList<TNode> Empty = new(new SyntaxNodeOrToken[0]);
+        public static readonly SeparatedSyntaxList<TNode> Empty = new(Array.Empty<SyntaxNodeOrToken>());
 
         public SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
         {

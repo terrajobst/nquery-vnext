@@ -46,8 +46,8 @@ namespace NQuery.Tests.Iterators
         {
             var inputs = new[]
             {
-                new MockedIterator(new object[0]),
-                new MockedIterator(new object[0])
+                new MockedIterator(Array.Empty<object>()),
+                new MockedIterator(Array.Empty<object>())
             };
 
             var entries = inputs.Select(_ => ImmutableArray<RowBufferEntry>.Empty);
@@ -63,7 +63,7 @@ namespace NQuery.Tests.Iterators
         {
             var inputs = new[]
             {
-                new MockedIterator(new object[0]),
+                new MockedIterator(Array.Empty<object>()),
                 new MockedIterator(new object[] {5, 6})
             };
 

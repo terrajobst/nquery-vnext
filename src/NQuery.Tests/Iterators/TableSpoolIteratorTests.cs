@@ -31,7 +31,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_TableSpool_ReturnsEmpty_IfInputEmpty()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
             var tableSpoolStack = new TableSpoolStack(1);
 
             using (var input = new MockedIterator(rows))

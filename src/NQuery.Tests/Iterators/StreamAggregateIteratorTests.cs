@@ -38,7 +38,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_StreamAggregate_ReturnsEmpty_IfInputEmptyAndGrouped()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
 
             using (var input = new MockedIterator(rows))
             {
@@ -57,7 +57,7 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_StreamAggregate_ReturnsSingleRow_IfInputEmptyAndNotGrouped()
         {
-            var rows = new object[0];
+            var rows = Array.Empty<object>();
             var expected = new object[1, 0];
 
             using (var input = new MockedIterator(rows))
