@@ -1366,16 +1366,13 @@ namespace NQuery
 
         private static int GetPrecedence(ExpressionSyntax expression)
         {
-            if (expression is BinaryExpressionSyntax)
-                return GetBinaryOperatorPrecedence(expression.Kind);
-
-            if (expression is UnaryExpressionSyntax)
-                return GetUnaryOperatorPrecedence(expression.Kind);
-
-            if (expression is BetweenExpressionSyntax)
-                return GetTernaryOperatorPrecedence(expression.Kind);
-
-            return 0;
+            return expression switch
+            {
+                BinaryExpressionSyntax => GetBinaryOperatorPrecedence(expression.Kind),
+                UnaryExpressionSyntax => GetUnaryOperatorPrecedence(expression.Kind),
+                BetweenExpressionSyntax => GetTernaryOperatorPrecedence(expression.Kind),
+                _ => 0
+            };
         }
     }
 }

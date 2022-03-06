@@ -26,16 +26,13 @@ namespace NQuery.Binding
 
         public override string ToString()
         {
-            if (Value is null)
-                return @"NULL";
-
-            if (Value is string)
-                return $"'{Value}'"; // TODO: We should escape this
-
-            if (Value is DateTime)
-                return $"#{Value}#";
-
-            return Value.ToString();
+            return Value switch
+            {
+                null => @"NULL",
+                string => $"'{Value}'",
+                DateTime => $"#{Value}#",
+                _ => Value.ToString()
+            };
         }
     }
 }

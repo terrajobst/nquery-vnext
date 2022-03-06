@@ -82,16 +82,13 @@ namespace NQuery.Authoring.Classifications
             if (token.Kind.IsPunctuation())
                 return SyntaxClassification.Punctuation;
 
-            if (token.Kind == SyntaxKind.IdentifierToken)
-                return SyntaxClassification.Identifier;
-
-            if ((token.Kind == SyntaxKind.StringLiteralToken))
-                return SyntaxClassification.StringLiteral;
-
-            if (token.Kind == SyntaxKind.NumericLiteralToken)
-                return SyntaxClassification.NumberLiteral;
-
-            return null;
+            return token.Kind switch
+            {
+                SyntaxKind.IdentifierToken => SyntaxClassification.Identifier,
+                SyntaxKind.StringLiteralToken => SyntaxClassification.StringLiteral,
+                SyntaxKind.NumericLiteralToken => SyntaxClassification.NumberLiteral,
+                _ => null
+            };
         }
     }
 }

@@ -17,22 +17,15 @@ namespace NQuery.Binding
 
         private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
         {
-            if (node is ParenthesizedQuerySyntax p)
-                return GetFirstSelectQuery(p.Query);
-
-            if (node is UnionQuerySyntax u)
-                return GetFirstSelectQuery(u.LeftQuery);
-
-            if (node is ExceptQuerySyntax e)
-                return GetFirstSelectQuery(e.LeftQuery);
-
-            if (node is IntersectQuerySyntax i)
-                return GetFirstSelectQuery(i.LeftQuery);
-
-            if (node is OrderedQuerySyntax o)
-                return GetFirstSelectQuery(o.Query);
-
-            return (SelectQuerySyntax)node;
+            return node switch
+            {
+                ParenthesizedQuerySyntax p => GetFirstSelectQuery(p.Query),
+                UnionQuerySyntax u => GetFirstSelectQuery(u.LeftQuery),
+                ExceptQuerySyntax e => GetFirstSelectQuery(e.LeftQuery),
+                IntersectQuerySyntax i => GetFirstSelectQuery(i.LeftQuery),
+                OrderedQuerySyntax o => GetFirstSelectQuery(o.Query),
+                _ => (SelectQuerySyntax)node
+            };
         }
 
         private static bool IsRecursive(CommonTableExpressionSyntax commonTableExpression)
