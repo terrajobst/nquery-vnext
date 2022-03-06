@@ -1386,22 +1386,19 @@ namespace NQuery.Binding
 
             // Case (1): Check for positional form.
 
-            if (selector is LiteralExpressionSyntax selectorAsLiteral)
+            if (selector is LiteralExpressionSyntax { Value: int position })
             {
-                if (selectorAsLiteral.Value is int position)
-                {
-                    var index = position - 1;
-                    var indexValid = 0 <= index && index < queryColumns.Length;
-                    if (indexValid)
-                        return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
+                var index = position - 1;
+                var indexValid = 0 <= index && index < queryColumns.Length;
+                if (indexValid)
+                    return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
 
-                    // Report that the given position isn't valid.
-                    Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position, queryColumns.Length);
+                // Report that the given position isn't valid.
+                Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position, queryColumns.Length);
 
-                    // And to avoid cascading errors, we'll fake up an invalid slot.
-                    var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
-                    return new BoundOrderBySelector(errorSlot, null);
-                }
+                // And to avoid cascading errors, we'll fake up an invalid slot.
+                var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
+                return new BoundOrderBySelector(errorSlot, null);
             }
 
             // Case (2): Check for query column name.
