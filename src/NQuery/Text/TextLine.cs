@@ -69,13 +69,7 @@ namespace NQuery.Text
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = (Text is not null ? Text.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ _start;
-                hashCode = (hashCode * 397) ^ _length;
-                return hashCode;
-            }
+            return HashCode.Combine(Text, _start, _length);
         }
 
         public static bool operator ==(TextLine left, TextLine right)

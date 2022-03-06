@@ -25,10 +25,7 @@ namespace NQuery.Text
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (Line * 397) ^ Column;
-            }
+            return HashCode.Combine(Line, Column);
         }
 
         public static bool operator ==(TextLocation left, TextLocation right)

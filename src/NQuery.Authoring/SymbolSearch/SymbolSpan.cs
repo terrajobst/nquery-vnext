@@ -35,13 +35,7 @@ namespace NQuery.Authoring.SymbolSearch
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = (int)Kind;
-                hashCode = (hashCode * 397) ^ Symbol.GetHashCode();
-                hashCode = (hashCode * 397) ^ Span.GetHashCode();
-                return hashCode;
-            }
+            return HashCode.Combine(Kind, Symbol, Span);
         }
 
         public static SymbolSpan CreateReference(Symbol symbol, TextSpan span)

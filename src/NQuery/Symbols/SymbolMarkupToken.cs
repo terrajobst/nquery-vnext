@@ -26,10 +26,7 @@ namespace NQuery.Symbols
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return ((int)Kind * 397) ^ Text.GetHashCode();
-            }
+            return HashCode.Combine(Kind, Text);
         }
     }
 }
