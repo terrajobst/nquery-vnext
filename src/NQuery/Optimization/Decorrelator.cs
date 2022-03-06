@@ -4,7 +4,7 @@ namespace NQuery.Optimization
 {
     internal sealed class Decorrelator : BoundTreeRewriter
     {
-        private bool ConjunctionHasOuterReference(HashSet<ValueSlot> definedValueSet, BoundExpression conjunction)
+        private static bool ConjunctionHasOuterReference(HashSet<ValueSlot> definedValueSet, BoundExpression conjunction)
         {
             var valueSlotFinder = new ValueSlotDependencyFinder();
             valueSlotFinder.VisitExpression(conjunction);

@@ -4,13 +4,13 @@ namespace NQuery.Tests.Iterators
 {
     public class IteratorTests
     {
-        internal void AssertEmpty(Iterator iterator)
+        internal static void AssertEmpty(Iterator iterator)
         {
             iterator.Open();
             Assert.False(iterator.Read());
         }
 
-        internal void AssertProduces(Iterator iterator, object[] data)
+        internal static void AssertProduces(Iterator iterator, object[] data)
         {
             var twoDimensional = new object[data.Length, 1];
             for (var i = 0; i < data.Length; i++)
@@ -19,7 +19,7 @@ namespace NQuery.Tests.Iterators
             AssertProduces(iterator, twoDimensional);
         }
 
-        internal void AssertProduces(Iterator iterator, object[,] data)
+        internal static void AssertProduces(Iterator iterator, object[,] data)
         {
             var rowCount = data.GetLength(0);
             var entryCount = data.GetLength(1);

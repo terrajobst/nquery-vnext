@@ -323,7 +323,7 @@ namespace NQuery.Binding
             }
         }
 
-        private BoundNode BindEmptyQuery()
+        private static BoundNode BindEmptyQuery()
         {
             var relation = new BoundEmptyRelation();
             var output = Enumerable.Empty<QueryColumnInstanceSymbol>();

@@ -2,7 +2,7 @@ namespace NQuery.Tests.Evaluation
 {
     public class EvaluationTest
     {
-        protected void AssertProduces<T>(string text, T[] expected)
+        protected static void AssertProduces<T>(string text, T[] expected)
         {
             var expectedColumns = new[] { typeof(T) };
             var expectedRows = new object[expected.Length][];
@@ -13,7 +13,7 @@ namespace NQuery.Tests.Evaluation
             AssertProduces(text, expectedColumns, expectedRows);
         }
 
-        protected void AssertProduces<T1, T2>(string text, (T1, T2)[] expected)
+        protected static void AssertProduces<T1, T2>(string text, (T1, T2)[] expected)
         {
             var expectedColumns = new[] { typeof(T1), typeof(T2) };
             var expectedRows = new object[expected.Length][];
@@ -24,7 +24,7 @@ namespace NQuery.Tests.Evaluation
             AssertProduces(text, expectedColumns, expectedRows);
         }
 
-        private void AssertProduces(string text, Type[] expectedColumns, object[][] expectedRows)
+        private static void AssertProduces(string text, Type[] expectedColumns, object[][] expectedRows)
         {
             var dataContext = NorthwindDataContext.Instance;
             var query = Query.Create(dataContext, text);

@@ -46,7 +46,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 signatures.Add(signaturesMap[signature]);
         }
 
-        private Dictionary<SignatureItem, ISignature> ToSignatures(ITrackingSpan applicableSpan, IEnumerable<SignatureItem> signatures, int selectedParameter)
+        private static Dictionary<SignatureItem, ISignature> ToSignatures(ITrackingSpan applicableSpan, IEnumerable<SignatureItem> signatures, int selectedParameter)
         {
             return signatures.ToDictionary(s => s, s => (ISignature)new NQuerySignature(applicableSpan, s, selectedParameter));
         }
