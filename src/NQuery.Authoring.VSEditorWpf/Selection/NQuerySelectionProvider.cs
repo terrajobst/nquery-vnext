@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
         private readonly ITextView _textView;
         private readonly ISelectionSpanProviderService _selectionSpanProviderService;
         private readonly Workspace _workspace;
-        private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
+        private readonly Stack<TextSpan> _selectionStack = new();
 
         public NQuerySelectionProvider(ITextView textView, ISelectionSpanProviderService selectionSpanProviderService)
         {

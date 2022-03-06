@@ -8,7 +8,7 @@ namespace NQuery.Syntax
     {
         private readonly SourceText _text;
         private readonly SyntaxTree _syntaxTree;
-        private readonly List<SyntaxToken> _tokens = new List<SyntaxToken>();
+        private readonly List<SyntaxToken> _tokens = new();
         private int _tokenIndex;
 
         public Parser(SourceText text, SyntaxTree syntaxTree)

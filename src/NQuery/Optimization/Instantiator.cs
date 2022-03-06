@@ -20,7 +20,7 @@ namespace NQuery.Optimization
 
         private sealed class ValueSlotRewriter : BoundTreeRewriter
         {
-            private readonly Dictionary<ValueSlot, ValueSlot> _valueSlotMapping = new Dictionary<ValueSlot, ValueSlot>();
+            private readonly Dictionary<ValueSlot, ValueSlot> _valueSlotMapping = new();
 
             public ValueSlotRewriter(IEnumerable<KeyValuePair<ValueSlot, ValueSlot>> mapping)
             {

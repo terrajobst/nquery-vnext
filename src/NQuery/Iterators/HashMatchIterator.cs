@@ -18,7 +18,7 @@ namespace NQuery.Iterators
         private Phase _currentPhase;
         private bool _probeMatched;
 
-        private static readonly object NullKey = new object();
+        private static readonly object NullKey = new();
 
         public HashMatchIterator(BoundHashMatchOperator logicalOperator, Iterator build, Iterator probe, int buildIndex, int probeIndex, IteratorPredicate remainder, HashMatchRowBuffer rowBuffer)
         {

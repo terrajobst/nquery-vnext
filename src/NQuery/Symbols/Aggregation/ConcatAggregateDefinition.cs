@@ -29,7 +29,7 @@ namespace NQuery.Symbols.Aggregation
 
         private sealed class ConcatAggregator : IAggregator
         {
-            private readonly SortedSet<string> _valueList = new SortedSet<string>();
+            private readonly SortedSet<string> _valueList = new();
 
             public void Initialize()
             {

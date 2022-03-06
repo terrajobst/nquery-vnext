@@ -5,7 +5,7 @@ namespace NQuery.Authoring.Wpf
 {
     public static class NQueryGlyphImageSource
     {
-        private static readonly Dictionary<string, BitmapImage> Images = new Dictionary<string, BitmapImage>();
+        private static readonly Dictionary<string, BitmapImage> Images = new();
 
         private static string FromName(string iconName)
         {

@@ -7,7 +7,7 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions
 {
     public class ExpandCodeActionListEditAction : EditActionBase
     {
-        private static readonly Lazy<RoutedCommand> LazyCommand = new Lazy<RoutedCommand>(() => new RoutedCommand("Expand Code Action List", typeof(SyntaxEditor)));
+        private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Expand Code Action List", typeof(SyntaxEditor)));
 
         public ExpandCodeActionListEditAction()
             : base("Expand Code Action List")

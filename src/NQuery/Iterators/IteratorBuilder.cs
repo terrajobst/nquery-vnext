@@ -9,7 +9,7 @@ namespace NQuery.Iterators
 {
     internal sealed class IteratorBuilder
     {
-        private readonly Stack<TableSpoolStack> _tableSpoolStack = new Stack<TableSpoolStack>();
+        private readonly Stack<TableSpoolStack> _tableSpoolStack = new();
 
         private RowBufferAllocation _outerRowBufferAllocation;
 

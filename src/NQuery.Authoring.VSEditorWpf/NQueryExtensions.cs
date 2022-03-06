@@ -8,7 +8,7 @@ namespace NQuery.Authoring.VSEditorWpf
 {
     public static class NQueryExtensions
     {
-        private static readonly object WorkspaceKey = new object();
+        private static readonly object WorkspaceKey = new();
 
         public static Workspace GetWorkspace(this ITextBuffer textBuffer)
         {

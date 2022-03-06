@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
         private readonly ITextView _textView;
         private readonly ISignatureHelpBroker _signatureHelpBroker;
         private readonly ISignatureHelpModelProviderService _signatureHelpModelProviderService;
-        private readonly object _selectedItemIndexKey = new object();
+        private readonly object _selectedItemIndexKey = new();
 
         private ISignatureHelpSession _session;
         private SignatureHelpModel _model;

@@ -9,7 +9,7 @@ namespace NQuery.Authoring.ActiproWpf.Commenting
 {
     public class ToggleSingleLineCommentAction : ToggleCommentAction
     {
-        private static readonly Lazy<RoutedCommand> LazyCommand = new Lazy<RoutedCommand>(() => new RoutedCommand("Toggle Single Line Comment", typeof(SyntaxEditor)));
+        private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Toggle Single Line Comment", typeof(SyntaxEditor)));
 
         public ToggleSingleLineCommentAction()
             : base("Toggle Single Line Comment")

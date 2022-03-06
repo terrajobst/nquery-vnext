@@ -6,7 +6,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 {
     public class ExtendSelectionAction : SelectionAction
     {
-        private static readonly Lazy<RoutedCommand> LazyCommand = new Lazy<RoutedCommand>(() => new RoutedCommand("Extend Selection", typeof(SyntaxEditor)));
+        private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Extend Selection", typeof(SyntaxEditor)));
 
         public ExtendSelectionAction()
             : base("Extend Selection")

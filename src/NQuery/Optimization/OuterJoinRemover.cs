@@ -6,7 +6,7 @@ namespace NQuery.Optimization
 {
     internal sealed class OuterJoinRemover : BoundTreeRewriter
     {
-        private readonly HashSet<ValueSlot> _nullRejectedRowBufferEntries = new HashSet<ValueSlot>();
+        private readonly HashSet<ValueSlot> _nullRejectedRowBufferEntries = new();
 
         private void AddNullRejectedTable(ValueSlot valueSlot)
         {

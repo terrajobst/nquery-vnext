@@ -14,7 +14,7 @@ namespace NQuery
         {
             private readonly string _text;
             private int _position;
-            private readonly StringBuilder _textBuilder = new StringBuilder();
+            private readonly StringBuilder _textBuilder = new();
             private readonly ImmutableArray<TextSpan>.Builder _spanBuilder = ImmutableArray.CreateBuilder<TextSpan>();
             private readonly ImmutableArray<TextChange>.Builder _changeBuilder = ImmutableArray.CreateBuilder<TextChange>();
 

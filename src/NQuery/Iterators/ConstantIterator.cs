@@ -2,7 +2,7 @@
 {
     internal sealed class ConstantIterator : Iterator
     {
-        private readonly EmptyRowBuffer _rowBuffer = new EmptyRowBuffer();
+        private readonly EmptyRowBuffer _rowBuffer = new();
         private bool _isEof;
 
         public override RowBuffer RowBuffer

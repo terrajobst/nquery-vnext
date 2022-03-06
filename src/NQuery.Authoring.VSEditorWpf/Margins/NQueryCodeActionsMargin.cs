@@ -21,7 +21,7 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
         private readonly ImmutableArray<ICodeIssueProvider> _issueProviders;
         private readonly ImmutableArray<ICodeRefactoringProvider> _refactoringProviders;
 
-        private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
+        private readonly CodeActionGlyphPopup _glyphPopup = new();
 
         public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ITextBufferUndoManager textBufferUndoManager, ImmutableArray<ICodeFixProvider> fixProviders, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
         {

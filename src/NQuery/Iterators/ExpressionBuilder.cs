@@ -13,8 +13,8 @@ namespace NQuery.Iterators
         private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object));
 
         private readonly RowBufferAllocation _rowBufferAllocation;
-        private readonly List<ParameterExpression> _locals = new List<ParameterExpression>();
-        private readonly List<Expression> _assignments = new List<Expression>();
+        private readonly List<ParameterExpression> _locals = new();
+        private readonly List<Expression> _assignments = new();
 
         private ExpressionBuilder(RowBufferAllocation allocation)
         {

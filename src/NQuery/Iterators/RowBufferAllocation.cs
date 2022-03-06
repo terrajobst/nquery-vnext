@@ -8,7 +8,7 @@ namespace NQuery.Iterators
     {
         private readonly Dictionary<ValueSlot, int> _mapping;
 
-        public static readonly RowBufferAllocation Empty = new RowBufferAllocation();
+        public static readonly RowBufferAllocation Empty = new();
 
         private RowBufferAllocation()
         {

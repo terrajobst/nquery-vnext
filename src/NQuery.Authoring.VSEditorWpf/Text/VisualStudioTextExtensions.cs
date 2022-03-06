@@ -8,8 +8,8 @@ namespace NQuery.Authoring.VSEditorWpf.Text
 {
     public static class VisualStudioTextExtensions
     {
-        private static readonly ConditionalWeakTable<ITextBuffer, SourceTextContainer> ProviderMap = new ConditionalWeakTable<ITextBuffer, SourceTextContainer>();
-        private static readonly ConditionalWeakTable<ITextSnapshot, SourceText> SnapshotMap = new ConditionalWeakTable<ITextSnapshot, SourceText>();
+        private static readonly ConditionalWeakTable<ITextBuffer, SourceTextContainer> ProviderMap = new();
+        private static readonly ConditionalWeakTable<ITextSnapshot, SourceText> SnapshotMap = new();
 
         public static SourceTextContainer ToSourceTextContainer(this ITextBuffer textBuffer)
         {
