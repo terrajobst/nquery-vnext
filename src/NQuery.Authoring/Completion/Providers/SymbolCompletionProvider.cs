@@ -110,7 +110,7 @@ namespace NQuery.Authoring.Completion.Providers
             if (!multiple)
                 return CreateSymbolCompletion(symbols.First());
 
-            var hasNonInvocables = symbols.Any(s => !(s is InvocableSymbol));
+            var hasNonInvocables = symbols.Any(s => s is not InvocableSymbol);
             if (!hasNonInvocables)
                 return CreateInvocableCompletionGroup(symbols);
 

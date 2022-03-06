@@ -985,7 +985,7 @@ namespace NQuery.Syntax
             // Let's make sure that the int literal we got is actually a valid int.
             // Note: We check for IsMissing because we don't want to validate synthesized
             //       tokens -- we already added the "token missing" diagnostics to those.
-            if (!value.IsMissing && !(value.Value is int))
+            if (!value.IsMissing && value.Value is not int)
             {
                 var diagnostics = new List<Diagnostic>();
                 diagnostics.ReportInvalidInteger(value.Span, value.ValueText);
