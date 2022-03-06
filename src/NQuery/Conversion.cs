@@ -39,9 +39,7 @@ namespace NQuery
             IsImplicit = isImplicit;
             _isBoxingOrUnboxing = isBoxingOrUnboxing;
             IsReference = isReference;
-            ConversionMethods = conversionMethods is null
-                ? ImmutableArray<MethodInfo>.Empty
-                : conversionMethods.ToImmutableArray();
+            ConversionMethods = conversionMethods?.ToImmutableArray() ?? ImmutableArray<MethodInfo>.Empty;
         }
 
         private static readonly Conversion None = new(false, false, false, false, false, null);

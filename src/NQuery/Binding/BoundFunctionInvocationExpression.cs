@@ -24,7 +24,7 @@ namespace NQuery.Binding
 
         public FunctionSymbol Symbol
         {
-            get { return Result.Selected is null ? null : Result.Selected.Signature.Symbol; }
+            get { return Result.Selected?.Signature.Symbol; }
         }
 
         public ImmutableArray<BoundExpression> Arguments { get; }

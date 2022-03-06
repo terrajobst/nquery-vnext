@@ -259,9 +259,7 @@ namespace NQueryViewer
                     ? Enumerable.Empty<Diagnostic>()
                     : semanticModel.GetDiagnostics();
                 var diagnostics = syntaxTreeDiagnostics.Concat(semanticModelDiagnostics);
-                var text = syntaxTree is null
-                    ? null
-                    : syntaxTree.Text;
+                var text = syntaxTree?.Text;
                 DiagnosticGrid.UpdateGrid(diagnostics, text);
             }
         }

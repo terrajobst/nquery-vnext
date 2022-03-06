@@ -30,9 +30,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
                                   .OfType<SnapshotSpan?>()
                                   .FirstOrDefault();
 
-            var tag = previousTag is null
-                          ? tags.Last()
-                          : previousTag.Value;
+            var tag = previousTag ?? tags.Last();
 
             SelectTag(tag);
         }
@@ -49,9 +47,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
                               .OfType<SnapshotSpan?>()
                               .FirstOrDefault();
 
-            var tag = nextTag is null
-                          ? tags.First()
-                          : nextTag.Value;
+            var tag = nextTag ?? tags.First();
 
             SelectTag(tag);
         }

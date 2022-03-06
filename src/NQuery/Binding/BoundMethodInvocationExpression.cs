@@ -25,7 +25,7 @@ namespace NQuery.Binding
 
         public MethodSymbol Symbol
         {
-            get { return Result.Selected is null ? null : Result.Selected.Signature.Symbol; }
+            get { return Result.Selected?.Signature.Symbol; }
         }
 
         public BoundExpression Target { get; }
