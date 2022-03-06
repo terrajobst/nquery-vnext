@@ -132,7 +132,7 @@ namespace NQuery.Syntax
 
         public int IndexOf(TNode item)
         {
-            for (int i = 0; i < _entries.Length; i++)
+            for (var i = 0; i < _entries.Length; i++)
             {
                 if (_entries[i].Node == item)
                     return i;
@@ -143,7 +143,7 @@ namespace NQuery.Syntax
 
         public int IndexOf(SyntaxToken separator)
         {
-            for (int i = 0; i < _entries.Length; i++)
+            for (var i = 0; i < _entries.Length; i++)
             {
                 if (_entries[i].Separator == separator)
                     return i;
