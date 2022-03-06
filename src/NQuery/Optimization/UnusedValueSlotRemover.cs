@@ -50,6 +50,10 @@ namespace NQuery.Optimization
             if (node.Probe is not null)
                 _recorder.Record(node.Probe);
 
+            var outerReferences = OuterReferenceFinder.GetOuterReferences(node);
+            foreach (var o in outerReferences)
+                _recorder.Record(o);
+
             return base.RewriteJoinRelation(node);
         }
 
