@@ -92,16 +92,13 @@ namespace NQuery.Binding
 
         private BoundNode BindRoot(SyntaxNode root)
         {
-            if (root is null)
-                return BindEmptyQuery();
-
-            if (root is QuerySyntax query)
-                return BindQuery(query);
-
-            if (root is ExpressionSyntax expression)
-                return BindExpression(expression);
-
-            throw ExceptionBuilder.UnexpectedValue(root);
+            return root switch
+            {
+                null => BindEmptyQuery(),
+                QuerySyntax query => BindQuery(query),
+                ExpressionSyntax expression => BindExpression(expression),
+                _ => throw ExceptionBuilder.UnexpectedValue(root)
+            };
         }
 
         private TResult Bind<TInput, TResult>(TInput node, Func<TInput, TResult> bindMethod)
