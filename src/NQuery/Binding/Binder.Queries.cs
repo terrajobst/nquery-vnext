@@ -803,7 +803,7 @@ namespace NQuery.Binding
         {
             var symbol = new CommonTableExpressionSymbol(
                 commonTableExpression.Name.ValueText,
-                _ => ((BoundQuery)null, ImmutableArray<ColumnSymbol>.Empty),
+                _ => (null, ImmutableArray<ColumnSymbol>.Empty),
                 _ => ImmutableArray<BoundQuery>.Empty
             );
 

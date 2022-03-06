@@ -22,7 +22,7 @@
         public void SetBuild(HashMatchEntry entry)
         {
             _buildEntry.Entry = entry;
-            _build.ActiveRowBuffer = entry is null ? (RowBuffer)_buildNull : _buildEntry;
+            _build.ActiveRowBuffer = entry is null ? _buildNull : _buildEntry;
         }
 
         public void SetProbe(RowBuffer rowBuffer)
