@@ -9,12 +9,10 @@
                 SELECT 1 {AS X}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"X");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"X");
         }
 
         [Fact]
@@ -24,11 +22,9 @@
                 SELECT 1 {X}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"X");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"X");
         }
 
         [Fact]
@@ -42,32 +38,30 @@
                 HAVING  TRUE
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.WhereClause);
-                enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
-                enumerator.AssertNode(SyntaxKind.GroupByClause);
-                enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertNode(SyntaxKind.HavingClause);
-                enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.WhereClause);
+            enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
+            enumerator.AssertNode(SyntaxKind.GroupByClause);
+            enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertNode(SyntaxKind.HavingClause);
+            enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
         }
 
         [Fact]
@@ -77,15 +71,13 @@
                 SELECT  1
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
         }
 
         [Fact]
@@ -96,18 +88,16 @@
                 FROM    Employees
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
         }
 
         [Fact]
@@ -118,18 +108,16 @@
                 WHERE   FALSE
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.WhereClause);
-                enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.WhereClause);
+            enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
         }
 
         [Fact]
@@ -140,20 +128,18 @@
                 GROUP   BY x
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.GroupByClause);
-                enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.GroupByClause);
+            enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
 
         [Fact]
@@ -164,18 +150,16 @@
                 HAVING  FALSE
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.HavingClause);
-                enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.HavingClause);
+            enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.FalseKeyword, @"FALSE");
         }
 
         [Fact]
@@ -185,15 +169,13 @@
                 SELECT x
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
 
         [Fact]
@@ -203,16 +185,14 @@
                 SELECT DISTINCT x
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertToken(SyntaxKind.DistinctKeyword, @"DISTINCT");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertToken(SyntaxKind.DistinctKeyword, @"DISTINCT");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
 
         [Fact]
@@ -222,16 +202,14 @@
                 SELECT ALL x
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertToken(SyntaxKind.AllKeyword, @"ALL");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertToken(SyntaxKind.AllKeyword, @"ALL");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
 
         [Fact]
@@ -241,17 +219,15 @@
                 SELECT TOP 10 *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -261,19 +237,17 @@
                 SELECT a, b
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"a");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"b");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"a");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"b");
         }
 
         [Fact]
@@ -283,12 +257,10 @@
                 SELECT {TOP 10} *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
         }
 
         [Fact]
@@ -298,14 +270,12 @@
                 SELECT {TOP 10 WITH TIES} *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
-                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
-                enumerator.AssertToken(SyntaxKind.TiesKeyword, @"TIES");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
+            enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+            enumerator.AssertToken(SyntaxKind.TiesKeyword, @"TIES");
         }
 
         [Fact]
@@ -315,15 +285,13 @@
                 SELECT {TOP 10 WITH }*
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
-                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
-                enumerator.AssertTokenMissing(SyntaxKind.TiesKeyword);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected 'TIES'.");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
+            enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+            enumerator.AssertTokenMissing(SyntaxKind.TiesKeyword);
+            enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected 'TIES'.");
         }
 
         [Fact]
@@ -333,15 +301,13 @@
                 SELECT {TOP 10 TIES} *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
-                enumerator.AssertTokenMissing(SyntaxKind.WithKeyword);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'TIES' but expected 'WITH'.");
-                enumerator.AssertToken(SyntaxKind.TiesKeyword, @"TIES");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10");
+            enumerator.AssertTokenMissing(SyntaxKind.WithKeyword);
+            enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found 'TIES' but expected 'WITH'.");
+            enumerator.AssertToken(SyntaxKind.TiesKeyword, @"TIES");
         }
 
         [Fact]
@@ -351,13 +317,11 @@
                 SELECT {TOP 10.3} *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10.3");
-                enumerator.AssertDiagnostic(DiagnosticId.InvalidInteger, @"'10.3' is not a valid integer.");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"10.3");
+            enumerator.AssertDiagnostic(DiagnosticId.InvalidInteger, @"'10.3' is not a valid integer.");
         }
 
         [Fact]
@@ -367,13 +331,11 @@
                 SELECT {TOP }#10-10-1998# *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '#10-10-1998#' but expected '<Numeric Literal>'.");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
+            enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '#10-10-1998#' but expected '<Numeric Literal>'.");
         }
 
         [Fact]
@@ -383,13 +345,11 @@
                 SELECT {TOP }'1' *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ''1'' but expected '<Numeric Literal>'.");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
+            enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found ''1'' but expected '<Numeric Literal>'.");
         }
 
         [Fact]
@@ -399,13 +359,11 @@
                 SELECT {TOP }*
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.TopClause);
-                enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
-                enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
-                enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected '<Numeric Literal>'.");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.TopClause);
+            enumerator.AssertToken(SyntaxKind.TopKeyword, @"TOP");
+            enumerator.AssertTokenMissing(SyntaxKind.NumericLiteralToken);
+            enumerator.AssertDiagnostic(DiagnosticId.TokenExpected, @"Found '*' but expected '<Numeric Literal>'.");
         }
 
         [Fact]
@@ -415,15 +373,13 @@
                 SELECT  {1 AS x}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
 
         [Fact]
@@ -433,12 +389,10 @@
                 SELECT  {1}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
         }
 
         [Fact]
@@ -448,13 +402,11 @@
                 SELECT  {t.*}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -464,11 +416,9 @@
                 SELECT  {*}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -479,13 +429,11 @@
                 {FROM    Employees}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
         }
 
         [Fact]
@@ -496,16 +444,14 @@
                 {FROM    Employees, EmployeeTerritories}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
         }
 
         [Fact]
@@ -517,13 +463,11 @@
                 {WHERE   TRUE}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.WhereClause);
-                enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.WhereClause);
+            enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
         }
 
         [Fact]
@@ -535,18 +479,16 @@
                 {GROUP   BY e.Country}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.GroupByClause);
-                enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.GroupByClause);
+            enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
         }
 
         [Fact]
@@ -558,25 +500,23 @@
                 {GROUP   BY e.Country, e.City}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.GroupByClause);
-                enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"City");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.GroupByClause);
+            enumerator.AssertToken(SyntaxKind.GroupKeyword, @"GROUP");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"City");
         }
 
         [Fact]
@@ -588,12 +528,10 @@
                 GROUP   BY {Country}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.GroupByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.GroupByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Country");
         }
 
         [Fact]
@@ -606,13 +544,11 @@
                 {HAVING  TRUE}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.HavingClause);
-                enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.HavingClause);
+            enumerator.AssertToken(SyntaxKind.HavingKeyword, @"HAVING");
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.TrueKeyword, @"TRUE");
         }
 
         [Fact]
@@ -623,20 +559,18 @@
                 ORDER   BY 1
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OrderedQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.OrderKeyword, @"ORDER");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OrderedQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.OrderKeyword, @"ORDER");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
         }
 
         [Fact]
@@ -647,24 +581,22 @@
                 ORDER   BY 1, 2
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OrderedQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.OrderKeyword, @"ORDER");
-                enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.LiteralExpression);
-                enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OrderedQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.OrderKeyword, @"ORDER");
+            enumerator.AssertToken(SyntaxKind.ByKeyword, @"BY");
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.LiteralExpression);
+            enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
         }
 
         [Fact]
@@ -676,13 +608,11 @@
                 ORDER   BY {FirstName DESC}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
-                enumerator.AssertToken(SyntaxKind.DescKeyword, @"DESC");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
+            enumerator.AssertToken(SyntaxKind.DescKeyword, @"DESC");
         }
 
         [Fact]
@@ -694,13 +624,11 @@
                 ORDER   BY {FirstName ASC}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
-                enumerator.AssertToken(SyntaxKind.AscKeyword, @"ASC");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
+            enumerator.AssertToken(SyntaxKind.AscKeyword, @"ASC");
         }
 
         [Fact]
@@ -712,12 +640,10 @@
                 ORDER   BY {FirstName}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OrderByColumn);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OrderByColumn);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"FirstName");
         }
 
         [Fact]
@@ -727,17 +653,15 @@
                 (SELECT *)
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.ParenthesizedQuery);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.ParenthesizedQuery);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
         }
 
         [Fact]
@@ -747,21 +671,19 @@
                 SELECT * UNION SELECT *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.UnionQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.UnionKeyword, @"UNION");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.UnionQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.UnionKeyword, @"UNION");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -771,22 +693,20 @@
                 SELECT * UNION ALL SELECT *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.UnionQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.UnionKeyword, @"UNION");
-                enumerator.AssertToken(SyntaxKind.AllKeyword, @"ALL");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.UnionQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.UnionKeyword, @"UNION");
+            enumerator.AssertToken(SyntaxKind.AllKeyword, @"ALL");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -796,21 +716,19 @@
                 SELECT * INTERSECT SELECT *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.IntersectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.IntersectKeyword, @"INTERSECT");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.IntersectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.IntersectKeyword, @"INTERSECT");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -820,21 +738,19 @@
                 SELECT * EXCEPT SELECT *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.ExceptQuery);
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.ExceptKeyword, @"EXCEPT");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.ExceptQuery);
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.ExceptKeyword, @"EXCEPT");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -847,26 +763,24 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
-                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE");
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
+            enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE");
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -879,27 +793,25 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
-                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpression);
-                enumerator.AssertToken(SyntaxKind.RecursiveKeyword, @"RECURSIVE");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE");
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
+            enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpression);
+            enumerator.AssertToken(SyntaxKind.RecursiveKeyword, @"RECURSIVE");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE");
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -914,37 +826,35 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
-                enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE1");
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE2");
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
+            enumerator.AssertToken(SyntaxKind.WithKeyword, @"WITH");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE1");
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"CTE2");
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
         }
 
         [Fact]
@@ -957,14 +867,12 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
         }
 
         [Fact]
@@ -977,17 +885,15 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-                enumerator.AssertToken(SyntaxKind.CommaToken, @",");
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"y");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
+            enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"y");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
         }
 
         [Fact]
@@ -1000,11 +906,9 @@
                 SELECT  *
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"x");
         }
     }
 }

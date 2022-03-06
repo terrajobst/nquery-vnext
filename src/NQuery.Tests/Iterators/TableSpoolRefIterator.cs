@@ -9,10 +9,8 @@ namespace NQuery.Tests.Iterators
         {
             var stack = new TableSpoolStack(1);
 
-            using (var iterator = new TableSpoolRefIterator(stack))
-            {
-                AssertEmpty(iterator);
-            }
+            using var iterator = new TableSpoolRefIterator(stack);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -28,12 +26,10 @@ namespace NQuery.Tests.Iterators
                 {1, "One"}
             };
 
-            using (var iterator = new TableSpoolRefIterator(stack))
-            {
-                AssertProduces(iterator, expected);
+            using var iterator = new TableSpoolRefIterator(stack);
+            AssertProduces(iterator, expected);
 
-                Assert.True(stack.IsEmpty);
-            }
+            Assert.True(stack.IsEmpty);
         }
     }
 }

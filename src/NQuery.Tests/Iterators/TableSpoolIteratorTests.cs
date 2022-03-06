@@ -10,22 +10,20 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = rows;
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            var tableSpoolStack = new TableSpoolStack(1);
+
+            using (var iterator = new TableSpoolIterator(input, tableSpoolStack))
             {
-                var tableSpoolStack = new TableSpoolStack(1);
-
-                using (var iterator = new TableSpoolIterator(input, tableSpoolStack))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -34,12 +32,10 @@ namespace NQuery.Tests.Iterators
             var rows = Array.Empty<object>();
             var tableSpoolStack = new TableSpoolStack(1);
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TableSpoolIterator(input, tableSpoolStack))
-            {
-                AssertEmpty(iterator);
-                Assert.True(tableSpoolStack.IsEmpty);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new TableSpoolIterator(input, tableSpoolStack);
+            AssertEmpty(iterator);
+            Assert.True(tableSpoolStack.IsEmpty);
         }
 
         [Fact]
@@ -54,21 +50,19 @@ namespace NQuery.Tests.Iterators
             var expected = rows;
 
             var tableSpoolStack = new TableSpoolStack(1);
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TableSpoolIterator(input, tableSpoolStack))
+            using var input = new MockedIterator(rows);
+            using var iterator = new TableSpoolIterator(input, tableSpoolStack);
+            AssertProduces(iterator, expected);
+
+            var stackRows = new List<RowBuffer>();
+            while (!tableSpoolStack.IsEmpty)
+                stackRows.Add(tableSpoolStack.Pop());
+
+            for (var i = 0; i < rows.GetLength(0); i++)
             {
-                AssertProduces(iterator, expected);
-
-                var stackRows = new List<RowBuffer>();
-                while (!tableSpoolStack.IsEmpty)
-                    stackRows.Add(tableSpoolStack.Pop());
-
-                for (var i = 0; i < rows.GetLength(0); i++)
-                {
-                    var originalLine = rows.GetLength(0) - i - 1;
-                    for (var j = 0; j < rows.GetLength(1); j++)
-                        Assert.Equal(rows[originalLine, j], stackRows[i][j]);
-                }
+                var originalLine = rows.GetLength(0) - i - 1;
+                for (var j = 0; j < rows.GetLength(1); j++)
+                    Assert.Equal(rows[originalLine, j], stackRows[i][j]);
             }
         }
     }

@@ -10,11 +10,9 @@
                 FROM    {Employees}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
         }
 
         [Fact]
@@ -25,13 +23,11 @@
                 FROM    {Employees e}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
         }
 
         [Fact]
@@ -43,16 +39,14 @@
                             CROSS JOIN EmployeeTerritories}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.CrossJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertToken(SyntaxKind.CrossKeyword, @"CROSS");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.CrossJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertToken(SyntaxKind.CrossKeyword, @"CROSS");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
         }
 
         [Fact]
@@ -64,33 +58,31 @@
                             INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
         }
 
         [Fact]
@@ -102,32 +94,30 @@
                             JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
         }
 
         [Fact]
@@ -143,79 +133,77 @@
                         ON et.TerritoryID = t.TerritoryID}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Territories");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
-                enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Region");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"r");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"r");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"RegionID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"RegionID");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"TerritoryID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"TerritoryID");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeTerritories");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Territories");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
+            enumerator.AssertToken(SyntaxKind.InnerKeyword, @"INNER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Region");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"r");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"r");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"RegionID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"RegionID");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"et");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"TerritoryID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"t");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"TerritoryID");
         }
 
         [Fact]
@@ -227,33 +215,31 @@
                             LEFT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.LeftKeyword, @"LEFT");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.LeftKeyword, @"LEFT");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -265,34 +251,32 @@
                             LEFT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.LeftKeyword, @"LEFT");
-                enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.LeftKeyword, @"LEFT");
+            enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -304,33 +288,31 @@
                             RIGHT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.RightKeyword, @"RIGHT");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.RightKeyword, @"RIGHT");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -342,34 +324,32 @@
                             RIGHT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.RightKeyword, @"RIGHT");
-                enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.RightKeyword, @"RIGHT");
+            enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -381,33 +361,31 @@
                             FULL JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.FullKeyword, @"FULL");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.FullKeyword, @"FULL");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -419,34 +397,32 @@
                             FULL OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.FullKeyword, @"FULL");
-                enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
-                enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertNode(SyntaxKind.Alias);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
-                enumerator.AssertNode(SyntaxKind.EqualExpression);
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
-                enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
-                enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
-                enumerator.AssertNode(SyntaxKind.NameExpression);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
-                enumerator.AssertToken(SyntaxKind.DotToken, @".");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.FullKeyword, @"FULL");
+            enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
+            enumerator.AssertToken(SyntaxKind.JoinKeyword, @"JOIN");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertNode(SyntaxKind.Alias);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.OnKeyword, @"ON");
+            enumerator.AssertNode(SyntaxKind.EqualExpression);
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e2");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+            enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+            enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+            enumerator.AssertNode(SyntaxKind.NameExpression);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e1");
+            enumerator.AssertToken(SyntaxKind.DotToken, @".");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"ReportsTo");
         }
 
         [Fact]
@@ -457,22 +433,20 @@
                 FROM    {(SELECT * FROM Employees) d}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.DerivedTableReference);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"d");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.DerivedTableReference);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"d");
         }
 
         [Fact]
@@ -483,23 +457,21 @@
                 FROM    {(SELECT * FROM Employees) AS d}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.DerivedTableReference);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.SelectQuery);
-                enumerator.AssertNode(SyntaxKind.SelectClause);
-                enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
-                enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
-                enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
-                enumerator.AssertNode(SyntaxKind.FromClause);
-                enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-                enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"d");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.DerivedTableReference);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.SelectQuery);
+            enumerator.AssertNode(SyntaxKind.SelectClause);
+            enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+            enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+            enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+            enumerator.AssertNode(SyntaxKind.FromClause);
+            enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+            enumerator.AssertToken(SyntaxKind.AsKeyword, @"AS");
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"d");
         }
 
         [Fact]
@@ -510,14 +482,12 @@
                 FROM    {(Employees)}
             ";
 
-            using (var enumerator = AssertingEnumerator.ForQuery(text))
-            {
-                enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
-                enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
-                enumerator.AssertNode(SyntaxKind.NamedTableReference);
-                enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
-                enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
-            }
+            using var enumerator = AssertingEnumerator.ForQuery(text);
+            enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);
+            enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+            enumerator.AssertNode(SyntaxKind.NamedTableReference);
+            enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+            enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
         }
     }
 }

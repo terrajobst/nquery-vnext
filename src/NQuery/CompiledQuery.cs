@@ -77,12 +77,10 @@ namespace NQuery
 
         private object EvaluateQueryAsExpression()
         {
-            using (var reader = CreateReader())
-            {
-                return !reader.Read() || reader.ColumnCount == 0
-                    ? null
-                    : reader[0];
-            }
+            using var reader = CreateReader();
+            return !reader.Read() || reader.ColumnCount == 0
+                ? null
+                : reader[0];
         }
     }
 }

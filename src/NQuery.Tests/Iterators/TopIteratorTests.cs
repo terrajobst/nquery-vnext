@@ -10,20 +10,18 @@ namespace NQuery.Tests.Iterators
             var rows = new object[] { 1, 2 };
             var expected = new object[] { 1, 2 };
 
-            using (var input = new MockedIterator(rows))
+            using var input = new MockedIterator(rows);
+            using (var iterator = new TopIterator(input, int.MaxValue))
             {
-                using (var iterator = new TopIterator(input, int.MaxValue))
+                for (var i = 0; i < 2; i++)
                 {
-                    for (var i = 0; i < 2; i++)
-                    {
-                        AssertProduces(iterator, expected);
-                    }
+                    AssertProduces(iterator, expected);
                 }
-
-                Assert.Equal(2, input.TotalOpenCount);
-                Assert.Equal(4, input.TotalReadCount);
-                Assert.Equal(1, input.DisposalCount);
             }
+
+            Assert.Equal(2, input.TotalOpenCount);
+            Assert.Equal(4, input.TotalReadCount);
+            Assert.Equal(1, input.DisposalCount);
         }
 
         [Fact]
@@ -31,11 +29,9 @@ namespace NQuery.Tests.Iterators
         {
             var rows = Array.Empty<object>();
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TopIterator(input, 1))
-            {
-                AssertEmpty(iterator);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new TopIterator(input, 1);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -43,11 +39,9 @@ namespace NQuery.Tests.Iterators
         {
             var rows = new object[] { 1 };
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TopIterator(input, 0))
-            {
-                AssertEmpty(iterator);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new TopIterator(input, 0);
+            AssertEmpty(iterator);
         }
 
         [Fact]
@@ -57,11 +51,9 @@ namespace NQuery.Tests.Iterators
             var expected = rows;
             var limit = rows.Length + 1;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TopIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new TopIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
 
         [Fact]
@@ -71,11 +63,9 @@ namespace NQuery.Tests.Iterators
             var expected = new object[] { 1, 2 };
             var limit = expected.Length;
 
-            using (var input = new MockedIterator(rows))
-            using (var iterator = new TopIterator(input, limit))
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var input = new MockedIterator(rows);
+            using var iterator = new TopIterator(input, limit);
+            AssertProduces(iterator, expected);
         }
     }
 }

@@ -28,24 +28,23 @@ namespace NQuery.Tests.Evaluation
         {
             var dataContext = NorthwindDataContext.Instance;
             var query = Query.Create(dataContext, text);
-            using (var data = query.ExecuteReader())
+            using var data = query.ExecuteReader();
+
+            Assert.Equal(expectedColumns.Length, data.ColumnCount);
+
+            for (var i = 0; i < expectedColumns.Length; i++)
+                Assert.Equal(expectedColumns[i], data.GetColumnType(i));
+
+            var rowIndex = 0;
+
+            while (data.Read())
             {
-                Assert.Equal(expectedColumns.Length, data.ColumnCount);
+                var expectedRow = expectedRows[rowIndex];
 
-                for (var i = 0; i < expectedColumns.Length; i++)
-                    Assert.Equal(expectedColumns[i], data.GetColumnType(i));
+                for (var columnIndex = 0; columnIndex < expectedColumns.Length; columnIndex++)
+                    Assert.Equal(expectedRow[columnIndex], data[columnIndex]);
 
-                var rowIndex = 0;
-
-                while (data.Read())
-                {
-                    var expectedRow = expectedRows[rowIndex];
-
-                    for (var columnIndex = 0; columnIndex < expectedColumns.Length; columnIndex++)
-                        Assert.Equal(expectedRow[columnIndex], data[columnIndex]);
-
-                    rowIndex++;
-                }
+                rowIndex++;
             }
         }
     }

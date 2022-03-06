@@ -16,8 +16,8 @@ namespace NQuery
             if (left.IsMissing != right.IsMissing)
                 return false;
 
-            var leftChildren = left.ChildNodesAndTokens().GetEnumerator();
-            var rightChildren = right.ChildNodesAndTokens().GetEnumerator();
+            using var leftChildren = left.ChildNodesAndTokens().GetEnumerator();
+            using var rightChildren = right.ChildNodesAndTokens().GetEnumerator();
 
             while (true)
             {

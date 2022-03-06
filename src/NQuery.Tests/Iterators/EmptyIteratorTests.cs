@@ -7,10 +7,8 @@ namespace NQuery.Tests.Iterators
         [Fact]
         public void Iterators_Empty_ReturnsNoRows()
         {
-            using (var iterator = new EmptyIterator())
-            {
-                AssertEmpty(iterator);
-            }
+            using var iterator = new EmptyIterator();
+            AssertEmpty(iterator);
         }
     }
 }

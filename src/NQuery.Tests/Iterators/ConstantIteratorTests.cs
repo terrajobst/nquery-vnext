@@ -9,10 +9,8 @@ namespace NQuery.Tests.Iterators
         {
             var expected = new object[1, 0];
 
-            using (var iterator = new ConstantIterator())
-            {
-                AssertProduces(iterator, expected);
-            }
+            using var iterator = new ConstantIterator();
+            AssertProduces(iterator, expected);
         }
     }
 }

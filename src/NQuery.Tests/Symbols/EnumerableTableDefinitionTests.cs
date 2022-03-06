@@ -80,28 +80,27 @@ namespace NQuery.Tests.Symbols
             var dataContext = DataContext.Empty.AddTables(symbol);
             var query = Query.Create(dataContext, $"SELECT * FROM {table.Name}");
 
-            using (var reader = query.ExecuteReader())
-            {
-                Assert.Equal(2, reader.ColumnCount);
+            using var reader = query.ExecuteReader();
 
-                Assert.Equal("Id", reader.GetColumnName(0));
-                Assert.Equal(typeof(int), reader.GetColumnType(0));
+            Assert.Equal(2, reader.ColumnCount);
 
-                Assert.Equal("Name", reader.GetColumnName(1));
-                Assert.Equal(typeof(string), reader.GetColumnType(1));
+            Assert.Equal("Id", reader.GetColumnName(0));
+            Assert.Equal(typeof(int), reader.GetColumnType(0));
 
-                Assert.True(reader.Read());
+            Assert.Equal("Name", reader.GetColumnName(1));
+            Assert.Equal(typeof(string), reader.GetColumnType(1));
 
-                Assert.Equal(rows[0].Id, reader[0]);
-                Assert.Equal(rows[0].Name, reader[1]);
+            Assert.True(reader.Read());
 
-                Assert.True(reader.Read());
+            Assert.Equal(rows[0].Id, reader[0]);
+            Assert.Equal(rows[0].Name, reader[1]);
 
-                Assert.Equal(rows[1].Id, reader[0]);
-                Assert.Equal(rows[1].Name, reader[1]);
+            Assert.True(reader.Read());
 
-                Assert.False(reader.Read());
-            }
+            Assert.Equal(rows[1].Id, reader[0]);
+            Assert.Equal(rows[1].Name, reader[1]);
+
+            Assert.False(reader.Read());
         }
     }
 }

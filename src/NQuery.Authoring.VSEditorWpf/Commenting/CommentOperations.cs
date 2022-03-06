@@ -43,18 +43,17 @@ namespace NQuery.Authoring.VSEditorWpf.Commenting
             var newText = newSyntaxTree.Text;
             var changes = newText.GetChanges(oldText);
 
-            using (var t = _textBufferUndoManager.TextBufferUndoHistory.CreateTransaction(Resources.TransactionToggleComment))
-            {
-                foreach (var change in changes)
-                {
-                    var textSpan = change.Span;
-                    var span = new Span(textSpan.Start, textSpan.Length);
-                    var text = change.NewText;
-                    _textView.TextBuffer.Replace(span, text);
-                }
+            using var transaction = _textBufferUndoManager.TextBufferUndoHistory.CreateTransaction(Resources.TransactionToggleComment);
 
-                t.Complete();
+            foreach (var change in changes)
+            {
+                var textSpan = change.Span;
+                var span = new Span(textSpan.Start, textSpan.Length);
+                var text = change.NewText;
+                _textView.TextBuffer.Replace(span, text);
             }
+
+            transaction.Complete();
         }
     }
 }
