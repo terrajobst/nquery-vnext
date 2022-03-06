@@ -18,7 +18,7 @@ namespace NQuery.Authoring.Tests.Completion.Providers
 
         private static void AssertIsAmbiguousMatch(string query, string tableInstanceName, string columnName)
         {
-            GetCompletionData(query, tableInstanceName, columnName, out var column, out var columnItem, out var columnMarkup);
+            GetCompletionData(query, tableInstanceName, columnName, out var column, out var columnItem, out _);
 
             Assert.Equal(Glyph.AmbiguousName, columnItem.Glyph);
             Assert.Equal(column.Name, columnItem.DisplayText);

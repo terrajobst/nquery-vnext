@@ -419,8 +419,7 @@ namespace NQuery.Binding
             if (boundLeft.OutputColumns.Length != boundRight.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
 
-            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput, out var leftValues,
-                out var rightValues);
+            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput, out var leftValues, out _);
 
             var outputValues = leftValues;
             var outputColumns = BindOutputColumns(columns, outputValues);

@@ -15,9 +15,6 @@ namespace NQuery.Authoring.Tests.Selection
 
             var syntaxTree = SyntaxTree.ParseQuery(query);
 
-            var spanTexts = spans.Select(s => syntaxTree.Text.GetText(s))
-                                 .ToImmutableArray();
-
             var provider = CreateProvider();
             var providers = ImmutableArray.Create(provider);
 
@@ -27,9 +24,6 @@ namespace NQuery.Authoring.Tests.Selection
             {
                 var child = cp.Child;
                 var parent = cp.Parent;
-
-                var childText = syntaxTree.Text.GetText(child);
-                var parentText = syntaxTree.Text.GetText(parent);
 
                 var actual = syntaxTree.ExtendSelection(child, providers);
                 Assert.Equal(parent, actual);
