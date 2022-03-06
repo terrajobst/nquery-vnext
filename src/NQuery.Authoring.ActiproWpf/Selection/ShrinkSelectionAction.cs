@@ -6,7 +6,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
 {
     public class ShrinkSelectionAction : SelectionAction
     {
-        private static readonly Lazy<RoutedCommand> LazyCommand = new Lazy<RoutedCommand>(() => new RoutedCommand("Shrink Selection", typeof(SyntaxEditor)));
+        private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Shrink Selection", typeof(SyntaxEditor)));
 
         public ShrinkSelectionAction()
             : base("Shrink Selection")

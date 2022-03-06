@@ -48,7 +48,7 @@ namespace NQuery.Hosting
 
         private sealed class PropertyTable
         {
-            private readonly Dictionary<string, Entry> _table = new Dictionary<string, Entry>();
+            private readonly Dictionary<string, Entry> _table = new();
 
             public class Entry
             {
@@ -87,7 +87,7 @@ namespace NQuery.Hosting
 
         private sealed class MethodTable
         {
-            private readonly Dictionary<string, Entry> _table = new Dictionary<string, Entry>();
+            private readonly Dictionary<string, Entry> _table = new();
 
             public class Entry
             {

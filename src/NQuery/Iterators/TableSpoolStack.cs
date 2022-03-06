@@ -3,7 +3,7 @@
     internal sealed class TableSpoolStack
     {
         private readonly int _rowBufferCount;
-        private readonly Stack<RowBuffer> _stack = new Stack<RowBuffer>();
+        private readonly Stack<RowBuffer> _stack = new();
 
         public TableSpoolStack(int rowBufferCount)
         {

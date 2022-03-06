@@ -8,8 +8,8 @@ namespace NQuery.Authoring.ActiproWpf.Text
 {
     public static class ActiproTextExtensions
     {
-        private static readonly ConditionalWeakTable<ITextDocument, SourceTextContainer> ProviderMap = new ConditionalWeakTable<ITextDocument, SourceTextContainer>();
-        private static readonly ConditionalWeakTable<ITextSnapshot, SourceText> SnapshotMap = new ConditionalWeakTable<ITextSnapshot, SourceText>();
+        private static readonly ConditionalWeakTable<ITextDocument, SourceTextContainer> ProviderMap = new();
+        private static readonly ConditionalWeakTable<ITextSnapshot, SourceText> SnapshotMap = new();
 
         public static SourceTextContainer ToSourceTextContainer(this ITextDocument textDocument)
         {

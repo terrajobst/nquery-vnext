@@ -5,7 +5,7 @@
         private sealed class AssertingEnumerator : IDisposable
         {
             private readonly IEnumerator<SyntaxNodeOrToken> _enumerator;
-            private readonly HashSet<Diagnostic> _assertedDiagnostics = new HashSet<Diagnostic>();
+            private readonly HashSet<Diagnostic> _assertedDiagnostics = new();
 
             private bool _isStart = true;
             private bool _hasErrors;

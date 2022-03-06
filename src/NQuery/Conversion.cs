@@ -44,15 +44,15 @@ namespace NQuery
                 : conversionMethods.ToImmutableArray();
         }
 
-        private static readonly Conversion None = new Conversion(false, false, false, false, false, null);
-        private static readonly Conversion Null = new Conversion(true, false, true, false, false, null);
-        private static readonly Conversion Identity = new Conversion(true, true, true, false, false, null);
-        private static readonly Conversion Implicit = new Conversion(true, false, true, false, false, null);
-        private static readonly Conversion Explicit = new Conversion(true, false, false, false, false, null);
-        private static readonly Conversion Boxing = new Conversion(true, false, true, true, false, null);
-        private static readonly Conversion Unboxing = new Conversion(true, false, false, true, false, null);
-        private static readonly Conversion UpCast = new Conversion(true, false, true, false, true, null);
-        private static readonly Conversion DownCast = new Conversion(true, false, false, false, true, null);
+        private static readonly Conversion None = new(false, false, false, false, false, null);
+        private static readonly Conversion Null = new(true, false, true, false, false, null);
+        private static readonly Conversion Identity = new(true, true, true, false, false, null);
+        private static readonly Conversion Implicit = new(true, false, true, false, false, null);
+        private static readonly Conversion Explicit = new(true, false, false, false, false, null);
+        private static readonly Conversion Boxing = new(true, false, true, true, false, null);
+        private static readonly Conversion Unboxing = new(true, false, false, true, false, null);
+        private static readonly Conversion UpCast = new(true, false, true, false, true, null);
+        private static readonly Conversion DownCast = new(true, false, false, false, true, null);
 
         public bool Exists { get; }
 

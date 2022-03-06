@@ -4,7 +4,7 @@ namespace NQuery.Text
 {
     public sealed class TextChangeSet : IEnumerable<TextChange>
     {
-        private readonly List<TextChange> _changes = new List<TextChange>();
+        private readonly List<TextChange> _changes = new();
 
         public void ReplaceText(TextSpan span, string newText)
         {

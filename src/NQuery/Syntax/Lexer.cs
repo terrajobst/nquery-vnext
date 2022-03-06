@@ -11,9 +11,9 @@ namespace NQuery.Syntax
         private readonly SyntaxTree _syntaxTree;
         private readonly SourceText _text;
         private readonly CharReader _charReader;
-        private readonly List<SyntaxTrivia> _leadingTrivia = new List<SyntaxTrivia>();
-        private readonly List<SyntaxTrivia> _trailingTrivia = new List<SyntaxTrivia>();
-        private readonly List<Diagnostic> _diagnostics = new List<Diagnostic>();
+        private readonly List<SyntaxTrivia> _leadingTrivia = new();
+        private readonly List<SyntaxTrivia> _trailingTrivia = new();
+        private readonly List<Diagnostic> _diagnostics = new();
 
         private SyntaxKind _kind;
         private SyntaxKind _contextualKind;

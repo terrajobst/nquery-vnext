@@ -18,7 +18,7 @@ namespace NQuery.Authoring.ActiproWpf.Margins
     internal sealed class NQueryEditorViewCodeActionMargin : Canvas, IEditorViewMargin, ICodeActionGlyphController
     {
         private readonly IEditorView _view;
-        private readonly CodeActionGlyphPopup _glyphPopup = new CodeActionGlyphPopup();
+        private readonly CodeActionGlyphPopup _glyphPopup = new();
 
         public NQueryEditorViewCodeActionMargin(IEditorView view)
         {

@@ -5,8 +5,8 @@ namespace NQuery.Optimization
 {
     internal sealed class SubqueryExpander : BoundTreeRewriter
     {
-        private readonly Stack<List<Subquery>> _subqueryStack = new Stack<List<Subquery>>();
-        private readonly Stack<BoundExpression> _passthruStack = new Stack<BoundExpression>();
+        private readonly Stack<List<Subquery>> _subqueryStack = new();
+        private readonly Stack<BoundExpression> _passthruStack = new();
 
         private enum SubqueryKind
         {

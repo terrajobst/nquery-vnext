@@ -9,8 +9,8 @@ namespace NQuery.Binding
     {
         private readonly DataContext _dataContext;
 
-        private readonly Dictionary<Type, ImmutableArray<PropertySymbol>> _propertySymbols = new Dictionary<Type, ImmutableArray<PropertySymbol>>();
-        private readonly Dictionary<Type, ImmutableArray<MethodSymbol>> _methodSymbols = new Dictionary<Type, ImmutableArray<MethodSymbol>>();
+        private readonly Dictionary<Type, ImmutableArray<PropertySymbol>> _propertySymbols = new();
+        private readonly Dictionary<Type, ImmutableArray<MethodSymbol>> _methodSymbols = new();
 
         public GlobalBinder(SharedBinderState sharedBinderState, DataContext dataContext)
             : base(sharedBinderState, null)

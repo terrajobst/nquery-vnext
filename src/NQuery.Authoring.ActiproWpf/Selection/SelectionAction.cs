@@ -16,7 +16,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
         private sealed class SelectionHandler
         {
             private readonly IEditorView _editorView;
-            private readonly Stack<TextSpan> _selectionStack = new Stack<TextSpan>();
+            private readonly Stack<TextSpan> _selectionStack = new();
 
             public SelectionHandler(IEditorView editorView)
             {
