@@ -105,8 +105,8 @@ namespace NQuery.Tests.Iterators
 
             var comparers = new[]
             {
-                Comparer<string>.Create((x, y) => y.CompareTo(x)),
-                Comparer<string>.Create((x, y) => x.CompareTo(y))
+                Comparer<string>.Create((x, y) => string.Compare(y, x, StringComparison.Ordinal)),
+                Comparer<string>.Create((x, y) => string.Compare(x, y, StringComparison.Ordinal))
             };
 
             using var iterator = new SortIterator(input, sortEntries, comparers);
