@@ -81,7 +81,7 @@ namespace NQuery.Symbols.Aggregation
 
             public void Accumulate(object value)
             {
-                decimal valueAsDecimal = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
+                var valueAsDecimal = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
                 _sum += valueAsDecimal;
                 _sumOfSquares += valueAsDecimal * valueAsDecimal;
                 _count++;
