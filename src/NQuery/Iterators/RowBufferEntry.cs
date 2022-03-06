@@ -33,10 +33,7 @@ namespace NQuery.Iterators
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (RowBuffer.GetHashCode() * 397) ^ Index;
-            }
+            return HashCode.Combine(RowBuffer, Index);
         }
 
         public static bool operator ==(RowBufferEntry left, RowBufferEntry right)

@@ -50,10 +50,7 @@ namespace NQuery.Text
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (Span.GetHashCode() * 397) ^ (NewText is not null ? NewText.GetHashCode() : 0);
-            }
+            return HashCode.Combine(Span, NewText);
         }
 
         public override string ToString()

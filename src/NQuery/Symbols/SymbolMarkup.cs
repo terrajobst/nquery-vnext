@@ -33,7 +33,11 @@ namespace NQuery.Symbols
 
         public override int GetHashCode()
         {
-            return Tokens.GetHashCode();
+            var result = new HashCode();
+            foreach (var token in Tokens)
+                result.Add(token);
+
+            return result.ToHashCode();
         }
 
         public override string ToString()

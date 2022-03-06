@@ -70,10 +70,7 @@ namespace NQuery.Text
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (Start * 397) ^ Length;
-            }
+            return HashCode.Combine(Start, Length);
         }
 
         public static bool operator ==(TextSpan left, TextSpan right)

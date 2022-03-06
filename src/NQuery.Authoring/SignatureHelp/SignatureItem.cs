@@ -29,12 +29,13 @@ namespace NQuery.Authoring.SignatureHelp
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = Content.GetHashCode();
-                hashCode = (hashCode * 397) ^ Parameters.GetHashCode();
-                return hashCode;
-            }
+            var result = new HashCode();
+            result.Add(Content);
+
+            foreach (var p in Parameters)
+                result.Add(p);
+
+            return result.ToHashCode();
         }
     }
 }
