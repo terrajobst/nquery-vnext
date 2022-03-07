@@ -2,7 +2,7 @@ namespace NQuery.Syntax
 {
     public abstract class TableReferenceSyntax : SyntaxNode
     {
-        internal TableReferenceSyntax(SyntaxTree syntaxTree)
+        private protected TableReferenceSyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }

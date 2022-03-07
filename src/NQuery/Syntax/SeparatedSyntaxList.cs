@@ -10,7 +10,7 @@ namespace NQuery.Syntax
 
         public static readonly SeparatedSyntaxList<TNode> Empty = new(Array.Empty<SyntaxNodeOrToken>());
 
-        public SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
+        internal SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
         {
             ValidateEntries(nodeOrTokens);
             _entries = ReadEntries(nodeOrTokens);

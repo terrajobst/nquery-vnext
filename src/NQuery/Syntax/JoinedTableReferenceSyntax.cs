@@ -2,7 +2,7 @@ namespace NQuery.Syntax
 {
     public abstract class JoinedTableReferenceSyntax : TableReferenceSyntax
     {
-        internal JoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right)
+        private protected JoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right)
             : base(syntaxTree)
         {
             Left = left;

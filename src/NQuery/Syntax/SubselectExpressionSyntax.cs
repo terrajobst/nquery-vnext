@@ -2,7 +2,7 @@ namespace NQuery.Syntax
 {
     public abstract class SubselectExpressionSyntax : ExpressionSyntax
     {
-        internal SubselectExpressionSyntax(SyntaxTree syntaxTree)
+        private protected SubselectExpressionSyntax(SyntaxTree syntaxTree)
             : base(syntaxTree)
         {
         }

@@ -4,7 +4,7 @@ namespace NQuery.Symbols
 {
     public abstract class ColumnInstanceSymbol : Symbol
     {
-        internal ColumnInstanceSymbol(string name)
+        private protected ColumnInstanceSymbol(string name)
             : base(name)
         {
         }
