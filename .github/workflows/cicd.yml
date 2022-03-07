@@ -29,13 +29,13 @@ jobs:
         run: |
           dotnet test ${env:SLN} --nologo
       - name: Upload binaries
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
         uses: actions/upload-artifact@v1
         with:
           name: bin
           path: bin
   push-to-github:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
     needs: build
     runs-on: windows-latest
     steps:
