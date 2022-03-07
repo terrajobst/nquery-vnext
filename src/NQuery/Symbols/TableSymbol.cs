@@ -4,7 +4,7 @@ namespace NQuery.Symbols
 {
     public abstract class TableSymbol : Symbol
     {
-        protected TableSymbol(string name)
+        private protected TableSymbol(string name)
             : base(name)
         {
         }

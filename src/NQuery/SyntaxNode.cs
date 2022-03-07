@@ -9,7 +9,7 @@ namespace NQuery
         private TextSpan? _span;
         private TextSpan? _fullSpan;
 
-        internal SyntaxNode(SyntaxTree syntaxTree)
+        private protected SyntaxNode(SyntaxTree syntaxTree)
         {
             SyntaxTree = syntaxTree;
         }
