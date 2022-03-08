@@ -8,38 +8,38 @@ namespace NQuery.Authoring.Tests.Classifications
         [Fact]
         public void SyntaxClassification_Classifies()
         {
-            var pieces = new[]
+            var pieces = new (string Text, SyntaxClassification Classification)[]
             {
-                Tuple.Create("-- Single line comment", SyntaxClassification.Comment),
-                Tuple.Create(Environment.NewLine, SyntaxClassification.Whitespace),
-                Tuple.Create("SELECT", SyntaxClassification.Keyword),
-                Tuple.Create("\t", SyntaxClassification.Whitespace),
-                Tuple.Create("e", SyntaxClassification.Identifier),
-                Tuple.Create(".", SyntaxClassification.Punctuation),
-                Tuple.Create("\"FirstName\"", SyntaxClassification.Identifier),
-                Tuple.Create(" ", SyntaxClassification.Whitespace),
-                Tuple.Create("AS", SyntaxClassification.Keyword),
-                Tuple.Create("[Full Name]", SyntaxClassification.Identifier),
-                Tuple.Create(Environment.NewLine, SyntaxClassification.Whitespace),
-                Tuple.Create("FROM", SyntaxClassification.Keyword),
-                Tuple.Create(" ", SyntaxClassification.Whitespace),
-                Tuple.Create("Employees", SyntaxClassification.Identifier),
-                Tuple.Create(Environment.NewLine, SyntaxClassification.Whitespace),
-                Tuple.Create("/* This a \r\n Comment \r that spans \n multiple lines */", SyntaxClassification.Comment),
-                Tuple.Create("WHERE", SyntaxClassification.Keyword),
-                Tuple.Create(" ", SyntaxClassification.Whitespace),
-                Tuple.Create("FirsName", SyntaxClassification.Identifier),
-                Tuple.Create("=", SyntaxClassification.Punctuation),
-                Tuple.Create("'Andrew'", SyntaxClassification.StringLiteral),
-                Tuple.Create(Environment.NewLine, SyntaxClassification.Whitespace),
-                Tuple.Create("AND", SyntaxClassification.Keyword),
-                Tuple.Create(" ", SyntaxClassification.Whitespace),
-                Tuple.Create("ReportsTo", SyntaxClassification.Identifier),
-                Tuple.Create("<", SyntaxClassification.Punctuation),
-                Tuple.Create("4", SyntaxClassification.NumberLiteral),
+                ("-- Single line comment", SyntaxClassification.Comment),
+                (Environment.NewLine, SyntaxClassification.Whitespace),
+                ("SELECT", SyntaxClassification.Keyword),
+                ("\t", SyntaxClassification.Whitespace),
+                ("e", SyntaxClassification.Identifier),
+                (".", SyntaxClassification.Punctuation),
+                ("\"FirstName\"", SyntaxClassification.Identifier),
+                (" ", SyntaxClassification.Whitespace),
+                ("AS", SyntaxClassification.Keyword),
+                ("[Full Name]", SyntaxClassification.Identifier),
+                (Environment.NewLine, SyntaxClassification.Whitespace),
+                ("FROM", SyntaxClassification.Keyword),
+                (" ", SyntaxClassification.Whitespace),
+                ("Employees", SyntaxClassification.Identifier),
+                (Environment.NewLine, SyntaxClassification.Whitespace),
+                ("/* This a \r\n Comment \r that spans \n multiple lines */", SyntaxClassification.Comment),
+                ("WHERE", SyntaxClassification.Keyword),
+                (" ", SyntaxClassification.Whitespace),
+                ("FirsName", SyntaxClassification.Identifier),
+                ("=", SyntaxClassification.Punctuation),
+                ("'Andrew'", SyntaxClassification.StringLiteral),
+                (Environment.NewLine, SyntaxClassification.Whitespace),
+                ("AND", SyntaxClassification.Keyword),
+                (" ", SyntaxClassification.Whitespace),
+                ("ReportsTo", SyntaxClassification.Identifier),
+                ("<", SyntaxClassification.Punctuation),
+                ("4", SyntaxClassification.NumberLiteral),
             };
 
-            var text = string.Concat(pieces.Select(t => t.Item1));
+            var text = string.Concat(pieces.Select(t => t.Text));
             var syntaxTree = SyntaxTree.ParseQuery(text);
             var classificationSpans = syntaxTree.Root.ClassifySyntax();
 
@@ -50,9 +50,9 @@ namespace NQuery.Authoring.Tests.Classifications
             for (var i = 0; i < pieces.Length; i++)
             {
                 var piece = pieces[i];
-                var pieceText = piece.Item1;
+                var pieceText = piece.Text;
                 var pieceSpan = new TextSpan(position, pieceText.Length);
-                var classification = piece.Item2;
+                var classification = piece.Classification;
 
                 Assert.Equal(pieceSpan, classificationSpans[i].Span);
                 Assert.Equal(classification, classificationSpans[i].Classification);

@@ -24,13 +24,13 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<OutliningRegionSpan>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<OutliningRegionSpan> RawTags)> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var syntaxTree = await document.GetSyntaxTreeAsync();
             var snapshot = document.GetTextSnapshot();
             var result = syntaxTree.Root.FindRegions(_outliningService.Outliners);
-            return Tuple.Create(snapshot, result.AsEnumerable());
+            return (snapshot, result);
         }
 
         protected override ITagSpan<IOutliningRegionTag> CreateTagSpan(ITextSnapshot snapshot, OutliningRegionSpan rawTag)

@@ -26,7 +26,7 @@ namespace NQuery
 
         private QueryReader CreateReader(bool schemaOnly)
         {
-            var columnNamesAndTypes = _query.OutputColumns.Select(c => Tuple.Create(c.Name, c.Type.ToOutputType())).ToImmutableArray();
+            var columnNamesAndTypes = _query.OutputColumns.Select(c => (c.Name, c.Type.ToOutputType())).ToImmutableArray();
             var iterator = IteratorBuilder.Build(_query.Relation);
             return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
         }

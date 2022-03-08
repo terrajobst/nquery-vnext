@@ -24,13 +24,13 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<TextSpan>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<TextSpan> RawTags)> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();
             var snapshot = document.GetTextSnapshot();
             var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
-            return Tuple.Create(snapshot, unnecessarySpans);
+            return (snapshot, unnecessarySpans);
         }
 
         protected override ITagSpan<IClassificationTag> CreateTagSpan(ITextSnapshot snapshot, TextSpan rawTag)

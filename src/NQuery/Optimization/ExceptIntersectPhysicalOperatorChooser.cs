@@ -13,7 +13,7 @@ namespace NQuery.Optimization
             var sortedValues = values.Zip(node.Comparers, (v, c) => new BoundComparedValue(v, c));
             var sortedLeft = new BoundSortRelation(true, left, sortedValues);
 
-            var valueSlots = sortedLeft.GetOutputValues().Zip(right.GetOutputValues(), ValueTuple.Create);
+            var valueSlots = sortedLeft.GetOutputValues().Zip(right.GetOutputValues());
             var condition = CreatePredicate(valueSlots);
 
             var joinOperator = node.IsIntersect

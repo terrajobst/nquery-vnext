@@ -65,8 +65,8 @@ namespace NQuery.Optimization
             edges = new List<JoinEdge>();
             var edgeByNodes = new Dictionary<(JoinNode, JoinNode), JoinEdge>();
 
-            var relationByValueSlot = relations.SelectMany(r => r.GetDefinedValues(), ValueTuple.Create)
-                                               .ToDictionary(t => t.Item2, t => t.Item1);
+            var relationByValueSlot = relations.SelectMany(r => r.GetDefinedValues(), (r, v) => (Relation: r, ValueSlot: v))
+                                               .ToDictionary(t => t.ValueSlot, t => t.Relation);
 
             var dependencyFinder = new ValueSlotDependencyFinder();
 

@@ -27,31 +27,31 @@ namespace NQuery.Authoring.Tests.Classifications
                 AND     LastName.Substring(0, ReportsTo) = '2'
             ";
 
-            var pieces = new[]
+            var pieces = new (string Text, SemanticClassification Classification)[]
                          {
-                             Tuple.Create("Emps", SemanticClassification.CommonTableExpression),
-                             Tuple.Create("e", SemanticClassification.SchemaTable),
-                             Tuple.Create("Employees", SemanticClassification.SchemaTable),
-                             Tuple.Create("e", SemanticClassification.SchemaTable),
-                             Tuple.Create("COUNT", SemanticClassification.Aggregate),
-                             Tuple.Create("SUM", SemanticClassification.Aggregate),
-                             Tuple.Create("d", SemanticClassification.DerivedTable),
-                             Tuple.Create("EmployeeId", SemanticClassification.Column),
-                             Tuple.Create("FirstName", SemanticClassification.Column),
-                             Tuple.Create("LastName", SemanticClassification.Column),
-                             Tuple.Create("FullName", SemanticClassification.Column),
-                             Tuple.Create("Emps", SemanticClassification.CommonTableExpression),
-                             Tuple.Create("d", SemanticClassification.DerivedTable),
-                             Tuple.Create("d", SemanticClassification.DerivedTable),
-                             Tuple.Create("ReportsTo", SemanticClassification.Column),
-                             Tuple.Create("@Manager", SemanticClassification.Variable),
-                             Tuple.Create("LEN", SemanticClassification.Function),
-                             Tuple.Create("LastName", SemanticClassification.Column),
-                             Tuple.Create("LastName", SemanticClassification.Column),
-                             Tuple.Create("Length", SemanticClassification.Property),
-                             Tuple.Create("LastName", SemanticClassification.Column),
-                             Tuple.Create("Substring", SemanticClassification.Method),
-                             Tuple.Create("ReportsTo", SemanticClassification.Column),
+                             ("Emps", SemanticClassification.CommonTableExpression),
+                             ("e", SemanticClassification.SchemaTable),
+                             ("Employees", SemanticClassification.SchemaTable),
+                             ("e", SemanticClassification.SchemaTable),
+                             ("COUNT", SemanticClassification.Aggregate),
+                             ("SUM", SemanticClassification.Aggregate),
+                             ("d", SemanticClassification.DerivedTable),
+                             ("EmployeeId", SemanticClassification.Column),
+                             ("FirstName", SemanticClassification.Column),
+                             ("LastName", SemanticClassification.Column),
+                             ("FullName", SemanticClassification.Column),
+                             ("Emps", SemanticClassification.CommonTableExpression),
+                             ("d", SemanticClassification.DerivedTable),
+                             ("d", SemanticClassification.DerivedTable),
+                             ("ReportsTo", SemanticClassification.Column),
+                             ("@Manager", SemanticClassification.Variable),
+                             ("LEN", SemanticClassification.Function),
+                             ("LastName", SemanticClassification.Column),
+                             ("LastName", SemanticClassification.Column),
+                             ("Length", SemanticClassification.Property),
+                             ("LastName", SemanticClassification.Column),
+                             ("Substring", SemanticClassification.Method),
+                             ("ReportsTo", SemanticClassification.Column),
                          };
 
             var compilation = CompilationFactory.CreateQuery(query);
@@ -67,8 +67,8 @@ namespace NQuery.Authoring.Tests.Classifications
             for (var i = 0; i < pieces.Length; i++)
             {
                 var piece = pieces[i];
-                var pieceText = piece.Item1;
-                var classification = piece.Item2;
+                var pieceText = piece.Text;
+                var classification = piece.Classification;
                 var classificationText = query.Substring(classificationSpans[i].Span);
 
                 Assert.Equal(pieceText, classificationText);

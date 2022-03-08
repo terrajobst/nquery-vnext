@@ -21,8 +21,8 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
         protected async void UpdateTags()
         {
             var versionAndDiagnostics = await GetDiagnosticsAsync();
-            var text = versionAndDiagnostics.Item1;
-            var diagnostics = versionAndDiagnostics.Item2;
+            var text = versionAndDiagnostics.Text;
+            var diagnostics = versionAndDiagnostics.Diagnostics;
 
             using (CreateBatch())
             {
@@ -38,6 +38,6 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             }
         }
 
-        protected abstract Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAsync();
+        protected abstract Task<(SourceText Text, IEnumerable<Diagnostic> Diagnostics)> GetDiagnosticsAsync();
     }
 }

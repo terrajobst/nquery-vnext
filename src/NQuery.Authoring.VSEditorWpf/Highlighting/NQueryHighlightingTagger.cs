@@ -34,7 +34,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<SnapshotSpan> RawTags)> GetRawTagsAsync()
         {
             var documentView = _textView.GetDocumentView();
             var position = documentView.Position;
@@ -45,7 +45,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
             var spans = semanticModel.GetHighlights(position, _highlighters)
                                      .Select(span => new SnapshotSpan(snapshot, span.Start, span.Length));
 
-            return Tuple.Create(snapshot, spans);
+            return (snapshot, spans);
         }
 
         protected override ITagSpan<HighlightTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)

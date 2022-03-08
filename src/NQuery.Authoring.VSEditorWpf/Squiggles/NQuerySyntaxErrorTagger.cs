@@ -20,12 +20,12 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<Diagnostic>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<Diagnostic> RawTags)> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var syntaxTree = await document.GetSyntaxTreeAsync();
             var snapshot = document.GetTextSnapshot();
-            return Tuple.Create(snapshot, syntaxTree.GetDiagnostics());
+            return (snapshot, syntaxTree.GetDiagnostics());
         }
     }
 }

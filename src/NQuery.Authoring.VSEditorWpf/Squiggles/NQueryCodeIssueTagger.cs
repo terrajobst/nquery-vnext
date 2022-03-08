@@ -27,14 +27,14 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<CodeIssue>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<CodeIssue> RawTags)> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();
             var snapshot = document.GetTextSnapshot();
             var providers = _codeIssueProviderService.Providers;
             var issues = await Task.Run(() => semanticModel.GetIssues(providers).Where(IsWarningOrError).ToImmutableArray());
-            return Tuple.Create(snapshot, issues.AsEnumerable());
+            return (snapshot, issues.AsEnumerable());
         }
 
         private static bool IsWarningOrError(CodeIssue issue)
