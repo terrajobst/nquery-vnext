@@ -33,7 +33,7 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<SnapshotSpan>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<SnapshotSpan> RawTags)> GetRawTagsAsync()
         {
             var documentView = _textView.GetDocumentView();
             var position = documentView.Position;
@@ -42,12 +42,12 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching
             var snapshot = document.GetTextSnapshot();
             var result = syntaxTree.MatchBraces(position, _braceMatcherService.Matchers);
             if (!result.IsValid)
-                return Tuple.Create(snapshot, Enumerable.Empty<SnapshotSpan>());
+                return (snapshot, Enumerable.Empty<SnapshotSpan>());
 
             var leftSpan = new SnapshotSpan(snapshot, result.Left.Start, result.Left.Length);
             var rightSpan = new SnapshotSpan(snapshot, result.Right.Start, result.Right.Length);
 
-            return Tuple.Create(snapshot, new[] { leftSpan, rightSpan }.AsEnumerable());
+            return (snapshot, new[] { leftSpan, rightSpan }.AsEnumerable());
         }
 
         protected override ITagSpan<ITextMarkerTag> CreateTagSpan(ITextSnapshot snapshot, SnapshotSpan rawTag)

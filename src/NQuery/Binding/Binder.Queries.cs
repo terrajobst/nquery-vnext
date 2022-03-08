@@ -211,7 +211,7 @@ namespace NQuery.Binding
                                      where bw is not null
                                      from c in bw.TableColumns
                                      where !IsGroupedOrAggregated(c.ValueSlot)
-                                     select Tuple.Create((SyntaxNode)n, c);
+                                     select (Syntax: (SyntaxNode)n, Symbol: c);
 
             var expressionReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
                                        where !n.AncestorsAndSelf().OfType<ExpressionSyntax>().Any(IsGroupedOrAggregated)
@@ -219,18 +219,14 @@ namespace NQuery.Binding
                                        where e is not null
                                        let c = e.Symbol as TableColumnInstanceSymbol
                                        where c is not null
-                                       select Tuple.Create((SyntaxNode)n, c);
+                                       select (Syntax: (SyntaxNode)n, Symbol: c);
 
             var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
-                                          where QueryState.IntroducedTables.ContainsKey(t.Item2.TableInstance)
+                                          where QueryState.IntroducedTables.ContainsKey(t.Symbol.TableInstance)
                                           select t;
 
-            foreach (var invalidColumnReference in invalidColumnReferences)
-            {
-                var symbolSpan = invalidColumnReference.Item1.Span;
-                var symbol = invalidColumnReference.Item2;
-                Diagnostics.Report(symbolSpan, diagnosticId, symbol.Name);
-            }
+            foreach (var (syntax, symbol) in invalidColumnReferences)
+                Diagnostics.Report(syntax.Span, diagnosticId, symbol.Name);
         }
 
         private bool IsGroupedOrAggregated(ExpressionSyntax expressionSyntax)
@@ -1288,8 +1284,8 @@ namespace NQuery.Binding
             // we will use their ordinals.
 
             var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
-            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => Tuple.Create(c.ValueSlot, i))
-                                                                      .GroupBy(t => t.Item1, t => t.Item2)
+            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (c.ValueSlot, Index: i))
+                                                                      .GroupBy(t => t.ValueSlot, t => t.Index)
                                                                       .ToDictionary(g => g.Key, g => g.First());
 
             var selectorBinder = CreateLocalBinder(selectorQueryColumns);

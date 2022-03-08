@@ -13,14 +13,14 @@ namespace NQuery.Authoring.VSEditorWpf
 
         protected async void InvalidateTags()
         {
-            var rawTagsResult = await GetRawTagsAsync();
-            _rawTagsSnapshot = rawTagsResult.Item1;
-            _rawTags = rawTagsResult.Item2.ToImmutableArray();
+            var (snapshot, rawTags) = await GetRawTagsAsync();
+            _rawTagsSnapshot = snapshot;
+            _rawTags = rawTags.ToImmutableArray();
             var snapshotSpan = new SnapshotSpan(_rawTagsSnapshot, 0, _rawTagsSnapshot.Length);
             OnTagsChanged(new SnapshotSpanEventArgs(snapshotSpan));
         }
 
-        protected abstract Task<Tuple<ITextSnapshot, IEnumerable<TRawTag>>> GetRawTagsAsync();
+        protected abstract Task<(ITextSnapshot Snapshot, IEnumerable<TRawTag> RawTags)> GetRawTagsAsync();
         protected abstract ITagSpan<TTag> CreateTagSpan(ITextSnapshot snapshot, TRawTag rawTag);
 
         public IEnumerable<ITagSpan<TTag>> GetTags(NormalizedSnapshotSpanCollection spans)

@@ -24,13 +24,13 @@ namespace NQuery.Authoring.VSEditorWpf.Classification
             InvalidateTags();
         }
 
-        protected override async Task<Tuple<ITextSnapshot, IEnumerable<SyntaxClassificationSpan>>> GetRawTagsAsync()
+        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<SyntaxClassificationSpan> RawTags)> GetRawTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var syntaxTree = await document.GetSyntaxTreeAsync();
             var snapshot = document.GetTextSnapshot();
             var classificationSpans = await Task.Run(() => syntaxTree.Root.ClassifySyntax());
-            return Tuple.Create(snapshot, classificationSpans.AsEnumerable());
+            return (snapshot, classificationSpans);
         }
 
         protected override ITagSpan<IClassificationTag> CreateTagSpan(ITextSnapshot snapshot, SyntaxClassificationSpan rawTag)

@@ -13,12 +13,12 @@ namespace NQuery
         private Iterator _iterator;
         private bool _isBof;
 
-        internal QueryReader(Iterator iterator, ImmutableArray<Tuple<string, Type>> columnNamesAndTypes, bool schemaOnly)
+        internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, bool schemaOnly)
         {
             _iterator = iterator;
             _schemaOnly = schemaOnly;
-            _columnNames = columnNamesAndTypes.Select(t => t.Item1).ToImmutableArray();
-            _columnTypes = columnNamesAndTypes.Select(t => t.Item2).ToImmutableArray();
+            _columnNames = columnNamesAndTypes.Select(t => t.ColumnName).ToImmutableArray();
+            _columnTypes = columnNamesAndTypes.Select(t => t.ColumnType).ToImmutableArray();
 
             if (!_schemaOnly)
                 _iterator.Open();

@@ -506,9 +506,9 @@ namespace NQuery.Binding
             var boundInput = BindExpression(node.InputExpression);
             var boundResults = BindCaseResultExpressions(node);
 
-            var boundCaseLabels = (from t in node.CaseLabels.Select((c, i) => Tuple.Create(c, i))
-                                   let caseLabel = t.Item1
-                                   let i = t.Item2
+            var boundCaseLabels = (from t in node.CaseLabels.Select((c, i) => (CaseLabel: c, Index: i))
+                                   let caseLabel = t.CaseLabel
+                                   let i = t.Index
                                    let boundWhen = BindExpression(caseLabel.WhenExpression)
                                    let boundCondition = BindBinaryExpression(caseLabel.WhenExpression.Span, BinaryOperatorKind.Equal, boundInput, boundWhen)
                                    let boundThen = boundResults[i]

@@ -46,10 +46,10 @@ namespace NQueryViewer
             var uniqueAssemblyPaths = (from p in pathSet
                                        let a = TryGetAssemblyName(p)
                                        where a is not null && !a.Name.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
-                                       let t = Tuple.Create(a.FullName, p)
-                                       group t by t.Item1
+                                       let t = (a.FullName, Path: p)
+                                       group t by t.FullName
                                            into g
-                                           let p = g.First().Item2
+                                           let p = g.First().Path
                                            orderby p
                                            select p).ToImmutableArray();
 

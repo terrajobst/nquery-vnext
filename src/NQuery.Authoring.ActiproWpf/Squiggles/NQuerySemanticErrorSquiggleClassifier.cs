@@ -24,12 +24,12 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             UpdateTags();
         }
 
-        protected override async Task<Tuple<SourceText, IEnumerable<Diagnostic>>> GetDiagnosticsAsync()
+        protected override async Task<(SourceText Text, IEnumerable<Diagnostic> Diagnostics)> GetDiagnosticsAsync()
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();
             var diagnostics = await Task.Run(() => semanticModel.GetDiagnostics());
-            return Tuple.Create(document.Text, diagnostics);
+            return (document.Text, diagnostics);
         }
     }
 }
