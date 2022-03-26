@@ -262,7 +262,7 @@ namespace NQuery.Symbols
             if (chars.Length == 0 || text.Length == 0)
                 return 0;
 
-            return text.IndexOf(chars, StringComparison.CurrentCulture) + 1;
+            return text.IndexOf(chars, StringComparison.InvariantCulture) + 1;
         }
 
         private static string Substring(string text, int start, int length)
@@ -292,12 +292,12 @@ namespace NQuery.Symbols
 
         private static string Upper(string text)
         {
-            return text?.ToUpper(CultureInfo.CurrentCulture);
+            return text?.ToUpper(CultureInfo.InvariantCulture);
         }
 
         private static string Lower(string text)
         {
-            return text?.ToLower(CultureInfo.CurrentCulture);
+            return text?.ToLower(CultureInfo.InvariantCulture);
         }
 
         private static string Trim(string text)
@@ -358,7 +358,7 @@ namespace NQuery.Symbols
         private static string Format(object value, string format)
         {
             var embeddedFormatString = string.Format(CultureInfo.InvariantCulture, @"{{0:{0}}}", format);
-            return string.Format(CultureInfo.CurrentCulture, embeddedFormatString, value);
+            return string.Format(CultureInfo.InvariantCulture, embeddedFormatString, value);
         }
 
         private static string Replicate(string text, int count)
