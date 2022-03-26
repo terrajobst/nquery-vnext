@@ -15,7 +15,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private readonly Workspace _workspace;
 
         public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
-            : base(typeof(NQueryUnnecessaryCodeClassifier).Name, null, document, true)
+            : base(nameof(NQueryUnnecessaryCodeClassifier), null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 

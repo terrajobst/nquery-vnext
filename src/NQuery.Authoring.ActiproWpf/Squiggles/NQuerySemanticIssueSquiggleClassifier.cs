@@ -12,7 +12,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
         private readonly Workspace _workspace;
 
         public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
-            : base(typeof(NQuerySemanticIssueSquiggleClassifier).Name, null, document, true)
+            : base(nameof(NQuerySemanticIssueSquiggleClassifier), null, document, true)
         {
             _workspace = document.GetWorkspace();
             if (_workspace is null)

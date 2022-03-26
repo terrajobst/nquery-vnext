@@ -12,7 +12,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private readonly Workspace _workspace;
 
         public NQuerySemanticClassifier(ICodeDocument document)
-            : base(typeof(NQuerySemanticClassifier).Name, null, document, true)
+            : base(nameof(NQuerySemanticClassifier), null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 

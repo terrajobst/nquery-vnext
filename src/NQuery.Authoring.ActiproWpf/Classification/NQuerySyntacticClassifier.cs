@@ -12,7 +12,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private readonly INQueryClassificationTypes _classificationTypes;
 
         public NQuerySyntacticClassifier(ICodeDocument document)
-            : base(typeof(NQuerySyntacticClassifier).Name, null, document, true)
+            : base(nameof(NQuerySyntacticClassifier), null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
             document.ParseDataChanged += DocumentOnParseDataChanged;
