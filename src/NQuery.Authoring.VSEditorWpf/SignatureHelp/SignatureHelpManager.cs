@@ -121,6 +121,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                 return;
 
             await UpdateModelAsync();
+
+            if (_session is null)
+                return;
+
             _session.Recalculate();
             _session.Match();
         }
