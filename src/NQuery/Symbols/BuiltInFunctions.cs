@@ -549,7 +549,7 @@ namespace NQuery.Symbols
             if (numberOfChars > text.Length)
                 numberOfChars = text.Length;
 
-            return text.Substring(0, numberOfChars);
+            return text[..numberOfChars];
         }
 
         private static string Right(string text, int numberOfChars)
@@ -560,7 +560,7 @@ namespace NQuery.Symbols
             if (numberOfChars > text.Length)
                 numberOfChars = text.Length;
 
-            return text.Substring(text.Length - numberOfChars, numberOfChars);
+            return text[^numberOfChars..];
         }
 
         private static string Space(int numberOfSpaces)
@@ -588,7 +588,7 @@ namespace NQuery.Symbols
 
         private static DateTime GetUtcDate()
         {
-            return DateTime.Now.ToUniversalTime();
+            return DateTime.UtcNow;
         }
 
         private static int GetDay(DateTime dateTime)
