@@ -89,14 +89,14 @@ namespace NQuery.Iterators
             var columnInstances = relation.DefinedValues;
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
-                                               .Select(c => BuildColumnAccess(c.Definition));
+                                               .Select(BuildColumnAccess);
             return new TableIterator(schemaTableSymbol, definedValues);
         }
 
-        private static Func<object, object> BuildColumnAccess(ColumnDefinition definition)
+        private static Func<object, object> BuildColumnAccess(SchemaColumnSymbol column)
         {
             var instance = Expression.Parameter(typeof(object));
-            var body = definition.CreateInvocation(instance);
+            var body = column.CreateInvocation(instance);
             var lambda = Expression.Lambda<Func<object, object>>(body, instance);
             return lambda.Compile();
         }

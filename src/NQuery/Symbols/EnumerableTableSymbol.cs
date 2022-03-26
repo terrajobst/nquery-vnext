@@ -16,7 +16,7 @@ namespace NQuery.Symbols
             _source = source;
             _rowType = rowType;
             Columns = propertyProvider.GetProperties(_rowType)
-                                      .Select(p => (ColumnSymbol)new SchemaColumnSymbol(new PropertyColumnDefinition(_rowType, p)))
+                                      .Select(p => (ColumnSymbol)new PropertyColumnSymbol(_rowType, p))
                                       .ToImmutableArray();
         }
 

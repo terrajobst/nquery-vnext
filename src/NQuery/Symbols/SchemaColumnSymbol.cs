@@ -1,13 +1,14 @@
+using System.Linq.Expressions;
+
 namespace NQuery.Symbols
 {
-    public sealed class SchemaColumnSymbol : ColumnSymbol
+    public abstract class SchemaColumnSymbol : ColumnSymbol
     {
-        public SchemaColumnSymbol(ColumnDefinition columnDefinition)
-            : base(columnDefinition.Name, columnDefinition.DataType)
+        protected SchemaColumnSymbol(string name, Type type)
+            : base(name, type)
         {
-            Definition = columnDefinition;
         }
 
-        public ColumnDefinition Definition { get; }
+        public abstract Expression CreateInvocation(Expression instance);
     }
 }

@@ -2,12 +2,13 @@ using System.Linq.Expressions;
 
 namespace NQuery.Symbols
 {
-    internal sealed class PropertyColumnDefinition : ColumnDefinition
+    internal sealed class PropertyColumnSymbol : SchemaColumnSymbol
     {
         private readonly Type _rowType;
         private readonly PropertySymbol _propertySymbol;
 
-        public PropertyColumnDefinition(Type rowType, PropertySymbol propertySymbol)
+        public PropertyColumnSymbol(Type rowType, PropertySymbol propertySymbol)
+            : base(propertySymbol.Name, propertySymbol.Type)
         {
             _rowType = rowType;
             _propertySymbol = propertySymbol;
@@ -25,16 +26,6 @@ namespace NQuery.Symbols
                     ),
                     typeof(object)
                 );
-        }
-
-        public override string Name
-        {
-            get { return _propertySymbol.Name; }
-        }
-
-        public override Type DataType
-        {
-            get { return _propertySymbol.Type; }
         }
     }
 }

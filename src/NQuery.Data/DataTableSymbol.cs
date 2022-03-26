@@ -16,7 +16,7 @@ namespace NQuery.Data
             ArgumentNullException.ThrowIfNull(dataTable);
 
             _dataTable = dataTable;
-            Columns = _dataTable.Columns.Cast<DataColumn>().Select(c => (ColumnSymbol)new SchemaColumnSymbol(new DataColumnDefinition(c))).ToImmutableArray();
+            Columns = _dataTable.Columns.Cast<DataColumn>().Select(c => (ColumnSymbol)new DataColumnSymbol(c)).ToImmutableArray();
         }
 
         public DataTableSymbol(DataTable dataTable, string name)
