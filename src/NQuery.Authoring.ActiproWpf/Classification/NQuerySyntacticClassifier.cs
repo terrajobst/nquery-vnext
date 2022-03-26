@@ -16,15 +16,15 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
             document.ParseDataChanged += DocumentOnParseDataChanged;
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
         private void DocumentOnParseDataChanged(object sender, ParseDataPropertyChangedEventArgs e)
         {
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
-        private async void UpdateTags()
+        private async void UpdateTagsAsync()
         {
             var document = Document.GetDocument();
             var syntaxTree = await document.GetSyntaxTreeAsync();

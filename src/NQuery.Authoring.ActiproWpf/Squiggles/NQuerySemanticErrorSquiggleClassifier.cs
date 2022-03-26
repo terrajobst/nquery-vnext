@@ -16,12 +16,12 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
         protected override async Task<(SourceText Text, IEnumerable<Diagnostic> Diagnostics)> GetDiagnosticsAsync()

@@ -18,12 +18,12 @@ namespace NQuery.Authoring.VSEditorWpf.Commenting
             _textBufferUndoManager = textBufferUndoManager;
         }
 
-        public async void ToggleSingleLineComment()
+        public async void ToggleSingleLineCommentAsync()
         {
             await ToggleComment(Commenter.ToggleSingleLineComment);
         }
 
-        public async void ToggleMultiLineComment()
+        public async void ToggleMultiLineCommentAsync()
         {
             await ToggleComment(Commenter.ToggleMultiLineComment);
         }

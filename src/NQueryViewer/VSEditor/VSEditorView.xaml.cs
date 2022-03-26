@@ -48,7 +48,7 @@ namespace NQueryViewer.VSEditor
 
             if (modifiers == ModifierKeys.Control && key == Key.W)
             {
-                _selectionProvider.ExtendSelection();
+                _selectionProvider.ExtendSelectionAsync();
                 e.Handled = true;
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.W)

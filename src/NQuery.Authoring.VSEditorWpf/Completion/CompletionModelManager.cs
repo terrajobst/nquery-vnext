@@ -44,15 +44,15 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                    c == ')';
         }
 
-        public void HandleTextInput(string text)
+        public async Task HandleTextInputAsync(string text)
         {
             if (_session is null && text.Any(IsTriggerChar))
             {
-                TriggerCompletion(false);
+                await TriggerCompletionAsync(false);
             }
             else if (_session is not null)
             {
-                UpdateModel();
+                await UpdateModelAsync();
             }
         }
 
@@ -62,21 +62,21 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
                 Commit();
         }
 
-        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+        private async void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
             if (_session is not null)
-                UpdateModel();
+                await UpdateModelAsync();
         }
 
-        public void TriggerCompletion(bool autoComplete)
+        public async Task TriggerCompletionAsync(bool autoComplete)
         {
             if (_session is not null)
                 _session.Dismiss();
             else
-                UpdateModel();
+                await UpdateModelAsync();
         }
 
-        private async void UpdateModel()
+        private async Task UpdateModelAsync()
         {
             var documentView = _textView.GetDocumentView();
             var position = documentView.Position;

@@ -21,15 +21,15 @@ namespace NQuery.Authoring.ActiproWpf.Classification
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
-        private async void UpdateTags()
+        private async void UpdateTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();

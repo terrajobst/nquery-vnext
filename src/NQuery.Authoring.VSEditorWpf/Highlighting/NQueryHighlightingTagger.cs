@@ -21,17 +21,17 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting
             _textView = textView;
             _highlighters = highlighters;
             _textView.Caret.PositionChanged += CaretOnPositionChanged;
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
         {
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         protected override async Task<(ITextSnapshot Snapshot, IEnumerable<SnapshotSpan> RawTags)> GetRawTagsAsync()

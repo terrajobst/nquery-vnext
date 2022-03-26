@@ -71,20 +71,20 @@ namespace NQuery.Authoring.ActiproWpf.Margins
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
         private void ViewOnSelectionChanged(object sender, EditorViewSelectionEventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
         private void ViewOnTextAreaLayout(object sender, TextViewTextAreaLayoutEventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
-        private async void UpdateGlyph()
+        private async void UpdateGlyphAsync()
         {
             var snapshot = _view.SyntaxEditor.GetDocumentView();
             var document = snapshot.Document;

@@ -2,7 +2,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
 {
     public interface INQuerySelectionProvider
     {
-        void ExtendSelection();
+        Task ExtendSelectionAsync();
         void ShrinkSelection();
     }
 }

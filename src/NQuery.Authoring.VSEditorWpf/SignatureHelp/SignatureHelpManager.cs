@@ -43,12 +43,12 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 
         private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
         {
-            UpdateSession();
+            UpdateSessionAsync();
         }
 
         private void TextBufferOnPostChanged(object sender, EventArgs e)
         {
-            UpdateSession();
+            UpdateSessionAsync();
         }
 
         private static bool IsTriggerChar(char c)
@@ -57,17 +57,17 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
                    c == ',';
         }
 
-        public void HandleTextInput(string text)
+        public async Task HandleTextInputAsync(string text)
         {
             if (_session is null && text.Any(IsTriggerChar))
-                TriggerSignatureHelp();
+                await TriggerSignatureHelpAsync();
         }
 
         public void HandlePreviewTextInput(string text)
         {
         }
 
-        public void TriggerSignatureHelp()
+        public async Task TriggerSignatureHelpAsync()
         {
             if (_session is not null)
             {
@@ -75,7 +75,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             }
             else
             {
-                UpdateModel();
+                await UpdateModelAsync();
             }
         }
 
@@ -90,7 +90,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             return selectedIndex;
         }
 
-        private async void UpdateModel()
+        private async Task UpdateModelAsync()
         {
             var selectedIndex = GetSelectedItemIndex();
             var documentView = _textView.GetDocumentView();
@@ -115,12 +115,12 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
             Model = model;
         }
 
-        private void UpdateSession()
+        private async void UpdateSessionAsync()
         {
             if (_session is null)
                 return;
 
-            UpdateModel();
+            await UpdateModelAsync();
             _session.Recalculate();
             _session.Match();
         }

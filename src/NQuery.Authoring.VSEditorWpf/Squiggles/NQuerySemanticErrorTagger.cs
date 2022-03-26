@@ -12,12 +12,12 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles
         {
             _workspace = workspace;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         protected override async Task<(ITextSnapshot Snapshot, IEnumerable<Diagnostic> RawTags)> GetRawTagsAsync()

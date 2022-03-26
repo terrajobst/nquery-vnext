@@ -26,7 +26,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
             _quickInfoModelProviderService = quickInfoModelProviderService;
         }
 
-        public async void TriggerQuickInfo(int offset)
+        public async Task TriggerQuickInfoAsync(int offset)
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();

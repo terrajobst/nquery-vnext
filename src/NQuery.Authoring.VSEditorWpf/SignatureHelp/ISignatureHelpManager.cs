@@ -4,9 +4,9 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
 {
     public interface ISignatureHelpManager
     {
-        void HandleTextInput(string text);
+        Task HandleTextInputAsync(string text);
         void HandlePreviewTextInput(string text);
-        void TriggerSignatureHelp();
+        Task TriggerSignatureHelpAsync();
 
         SignatureHelpModel Model { get; }
         event EventHandler<EventArgs> ModelChanged;

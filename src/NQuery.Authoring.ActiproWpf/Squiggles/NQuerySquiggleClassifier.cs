@@ -18,7 +18,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles
             _classificationType = classificationType;
         }
 
-        protected async void UpdateTags()
+        protected async void UpdateTagsAsync()
         {
             var versionAndDiagnostics = await GetDiagnosticsAsync();
             var text = versionAndDiagnostics.Text;
