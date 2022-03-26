@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Text;
 
 namespace NQuery
 {
@@ -13,12 +12,7 @@ namespace NQuery
 
         private static string FormatMessage(IEnumerable<Diagnostic> diagnostics)
         {
-            var sb = new StringBuilder();
-
-            foreach (var diagnostic in diagnostics)
-                sb.AppendLine(diagnostic.Message);
-
-            return sb.ToString();
+            return string.Join(Environment.NewLine, diagnostics.Select(d => d.Message));
         }
 
         public ImmutableArray<Diagnostic> Diagnostics { get; }
