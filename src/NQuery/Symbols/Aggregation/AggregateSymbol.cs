@@ -1,14 +1,11 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class AggregateSymbol : Symbol
+    public abstract class AggregateSymbol : Symbol
     {
-        public AggregateSymbol(AggregateDefinition definition)
-            : base(definition.Name)
+        protected AggregateSymbol(string name)
+            : base(name)
         {
-            Definition = definition;
         }
-
-        public AggregateDefinition Definition { get; }
 
         public override SymbolKind Kind
         {
@@ -19,5 +16,7 @@ namespace NQuery.Symbols.Aggregation
         {
             get { return TypeFacts.Missing; }
         }
+
+        public abstract IAggregatable CreateAggregatable(Type argumentType);
     }
 }

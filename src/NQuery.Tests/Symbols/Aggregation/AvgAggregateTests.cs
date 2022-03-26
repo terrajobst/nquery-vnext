@@ -11,9 +11,9 @@ namespace NQuery.Tests.Symbols.Aggregation
             AssertProduces(null, typeof(int), values);
         }
 
-        protected override AggregateDefinition CreateAggregateDefinition()
+        protected override AggregateSymbol CreateAggregateSymbol()
         {
-            return new AvgAggregateDefinition();
+            return new AvgAggregateSymbol();
         }
     }
 }

@@ -6,7 +6,7 @@ namespace NQuery.Tests.Symbols.Aggregation
     {
         internal void AssertProduces(object expected, Type argumentType, object[] values)
         {
-            var aggregator = CreateAggregateDefinition().CreateAggregatable(argumentType).CreateAggregator();
+            var aggregator = CreateAggregateSymbol().CreateAggregatable(argumentType).CreateAggregator();
             aggregator.Initialize();
 
             foreach (var value in values)
@@ -16,6 +16,6 @@ namespace NQuery.Tests.Symbols.Aggregation
             Assert.Equal(expected, actual);
         }
 
-        protected abstract AggregateDefinition CreateAggregateDefinition();
+        protected abstract AggregateSymbol CreateAggregateSymbol();
     }
 }

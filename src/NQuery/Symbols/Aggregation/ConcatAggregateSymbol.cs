@@ -2,11 +2,11 @@ using System.Text;
 
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class ConcatAggregateDefinition : AggregateDefinition
+    public sealed class ConcatAggregateSymbol : AggregateSymbol
     {
-        public override string Name
+        public ConcatAggregateSymbol()
+            : base(@"CONCAT")
         {
-            get { return @"CONCAT"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

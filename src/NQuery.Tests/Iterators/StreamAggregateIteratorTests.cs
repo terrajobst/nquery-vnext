@@ -78,8 +78,8 @@ namespace NQuery.Tests.Iterators
             var comparers = ImmutableArray<IComparer>.Empty;
             var aggregators = new[]
             {
-                new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-                new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
+                new MaxAggregateSymbol().CreateAggregatable(typeof(int)).CreateAggregator(),
+                new MinAggregateSymbol().CreateAggregatable(typeof(int)).CreateAggregator()
             };
 
             var function = new IteratorFunction(() => input.RowBuffer[0]);
@@ -114,8 +114,8 @@ namespace NQuery.Tests.Iterators
             var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
             var aggregators = new[]
             {
-                new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-                new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator()
+                new MaxAggregateSymbol().CreateAggregatable(typeof(int)).CreateAggregator(),
+                new MinAggregateSymbol().CreateAggregatable(typeof(int)).CreateAggregator()
             };
 
             var function = new IteratorFunction(() => input.RowBuffer[1]);

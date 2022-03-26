@@ -1,17 +1,13 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public abstract class MinMaxAggregateDefinition : AggregateDefinition
+    public abstract class MinMaxAggregateSymbol : AggregateSymbol
     {
         private readonly bool _isMin;
 
-        protected MinMaxAggregateDefinition(bool isMin)
+        protected MinMaxAggregateSymbol(bool isMin)
+            : base(isMin ? @"MIN" : @"MAX")
         {
             _isMin = isMin;
-        }
-
-        public override string Name
-        {
-            get { return _isMin ? @"MIN" : @"MAX"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)
