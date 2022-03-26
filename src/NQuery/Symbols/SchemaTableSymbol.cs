@@ -1,35 +1,48 @@
-using System.Collections.Immutable;
+using System.Collections;
+
+using NQuery.Hosting;
 
 namespace NQuery.Symbols
 {
-    public sealed class SchemaTableSymbol : TableSymbol
+    public abstract class SchemaTableSymbol : TableSymbol
     {
-        public SchemaTableSymbol(TableDefinition tableDefinition)
-            : base(GetName(tableDefinition))
+        protected SchemaTableSymbol(string name)
+            : base(name)
         {
-            Definition = tableDefinition;
-            Columns = tableDefinition.Columns.Select(c => (ColumnSymbol)new SchemaColumnSymbol(c)).ToImmutableArray();
         }
-
-        private static string GetName(TableDefinition tableDefinition)
-        {
-            ArgumentNullException.ThrowIfNull(tableDefinition);
-
-            return tableDefinition.Name;
-        }
-
-        public TableDefinition Definition { get; }
 
         public override SymbolKind Kind
         {
             get { return SymbolKind.SchemaTable; }
         }
 
-        public override Type Type
+        public abstract IEnumerable GetRows();
+
+        public static SchemaTableSymbol Create<T>(string name, IEnumerable<T> source)
         {
-            get { return Definition.RowType; }
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+
+            return Create(name, source, new ReflectionProvider());
         }
 
-        public override ImmutableArray<ColumnSymbol> Columns { get; }
+        public static SchemaTableSymbol Create<T>(string name, IEnumerable<T> source, IPropertyProvider propertyProvider)
+        {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(propertyProvider);
+
+            return Create(name, source, typeof(T), propertyProvider);
+        }
+
+        public static SchemaTableSymbol Create(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
+        {
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(rowType);
+            ArgumentNullException.ThrowIfNull(propertyProvider);
+
+            return new EnumerableTableSymbol(name, source, rowType, propertyProvider);
+        }
     }
 }

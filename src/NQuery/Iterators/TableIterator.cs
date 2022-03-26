@@ -7,13 +7,13 @@ namespace NQuery.Iterators
 {
     internal sealed class TableIterator : Iterator
     {
-        private readonly TableDefinition _table;
+        private readonly SchemaTableSymbol _table;
         private readonly ImmutableArray<Func<object, object>> _definedValues;
         private readonly ArrayRowBuffer _rowBuffer;
 
         private IEnumerator _rows;
 
-        public TableIterator(TableDefinition table, IEnumerable<Func<object, object>> valueSelectors)
+        public TableIterator(SchemaTableSymbol table, IEnumerable<Func<object, object>> valueSelectors)
         {
             _table = table;
             _definedValues = valueSelectors.ToImmutableArray();

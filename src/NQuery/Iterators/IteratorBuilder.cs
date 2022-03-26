@@ -86,12 +86,11 @@ namespace NQuery.Iterators
         private static Iterator BuildTable(BoundTableRelation relation)
         {
             var schemaTableSymbol = (SchemaTableSymbol)relation.TableInstance.Table;
-            var tableDefinition = schemaTableSymbol.Definition;
             var columnInstances = relation.DefinedValues;
             var definedValues = columnInstances.Select(ci => ci.Column)
                                                .Cast<SchemaColumnSymbol>()
                                                .Select(c => BuildColumnAccess(c.Definition));
-            return new TableIterator(tableDefinition, definedValues);
+            return new TableIterator(schemaTableSymbol, definedValues);
         }
 
         private static Func<object, object> BuildColumnAccess(ColumnDefinition definition)

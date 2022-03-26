@@ -57,7 +57,7 @@ namespace NQuery.Optimization
             if (relation.TableInstance.Table is not SchemaTableSymbol tableSymbol)
                 return CardinalityEstimate.Unknown;
 
-            if (tableSymbol.Definition.GetRows() is not ICollection collection)
+            if (tableSymbol.GetRows() is not ICollection collection)
                 return CardinalityEstimate.Unknown;
 
             return new CardinalityEstimate(0, collection.Count);

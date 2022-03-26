@@ -2,7 +2,7 @@
 
 namespace NQuery.Tests.Symbols
 {
-    public class EnumerableTableDefinitionTests
+    public sealed class EnumerableTableDefinitionTests
     {
         private sealed class PropertyTableRow
         {
@@ -40,30 +40,30 @@ namespace NQuery.Tests.Symbols
         public void EnumerableTableDefinition_ReturnsPublicNonStaticProperties()
         {
             var rows = Enumerable.Empty<PropertyTableRow>();
-            var table = TableDefinition.Create("Table", rows);
+            var table = SchemaTableSymbol.Create("Table", rows);
 
             Assert.Equal(2, table.Columns.Length);
 
             Assert.Equal("Id", table.Columns[0].Name);
-            Assert.Equal(typeof(int), table.Columns[0].DataType);
+            Assert.Equal(typeof(int), table.Columns[0].Type);
 
             Assert.Equal("Name", table.Columns[1].Name);
-            Assert.Equal(typeof(string), table.Columns[1].DataType);
+            Assert.Equal(typeof(string), table.Columns[1].Type);
         }
 
         [Fact]
         public void EnumerableTableDefinition_ReturnsPublicNonStaticFields()
         {
             var rows = Enumerable.Empty<FieldTableRow>();
-            var table = TableDefinition.Create("Table", rows);
+            var table = SchemaTableSymbol.Create("Table", rows);
 
             Assert.Equal(2, table.Columns.Length);
 
             Assert.Equal("Id", table.Columns[0].Name);
-            Assert.Equal(typeof(int), table.Columns[0].DataType);
+            Assert.Equal(typeof(int), table.Columns[0].Type);
 
             Assert.Equal("Name", table.Columns[1].Name);
-            Assert.Equal(typeof(string), table.Columns[1].DataType);
+            Assert.Equal(typeof(string), table.Columns[1].Type);
         }
 
         [Fact]
@@ -75,9 +75,8 @@ namespace NQuery.Tests.Symbols
                 new PropertyTableRow(1, "Nancy")
             };
 
-            var table = TableDefinition.Create("Table", rows);
-            var symbol = new SchemaTableSymbol(table);
-            var dataContext = DataContext.Empty.AddTables(symbol);
+            var table = SchemaTableSymbol.Create("Table", rows);
+            var dataContext = DataContext.Empty.AddTables(table);
             var query = Query.Create(dataContext, $"SELECT * FROM {table.Name}");
 
             using var reader = query.ExecuteReader();
