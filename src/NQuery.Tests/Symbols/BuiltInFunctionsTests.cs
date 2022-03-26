@@ -1,8 +1,6 @@
-using System.Globalization;
-
 namespace NQuery.Tests.Symbols
 {
-    public class BuiltInFunctionsTests : BuiltInSymbolsTests
+    public sealed class BuiltInFunctionsTests : BuiltInSymbolsTests
     {
         private static void AssertEvaluatesToDouble(string text, double expectedValue)
         {
@@ -123,20 +121,8 @@ namespace NQuery.Tests.Symbols
         [Fact]
         public void BuiltInFunctions_Format()
         {
-            var oldCulture = Thread.CurrentThread.CurrentCulture;
-
-            try
-            {
-                var newCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
-                newCulture.NumberFormat.PercentSymbol = "#";
-
-                Thread.CurrentThread.CurrentCulture = newCulture;
-                AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 #");
-            }
-            finally
-            {
-                Thread.CurrentThread.CurrentCulture = oldCulture;
-            }
+            AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 %");
+            AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", "12\u066b30\u066a\u061c");
         }
 
         [Fact]
@@ -187,6 +173,8 @@ namespace NQuery.Tests.Symbols
         public void BuiltInFunctions_Lower()
         {
             AssertEvaluatesTo("LOWER('Hello')", "hello");
+            AssertEvaluatesTo("LOWER('\u0130')", "\u0130");
+            AssertEvaluatesTo("LOWER('\u0130', 'tr-TR')", "i");
         }
 
         [Fact]
@@ -402,6 +390,9 @@ namespace NQuery.Tests.Symbols
 
             AssertEvaluatesTo("TO_BOOLEAN('true')", true);
             AssertEvaluatesTo("TO_BOOLEAN('false')", false);
+
+            AssertEvaluatesTo("TO_BOOLEAN('true', 'de-DE')", true);
+            AssertEvaluatesTo("TO_BOOLEAN('false', 'de-DE')", false);
         }
 
         [Fact]
@@ -409,6 +400,9 @@ namespace NQuery.Tests.Symbols
         {
             AssertEvaluatesTo("TO_BYTE(0)", (byte)0);
             AssertEvaluatesTo("TO_BYTE(255)", (byte)255);
+
+            AssertEvaluatesTo("TO_BYTE('0', 'de-DE')", (byte)0);
+            AssertEvaluatesTo("TO_BYTE('255', 'de-DE')", (byte)255);
         }
 
         [Fact]
@@ -416,12 +410,16 @@ namespace NQuery.Tests.Symbols
         {
             AssertEvaluatesTo("TO_CHAR(32)", ' ');
             AssertEvaluatesTo("TO_CHAR(' ')", ' ');
+
+            AssertEvaluatesTo("TO_CHAR('ß', 'de-DE')", 'ß');
         }
 
         [Fact]
         public void BuiltInFunctions_ToDateTime()
         {
             AssertEvaluatesTo("TO_DATETIME('2015-12-31')", new DateTime(2015, 12, 31));
+            AssertEvaluatesTo("TO_DATETIME('01/02/2015', 'en-US')", new DateTime(2015, 1, 2));
+            AssertEvaluatesTo("TO_DATETIME('01/02/2015', 'en-AU')", new DateTime(2015, 2, 1));
         }
 
         [Fact]
@@ -434,6 +432,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_DECIMAL('-123.456')", -123.456m);
             AssertEvaluatesTo("TO_DECIMAL('0')", 0m);
             AssertEvaluatesTo("TO_DECIMAL('123.456')", 123.456m);
+
+            AssertEvaluatesTo("TO_DECIMAL('-123,456', 'de-DE')", -123.456m);
+            AssertEvaluatesTo("TO_DECIMAL('0,0', 'de-DE')", 0m);
+            AssertEvaluatesTo("TO_DECIMAL('123,456', 'de-DE')", 123.456m);
         }
 
         [Fact]
@@ -446,6 +448,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_DOUBLE('0')", 0d);
             AssertEvaluatesTo("TO_DOUBLE('123e4')", 123e4d);
             AssertEvaluatesTo("TO_DOUBLE('123e-4')", 123e-4d);
+
+            AssertEvaluatesTo("TO_DOUBLE('-123,456', 'de-DE')", -123.456d);
+            AssertEvaluatesTo("TO_DOUBLE('0,0', 'de-DE')", 0d);
+            AssertEvaluatesTo("TO_DOUBLE('123,456', 'de-DE')", 123.456d);
         }
 
         [Fact]
@@ -458,6 +464,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_INT16('-32000')", (short)-32000);
             AssertEvaluatesTo("TO_INT16('0')", (short)0);
             AssertEvaluatesTo("TO_INT16('32000')", (short)32000);
+
+            AssertEvaluatesTo("TO_INT16('-32000', 'de-DE')", (short)-32000);
+            AssertEvaluatesTo("TO_INT16('0', 'de-DE')", (short)0);
+            AssertEvaluatesTo("TO_INT16('32000', 'de-DE')", (short)32000);
         }
 
         [Fact]
@@ -470,6 +480,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_INT32('-123456789')", -123456789);
             AssertEvaluatesTo("TO_INT32('0')", 0);
             AssertEvaluatesTo("TO_INT32('123456789')", 123456789);
+
+            AssertEvaluatesTo("TO_INT32('-123456789', 'de-DE')", -123456789);
+            AssertEvaluatesTo("TO_INT32('0', 'de-DE')", 0);
+            AssertEvaluatesTo("TO_INT32('123456789', 'de-DE')", 123456789);
         }
 
         [Fact]
@@ -482,6 +496,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_INT64('-12345678912')", -12345678912);
             AssertEvaluatesTo("TO_INT64('0')", (long)0);
             AssertEvaluatesTo("TO_INT64('12345678912')", 12345678912);
+
+            AssertEvaluatesTo("TO_INT64('-12345678912', 'de-DE')", -12345678912);
+            AssertEvaluatesTo("TO_INT64('0', 'de-DE')", (long)0);
+            AssertEvaluatesTo("TO_INT64('12345678912', 'de-DE')", 12345678912);
         }
 
         [Fact]
@@ -494,6 +512,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_SBYTE('-127')", (sbyte)-127);
             AssertEvaluatesTo("TO_SBYTE('0')", (sbyte)0);
             AssertEvaluatesTo("TO_SBYTE('127')", (sbyte)127);
+
+            AssertEvaluatesTo("TO_SBYTE('-127', 'de-DE')", (sbyte)-127);
+            AssertEvaluatesTo("TO_SBYTE('0', 'de-DE')", (sbyte)0);
+            AssertEvaluatesTo("TO_SBYTE('127', 'de-DE')", (sbyte)127);
         }
 
         [Fact]
@@ -506,6 +528,10 @@ namespace NQuery.Tests.Symbols
             AssertEvaluatesTo("TO_SINGLE('0')", 0f);
             AssertEvaluatesTo("TO_SINGLE('123e4')", 123e4f);
             AssertEvaluatesTo("TO_SINGLE('123e-4')", 123e-4f);
+
+            AssertEvaluatesTo("TO_SINGLE('-123,456', 'de-DE')", -123.456f);
+            AssertEvaluatesTo("TO_SINGLE('0,0', 'de-DE')", 0f);
+            AssertEvaluatesTo("TO_SINGLE('123,456', 'de-DE')", 123.456f);
         }
 
         [Fact]
@@ -516,6 +542,9 @@ namespace NQuery.Tests.Symbols
 
             AssertEvaluatesTo("TO_STRING(FALSE)", "False");
             AssertEvaluatesTo("TO_STRING(TRUE)", "True");
+
+            AssertEvaluatesTo("TO_STRING(5.1)", "5.1");
+            AssertEvaluatesTo("TO_STRING(5.1, 'de-DE')", "5,1");
         }
 
         [Fact]
@@ -526,6 +555,9 @@ namespace NQuery.Tests.Symbols
 
             AssertEvaluatesTo("TO_UINT16('0')", (ushort)0);
             AssertEvaluatesTo("TO_UINT16('65000')", (ushort)65000);
+
+            AssertEvaluatesTo("TO_UINT16('0', 'de-DE')", (ushort)0);
+            AssertEvaluatesTo("TO_UINT16('65000', 'de-DE')", (ushort)65000);
         }
 
         [Fact]
@@ -536,6 +568,9 @@ namespace NQuery.Tests.Symbols
 
             AssertEvaluatesTo("TO_UINT32('0')", (uint)0);
             AssertEvaluatesTo("TO_UINT32('4123456789')", 4123456789);
+
+            AssertEvaluatesTo("TO_UINT32('0', 'de-DE')", (uint)0);
+            AssertEvaluatesTo("TO_UINT32('4123456789', 'de-DE')", 4123456789);
         }
 
         [Fact]
@@ -546,6 +581,9 @@ namespace NQuery.Tests.Symbols
 
             AssertEvaluatesTo("TO_UINT64('0')", (ulong)0);
             AssertEvaluatesTo("TO_UINT64('9999999999123456789')", 9999999999123456789);
+
+            AssertEvaluatesTo("TO_UINT64('0', 'de-DE')", (ulong)0);
+            AssertEvaluatesTo("TO_UINT64('9999999999123456789', 'de-DE')", 9999999999123456789);
         }
 
         [Fact]
@@ -558,6 +596,8 @@ namespace NQuery.Tests.Symbols
         public void BuiltInFunctions_Upper()
         {
             AssertEvaluatesTo("UPPER('Hello')", "HELLO");
+            AssertEvaluatesTo("UPPER('i')", "I");
+            AssertEvaluatesTo("UPPER('i', 'tr-TR')", "\u0130");
         }
 
         [Fact]
