@@ -96,10 +96,10 @@ namespace NQuery.Optimization
             var countOutput = factory.CreateTemporary(typeof(int));
 
             var anyAggregateSymbol = BuiltInAggregates.Any;
-            var anyAggregatable = anyAggregateSymbol.Definition.CreateAggregatable(valueSlot.Type);
+            var anyAggregatable = anyAggregateSymbol.CreateAggregatable(valueSlot.Type);
 
             var countAggregatedSymbol = BuiltInAggregates.Count;
-            var countAggregatable = countAggregatedSymbol.Definition.CreateAggregatable(typeof(int));
+            var countAggregatable = countAggregatedSymbol.CreateAggregatable(typeof(int));
 
             var aggregates = new[]
             {

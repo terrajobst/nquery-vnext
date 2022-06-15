@@ -2,18 +2,14 @@ using System.Globalization;
 
 namespace NQuery.Symbols.Aggregation
 {
-    public abstract class VarAndStdDevAggregateDefinition : AggregateDefinition
+    public abstract class VarAndStdDevAggregateSymbol : AggregateSymbol
     {
         private readonly bool _isVar;
 
-        protected VarAndStdDevAggregateDefinition(bool isVar)
+        protected VarAndStdDevAggregateSymbol(bool isVar)
+            : base(isVar ? @"VAR" : @"STDEV")
         {
             _isVar = isVar;
-        }
-
-        public override string Name
-        {
-            get { return _isVar ? @"VAR" : @"STDEV"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

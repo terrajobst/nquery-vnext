@@ -1,10 +1,10 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class SumAggregateDefinition : AggregateDefinition
+    public sealed class SumAggregateSymbol : AggregateSymbol
     {
-        public override string Name
+        public SumAggregateSymbol()
+            : base(@"SUM")
         {
-            get { return @"SUM"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

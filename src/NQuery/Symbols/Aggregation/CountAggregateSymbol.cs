@@ -1,10 +1,10 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class CountAggregateDefinition : AggregateDefinition
+    public sealed class CountAggregateSymbol : AggregateSymbol
     {
-        public override string Name
+        public CountAggregateSymbol()
+            : base(@"COUNT")
         {
-            get { return @"COUNT"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

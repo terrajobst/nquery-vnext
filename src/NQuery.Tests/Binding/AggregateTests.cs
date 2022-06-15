@@ -6,16 +6,14 @@ using NQuery.Syntax;
 
 namespace NQuery.Tests.Binding
 {
-    public class AggregateTests
+    public sealed class AggregateTests
     {
-        private sealed class FakeAggregateDefinition : AggregateDefinition
+        private sealed class FakeAggregateSymbol : AggregateSymbol
         {
-            public FakeAggregateDefinition(string name)
+            public FakeAggregateSymbol(string name)
+                : base(name)
             {
-                Name = name;
             }
-
-            public override string Name { get; }
 
             public override IAggregatable CreateAggregatable(Type argumentType)
             {
@@ -35,8 +33,7 @@ namespace NQuery.Tests.Binding
 
         private static AggregateSymbol CreateAggregate(string name)
         {
-            var definition = new FakeAggregateDefinition(name);
-            return new AggregateSymbol(definition);
+            return new FakeAggregateSymbol(name);
         }
 
         [Fact]

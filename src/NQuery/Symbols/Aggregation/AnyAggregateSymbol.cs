@@ -1,10 +1,10 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class AnyAggregateDefinition : AggregateDefinition
+    public sealed class AnyAggregateSymbol : AggregateSymbol
     {
-        public override string Name
+        public AnyAggregateSymbol()
+            : base(@"ANY")
         {
-            get { return @"ANY"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)

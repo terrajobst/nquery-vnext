@@ -1,20 +1,20 @@
 namespace NQuery.Symbols.Aggregation
 {
-    public sealed class AvgAggregateDefinition : AggregateDefinition
+    public sealed class AvgAggregateSymbol : AggregateSymbol
     {
-        public override string Name
+        public AvgAggregateSymbol()
+            : base(@"AVG")
         {
-            get { return @"AVG"; }
         }
 
         public override IAggregatable CreateAggregatable(Type argumentType)
         {
-            var sumAggregate = new SumAggregateDefinition();
+            var sumAggregate = new SumAggregateSymbol();
             var sumAggregatable = sumAggregate.CreateAggregatable(argumentType);
             if (sumAggregatable is null)
                 return null;
 
-            var countAggregate = new CountAggregateDefinition();
+            var countAggregate = new CountAggregateSymbol();
             var countAggregatable = countAggregate.CreateAggregatable(argumentType);
             if (countAggregatable is null)
                 return null;

@@ -878,7 +878,7 @@ namespace NQuery.Binding
         {
             var aggregatable = boundArgument.Type.IsError()
                 ? null
-                : aggregate.Definition.CreateAggregatable(boundArgument.Type);
+                : aggregate.CreateAggregatable(boundArgument.Type);
 
             if (!boundArgument.Type.IsError() && aggregatable is null)
                 Diagnostics.ReportAggregateDoesNotSupportType(errorSpan, aggregate, boundArgument.Type);

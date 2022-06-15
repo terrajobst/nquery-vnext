@@ -7,17 +7,17 @@ namespace NQuery.Symbols.Aggregation
             return new[]
             {
                 Count,
-                new AggregateSymbol(new AvgAggregateDefinition()),
-                new AggregateSymbol(new MaxAggregateDefinition()),
-                new AggregateSymbol(new MinAggregateDefinition()),
-                new AggregateSymbol(new SumAggregateDefinition()),
-                new AggregateSymbol(new StdDevAggregateDefinition()),
-                new AggregateSymbol(new VarAggregateDefinition()),
-                new AggregateSymbol(new ConcatAggregateDefinition())
+                new AvgAggregateSymbol(),
+                new MaxAggregateSymbol(),
+                new MinAggregateSymbol(),
+                new SumAggregateSymbol(),
+                new StdDevAggregateSymbol(),
+                new VarAggregateSymbol(),
+                new ConcatAggregateSymbol()
             };
         }
 
-        public static readonly AggregateSymbol Count = new(new CountAggregateDefinition());
-        public static readonly AggregateSymbol Any = new(new AnyAggregateDefinition());
+        public static readonly AggregateSymbol Count = new CountAggregateSymbol();
+        public static readonly AggregateSymbol Any = new AnyAggregateSymbol();
     }
 }
