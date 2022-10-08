@@ -23,7 +23,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection
             _textView.Selection.SelectionChanged += SelectionOnSelectionChanged;
         }
 
-        public async void ExtendSelection()
+        public async Task ExtendSelectionAsync()
         {
             var documentView = _textView.GetDocumentView();
             var document = documentView.Document;

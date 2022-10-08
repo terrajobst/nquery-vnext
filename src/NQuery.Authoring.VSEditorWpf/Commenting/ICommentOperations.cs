@@ -2,7 +2,7 @@
 {
     public interface ICommentOperations
     {
-        void ToggleSingleLineComment();
-        void ToggleMultiLineComment();
+        void ToggleSingleLineCommentAsync();
+        void ToggleMultiLineCommentAsync();
     }
 }

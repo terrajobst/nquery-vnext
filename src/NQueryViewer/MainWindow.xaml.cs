@@ -57,7 +57,7 @@ namespace NQueryViewer
             }
 
             NewEditor();
-            UpdateTree();
+            UpdateTreeAsync();
         }
 
         private void NewEditor()
@@ -105,7 +105,7 @@ namespace NQueryViewer
             DocumentTabControl.Items.RemoveAt(DocumentTabControl.SelectedIndex);
         }
 
-        private async void ExecuteQuery()
+        private async void ExecuteQueryAsync()
         {
             var editorView = CurrentEditorView;
             if (editorView is null)
@@ -183,9 +183,9 @@ namespace NQueryViewer
 
         private void UpdateDocumentState()
         {
-            UpdateTree();
-            UpdateDiagnostics();
-            UpdateShowPlan();
+            UpdateTreeAsync();
+            UpdateDiagnosticsAsync();
+            UpdateShowPlanAsync();
             UpdateDocumentKind();
         }
 
@@ -196,7 +196,7 @@ namespace NQueryViewer
             QueryModeExpressionMenuItem.IsChecked = currentKind == DocumentKind.Expression;
         }
 
-        private async void UpdateTree()
+        private async void UpdateTreeAsync()
         {
             var isVisible = ToolsViewSyntaxMenuItem.IsChecked;
 
@@ -238,7 +238,7 @@ namespace NQueryViewer
                 CurrentEditorView.Selection = span.Value;
         }
 
-        private async void UpdateDiagnostics()
+        private async void UpdateDiagnosticsAsync()
         {
             if (CurrentEditorView is null)
             {
@@ -263,7 +263,7 @@ namespace NQueryViewer
             }
         }
 
-        private async void UpdateShowPlan()
+        private async void UpdateShowPlanAsync()
         {
             if (CurrentEditorView is null)
             {
@@ -295,7 +295,7 @@ namespace NQueryViewer
             }
             else if (e.Key == Key.F5 && e.KeyboardDevice.Modifiers == ModifierKeys.None)
             {
-                ExecuteQuery();
+                ExecuteQueryAsync();
                 e.Handled = true;
             }
             else if (e.Key == Key.L && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
@@ -314,7 +314,7 @@ namespace NQueryViewer
 
         private void QueryExecuteMenuItem_OnClick(object sender, RoutedEventArgs e)
         {
-            ExecuteQuery();
+            ExecuteQueryAsync();
         }
 
         private void QueryExplainMenuItem_OnClick(object sender, RoutedEventArgs e)
@@ -336,7 +336,7 @@ namespace NQueryViewer
         {
             ToolsViewSyntaxMenuItem.IsChecked = !ToolsViewSyntaxMenuItem.IsChecked;
 
-            UpdateTree();
+            UpdateTreeAsync();
         }
 
         private async void ToolsGenerateParserTestMenuItem_OnClick(object sender, RoutedEventArgs e)

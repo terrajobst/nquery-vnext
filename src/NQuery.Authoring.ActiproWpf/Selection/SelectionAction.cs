@@ -40,7 +40,7 @@ namespace NQuery.Authoring.ActiproWpf.Selection
                     _selectionStack.Clear();
             }
 
-            public async void ExtendSelection()
+            public async Task ExtendSelectionAsync()
             {
                 var snapshot = _editorView.SyntaxEditor.GetDocumentView();
                 var syntaxTree = await snapshot.Document.GetSyntaxTreeAsync();
@@ -90,10 +90,10 @@ namespace NQuery.Authoring.ActiproWpf.Selection
             return value;
         }
 
-        protected static void ExtendSelection(ITextView textView)
+        protected static void ExtendSelectionAsync(ITextView textView)
         {
             var selectionHandler = GetSelectionHandler(textView);
-            selectionHandler?.ExtendSelection();
+            selectionHandler?.ExtendSelectionAsync();
         }
 
         protected static void ShrinkSelection(ITextView textView)

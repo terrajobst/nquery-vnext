@@ -15,7 +15,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification
         private readonly Workspace _workspace;
 
         public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
-            : base(typeof(NQueryUnnecessaryCodeClassifier).Name, null, document, true)
+            : base(nameof(NQueryUnnecessaryCodeClassifier), null, document, true)
         {
             _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
@@ -24,15 +24,15 @@ namespace NQuery.Authoring.ActiproWpf.Classification
                 return;
 
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateTags();
+            UpdateTagsAsync();
         }
 
-        private async void UpdateTags()
+        private async void UpdateTagsAsync()
         {
             var document = _workspace.CurrentDocument;
             var semanticModel = await document.GetSemanticModelAsync();

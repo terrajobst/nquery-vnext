@@ -11,7 +11,7 @@ namespace NQuery.Authoring.VSEditorWpf
         private ImmutableArray<TRawTag> _rawTags = ImmutableArray<TRawTag>.Empty;
         private ITextSnapshot _rawTagsSnapshot;
 
-        protected async void InvalidateTags()
+        protected async void InvalidateTagsAsync()
         {
             var (snapshot, rawTags) = await GetRawTagsAsync();
             _rawTagsSnapshot = snapshot;

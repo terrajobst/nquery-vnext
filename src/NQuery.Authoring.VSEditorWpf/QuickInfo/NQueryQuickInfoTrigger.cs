@@ -16,7 +16,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo
 
         private void WpfTextViewOnMouseHover(object sender, MouseHoverEventArgs e)
         {
-            _quickInfoManager.TriggerQuickInfo(e.Position);
+            _quickInfoManager.TriggerQuickInfoAsync(e.Position);
         }
     }
 }

@@ -16,12 +16,12 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining
             _workspace = workspace;
             _outliningService = outliningService;
             _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            InvalidateTags();
+            InvalidateTagsAsync();
         }
 
         protected override async Task<(ITextSnapshot Snapshot, IEnumerable<OutliningRegionSpan> RawTags)> GetRawTagsAsync()

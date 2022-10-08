@@ -37,11 +37,11 @@ namespace NQuery.Authoring.VSEditorWpf
             get { return true; }
         }
 
-        public override void TextInput(TextCompositionEventArgs args)
+        public override async void TextInput(TextCompositionEventArgs args)
         {
             base.TextInput(args);
-            _completionModelManager.HandleTextInput(args.Text);
-            _signatureHelpManager.HandleTextInput(args.Text);
+            await _completionModelManager.HandleTextInputAsync(args.Text);
+            await _signatureHelpManager.HandleTextInputAsync(args.Text);
         }
 
         public override void PreviewTextInput(TextCompositionEventArgs args)
@@ -63,17 +63,17 @@ namespace NQuery.Authoring.VSEditorWpf
             }
             else if (modifiers == ModifierKeys.Control && key == Key.Space)
             {
-                CompleteWord();
+                CompleteWordAsync();
                 args.Handled = true;
             }
             else if (modifiers == ModifierKeys.Control && key == Key.J)
             {
-                ListMembers();
+                ListMembersAsync();
                 args.Handled = true;
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Space)
             {
-                ParameterInfo();
+                ParameterInfoAsync();
                 args.Handled = true;
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Up)
@@ -88,12 +88,12 @@ namespace NQuery.Authoring.VSEditorWpf
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Alt) && key == Key.Oem2)
             {
-                _commentOperations.ToggleSingleLineComment();
+                _commentOperations.ToggleSingleLineCommentAsync();
                 args.Handled = true;
             }
             else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Oem2)
             {
-                _commentOperations.ToggleMultiLineComment();
+                _commentOperations.ToggleMultiLineCommentAsync();
                 args.Handled = true;
             }
             else if (modifiers == ModifierKeys.None)
@@ -129,19 +129,19 @@ namespace NQuery.Authoring.VSEditorWpf
             base.PreviewKeyDown(args);
         }
 
-        private void ListMembers()
+        private async void ListMembersAsync()
         {
-            _completionModelManager.TriggerCompletion(false);
+            await _completionModelManager.TriggerCompletionAsync(false);
         }
 
-        private void CompleteWord()
+        private async void CompleteWordAsync()
         {
-            _completionModelManager.TriggerCompletion(true);
+            await _completionModelManager.TriggerCompletionAsync(true);
         }
 
-        private void ParameterInfo()
+        private async void ParameterInfoAsync()
         {
-            _signatureHelpManager.TriggerSignatureHelp();
+            await _signatureHelpManager.TriggerSignatureHelpAsync();
         }
 
         private void NavigateToPreviousHighlight()

@@ -4,9 +4,9 @@ namespace NQuery.Authoring.VSEditorWpf.Completion
 {
     public interface ICompletionModelManager
     {
-        void HandleTextInput(string text);
+        Task HandleTextInputAsync(string text);
         void HandlePreviewTextInput(string text);
-        void TriggerCompletion(bool autoComplete);
+        Task TriggerCompletionAsync(bool autoComplete);
         bool Commit();
 
         CompletionModel Model { get; }

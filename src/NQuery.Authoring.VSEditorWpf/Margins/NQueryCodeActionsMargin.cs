@@ -81,17 +81,17 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
 
         private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
         private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
         private void TextViewOnLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
         {
-            UpdateGlyph();
+            UpdateGlyphAsync();
         }
 
         private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
@@ -99,7 +99,7 @@ namespace NQuery.Authoring.VSEditorWpf.Margins
             LayoutTransform = e.ZoomTransform;
         }
 
-        private async void UpdateGlyph()
+        private async void UpdateGlyphAsync()
         {
             var textView = _textViewHost.TextView;
             var documentView = textView.GetDocumentView();
