@@ -7,12 +7,13 @@ using NQuery.Symbols;
 
 namespace NQuery.Data
 {
-    public sealed class DataColumnDefinition : ColumnDefinition
+    public sealed class DataColumnSymbol : SchemaColumnSymbol
     {
         private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) });
         private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull");
 
-        public DataColumnDefinition(DataColumn dataColumn)
+        public DataColumnSymbol(DataColumn dataColumn)
+            : base(dataColumn.ColumnName, dataColumn.DataType)
         {
             ArgumentNullException.ThrowIfNull(dataColumn);
 
@@ -20,16 +21,6 @@ namespace NQuery.Data
         }
 
         public DataColumn DataColumn { get; }
-
-        public override string Name
-        {
-            get { return DataColumn.ColumnName; }
-        }
-
-        public override Type DataType
-        {
-            get { return DataColumn.DataType; }
-        }
 
         public override Expression CreateInvocation(Expression instance)
         {
