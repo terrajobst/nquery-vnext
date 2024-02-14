@@ -8,6 +8,8 @@ internal sealed class JoinConditionValueSlotExtractor : BoundTreeRewriter
 {
     protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
     {
+        node = (BoundJoinRelation)base.RewriteJoinRelation(node);
+
         var valueSlotFactory = node.GetOutputValues().FirstOrDefault()?.Factory ?? new ValueSlotFactory();
         var leftOutputValues = node.Left.GetOutputValues().ToImmutableArray();
         var rightOutputValues = node.Right.GetOutputValues().ToImmutableArray();
