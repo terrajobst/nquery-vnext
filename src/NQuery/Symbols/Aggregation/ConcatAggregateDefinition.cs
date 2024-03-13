@@ -42,7 +42,12 @@ namespace NQuery.Symbols.Aggregation
                 if (value is null)
                     return;
 
-                var strValue = Convert.ToString(value, CultureInfo.InvariantCulture).Trim();
+                var strValue = Convert.ToString(value, CultureInfo.InvariantCulture);
+
+                if (strValue is null)
+                    return;
+
+                strValue = strValue.Trim();
 
                 if (_valueList.Contains(strValue))
                     return;
