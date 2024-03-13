@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace NQuery.Symbols.Aggregation
@@ -41,7 +42,7 @@ namespace NQuery.Symbols.Aggregation
                 if (value is null)
                     return;
 
-                var strValue = value.ToString().Trim();
+                var strValue = Convert.ToString(value, CultureInfo.InvariantCulture).Trim();
 
                 if (_valueList.Contains(strValue))
                     return;
