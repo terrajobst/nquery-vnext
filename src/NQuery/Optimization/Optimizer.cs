@@ -26,6 +26,9 @@ namespace NQuery.Optimization
             // TODO: This shouldn't be necessary
             yield return new DerivedTableRemover();
 
+            // Move computed values from join condition to value slots
+            yield return new JoinConditionValueSlotExtractor();
+
             // Expand full outer joins
             yield return new FullOuterJoinExpander();
 
