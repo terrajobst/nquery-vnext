@@ -39,10 +39,16 @@ namespace NQuery.Iterators
             return BuildExpression<IteratorPredicate>(predicate, typeof(bool), allocation);
         }
 
-        private static TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType, RowBufferAllocation allocation)
+        private static TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType, RowBufferAllocation allocation) where TDelegate : Delegate
+        {
+            var lambda = BuildExpression(expression, typeof(TDelegate), targetType, allocation);
+            return (TDelegate)lambda.Compile();
+        }
+
+        private static LambdaExpression BuildExpression(BoundExpression expression, Type delegateType, Type targetType, RowBufferAllocation allocation)
         {
             var builder = new ExpressionBuilder(allocation);
-            return builder.BuildExpression<TDelegate>(expression, targetType);
+            return builder.BuildExpression(expression, delegateType, targetType);
         }
 
         private ParameterExpression BuildCachedExpression(BoundExpression expression)
@@ -61,11 +67,6 @@ namespace NQuery.Iterators
             return result.Type.CanBeNull()
                        ? result
                        : Expression.Convert(result, result.Type.GetNullableType());
-        }
-
-        private Expression BuildLiftedExpression(BoundExpression expression)
-        {
-            return BuildLiftedExpression(BuildExpression(expression));
         }
 
         private static Expression BuildLoweredExpression(Expression expression)
@@ -144,7 +145,7 @@ namespace NQuery.Iterators
             return Expression.Convert(Expression.Constant(true), typeof(bool?));
         }
 
-        private TDelegate BuildExpression<TDelegate>(BoundExpression expression, Type targetType)
+        private LambdaExpression BuildExpression(BoundExpression expression, Type delegateType, Type targetType)
         {
             var actualExpression = BuildCachedExpression(expression);
             var coalescedExpression = targetType.CanBeNull()
@@ -153,8 +154,8 @@ namespace NQuery.Iterators
             var resultExpression = Expression.Convert(coalescedExpression, targetType);
             var expressions = _assignments.Concat(new[] { resultExpression });
             var body = Expression.Block(_locals, expressions);
-            var lambda = Expression.Lambda<TDelegate>(body);
-            return lambda.Compile();
+            var lambda = Expression.Lambda(delegateType, body);
+            return lambda;
         }
 
         private Expression BuildExpression(BoundExpression expression)
@@ -455,7 +456,7 @@ namespace NQuery.Iterators
             if (caseLabelIndex == caseExpression.CaseLabels.Length)
                 return caseExpression.ElseExpression is null
                            ? BuildNullValue(caseExpression.Type)
-                           : BuildLiftedExpression(caseExpression.ElseExpression);
+                           : BuildNestedScopeInvocation(caseExpression.ElseExpression);
 
             var caseLabel = caseExpression.CaseLabels[caseLabelIndex];
             var condition = caseLabel.Condition;
@@ -464,12 +465,21 @@ namespace NQuery.Iterators
             return
                 Expression.Condition(
                     Expression.Equal(
-                        BuildLiftedExpression(condition),
+                        BuildNestedScopeInvocation(condition),
                         BuildNullableTrue()
                     ),
-                    BuildLiftedExpression(result),
+                    BuildNestedScopeInvocation(result),
                     BuildCaseLabel(caseExpression, caseLabelIndex + 1)
                 );
+        }
+
+        private Expression BuildNestedScopeInvocation(BoundExpression expression)
+        {
+            var targetType = expression.Type;
+            var delegateType = typeof(Func<>).MakeGenericType(targetType);
+            var lambda = BuildExpression(expression, delegateType, targetType, _rowBufferAllocation);
+            var invocation = Expression.Invoke(lambda);
+            return BuildLiftedExpression(invocation);
         }
     }
 }
