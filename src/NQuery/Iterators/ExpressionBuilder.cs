@@ -51,7 +51,7 @@ namespace NQuery.Iterators
             return builder.BuildExpression(expression, delegateType, targetType);
         }
 
-        private ParameterExpression BuildCachedExpression(BoundExpression expression)
+        private Expression BuildCachedExpression(BoundExpression expression)
         {
             var result = BuildExpression(expression);
             var liftedExpression = BuildLiftedExpression(result);
@@ -114,7 +114,7 @@ namespace NQuery.Iterators
             return
                 BuildLiftedExpression(
                     methodSymbol.CreateInvocation(
-                    BuildLoweredExpression(instance),
+                        BuildLoweredExpression(instance),
                         arguments.Select(BuildLoweredExpression)
                     )
                 );
@@ -149,7 +149,7 @@ namespace NQuery.Iterators
         {
             var actualExpression = BuildCachedExpression(expression);
             var coalescedExpression = targetType.CanBeNull()
-                                          ? (Expression)actualExpression
+                                          ? actualExpression
                                           : Expression.Coalesce(actualExpression, Expression.Default(targetType));
             var resultExpression = Expression.Convert(coalescedExpression, targetType);
             var expressions = _assignments.Concat(new[] { resultExpression });
