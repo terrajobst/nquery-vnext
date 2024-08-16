@@ -1,0 +1,150 @@
+﻿using System.Linq.Expressions;
+
+using NQuery.Symbols;
+
+namespace NQuery.Tests
+{
+    public partial class ExpressionTests
+    {
+        private static InvocationResult EvaluateAndCountInvocations(string text)
+        {
+            var invocationResult = new InvocationResult();
+            var invocationResultVariable = new VariableSymbol("ir", typeof(InvocationResult), invocationResult);
+            var nullInt32Function = new InvocationResultFunctionSymbol<int?>("NULL_INT32", NullInt32Function);
+            var nonNullInt32Function = new InvocationResultFunctionSymbol<int?>("NON_NULL_INT32", NonNullInt32Function);
+            var dataContext = DataContext.Default
+                                         .AddVariables(invocationResultVariable)
+                                         .AddFunctions(nullInt32Function, nonNullInt32Function);
+            var expression = Expression<object>.Create(dataContext, text);
+            invocationResult.Result = expression.Evaluate();
+            return invocationResult;
+        }
+
+        [Fact]
+        public void Expression_Evaluation_Conversion_Once()
+        {
+            var result = EvaluateAndCountInvocations("CAST(NON_NULL_INT32(ir) AS int64)");
+            Assert.Equal(42L, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_Unary_Once()
+        {
+            var result = EvaluateAndCountInvocations("~NON_NULL_INT32(ir)");
+            Assert.Equal(~42, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_Binary_EagerOnce()
+        {
+            var result = EvaluateAndCountInvocations("NULL_INT32(ir) + NON_NULL_INT32(ir)");
+            Assert.Null(result.Result);
+            Assert.Equal(1, result.NullInt32FunctionCount);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_FunctionInvocation_EagerOnce()
+        {
+            var result = EvaluateAndCountInvocations("SUBSTRING('abc', NULL_INT32(ir), NON_NULL_INT32(ir))");
+            Assert.Null(result.Result);
+            Assert.Equal(1, result.NullInt32FunctionCount);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_MethodInvocation_Instance_Once()
+        {
+            var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir).Equals(42)");
+            Assert.Equal(true, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_MethodInvocation_Arguments_EagerOnce()
+        {
+            var result = EvaluateAndCountInvocations("''.Substring(NULL_INT32(ir), NON_NULL_INT32(ir))");
+            Assert.Null(result.Result);
+            Assert.Equal(1, result.NullInt32FunctionCount);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_PropertyAccess_Once()
+        {
+            var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir).Equals(42)");
+            Assert.Equal(true, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_IsNull_Once()
+        {
+            var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir) IS NOT NULL");
+            Assert.Equal(true, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_CaseWhen_LazyOnce_Simple()
+        {
+            var result = EvaluateAndCountInvocations("CASE WHEN NON_NULL_INT32(ir) = 42 THEN 42 ELSE NULL_INT32(ir) END");
+            Assert.Equal(42, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+            Assert.Equal(0, result.NullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Expression_Evaluation_CaseWhen_LazyOnce_Complex()
+        {
+            const string text = @"
+                CASE
+                    WHEN TO_INT32(NON_NULL_INT32(ir)) = 42 THEN 42
+                    WHEN TO_INT32(NON_NULL_INT32(ir)) != 42 THEN 0
+                    ELSE TO_INT32(NULL_INT32(ir))
+                END";
+
+            var result = EvaluateAndCountInvocations(text);
+            Assert.Equal(42, result.Result);
+            Assert.Equal(1, result.NonNullInt32FunctionCount);
+            Assert.Equal(0, result.NullInt32FunctionCount);
+        }
+
+        private static int? NullInt32Function(InvocationResult ir)
+        {
+            ir.NullInt32FunctionCount++;
+            return null;
+        }
+
+        private static int? NonNullInt32Function(InvocationResult ir)
+        {
+            ir.NonNullInt32FunctionCount++;
+            return 42;
+        }
+
+        private sealed class InvocationResult
+        {
+            public object Result { get; set; }
+            public int NullInt32FunctionCount { get; set; }
+            public int NonNullInt32FunctionCount { get; set; }
+        }
+
+        private sealed class InvocationResultFunctionSymbol<TResult> : FunctionSymbol
+        {
+            public InvocationResultFunctionSymbol(string name, Func<InvocationResult, TResult> function)
+                : base(name, typeof(TResult).GetNonNullableType(), new ParameterSymbol("ir", typeof(InvocationResult)))
+            {
+                Function = function;
+            }
+
+            public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+            {
+                return Expression.Call(Function.Method, arguments);
+            }
+
+            private Func<InvocationResult, TResult> Function { get; }
+        }
+    }
+}
