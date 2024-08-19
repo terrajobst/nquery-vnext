@@ -2,9 +2,9 @@
 
 using NQuery.Symbols;
 
-namespace NQuery.Tests
+namespace NQuery.Tests.Evaluation
 {
-    public partial class ExpressionTests
+    public sealed class EagerAndLazyTests
     {
         private static InvocationResult EvaluateAndCountInvocations(string text)
         {
@@ -21,7 +21,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_Conversion_Once()
+        public void Evaluation_Conversion_Once()
         {
             var result = EvaluateAndCountInvocations("CAST(NON_NULL_INT32(ir) AS int64)");
             Assert.Equal(42L, result.Result);
@@ -29,7 +29,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_Unary_Once()
+        public void Evaluation_Unary_Once()
         {
             var result = EvaluateAndCountInvocations("~NON_NULL_INT32(ir)");
             Assert.Equal(~42, result.Result);
@@ -37,7 +37,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_Binary_EagerOnce()
+        public void Evaluation_Binary_EagerOnce()
         {
             var result = EvaluateAndCountInvocations("NULL_INT32(ir) + NON_NULL_INT32(ir)");
             Assert.Null(result.Result);
@@ -46,7 +46,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_FunctionInvocation_EagerOnce()
+        public void Evaluation_FunctionInvocation_EagerOnce()
         {
             var result = EvaluateAndCountInvocations("SUBSTRING('abc', NULL_INT32(ir), NON_NULL_INT32(ir))");
             Assert.Null(result.Result);
@@ -55,7 +55,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_MethodInvocation_Instance_Once()
+        public void Evaluation_MethodInvocation_Instance_Once()
         {
             var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir).Equals(42)");
             Assert.Equal(true, result.Result);
@@ -63,7 +63,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_MethodInvocation_Arguments_EagerOnce()
+        public void Evaluation_MethodInvocation_Arguments_EagerOnce()
         {
             var result = EvaluateAndCountInvocations("''.Substring(NULL_INT32(ir), NON_NULL_INT32(ir))");
             Assert.Null(result.Result);
@@ -72,7 +72,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_PropertyAccess_Once()
+        public void Evaluation_PropertyAccess_Once()
         {
             var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir).Equals(42)");
             Assert.Equal(true, result.Result);
@@ -80,7 +80,7 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_IsNull_Once()
+        public void Evaluation_IsNull_Once()
         {
             var result = EvaluateAndCountInvocations("NON_NULL_INT32(ir) IS NOT NULL");
             Assert.Equal(true, result.Result);
@@ -88,16 +88,22 @@ namespace NQuery.Tests
         }
 
         [Fact]
-        public void Expression_Evaluation_CaseWhen_LazyOnce_Simple()
+        public void Evaluation_CaseWhen_NonNullFunction_LazyOnce()
         {
-            var result = EvaluateAndCountInvocations("CASE WHEN NON_NULL_INT32(ir) = 42 THEN 42 ELSE NULL_INT32(ir) END");
+            const string text = @"
+                CASE
+                    WHEN NON_NULL_INT32(ir) = 42 THEN 42
+                    ELSE NULL_INT32(ir)
+                END";
+
+            var result = EvaluateAndCountInvocations(text);
             Assert.Equal(42, result.Result);
             Assert.Equal(1, result.NonNullInt32FunctionCount);
             Assert.Equal(0, result.NullInt32FunctionCount);
         }
 
         [Fact]
-        public void Expression_Evaluation_CaseWhen_LazyOnce_Complex()
+        public void Evaluation_CaseWhen_NonNullNestedFunction_LazyOnce()
         {
             const string text = @"
                 CASE
@@ -110,6 +116,20 @@ namespace NQuery.Tests
             Assert.Equal(42, result.Result);
             Assert.Equal(1, result.NonNullInt32FunctionCount);
             Assert.Equal(0, result.NullInt32FunctionCount);
+        }
+
+        [Fact]
+        public void Evaluation_CaseWhen_NullFunction_LazyOnce()
+        {
+            const string text = @"
+                CASE
+                    WHEN NULL_INT32(ir) = 0 THEN 42
+                    ELSE 0
+                END";
+
+            var result = EvaluateAndCountInvocations(text);
+            Assert.Equal(0, result.Result);
+            Assert.Equal(1, result.NullInt32FunctionCount);
         }
 
         private static int? NullInt32Function(InvocationResult ir)
