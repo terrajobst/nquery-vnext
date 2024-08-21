@@ -14,12 +14,19 @@ namespace NQuery.Symbols
         {
         }
 
-        public abstract Expression CreateInvocation(IEnumerable<Expression> arguments);
+        public Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            var function = FunctionDelegate;
+            var instance = function.Target == null ? null : Expression.Constant(function.Target);
+            return Expression.Call(instance, function.Method, arguments);
+        }
 
         public override SymbolKind Kind
         {
             get { return SymbolKind.Function; }
         }
+
+        protected abstract Delegate FunctionDelegate { get; }
     }
 
     public sealed class FunctionSymbol<TResult> : FunctionSymbol
@@ -30,12 +37,12 @@ namespace NQuery.Symbols
             Function = function;
         }
 
-        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
-        {
-            return Expression.Call(Function.Method, arguments);
-        }
-
         public Func<TResult> Function { get; }
+
+        protected override Delegate FunctionDelegate
+        {
+            get { return Function; }
+        }
     }
 
     public sealed class FunctionSymbol<T, TResult> : FunctionSymbol
@@ -52,12 +59,12 @@ namespace NQuery.Symbols
             Function = function;
         }
 
-        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
-        {
-            return Expression.Call(Function.Method, arguments);
-        }
-
         public Func<T, TResult> Function { get; }
+
+        protected override Delegate FunctionDelegate
+        {
+            get { return Function; }
+        }
     }
 
     public sealed class FunctionSymbol<T1, T2, TResult> : FunctionSymbol
@@ -73,12 +80,12 @@ namespace NQuery.Symbols
             Function = function;
         }
 
-        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
-        {
-            return Expression.Call(Function.Method, arguments);
-        }
-
         public Func<T1, T2, TResult> Function { get; }
+
+        protected override Delegate FunctionDelegate
+        {
+            get { return Function; }
+        }
     }
 
     public sealed class FunctionSymbol<T1, T2, T3, TResult> : FunctionSymbol
@@ -94,11 +101,11 @@ namespace NQuery.Symbols
             Function = function;
         }
 
-        public override Expression CreateInvocation(IEnumerable<Expression> arguments)
-        {
-            return Expression.Call(Function.Method, arguments);
-        }
-
         public Func<T1, T2, T3, TResult> Function { get; }
+
+        protected override Delegate FunctionDelegate
+        {
+            get { return Function; }
+        }
     }
 }

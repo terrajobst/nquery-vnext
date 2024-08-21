@@ -1,8 +1,8 @@
 namespace NQuery.Tests.Evaluation
 {
-    public class EvaluationTest
+    public abstract class EvaluationTest
     {
-        protected static void AssertProduces<T>(string text, T[] expected)
+        protected static void AssertProduces<T>(string text, T[] expected, DataContext dataContext = null)
         {
             var expectedColumns = new[] { typeof(T) };
             var expectedRows = new object[expected.Length][];
@@ -10,10 +10,10 @@ namespace NQuery.Tests.Evaluation
             for (var i = 0; i < expected.Length; i++)
                 expectedRows[i] = new object[] { expected[i] };
 
-            AssertProduces(text, expectedColumns, expectedRows);
+            AssertProduces(text, expectedColumns, expectedRows, dataContext);
         }
 
-        protected static void AssertProduces<T1, T2>(string text, (T1, T2)[] expected)
+        protected static void AssertProduces<T1, T2>(string text, (T1, T2)[] expected, DataContext dataContext = null)
         {
             var expectedColumns = new[] { typeof(T1), typeof(T2) };
             var expectedRows = new object[expected.Length][];
@@ -21,12 +21,12 @@ namespace NQuery.Tests.Evaluation
             for (var i = 0; i < expected.Length; i++)
                 expectedRows[i] = new object[] { expected[i].Item1, expected[i].Item2 };
 
-            AssertProduces(text, expectedColumns, expectedRows);
+            AssertProduces(text, expectedColumns, expectedRows, dataContext);
         }
 
-        private static void AssertProduces(string text, Type[] expectedColumns, object[][] expectedRows)
+        private static void AssertProduces(string text, Type[] expectedColumns, object[][] expectedRows, DataContext dataContext)
         {
-            var dataContext = NorthwindDataContext.Instance;
+            dataContext ??= NorthwindDataContext.Instance;
             var query = Query.Create(dataContext, text);
             using var data = query.ExecuteReader();
 
