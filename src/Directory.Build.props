@@ -7,9 +7,13 @@
     <LangVersion>14.0</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(MSBuildProjectName) != 'NQueryViewer' AND !$(MSBuildProjectName.EndsWith('.Tests'))">
+  <PropertyGroup Condition="$(MSBuildProjectName) == 'NQueryViewer' OR $(MSBuildProjectName.EndsWith('.Testing'))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsPackable)' != 'false'">
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <PackageOutputPath>$(OutDir)</PackageOutputPath>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin</PackageOutputPath>
     <Authors>$(Company)</Authors>
     <RepositoryUrl>https://github.com/terrajobst/nquery-vnext</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
