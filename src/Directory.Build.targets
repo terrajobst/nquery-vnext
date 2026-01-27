@@ -1,9 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project>
 
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)\Common\CommonAssemblyInfo.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)\Common\ExceptionBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)\Common\*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
