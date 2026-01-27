@@ -24,7 +24,8 @@ jobs:
           dotnet-version: '8.0.*'
       - name: dotnet build
         run: |
-          dotnet build ${env:SLN} -c Release --nologo -o ${env:BIN}
+          dotnet build ${env:SLN} -c Release --nologo
+          dotnet pack ${env:SLN} -c Release --nologo -o ${env:BIN}
       - name: dotnet test
         run: |
           dotnet test ${env:SLN} --nologo
