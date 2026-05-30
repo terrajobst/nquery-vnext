@@ -32,8 +32,8 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
         uses: actions/upload-artifact@v4
         with:
+          path: artifacts/bin
           name: bin
-          path: bin
   push-to-github:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
     needs: build
