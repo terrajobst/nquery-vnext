@@ -7,7 +7,7 @@ on:
 
 env:
   DOTNET_NOLOGO: true
-  SLN: ${{ github.workspace }}/src/NQuery.sln
+  SLN: ${{ github.workspace }}/src/NQuery.slnx
 
 jobs:
   build:

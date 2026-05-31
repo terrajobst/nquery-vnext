@@ -1,0 +1,33 @@
+<Solution>
+  <Folder Name="/.global/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="nuget.config" />
+    <File Path="version.json" />
+    <File Path="xunit.runner.json" />
+  </Folder>
+  <Folder Name="/Core Tests/">
+    <Project Path="NQuery.Dynamic.Tests/NQuery.Dynamic.Tests.csproj" />
+    <Project Path="NQuery.Testing/NQuery.Testing.csproj" />
+    <Project Path="NQuery.Tests/NQuery.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="NQuery.Data/NQuery.Data.csproj" />
+    <Project Path="NQuery.Dynamic/NQuery.Dynamic.csproj" />
+    <Project Path="NQuery/NQuery.csproj" />
+  </Folder>
+  <Folder Name="/Services Common/">
+    <Project Path="NQuery.Authoring.Composition/NQuery.Authoring.Composition.csproj" />
+    <Project Path="NQuery.Authoring.Tests/NQuery.Authoring.Tests.csproj" />
+    <Project Path="NQuery.Authoring.Wpf/NQuery.Authoring.Wpf.csproj" />
+    <Project Path="NQuery.Authoring/NQuery.Authoring.csproj" />
+  </Folder>
+  <Folder Name="/Services Editors/">
+    <Project Path="NQuery.Authoring.ActiproWpf/NQuery.Authoring.ActiproWpf.csproj" />
+    <Project Path="NQuery.Authoring.VSEditorWpf/NQuery.Authoring.VSEditorWpf.csproj" />
+  </Folder>
+  <Folder Name="/Viewers/">
+    <Project Path="NQueryViewer/NQueryViewer.csproj" />
+  </Folder>
+</Solution>
