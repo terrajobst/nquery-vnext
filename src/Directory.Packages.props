@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="ActiproSoftware.Controls.WPF.SyntaxEditor" Version="24.1.2" />
+    <PackageVersion Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.4" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.VSEditor.Standalone.10" Version="1.0.0" />
+    <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.141" />
+    <PackageVersion Include="System.Collections.Immutable" Version="10.0.2" />
+    <PackageVersion Include="System.ComponentModel.Composition" Version="8.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2">
+    <PackageVersion Include="xunit" Version="2.9.0" />
+  </ItemGroup>
+</Project>
