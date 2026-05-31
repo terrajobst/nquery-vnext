@@ -26,7 +26,7 @@ jobs:
           dotnet build ${env:SLN} -t build -t pack -c Release --nologo
       - name: dotnet test
         run: |
-          dotnet test ${env:SLN} --nologo
+          dotnet test --solution ${env:SLN}
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
         uses: actions/upload-artifact@v7

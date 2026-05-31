@@ -2,4 +2,4 @@
 setlocal
 
 set SLN_FILE=%~dp0src\NQuery.slnx
-dotnet test %SLN_FILE% --nologo -- %*
+dotnet test --solution %SLN_FILE%
