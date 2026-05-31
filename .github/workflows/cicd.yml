@@ -20,7 +20,7 @@ jobs:
       - name: Get .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '8.0.*'
+          dotnet-version: '10.0.*'
       - name: dotnet build
         run: |
           dotnet build ${env:SLN} -c Release --nologo
@@ -46,5 +46,5 @@ jobs:
           name: artifacts
           path: artifacts
       - run: |
-          ls artifacts
+          ls artifacts/package
           dotnet nuget push artifacts/package/*.nupkg -s "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GITHUB_TOKEN }}
