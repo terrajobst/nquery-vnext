@@ -46,4 +46,5 @@ jobs:
           name: artifacts
           path: artifacts
       - run: |
+          ls artifacts
           dotnet nuget push artifacts/package/*.nupkg -s "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GITHUB_TOKEN }}
