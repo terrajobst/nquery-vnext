@@ -8,7 +8,6 @@ on:
 env:
   DOTNET_NOLOGO: true
   SLN: ${{ github.workspace }}/src/NQuery.sln
-  BIN: ${{ github.workspace }}/bin/
 
 jobs:
   build:
@@ -24,7 +23,7 @@ jobs:
           dotnet-version: '8.0.*'
       - name: dotnet build
         run: |
-          dotnet build ${env:SLN} -c Release --nologo -o ${env:BIN}
+          dotnet build ${env:SLN} -c Release --nologo
       - name: dotnet test
         run: |
           dotnet test ${env:SLN} --nologo
@@ -32,8 +31,8 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
         uses: actions/upload-artifact@v4
         with:
-          path: artifacts/bin
-          name: bin
+          path: artifacts
+          name: artifacts
   push-to-github:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
     needs: build
@@ -41,10 +40,10 @@ jobs:
     permissions:
       packages: write
     steps:
-      - name: Download binaries
+      - name: Download artifacts
         uses: actions/download-artifact@v4.1.7
         with:
-          name: bin
-          path: .artifacts/bin
+          name: artifacts
+          path: artifacts
       - run: |
-          dotnet nuget push .artifacts/bin/*.nupkg -s "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GITHUB_TOKEN }}
+          dotnet nuget push .artifacts/package/*.nupkg -s "https://nuget.pkg.github.com/terrajobst/index.json" -k ${{ secrets.GITHUB_TOKEN }}
