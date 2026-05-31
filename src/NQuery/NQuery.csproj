@@ -11,7 +11,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Bcl.Memory" Version="10.0.4" />
     <PackageReference Include="System.Collections.Immutable" Version="10.0.2" />
   </ItemGroup>
 
