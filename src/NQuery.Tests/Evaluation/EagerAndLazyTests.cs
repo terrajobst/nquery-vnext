@@ -159,9 +159,9 @@ namespace NQuery.Tests.Evaluation
                 Function = function;
             }
 
-            public override Expression CreateInvocation(IEnumerable<Expression> arguments)
+            protected override Delegate FunctionDelegate
             {
-                return Expression.Call(Function.Method, arguments);
+                get { return Function; }
             }
 
             private Func<InvocationResult, TResult> Function { get; }
