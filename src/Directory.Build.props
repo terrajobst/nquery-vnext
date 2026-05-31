@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">
-    <PackageOutputPath>$(MSBuildThisFileDirectory)..\bin</PackageOutputPath>
     <Authors>$(Company)</Authors>
     <RepositoryUrl>https://github.com/terrajobst/nquery-vnext</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>

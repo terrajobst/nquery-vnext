@@ -23,8 +23,7 @@ jobs:
           dotnet-version: '10.0.*'
       - name: dotnet build
         run: |
-          dotnet build ${env:SLN} -c Release --nologo
-          dotnet pack ${env:SLN} -c Release --nologo
+          dotnet build ${env:SLN} -t build -t pack -c Release --nologo
       - name: dotnet test
         run: |
           dotnet test ${env:SLN} --nologo
