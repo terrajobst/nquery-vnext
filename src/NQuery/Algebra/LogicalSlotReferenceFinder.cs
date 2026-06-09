@@ -1,9 +1,8 @@
 #nullable enable
 
-using NQuery.Algebra;
 using NQuery.Binding;
 
-namespace NQuery.LogicalOptimization
+namespace NQuery.Algebra
 {
     // Collects the value slots *referenced* by a logical expression or operator
     // subtree (as opposed to the slots they define). Used to decide whether a

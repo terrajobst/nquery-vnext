@@ -5,20 +5,15 @@ using System.Collections.Immutable;
 
 using NQuery.Binding;
 
-namespace NQuery.Algebra
+namespace NQuery.Planning
 {
-    // Base of the logical relational algebra produced by the Algebrizer
-    // (Bound -> Logical). Operators are immutable and flow data as value slots.
-    //
-    // Defined and output value slots are materialized lazily and cached: defined
-    // values as a FrozenSet (used for membership tests -- "does this subtree
-    // reference/contain that slot"), output values as an ImmutableArray (order is
-    // meaningful -- it is the column order of the result). Caching is safe because
-    // operators are immutable; the lazy initialization is interlocked so concurrent
-    // reads are sound, and the concrete return types avoid boxing.
-    internal abstract class LogicalOperator
+    // Base of the physical operator tree produced by the Planner (Logical ->
+    // Physical). Same slot-flow as the logical layer -- planning chooses algorithms,
+    // it does not change which slots flow -- so defined/output value slots are
+    // materialized lazily and cached exactly as on LogicalOperator.
+    internal abstract class PhysicalOperator
     {
-        public abstract LogicalOperatorKind Kind { get; }
+        public abstract PhysicalOperatorKind Kind { get; }
 
         public FrozenSet<ValueSlot> DefinedValueSlots
         {

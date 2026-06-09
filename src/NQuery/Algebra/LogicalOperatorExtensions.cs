@@ -18,18 +18,18 @@ namespace NQuery.Algebra
         {
             return node switch
             {
-                LogicalFilter n => new[] { n.Input },
-                LogicalCompute n => new[] { n.Input },
-                LogicalProject n => new[] { n.Input },
-                LogicalSort n => new[] { n.Input },
-                LogicalTop n => new[] { n.Input },
-                LogicalAssert n => new[] { n.Input },
-                LogicalAggregate n => new[] { n.Input },
-                LogicalJoin n => new[] { n.Left, n.Right },
-                LogicalApply n => new[] { n.Left, n.Right },
-                LogicalIntersectOrExcept n => new[] { n.Left, n.Right },
-                LogicalUnion n => n.Inputs.AsEnumerable(),
-                _ => Enumerable.Empty<LogicalOperator>()
+                LogicalFilter n => [n.Input],
+                LogicalCompute n => [n.Input],
+                LogicalProject n => [n.Input],
+                LogicalSort n => [n.Input],
+                LogicalTop n => [n.Input],
+                LogicalAssert n => [n.Input],
+                LogicalAggregate n => [n.Input],
+                LogicalJoin n => [n.Left, n.Right],
+                LogicalApply n => [n.Left, n.Right],
+                LogicalIntersectOrExcept n => [n.Left, n.Right],
+                LogicalUnion n => n.Inputs,
+                _ => []
             };
         }
     }
