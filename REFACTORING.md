@@ -2,13 +2,6 @@
 
 ## Increase test coverage:
 
-* Binder
-* Optimizer
-* Lowerer
-* Compiler
-
-### Additions
-
 * A correctness test that runs in debug builds and asserts the bound tree is
   correct after each optimization step:
     - every referenced ValueSlot is either defined by a descendant or is a
@@ -20,69 +13,67 @@
 * A small set (~a dozen) of curated snapshots for interesting queries which
   assert the full plan in approval testing style
 
-## Physical Operator Layer
-
-* Add new tree hierarchy for Physical operators
-* Add a translation layer Logical -> Physical
-    - The physical nodes should have compiled expressions
-* Add a translation layer Physical -> Iterator
-* The `Optimizer` class handles both, optimization, as well as lowering. We
-  should cleanly split this.
-* Namespace: `NQuery.Planning`
-* BaseNode: `PhysicalOperator`What
-
-## Value Slots
-
-* Simplify this entire thing
-
-## Executable
+## Remaining items
 
 * Make sure that all plans are executable
-
-## Understanding
-
 * Should symbols refer to value slots at all?
     - No, we should remove that
-* What properties do we need to track?
-    - Like sort order?
-    - And where would those be tracked? On the logical operator?
-* Is `ValueSlot` a good term? Or should we go with `ColumnId`?
-* Should logical operators have explicit collections for defined value slots and returned value slots?
-* How should outer references be modelled?
-    - An explicit ApplyNode
+    - Simplify the value slot assignments
+    - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
-    - Track conjunction lists at filter and join
+* What properties do we need to track?
+    - Like sort order?
+    - And where would those be tracked? On the logical operator?
 
-## Components
+## Missing
 
-* Lexer.Lex() -> SyntaxToken
-* Parser.Parse() -> SyntaxNode
-* Binder.Bind() -> BoundNode
-* Algebrizer.Algebrize() -> LogicalOperator
-* Optimizer.Optimize() -> LogicalOperator
-* Planner.Plan() -> PhysicalOperator
-* Emitter.Emit() -> ExecutablePlan
-* ExecutablePlan.CreateIterator() -> Iterator
+### Algebra (Bound → Logical)
 
-We should split today's `Iterator` into `ExecutablePlan` and `Iterator`:
+- Subqueries inside JOIN ON / passthru conditions — explicitly throws
+  NotSupportedException (Algebrizer.cs:145). An Apply attaches to one input, but
+  a join condition sees both sides, so this case isn't lowered.
+- CTE cloning — the "non-trivial transform needs a pass" case we discussed; no
+  pass exists (only trivial derived-table inlining is done).
 
-* Emitter.Emit(PhysicalOperator) -> ExecutablePlan — the reusable artifact: plan
-  structure + the compiled delegates (IteratorFunction/IteratorPredicate) +
-  row-buffer layout. Built once, cached on CompiledQuery. Because the only thing
-  that's genuinely "emitted code" in your engine is those compiled delegates,
-  and they are reusable — so emitting them once is the real codegen step, and
-  the name now matches the "reusable like IL" intuition.
-  
-* ExecutablePlan.Open() -> Cursor (or CreateCursor) — the per-execution step
-  that allocates the RowBuffers and cursor position. Cheap, allocates only
-  mutable state, runnable many times and concurrently. This is your
-  ExecInitNode/Volcano-Open. It is not a pipeline phase — it's runtime
-  instantiation, deliberately outside the seven-phase list.
+### Planning (Logical → Physical)
 
-Primary recommendation — Executable… prefix, base ExecutableOperator:
+- Any cost basis — no cardinality/cost estimation; join-algorithm and join-order
+  choices are purely syntactic.
+- Aggregate strategy — always one PhysicalAggregate; no stream-vs-hash choice,
+  no use of existing ordering.
+- Apply execution strategy — no spool/rewind planning for correlated Apply;
+  PhysicalApply is emitted verbatim.
+- Sort elimination when input is already ordered (no ordering-property
+  propagation into the planner), and no index/seek selection (table scan only).
 
-  ExecutablePlan            // the reusable tree (Emitter output, what you cache)
-  ExecutableOperator        // node base
-    ExecutableFilter, ExecutableSort, ExecutableHashMatch, ExecutableTableScan, 
+### Emit (Physical → ExecutablePlan)
+
+- ExecutableJoin, ExecutableApply, ExecutableAggregate, ExecutableConcatenation,
+  ExecutableIntersectOrExcept.
+
+### EmittedIterators
+
+- No join/apply/aggregate/concatenation/intersect-except iterators. The legacy
+  NQuery.Iterators has these (nested-loops family, hash match, stream aggregate,
+  concatenation, table spool) but they were deliberately not ported — they need
+  the compile-once treatment, not a copy.
+- EmittedExpressionCompiler is single-buffer — it compiles against one
+  operator's output-slot layout. Join/Apply predicates need a combined
+  left+right slot map; CreateSlotIndices could build it, but nothing wires it
+  yet.
+- No spool/rewind iterator for correlated Apply.
+
+### Cross-cutting
+
+- The whole new pipeline is parallel and test-only — Query/QueryReader still run
+  on the old IteratorBuilder/ExpressionBuilder. Nothing public routes through
+  it.
+- No ShowPlan/explain for physical or executable plans.
+- End-to-end execution (the differential test vs. the existing engine) currently
+  covers scan, filter, compute, project, sort, top — exactly the wired set
+  above.
+- The single biggest unblocking piece is ExecutableJoin + its emitted iterators
+  (nested-loops and hash-match, with combined-buffer predicate compilation);
+  Apply, Aggregate, and the set operators follow from the same machinery.
