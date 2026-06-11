@@ -14,6 +14,6 @@ namespace NQuery.Emit
         {
         }
 
-        public override Iterator CreateIterator() => new ConstantIterator();
+        public override Iterator CreateIterator(RowBuffer? outer) => new ConstantIterator();
     }
 }

@@ -13,23 +13,25 @@ namespace NQuery.Emit
         private readonly ExecutableOperator _input;
         private readonly EmittedPredicate _predicate;
 
-        public ExecutableFilter(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalExpression> conditions)
+        public ExecutableFilter(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalExpression> conditions, ImmutableArray<ValueSlot> outerSlots)
             : base(outputValueSlots)
         {
             _input = input;
 
-            // Compile the conjuncts once, against the input's slot layout. The
-            // predicate takes the row buffer at run time, so it is reusable.
-            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(input.OutputValueSlots);
+            // Compile the conjuncts once. When this filter is correlated (inside an
+            // Apply's right), the predicate sees the outer slots ahead of the input's,
+            // matching the (outer ++ input) buffer fed at run time.
+            var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
+            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
             var predicates = conditions
                              .Select(c => EmittedExpressionCompiler.CompilePredicate(c, slotIndices))
                              .ToImmutableArray();
             _predicate = Conjoin(predicates);
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            return new EmittedFilterIterator(_input.CreateIterator(), _predicate);
+            return new EmittedFilterIterator(_input.CreateIterator(outer), _predicate, outer);
         }
 
         // Each conjunct already yields false on NULL, so AND-ing gives WHERE semantics.

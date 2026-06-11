@@ -32,6 +32,9 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT e.EmployeeID FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) ORDER BY e.EmployeeID")]
         // Correlated NOT EXISTS -> probing left-semi join (probe = false path).
         [InlineData("SELECT c.CustomerID FROM Customers c WHERE NOT EXISTS (SELECT * FROM Orders o WHERE o.CustomerID = c.CustomerID) ORDER BY c.CustomerID")]
+        // Correlated scalar subquery that survives decorrelation (Top blocks it) ->
+        // a left-outer apply executed as correlated nested loops.
+        [InlineData("SELECT e.EmployeeID, (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID ORDER BY o.OrderID) FROM Employees e ORDER BY e.EmployeeID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

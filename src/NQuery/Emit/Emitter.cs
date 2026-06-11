@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
+using NQuery.Binding;
 using NQuery.Planning;
 using NQuery.Symbols;
 
@@ -10,25 +11,29 @@ namespace NQuery.Emit
 {
     // The Emit phase: lowers the physical operator tree into an ExecutablePlan -- a
     // tree of ExecutableOperators ready to produce runtime iterators. Table-scan
-    // column accessors are compiled here (they hold no row buffer, so they are
-    // reusable); the remaining expressions are compiled per CreateIterator for now.
+    // column accessors and the filter/compute/join predicates are compiled here once,
+    // since they take the row buffer as a parameter and are reusable across runs.
+    //
+    // outerSlots carries the slots an enclosing Apply makes available to its right
+    // subtree (its correlated outer references). It accumulates through nested applies
+    // and lets correlated filters/computes compile against the (outer ++ input) layout.
     internal static class Emitter
     {
         public static ExecutablePlan Emit(PhysicalQuery query)
         {
             ArgumentNullException.ThrowIfNull(query);
 
-            return new ExecutablePlan(EmitOperator(query.Root), query.OutputColumns);
+            return new ExecutablePlan(EmitOperator(query.Root, ImmutableArray<ValueSlot>.Empty), query.OutputColumns);
         }
 
         public static ExecutablePlan Emit(PhysicalOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
         {
             ArgumentNullException.ThrowIfNull(root);
 
-            return new ExecutablePlan(EmitOperator(root), outputColumns);
+            return new ExecutablePlan(EmitOperator(root, ImmutableArray<ValueSlot>.Empty), outputColumns);
         }
 
-        private static ExecutableOperator EmitOperator(PhysicalOperator node)
+        private static ExecutableOperator EmitOperator(PhysicalOperator node, ImmutableArray<ValueSlot> outerSlots)
         {
             switch (node.Kind)
             {
@@ -39,25 +44,25 @@ namespace NQuery.Emit
                 case PhysicalOperatorKind.TableScan:
                     return EmitTableScan((PhysicalTableScan)node);
                 case PhysicalOperatorKind.Filter:
-                    return EmitFilter((PhysicalFilter)node);
+                    return EmitFilter((PhysicalFilter)node, outerSlots);
                 case PhysicalOperatorKind.ComputeScalar:
-                    return EmitComputeScalar((PhysicalComputeScalar)node);
+                    return EmitComputeScalar((PhysicalComputeScalar)node, outerSlots);
                 case PhysicalOperatorKind.Project:
-                    return EmitProject((PhysicalProject)node);
+                    return EmitProject((PhysicalProject)node, outerSlots);
                 case PhysicalOperatorKind.Sort:
-                    return EmitSort((PhysicalSort)node);
+                    return EmitSort((PhysicalSort)node, outerSlots);
                 case PhysicalOperatorKind.Top:
-                    return EmitTop((PhysicalTop)node);
+                    return EmitTop((PhysicalTop)node, outerSlots);
                 case PhysicalOperatorKind.NestedLoops:
-                    return EmitNestedLoops((PhysicalNestedLoops)node);
+                    return EmitNestedLoops((PhysicalNestedLoops)node, outerSlots);
                 case PhysicalOperatorKind.Apply:
-                    return EmitApply((PhysicalApply)node);
+                    return EmitApply((PhysicalApply)node, outerSlots);
                 case PhysicalOperatorKind.Aggregate:
-                    return EmitAggregate((PhysicalAggregate)node);
+                    return EmitAggregate((PhysicalAggregate)node, outerSlots);
                 case PhysicalOperatorKind.Concatenation:
-                    return EmitConcatenation((PhysicalConcatenation)node);
+                    return EmitConcatenation((PhysicalConcatenation)node, outerSlots);
                 case PhysicalOperatorKind.IntersectOrExcept:
-                    return EmitIntersectOrExcept((PhysicalIntersectOrExcept)node);
+                    return EmitIntersectOrExcept((PhysicalIntersectOrExcept)node, outerSlots);
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
@@ -81,57 +86,65 @@ namespace NQuery.Emit
             return Expression.Lambda<Func<object, object>>(body, instance).Compile();
         }
 
-        private static ExecutableOperator EmitFilter(PhysicalFilter node)
+        private static ExecutableOperator EmitFilter(PhysicalFilter node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableFilter(node.OutputValueSlots, EmitOperator(node.Input), node.Conditions);
+            return new ExecutableFilter(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.Conditions, outerSlots);
         }
 
-        private static ExecutableOperator EmitComputeScalar(PhysicalComputeScalar node)
+        private static ExecutableOperator EmitComputeScalar(PhysicalComputeScalar node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableComputeScalar(node.OutputValueSlots, EmitOperator(node.Input), node.DefinedValues);
+            return new ExecutableComputeScalar(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.DefinedValues, outerSlots);
         }
 
-        private static ExecutableOperator EmitProject(PhysicalProject node)
+        private static ExecutableOperator EmitProject(PhysicalProject node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableProject(node.OutputValueSlots, EmitOperator(node.Input), node.Outputs);
+            return new ExecutableProject(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.Outputs);
         }
 
-        private static ExecutableOperator EmitSort(PhysicalSort node)
+        private static ExecutableOperator EmitSort(PhysicalSort node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableSort(node.OutputValueSlots, EmitOperator(node.Input), node.IsDistinct, node.SortedValues);
+            return new ExecutableSort(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.IsDistinct, node.SortedValues);
         }
 
-        private static ExecutableOperator EmitTop(PhysicalTop node)
+        private static ExecutableOperator EmitTop(PhysicalTop node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableTop(node.OutputValueSlots, EmitOperator(node.Input), node.Limit, node.TieEntries);
+            return new ExecutableTop(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.Limit, node.TieEntries);
         }
 
-        private static ExecutableOperator EmitNestedLoops(PhysicalNestedLoops node)
+        private static ExecutableOperator EmitNestedLoops(PhysicalNestedLoops node, ImmutableArray<ValueSlot> outerSlots)
         {
-            var left = EmitOperator(node.Left);
-            var right = EmitOperator(node.Right);
+            var left = EmitOperator(node.Left, outerSlots);
+            var right = EmitOperator(node.Right, outerSlots);
             return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate);
         }
 
-        private static ExecutableOperator EmitApply(PhysicalApply node)
+        private static ExecutableOperator EmitApply(PhysicalApply node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableApply(node.OutputValueSlots, EmitOperator(node.Left), EmitOperator(node.Right));
+            var left = EmitOperator(node.Left, outerSlots);
+
+            // The right subtree may reference the left's slots; add them to the outer
+            // scope (after any outer this apply itself sits under).
+            var innerOuterSlots = outerSlots.IsEmpty ? left.OutputValueSlots : outerSlots.AddRange(left.OutputValueSlots);
+            var right = EmitOperator(node.Right, innerOuterSlots);
+            return new ExecutableApply(node.OutputValueSlots, left, right, node.ApplyKind, node.Probe);
         }
 
-        private static ExecutableOperator EmitAggregate(PhysicalAggregate node)
+        private static ExecutableOperator EmitAggregate(PhysicalAggregate node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableAggregate(node.OutputValueSlots, EmitOperator(node.Input));
+            return new ExecutableAggregate(node.OutputValueSlots, EmitOperator(node.Input, outerSlots));
         }
 
-        private static ExecutableOperator EmitConcatenation(PhysicalConcatenation node)
+        private static ExecutableOperator EmitConcatenation(PhysicalConcatenation node, ImmutableArray<ValueSlot> outerSlots)
         {
-            var inputs = node.Inputs.Select(EmitOperator).ToImmutableArray();
+            var inputs = node.Inputs.Select(i => EmitOperator(i, outerSlots)).ToImmutableArray();
             return new ExecutableConcatenation(node.OutputValueSlots, inputs);
         }
 
-        private static ExecutableOperator EmitIntersectOrExcept(PhysicalIntersectOrExcept node)
+        private static ExecutableOperator EmitIntersectOrExcept(PhysicalIntersectOrExcept node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableIntersectOrExcept(node.OutputValueSlots, EmitOperator(node.Left), EmitOperator(node.Right));
+            var left = EmitOperator(node.Left, outerSlots);
+            var right = EmitOperator(node.Right, outerSlots);
+            return new ExecutableIntersectOrExcept(node.OutputValueSlots, left, right);
         }
     }
 }

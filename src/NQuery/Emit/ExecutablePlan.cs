@@ -30,7 +30,7 @@ namespace NQuery.Emit
 
         public Iterator CreateIterator()
         {
-            return _root.CreateIterator();
+            return _root.CreateIterator(outer: null);
         }
     }
 }

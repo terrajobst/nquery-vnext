@@ -20,6 +20,6 @@ namespace NQuery.Emit
             _columnAccessors = columnAccessors;
         }
 
-        public override Iterator CreateIterator() => new TableIterator(_definition, _columnAccessors);
+        public override Iterator CreateIterator(RowBuffer? outer) => new TableIterator(_definition, _columnAccessors);
     }
 }

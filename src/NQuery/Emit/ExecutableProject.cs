@@ -19,9 +19,9 @@ namespace NQuery.Emit
             _outputs = outputs;
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            var input = _input.CreateIterator();
+            var input = _input.CreateIterator(outer);
             var allocation = Allocate(_input, input);
             var entries = _outputs.Select(s => allocation[s]);
             return new ProjectionIterator(input, entries);

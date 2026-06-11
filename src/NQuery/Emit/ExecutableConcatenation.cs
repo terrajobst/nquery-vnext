@@ -18,7 +18,7 @@ namespace NQuery.Emit
 
         public ImmutableArray<ExecutableOperator> Inputs { get; }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
             throw new NotSupportedException("Emitting a concatenation iterator is not yet supported.");
         }

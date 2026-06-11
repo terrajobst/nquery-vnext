@@ -20,7 +20,10 @@ namespace NQuery.Emit
 
         public ImmutableArray<ValueSlot> OutputValueSlots { get; }
 
-        public abstract Iterator CreateIterator();
+        // outer is the row buffer of the enclosing Apply's left side (its correlated
+        // outer references), or null at the top level. Operators thread it to their
+        // inputs; correlated filters/computes read from it.
+        public abstract Iterator CreateIterator(RowBuffer? outer);
 
         protected static RowBufferAllocation Allocate(ExecutableOperator input, Iterator inputIterator)
         {

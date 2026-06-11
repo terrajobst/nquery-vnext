@@ -21,9 +21,9 @@ namespace NQuery.Emit
             _sortedValues = sortedValues;
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            var input = _input.CreateIterator();
+            var input = _input.CreateIterator(outer);
             var allocation = Allocate(_input, input);
             var entries = _sortedValues.Select(v => allocation[v.ValueSlot]).ToImmutableArray();
             var comparers = _sortedValues.Select(v => v.Comparer).ToImmutableArray();

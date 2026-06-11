@@ -21,9 +21,9 @@ namespace NQuery.Emit
             _tieEntries = tieEntries;
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            var input = _input.CreateIterator();
+            var input = _input.CreateIterator(outer);
             if (_tieEntries.IsEmpty)
                 return new TopIterator(input, _limit);
 

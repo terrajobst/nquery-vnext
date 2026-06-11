@@ -42,10 +42,10 @@ namespace NQuery.Emit
                 : EmittedExpressionCompiler.CompilePredicate(passthruPredicate, slotIndices);
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            var left = _left.CreateIterator();
-            var right = _right.CreateIterator();
+            var left = _left.CreateIterator(outer);
+            var right = _right.CreateIterator(outer);
 
             switch (_joinKind)
             {

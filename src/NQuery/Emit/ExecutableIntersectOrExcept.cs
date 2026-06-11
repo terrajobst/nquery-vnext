@@ -21,7 +21,7 @@ namespace NQuery.Emit
 
         public ExecutableOperator Right { get; }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
             throw new NotSupportedException("Emitting an intersect/except iterator is not yet supported.");
         }

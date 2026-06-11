@@ -13,21 +13,24 @@ namespace NQuery.Emit
         private readonly ExecutableOperator _input;
         private readonly ImmutableArray<EmittedFunction> _functions;
 
-        public ExecutableComputeScalar(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComputedValue> definedValues)
+        public ExecutableComputeScalar(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComputedValue> definedValues, ImmutableArray<ValueSlot> outerSlots)
             : base(outputValueSlots)
         {
             _input = input;
 
-            // Compile the computed expressions once, against the input's slot layout.
-            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(input.OutputValueSlots);
+            // Compile the computed expressions once. When this compute is correlated
+            // (inside an Apply's right), the expressions see the outer slots ahead of
+            // the input's, matching the (outer ++ input) buffer fed at run time.
+            var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
+            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
             _functions = definedValues
                          .Select(v => EmittedExpressionCompiler.CompileFunction(v.Expression, slotIndices))
                          .ToImmutableArray();
         }
 
-        public override Iterator CreateIterator()
+        public override Iterator CreateIterator(RowBuffer? outer)
         {
-            return new EmittedComputeScalarIterator(_input.CreateIterator(), _functions);
+            return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _functions, outer);
         }
     }
 }
