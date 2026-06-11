@@ -90,14 +90,29 @@ namespace NQuery.Planning
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate);
+            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate, isDependent: false);
         }
 
+        // An Apply is a dependent join: it has no join condition of its own (the
+        // correlation lives in the right subtree) and is executed as nested loops with
+        // the left's columns exposed to the right as outer references.
         private static PhysicalOperator PlanApply(LogicalApply node)
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalApply(node.ApplyKind, left, right, node.Probe);
+            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, isDependent: true);
+        }
+
+        private static LogicalJoinKind MapApplyKind(LogicalApplyKind kind)
+        {
+            return kind switch
+            {
+                LogicalApplyKind.Inner => LogicalJoinKind.Inner,
+                LogicalApplyKind.LeftOuter => LogicalJoinKind.LeftOuter,
+                LogicalApplyKind.LeftSemi => LogicalJoinKind.LeftSemi,
+                LogicalApplyKind.LeftAntiSemi => LogicalJoinKind.LeftAntiSemi,
+                _ => throw ExceptionBuilder.UnexpectedValue(kind)
+            };
         }
 
         private static PhysicalOperator PlanAggregate(LogicalAggregate node)

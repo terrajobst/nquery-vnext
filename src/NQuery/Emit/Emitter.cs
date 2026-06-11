@@ -55,8 +55,6 @@ namespace NQuery.Emit
                     return EmitTop((PhysicalTop)node, outerSlots);
                 case PhysicalOperatorKind.NestedLoops:
                     return EmitNestedLoops((PhysicalNestedLoops)node, outerSlots);
-                case PhysicalOperatorKind.Apply:
-                    return EmitApply((PhysicalApply)node, outerSlots);
                 case PhysicalOperatorKind.Aggregate:
                     return EmitAggregate((PhysicalAggregate)node, outerSlots);
                 case PhysicalOperatorKind.Concatenation:
@@ -114,19 +112,15 @@ namespace NQuery.Emit
         private static ExecutableOperator EmitNestedLoops(PhysicalNestedLoops node, ImmutableArray<ValueSlot> outerSlots)
         {
             var left = EmitOperator(node.Left, outerSlots);
-            var right = EmitOperator(node.Right, outerSlots);
-            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate);
-        }
 
-        private static ExecutableOperator EmitApply(PhysicalApply node, ImmutableArray<ValueSlot> outerSlots)
-        {
-            var left = EmitOperator(node.Left, outerSlots);
-
-            // The right subtree may reference the left's slots; add them to the outer
-            // scope (after any outer this apply itself sits under).
-            var innerOuterSlots = outerSlots.IsEmpty ? left.OutputValueSlots : outerSlots.AddRange(left.OutputValueSlots);
-            var right = EmitOperator(node.Right, innerOuterSlots);
-            return new ExecutableApply(node.OutputValueSlots, left, right, node.ApplyKind, node.Probe);
+            // A dependent join (apply) exposes the left's slots to the right subtree as
+            // outer references, after any outer this node itself sits under. A plain
+            // join's right is independent, so it just sees the inherited outer scope.
+            var rightOuterSlots = node.IsDependent
+                ? (outerSlots.IsEmpty ? left.OutputValueSlots : outerSlots.AddRange(left.OutputValueSlots))
+                : outerSlots;
+            var right = EmitOperator(node.Right, rightOuterSlots);
+            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.IsDependent);
         }
 
         private static ExecutableOperator EmitAggregate(PhysicalAggregate node, ImmutableArray<ValueSlot> outerSlots)

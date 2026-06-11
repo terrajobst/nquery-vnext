@@ -13,9 +13,15 @@ namespace NQuery.Planning
     // for any predicate. Equi-joins will get a sibling PhysicalHashMatch once that is
     // built; until then every join is planned as nested loops. Slot flow is identical
     // to the logical join.
+    //
+    // It is also the physical form of an Apply (a dependent join): IsDependent means
+    // the right may reference the left's columns (outer references), so the executor
+    // threads the left row into the right's evaluation. A plain join has IsDependent
+    // = false; an apply has IsDependent = true, no Conditions (the correlation lives
+    // in the right's own filters), and its ApplyKind mapped onto JoinKind.
     internal sealed class PhysicalNestedLoops : PhysicalOperator
     {
-        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate)
+        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, bool isDependent)
         {
             JoinKind = joinKind;
             Left = left;
@@ -23,6 +29,7 @@ namespace NQuery.Planning
             Conditions = conditions;
             Probe = probe;
             PassthruPredicate = passthruPredicate;
+            IsDependent = isDependent;
         }
 
         public override PhysicalOperatorKind Kind => PhysicalOperatorKind.NestedLoops;
@@ -38,6 +45,10 @@ namespace NQuery.Planning
         public ValueSlot? Probe { get; }
 
         public LogicalExpression? PassthruPredicate { get; }
+
+        // True for an Apply: the right side is re-evaluated per left row with the
+        // left's columns in scope as outer references.
+        public bool IsDependent { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots()
         {

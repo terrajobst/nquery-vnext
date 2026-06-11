@@ -60,27 +60,31 @@
   choices are purely syntactic.
 - Aggregate strategy — always one PhysicalAggregate; no stream-vs-hash choice,
   no use of existing ordering.
-- Apply execution strategy — correlated Apply runs as naive correlated nested
-  loops (re-scan the right per left row); no indexed-seek inner or spool/rewind.
+- Apply execution strategy — a LogicalApply lowers to a *dependent*
+  PhysicalNestedLoops (IsDependent = true); there is no separate physical/
+  executable Apply node. It runs as naive correlated nested loops (re-scan the
+  right per left row); no indexed-seek inner or spool/rewind.
 - Sort elimination when input is already ordered (no ordering-property
   propagation into the planner), and no index/seek selection (table scan only).
 
 ### Emit (Physical → ExecutablePlan)
 
 - ExecutableAggregate, ExecutableConcatenation, ExecutableIntersectOrExcept.
-  (ExecutableNestedLoops and ExecutableApply are wired.)
+  (ExecutableNestedLoops is wired and also serves Apply.)
 
 ### EmittedIterators
 
 - No aggregate/concatenation/intersect-except iterators, and no hash match. The
   nested-loops family is ported (inner, left outer, left semi, left anti-semi,
-  probing left semi) and is reused for Apply; the legacy NQuery.Iterators also has
-  hash match, stream aggregate, concatenation, and table spool, deliberately not
-  ported yet — they need the compile-once treatment, not a copy.
+  probing left semi) and serves both joins and applies; the legacy
+  NQuery.Iterators also has hash match, stream aggregate, concatenation, and table
+  spool, deliberately not ported yet — they need the compile-once treatment, not a
+  copy.
 - ExecutableNestedLoops compiles its predicates against the combined (left ++
-  right) slot map via CreateSlotIndices; Apply reuses the same combined-buffer
-  trick for correlation — its right subtree's filters/computes compile against
-  (outer ++ input) and read an outer buffer threaded through CreateIterator.
+  right) slot map via CreateSlotIndices. A dependent (apply) nested loops uses the
+  same combined-buffer trick for correlation — its right subtree's filters/computes
+  compile against (outer ++ input) and read an outer buffer threaded through
+  CreateIterator.
 - No spool/rewind iterator for correlated Apply (naive re-scan only). Join
   predicates that reference outer slots (correlation on a join, not a filter) are
   not handled — decorrelation routes correlation through filters.
