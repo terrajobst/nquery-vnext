@@ -101,16 +101,7 @@ namespace NQuery.Planning
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            var outerReferences = GetOuterReferences(node.Left, node.Right);
-            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, outerReferences);
-        }
-
-        // The left's output columns that the right subtree actually reads (the
-        // correlation), in the left's output order.
-        private static ImmutableArray<ValueSlot> GetOuterReferences(LogicalOperator left, LogicalOperator right)
-        {
-            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(right);
-            return left.OutputValueSlots.Where(referenced.Contains).ToImmutableArray();
+            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, node.OuterReferences);
         }
 
         private static LogicalJoinKind MapApplyKind(LogicalApplyKind kind)

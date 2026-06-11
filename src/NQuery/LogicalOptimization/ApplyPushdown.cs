@@ -37,8 +37,9 @@ namespace NQuery.LogicalOptimization
 
         private static LogicalOperator Decorrelate(LogicalApply apply)
         {
-            // Base case: the right side no longer reaches into the left.
-            if (!DependsOnLeft(apply.Right, apply.Left))
+            // Base case: no outer references, so the right no longer reaches into the
+            // left -- it is already an ordinary join.
+            if (apply.OuterReferences.IsEmpty)
                 return ToJoin(apply, apply.Right, ImmutableArray<LogicalExpression>.Empty);
 
             switch (apply.Right)

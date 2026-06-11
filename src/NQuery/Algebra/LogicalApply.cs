@@ -37,7 +37,25 @@ namespace NQuery.Algebra
         // The mark column for Semi/AntiSemi applies; null for Inner/LeftOuter.
         public ValueSlot? Probe { get; }
 
+        // The left's output columns the right side references -- i.e. the correlation.
+        // Lazily computed (and cached) by walking the right subtree once.
+        public ImmutableArray<ValueSlot> OuterReferences
+        {
+            get
+            {
+                if (field.IsDefault)
+                    ImmutableInterlocked.InterlockedInitialize(ref field, ComputeOuterReferences());
+                return field;
+            }
+        }
+
         private bool ExposesRight => ApplyKind is LogicalApplyKind.Inner or LogicalApplyKind.LeftOuter;
+
+        private ImmutableArray<ValueSlot> ComputeOuterReferences()
+        {
+            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(Right);
+            return Left.OutputValueSlots.Where(referenced.Contains).ToImmutableArray();
+        }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots()
         {
