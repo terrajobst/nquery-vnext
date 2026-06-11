@@ -1,17 +1,15 @@
 #nullable enable
 
-using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
-using NQuery.Binding;
 
 namespace NQuery.Planning
 {
     // Translates the optimized logical algebra into a physical operator tree
-    // (Logical -> Physical). Mostly a one-to-one lowering; the real planning
-    // decision so far is choosing a join algorithm (hash match vs nested loops).
-    // The stream-vs-hash aggregate choice and cost-based decisions are future work.
+    // (Logical -> Physical). Currently a one-to-one lowering: every join becomes
+    // nested loops. Algorithm selection (a sibling hash-match node for equi-joins),
+    // the stream-vs-hash aggregate choice, and cost-based decisions are future work.
     internal static class Planner
     {
         public static PhysicalQuery Plan(LogicalQuery query)
@@ -46,7 +44,7 @@ namespace NQuery.Planning
                 case LogicalOperatorKind.Project:
                     return PlanProject((LogicalProject)node);
                 case LogicalOperatorKind.Join:
-                    return PlanJoin((LogicalJoin)node);
+                    return PlanNestedLoops((LogicalJoin)node);
                 case LogicalOperatorKind.Apply:
                     return PlanApply((LogicalApply)node);
                 case LogicalOperatorKind.Aggregate:
@@ -88,12 +86,11 @@ namespace NQuery.Planning
             return new PhysicalProject(input, node.Outputs);
         }
 
-        private static PhysicalOperator PlanJoin(LogicalJoin node)
+        private static PhysicalOperator PlanNestedLoops(LogicalJoin node)
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            var algorithm = ChooseJoinAlgorithm(node, left, right);
-            return new PhysicalJoin(algorithm, node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate);
+            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate);
         }
 
         private static PhysicalOperator PlanApply(LogicalApply node)
@@ -132,33 +129,6 @@ namespace NQuery.Planning
         {
             var input = PlanOperator(node.Input);
             return new PhysicalTop(input, node.Limit, node.TieEntries);
-        }
-
-        // A join with a conjunct that equates a left-only expression with a
-        // right-only expression can use a hash match; otherwise nested loops.
-        private static PhysicalJoinAlgorithm ChooseJoinAlgorithm(LogicalJoin node, PhysicalOperator left, PhysicalOperator right)
-        {
-            foreach (var condition in node.Conditions)
-            {
-                if (IsEquiJoinCondition(condition, left.DefinedValueSlots, right.DefinedValueSlots))
-                    return PhysicalJoinAlgorithm.HashMatch;
-            }
-
-            return PhysicalJoinAlgorithm.NestedLoops;
-        }
-
-        private static bool IsEquiJoinCondition(LogicalExpression condition, FrozenSet<ValueSlot> left, FrozenSet<ValueSlot> right)
-        {
-            if (condition is not LogicalBinaryExpression { OperatorKind: BinaryOperatorKind.Equal } binary)
-                return false;
-
-            var operands = LogicalSlotReferenceFinder.FindReferencedSlots(binary.Left);
-            var others = LogicalSlotReferenceFinder.FindReferencedSlots(binary.Right);
-            if (operands.Count == 0 || others.Count == 0)
-                return false;
-
-            return (operands.All(left.Contains) && others.All(right.Contains))
-                || (operands.All(right.Contains) && others.All(left.Contains));
         }
     }
 }

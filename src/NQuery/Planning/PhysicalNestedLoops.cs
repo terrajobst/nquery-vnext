@@ -8,14 +8,15 @@ using NQuery.Binding;
 
 namespace NQuery.Planning
 {
-    // The physical realization of a logical join. Algorithm is the planning choice:
-    // a hash match for equi-joins, nested loops otherwise. Slot flow is identical to
-    // the logical join.
-    internal sealed class PhysicalJoin : PhysicalOperator
+    // The nested-loops realization of a logical join: for each outer (left) row it
+    // rescans the inner (right). It is the general-purpose join algorithm -- it works
+    // for any predicate. Equi-joins will get a sibling PhysicalHashMatch once that is
+    // built; until then every join is planned as nested loops. Slot flow is identical
+    // to the logical join.
+    internal sealed class PhysicalNestedLoops : PhysicalOperator
     {
-        public PhysicalJoin(PhysicalJoinAlgorithm algorithm, LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate)
+        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate)
         {
-            Algorithm = algorithm;
             JoinKind = joinKind;
             Left = left;
             Right = right;
@@ -24,9 +25,7 @@ namespace NQuery.Planning
             PassthruPredicate = passthruPredicate;
         }
 
-        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Join;
-
-        public PhysicalJoinAlgorithm Algorithm { get; }
+        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.NestedLoops;
 
         public LogicalJoinKind JoinKind { get; }
 

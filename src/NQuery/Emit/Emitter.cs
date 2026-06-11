@@ -48,8 +48,8 @@ namespace NQuery.Emit
                     return EmitSort((PhysicalSort)node);
                 case PhysicalOperatorKind.Top:
                     return EmitTop((PhysicalTop)node);
-                case PhysicalOperatorKind.Join:
-                    return EmitJoin((PhysicalJoin)node);
+                case PhysicalOperatorKind.NestedLoops:
+                    return EmitNestedLoops((PhysicalNestedLoops)node);
                 case PhysicalOperatorKind.Apply:
                     return EmitApply((PhysicalApply)node);
                 case PhysicalOperatorKind.Aggregate:
@@ -106,9 +106,11 @@ namespace NQuery.Emit
             return new ExecutableTop(node.OutputValueSlots, EmitOperator(node.Input), node.Limit, node.TieEntries);
         }
 
-        private static ExecutableOperator EmitJoin(PhysicalJoin node)
+        private static ExecutableOperator EmitNestedLoops(PhysicalNestedLoops node)
         {
-            return new ExecutableJoin(node.OutputValueSlots, EmitOperator(node.Left), EmitOperator(node.Right));
+            var left = EmitOperator(node.Left);
+            var right = EmitOperator(node.Right);
+            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate);
         }
 
         private static ExecutableOperator EmitApply(PhysicalApply node)

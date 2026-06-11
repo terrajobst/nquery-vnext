@@ -20,6 +20,22 @@
     - No, we should remove that
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
+* Instantiating CTEs
+    - Need to handle recursive ones
+* Not implemented — these nodes build but throw NotSupportedException from CreateIterator():
+  - ExecutableApply
+  - ExecutableAggregate
+  - ExecutableConcatenation
+  - ExecutableIntersectOrExcept
+* Cases
+  - Distinct
+  - Distinct with ties
+  - Union
+  - Except
+  - Intersect
+  - Full outer join
+* Subqueries in join conditions
+    - Is that where passthru comes from?
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
@@ -50,19 +66,19 @@
 
 ### Emit (Physical → ExecutablePlan)
 
-- ExecutableJoin, ExecutableApply, ExecutableAggregate, ExecutableConcatenation,
-  ExecutableIntersectOrExcept.
+- ExecutableApply, ExecutableAggregate, ExecutableConcatenation,
+  ExecutableIntersectOrExcept. (ExecutableNestedLoops is wired.)
 
 ### EmittedIterators
 
-- No join/apply/aggregate/concatenation/intersect-except iterators. The legacy
-  NQuery.Iterators has these (nested-loops family, hash match, stream aggregate,
-  concatenation, table spool) but they were deliberately not ported — they need
-  the compile-once treatment, not a copy.
-- EmittedExpressionCompiler is single-buffer — it compiles against one
-  operator's output-slot layout. Join/Apply predicates need a combined
-  left+right slot map; CreateSlotIndices could build it, but nothing wires it
-  yet.
+- No apply/aggregate/concatenation/intersect-except iterators, and no hash match.
+  The nested-loops family is ported (inner, left outer, left semi, left
+  anti-semi, probing left semi); the legacy NQuery.Iterators also has hash match,
+  stream aggregate, concatenation, and table spool, deliberately not ported yet —
+  they need the compile-once treatment, not a copy.
+- ExecutableNestedLoops compiles its predicates against the combined (left ++
+  right) slot map via CreateSlotIndices; the same combined-buffer approach is what
+  Apply/hash match will reuse.
 - No spool/rewind iterator for correlated Apply.
 
 ### Cross-cutting
@@ -72,8 +88,9 @@
   it.
 - No ShowPlan/explain for physical or executable plans.
 - End-to-end execution (the differential test vs. the existing engine) currently
-  covers scan, filter, compute, project, sort, top — exactly the wired set
-  above.
-- The single biggest unblocking piece is ExecutableJoin + its emitted iterators
-  (nested-loops and hash-match, with combined-buffer predicate compilation);
-  Apply, Aggregate, and the set operators follow from the same machinery.
+  covers scan, filter, compute, project, sort, top, and nested-loops joins
+  (inner, cross, left outer, probing semi via EXISTS / NOT EXISTS).
+- The next pieces are ExecutableApply (correlated dependent nested loops) and
+  ExecutableAggregate, then the set operators and a hash-match join node; all
+  reuse the combined-buffer predicate compilation that ExecutableNestedLoops
+  established.

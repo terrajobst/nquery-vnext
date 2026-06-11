@@ -10,7 +10,7 @@ namespace NQuery.Planning
         Filter,
         ComputeScalar,
         Project,
-        Join,
+        NestedLoops,
         Apply,
         Aggregate,
         Sort,

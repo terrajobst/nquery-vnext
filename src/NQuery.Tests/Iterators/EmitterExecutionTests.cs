@@ -9,8 +9,10 @@ namespace NQuery.Tests.Iterators
 {
     // End-to-end execution through the new pipeline
     // (Bind -> Algebrize -> Optimize -> Plan -> Emit -> CreateIterator), checked
-    // differentially against the existing engine. Limited to the operators the
-    // Emitter covers so far: scan, filter, compute, project, sort, top.
+    // differentially against the existing engine. Covers the operators the Emitter
+    // wires so far: scan, filter, compute, project, sort, top, and nested-loops joins
+    // (inner, cross, left outer, and probing semi via EXISTS / NOT EXISTS). Queries
+    // carry an ORDER BY so the row order is deterministic across both engines.
     public class EmitterExecutionTests
     {
         [Theory]
@@ -20,6 +22,16 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT CASE WHEN e.City = 'London' THEN 1 ELSE 0 END FROM Employees e")]
         [InlineData("SELECT e.City FROM Employees e ORDER BY e.City")]
         [InlineData("SELECT TOP 3 e.City FROM Employees e ORDER BY e.City")]
+        // Inner join with a side-local filter that pushes under the join.
+        [InlineData("SELECT od.ProductID, o.CustomerID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID = od.OrderID WHERE o.OrderID = 10248 ORDER BY od.ProductID")]
+        // Cross join; SELECT order differs from FROM order to check slot mapping.
+        [InlineData("SELECT c.CustomerID, e.EmployeeID FROM Employees e, Customers c ORDER BY e.EmployeeID, c.CustomerID")]
+        // Left outer join that leaves most outer rows with a NULL right side.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.OrderID = 10248 ORDER BY e.EmployeeID, o.OrderID")]
+        // Correlated EXISTS -> probing left-semi join (probe = true path).
+        [InlineData("SELECT e.EmployeeID FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) ORDER BY e.EmployeeID")]
+        // Correlated NOT EXISTS -> probing left-semi join (probe = false path).
+        [InlineData("SELECT c.CustomerID FROM Customers c WHERE NOT EXISTS (SELECT * FROM Orders o WHERE o.CustomerID = c.CustomerID) ORDER BY c.CustomerID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

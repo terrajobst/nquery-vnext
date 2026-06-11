@@ -25,21 +25,20 @@ namespace NQuery.Tests.Planning
         }
 
         [Fact]
-        public void Planner_ChoosesHashMatch_ForEquiJoin()
+        public void Planner_BuildsNestedLoops_ForEquiJoin()
         {
             var text = "SELECT o.OrderID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID = od.OrderID";
-            var join = Plan(text).DescendantsAndSelf().OfType<PhysicalJoin>().Single();
+            var join = Plan(text).DescendantsAndSelf().OfType<PhysicalNestedLoops>().Single();
 
-            Assert.Equal(PhysicalJoinAlgorithm.HashMatch, join.Algorithm);
+            Assert.NotEmpty(join.Conditions);
         }
 
         [Fact]
-        public void Planner_ChoosesNestedLoops_ForCrossProduct()
+        public void Planner_BuildsNestedLoops_ForCrossProduct()
         {
             var text = "SELECT e.LastName, c.City FROM Employees e, Customers c";
-            var join = Plan(text).DescendantsAndSelf().OfType<PhysicalJoin>().Single();
+            var join = Plan(text).DescendantsAndSelf().OfType<PhysicalNestedLoops>().Single();
 
-            Assert.Equal(PhysicalJoinAlgorithm.NestedLoops, join.Algorithm);
             Assert.Empty(join.Conditions);
         }
 
