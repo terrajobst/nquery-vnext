@@ -113,14 +113,14 @@ namespace NQuery.Emit
         {
             var left = EmitOperator(node.Left, outerSlots);
 
-            // A dependent join (apply) exposes the left's slots to the right subtree as
-            // outer references, after any outer this node itself sits under. A plain
-            // join's right is independent, so it just sees the inherited outer scope.
-            var rightOuterSlots = node.IsDependent
-                ? (outerSlots.IsEmpty ? left.OutputValueSlots : outerSlots.AddRange(left.OutputValueSlots))
-                : outerSlots;
+            // A dependent join (apply) adds its outer references to the right subtree's
+            // outer scope, after any outer this node itself sits under. A plain join's
+            // right is independent, so it just sees the inherited outer scope.
+            var rightOuterSlots = node.OuterReferences.IsEmpty
+                ? outerSlots
+                : outerSlots.AddRange(node.OuterReferences);
             var right = EmitOperator(node.Right, rightOuterSlots);
-            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.IsDependent);
+            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.OuterReferences);
         }
 
         private static ExecutableOperator EmitAggregate(PhysicalAggregate node, ImmutableArray<ValueSlot> outerSlots)

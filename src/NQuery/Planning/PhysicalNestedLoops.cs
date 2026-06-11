@@ -14,14 +14,14 @@ namespace NQuery.Planning
     // built; until then every join is planned as nested loops. Slot flow is identical
     // to the logical join.
     //
-    // It is also the physical form of an Apply (a dependent join): IsDependent means
-    // the right may reference the left's columns (outer references), so the executor
-    // threads the left row into the right's evaluation. A plain join has IsDependent
-    // = false; an apply has IsDependent = true, no Conditions (the correlation lives
-    // in the right's own filters), and its ApplyKind mapped onto JoinKind.
+    // It is also the physical form of an Apply (a dependent join): OuterReferences are
+    // the left columns the right side reads, so the executor threads those values into
+    // the right's evaluation. A plain join has no outer references; an apply has the
+    // referenced left slots, no Conditions (the correlation lives in the right's own
+    // filters), and its ApplyKind mapped onto JoinKind.
     internal sealed class PhysicalNestedLoops : PhysicalOperator
     {
-        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, bool isDependent)
+        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
         {
             JoinKind = joinKind;
             Left = left;
@@ -29,7 +29,7 @@ namespace NQuery.Planning
             Conditions = conditions;
             Probe = probe;
             PassthruPredicate = passthruPredicate;
-            IsDependent = isDependent;
+            OuterReferences = outerReferences;
         }
 
         public override PhysicalOperatorKind Kind => PhysicalOperatorKind.NestedLoops;
@@ -46,9 +46,10 @@ namespace NQuery.Planning
 
         public LogicalExpression? PassthruPredicate { get; }
 
-        // True for an Apply: the right side is re-evaluated per left row with the
-        // left's columns in scope as outer references.
-        public bool IsDependent { get; }
+        // The left columns the right side references (an Apply's correlation). Empty
+        // for an ordinary, independent join. When non-empty, the right is re-evaluated
+        // per left row with these values in scope.
+        public ImmutableArray<ValueSlot> OuterReferences { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots()
         {

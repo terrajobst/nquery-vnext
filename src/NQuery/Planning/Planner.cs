@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
+using NQuery.Binding;
 
 namespace NQuery.Planning
 {
@@ -90,17 +91,26 @@ namespace NQuery.Planning
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate, isDependent: false);
+            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
         }
 
         // An Apply is a dependent join: it has no join condition of its own (the
         // correlation lives in the right subtree) and is executed as nested loops with
-        // the left's columns exposed to the right as outer references.
+        // the referenced left columns exposed to the right as outer references.
         private static PhysicalOperator PlanApply(LogicalApply node)
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, isDependent: true);
+            var outerReferences = GetOuterReferences(node.Left, node.Right);
+            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, outerReferences);
+        }
+
+        // The left's output columns that the right subtree actually reads (the
+        // correlation), in the left's output order.
+        private static ImmutableArray<ValueSlot> GetOuterReferences(LogicalOperator left, LogicalOperator right)
+        {
+            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(right);
+            return left.OutputValueSlots.Where(referenced.Contains).ToImmutableArray();
         }
 
         private static LogicalJoinKind MapApplyKind(LogicalApplyKind kind)

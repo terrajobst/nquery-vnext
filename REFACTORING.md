@@ -60,10 +60,10 @@
   choices are purely syntactic.
 - Aggregate strategy — always one PhysicalAggregate; no stream-vs-hash choice,
   no use of existing ordering.
-- Apply execution strategy — a LogicalApply lowers to a *dependent*
-  PhysicalNestedLoops (IsDependent = true); there is no separate physical/
-  executable Apply node. It runs as naive correlated nested loops (re-scan the
-  right per left row); no indexed-seek inner or spool/rewind.
+- Apply execution strategy — a LogicalApply lowers to a PhysicalNestedLoops
+  carrying OuterReferences (the left columns the right reads); there is no separate
+  physical/executable Apply node. It runs as naive correlated nested loops (re-scan
+  the right per left row); no indexed-seek inner or spool/rewind.
 - Sort elimination when input is already ordered (no ordering-property
   propagation into the planner), and no index/seek selection (table scan only).
 

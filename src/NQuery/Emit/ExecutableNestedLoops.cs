@@ -12,10 +12,10 @@ namespace NQuery.Emit
     // against the combined (left ++ right) slot layout, and take the row buffer as a
     // parameter -- so the executable join is reusable across CreateIterator() calls.
     //
-    // It is also the physical form of an Apply (a dependent join): when isDependent,
-    // the left row is exposed to the right side as outer references, and the join
-    // predicate is simply absent (empty conditions => constant true) because the
-    // correlation lives inside the right subtree's own filters/computes.
+    // It is also the physical form of an Apply (a dependent join): outerReferences are
+    // the left columns the right reads, and the join predicate is simply absent (empty
+    // conditions => constant true) because the correlation lives inside the right
+    // subtree's own filters/computes.
     internal sealed class ExecutableNestedLoops : ExecutableOperator
     {
         private static readonly EmittedPredicate AlwaysTrue = _ => true;
@@ -25,18 +25,22 @@ namespace NQuery.Emit
         private readonly ExecutableOperator _right;
         private readonly LogicalJoinKind _joinKind;
         private readonly ValueSlot? _probe;
-        private readonly bool _isDependent;
+        private readonly ImmutableArray<int> _outerReferenceIndices;
         private readonly EmittedPredicate _predicate;
         private readonly EmittedPredicate _passthruPredicate;
 
-        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, LogicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, bool isDependent)
+        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, LogicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
             : base(outputValueSlots)
         {
             _left = left;
             _right = right;
             _joinKind = joinKind;
             _probe = probe;
-            _isDependent = isDependent;
+
+            // The outer references are exposed to the right by projecting the left's
+            // row buffer down to just these columns; precompute their positions in the
+            // left's output (which is the left iterator's row-buffer layout).
+            _outerReferenceIndices = outerReferences.Select(s => left.OutputValueSlots.IndexOf(s)).ToImmutableArray();
 
             // The predicates see both sides, so compile them against the combined slot
             // layout; that is exactly the order of the CombinedRowBuffer the iterators
@@ -53,12 +57,17 @@ namespace NQuery.Emit
         {
             var left = _left.CreateIterator(outer);
 
-            // A dependent join exposes the left row to the right as outer references
-            // (accumulated onto any outer this node itself sits under). A plain join's
-            // right is independent, so it just sees the outer it was handed.
-            var rightOuter = _isDependent
-                ? (outer is null ? left.RowBuffer : new CombinedRowBuffer(outer, left.RowBuffer))
-                : outer;
+            // A dependent join exposes its outer references (a projection of the left
+            // row) to the right, accumulated onto any outer this node itself sits
+            // under. A plain join's right is independent, so it just sees the outer it
+            // was handed.
+            var rightOuter = outer;
+            if (!_outerReferenceIndices.IsEmpty)
+            {
+                var projectedLeft = new ProjectedRowBuffer(_outerReferenceIndices.Select(i => new RowBufferEntry(left.RowBuffer, i)));
+                rightOuter = outer is null ? projectedLeft : new CombinedRowBuffer(outer, projectedLeft);
+            }
+
             var right = _right.CreateIterator(rightOuter);
 
             switch (_joinKind)
