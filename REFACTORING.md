@@ -1,5 +1,14 @@
 # NQuery Major Refactoring
 
+Perform these renames/moves. This makes it clearer where we are and allows us to
+use "the right names" in the new universe:
+
+    src\NQuery\Algebra               -> src\NQuery\Refactor\Algebra
+    src\NQuery\AlgebraOptimization   -> src\NQuery\Refactor\Optimization
+    src\NQuery\AlgebraBinding        -> src\NQuery\Refactor\Binding
+    src\NQuery\Emit                  -> src\NQuery\Refactor\Emit
+    src\NQuery\EmittedIterators      -> src\NQuery\Refactor\Iterators
+
 ## Increase test coverage:
 
 * A correctness test that runs in debug builds and asserts the bound tree is
