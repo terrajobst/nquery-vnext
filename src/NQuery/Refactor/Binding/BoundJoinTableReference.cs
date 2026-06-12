@@ -23,12 +23,12 @@ namespace NQuery.Refactor.Binding
 
         public BoundExpression Condition { get; }
 
-        public override IEnumerable<ValueSlot> GetDefinedValues()
+        public override IEnumerable<IBoundValue> GetDefinedValues()
         {
             return Left.GetDefinedValues().Concat(Right.GetDefinedValues());
         }
 
-        public override IEnumerable<ValueSlot> GetOutputValues()
+        public override IEnumerable<IBoundValue> GetOutputValues()
         {
             return Left.GetOutputValues().Concat(Right.GetOutputValues());
         }

@@ -23,12 +23,12 @@ namespace NQuery.Refactor.Binding
 
         public ImmutableArray<TableColumnInstanceSymbol> DefinedValues { get; }
 
-        public override IEnumerable<ValueSlot> GetDefinedValues()
+        public override IEnumerable<IBoundValue> GetDefinedValues()
         {
-            return DefinedValues.Select(d => d.ValueSlotRefactor);
+            return DefinedValues.Select(d => d.BoundValue);
         }
 
-        public override IEnumerable<ValueSlot> GetOutputValues()
+        public override IEnumerable<IBoundValue> GetOutputValues()
         {
             return GetDefinedValues();
         }

@@ -44,14 +44,14 @@ namespace NQuery.Tests.Algebra
 
             Assert.NotNull(logicalQuery.Root);
 
-            // Algebrization preserves the query's external contract: the logical
-            // root produces the same output value slots, in the same order, and the
-            // same output columns as the bound query. (The internal defined-value
+            // Algebrization preserves the query's external contract: the logical root
+            // produces one output slot per output column, in the same order and of the same
+            // type, and exposes the same output columns as the bound query. (The algebrizer
+            // now mints its own slots from the binder's value identities, so this is
+            // type/arity equality, not slot-reference equality. The internal defined-value
             // scope is not preserved for subqueries -- Apply introduction lifts the
             // subquery's slots into the surrounding scope, which is intended.)
-            // Because the Algebrizer reuses the binder's slot instances, this is
-            // reference equality per slot.
-            Assert.Equal(boundQuery.OutputColumns.Select(c => c.ValueSlotRefactor), logicalQuery.Root.OutputValueSlots);
+            Assert.Equal(boundQuery.OutputColumns.Select(c => c.Type), logicalQuery.Root.OutputValueSlots.Select(s => s.Type));
             Assert.Equal(boundQuery.OutputColumns, logicalQuery.OutputColumns);
         }
 

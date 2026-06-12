@@ -9,7 +9,7 @@ namespace NQuery.Refactor.Algebra
 {
     internal sealed class LogicalSort : LogicalOperator
     {
-        public LogicalSort(bool isDistinct, LogicalOperator input, ImmutableArray<BoundComparedValue> sortedValues)
+        public LogicalSort(bool isDistinct, LogicalOperator input, ImmutableArray<LogicalComparedValue> sortedValues)
         {
             IsDistinct = isDistinct;
             Input = input;
@@ -22,7 +22,7 @@ namespace NQuery.Refactor.Algebra
 
         public LogicalOperator Input { get; }
 
-        public ImmutableArray<BoundComparedValue> SortedValues { get; }
+        public ImmutableArray<LogicalComparedValue> SortedValues { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Input.DefinedValueSlots;
 

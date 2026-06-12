@@ -82,17 +82,12 @@ namespace NQuery.Refactor.Algebra
 
         private LogicalOperator CloneTableScan(LogicalTableScan node)
         {
-            var original = node.TableInstance;
-            var factory = node.DefinedValues[0].ValueSlotRefactor.Factory;
-            var instanceName = factory.CreateNamed(original.Name, typeof(int)).Name;
-            var instance = new TableInstanceSymbol(instanceName, original.Table, factory);
-            var byColumn = instance.ColumnInstances.ToDictionary(c => c.Column);
-
-            foreach (var column in original.ColumnInstances)
-                _slotMap[column.ValueSlotRefactor] = byColumn[column.Column].ValueSlotRefactor;
-
-            var definedValues = node.DefinedValues.Select(d => byColumn[d.Column]).ToImmutableArray();
-            return new LogicalTableScan(instance, definedValues);
+            // Slots, not symbols, carry identity now: a fresh, slot-disjoint scan is just the same
+            // table instance and columns with duplicated output slots (mapped, so references in the
+            // rest of the subtree follow). DefinedValues only supply column accessors/types at emit,
+            // so the two clones can share them.
+            var outputs = node.OutputValueSlots.Select(Introduce).ToImmutableArray();
+            return new LogicalTableScan(node.TableInstance, node.DefinedValues, outputs);
         }
 
         private LogicalOperator CloneFilter(LogicalFilter node)
@@ -141,7 +136,7 @@ namespace NQuery.Refactor.Algebra
         private LogicalOperator CloneAggregate(LogicalAggregate node)
         {
             var input = Clone(node.Input);
-            var groups = node.Groups.Select(g => new BoundComparedValue(Map(g.ValueSlot), g.Comparer)).ToImmutableArray();
+            var groups = node.Groups.Select(g => new LogicalComparedValue(Map(g.ValueSlot), g.Comparer)).ToImmutableArray();
             var aggregates = node.Aggregates
                                  .Select(a => new LogicalAggregatedValue(Introduce(a.Output), a.Aggregate, a.Aggregatable, CloneExpression(a.Argument)))
                                  .ToImmutableArray();
@@ -152,7 +147,7 @@ namespace NQuery.Refactor.Algebra
         {
             var inputs = node.Inputs.Select(Clone).ToImmutableArray();
             var definedValues = node.DefinedValues
-                                    .Select(v => new BoundUnifiedValue(Introduce(v.ValueSlot), v.InputValueSlots.Select(Map)))
+                                    .Select(v => new LogicalUnifiedValue(Introduce(v.ValueSlot), v.InputValueSlots.Select(Map)))
                                     .ToImmutableArray();
             return new LogicalUnion(node.IsUnionAll, inputs, definedValues, node.Comparers);
         }
@@ -168,14 +163,14 @@ namespace NQuery.Refactor.Algebra
         private LogicalOperator CloneSort(LogicalSort node)
         {
             var input = Clone(node.Input);
-            var sortedValues = node.SortedValues.Select(v => new BoundComparedValue(Map(v.ValueSlot), v.Comparer)).ToImmutableArray();
+            var sortedValues = node.SortedValues.Select(v => new LogicalComparedValue(Map(v.ValueSlot), v.Comparer)).ToImmutableArray();
             return new LogicalSort(node.IsDistinct, input, sortedValues);
         }
 
         private LogicalOperator CloneTop(LogicalTop node)
         {
             var input = Clone(node.Input);
-            var tieEntries = node.TieEntries.Select(v => new BoundComparedValue(Map(v.ValueSlot), v.Comparer)).ToImmutableArray();
+            var tieEntries = node.TieEntries.Select(v => new LogicalComparedValue(Map(v.ValueSlot), v.Comparer)).ToImmutableArray();
             return new LogicalTop(input, node.Limit, tieEntries);
         }
 

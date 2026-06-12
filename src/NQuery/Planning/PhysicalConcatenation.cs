@@ -3,6 +3,7 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
 namespace NQuery.Planning
@@ -12,7 +13,7 @@ namespace NQuery.Planning
     // this node carries no IsUnionAll flag of its own.
     internal sealed class PhysicalConcatenation : PhysicalOperator
     {
-        public PhysicalConcatenation(ImmutableArray<PhysicalOperator> inputs, ImmutableArray<BoundUnifiedValue> definedValues)
+        public PhysicalConcatenation(ImmutableArray<PhysicalOperator> inputs, ImmutableArray<LogicalUnifiedValue> definedValues)
         {
             Inputs = inputs;
             DefinedValues = definedValues;
@@ -22,7 +23,7 @@ namespace NQuery.Planning
 
         public ImmutableArray<PhysicalOperator> Inputs { get; }
 
-        public ImmutableArray<BoundUnifiedValue> DefinedValues { get; }
+        public ImmutableArray<LogicalUnifiedValue> DefinedValues { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => DefinedValues.Select(v => v.ValueSlot).ToFrozenSet();
 

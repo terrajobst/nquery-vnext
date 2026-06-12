@@ -11,7 +11,7 @@ namespace NQuery.Refactor.Algebra
     // (stream vs hash aggregate) is a planning concern, not represented here.
     internal sealed class LogicalAggregate : LogicalOperator
     {
-        public LogicalAggregate(LogicalOperator input, ImmutableArray<BoundComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
+        public LogicalAggregate(LogicalOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
         {
             Input = input;
             Groups = groups;
@@ -22,7 +22,7 @@ namespace NQuery.Refactor.Algebra
 
         public LogicalOperator Input { get; }
 
-        public ImmutableArray<BoundComparedValue> Groups { get; }
+        public ImmutableArray<LogicalComparedValue> Groups { get; }
 
         public ImmutableArray<LogicalAggregatedValue> Aggregates { get; }
 

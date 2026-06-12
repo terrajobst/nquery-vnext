@@ -10,6 +10,6 @@ namespace NQuery.Refactor.Binding
 
         public List<Diagnostic> Diagnostics { get; } = new();
 
-        public ValueSlotFactory ValueSlotFactory { get; } = new();
+        public BoundValueFactory ValueFactory { get; } = new();
     }
 }

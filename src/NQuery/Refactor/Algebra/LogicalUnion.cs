@@ -10,7 +10,7 @@ namespace NQuery.Refactor.Algebra
 {
     internal sealed class LogicalUnion : LogicalOperator
     {
-        public LogicalUnion(bool isUnionAll, ImmutableArray<LogicalOperator> inputs, ImmutableArray<BoundUnifiedValue> definedValues, ImmutableArray<IComparer> comparers)
+        public LogicalUnion(bool isUnionAll, ImmutableArray<LogicalOperator> inputs, ImmutableArray<LogicalUnifiedValue> definedValues, ImmutableArray<IComparer> comparers)
         {
             IsUnionAll = isUnionAll;
             Inputs = inputs;
@@ -24,7 +24,7 @@ namespace NQuery.Refactor.Algebra
 
         public ImmutableArray<LogicalOperator> Inputs { get; }
 
-        public ImmutableArray<BoundUnifiedValue> DefinedValues { get; }
+        public ImmutableArray<LogicalUnifiedValue> DefinedValues { get; }
 
         public ImmutableArray<IComparer> Comparers { get; }
 

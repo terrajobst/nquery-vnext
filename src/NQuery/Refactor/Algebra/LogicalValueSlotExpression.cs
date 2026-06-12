@@ -5,8 +5,8 @@ using NQuery.Refactor.Binding;
 namespace NQuery.Refactor.Algebra
 {
     // The sole variable leaf of the logical expression language: a reference to a
-    // value slot. Both BoundValueSlotExpression and BoundColumnExpression (whose
-    // symbol carries a slot) translate into this.
+    // value slot. Both BoundValueExpression and BoundColumnExpression translate into
+    // this -- the algebrizer maps their IBoundValue to the slot referenced here.
     internal sealed class LogicalValueSlotExpression : LogicalExpression
     {
         public LogicalValueSlotExpression(ValueSlot valueSlot)

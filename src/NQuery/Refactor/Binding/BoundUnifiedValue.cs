@@ -1,20 +1,17 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Refactor.Binding
 {
     internal sealed class BoundUnifiedValue
     {
-        public BoundUnifiedValue(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
+        public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
         {
-            ValueSlot = valueSlot;
-            InputValueSlots = inputValueSlots.ToImmutableArray();
+            Value = value;
+            InputValues = inputValues.ToImmutableArray();
         }
 
-        public ValueSlot ValueSlot { get; }
+        public IBoundValue Value { get; }
 
-        public ImmutableArray<ValueSlot> InputValueSlots { get; }
-
+        public ImmutableArray<IBoundValue> InputValues { get; }
     }
 }

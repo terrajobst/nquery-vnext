@@ -1,18 +1,15 @@
-using NQuery.Binding;
-
 namespace NQuery.Refactor.Binding
 {
     internal sealed class BoundComputedValue
     {
-        public BoundComputedValue(BoundExpression expression, ValueSlot valueSlot)
+        public BoundComputedValue(BoundExpression expression, IBoundValue value)
         {
             Expression = expression;
-            ValueSlot = valueSlot;
+            Value = value;
         }
 
         public BoundExpression Expression { get; }
 
-        public ValueSlot ValueSlot { get; }
-
+        public IBoundValue Value { get; }
     }
 }

@@ -140,7 +140,7 @@ namespace NQuery.Refactor.Binding
             return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
         }
 
-        private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
+        private void BindToCommonType(TextSpan diagnosticSpan, IBoundValue left, IBoundValue right, out BoundExpression newLeft, out BoundExpression newRight)
         {
             newLeft = null;
             newRight = null;
@@ -158,11 +158,11 @@ namespace NQuery.Refactor.Binding
 
             if (conversionLeftToRight.IsImplicit)
             {
-                newLeft = BindConversion(diagnosticSpan, new BoundValueSlotExpression(left), right.Type);
+                newLeft = BindConversion(diagnosticSpan, new BoundValueExpression(left), right.Type);
             }
             else
             {
-                newRight = BindConversion(diagnosticSpan, new BoundValueSlotExpression(right), left.Type);
+                newRight = BindConversion(diagnosticSpan, new BoundValueExpression(right), left.Type);
             }
         }
 
@@ -196,7 +196,7 @@ namespace NQuery.Refactor.Binding
             // we want our caller to refer to this value slot.
 
             if (TryReplaceExpression(node, result, out var valueSlot))
-                return new BoundValueSlotExpression(valueSlot);
+                return new BoundValueExpression(valueSlot);
 
             return result;
         }
@@ -915,7 +915,7 @@ namespace NQuery.Refactor.Binding
                 var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
                 if (existingSlot is null)
                 {
-                    var slot = ValueSlotFactory.CreateTemporary(boundAggregate.Type);
+                    var slot = ValueFactory.CreateTemporary(boundAggregate.Type);
                     queryState.ComputedAggregates.Add(new BoundComputedValueWithSyntax(aggregate, boundAggregate, slot));
                 }
             }
@@ -999,7 +999,7 @@ namespace NQuery.Refactor.Binding
             if (boundQuery.OutputColumns.Length > 1)
                 Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(node.Span);
 
-            var value = boundQuery.OutputColumns.First().ValueSlotRefactor;
+            var value = boundQuery.OutputColumns.First().BoundValue;
 
             return new BoundSingleRowSubselect(value, boundQuery);
         }
@@ -1036,15 +1036,15 @@ namespace NQuery.Refactor.Binding
 
             if (boundQuery.OutputColumns.Length == 0)
             {
-                var outputValue = ValueSlotFactory.CreateTemporary(typeof(bool));
-                return new BoundValueSlotExpression(outputValue);
+                var outputValue = ValueFactory.CreateTemporary(typeof(bool));
+                return new BoundValueExpression(outputValue);
             }
 
             if (boundQuery.OutputColumns.Length > 1)
                 Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(queryNode.Span);
 
             var rightColumn = boundQuery.OutputColumns[0];
-            var right = new BoundValueSlotExpression(rightColumn.ValueSlotRefactor);
+            var right = new BoundValueExpression(rightColumn.BoundValue);
 
             // Now we need to bind the binary operator.
             //
@@ -1077,9 +1077,9 @@ namespace NQuery.Refactor.Binding
 
             if (convertedRight != right)
             {
-                var outputValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
+                var outputValue = ValueFactory.CreateTemporary(convertedRight.Type);
                 computedValues = ImmutableArray.Create(new BoundComputedValue(convertedRight, outputValue));
-                convertedRight = new BoundValueSlotExpression(outputValue);
+                convertedRight = new BoundValueExpression(outputValue);
             }
 
             // In order to simplify later phases, we'll rewrite the ALL/ANY subselect into

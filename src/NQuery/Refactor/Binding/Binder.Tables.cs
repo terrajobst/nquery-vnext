@@ -58,7 +58,7 @@ namespace NQuery.Refactor.Binding
                 var errorAlias = node.Alias is null
                                    ? errorTable.Name
                                    : node.Alias.Identifier.ValueText;
-                var errorInstance = new TableInstanceSymbol(errorAlias, errorTable, ValueSlotFactory);
+                var errorInstance = new TableInstanceSymbol(errorAlias, errorTable);
                 return new BoundNamedTableReference(errorInstance);
             }
 
@@ -72,7 +72,7 @@ namespace NQuery.Refactor.Binding
 
             var alias = aliasIdentifier.ValueText;
 
-            var tableInstance = new TableInstanceSymbol(alias, table, ValueSlotFactory);
+            var tableInstance = new TableInstanceSymbol(alias, table);
 
             QueryState.IntroducedTables.Add(tableInstance, aliasIdentifier);
 
@@ -128,18 +128,18 @@ namespace NQuery.Refactor.Binding
 
             var namedQueryColumns = query.OutputColumns.Where(c => !string.IsNullOrEmpty(c.Name));
             var columns = new List<ColumnSymbol>();
-            var valueSlotFromColumn = new Dictionary<ColumnSymbol, ValueSlot>();
+            var valueFromColumn = new Dictionary<ColumnSymbol, IBoundValue>();
 
             foreach (var queryColumn in namedQueryColumns)
             {
                 var columnSymbol = new ColumnSymbol(queryColumn.Name, queryColumn.Type);
                 columns.Add(columnSymbol);
-                valueSlotFromColumn.Add(columnSymbol, queryColumn.ValueSlotRefactor);
+                valueFromColumn.Add(columnSymbol, queryColumn.BoundValue);
             }
 
             var derivedTable = new DerivedTableSymbol(columns);
-            var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((_, c) => valueSlotFromColumn[c]);
-            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
+            var aliasFactory = new Func<TableInstanceSymbol, ColumnSymbol, IBoundValue>((_, c) => valueFromColumn[c]);
+            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, aliasFactory);
             var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
             QueryState.IntroducedTables.Add(derivedTableInstance, node.Name);

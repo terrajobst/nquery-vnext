@@ -13,7 +13,7 @@ namespace NQuery.Planning
     // aggregate instead is a later planning refinement.
     internal sealed class PhysicalStreamAggregates : PhysicalOperator
     {
-        public PhysicalStreamAggregates(PhysicalOperator input, ImmutableArray<BoundComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
+        public PhysicalStreamAggregates(PhysicalOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
         {
             Input = input;
             Groups = groups;
@@ -24,7 +24,7 @@ namespace NQuery.Planning
 
         public PhysicalOperator Input { get; }
 
-        public ImmutableArray<BoundComparedValue> Groups { get; }
+        public ImmutableArray<LogicalComparedValue> Groups { get; }
 
         public ImmutableArray<LogicalAggregatedValue> Aggregates { get; }
 

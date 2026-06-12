@@ -1,20 +1,17 @@
 using System.Collections;
 
-using NQuery.Binding;
-
 namespace NQuery.Refactor.Binding
 {
     internal sealed class BoundComparedValue
     {
-        public BoundComparedValue(ValueSlot valueSlot, IComparer comparer)
+        public BoundComparedValue(IBoundValue value, IComparer comparer)
         {
-            ValueSlot = valueSlot;
+            Value = value;
             Comparer = comparer;
         }
 
-        public ValueSlot ValueSlot { get; }
+        public IBoundValue Value { get; }
 
         public IComparer Comparer { get; }
-
     }
 }

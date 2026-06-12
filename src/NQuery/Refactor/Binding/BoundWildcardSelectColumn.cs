@@ -14,7 +14,7 @@ namespace NQuery.Refactor.Binding
         {
             Table = table;
             _tableColumns = columns.ToImmutableArray();
-            QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.ValueSlotRefactor)).ToImmutableArray();
+            QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.BoundValue)).ToImmutableArray();
         }
 
         public override BoundNodeKind Kind

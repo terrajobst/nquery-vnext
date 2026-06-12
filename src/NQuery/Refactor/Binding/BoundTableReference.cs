@@ -6,8 +6,8 @@ namespace NQuery.Refactor.Binding
     // relations/logical operators is the algebrizer's job.
     internal abstract class BoundTableReference : BoundNode
     {
-        public abstract IEnumerable<ValueSlot> GetDefinedValues();
+        public abstract IEnumerable<IBoundValue> GetDefinedValues();
 
-        public abstract IEnumerable<ValueSlot> GetOutputValues();
+        public abstract IEnumerable<IBoundValue> GetOutputValues();
     }
 }

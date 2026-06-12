@@ -18,16 +18,21 @@ namespace NQuery.Symbols
             ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToImmutableArray();
         }
 
-        internal TableInstanceSymbol(string name, TableSymbol table, NQuery.Refactor.Binding.ValueSlotFactory valueFactory)
-            : this(name, table, (ti, c) => valueFactory.CreateNamed($"{ti.Name}.{c.Name}", c.Type))
-        {
-        }
-
-        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, NQuery.Refactor.Binding.ValueSlot> valueFactory)
+        // Refactor pipeline, real table: each column is its own value identity (the algebrizer
+        // mints its slot at the scan).
+        internal TableInstanceSymbol(string name, TableSymbol table)
             : base(name)
         {
             Table = table;
-            ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToImmutableArray();
+            ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c)).ToImmutableArray();
+        }
+
+        // Refactor pipeline, derived table: each column aliases the inner query's value.
+        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, NQuery.Refactor.Binding.IBoundValue> aliasFactory)
+            : base(name)
+        {
+            Table = table;
+            ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, aliasFactory(this, c))).ToImmutableArray();
         }
 
         public override SymbolKind Kind

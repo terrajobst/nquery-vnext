@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Iterators;
 
@@ -11,9 +12,9 @@ namespace NQuery.Refactor.Emit
     {
         private readonly ExecutableOperator _input;
         private readonly int _limit;
-        private readonly ImmutableArray<BoundComparedValue> _tieEntries;
+        private readonly ImmutableArray<LogicalComparedValue> _tieEntries;
 
-        public ExecutableTop(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, int limit, ImmutableArray<BoundComparedValue> tieEntries)
+        public ExecutableTop(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
             : base(outputValueSlots)
         {
             _input = input;

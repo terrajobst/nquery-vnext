@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Iterators;
 
@@ -14,9 +15,9 @@ namespace NQuery.Refactor.Emit
     internal sealed class ExecutableConcatenation : ExecutableOperator
     {
         private readonly ImmutableArray<ExecutableOperator> _inputs;
-        private readonly ImmutableArray<BoundUnifiedValue> _definedValues;
+        private readonly ImmutableArray<LogicalUnifiedValue> _definedValues;
 
-        public ExecutableConcatenation(ImmutableArray<ValueSlot> outputValueSlots, ImmutableArray<ExecutableOperator> inputs, ImmutableArray<BoundUnifiedValue> definedValues)
+        public ExecutableConcatenation(ImmutableArray<ValueSlot> outputValueSlots, ImmutableArray<ExecutableOperator> inputs, ImmutableArray<LogicalUnifiedValue> definedValues)
             : base(outputValueSlots)
         {
             _inputs = inputs;

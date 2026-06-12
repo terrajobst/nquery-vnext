@@ -3,13 +3,14 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
 namespace NQuery.Planning
 {
     internal sealed class PhysicalSort : PhysicalOperator
     {
-        public PhysicalSort(bool isDistinct, PhysicalOperator input, ImmutableArray<BoundComparedValue> sortedValues)
+        public PhysicalSort(bool isDistinct, PhysicalOperator input, ImmutableArray<LogicalComparedValue> sortedValues)
         {
             IsDistinct = isDistinct;
             Input = input;
@@ -22,7 +23,7 @@ namespace NQuery.Planning
 
         public PhysicalOperator Input { get; }
 
-        public ImmutableArray<BoundComparedValue> SortedValues { get; }
+        public ImmutableArray<LogicalComparedValue> SortedValues { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Input.DefinedValueSlots;
 

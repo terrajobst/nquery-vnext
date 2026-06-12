@@ -21,7 +21,7 @@ namespace NQuery.Refactor.Binding
         CaseExpression,
         SingleRowSubselect,
         ExistsSubselect,
-        ValueSlotExpression,
+        ValueExpression,
 
         // Table references
         NamedTableReference,

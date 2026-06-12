@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Iterators;
 
@@ -11,9 +12,9 @@ namespace NQuery.Refactor.Emit
     {
         private readonly ExecutableOperator _input;
         private readonly bool _isDistinct;
-        private readonly ImmutableArray<BoundComparedValue> _sortedValues;
+        private readonly ImmutableArray<LogicalComparedValue> _sortedValues;
 
-        public ExecutableSort(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, bool isDistinct, ImmutableArray<BoundComparedValue> sortedValues)
+        public ExecutableSort(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, bool isDistinct, ImmutableArray<LogicalComparedValue> sortedValues)
             : base(outputValueSlots)
         {
             _input = input;

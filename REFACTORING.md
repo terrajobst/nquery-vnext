@@ -15,17 +15,15 @@
 
 ## Remaining items
 
-* Should symbols refer to value slots at all?
-    - No, we should remove that
-    - Simplify the value slot assignments
-    - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
-  - Add BoundCommonTableExpression that has AnchorMembers and RecursiveMembers
-  - Make the new Algebrizer not use ValueSlots from symbols but rather create
-    them
+  - Rename IBoundValue -> IBoundColumn and ValueSlot -> ColumnId. NOTE: "column" is
+    already used by ColumnSymbol / ColumnInstanceSymbol / BoundColumnExpression, so
+    IBoundColumn/BoundColumn will crowd that space; the slot rename is a large member
+    churn (OutputValueSlots, DefinedValueSlots, LogicalValueSlotExpression, ...).
   - Subqueries in a non-inner join's ON (inner joins are handled by hoisting the
     subquery conjunct into a filter above the join)
   - Instantiating CTEs
+  - Add BoundCommonTableExpression that has AnchorMembers and RecursiveMembers
   - Should Empty/Constant just be a node that can return a table of literals?
   - Look at the legacy optimizer and compare it against the new pipeline. What
     optimizations are we performing already and which ones do we need to port?

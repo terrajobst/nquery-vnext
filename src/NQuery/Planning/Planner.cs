@@ -72,7 +72,7 @@ namespace NQuery.Planning
 
         private static PhysicalOperator PlanConstant(LogicalConstant node) => new PhysicalConstant();
 
-        private static PhysicalOperator PlanTableScan(LogicalTableScan node) => new PhysicalTableScan(node.TableInstance, node.DefinedValues);
+        private static PhysicalOperator PlanTableScan(LogicalTableScan node) => new PhysicalTableScan(node.TableInstance, node.DefinedValues, node.OutputValueSlots);
 
         private static PhysicalOperator PlanFilter(LogicalFilter node)
         {
@@ -245,7 +245,7 @@ namespace NQuery.Planning
             var firstOutputs = branch1.OutputValueSlots;
             var secondOutputs = branch2.OutputValueSlots;
             var unifiedValues = Enumerable.Range(0, outputs.Length)
-                                          .Select(i => new BoundUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
+                                          .Select(i => new LogicalUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
                                           .ToImmutableArray();
 
             return new LogicalUnion(isUnionAll: true, ImmutableArray.Create<LogicalOperator>(branch1, branch2), unifiedValues, ImmutableArray<IComparer>.Empty);
@@ -313,7 +313,7 @@ namespace NQuery.Planning
             // A plain UNION removes duplicates. Mirror the legacy lowering: a distinct
             // sort over the unified columns (with their comparers) above the concatenation.
             var sortedValues = node.DefinedValues
-                                   .Zip(node.Comparers, (v, c) => new BoundComparedValue(v.ValueSlot, c))
+                                   .Zip(node.Comparers, (v, c) => new LogicalComparedValue(v.ValueSlot, c))
                                    .ToImmutableArray();
             return new PhysicalSort(isDistinct: true, concatenation, sortedValues);
         }
@@ -330,7 +330,7 @@ namespace NQuery.Planning
             var leftValues = left.OutputValueSlots;
             var rightValues = right.OutputValueSlots;
 
-            var sortedValues = leftValues.Zip(node.Comparers, (v, c) => new BoundComparedValue(v, c)).ToImmutableArray();
+            var sortedValues = leftValues.Zip(node.Comparers, (v, c) => new LogicalComparedValue(v, c)).ToImmutableArray();
             var distinctLeft = new PhysicalSort(isDistinct: true, left, sortedValues);
 
             var conditions = Enumerable.Range(0, leftValues.Length)

@@ -24,6 +24,6 @@ namespace NQuery.Refactor.Binding
 
         public List<BoundComputedValueWithSyntax> ComputedProjections { get; } = new();
 
-        public Dictionary<ExpressionSyntax, ValueSlot> ReplacedExpression { get; } = new();
+        public Dictionary<ExpressionSyntax, IBoundValue> ReplacedExpression { get; } = new();
     }
 }

@@ -21,9 +21,9 @@ namespace NQuery.Refactor.Binding
             get { return _sharedBinderState.Diagnostics; }
         }
 
-        private ValueSlotFactory ValueSlotFactory
+        private BoundValueFactory ValueFactory
         {
-            get { return _sharedBinderState.ValueSlotFactory; }
+            get { return _sharedBinderState.ValueFactory; }
         }
 
         protected virtual bool InWhereClause

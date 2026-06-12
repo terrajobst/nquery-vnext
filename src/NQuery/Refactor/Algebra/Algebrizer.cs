@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 
 using NQuery.Refactor.Binding;
+using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 
 using BinaryOperator = NQuery.Binding.BinaryOperator;
@@ -38,6 +39,11 @@ namespace NQuery.Refactor.Algebra
         // subquery found here is skipped (passed through its Apply) for rows the guard
         // matches. A pushed null means "no guard"; CurrentPassthru reads the top.
         private readonly Stack<LogicalExpression?> _passthruStack = new();
+
+        // The single slot-assignment authority: every IBoundValue the binder produced maps to
+        // exactly one algebra ValueSlot, minted on first use. This is the Bound -> Logical
+        // value-identity translation; nothing downstream of the algebrizer sees an IBoundValue.
+        private readonly Dictionary<IBoundValue, ValueSlot> _slots = new();
 
         public static LogicalQuery Algebrize(BoundQuery query)
         {
@@ -77,7 +83,9 @@ namespace NQuery.Refactor.Algebra
             if (node.GroupBy is not null && !node.GroupBy.ComputedGroups.IsEmpty)
                 input = AlgebrizeCompute(input, node.GroupBy.ComputedGroups);
 
-            var groups = node.GroupBy?.Groups ?? ImmutableArray<BoundComparedValue>.Empty;
+            var groups = node.GroupBy is null
+                ? ImmutableArray<LogicalComparedValue>.Empty
+                : node.GroupBy.Groups.Select(TranslateCompared).ToImmutableArray();
             var aggregates = node.Select.Aggregates;
             if (!groups.IsEmpty || !aggregates.IsEmpty)
             {
@@ -94,23 +102,23 @@ namespace NQuery.Refactor.Algebra
                 input = AlgebrizeCompute(input, node.Select.Projections);
 
             if (node.OrderBy is not null)
-                input = new LogicalSort(node.Select.IsDistinct, input, node.OrderBy.SortedValues);
+                input = new LogicalSort(node.Select.IsDistinct, input, node.OrderBy.SortedValues.Select(TranslateCompared).ToImmutableArray());
 
             if (node.Top is not null)
             {
                 // TOP WITH TIES breaks ties using the sort keys (the binder requires an ORDER BY
                 // for WITH TIES, so OrderBy is non-null here).
                 var tieEntries = node.Top.WithTies && node.OrderBy is not null
-                    ? node.OrderBy.SortedValues
-                    : ImmutableArray<BoundComparedValue>.Empty;
+                    ? node.OrderBy.SortedValues.Select(TranslateCompared).ToImmutableArray()
+                    : ImmutableArray<LogicalComparedValue>.Empty;
                 input = new LogicalTop(input, node.Top.Limit, tieEntries);
             }
 
-            input = new LogicalProject(input, node.OutputColumns.Select(c => c.ValueSlotRefactor).ToImmutableArray());
+            input = new LogicalProject(input, node.OutputColumns.Select(c => GetSlot(c.BoundValue)).ToImmutableArray());
 
             // SELECT DISTINCT with no ORDER BY: a group-by over the output columns.
             if (!node.Select.DistinctValues.IsEmpty)
-                input = new LogicalAggregate(input, node.Select.DistinctValues, ImmutableArray<LogicalAggregatedValue>.Empty);
+                input = new LogicalAggregate(input, node.Select.DistinctValues.Select(TranslateCompared).ToImmutableArray(), ImmutableArray<LogicalAggregatedValue>.Empty);
 
             return input;
         }
@@ -135,7 +143,7 @@ namespace NQuery.Refactor.Algebra
         {
             return node switch
             {
-                BoundNamedTableReference named => new LogicalTableScan(named.TableInstance, named.DefinedValues),
+                BoundNamedTableReference named => AlgebrizeNamedTableReference(named),
                 // A derived table is a pure scoping wrapper: its column slots are the inner query's
                 // output slots, so it carries no algebraic meaning -- inline the inner query.
                 BoundDerivedTableReference derived => AlgebrizeQuery(derived.Query),
@@ -196,7 +204,8 @@ namespace NQuery.Refactor.Algebra
         private LogicalOperator AlgebrizeUnionQuery(BoundUnionQuery node)
         {
             var inputs = node.Inputs.Select(AlgebrizeQueryInput).ToImmutableArray();
-            return new LogicalUnion(node.IsUnionAll, inputs, node.UnifiedValues, node.Comparers);
+            var unifiedValues = node.UnifiedValues.Select(TranslateUnified).ToImmutableArray();
+            return new LogicalUnion(node.IsUnionAll, inputs, unifiedValues, node.Comparers);
         }
 
         private LogicalOperator AlgebrizeIntersectOrExceptQuery(BoundIntersectOrExceptQuery node)
@@ -209,7 +218,7 @@ namespace NQuery.Refactor.Algebra
         private LogicalOperator AlgebrizeOrderedQuery(BoundOrderedQuery node)
         {
             var input = AlgebrizeQuery(node.Query);
-            return new LogicalSort(false, input, node.SortedValues);
+            return new LogicalSort(false, input, node.SortedValues.Select(TranslateCompared).ToImmutableArray());
         }
 
         // A set-operation input: the inner query, plus the type-coercion compute/project the
@@ -221,7 +230,7 @@ namespace NQuery.Refactor.Algebra
                 return relation;
 
             relation = AlgebrizeCompute(relation, input.ComputedValues);
-            return new LogicalProject(relation, input.OutputValues);
+            return new LogicalProject(relation, input.OutputValues.Select(GetSlot).ToImmutableArray());
         }
 
         private static LogicalJoinKind MapJoinKind(BoundJoinType joinType)
@@ -280,13 +289,13 @@ namespace NQuery.Refactor.Algebra
         private LogicalComputedValue AlgebrizeComputedValue(BoundComputedValue value, List<PendingApply> applies)
         {
             var expression = AlgebrizeExpression(value.Expression, applies);
-            return new LogicalComputedValue(expression, value.ValueSlot);
+            return new LogicalComputedValue(expression, GetSlot(value.Value));
         }
 
         private LogicalAggregatedValue AlgebrizeAggregatedValue(BoundAggregatedValue value, List<PendingApply> applies)
         {
             var argument = AlgebrizeExpression(value.Argument, applies);
-            return new LogicalAggregatedValue(value.Output, value.Aggregate, value.Aggregatable, argument);
+            return new LogicalAggregatedValue(GetSlot(value.Output), value.Aggregate, value.Aggregatable, argument);
         }
 
         // Each operator collects the applies produced while translating its own expressions, then
@@ -310,8 +319,8 @@ namespace NQuery.Refactor.Algebra
             {
                 case BoundNodeKind.LiteralExpression:
                     return AlgebrizeLiteralExpression((BoundLiteralExpression)node, applies);
-                case BoundNodeKind.ValueSlotExpression:
-                    return AlgebrizeValueSlotExpression((BoundValueSlotExpression)node, applies);
+                case BoundNodeKind.ValueExpression:
+                    return AlgebrizeValueExpression((BoundValueExpression)node, applies);
                 case BoundNodeKind.ColumnExpression:
                     return AlgebrizeColumnExpression((BoundColumnExpression)node, applies);
                 case BoundNodeKind.VariableExpression:
@@ -346,16 +355,16 @@ namespace NQuery.Refactor.Algebra
             return new LogicalLiteralExpression(node.Value);
         }
 
-        private LogicalExpression AlgebrizeValueSlotExpression(BoundValueSlotExpression node, List<PendingApply> applies)
+        private LogicalExpression AlgebrizeValueExpression(BoundValueExpression node, List<PendingApply> applies)
         {
-            return new LogicalValueSlotExpression(node.ValueSlot);
+            return new LogicalValueSlotExpression(GetSlot(node.Value));
         }
 
         // A column reference resolves to a reference to the slot its symbol owns: this is the
         // "symbol-refs become slot-refs" step of algebrization.
         private LogicalExpression AlgebrizeColumnExpression(BoundColumnExpression node, List<PendingApply> applies)
         {
-            return new LogicalValueSlotExpression(node.Symbol.ValueSlotRefactor);
+            return new LogicalValueSlotExpression(GetSlot(node.Symbol.BoundValue));
         }
 
         private LogicalExpression AlgebrizeVariableExpression(BoundVariableExpression node, List<PendingApply> applies)
@@ -456,16 +465,17 @@ namespace NQuery.Refactor.Algebra
         private LogicalExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node, List<PendingApply> applies)
         {
             var relation = AlgebrizeQuery(node.Query);
+            var value = GetSlot(node.Value);
 
             // A scalar subquery must yield at most one row. When the query already guarantees that,
             // attach it directly. Otherwise guard it with a cardinality check.
             if (ReturnsAtMostOneRow(relation))
             {
                 applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
-                return new LogicalValueSlotExpression(node.Value);
+                return new LogicalValueSlotExpression(value);
             }
 
-            var guarded = GuardSingleRow(relation, node.Value, out var output);
+            var guarded = GuardSingleRow(relation, value, out var output);
             applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, guarded, probe: null, CurrentPassthru));
             return new LogicalValueSlotExpression(output);
         }
@@ -490,7 +500,7 @@ namespace NQuery.Refactor.Algebra
                 BuiltInAggregates.Count.Definition.CreateAggregatable(typeof(int)),
                 new LogicalLiteralExpression(0));
 
-            var aggregate = new LogicalAggregate(relation, ImmutableArray<BoundComparedValue>.Empty, ImmutableArray.Create(any, count));
+            var aggregate = new LogicalAggregate(relation, ImmutableArray<LogicalComparedValue>.Empty, ImmutableArray.Create(any, count));
 
             var condition = Binary(new LogicalValueSlotExpression(countOutput), BinaryOperatorKind.LessOrEqual, new LogicalLiteralExpression(1));
 
@@ -551,6 +561,43 @@ namespace NQuery.Refactor.Algebra
             var probe = _valueSlotFactory.CreateTemporary(typeof(bool));
             applies.Add(new PendingApply(LogicalApplyKind.LeftSemi, relation, probe, CurrentPassthru));
             return new LogicalValueSlotExpression(probe);
+        }
+
+        // Maps an IBoundValue to its algebra slot, minting one the first time. Column references
+        // resolve here too (the symbol's denoted value is the key), so the slot a table scan mints
+        // for a column is the same one every reference to it sees.
+        private ValueSlot GetSlot(IBoundValue value)
+        {
+            if (!_slots.TryGetValue(value, out var slot))
+            {
+                slot = MintSlot(value);
+                _slots.Add(value, slot);
+            }
+
+            return slot;
+        }
+
+        private ValueSlot MintSlot(IBoundValue value)
+        {
+            return value is TableColumnInstanceSymbol column
+                ? _valueSlotFactory.CreateNamed($"{column.TableInstance.Name}.{column.Name}", value.Type)
+                : _valueSlotFactory.CreateTemporary(value.Type);
+        }
+
+        private LogicalComparedValue TranslateCompared(BoundComparedValue value)
+        {
+            return new LogicalComparedValue(GetSlot(value.Value), value.Comparer);
+        }
+
+        private LogicalUnifiedValue TranslateUnified(BoundUnifiedValue value)
+        {
+            return new LogicalUnifiedValue(GetSlot(value.Value), value.InputValues.Select(GetSlot));
+        }
+
+        private LogicalTableScan AlgebrizeNamedTableReference(BoundNamedTableReference node)
+        {
+            var slots = node.DefinedValues.Select(c => GetSlot(c.BoundValue)).ToImmutableArray();
+            return new LogicalTableScan(node.TableInstance, node.DefinedValues, slots);
         }
 
         private readonly struct PendingApply

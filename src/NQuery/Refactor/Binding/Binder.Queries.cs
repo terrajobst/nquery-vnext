@@ -60,7 +60,7 @@ namespace NQuery.Refactor.Binding
             return null;
         }
 
-        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out ValueSlot valueSlot)
+        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue valueSlot)
         {
             var queryState = QueryState;
 
@@ -69,7 +69,7 @@ namespace NQuery.Refactor.Binding
             var columnInstance = boundExpression is not BoundColumnExpression columnExpression ? null : columnExpression.Symbol;
             if (columnInstance is not null && queryState is not null)
             {
-                valueSlot = columnInstance.ValueSlotRefactor;
+                valueSlot = columnInstance.BoundValue;
                 queryState.ReplacedExpression.Add(expression, valueSlot);
                 return true;
             }
@@ -96,19 +96,19 @@ namespace NQuery.Refactor.Binding
             return false;
         }
 
-        private static bool TryGetExistingValue(BoundExpression boundExpression, out ValueSlot valueSlot)
+        private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue valueSlot)
         {
-            if (boundExpression is not BoundValueSlotExpression boundValueSlot)
+            if (boundExpression is not BoundValueExpression boundValueSlot)
             {
                 valueSlot = null;
                 return false;
             }
 
-            valueSlot = boundValueSlot.ValueSlot;
+            valueSlot = boundValueSlot.Value;
             return true;
         }
 
-        private static ValueSlot FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
+        private static IBoundValue FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
         {
             return (from c in candidates
                     where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
@@ -212,7 +212,7 @@ namespace NQuery.Refactor.Binding
                                      let bw = GetBoundNode<BoundWildcardSelectColumn>(n)
                                      where bw is not null
                                      from c in bw.TableColumns
-                                     where !IsGroupedOrAggregated(c.ValueSlotRefactor)
+                                     where !IsGroupedOrAggregated(c.BoundValue)
                                      select (Syntax: (SyntaxNode)n, Symbol: c);
 
             var expressionReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
@@ -242,7 +242,7 @@ namespace NQuery.Refactor.Binding
             return IsGroupedOrAggregated(valueSlot);
         }
 
-        private bool IsGroupedOrAggregated(ValueSlot valueSlot)
+        private bool IsGroupedOrAggregated(IBoundValue valueSlot)
         {
             var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
             return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
@@ -345,9 +345,9 @@ namespace NQuery.Refactor.Binding
             var outputValues = inputs.First()
                 .OutputValues
                 .Take(columnCount)
-                .Select(v => ValueSlotFactory.CreateTemporary(v.Type))
+                .Select(v => (IBoundValue)ValueFactory.CreateTemporary(v.Type))
                 .ToImmutableArray();
-            var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.OutputValues[columnIndex]))).ToImmutableArray();
+            var definedValues = outputValues.Select((value, columnIndex) => new BoundUnifiedValue(value, inputs.Select(input => input.OutputValues[columnIndex]))).ToImmutableArray();
             var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
             var comparers = (isUnionAll
                 ? Enumerable.Empty<IComparer>()
@@ -426,15 +426,15 @@ namespace NQuery.Refactor.Binding
             var columnCount = Math.Min(left.OutputColumns.Length, right.OutputColumns.Length);
 
             var leftComputedValues = new List<BoundComputedValue>(columnCount);
-            var leftOutputs = new List<ValueSlot>(columnCount);
+            var leftOutputs = new List<IBoundValue>(columnCount);
 
             var rightComputedValues = new List<BoundComputedValue>(columnCount);
-            var rightOutputs = new List<ValueSlot>(columnCount);
+            var rightOutputs = new List<IBoundValue>(columnCount);
 
             for (var i = 0; i < columnCount; i++)
             {
-                var leftValue = left.OutputColumns[i].ValueSlotRefactor;
-                var rightValue = right.OutputColumns[i].ValueSlotRefactor;
+                var leftValue = left.OutputColumns[i].BoundValue;
+                var rightValue = right.OutputColumns[i].BoundValue;
 
                 BindToCommonType(diagnosticSpan, leftValue, rightValue, out var convertedLeft, out var convertedRight);
 
@@ -444,7 +444,7 @@ namespace NQuery.Refactor.Binding
                 }
                 else
                 {
-                    var newLeftValue = ValueSlotFactory.CreateTemporary(convertedLeft.Type);
+                    var newLeftValue = ValueFactory.CreateTemporary(convertedLeft.Type);
                     var computedValue = new BoundComputedValue(convertedLeft, newLeftValue);
                     leftComputedValues.Add(computedValue);
                     leftOutputs.Add(newLeftValue);
@@ -456,7 +456,7 @@ namespace NQuery.Refactor.Binding
                 }
                 else
                 {
-                    var newRightValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
+                    var newRightValue = ValueFactory.CreateTemporary(convertedRight.Type);
                     var computedValue = new BoundComputedValue(convertedRight, newRightValue);
                     rightComputedValues.Add(computedValue);
                     rightOutputs.Add(newRightValue);
@@ -472,13 +472,13 @@ namespace NQuery.Refactor.Binding
             var columnCount = queries.Select(q => q.OutputColumns.Length).Min();
             var computations = new List<BoundComputedValue>[queries.Length];
 
-            var outputs = new List<ValueSlot>[queries.Length];
+            var outputs = new List<IBoundValue>[queries.Length];
             for (var i = 0; i < outputs.Length; i++)
-                outputs[i] = new List<ValueSlot>();
+                outputs[i] = new List<IBoundValue>();
 
             for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
             {
-                var expressions = queries.Select(q => new BoundValueSlotExpression(q.OutputColumns[columnIndex].ValueSlotRefactor)).OfType<BoundExpression>().ToImmutableArray();
+                var expressions = queries.Select(q => new BoundValueExpression(q.OutputColumns[columnIndex].BoundValue)).OfType<BoundExpression>().ToImmutableArray();
                 var convertedExpressions = BindToCommonType(expressions, diagnosticSpan);
 
                 for (var queryIndex = 0; queryIndex < expressions.Length; queryIndex++)
@@ -490,14 +490,14 @@ namespace NQuery.Refactor.Binding
                     {
                         // Nothing to do.
 
-                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].ValueSlotRefactor;
+                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].BoundValue;
                         outputs[queryIndex].Add(originalValueSlot);
                     }
                     else
                     {
                         computations[queryIndex] ??= new List<BoundComputedValue>();
 
-                        var computedValueSlot = ValueSlotFactory.CreateTemporary(converted.Type);
+                        var computedValueSlot = ValueFactory.CreateTemporary(converted.Type);
                         var computedValue = new BoundComputedValue(converted, computedValueSlot);
                         computations[queryIndex].Add(computedValue);
 
@@ -520,7 +520,7 @@ namespace NQuery.Refactor.Binding
             return result.ToImmutableArray();
         }
 
-        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<ValueSlot> outputValues)
+        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<IBoundValue> outputValues)
         {
             var result = new List<QueryColumnInstanceSymbol>(inputColumns.Length);
 
@@ -532,7 +532,7 @@ namespace NQuery.Refactor.Binding
                 var queryColumn = inputColumns[i];
                 var valueSlot = outputValues[i];
 
-                var resultColumn = queryColumn.ValueSlotRefactor == valueSlot
+                var resultColumn = queryColumn.BoundValue == valueSlot
                     ? queryColumn
                     : new QueryColumnInstanceSymbol(queryColumn.Name, valueSlot);
 
@@ -901,21 +901,21 @@ namespace NQuery.Refactor.Binding
             }
             else
             {
-                var outputValueSet = new HashSet<ValueSlot>(outputColumns.Select(c => c.ValueSlotRefactor));
+                var outputValueSet = new HashSet<IBoundValue>(outputColumns.Select(c => c.BoundValue));
 
                 for (var i = 0; i < orderByClause.Columns.Length; i++)
                 {
                     var column = orderedQueryNode.Columns[i];
                     var boundColumn = orderByClause.Columns[i];
-                    var orderedValue = boundColumn.ComparedValue.ValueSlot;
+                    var orderedValue = boundColumn.ComparedValue.Value;
 
                     if (!outputValueSet.Contains(orderedValue))
                         Diagnostics.ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(column.Span);
                 }
 
-                var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.ComparedValue.ValueSlot));
-                distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.ValueSlotRefactor, distinctComparer[i]))
-                                                 .Where(s => !orderByValueSet.Contains(s.ValueSlot))
+                var orderByValueSet = new HashSet<IBoundValue>(orderByClause.Columns.Select(c => c.ComparedValue.Value));
+                distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.BoundValue, distinctComparer[i]))
+                                                 .Where(s => !orderByValueSet.Contains(s.Value))
                                                  .ToImmutableArray();
             }
 
@@ -937,7 +937,7 @@ namespace NQuery.Refactor.Binding
 
             var computedGroups = queryBinder.QueryState
                                             .ComputedGroupings
-                                            .Where(g => g.Expression is not BoundValueSlotExpression)
+                                            .Where(g => g.Expression is not BoundValueExpression)
                                             .Select(g => new BoundComputedValue(g.Expression, g.Result))
                                             .ToImmutableArray();
 
@@ -949,7 +949,7 @@ namespace NQuery.Refactor.Binding
             // columns (an ORDER BY instead turns it into a distinct-sort over SortedValues).
             var distinctValues = !isDistinct || orderByClause is not null
                 ? ImmutableArray<BoundComparedValue>.Empty
-                : outputColumns.Select(c => new BoundComparedValue(c.ValueSlotRefactor, BindComparer(distinctKeyword.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
+                : outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
                                .ToImmutableArray();
 
             var boundFrom = fromClause is null ? null : new BoundFromClause(fromClause);
@@ -1005,7 +1005,7 @@ namespace NQuery.Refactor.Binding
 
             if (!TryGetExistingValue(boundExpression, out var valueSlot))
             {
-                valueSlot = ValueSlotFactory.CreateTemporary(boundExpression.Type);
+                valueSlot = ValueFactory.CreateTemporary(boundExpression.Type);
                 QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
             }
 
@@ -1182,7 +1182,7 @@ namespace NQuery.Refactor.Binding
                 var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 if (!TryGetExistingValue(boundExpression, out var valueSlot))
-                    valueSlot = ValueSlotFactory.CreateTemporary(expressionType);
+                    valueSlot = ValueFactory.CreateTemporary(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
@@ -1232,7 +1232,7 @@ namespace NQuery.Refactor.Binding
             // we will use their ordinals.
 
             var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
-            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (ValueSlot: c.ValueSlotRefactor, Index: i))
+            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (ValueSlot: c.BoundValue, Index: i))
                                                                       .GroupBy(t => t.ValueSlot, t => t.Index)
                                                                       .ToDictionary(g => g.Key, g => g.First());
 
@@ -1269,7 +1269,7 @@ namespace NQuery.Refactor.Binding
                 // However, if the query we are applied to is a combined query, it must exist
                 // in the input.
 
-                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.ValueSlot, out var columnOrdinal))
+                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.Value, out var columnOrdinal))
                 {
                     columnOrdinal = -1;
                     if (selectorsMustBeInInput)
@@ -1280,8 +1280,8 @@ namespace NQuery.Refactor.Binding
                                       ? resultQueryColumns[columnOrdinal]
                                       : null;
                 var valueSlot = queryColumn is not null
-                                    ? queryColumn.ValueSlotRefactor
-                                    : boundSelector.ValueSlot;
+                                    ? queryColumn.BoundValue
+                                    : boundSelector.Value;
 
                 // Almost there. Now the only thing left for us to do is getting
                 // the associated comparer.
@@ -1326,13 +1326,13 @@ namespace NQuery.Refactor.Binding
                 var index = position - 1;
                 var indexValid = 0 <= index && index < queryColumns.Length;
                 if (indexValid)
-                    return new BoundOrderBySelector(queryColumns[index].ValueSlotRefactor, null);
+                    return new BoundOrderBySelector(queryColumns[index].BoundValue, null);
 
                 // Report that the given position isn't valid.
                 Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position, queryColumns.Length);
 
                 // And to avoid cascading errors, we'll fake up an invalid slot.
-                var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
+                var errorSlot = ValueFactory.CreateTemporary(TypeFacts.Missing);
                 return new BoundOrderBySelector(errorSlot, null);
             }
 
@@ -1352,7 +1352,7 @@ namespace NQuery.Refactor.Binding
                     // This ensures that this name appears to be bound like any other expression.
                     Bind(selectorAsName, new BoundColumnExpression(queryColumn));
 
-                    return new BoundOrderBySelector(queryColumn.ValueSlotRefactor, null);
+                    return new BoundOrderBySelector(queryColumn.BoundValue, null);
                 }
             }
 
@@ -1366,7 +1366,7 @@ namespace NQuery.Refactor.Binding
             if (TryGetExistingValue(boundSelector, out var valueSlot))
                 return new BoundOrderBySelector(valueSlot, null);
 
-            valueSlot = ValueSlotFactory.CreateTemporary(boundSelector.Type);
+            valueSlot = ValueFactory.CreateTemporary(boundSelector.Type);
             var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
             return new BoundOrderBySelector(valueSlot, computedValue);
         }

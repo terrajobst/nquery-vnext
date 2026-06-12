@@ -3,13 +3,14 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
+using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
 namespace NQuery.Planning
 {
     internal sealed class PhysicalTop : PhysicalOperator
     {
-        public PhysicalTop(PhysicalOperator input, int limit, ImmutableArray<BoundComparedValue> tieEntries)
+        public PhysicalTop(PhysicalOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
         {
             Input = input;
             Limit = limit;
@@ -22,7 +23,7 @@ namespace NQuery.Planning
 
         public int Limit { get; }
 
-        public ImmutableArray<BoundComparedValue> TieEntries { get; }
+        public ImmutableArray<LogicalComparedValue> TieEntries { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Input.DefinedValueSlots;
 

@@ -16,14 +16,14 @@ namespace NQuery.Refactor.Binding
 
         public BoundQuery Query { get; }
 
-        public override IEnumerable<ValueSlot> GetDefinedValues()
+        public override IEnumerable<IBoundValue> GetDefinedValues()
         {
             return GetOutputValues();
         }
 
-        public override IEnumerable<ValueSlot> GetOutputValues()
+        public override IEnumerable<IBoundValue> GetOutputValues()
         {
-            return Query.OutputColumns.Select(c => c.ValueSlotRefactor);
+            return Query.OutputColumns.Select(c => c.BoundValue);
         }
     }
 }

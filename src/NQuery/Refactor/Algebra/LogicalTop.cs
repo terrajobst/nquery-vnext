@@ -9,7 +9,7 @@ namespace NQuery.Refactor.Algebra
 {
     internal sealed class LogicalTop : LogicalOperator
     {
-        public LogicalTop(LogicalOperator input, int limit, ImmutableArray<BoundComparedValue> tieEntries)
+        public LogicalTop(LogicalOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
         {
             Input = input;
             Limit = limit;
@@ -22,7 +22,7 @@ namespace NQuery.Refactor.Algebra
 
         public int Limit { get; }
 
-        public ImmutableArray<BoundComparedValue> TieEntries { get; }
+        public ImmutableArray<LogicalComparedValue> TieEntries { get; }
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Input.DefinedValueSlots;
 

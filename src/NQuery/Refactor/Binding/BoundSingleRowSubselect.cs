@@ -2,7 +2,7 @@ namespace NQuery.Refactor.Binding
 {
     internal sealed class BoundSingleRowSubselect : BoundExpression
     {
-        public BoundSingleRowSubselect(ValueSlot value, BoundQuery query)
+        public BoundSingleRowSubselect(IBoundValue value, BoundQuery query)
         {
             Value = value;
             Query = query;
@@ -18,7 +18,7 @@ namespace NQuery.Refactor.Binding
             get { return Value.Type; }
         }
 
-        public ValueSlot Value { get; }
+        public IBoundValue Value { get; }
 
         public BoundQuery Query { get; }
 

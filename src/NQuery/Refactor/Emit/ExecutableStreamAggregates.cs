@@ -23,7 +23,7 @@ namespace NQuery.Refactor.Emit
         private readonly ImmutableArray<IAggregatable> _aggregatables;
         private readonly ImmutableArray<EmittedFunction> _argumentFunctions;
 
-        public ExecutableStreamAggregates(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<BoundComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates, ImmutableArray<ValueSlot> outerSlots)
+        public ExecutableStreamAggregates(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates, ImmutableArray<ValueSlot> outerSlots)
             : base(outputValueSlots)
         {
             _input = input;
