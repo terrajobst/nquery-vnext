@@ -132,7 +132,16 @@ namespace NQuery.Planning
         private static PhysicalOperator PlanUnion(LogicalUnion node)
         {
             var inputs = node.Inputs.Select(PlanOperator).ToImmutableArray();
-            return new PhysicalConcatenation(node.IsUnionAll, inputs, node.DefinedValues, node.Comparers);
+            var concatenation = new PhysicalConcatenation(inputs, node.DefinedValues);
+            if (node.IsUnionAll)
+                return concatenation;
+
+            // A plain UNION removes duplicates. Mirror the legacy lowering: a distinct
+            // sort over the unified columns (with their comparers) above the concatenation.
+            var sortedValues = node.DefinedValues
+                                   .Zip(node.Comparers, (v, c) => new BoundComparedValue(v.ValueSlot, c))
+                                   .ToImmutableArray();
+            return new PhysicalSort(isDistinct: true, concatenation, sortedValues);
         }
 
         private static PhysicalOperator PlanIntersectOrExcept(LogicalIntersectOrExcept node)

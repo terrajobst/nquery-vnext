@@ -23,12 +23,10 @@
 * Instantiating CTEs
     - Need to handle recursive ones
 * Not implemented — these nodes build but throw NotSupportedException from CreateIterator():
-  - ExecutableConcatenation    
   - ExecutableIntersectOrExcept
 * Cases
   - Distinct
   - Distinct with ties
-  - Union
   - Except
   - Intersect
   - Full outer join
@@ -67,17 +65,17 @@
 
 ### Emit (Physical → ExecutablePlan)
 
-- ExecutableConcatenation, ExecutableIntersectOrExcept. (ExecutableStreamAggregates
-  is wired; ExecutableNestedLoops is wired and also serves Apply.)
+- ExecutableIntersectOrExcept. (ExecutableConcatenation and ExecutableStreamAggregates
+  are wired; ExecutableNestedLoops is wired and also serves Apply.)
 
 ### EmittedIterators
 
-- No concatenation/intersect-except iterators, and no hash match. The
-  nested-loops family is ported (inner, left outer, left semi, left anti-semi,
-  probing left semi) and serves both joins and applies, and a stream aggregate
-  (EmittedStreamAggregateIterator) is ported; the legacy NQuery.Iterators also has
-  hash match, concatenation, and table spool, deliberately not ported yet — they
-  need the compile-once treatment, not a copy.
+- No intersect-except iterator, and no hash match. The nested-loops family is ported
+  (inner, left outer, left semi, left anti-semi, probing left semi) and serves both
+  joins and applies; a stream aggregate (EmittedStreamAggregateIterator) and a
+  concatenation (EmittedConcatenationIterator) are ported; the legacy NQuery.Iterators
+  also has hash match and table spool, deliberately not ported yet — they need the
+  compile-once treatment, not a copy.
 - ExecutableNestedLoops compiles its predicates against the combined (left ++
   right) slot map via CreateSlotIndices. A dependent (apply) nested loops uses the
   same combined-buffer trick for correlation — its right subtree's filters/computes
@@ -96,7 +94,8 @@
 - End-to-end execution (the differential test vs. the existing engine) currently
   covers scan, filter, compute, project, sort, top, nested-loops joins (inner,
   cross, left outer, probing semi via EXISTS / NOT EXISTS), correlated apply
-  (a surviving TOP-1 scalar subquery), and stream aggregates (scalar and grouped,
-  including empty input and NULL grouping/argument handling).
-- The next pieces are the set operators and a hash-match join node; all reuse the
+  (a surviving TOP-1 scalar subquery), stream aggregates (scalar and grouped,
+  including empty input and NULL grouping/argument handling), and concatenation
+  (UNION ALL and UNION, the latter via a distinct sort).
+- The next pieces are intersect/except and a hash-match join node; all reuse the
   combined-buffer predicate compilation that ExecutableNestedLoops established.

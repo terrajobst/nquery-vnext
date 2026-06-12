@@ -131,7 +131,7 @@ namespace NQuery.Emit
         private static ExecutableOperator EmitConcatenation(PhysicalConcatenation node, ImmutableArray<ValueSlot> outerSlots)
         {
             var inputs = node.Inputs.Select(i => EmitOperator(i, outerSlots)).ToImmutableArray();
-            return new ExecutableConcatenation(node.OutputValueSlots, inputs);
+            return new ExecutableConcatenation(node.OutputValueSlots, inputs, node.DefinedValues);
         }
 
         private static ExecutableOperator EmitIntersectOrExcept(PhysicalIntersectOrExcept node, ImmutableArray<ValueSlot> outerSlots)

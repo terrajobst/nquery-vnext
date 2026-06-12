@@ -47,6 +47,12 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT e.ReportsTo, COUNT(*) FROM Employees e GROUP BY e.ReportsTo ORDER BY e.ReportsTo")]
         // Aggregate argument that skips NULLs (COUNT(col)) vs COUNT(*).
         [InlineData("SELECT e.City, COUNT(e.ReportsTo), COUNT(*) FROM Employees e GROUP BY e.City ORDER BY e.City")]
+        // UNION ALL -> concatenation: every row from both inputs, duplicates kept.
+        [InlineData("SELECT e.City FROM Employees e UNION ALL SELECT c.City FROM Customers c ORDER BY 1")]
+        // UNION -> concatenation under a distinct sort, duplicate cities collapsed.
+        [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c ORDER BY 1")]
+        // Three-way UNION ALL with differing column sources to check per-input projection.
+        [InlineData("SELECT e.EmployeeID FROM Employees e UNION ALL SELECT o.OrderID FROM Orders o UNION ALL SELECT od.ProductID FROM [Order Details] od ORDER BY 1")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

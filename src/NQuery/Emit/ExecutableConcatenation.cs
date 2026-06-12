@@ -7,20 +7,32 @@ using NQuery.EmittedIterators;
 
 namespace NQuery.Emit
 {
-    // Placeholder: UNION [ALL]. Not wired.
+    // Concatenation (UNION ALL): each input contributes its rows in turn. The defined
+    // values describe, per input, which of that input's slots feed each unified output
+    // column, so every input is projected into the same output order. A plain UNION's
+    // distinctness is applied by a sort the planner places above this node.
     internal sealed class ExecutableConcatenation : ExecutableOperator
     {
-        public ExecutableConcatenation(ImmutableArray<ValueSlot> outputValueSlots, ImmutableArray<ExecutableOperator> inputs)
+        private readonly ImmutableArray<ExecutableOperator> _inputs;
+        private readonly ImmutableArray<BoundUnifiedValue> _definedValues;
+
+        public ExecutableConcatenation(ImmutableArray<ValueSlot> outputValueSlots, ImmutableArray<ExecutableOperator> inputs, ImmutableArray<BoundUnifiedValue> definedValues)
             : base(outputValueSlots)
         {
-            Inputs = inputs;
+            _inputs = inputs;
+            _definedValues = definedValues;
         }
-
-        public ImmutableArray<ExecutableOperator> Inputs { get; }
 
         public override Iterator CreateIterator(RowBuffer? outer)
         {
-            throw new NotSupportedException("Emitting a concatenation iterator is not yet supported.");
+            var inputs = _inputs.Select(i => i.CreateIterator(outer)).ToImmutableArray();
+            var inputEntries = Enumerable.Range(0, inputs.Length)
+                                         .Select(i =>
+                                         {
+                                             var allocation = Allocate(_inputs[i], inputs[i]);
+                                             return _definedValues.Select(d => allocation[d.InputValueSlots[i]]).ToImmutableArray();
+                                         });
+            return new EmittedConcatenationIterator(inputs, inputEntries);
         }
     }
 }
