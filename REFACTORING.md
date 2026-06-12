@@ -21,11 +21,10 @@
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
-  - Are their any enums reused across layers that we should duplicate/subset?
-  - Should Empty/Constant just be a node that can return a table of literals?
-  - Subqueries in join conditions (is that where passthru comes from?)
   - Full outer join
+  - Subqueries in join conditions (is that where passthru comes from?)
   - Instantiating CTEs
+  - Should Empty/Constant just be a node that can return a table of literals?
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF

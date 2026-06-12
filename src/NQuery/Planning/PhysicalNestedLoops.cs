@@ -21,7 +21,7 @@ namespace NQuery.Planning
     // filters), and its ApplyKind mapped onto JoinKind.
     internal sealed class PhysicalNestedLoops : PhysicalOperator
     {
-        public PhysicalNestedLoops(LogicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
+        public PhysicalNestedLoops(PhysicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
         {
             JoinKind = joinKind;
             Left = left;
@@ -34,7 +34,7 @@ namespace NQuery.Planning
 
         public override PhysicalOperatorKind Kind => PhysicalOperatorKind.NestedLoops;
 
-        public LogicalJoinKind JoinKind { get; }
+        public PhysicalJoinKind JoinKind { get; }
 
         public PhysicalOperator Left { get; }
 
@@ -73,8 +73,8 @@ namespace NQuery.Planning
         {
             return JoinKind switch
             {
-                LogicalJoinKind.Inner or LogicalJoinKind.LeftOuter or LogicalJoinKind.FullOuter => true,
-                LogicalJoinKind.LeftSemi or LogicalJoinKind.LeftAntiSemi => false,
+                PhysicalJoinKind.Inner or PhysicalJoinKind.LeftOuter => true,
+                PhysicalJoinKind.LeftSemi or PhysicalJoinKind.LeftAntiSemi => false,
                 _ => throw ExceptionBuilder.UnexpectedValue(JoinKind)
             };
         }

@@ -42,6 +42,17 @@ namespace NQuery.Tests.Planning
             Assert.Empty(join.Conditions);
         }
 
+        [Fact]
+        public void Planner_RejectsFullOuterJoin_AtPlanTime()
+        {
+            // Nested loops can't produce a full outer join and there's no hash match
+            // yet, so PhysicalJoinKind has no FullOuter to map to. The planner surfaces
+            // that here rather than letting it reach the executor.
+            var text = "SELECT e.City, c.City FROM Employees e FULL JOIN Customers c ON e.City = c.City";
+
+            Assert.Throws<NotSupportedException>(() => Plan(text));
+        }
+
         private static PhysicalOperator Plan(string text)
         {
             return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)))).Root;

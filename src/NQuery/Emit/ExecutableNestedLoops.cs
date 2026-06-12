@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using NQuery.Algebra;
 using NQuery.Binding;
 using NQuery.EmittedIterators;
+using NQuery.Planning;
 
 namespace NQuery.Emit
 {
@@ -23,13 +24,13 @@ namespace NQuery.Emit
 
         private readonly ExecutableOperator _left;
         private readonly ExecutableOperator _right;
-        private readonly LogicalJoinKind _joinKind;
+        private readonly PhysicalJoinKind _joinKind;
         private readonly ValueSlot? _probe;
         private readonly ImmutableArray<int> _outerReferenceIndices;
         private readonly EmittedPredicate _predicate;
         private readonly EmittedPredicate _passthruPredicate;
 
-        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, LogicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
+        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, PhysicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
             : base(outputValueSlots)
         {
             _left = left;
@@ -72,18 +73,16 @@ namespace NQuery.Emit
 
             switch (_joinKind)
             {
-                case LogicalJoinKind.Inner:
+                case PhysicalJoinKind.Inner:
                     return new InnerNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
-                case LogicalJoinKind.LeftOuter:
+                case PhysicalJoinKind.LeftOuter:
                     return new LeftOuterNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
-                case LogicalJoinKind.LeftSemi:
+                case PhysicalJoinKind.LeftSemi:
                     return _probe is null
                         ? new LeftSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate)
                         : new ProbingLeftSemiNestedLoopsIterator(left, right, _predicate);
-                case LogicalJoinKind.LeftAntiSemi:
+                case PhysicalJoinKind.LeftAntiSemi:
                     return new LeftAntiSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
-                case LogicalJoinKind.FullOuter:
-                    throw new NotSupportedException("FULL OUTER JOIN requires a hash match; nested loops cannot produce it.");
                 default:
                     throw ExceptionBuilder.UnexpectedValue(_joinKind);
             }

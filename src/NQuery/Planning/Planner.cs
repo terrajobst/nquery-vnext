@@ -93,7 +93,23 @@ namespace NQuery.Planning
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalNestedLoops(node.JoinKind, left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
+            return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
+        }
+
+        // A full outer join can't be produced by nested loops -- it needs a hash match,
+        // which isn't built yet -- so it has no PhysicalJoinKind to map to. This is the
+        // single point where that gap surfaces, rather than at execution time.
+        private static PhysicalJoinKind MapJoinKind(LogicalJoinKind kind)
+        {
+            return kind switch
+            {
+                LogicalJoinKind.Inner => PhysicalJoinKind.Inner,
+                LogicalJoinKind.LeftOuter => PhysicalJoinKind.LeftOuter,
+                LogicalJoinKind.LeftSemi => PhysicalJoinKind.LeftSemi,
+                LogicalJoinKind.LeftAntiSemi => PhysicalJoinKind.LeftAntiSemi,
+                LogicalJoinKind.FullOuter => throw new NotSupportedException("FULL OUTER JOIN requires a hash match, which is not yet implemented."),
+                _ => throw ExceptionBuilder.UnexpectedValue(kind)
+            };
         }
 
         // An Apply is a dependent join: it has no join condition of its own (the
@@ -106,14 +122,14 @@ namespace NQuery.Planning
             return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, node.OuterReferences);
         }
 
-        private static LogicalJoinKind MapApplyKind(LogicalApplyKind kind)
+        private static PhysicalJoinKind MapApplyKind(LogicalApplyKind kind)
         {
             return kind switch
             {
-                LogicalApplyKind.Inner => LogicalJoinKind.Inner,
-                LogicalApplyKind.LeftOuter => LogicalJoinKind.LeftOuter,
-                LogicalApplyKind.LeftSemi => LogicalJoinKind.LeftSemi,
-                LogicalApplyKind.LeftAntiSemi => LogicalJoinKind.LeftAntiSemi,
+                LogicalApplyKind.Inner => PhysicalJoinKind.Inner,
+                LogicalApplyKind.LeftOuter => PhysicalJoinKind.LeftOuter,
+                LogicalApplyKind.LeftSemi => PhysicalJoinKind.LeftSemi,
+                LogicalApplyKind.LeftAntiSemi => PhysicalJoinKind.LeftAntiSemi,
                 _ => throw ExceptionBuilder.UnexpectedValue(kind)
             };
         }
@@ -165,7 +181,7 @@ namespace NQuery.Planning
                                        .Select(i => BuildNullSafeEquality(leftValues[i], rightValues[i]))
                                        .ToImmutableArray();
 
-            var joinKind = node.IsIntersect ? LogicalJoinKind.LeftSemi : LogicalJoinKind.LeftAntiSemi;
+            var joinKind = node.IsIntersect ? PhysicalJoinKind.LeftSemi : PhysicalJoinKind.LeftAntiSemi;
 
             return new PhysicalNestedLoops(joinKind, distinctLeft, right, conditions, probe: null, passthruPredicate: null, ImmutableArray<ValueSlot>.Empty);
         }
