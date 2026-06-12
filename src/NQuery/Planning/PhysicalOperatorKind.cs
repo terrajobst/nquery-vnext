@@ -14,6 +14,7 @@ namespace NQuery.Planning
         StreamAggregates,
         Sort,
         Top,
-        Concatenation
+        Concatenation,
+        Assert
     }
 }

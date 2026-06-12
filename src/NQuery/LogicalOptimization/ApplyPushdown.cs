@@ -61,6 +61,11 @@ namespace NQuery.LogicalOptimization
                 case LogicalFilter filter when !DependsOnLeft(filter.Input, apply.Left):
                     return ToJoin(apply, filter.Input, filter.Conditions);
 
+                // TODO: Push Apply through GroupBy (Apply(L, Agg(R)) -> Agg-with-group-on-
+                //       L's-key over Apply(L, R)), the "magic decorrelation" rule. Until
+                //       then a guarded scalar subquery -- Apply(L, Assert(Aggregate(...)))
+                //       from Algebrizer.GuardSingleRow -- falls through here and runs as
+                //       correlated nested loops (correct, but a re-scan per left row).
                 default:
                     return apply;
             }

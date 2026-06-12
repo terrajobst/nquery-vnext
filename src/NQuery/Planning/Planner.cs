@@ -58,6 +58,8 @@ namespace NQuery.Planning
                     return PlanSort((LogicalSort)node);
                 case LogicalOperatorKind.Top:
                     return PlanTop((LogicalTop)node);
+                case LogicalOperatorKind.Assert:
+                    return PlanAssert((LogicalAssert)node);
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
@@ -198,6 +200,12 @@ namespace NQuery.Planning
         {
             var input = PlanOperator(node.Input);
             return new PhysicalTop(input, node.Limit, node.TieEntries);
+        }
+
+        private static PhysicalOperator PlanAssert(LogicalAssert node)
+        {
+            var input = PlanOperator(node.Input);
+            return new PhysicalAssert(input, node.Condition, node.Message);
         }
     }
 }

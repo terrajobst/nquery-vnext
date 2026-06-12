@@ -20,12 +20,13 @@
     - No, we should remove that
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
-* Instantiating CTEs
-    - Need to handle recursive ones
-* Cases
+* Missing
+  - Rename LogicalOptimization to AlgebraOptimization
+  - Are their any enums reused across layers that we should duplicate/subset?
+  - Should Empty/Constant just be a node that can return a table of literals?
+  - Subqueries in join conditions (is that where passthru comes from?)
   - Full outer join
-* Subqueries in join conditions
-    - Is that where passthru comes from?
+  - Instantiating CTEs
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
@@ -93,7 +94,9 @@
   cross, left outer, probing semi via EXISTS / NOT EXISTS), correlated apply
   (a surviving TOP-1 scalar subquery), stream aggregates (scalar and grouped,
   including empty input and NULL grouping/argument handling), concatenation
-  (UNION ALL and UNION, the latter via a distinct sort), and INTERSECT/EXCEPT
-  (including NULL-equals-NULL matching and multi-column predicates).
+  (UNION ALL and UNION, the latter via a distinct sort), INTERSECT/EXCEPT
+  (including NULL-equals-NULL matching and multi-column predicates), and scalar
+  subqueries (the cardinality guard's assert firing on multi-row, passing on a
+  unique-key single row, and skipped for a provably single-row aggregate).
 - The next piece is a hash-match join node, reusing the combined-buffer predicate
   compilation that ExecutableNestedLoops established.

@@ -3,6 +3,7 @@
 using System.Collections.Immutable;
 
 using NQuery.Binding;
+using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Algebra
 {
@@ -381,8 +382,90 @@ namespace NQuery.Algebra
         private LogicalExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node, List<PendingApply> applies)
         {
             var relation = AlgebrizeRelation(node.Relation);
-            applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null));
-            return new LogicalValueSlotExpression(node.Value);
+
+            // A scalar subquery must yield at most one row. When the relation already
+            // guarantees that, attach it directly. Otherwise guard it with a cardinality
+            // check. Modelling the guarantee as an aggregate (rather than an opaque
+            // max-one-row operator) keeps the subquery in the form the apply-decorrelation
+            // rules understand.
+            if (ReturnsAtMostOneRow(relation))
+            {
+                applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null));
+                return new LogicalValueSlotExpression(node.Value);
+            }
+
+            var guarded = GuardSingleRow(relation, node.Value, out var output);
+            applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, guarded, probe: null));
+            return new LogicalValueSlotExpression(output);
+        }
+
+        // ANY(value) collapses the (zero or one) surviving rows to the scalar result;
+        // COUNT detects the error case. With no GROUP BY the aggregate always yields a
+        // single row, so the assert sees one row carrying both the value and the count.
+        //
+        // TODO: This aggregate form is canonical so the apply over it can be unnested,
+        //       but ApplyPushdown doesn't do that yet (see its GroupBy TODO). Until then a
+        //       correlated guarded subquery executes as correlated nested loops.
+        private LogicalOperator GuardSingleRow(LogicalOperator relation, ValueSlot value, out ValueSlot output)
+        {
+            var anyOutput = _valueSlotFactory.CreateTemporary(value.Type);
+            var countOutput = _valueSlotFactory.CreateTemporary(typeof(int));
+
+            var any = new LogicalAggregatedValue(
+                anyOutput,
+                BuiltInAggregates.Any,
+                BuiltInAggregates.Any.Definition.CreateAggregatable(value.Type),
+                new LogicalValueSlotExpression(value));
+
+            var count = new LogicalAggregatedValue(
+                countOutput,
+                BuiltInAggregates.Count,
+                BuiltInAggregates.Count.Definition.CreateAggregatable(typeof(int)),
+                new LogicalLiteralExpression(0));
+
+            var aggregate = new LogicalAggregate(relation, ImmutableArray<BoundComparedValue>.Empty, ImmutableArray.Create(any, count));
+
+            var condition = Binary(new LogicalValueSlotExpression(countOutput), BinaryOperatorKind.LessOrEqual, new LogicalLiteralExpression(1));
+
+            output = anyOutput;
+            return new LogicalAssert(aggregate, condition, Resources.SubqueryReturnedMoreThanRow);
+        }
+
+        // Whether a relation provably returns at most one row, so the cardinality guard
+        // can be skipped. Conservative: it peels cardinality-non-increasing unary
+        // operators down to a capping node (a scalar aggregate, TOP 1, or a constant).
+        private static bool ReturnsAtMostOneRow(LogicalOperator node)
+        {
+            switch (node.Kind)
+            {
+                case LogicalOperatorKind.Empty:
+                case LogicalOperatorKind.Constant:
+                    return true;
+                case LogicalOperatorKind.Aggregate:
+                    return ((LogicalAggregate)node).Groups.IsEmpty;
+                case LogicalOperatorKind.Top:
+                    var top = (LogicalTop)node;
+                    // TOP 1 caps at one row, unless WITH TIES can admit more.
+                    return top.Limit <= 1 && top.TieEntries.IsEmpty || ReturnsAtMostOneRow(top.Input);
+                case LogicalOperatorKind.Filter:
+                    return ReturnsAtMostOneRow(((LogicalFilter)node).Input);
+                case LogicalOperatorKind.Compute:
+                    return ReturnsAtMostOneRow(((LogicalCompute)node).Input);
+                case LogicalOperatorKind.Project:
+                    return ReturnsAtMostOneRow(((LogicalProject)node).Input);
+                case LogicalOperatorKind.Sort:
+                    return ReturnsAtMostOneRow(((LogicalSort)node).Input);
+                case LogicalOperatorKind.Assert:
+                    return ReturnsAtMostOneRow(((LogicalAssert)node).Input);
+                default:
+                    return false;
+            }
+        }
+
+        private static LogicalBinaryExpression Binary(LogicalExpression left, BinaryOperatorKind kind, LogicalExpression right)
+        {
+            var result = BinaryOperator.Resolve(kind, left.Type, right.Type);
+            return new LogicalBinaryExpression(left, kind, result, right);
         }
 
         // EXISTS becomes a Semi apply that produces a boolean probe slot; the

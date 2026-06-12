@@ -61,6 +61,12 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT e.ReportsTo FROM Employees e EXCEPT SELECT o.EmployeeID FROM Orders o ORDER BY 1")]
         // Multi-column INTERSECT to check the all-columns-equal predicate.
         [InlineData("SELECT e.Country, e.City FROM Employees e INTERSECT SELECT c.Country, c.City FROM Customers c ORDER BY 1, 2")]
+        // Scalar subquery whose relation isn't provably single-row -> cardinality guard
+        // (aggregate + assert). The unique key keeps it to one row, so the assert passes.
+        [InlineData("SELECT c.CustomerID, (SELECT o.OrderDate FROM Orders o WHERE o.OrderID = 10248) FROM Customers c ORDER BY c.CustomerID")]
+        // Correlated scalar subquery that IS provably single-row (a scalar aggregate) ->
+        // the guard is skipped, leaving a plain apply.
+        [InlineData("SELECT c.CustomerID, (SELECT MAX(o.OrderID) FROM Orders o WHERE o.CustomerID = c.CustomerID) FROM Customers c ORDER BY c.CustomerID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);
@@ -87,6 +93,17 @@ namespace NQuery.Tests.Iterators
             Assert.Equal(first.Count, second.Count);
             for (var i = 0; i < first.Count; i++)
                 Assert.Equal(first[i], second[i]);
+        }
+
+        [Fact]
+        public void NewPipeline_ThrowsForMultiRowScalarSubquery()
+        {
+            // A scalar subquery that returns more than one row is a runtime error in
+            // both engines (the cardinality guard's assert fires).
+            var text = "SELECT (SELECT e.City FROM Employees e) FROM Customers c";
+
+            Assert.Throws<InvalidOperationException>(() => RunExistingEngine(text));
+            Assert.Throws<InvalidOperationException>(() => RunNewPipeline(text));
         }
 
         private static List<object[]> RunNewPipeline(string text)
