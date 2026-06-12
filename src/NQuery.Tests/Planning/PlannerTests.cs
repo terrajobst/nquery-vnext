@@ -1,6 +1,6 @@
 using NQuery.Algebra;
 using NQuery.Binding;
-using NQuery.LogicalOptimization;
+using NQuery.AlgebraOptimization;
 using NQuery.Planning;
 
 namespace NQuery.Tests.Planning

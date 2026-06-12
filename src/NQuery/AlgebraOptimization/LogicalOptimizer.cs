@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 using NQuery.Algebra;
 
-namespace NQuery.LogicalOptimization
+namespace NQuery.AlgebraOptimization
 {
     // Driver for the logical optimization pipeline. Passes are grouped into ordered
     // batches; each batch runs either Once or to a FixedPoint.

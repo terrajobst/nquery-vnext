@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 using NQuery.Algebra;
 
-namespace NQuery.LogicalOptimization
+namespace NQuery.AlgebraOptimization
 {
     // Decorrelation by pushing Apply down: an Apply whose right side no longer
     // depends on the left becomes an ordinary join. Two rules so far:

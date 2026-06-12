@@ -1,8 +1,8 @@
 using NQuery.Algebra;
 using NQuery.Binding;
-using NQuery.LogicalOptimization;
+using NQuery.AlgebraOptimization;
 
-namespace NQuery.Tests.LogicalOptimization
+namespace NQuery.Tests.AlgebraOptimization
 {
     public class LogicalOptimizerTests
     {

@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using NQuery.Algebra;
 using NQuery.Binding;
 
-namespace NQuery.LogicalOptimization
+namespace NQuery.AlgebraOptimization
 {
     // Normalizes and reorders inner-join regions. A connected region of inner joins
     // (cross products included) is collapsed into its set of leaf inputs plus a pool

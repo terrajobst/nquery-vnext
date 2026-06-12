@@ -2,7 +2,7 @@ using NQuery.Algebra;
 using NQuery.Binding;
 using NQuery.Emit;
 using NQuery.EmittedIterators;
-using NQuery.LogicalOptimization;
+using NQuery.AlgebraOptimization;
 using NQuery.Planning;
 
 namespace NQuery.Tests.Iterators

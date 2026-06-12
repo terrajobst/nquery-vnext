@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using NQuery.Algebra;
 using NQuery.Binding;
 
-namespace NQuery.LogicalOptimization
+namespace NQuery.AlgebraOptimization
 {
     // Pushes selection conjuncts into the side of an inner join that already
     // defines every slot a conjunct references, recursing so a conjunct travels as
