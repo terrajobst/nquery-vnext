@@ -3,8 +3,8 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
-using NQuery.AlgebraBinding;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
 using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
 using BinaryOperator = NQuery.Binding.BinaryOperator;
 

@@ -3,8 +3,8 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
-using NQuery.AlgebraBinding;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
 
 namespace NQuery.Planning
 {

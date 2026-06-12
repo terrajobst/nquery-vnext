@@ -3,7 +3,7 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.AlgebraBinding;
+using NQuery.Refactor.Binding;
 
 namespace NQuery.Planning
 {

@@ -1,6 +1,6 @@
-using NQuery.Algebra;
-using NQuery.AlgebraBinding;
-using NQuery.AlgebraOptimization;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
+using NQuery.Refactor.Optimization;
 using NQuery.Planning;
 
 namespace NQuery.Tests.Planning

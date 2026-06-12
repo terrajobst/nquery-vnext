@@ -18,12 +18,12 @@ namespace NQuery.Symbols
             ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, valueFactory)).ToImmutableArray();
         }
 
-        internal TableInstanceSymbol(string name, TableSymbol table, NQuery.AlgebraBinding.ValueSlotFactory valueFactory)
+        internal TableInstanceSymbol(string name, TableSymbol table, NQuery.Refactor.Binding.ValueSlotFactory valueFactory)
             : this(name, table, (ti, c) => valueFactory.CreateNamed($"{ti.Name}.{c.Name}", c.Type))
         {
         }
 
-        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, NQuery.AlgebraBinding.ValueSlot> valueFactory)
+        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, NQuery.Refactor.Binding.ValueSlot> valueFactory)
             : base(name)
         {
             Table = table;

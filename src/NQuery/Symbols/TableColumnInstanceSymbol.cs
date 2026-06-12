@@ -5,7 +5,7 @@ namespace NQuery.Symbols
     public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol
     {
         private readonly ValueSlot _valueSlot;
-        private readonly NQuery.AlgebraBinding.ValueSlot _valueSlotRefactor;
+        private readonly NQuery.Refactor.Binding.ValueSlot _valueSlotRefactor;
 
         internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, Func<TableInstanceSymbol, ColumnSymbol, ValueSlot> valueSlotFactory)
             : base(column.Name)
@@ -15,7 +15,7 @@ namespace NQuery.Symbols
             _valueSlot = valueSlotFactory(tableInstance, column);
         }
 
-        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, Func<TableInstanceSymbol, ColumnSymbol, NQuery.AlgebraBinding.ValueSlot> valueSlotFactory)
+        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, Func<TableInstanceSymbol, ColumnSymbol, NQuery.Refactor.Binding.ValueSlot> valueSlotFactory)
             : base(column.Name)
         {
             TableInstance = tableInstance;
@@ -30,7 +30,7 @@ namespace NQuery.Symbols
 
         internal override ValueSlot ValueSlot => _valueSlot ?? throw new InvalidOperationException("This symbol was bound by the AlgebraBinding binder; use ValueSlotRefactor.");
 
-        internal override NQuery.AlgebraBinding.ValueSlot ValueSlotRefactor => _valueSlotRefactor ?? throw new InvalidOperationException("This symbol was bound by the legacy Binding binder; use ValueSlot.");
+        internal override NQuery.Refactor.Binding.ValueSlot ValueSlotRefactor => _valueSlotRefactor ?? throw new InvalidOperationException("This symbol was bound by the legacy Binding binder; use ValueSlot.");
 
         private protected override Type SlotType => _valueSlot is not null ? _valueSlot.Type : _valueSlotRefactor.Type;
 

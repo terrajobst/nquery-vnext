@@ -11,7 +11,7 @@ namespace NQuery.Symbols
 
         internal abstract ValueSlot ValueSlot { get; }
 
-        internal abstract NQuery.AlgebraBinding.ValueSlot ValueSlotRefactor { get; }
+        internal abstract NQuery.Refactor.Binding.ValueSlot ValueSlotRefactor { get; }
 
         public sealed override Type Type
         {

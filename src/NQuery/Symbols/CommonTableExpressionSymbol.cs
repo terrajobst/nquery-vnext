@@ -7,9 +7,9 @@ namespace NQuery.Symbols
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
         private readonly BoundQuery _anchor;
-        private readonly NQuery.AlgebraBinding.BoundQuery _anchorRefactor;
+        private readonly NQuery.Refactor.Binding.BoundQuery _anchorRefactor;
         private readonly ImmutableArray<BoundQuery> _recursiveMembers;
-        private readonly ImmutableArray<NQuery.AlgebraBinding.BoundQuery> _recursiveMembersRefactor;
+        private readonly ImmutableArray<NQuery.Refactor.Binding.BoundQuery> _recursiveMembersRefactor;
 
         internal CommonTableExpressionSymbol(
             string name,
@@ -32,16 +32,16 @@ namespace NQuery.Symbols
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (NQuery.AlgebraBinding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
+            Func<CommonTableExpressionSymbol, (NQuery.Refactor.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
         )
-            : this(name, anchorBinder, _ => ImmutableArray<NQuery.AlgebraBinding.BoundQuery>.Empty)
+            : this(name, anchorBinder, _ => ImmutableArray<NQuery.Refactor.Binding.BoundQuery>.Empty)
         {
         }
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (NQuery.AlgebraBinding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
-            Func<CommonTableExpressionSymbol, ImmutableArray<NQuery.AlgebraBinding.BoundQuery>> recursiveBinder
+            Func<CommonTableExpressionSymbol, (NQuery.Refactor.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
+            Func<CommonTableExpressionSymbol, ImmutableArray<NQuery.Refactor.Binding.BoundQuery>> recursiveBinder
         )
             : base(name)
         {
@@ -63,10 +63,10 @@ namespace NQuery.Symbols
 
         internal BoundQuery Anchor => _anchor ?? throw new InvalidOperationException("This CTE was bound by the AlgebraBinding binder; use AnchorRefactor.");
 
-        internal NQuery.AlgebraBinding.BoundQuery AnchorRefactor => _anchorRefactor ?? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use Anchor.");
+        internal NQuery.Refactor.Binding.BoundQuery AnchorRefactor => _anchorRefactor ?? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use Anchor.");
 
         internal ImmutableArray<BoundQuery> RecursiveMembers => _recursiveMembers.IsDefault ? throw new InvalidOperationException("This CTE was bound by the AlgebraBinding binder; use RecursiveMembersRefactor.") : _recursiveMembers;
 
-        internal ImmutableArray<NQuery.AlgebraBinding.BoundQuery> RecursiveMembersRefactor => _recursiveMembersRefactor.IsDefault ? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use RecursiveMembers.") : _recursiveMembersRefactor;
+        internal ImmutableArray<NQuery.Refactor.Binding.BoundQuery> RecursiveMembersRefactor => _recursiveMembersRefactor.IsDefault ? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use RecursiveMembers.") : _recursiveMembersRefactor;
     }
 }

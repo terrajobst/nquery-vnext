@@ -1,8 +1,8 @@
-using NQuery.Algebra;
-using NQuery.AlgebraBinding;
-using NQuery.Emit;
-using NQuery.EmittedIterators;
-using NQuery.AlgebraOptimization;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
+using NQuery.Refactor.Emit;
+using NQuery.Refactor.Iterators;
+using NQuery.Refactor.Optimization;
 using NQuery.Planning;
 
 namespace NQuery.Tests.Iterators

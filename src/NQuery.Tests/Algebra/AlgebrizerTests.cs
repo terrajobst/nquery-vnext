@@ -1,5 +1,5 @@
-using NQuery.Algebra;
-using NQuery.AlgebraBinding;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
 
 namespace NQuery.Tests.Algebra
 {
