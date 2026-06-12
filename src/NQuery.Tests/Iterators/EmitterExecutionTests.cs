@@ -35,6 +35,18 @@ namespace NQuery.Tests.Iterators
         // Correlated scalar subquery that survives decorrelation (Top blocks it) ->
         // a left-outer apply executed as correlated nested loops.
         [InlineData("SELECT e.EmployeeID, (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID ORDER BY o.OrderID) FROM Employees e ORDER BY e.EmployeeID")]
+        // Scalar aggregate over all rows (no GROUP BY) -> stream aggregate, one row.
+        [InlineData("SELECT COUNT(*) FROM Employees e")]
+        [InlineData("SELECT COUNT(*), MAX(e.EmployeeID), MIN(e.EmployeeID), SUM(e.EmployeeID) FROM Employees e")]
+        // Scalar aggregate over an empty input still yields a single row.
+        [InlineData("SELECT COUNT(*), SUM(e.EmployeeID) FROM Employees e WHERE e.City = 'Nowhere'")]
+        // Grouped aggregate -> sort on the grouping column feeding a stream aggregate.
+        [InlineData("SELECT e.City, COUNT(*) FROM Employees e GROUP BY e.City ORDER BY e.City")]
+        [InlineData("SELECT e.Country, e.City, COUNT(*) FROM Employees e GROUP BY e.Country, e.City ORDER BY e.Country, e.City")]
+        // Grouping column that contains NULLs (ReportsTo) forms its own group.
+        [InlineData("SELECT e.ReportsTo, COUNT(*) FROM Employees e GROUP BY e.ReportsTo ORDER BY e.ReportsTo")]
+        // Aggregate argument that skips NULLs (COUNT(col)) vs COUNT(*).
+        [InlineData("SELECT e.City, COUNT(e.ReportsTo), COUNT(*) FROM Employees e GROUP BY e.City ORDER BY e.City")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

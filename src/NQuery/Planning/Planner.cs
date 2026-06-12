@@ -49,7 +49,7 @@ namespace NQuery.Planning
                 case LogicalOperatorKind.Apply:
                     return PlanApply((LogicalApply)node);
                 case LogicalOperatorKind.Aggregate:
-                    return PlanAggregate((LogicalAggregate)node);
+                    return PlanStreamAggregates((LogicalAggregate)node);
                 case LogicalOperatorKind.Union:
                     return PlanUnion((LogicalUnion)node);
                 case LogicalOperatorKind.IntersectOrExcept:
@@ -116,10 +116,17 @@ namespace NQuery.Planning
             };
         }
 
-        private static PhysicalOperator PlanAggregate(LogicalAggregate node)
+        private static PhysicalOperator PlanStreamAggregates(LogicalAggregate node)
         {
             var input = PlanOperator(node.Input);
-            return new PhysicalAggregate(input, node.Groups, node.Aggregates);
+
+            // A stream aggregate consumes its input one group at a time, so the rows must
+            // arrive grouped. Sort on the grouping columns (reusing their comparers) to
+            // guarantee that. A hash aggregate, which wouldn't need this, is future work.
+            if (!node.Groups.IsEmpty)
+                input = new PhysicalSort(isDistinct: false, input, node.Groups);
+
+            return new PhysicalStreamAggregates(input, node.Groups, node.Aggregates);
         }
 
         private static PhysicalOperator PlanUnion(LogicalUnion node)

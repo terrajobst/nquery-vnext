@@ -55,8 +55,8 @@ namespace NQuery.Emit
                     return EmitTop((PhysicalTop)node, outerSlots);
                 case PhysicalOperatorKind.NestedLoops:
                     return EmitNestedLoops((PhysicalNestedLoops)node, outerSlots);
-                case PhysicalOperatorKind.Aggregate:
-                    return EmitAggregate((PhysicalAggregate)node, outerSlots);
+                case PhysicalOperatorKind.StreamAggregates:
+                    return EmitStreamAggregates((PhysicalStreamAggregates)node, outerSlots);
                 case PhysicalOperatorKind.Concatenation:
                     return EmitConcatenation((PhysicalConcatenation)node, outerSlots);
                 case PhysicalOperatorKind.IntersectOrExcept:
@@ -123,9 +123,9 @@ namespace NQuery.Emit
             return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.OuterReferences);
         }
 
-        private static ExecutableOperator EmitAggregate(PhysicalAggregate node, ImmutableArray<ValueSlot> outerSlots)
+        private static ExecutableOperator EmitStreamAggregates(PhysicalStreamAggregates node, ImmutableArray<ValueSlot> outerSlots)
         {
-            return new ExecutableAggregate(node.OutputValueSlots, EmitOperator(node.Input, outerSlots));
+            return new ExecutableStreamAggregates(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.Groups, node.Aggregates, outerSlots);
         }
 
         private static ExecutableOperator EmitConcatenation(PhysicalConcatenation node, ImmutableArray<ValueSlot> outerSlots)

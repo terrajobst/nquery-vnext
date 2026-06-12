@@ -8,18 +8,19 @@ using NQuery.Binding;
 
 namespace NQuery.Planning
 {
-    // A single physical aggregate for now. Choosing between a stream aggregate
-    // (over sorted input) and a hash aggregate is a later planning refinement.
-    internal sealed class PhysicalAggregate : PhysicalOperator
+    // Aggregation as a stream aggregate: it consumes input the planner has sorted on
+    // the grouping columns and collapses each run of equal-group rows. Choosing a hash
+    // aggregate instead is a later planning refinement.
+    internal sealed class PhysicalStreamAggregates : PhysicalOperator
     {
-        public PhysicalAggregate(PhysicalOperator input, ImmutableArray<BoundComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
+        public PhysicalStreamAggregates(PhysicalOperator input, ImmutableArray<BoundComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
         {
             Input = input;
             Groups = groups;
             Aggregates = aggregates;
         }
 
-        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Aggregate;
+        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.StreamAggregates;
 
         public PhysicalOperator Input { get; }
 

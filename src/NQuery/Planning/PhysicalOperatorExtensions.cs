@@ -23,7 +23,7 @@ namespace NQuery.Planning
                 PhysicalProject n => [n.Input],
                 PhysicalSort n => [n.Input],
                 PhysicalTop n => [n.Input],
-                PhysicalAggregate n => [n.Input],
+                PhysicalStreamAggregates n => [n.Input],
                 PhysicalNestedLoops n => [n.Left, n.Right],
                 PhysicalIntersectOrExcept n => [n.Left, n.Right],
                 PhysicalConcatenation n => n.Inputs,

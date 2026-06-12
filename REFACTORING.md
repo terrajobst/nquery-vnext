@@ -23,9 +23,6 @@
 * Instantiating CTEs
     - Need to handle recursive ones
 * Not implemented — these nodes build but throw NotSupportedException from CreateIterator():
-  - ExecutableAggregate
-    - HashAggregate
-    - StreamAggregate
   - ExecutableConcatenation    
   - ExecutableIntersectOrExcept
 * Cases
@@ -58,8 +55,9 @@
 
 - Any cost basis — no cardinality/cost estimation; join-algorithm and join-order
   choices are purely syntactic.
-- Aggregate strategy — always one PhysicalAggregate; no stream-vs-hash choice,
-  no use of existing ordering.
+- Aggregate strategy — always a stream aggregate: PhysicalStreamAggregates over a
+  PhysicalSort on the grouping columns. No hash-aggregate alternative, and no use
+  of existing ordering to elide the sort.
 - Apply execution strategy — a LogicalApply lowers to a PhysicalNestedLoops
   carrying OuterReferences (the left columns the right reads); there is no separate
   physical/executable Apply node. It runs as naive correlated nested loops (re-scan
@@ -69,17 +67,17 @@
 
 ### Emit (Physical → ExecutablePlan)
 
-- ExecutableAggregate, ExecutableConcatenation, ExecutableIntersectOrExcept.
-  (ExecutableNestedLoops is wired and also serves Apply.)
+- ExecutableConcatenation, ExecutableIntersectOrExcept. (ExecutableStreamAggregates
+  is wired; ExecutableNestedLoops is wired and also serves Apply.)
 
 ### EmittedIterators
 
-- No aggregate/concatenation/intersect-except iterators, and no hash match. The
+- No concatenation/intersect-except iterators, and no hash match. The
   nested-loops family is ported (inner, left outer, left semi, left anti-semi,
-  probing left semi) and serves both joins and applies; the legacy
-  NQuery.Iterators also has hash match, stream aggregate, concatenation, and table
-  spool, deliberately not ported yet — they need the compile-once treatment, not a
-  copy.
+  probing left semi) and serves both joins and applies, and a stream aggregate
+  (EmittedStreamAggregateIterator) is ported; the legacy NQuery.Iterators also has
+  hash match, concatenation, and table spool, deliberately not ported yet — they
+  need the compile-once treatment, not a copy.
 - ExecutableNestedLoops compiles its predicates against the combined (left ++
   right) slot map via CreateSlotIndices. A dependent (apply) nested loops uses the
   same combined-buffer trick for correlation — its right subtree's filters/computes
@@ -97,8 +95,8 @@
 - No ShowPlan/explain for physical or executable plans.
 - End-to-end execution (the differential test vs. the existing engine) currently
   covers scan, filter, compute, project, sort, top, nested-loops joins (inner,
-  cross, left outer, probing semi via EXISTS / NOT EXISTS), and correlated apply
-  (a surviving TOP-1 scalar subquery).
-- The next pieces are ExecutableAggregate, then the set operators and a
-  hash-match join node; all reuse the combined-buffer predicate compilation that
-  ExecutableNestedLoops established.
+  cross, left outer, probing semi via EXISTS / NOT EXISTS), correlated apply
+  (a surviving TOP-1 scalar subquery), and stream aggregates (scalar and grouped,
+  including empty input and NULL grouping/argument handling).
+- The next pieces are the set operators and a hash-match join node; all reuse the
+  combined-buffer predicate compilation that ExecutableNestedLoops established.
