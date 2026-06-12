@@ -18,12 +18,13 @@ namespace NQuery.Algebra
     //     was found.
     internal sealed class LogicalApply : LogicalOperator
     {
-        public LogicalApply(LogicalApplyKind applyKind, LogicalOperator left, LogicalOperator right, ValueSlot? probe)
+        public LogicalApply(LogicalApplyKind applyKind, LogicalOperator left, LogicalOperator right, ValueSlot? probe, LogicalExpression? passthru = null)
         {
             ApplyKind = applyKind;
             Left = left;
             Right = right;
             Probe = probe;
+            Passthru = passthru;
         }
 
         public override LogicalOperatorKind Kind => LogicalOperatorKind.Apply;
@@ -36,6 +37,14 @@ namespace NQuery.Algebra
 
         // The mark column for Semi/AntiSemi applies; null for Inner/LeftOuter.
         public ValueSlot? Probe { get; }
+
+        // A left-row predicate (over Left's columns) under which the Right is *not*
+        // evaluated -- the row passes straight through (null-padded / unmatched). It
+        // restores CASE short-circuiting for a subquery inside a CASE branch: the guard
+        // is the condition under which that branch isn't taken. Null for an ordinary
+        // (unconditional) apply. A guarded apply is left as nested loops -- it is not
+        // decorrelated, so the executor's passthru handling honors the guard.
+        public LogicalExpression? Passthru { get; }
 
         // The left's output columns the right side references -- i.e. the correlation.
         // Lazily computed (and cached) by walking the right subtree once.

@@ -34,6 +34,11 @@ namespace NQuery.Algebra
     {
         private readonly ValueSlotFactory _valueSlotFactory = new();
 
+        // The CASE-branch passthru guards in scope while algebrizing an expression. A
+        // subquery found here is skipped (passed through its Apply) for rows the guard
+        // matches. A pushed null means "no guard"; CurrentPassthru reads the top.
+        private readonly Stack<LogicalExpression?> _passthruStack = new();
+
         public static LogicalQuery Algebrize(BoundQuery query)
         {
             ArgumentNullException.ThrowIfNull(query);
@@ -317,7 +322,7 @@ namespace NQuery.Algebra
         private static LogicalOperator WrapInApplies(LogicalOperator input, List<PendingApply> applies)
         {
             foreach (var apply in applies)
-                input = new LogicalApply(apply.Kind, input, apply.Relation, apply.Probe);
+                input = new LogicalApply(apply.Kind, input, apply.Relation, apply.Probe, apply.Passthru);
             return input;
         }
 
@@ -410,18 +415,55 @@ namespace NQuery.Algebra
             return new LogicalIsNullExpression(expression);
         }
 
+        // CASE short-circuits: a subquery in a THEN/ELSE is evaluated only when its branch
+        // is selected. We thread a "passthru" guard -- the condition under which a branch
+        // is *not* reached -- through the branch, and AlgebrizeSingleRowSubselect /
+        // AlgebrizeExistsSubselect stamp it onto any Apply they introduce, so the executor
+        // skips the subquery for those rows (matching the legacy SubqueryExpander).
         private LogicalExpression AlgebrizeCaseExpression(BoundCaseExpression node, List<PendingApply> applies)
         {
-            var caseLabels = node.CaseLabels.Select(l => AlgebrizeCaseLabel(l, applies)).ToImmutableArray();
+            // The guard that already applies to this whole CASE (from an enclosing CASE).
+            var whenPassthru = CurrentPassthru;
+            var caseLabels = ImmutableArray.CreateBuilder<LogicalCaseLabel>(node.CaseLabels.Length);
+
+            foreach (var label in node.CaseLabels)
+            {
+                // The WHEN runs under the enclosing guard only.
+                _passthruStack.Push(whenPassthru);
+                var when = AlgebrizeExpression(label.Condition, applies);
+                _passthruStack.Pop();
+
+                // The THEN is reached only when no earlier WHEN matched and this WHEN is
+                // true; so it is passed through when an earlier branch matched
+                // (whenPassthru) or this WHEN is not true (NOT when).
+                _passthruStack.Push(Or(whenPassthru, Not(when)));
+                var then = AlgebrizeExpression(label.ThenExpression, applies);
+                _passthruStack.Pop();
+
+                caseLabels.Add(new LogicalCaseLabel(when, then));
+
+                whenPassthru = Or(whenPassthru, when);
+            }
+
+            // The ELSE is reached only when no WHEN matched.
+            _passthruStack.Push(whenPassthru);
             var elseExpression = AlgebrizeExpressionOrNull(node.ElseExpression, applies);
-            return new LogicalCaseExpression(caseLabels, elseExpression);
+            _passthruStack.Pop();
+
+            return new LogicalCaseExpression(caseLabels.ToImmutable(), elseExpression);
         }
 
-        private LogicalCaseLabel AlgebrizeCaseLabel(BoundCaseLabel label, List<PendingApply> applies)
+        private LogicalExpression? CurrentPassthru => _passthruStack.Count == 0 ? null : _passthruStack.Peek();
+
+        private static LogicalExpression Not(LogicalExpression expression)
         {
-            var condition = AlgebrizeExpression(label.Condition, applies);
-            var thenExpression = AlgebrizeExpression(label.ThenExpression, applies);
-            return new LogicalCaseLabel(condition, thenExpression);
+            var result = UnaryOperator.Resolve(UnaryOperatorKind.LogicalNot, expression.Type);
+            return new LogicalUnaryExpression(UnaryOperatorKind.LogicalNot, result, expression);
+        }
+
+        private static LogicalExpression? Or(LogicalExpression? left, LogicalExpression right)
+        {
+            return left is null ? right : Binary(left, BinaryOperatorKind.LogicalOr, right);
         }
 
         private LogicalExpression AlgebrizeFunctionInvocationExpression(BoundFunctionInvocationExpression node, List<PendingApply> applies)
@@ -456,12 +498,12 @@ namespace NQuery.Algebra
             // rules understand.
             if (ReturnsAtMostOneRow(relation))
             {
-                applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null));
+                applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
                 return new LogicalValueSlotExpression(node.Value);
             }
 
             var guarded = GuardSingleRow(relation, node.Value, out var output);
-            applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, guarded, probe: null));
+            applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, guarded, probe: null, CurrentPassthru));
             return new LogicalValueSlotExpression(output);
         }
 
@@ -541,17 +583,18 @@ namespace NQuery.Algebra
         {
             var relation = AlgebrizeRelation(node.Relation);
             var probe = _valueSlotFactory.CreateTemporary(typeof(bool));
-            applies.Add(new PendingApply(LogicalApplyKind.LeftSemi, relation, probe));
+            applies.Add(new PendingApply(LogicalApplyKind.LeftSemi, relation, probe, CurrentPassthru));
             return new LogicalValueSlotExpression(probe);
         }
 
         private readonly struct PendingApply
         {
-            public PendingApply(LogicalApplyKind kind, LogicalOperator relation, ValueSlot? probe)
+            public PendingApply(LogicalApplyKind kind, LogicalOperator relation, ValueSlot? probe, LogicalExpression? passthru)
             {
                 Kind = kind;
                 Relation = relation;
                 Probe = probe;
+                Passthru = passthru;
             }
 
             public LogicalApplyKind Kind { get; }
@@ -559,6 +602,10 @@ namespace NQuery.Algebra
             public LogicalOperator Relation { get; }
 
             public ValueSlot? Probe { get; }
+
+            // The CASE-branch guard under which this subquery is skipped (null when the
+            // subquery isn't inside a CASE branch).
+            public LogicalExpression? Passthru { get; }
         }
     }
 }

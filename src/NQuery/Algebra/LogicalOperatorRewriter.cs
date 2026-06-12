@@ -87,7 +87,7 @@ namespace NQuery.Algebra
             var right = RewriteRelation(node.Right);
             return left == node.Left && right == node.Right
                 ? node
-                : new LogicalApply(node.ApplyKind, left, right, node.Probe);
+                : new LogicalApply(node.ApplyKind, left, right, node.Probe, node.Passthru);
         }
 
         protected virtual LogicalOperator RewriteAggregate(LogicalAggregate node)

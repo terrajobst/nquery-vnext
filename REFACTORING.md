@@ -50,6 +50,11 @@
   - Add MergeJoin for cases where the input is pre-sorted
   - Pass sort keys down such that we can use it to choose a stream aggregate +
     sort over a hash aggregate
+* Use fuzzing for the parser to find parsing bugs
+* Use fuzzing for the query pipeline to find queries that fail 
+* Use benchmarks to compare old vs new engine
+* Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
+  slot representation)
 
 ## Missing
 
@@ -60,9 +65,17 @@
   hoisted into a filter above the join, with its Apply correlated to the join's whole
   (left ++ right) output. Subqueries in a non-inner join's ON are still unlowered
   (moving the conjunct above the join changes outer-join semantics) and throw
-  NotSupportedException. A join's Probe/PassthruPredicate are always null here (the
-  binder never sets them; only the legacy SubqueryExpander does), so a subquery in a
-  passthru can't arise — the algebrizer just asserts the invariant.
+  NotSupportedException. A bound join's Probe/PassthruPredicate are always null here
+  (the binder never sets them; only the legacy SubqueryExpander does), so a bound-tree
+  passthru can't arise — the algebrizer just asserts that invariant.
+- CASE short-circuiting is honored: a subquery in a THEN/ELSE branch is evaluated only
+  when that branch is selected. The algebrizer threads a passthru guard (the condition
+  under which a branch isn't taken) through CASE branches and stamps it onto the Apply
+  the subquery introduces (LogicalApply.Passthru). A guarded Apply is left as nested
+  loops -- ApplyPushdown won't decorrelate it, and the planner passes the guard to
+  PhysicalNestedLoops, whose iterators skip (pass through) the right for guarded rows.
+  This is what keeps a multi-row subquery's cardinality assert from firing for a branch
+  that's never taken.
 - CTE cloning — the "non-trivial transform needs a pass" case we discussed; no
   instantiation pass exists yet (only trivial derived-table inlining is done). The
   slot-remapping machinery it needs is now available: LogicalOperatorCloner (built
@@ -127,8 +140,10 @@
   nullable key and a non-equi residual remainder), FULL OUTER JOIN (an equi
   condition goes to a hash match; a non-equi one the planner expands to left-outer
   UNION ALL right-anti-semi with the left null-padded, cloning the inputs with
-  LogicalOperatorCloner so each branch is slot-disjoint), and subqueries in an inner
-  join's ON (EXISTS / NOT EXISTS / uncorrelated scalar aggregate).
+  LogicalOperatorCloner so each branch is slot-disjoint), subqueries in an inner
+  join's ON (EXISTS / NOT EXISTS / uncorrelated scalar aggregate), and CASE-branch
+  subqueries guarded by passthru (a multi-row subquery in a never-taken THEN/ELSE is
+  skipped rather than asserting, and a conditional guard still yields the right values).
 - A hash match builds on the join's left and probes with its right (no smaller-side
   choice yet). Semi/anti joins and non-equi conditions stay nested loops. The next
   natural step is a merge join for pre-sorted inputs and cost-based build-side / join

@@ -90,6 +90,16 @@ namespace NQuery.Tests.Iterators
         // Uncorrelated scalar aggregate subquery in an inner join's ON -> a cross-joined
         // single-row value the filter above the join tests.
         [InlineData("SELECT od.OrderID, od.ProductID FROM [Order Details] od INNER JOIN Products p ON od.ProductID = p.ProductID AND od.UnitPrice > (SELECT AVG(od2.UnitPrice) FROM [Order Details] od2) ORDER BY od.OrderID, od.ProductID")]
+        // CASE passthru: a multi-row subquery in a THEN whose WHEN is always false must be
+        // skipped -- otherwise its cardinality assert would fire even though the branch is
+        // never taken.
+        [InlineData("SELECT e.EmployeeID, CASE WHEN e.EmployeeID = 0 THEN (SELECT o.OrderID FROM Orders o) ELSE e.EmployeeID END FROM Employees e ORDER BY e.EmployeeID")]
+        // CASE passthru on the ELSE branch (the WHEN is always true, so the ELSE subquery
+        // is never evaluated).
+        [InlineData("SELECT e.EmployeeID, CASE WHEN e.EmployeeID > 0 THEN 1 ELSE (SELECT o.OrderID FROM Orders o) END FROM Employees e ORDER BY e.EmployeeID")]
+        // CASE passthru that is conditional: the correlated subquery runs only for the UK
+        // rows the WHEN selects, and the values still come out right.
+        [InlineData("SELECT e.EmployeeID, CASE WHEN e.Country = 'UK' THEN (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) ELSE -1 END FROM Employees e ORDER BY e.EmployeeID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

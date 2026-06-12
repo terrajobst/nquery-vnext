@@ -134,7 +134,8 @@ namespace NQuery.Algebra
             var left = Clone(node.Left);
             var right = Clone(node.Right);
             var probe = node.Probe is null ? null : Introduce(node.Probe);
-            return new LogicalApply(node.ApplyKind, left, right, probe);
+            var passthru = node.Passthru is null ? null : CloneExpression(node.Passthru);
+            return new LogicalApply(node.ApplyKind, left, right, probe, passthru);
         }
 
         private LogicalOperator CloneAggregate(LogicalAggregate node)

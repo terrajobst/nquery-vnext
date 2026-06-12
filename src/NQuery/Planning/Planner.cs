@@ -273,7 +273,7 @@ namespace NQuery.Planning
         {
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, passthruPredicate: null, node.OuterReferences);
+            return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, node.Passthru, node.OuterReferences);
         }
 
         private static PhysicalJoinKind MapApplyKind(LogicalApplyKind kind)

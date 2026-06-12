@@ -37,6 +37,12 @@ namespace NQuery.AlgebraOptimization
 
         private static LogicalOperator Decorrelate(LogicalApply apply)
         {
+            // A guarded apply (a CASE-branch subquery whose evaluation is conditional)
+            // is left as nested loops: the executor's passthru handling skips the right
+            // for guarded rows, which a decorrelated join would lose.
+            if (apply.Passthru is not null)
+                return apply;
+
             // Base case: no outer references, so the right no longer reaches into the
             // left -- it is already an ordinary join.
             if (apply.OuterReferences.IsEmpty)

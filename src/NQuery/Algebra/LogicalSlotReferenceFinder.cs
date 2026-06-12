@@ -120,6 +120,7 @@ namespace NQuery.Algebra
 
         private static void AddApply(LogicalApply node, HashSet<ValueSlot> slots)
         {
+            AddExpression(node.Passthru, slots);
             AddOperator(node.Left, slots);
             AddOperator(node.Right, slots);
         }
