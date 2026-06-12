@@ -3,7 +3,7 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.Symbols;
 
 namespace NQuery.Algebra
@@ -22,8 +22,8 @@ namespace NQuery.Algebra
 
         public ImmutableArray<TableColumnInstanceSymbol> DefinedValues { get; }
 
-        protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => DefinedValues.Select(d => d.ValueSlot).ToFrozenSet();
+        protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => DefinedValues.Select(d => d.ValueSlotRefactor).ToFrozenSet();
 
-        protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => DefinedValues.Select(d => d.ValueSlot).ToImmutableArray();
+        protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => DefinedValues.Select(d => d.ValueSlotRefactor).ToImmutableArray();
     }
 }

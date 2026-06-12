@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 
+using NQuery.AlgebraBinding;
 using NQuery.Binding;
 using NQuery.Symbols;
 

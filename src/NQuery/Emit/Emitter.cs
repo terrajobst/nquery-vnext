@@ -3,7 +3,7 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.Planning;
 using NQuery.Symbols;
 

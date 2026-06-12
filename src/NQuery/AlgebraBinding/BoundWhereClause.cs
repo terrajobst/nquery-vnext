@@ -1,0 +1,12 @@
+namespace NQuery.AlgebraBinding
+{
+    internal sealed class BoundWhereClause
+    {
+        public BoundWhereClause(BoundExpression condition)
+        {
+            Condition = condition;
+        }
+
+        public BoundExpression Condition { get; }
+    }
+}

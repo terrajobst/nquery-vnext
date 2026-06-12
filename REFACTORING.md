@@ -24,24 +24,24 @@ use "the right names" in the new universe:
 
 ## Remaining items
 
-* Make sure that all plans are executable
 * Should symbols refer to value slots at all?
     - No, we should remove that
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
+  - Add BoundCommonTableExpression that has AnchorMembers and RecursiveMembers
+  - Make the new Algebrizer not use ValueSlots from symbols but rather create
+    them
   - Subqueries in a non-inner join's ON (inner joins are handled by hoisting the
     subquery conjunct into a filter above the join)
   - Instantiating CTEs
   - Should Empty/Constant just be a node that can return a table of literals?
   - Look at the legacy optimizer and compare it against the new pipeline. What
     optimizations are we performing already and which ones do we need to port?
-  - The binder is doing a lot of algebrization we could keep it separate and
-    make sure the bound nodes are a shallow representation to the syntax, mapped
-    1:1
   - Review naming of various constructs and check whether there a better
     industrial terms
-* Representing AND and OR
+  - Make sure that all plans are executable
+  Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
 * What properties do we need to track?

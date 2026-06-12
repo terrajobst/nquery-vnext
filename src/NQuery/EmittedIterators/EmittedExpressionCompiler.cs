@@ -5,7 +5,11 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
+using UnaryOperatorSignature = NQuery.Binding.UnaryOperatorSignature;
+using UnaryOperatorKind = NQuery.Binding.UnaryOperatorKind;
+using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
+using BinaryOperatorSignature = NQuery.Binding.BinaryOperatorSignature;
 using NQuery.Symbols;
 
 namespace NQuery.EmittedIterators

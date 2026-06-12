@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.EmittedIterators;
 using NQuery.Symbols.Aggregation;
 

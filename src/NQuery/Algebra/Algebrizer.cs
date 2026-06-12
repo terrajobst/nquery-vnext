@@ -1,35 +1,35 @@
 #nullable enable
 
 using System.Collections.Immutable;
-using System.Diagnostics;
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.Symbols.Aggregation;
+
+using BinaryOperator = NQuery.Binding.BinaryOperator;
+using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
+using UnaryOperator = NQuery.Binding.UnaryOperator;
+using UnaryOperatorKind = NQuery.Binding.UnaryOperatorKind;
 
 namespace NQuery.Algebra
 {
-    // Translates the binder's relational bound tree into the logical algebra
+    // Translates the binder's syntax-shaped query tree (BoundQuery) into the logical algebra
     // (LogicalOperator). This is the Bound -> Logical lowering.
     //
-    // It is layered on top of the existing bound tree -- it reuses the same
-    // ValueSlots (and resolved operator/symbol metadata) and does not modify the
-    // binder or the bound nodes. The result is fully logical:
+    // It reuses the binder's value slots and resolved operator/symbol metadata. Two things
+    // happen here that the binder deliberately left undone:
     //
-    //   * column references become slot references;
-    //   * correlation is made explicit -- a scalar subquery becomes a LeftOuter
-    //     Apply whose value slot the expression then references, and an EXISTS
-    //     subquery becomes a Semi Apply producing a boolean probe slot the
-    //     expression references. The logical expression language therefore cannot
-    //     contain a relation: subqueries are never expression nodes.
+    //   * a SELECT query, kept per-clause by the binder, is lowered into the relational
+    //     pipeline (Filter/Compute/Aggregate/Sort/Top/Project); and
+    //   * correlation is made explicit -- a scalar subquery becomes a LeftOuter Apply whose
+    //     value slot the expression then references, and an EXISTS subquery becomes a Semi Apply
+    //     producing a boolean probe slot the expression references. The logical expression
+    //     language therefore cannot contain a query: subqueries are never expression nodes.
     //
-    // Apply introduction happens here because it *is* part of forming the algebra.
-    // Decorrelation -- pushing those applies down until the right no longer depends
-    // on the left, turning them into ordinary joins -- is a separate optimizer pass.
+    // Apply introduction happens here because it *is* part of forming the algebra. Decorrelation
+    // -- pushing those applies down until the right no longer depends on the left, turning them
+    // into ordinary joins -- is a separate optimizer pass.
     //
-    // Out of scope: subqueries inside join conditions (an apply has a single input
-    // to attach to, but a join condition sees both sides) -- these throw. And
-    // optimizer-introduced physical nodes (hash match, stream aggregate,
-    // concatenation, table spools) never appear in the binder's output.
+    // Out of scope: subqueries inside a non-inner join's ON condition -- these throw.
     internal sealed class Algebrizer
     {
         private readonly ValueSlotFactory _valueSlotFactory = new();
@@ -44,121 +44,115 @@ namespace NQuery.Algebra
             ArgumentNullException.ThrowIfNull(query);
 
             var algebrizer = new Algebrizer();
-            var root = algebrizer.AlgebrizeRelation(query.Relation);
+            var root = algebrizer.AlgebrizeQuery(query);
             return new LogicalQuery(root, query.OutputColumns);
         }
 
-        public static LogicalOperator Algebrize(BoundRelation relation)
+        private LogicalOperator AlgebrizeQuery(BoundQuery node)
         {
-            ArgumentNullException.ThrowIfNull(relation);
-
-            return new Algebrizer().AlgebrizeRelation(relation);
-        }
-
-        private LogicalOperator AlgebrizeRelation(BoundRelation node)
-        {
-            switch (node.Kind)
+            return node switch
             {
-                case BoundNodeKind.EmptyRelation:
-                    return AlgebrizeEmptyRelation((BoundEmptyRelation)node);
-                case BoundNodeKind.ConstantRelation:
-                    return AlgebrizeConstantRelation((BoundConstantRelation)node);
-                case BoundNodeKind.TableRelation:
-                    return AlgebrizeTableRelation((BoundTableRelation)node);
-                case BoundNodeKind.DerivedTableRelation:
-                    return AlgebrizeDerivedTableRelation((BoundDerivedTableRelation)node);
-                case BoundNodeKind.FilterRelation:
-                    return AlgebrizeFilterRelation((BoundFilterRelation)node);
-                case BoundNodeKind.ComputeRelation:
-                    return AlgebrizeComputeRelation((BoundComputeRelation)node);
-                case BoundNodeKind.ProjectRelation:
-                    return AlgebrizeProjectRelation((BoundProjectRelation)node);
-                case BoundNodeKind.JoinRelation:
-                    return AlgebrizeJoinRelation((BoundJoinRelation)node);
-                case BoundNodeKind.GroupByAndAggregationRelation:
-                    return AlgebrizeGroupByAndAggregationRelation((BoundGroupByAndAggregationRelation)node);
-                case BoundNodeKind.UnionRelation:
-                    return AlgebrizeUnionRelation((BoundUnionRelation)node);
-                case BoundNodeKind.IntersectOrExceptRelation:
-                    return AlgebrizeIntersectOrExceptRelation((BoundIntersectOrExceptRelation)node);
-                case BoundNodeKind.SortRelation:
-                    return AlgebrizeSortRelation((BoundSortRelation)node);
-                case BoundNodeKind.TopRelation:
-                    return AlgebrizeTopRelation((BoundTopRelation)node);
-                case BoundNodeKind.AssertRelation:
-                    return AlgebrizeAssertRelation((BoundAssertRelation)node);
-                default:
-                    throw ExceptionBuilder.UnexpectedValue(node.Kind);
+                BoundSelectQuery select => AlgebrizeSelectQuery(select),
+                BoundUnionQuery union => AlgebrizeUnionQuery(union),
+                BoundIntersectOrExceptQuery intersectOrExcept => AlgebrizeIntersectOrExceptQuery(intersectOrExcept),
+                BoundOrderedQuery ordered => AlgebrizeOrderedQuery(ordered),
+                BoundEmptyQuery => new LogicalEmpty(),
+                _ => throw ExceptionBuilder.UnexpectedValue(node.Kind)
+            };
+        }
+
+        // Lowers a per-clause SELECT into the relational pipeline. The order mirrors the legacy
+        // binder's "putting it together" assembly: FROM -> WHERE -> compute group expressions ->
+        // GROUP BY/aggregate -> HAVING -> compute SELECT expressions -> sort -> top -> project ->
+        // distinct (when there is no ORDER BY).
+        private LogicalOperator AlgebrizeSelectQuery(BoundSelectQuery node)
+        {
+            var input = node.From is null
+                ? new LogicalConstant()
+                : AlgebrizeTableReference(node.From.Root);
+
+            if (node.Where is not null)
+                input = AlgebrizeFilter(input, node.Where.Condition);
+
+            if (node.GroupBy is not null && !node.GroupBy.ComputedGroups.IsEmpty)
+                input = AlgebrizeCompute(input, node.GroupBy.ComputedGroups);
+
+            var groups = node.GroupBy?.Groups ?? ImmutableArray<BoundComparedValue>.Empty;
+            var aggregates = node.Select.Aggregates;
+            if (!groups.IsEmpty || !aggregates.IsEmpty)
+            {
+                var applies = new List<PendingApply>();
+                var aggs = aggregates.Select(a => AlgebrizeAggregatedValue(a, applies)).ToImmutableArray();
+                input = WrapInApplies(input, applies);
+                input = new LogicalAggregate(input, groups, aggs);
             }
+
+            if (node.Having is not null)
+                input = AlgebrizeFilter(input, node.Having.Condition);
+
+            if (!node.Select.Projections.IsEmpty)
+                input = AlgebrizeCompute(input, node.Select.Projections);
+
+            if (node.OrderBy is not null)
+                input = new LogicalSort(node.Select.IsDistinct, input, node.OrderBy.SortedValues);
+
+            if (node.Top is not null)
+            {
+                // TOP WITH TIES breaks ties using the sort keys (the binder requires an ORDER BY
+                // for WITH TIES, so OrderBy is non-null here).
+                var tieEntries = node.Top.WithTies && node.OrderBy is not null
+                    ? node.OrderBy.SortedValues
+                    : ImmutableArray<BoundComparedValue>.Empty;
+                input = new LogicalTop(input, node.Top.Limit, tieEntries);
+            }
+
+            input = new LogicalProject(input, node.OutputColumns.Select(c => c.ValueSlotRefactor).ToImmutableArray());
+
+            // SELECT DISTINCT with no ORDER BY: a group-by over the output columns.
+            if (!node.Select.DistinctValues.IsEmpty)
+                input = new LogicalAggregate(input, node.Select.DistinctValues, ImmutableArray<LogicalAggregatedValue>.Empty);
+
+            return input;
         }
 
-        private LogicalOperator AlgebrizeEmptyRelation(BoundEmptyRelation node)
+        private LogicalOperator AlgebrizeFilter(LogicalOperator input, BoundExpression condition)
         {
-            return new LogicalEmpty();
-        }
-
-        private LogicalOperator AlgebrizeConstantRelation(BoundConstantRelation node)
-        {
-            return new LogicalConstant();
-        }
-
-        private LogicalOperator AlgebrizeTableRelation(BoundTableRelation node)
-        {
-            return new LogicalTableScan(node.TableInstance, node.DefinedValues);
-        }
-
-        private LogicalOperator AlgebrizeDerivedTableRelation(BoundDerivedTableRelation node)
-        {
-            // A derived table is a pure scoping wrapper: its output slots are the
-            // inner relation's slots, so it carries no algebraic meaning -- inline
-            // it rather than introduce a node that would only be removed later.
-            return AlgebrizeRelation(node.Relation);
-        }
-
-        private LogicalOperator AlgebrizeFilterRelation(BoundFilterRelation node)
-        {
-            var input = AlgebrizeRelation(node.Input);
             var applies = new List<PendingApply>();
-            var condition = AlgebrizeExpression(node.Condition, applies);
+            var logicalCondition = AlgebrizeExpression(condition, applies);
             input = WrapInApplies(input, applies);
-            var conditions = FlattenConjuncts(condition).ToImmutableArray();
-            return new LogicalFilter(input, conditions);
+            return new LogicalFilter(input, FlattenConjuncts(logicalCondition).ToImmutableArray());
         }
 
-        private LogicalOperator AlgebrizeComputeRelation(BoundComputeRelation node)
+        private LogicalOperator AlgebrizeCompute(LogicalOperator input, ImmutableArray<BoundComputedValue> definedValues)
         {
-            var input = AlgebrizeRelation(node.Input);
             var applies = new List<PendingApply>();
-            var definedValues = node.DefinedValues.Select(v => AlgebrizeComputedValue(v, applies)).ToImmutableArray();
+            var defined = definedValues.Select(v => AlgebrizeComputedValue(v, applies)).ToImmutableArray();
             input = WrapInApplies(input, applies);
-            return new LogicalCompute(input, definedValues);
+            return new LogicalCompute(input, defined);
         }
 
-        private LogicalOperator AlgebrizeProjectRelation(BoundProjectRelation node)
+        private LogicalOperator AlgebrizeTableReference(BoundTableReference node)
         {
-            var input = AlgebrizeRelation(node.Input);
-            return new LogicalProject(input, node.Outputs);
+            return node switch
+            {
+                BoundNamedTableReference named => new LogicalTableScan(named.TableInstance, named.DefinedValues),
+                // A derived table is a pure scoping wrapper: its column slots are the inner query's
+                // output slots, so it carries no algebraic meaning -- inline the inner query.
+                BoundDerivedTableReference derived => AlgebrizeQuery(derived.Query),
+                BoundJoinTableReference join => AlgebrizeJoinTableReference(join),
+                _ => throw ExceptionBuilder.UnexpectedValue(node.Kind)
+            };
         }
 
-        private LogicalOperator AlgebrizeJoinRelation(BoundJoinRelation node)
+        private LogicalOperator AlgebrizeJoinTableReference(BoundJoinTableReference node)
         {
-            var left = AlgebrizeRelation(node.Left);
-            var right = AlgebrizeRelation(node.Right);
+            var left = AlgebrizeTableReference(node.Left);
+            var right = AlgebrizeTableReference(node.Right);
 
-            // The binder never emits a probe or a passthru predicate -- those exist only in
-            // the legacy SubqueryExpander's output, which the new pipeline doesn't run. So
-            // PassthruPredicate is always null here and can't contain a subquery; algebrize
-            // it defensively (a no-op on null) and assert the invariant.
-            var passthruApplies = new List<PendingApply>();
-            var passthruPredicate = AlgebrizeExpressionOrNull(node.PassthruPredicate, passthruApplies);
-            Debug.Assert(passthruApplies.Count == 0, "The binder does not produce passthru predicates, let alone ones containing subqueries.");
-
-            // Split the ON condition into conjuncts. A subquery-free conjunct stays as the
-            // join's own condition (so an equi-join can still become a hash match). A
-            // conjunct that introduces a subquery turns into an Apply, which can't live
-            // inside the join expression -- so it is hoisted into a filter above the join,
-            // where the Apply (correlated to the join's whole left ++ right output)
-            // produces the probe/value slot the filter then tests.
+            // Split the ON condition into conjuncts. A subquery-free conjunct stays as the join's
+            // own condition (so an equi-join can still become a hash match). A conjunct that
+            // introduces a subquery turns into an Apply, which can't live inside the join
+            // expression -- so it is hoisted into a filter above the join.
             var joinConditions = new List<LogicalExpression>();
             var filterConditions = new List<LogicalExpression>();
             var applies = new List<PendingApply>();
@@ -180,25 +174,18 @@ namespace NQuery.Algebra
 
             var conditions = joinConditions.ToImmutableArray();
 
-            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical layer
-            // never sees a right-outer join. The conditions reference slots by identity, so
-            // swapping the operands preserves meaning.
+            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical layer never
+            // sees a right-outer join. The conditions reference slots by identity, so swapping the
+            // operands preserves meaning.
             var join = node.JoinType == BoundJoinType.RightOuter
-                ? new LogicalJoin(LogicalJoinKind.LeftOuter, right, left, conditions, node.Probe, passthruPredicate)
-                : new LogicalJoin(MapJoinKind(node.JoinType), left, right, conditions, node.Probe, passthruPredicate);
+                ? new LogicalJoin(LogicalJoinKind.LeftOuter, right, left, conditions, probe: null, passthruPredicate: null)
+                : new LogicalJoin(MapJoinKind(node.JoinType), left, right, conditions, probe: null, passthruPredicate: null);
 
             if (applies.Count == 0)
                 return join;
 
-            // Hoisting a conjunct out of the ON clause into a filter above the join only
-            // preserves semantics for an inner join, where ON is a plain filter. For an
-            // outer/semi/anti join it would change which rows are preserved, so that case
-            // isn't lowered.
-            //
-            // TODO: Lower this. A LEFT OUTER ON p can be rewritten as the matching pairs
-            //       (sigma_p of the cross product, where the Apply works as for an inner
-            //       join) unioned with the unmatched left rows null-padded -- the same
-            //       shape as the FULL OUTER expansion in the planner. Semi/anti are similar.
+            // Hoisting a conjunct out of the ON clause into a filter above the join only preserves
+            // semantics for an inner join, where ON is a plain filter.
             if (node.JoinType != BoundJoinType.Inner)
                 throw new NotSupportedException("Subqueries inside a non-inner join's ON condition are not yet supported.");
 
@@ -206,9 +193,52 @@ namespace NQuery.Algebra
             return new LogicalFilter(withApplies, filterConditions.ToImmutableArray());
         }
 
-        // Splits a bound predicate into its top-level conjuncts (an AND chain). Used to
-        // keep subquery-free join conditions on the join while pulling subquery-bearing
-        // ones above it.
+        private LogicalOperator AlgebrizeUnionQuery(BoundUnionQuery node)
+        {
+            var inputs = node.Inputs.Select(AlgebrizeQueryInput).ToImmutableArray();
+            return new LogicalUnion(node.IsUnionAll, inputs, node.UnifiedValues, node.Comparers);
+        }
+
+        private LogicalOperator AlgebrizeIntersectOrExceptQuery(BoundIntersectOrExceptQuery node)
+        {
+            var left = AlgebrizeQueryInput(node.Left);
+            var right = AlgebrizeQueryInput(node.Right);
+            return new LogicalIntersectOrExcept(node.IsIntersect, left, right, node.Comparers);
+        }
+
+        private LogicalOperator AlgebrizeOrderedQuery(BoundOrderedQuery node)
+        {
+            var input = AlgebrizeQuery(node.Query);
+            return new LogicalSort(false, input, node.SortedValues);
+        }
+
+        // A set-operation input: the inner query, plus the type-coercion compute/project the
+        // binder deferred (empty when no coercion was needed).
+        private LogicalOperator AlgebrizeQueryInput(BoundQueryInput input)
+        {
+            var relation = AlgebrizeQuery(input.Query);
+            if (input.ComputedValues.IsEmpty)
+                return relation;
+
+            relation = AlgebrizeCompute(relation, input.ComputedValues);
+            return new LogicalProject(relation, input.OutputValues);
+        }
+
+        private static LogicalJoinKind MapJoinKind(BoundJoinType joinType)
+        {
+            return joinType switch
+            {
+                BoundJoinType.Inner => LogicalJoinKind.Inner,
+                BoundJoinType.LeftOuter => LogicalJoinKind.LeftOuter,
+                BoundJoinType.FullOuter => LogicalJoinKind.FullOuter,
+                BoundJoinType.LeftSemi => LogicalJoinKind.LeftSemi,
+                BoundJoinType.LeftAntiSemi => LogicalJoinKind.LeftAntiSemi,
+                _ => throw ExceptionBuilder.UnexpectedValue(joinType)
+            };
+        }
+
+        // Splits a bound predicate into its top-level conjuncts (an AND chain). Used to keep
+        // subquery-free join conditions on the join while pulling subquery-bearing ones above it.
         private static IEnumerable<BoundExpression> SplitConjuncts(BoundExpression? expression)
         {
             if (expression is null)
@@ -227,22 +257,8 @@ namespace NQuery.Algebra
             }
         }
 
-        private static LogicalJoinKind MapJoinKind(BoundJoinType joinType)
-        {
-            return joinType switch
-            {
-                BoundJoinType.Inner => LogicalJoinKind.Inner,
-                BoundJoinType.LeftOuter => LogicalJoinKind.LeftOuter,
-                BoundJoinType.FullOuter => LogicalJoinKind.FullOuter,
-                BoundJoinType.LeftSemi => LogicalJoinKind.LeftSemi,
-                BoundJoinType.LeftAntiSemi => LogicalJoinKind.LeftAntiSemi,
-                _ => throw ExceptionBuilder.UnexpectedValue(joinType)
-            };
-        }
-
-        // Splits a predicate into its top-level conjuncts so that Filter/Join can
-        // store them as a list (an implicit AND), which is what selection pushdown
-        // moves individually.
+        // Splits a logical predicate into its top-level conjuncts so that Filter/Join can store
+        // them as a list (an implicit AND), which is what selection pushdown moves individually.
         private static IEnumerable<LogicalExpression> FlattenConjuncts(LogicalExpression? expression)
         {
             if (expression is null)
@@ -261,49 +277,6 @@ namespace NQuery.Algebra
             }
         }
 
-        private LogicalOperator AlgebrizeGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
-        {
-            var input = AlgebrizeRelation(node.Input);
-            var applies = new List<PendingApply>();
-            var aggregates = node.Aggregates.Select(a => AlgebrizeAggregatedValue(a, applies)).ToImmutableArray();
-            input = WrapInApplies(input, applies);
-            return new LogicalAggregate(input, node.Groups, aggregates);
-        }
-
-        private LogicalOperator AlgebrizeUnionRelation(BoundUnionRelation node)
-        {
-            var inputs = node.Inputs.Select(AlgebrizeRelation).ToImmutableArray();
-            return new LogicalUnion(node.IsUnionAll, inputs, node.DefinedValues, node.Comparers);
-        }
-
-        private LogicalOperator AlgebrizeIntersectOrExceptRelation(BoundIntersectOrExceptRelation node)
-        {
-            var left = AlgebrizeRelation(node.Left);
-            var right = AlgebrizeRelation(node.Right);
-            return new LogicalIntersectOrExcept(node.IsIntersect, left, right, node.Comparers);
-        }
-
-        private LogicalOperator AlgebrizeSortRelation(BoundSortRelation node)
-        {
-            var input = AlgebrizeRelation(node.Input);
-            return new LogicalSort(node.IsDistinct, input, node.SortedValues);
-        }
-
-        private LogicalOperator AlgebrizeTopRelation(BoundTopRelation node)
-        {
-            var input = AlgebrizeRelation(node.Input);
-            return new LogicalTop(input, node.Limit, node.TieEntries);
-        }
-
-        private LogicalOperator AlgebrizeAssertRelation(BoundAssertRelation node)
-        {
-            var input = AlgebrizeRelation(node.Input);
-            var applies = new List<PendingApply>();
-            var condition = AlgebrizeExpression(node.Condition, applies);
-            input = WrapInApplies(input, applies);
-            return new LogicalAssert(input, condition, node.Message);
-        }
-
         private LogicalComputedValue AlgebrizeComputedValue(BoundComputedValue value, List<PendingApply> applies)
         {
             var expression = AlgebrizeExpression(value.Expression, applies);
@@ -316,9 +289,9 @@ namespace NQuery.Algebra
             return new LogicalAggregatedValue(value.Output, value.Aggregate, value.Aggregatable, argument);
         }
 
-        // Each operator collects the applies produced while translating its own
-        // expressions, then wraps its input in them so the subquery slots are in
-        // scope for the expressions that reference them.
+        // Each operator collects the applies produced while translating its own expressions, then
+        // wraps its input in them so the subquery slots are in scope for the expressions that
+        // reference them.
         private static LogicalOperator WrapInApplies(LogicalOperator input, List<PendingApply> applies)
         {
             foreach (var apply in applies)
@@ -378,11 +351,11 @@ namespace NQuery.Algebra
             return new LogicalValueSlotExpression(node.ValueSlot);
         }
 
-        // A column reference resolves to a reference to the slot its symbol owns:
-        // this is the "symbol-refs become slot-refs" step of algebrization.
+        // A column reference resolves to a reference to the slot its symbol owns: this is the
+        // "symbol-refs become slot-refs" step of algebrization.
         private LogicalExpression AlgebrizeColumnExpression(BoundColumnExpression node, List<PendingApply> applies)
         {
-            return new LogicalValueSlotExpression(node.Symbol.ValueSlot);
+            return new LogicalValueSlotExpression(node.Symbol.ValueSlotRefactor);
         }
 
         private LogicalExpression AlgebrizeVariableExpression(BoundVariableExpression node, List<PendingApply> applies)
@@ -415,27 +388,21 @@ namespace NQuery.Algebra
             return new LogicalIsNullExpression(expression);
         }
 
-        // CASE short-circuits: a subquery in a THEN/ELSE is evaluated only when its branch
-        // is selected. We thread a "passthru" guard -- the condition under which a branch
-        // is *not* reached -- through the branch, and AlgebrizeSingleRowSubselect /
-        // AlgebrizeExistsSubselect stamp it onto any Apply they introduce, so the executor
-        // skips the subquery for those rows (matching the legacy SubqueryExpander).
+        // CASE short-circuits: a subquery in a THEN/ELSE is evaluated only when its branch is
+        // selected. We thread a "passthru" guard -- the condition under which a branch is *not*
+        // reached -- through the branch, and AlgebrizeSingleRowSubselect / AlgebrizeExistsSubselect
+        // stamp it onto any Apply they introduce, so the executor skips the subquery for those rows.
         private LogicalExpression AlgebrizeCaseExpression(BoundCaseExpression node, List<PendingApply> applies)
         {
-            // The guard that already applies to this whole CASE (from an enclosing CASE).
             var whenPassthru = CurrentPassthru;
             var caseLabels = ImmutableArray.CreateBuilder<LogicalCaseLabel>(node.CaseLabels.Length);
 
             foreach (var label in node.CaseLabels)
             {
-                // The WHEN runs under the enclosing guard only.
                 _passthruStack.Push(whenPassthru);
                 var when = AlgebrizeExpression(label.Condition, applies);
                 _passthruStack.Pop();
 
-                // The THEN is reached only when no earlier WHEN matched and this WHEN is
-                // true; so it is passed through when an earlier branch matched
-                // (whenPassthru) or this WHEN is not true (NOT when).
                 _passthruStack.Push(Or(whenPassthru, Not(when)));
                 var then = AlgebrizeExpression(label.ThenExpression, applies);
                 _passthruStack.Pop();
@@ -445,7 +412,6 @@ namespace NQuery.Algebra
                 whenPassthru = Or(whenPassthru, when);
             }
 
-            // The ELSE is reached only when no WHEN matched.
             _passthruStack.Push(whenPassthru);
             var elseExpression = AlgebrizeExpressionOrNull(node.ElseExpression, applies);
             _passthruStack.Pop();
@@ -485,17 +451,14 @@ namespace NQuery.Algebra
             return new LogicalMethodInvocationExpression(target, arguments, node.Result);
         }
 
-        // A scalar subquery becomes a LeftOuter apply that exposes its value slot;
-        // the expression is replaced by a reference to that slot.
+        // A scalar subquery becomes a LeftOuter apply that exposes its value slot; the expression
+        // is replaced by a reference to that slot.
         private LogicalExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node, List<PendingApply> applies)
         {
-            var relation = AlgebrizeRelation(node.Relation);
+            var relation = AlgebrizeQuery(node.Query);
 
-            // A scalar subquery must yield at most one row. When the relation already
-            // guarantees that, attach it directly. Otherwise guard it with a cardinality
-            // check. Modelling the guarantee as an aggregate (rather than an opaque
-            // max-one-row operator) keeps the subquery in the form the apply-decorrelation
-            // rules understand.
+            // A scalar subquery must yield at most one row. When the query already guarantees that,
+            // attach it directly. Otherwise guard it with a cardinality check.
             if (ReturnsAtMostOneRow(relation))
             {
                 applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
@@ -507,13 +470,9 @@ namespace NQuery.Algebra
             return new LogicalValueSlotExpression(output);
         }
 
-        // ANY(value) collapses the (zero or one) surviving rows to the scalar result;
-        // COUNT detects the error case. With no GROUP BY the aggregate always yields a
-        // single row, so the assert sees one row carrying both the value and the count.
-        //
-        // TODO: This aggregate form is canonical so the apply over it can be unnested,
-        //       but ApplyPushdown doesn't do that yet (see its GroupBy TODO). Until then a
-        //       correlated guarded subquery executes as correlated nested loops.
+        // ANY(value) collapses the (zero or one) surviving rows to the scalar result; COUNT detects
+        // the error case. With no GROUP BY the aggregate always yields a single row, so the assert
+        // sees one row carrying both the value and the count.
         private LogicalOperator GuardSingleRow(LogicalOperator relation, ValueSlot value, out ValueSlot output)
         {
             var anyOutput = _valueSlotFactory.CreateTemporary(value.Type);
@@ -539,9 +498,9 @@ namespace NQuery.Algebra
             return new LogicalAssert(aggregate, condition, Resources.SubqueryReturnedMoreThanRow);
         }
 
-        // Whether a relation provably returns at most one row, so the cardinality guard
-        // can be skipped. Conservative: it peels cardinality-non-increasing unary
-        // operators down to a capping node (a scalar aggregate, TOP 1, or a constant).
+        // Whether a relation provably returns at most one row, so the cardinality guard can be
+        // skipped. Conservative: it peels cardinality-non-increasing unary operators down to a
+        // capping node (a scalar aggregate, TOP 1, or a constant).
         private static bool ReturnsAtMostOneRow(LogicalOperator node)
         {
             switch (node.Kind)
@@ -553,7 +512,6 @@ namespace NQuery.Algebra
                     return ((LogicalAggregate)node).Groups.IsEmpty;
                 case LogicalOperatorKind.Top:
                     var top = (LogicalTop)node;
-                    // TOP 1 caps at one row, unless WITH TIES can admit more.
                     return top.Limit <= 1 && top.TieEntries.IsEmpty || ReturnsAtMostOneRow(top.Input);
                 case LogicalOperatorKind.Filter:
                     return ReturnsAtMostOneRow(((LogicalFilter)node).Input);
@@ -576,12 +534,20 @@ namespace NQuery.Algebra
             return new LogicalBinaryExpression(left, kind, result, right);
         }
 
-        // EXISTS becomes a Semi apply that produces a boolean probe slot; the
-        // expression is replaced by a reference to the probe (so NOT EXISTS is just
-        // NOT <probe>, and EXISTS can appear anywhere in a predicate).
+        // EXISTS becomes a Semi apply that produces a boolean probe slot; the expression is
+        // replaced by a reference to the probe (so NOT EXISTS is just NOT <probe>, and EXISTS can
+        // appear anywhere in a predicate). ALL/ANY rewrites carry an extra compute/filter the
+        // binder deferred; those are applied over the subquery before the semi apply.
         private LogicalExpression AlgebrizeExistsSubselect(BoundExistsSubselect node, List<PendingApply> applies)
         {
-            var relation = AlgebrizeRelation(node.Relation);
+            var relation = AlgebrizeQuery(node.Query);
+
+            if (!node.ComputedValues.IsEmpty)
+                relation = AlgebrizeCompute(relation, node.ComputedValues);
+
+            if (node.Filter is not null)
+                relation = AlgebrizeFilter(relation, node.Filter);
+
             var probe = _valueSlotFactory.CreateTemporary(typeof(bool));
             applies.Add(new PendingApply(LogicalApplyKind.LeftSemi, relation, probe, CurrentPassthru));
             return new LogicalValueSlotExpression(probe);
@@ -603,8 +569,8 @@ namespace NQuery.Algebra
 
             public ValueSlot? Probe { get; }
 
-            // The CASE-branch guard under which this subquery is skipped (null when the
-            // subquery isn't inside a CASE branch).
+            // The CASE-branch guard under which this subquery is skipped (null when the subquery
+            // isn't inside a CASE branch).
             public LogicalExpression? Passthru { get; }
         }
     }

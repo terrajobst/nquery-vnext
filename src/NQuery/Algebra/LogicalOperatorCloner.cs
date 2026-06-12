@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.Symbols;
 
 namespace NQuery.Algebra
@@ -83,13 +83,13 @@ namespace NQuery.Algebra
         private LogicalOperator CloneTableScan(LogicalTableScan node)
         {
             var original = node.TableInstance;
-            var factory = node.DefinedValues[0].ValueSlot.Factory;
+            var factory = node.DefinedValues[0].ValueSlotRefactor.Factory;
             var instanceName = factory.CreateNamed(original.Name, typeof(int)).Name;
             var instance = new TableInstanceSymbol(instanceName, original.Table, factory);
             var byColumn = instance.ColumnInstances.ToDictionary(c => c.Column);
 
             foreach (var column in original.ColumnInstances)
-                _slotMap[column.ValueSlot] = byColumn[column.Column].ValueSlot;
+                _slotMap[column.ValueSlotRefactor] = byColumn[column.Column].ValueSlotRefactor;
 
             var definedValues = node.DefinedValues.Select(d => byColumn[d.Column]).ToImmutableArray();
             return new LogicalTableScan(instance, definedValues);

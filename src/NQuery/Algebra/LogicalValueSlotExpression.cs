@@ -1,6 +1,6 @@
 #nullable enable
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 
 namespace NQuery.Algebra
 {

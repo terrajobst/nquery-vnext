@@ -1,5 +1,5 @@
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.AlgebraOptimization;
 using NQuery.Planning;
 

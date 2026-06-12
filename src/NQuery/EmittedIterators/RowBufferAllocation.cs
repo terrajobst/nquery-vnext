@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 
 namespace NQuery.EmittedIterators
 {

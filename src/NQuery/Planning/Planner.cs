@@ -4,7 +4,9 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
+using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
+using BinaryOperator = NQuery.Binding.BinaryOperator;
 
 namespace NQuery.Planning
 {

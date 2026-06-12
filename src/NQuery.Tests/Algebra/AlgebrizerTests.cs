@@ -1,5 +1,5 @@
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 
 namespace NQuery.Tests.Algebra
 {
@@ -51,7 +51,7 @@ namespace NQuery.Tests.Algebra
             // subquery's slots into the surrounding scope, which is intended.)
             // Because the Algebrizer reuses the binder's slot instances, this is
             // reference equality per slot.
-            Assert.Equal(boundQuery.Relation.GetOutputValues(), logicalQuery.Root.OutputValueSlots);
+            Assert.Equal(boundQuery.OutputColumns.Select(c => c.ValueSlotRefactor), logicalQuery.Root.OutputValueSlots);
             Assert.Equal(boundQuery.OutputColumns, logicalQuery.OutputColumns);
         }
 

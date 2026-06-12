@@ -1,5 +1,5 @@
 using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.AlgebraBinding;
 using NQuery.Emit;
 using NQuery.EmittedIterators;
 using NQuery.AlgebraOptimization;
