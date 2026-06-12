@@ -26,7 +26,7 @@ namespace NQuery.EmittedIterators
         public override void CopyTo(object[] array, int destinationIndex)
         {
             for (var i = 0; i < _projectedIndices.Length; i++)
-                array[i] = _projectedIndices[i].GetValue();
+                array[destinationIndex + i] = _projectedIndices[i].GetValue();
         }
     }
 }

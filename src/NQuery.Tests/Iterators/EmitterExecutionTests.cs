@@ -82,6 +82,14 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT e.EmployeeID, m.EmployeeID FROM Employees e LEFT JOIN Employees m ON e.ReportsTo = m.EmployeeID ORDER BY e.EmployeeID")]
         // Non-equi FULL OUTER -> no hash key, so the planner's expansion still runs.
         [InlineData("SELECT e.EmployeeID, t.n FROM Employees e FULL JOIN (SELECT e2.EmployeeID AS n FROM Employees e2 WHERE e2.EmployeeID <= 3) t ON e.EmployeeID < t.n ORDER BY e.EmployeeID, t.n")]
+        // EXISTS in an inner join's ON, correlated to the join output -> hoisted into a
+        // (probing) semi join above the join.
+        [InlineData("SELECT o.OrderID, od.ProductID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID = od.OrderID AND EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID AND c.Country = 'Germany') ORDER BY o.OrderID, od.ProductID")]
+        // NOT EXISTS in an inner join's ON.
+        [InlineData("SELECT o.OrderID, od.ProductID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID = od.OrderID AND NOT EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID AND c.Country = 'Germany') ORDER BY o.OrderID, od.ProductID")]
+        // Uncorrelated scalar aggregate subquery in an inner join's ON -> a cross-joined
+        // single-row value the filter above the join tests.
+        [InlineData("SELECT od.OrderID, od.ProductID FROM [Order Details] od INNER JOIN Products p ON od.ProductID = p.ProductID AND od.UnitPrice > (SELECT AVG(od2.UnitPrice) FROM [Order Details] od2) ORDER BY od.OrderID, od.ProductID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);
@@ -108,6 +116,16 @@ namespace NQuery.Tests.Iterators
             Assert.Equal(first.Count, second.Count);
             for (var i = 0; i < first.Count; i++)
                 Assert.Equal(first[i], second[i]);
+        }
+
+        [Fact]
+        public void NewPipeline_DoesNotSupport_SubqueryInOuterJoinCondition()
+        {
+            // Hoisting an ON conjunct above the join changes outer-join semantics, so a
+            // subquery in a non-inner join's ON isn't lowered (yet).
+            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID)";
+
+            Assert.Throws<NotSupportedException>(() => RunNewPipeline(text));
         }
 
         [Fact]

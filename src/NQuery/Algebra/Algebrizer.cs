@@ -1,6 +1,7 @@
 #nullable enable
 
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 using NQuery.Binding;
 using NQuery.Symbols.Aggregation;
@@ -139,21 +140,86 @@ namespace NQuery.Algebra
             var left = AlgebrizeRelation(node.Left);
             var right = AlgebrizeRelation(node.Right);
 
+            // The binder never emits a probe or a passthru predicate -- those exist only in
+            // the legacy SubqueryExpander's output, which the new pipeline doesn't run. So
+            // PassthruPredicate is always null here and can't contain a subquery; algebrize
+            // it defensively (a no-op on null) and assert the invariant.
+            var passthruApplies = new List<PendingApply>();
+            var passthruPredicate = AlgebrizeExpressionOrNull(node.PassthruPredicate, passthruApplies);
+            Debug.Assert(passthruApplies.Count == 0, "The binder does not produce passthru predicates, let alone ones containing subqueries.");
+
+            // Split the ON condition into conjuncts. A subquery-free conjunct stays as the
+            // join's own condition (so an equi-join can still become a hash match). A
+            // conjunct that introduces a subquery turns into an Apply, which can't live
+            // inside the join expression -- so it is hoisted into a filter above the join,
+            // where the Apply (correlated to the join's whole left ++ right output)
+            // produces the probe/value slot the filter then tests.
+            var joinConditions = new List<LogicalExpression>();
+            var filterConditions = new List<LogicalExpression>();
             var applies = new List<PendingApply>();
-            var condition = AlgebrizeExpressionOrNull(node.Condition, applies);
-            var passthruPredicate = AlgebrizeExpressionOrNull(node.PassthruPredicate, applies);
-            if (applies.Count > 0)
-                throw new NotSupportedException("Subqueries inside join conditions are not yet supported by Apply introduction.");
 
-            var conditions = FlattenConjuncts(condition).ToImmutableArray();
+            foreach (var conjunct in SplitConjuncts(node.Condition))
+            {
+                var conjunctApplies = new List<PendingApply>();
+                var algebrized = AlgebrizeExpression(conjunct, conjunctApplies);
+                if (conjunctApplies.Count == 0)
+                {
+                    joinConditions.Add(algebrized);
+                }
+                else
+                {
+                    applies.AddRange(conjunctApplies);
+                    filterConditions.Add(algebrized);
+                }
+            }
 
-            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical
-            // layer never sees a right-outer join. The condition/passthru reference
-            // slots by identity, so swapping the operands preserves meaning.
-            if (node.JoinType == BoundJoinType.RightOuter)
-                return new LogicalJoin(LogicalJoinKind.LeftOuter, right, left, conditions, node.Probe, passthruPredicate);
+            var conditions = joinConditions.ToImmutableArray();
 
-            return new LogicalJoin(MapJoinKind(node.JoinType), left, right, conditions, node.Probe, passthruPredicate);
+            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical layer
+            // never sees a right-outer join. The conditions reference slots by identity, so
+            // swapping the operands preserves meaning.
+            var join = node.JoinType == BoundJoinType.RightOuter
+                ? new LogicalJoin(LogicalJoinKind.LeftOuter, right, left, conditions, node.Probe, passthruPredicate)
+                : new LogicalJoin(MapJoinKind(node.JoinType), left, right, conditions, node.Probe, passthruPredicate);
+
+            if (applies.Count == 0)
+                return join;
+
+            // Hoisting a conjunct out of the ON clause into a filter above the join only
+            // preserves semantics for an inner join, where ON is a plain filter. For an
+            // outer/semi/anti join it would change which rows are preserved, so that case
+            // isn't lowered.
+            //
+            // TODO: Lower this. A LEFT OUTER ON p can be rewritten as the matching pairs
+            //       (sigma_p of the cross product, where the Apply works as for an inner
+            //       join) unioned with the unmatched left rows null-padded -- the same
+            //       shape as the FULL OUTER expansion in the planner. Semi/anti are similar.
+            if (node.JoinType != BoundJoinType.Inner)
+                throw new NotSupportedException("Subqueries inside a non-inner join's ON condition are not yet supported.");
+
+            var withApplies = WrapInApplies(join, applies);
+            return new LogicalFilter(withApplies, filterConditions.ToImmutableArray());
+        }
+
+        // Splits a bound predicate into its top-level conjuncts (an AND chain). Used to
+        // keep subquery-free join conditions on the join while pulling subquery-bearing
+        // ones above it.
+        private static IEnumerable<BoundExpression> SplitConjuncts(BoundExpression? expression)
+        {
+            if (expression is null)
+                yield break;
+
+            if (expression is BoundBinaryExpression { OperatorKind: BinaryOperatorKind.LogicalAnd } binary)
+            {
+                foreach (var conjunct in SplitConjuncts(binary.Left))
+                    yield return conjunct;
+                foreach (var conjunct in SplitConjuncts(binary.Right))
+                    yield return conjunct;
+            }
+            else
+            {
+                yield return expression;
+            }
         }
 
         private static LogicalJoinKind MapJoinKind(BoundJoinType joinType)

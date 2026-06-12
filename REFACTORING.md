@@ -21,7 +21,8 @@
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
-  - Subqueries in join conditions (is that where passthru comes from?)
+  - Subqueries in a non-inner join's ON (inner joins are handled by hoisting the
+    subquery conjunct into a filter above the join)
   - Instantiating CTEs
   - Should Empty/Constant just be a node that can return a table of literals?
   - Look at the legacy optimizer and compare it against the new pipeline. What
@@ -54,9 +55,14 @@
 
 ### Algebra (Bound → Logical)
 
-- Subqueries inside JOIN ON / passthru conditions — explicitly throws
-  NotSupportedException (Algebrizer.cs:145). An Apply attaches to one input, but
-  a join condition sees both sides, so this case isn't lowered.
+- Subqueries inside an INNER join's ON are lowered: subquery-free conjuncts stay on
+  the join (preserving hash-match eligibility), and a subquery-bearing conjunct is
+  hoisted into a filter above the join, with its Apply correlated to the join's whole
+  (left ++ right) output. Subqueries in a non-inner join's ON are still unlowered
+  (moving the conjunct above the join changes outer-join semantics) and throw
+  NotSupportedException. A join's Probe/PassthruPredicate are always null here (the
+  binder never sets them; only the legacy SubqueryExpander does), so a subquery in a
+  passthru can't arise — the algebrizer just asserts the invariant.
 - CTE cloning — the "non-trivial transform needs a pass" case we discussed; no
   instantiation pass exists yet (only trivial derived-table inlining is done). The
   slot-remapping machinery it needs is now available: LogicalOperatorCloner (built
@@ -118,10 +124,11 @@
   subqueries (the cardinality guard's assert firing on multi-row, passing on a
   unique-key single row, and skipped for a provably single-row aggregate),
   hash-match joins (inner/left-outer/full-outer over an equi-key, including a
-  nullable key and a non-equi residual remainder), and FULL OUTER JOIN (an equi
+  nullable key and a non-equi residual remainder), FULL OUTER JOIN (an equi
   condition goes to a hash match; a non-equi one the planner expands to left-outer
   UNION ALL right-anti-semi with the left null-padded, cloning the inputs with
-  LogicalOperatorCloner so each branch is slot-disjoint).
+  LogicalOperatorCloner so each branch is slot-disjoint), and subqueries in an inner
+  join's ON (EXISTS / NOT EXISTS / uncorrelated scalar aggregate).
 - A hash match builds on the join's left and probes with its right (no smaller-side
   choice yet). Semi/anti joins and non-equi conditions stay nested loops. The next
   natural step is a merge join for pre-sorted inputs and cost-based build-side / join
