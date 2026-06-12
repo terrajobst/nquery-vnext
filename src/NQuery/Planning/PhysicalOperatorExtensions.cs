@@ -26,6 +26,7 @@ namespace NQuery.Planning
                 PhysicalAssert n => [n.Input],
                 PhysicalStreamAggregates n => [n.Input],
                 PhysicalNestedLoops n => [n.Left, n.Right],
+                PhysicalHashMatch n => [n.Build, n.Probe],
                 PhysicalConcatenation n => n.Inputs,
                 _ => []
             };

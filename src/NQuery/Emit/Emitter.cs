@@ -55,6 +55,8 @@ namespace NQuery.Emit
                     return EmitTop((PhysicalTop)node, outerSlots);
                 case PhysicalOperatorKind.NestedLoops:
                     return EmitNestedLoops((PhysicalNestedLoops)node, outerSlots);
+                case PhysicalOperatorKind.HashMatch:
+                    return EmitHashMatch((PhysicalHashMatch)node, outerSlots);
                 case PhysicalOperatorKind.StreamAggregates:
                     return EmitStreamAggregates((PhysicalStreamAggregates)node, outerSlots);
                 case PhysicalOperatorKind.Concatenation:
@@ -121,6 +123,13 @@ namespace NQuery.Emit
                 : outerSlots.AddRange(node.OuterReferences);
             var right = EmitOperator(node.Right, rightOuterSlots);
             return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.OuterReferences);
+        }
+
+        private static ExecutableOperator EmitHashMatch(PhysicalHashMatch node, ImmutableArray<ValueSlot> outerSlots)
+        {
+            var build = EmitOperator(node.Build, outerSlots);
+            var probe = EmitOperator(node.Probe, outerSlots);
+            return new ExecutableHashMatch(node.OutputValueSlots, build, probe, node.HashMatchKind, node.BuildKey, node.ProbeKey, node.Remainder);
         }
 
         private static ExecutableOperator EmitStreamAggregates(PhysicalStreamAggregates node, ImmutableArray<ValueSlot> outerSlots)

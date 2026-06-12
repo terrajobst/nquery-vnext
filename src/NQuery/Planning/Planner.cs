@@ -46,7 +46,7 @@ namespace NQuery.Planning
                 case LogicalOperatorKind.Project:
                     return PlanProject((LogicalProject)node);
                 case LogicalOperatorKind.Join:
-                    return PlanNestedLoops((LogicalJoin)node);
+                    return PlanJoin((LogicalJoin)node);
                 case LogicalOperatorKind.Apply:
                     return PlanApply((LogicalApply)node);
                 case LogicalOperatorKind.Aggregate:
@@ -90,8 +90,23 @@ namespace NQuery.Planning
             return new PhysicalProject(input, node.Outputs);
         }
 
-        private static PhysicalOperator PlanNestedLoops(LogicalJoin node)
+        private static PhysicalOperator PlanJoin(LogicalJoin node)
         {
+            // Prefer a hash match for an equi-join it supports (inner / left outer / full
+            // outer). It produces FULL OUTER directly, so an equi full outer skips the
+            // nested-loops expansion below.
+            //
+            // TODO: Build is always the join's left -- there is no cost model, so we don't
+            //       choose the smaller input to hash, nor decide hash-vs-loops by estimated
+            //       cardinality. Once cardinality estimation exists, pick the build side
+            //       (and the algorithm) by cost.
+            if (CanHashMatch(node.JoinKind) && TryGetEquiKey(node, out var buildKey, out var probeKey, out var remainder))
+            {
+                var build = PlanOperator(node.Left);
+                var probe = PlanOperator(node.Right);
+                return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, buildKey, probeKey, remainder);
+            }
+
             // Nested loops can't produce a full outer join. Expanding it into operators
             // that can is a planning-time strategy choice, so it happens here rather than
             // in the algebra: the logical tree keeps the FULL OUTER as a single join.
@@ -103,7 +118,85 @@ namespace NQuery.Planning
             return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
         }
 
-        // FULL OUTER JOIN expanded into operators nested loops can run:
+        // TODO: Semi/anti joins are excluded, so an equi EXISTS / NOT EXISTS still runs as
+        //       (probing) nested loops. A hash match can do left-semi / left-anti-semi too
+        //       (probe a row, emit/suppress it on first build match), which would beat the
+        //       nested-loops re-scan for an equi correlation. Extend PhysicalHashMatchKind
+        //       and EmittedHashMatchIterator to cover them and widen this guard.
+        private static bool CanHashMatch(LogicalJoinKind kind)
+        {
+            return kind is LogicalJoinKind.Inner or LogicalJoinKind.LeftOuter or LogicalJoinKind.FullOuter;
+        }
+
+        private static PhysicalHashMatchKind MapHashMatchKind(LogicalJoinKind kind)
+        {
+            return kind switch
+            {
+                LogicalJoinKind.Inner => PhysicalHashMatchKind.Inner,
+                LogicalJoinKind.LeftOuter => PhysicalHashMatchKind.LeftOuter,
+                LogicalJoinKind.FullOuter => PhysicalHashMatchKind.FullOuter,
+                _ => throw ExceptionBuilder.UnexpectedValue(kind)
+            };
+        }
+
+        // Finds the first conjunct of the form (leftSlot = rightSlot); it becomes the
+        // hash key and the remaining conjuncts the residual remainder. A non-equi or
+        // single-sided condition yields no key, so the caller falls back to nested loops.
+        private static bool TryGetEquiKey(LogicalJoin node, out ValueSlot buildKey, out ValueSlot probeKey, out ImmutableArray<LogicalExpression> remainder)
+        {
+            var leftSlots = node.Left.OutputValueSlots;
+            var rightSlots = node.Right.OutputValueSlots;
+
+            for (var i = 0; i < node.Conditions.Length; i++)
+            {
+                if (TryGetEquiSlots(node.Conditions[i], leftSlots, rightSlots, out buildKey, out probeKey))
+                {
+                    remainder = node.Conditions.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            buildKey = null!;
+            probeKey = null!;
+            remainder = default;
+            return false;
+        }
+
+        // TODO: This treats the `=` operator as satisfiable by the hash match's runtime
+        //       key equality (Dictionary<object>, i.e. object.Equals/GetHashCode). That
+        //       holds for the current value types, but a type whose `=` operator disagrees
+        //       with object equality (e.g. a culture-sensitive string compare) would make
+        //       the hash match diverge from nested loops. Guard by the key type's
+        //       comparer, or thread the operator's comparer into the hash table.
+        private static bool TryGetEquiSlots(LogicalExpression condition, ImmutableArray<ValueSlot> leftSlots, ImmutableArray<ValueSlot> rightSlots, out ValueSlot buildKey, out ValueSlot probeKey)
+        {
+            if (condition is LogicalBinaryExpression { OperatorKind: BinaryOperatorKind.Equal } binary &&
+                binary.Left is LogicalValueSlotExpression left &&
+                binary.Right is LogicalValueSlotExpression right)
+            {
+                if (leftSlots.Contains(left.ValueSlot) && rightSlots.Contains(right.ValueSlot))
+                {
+                    buildKey = left.ValueSlot;
+                    probeKey = right.ValueSlot;
+                    return true;
+                }
+
+                if (leftSlots.Contains(right.ValueSlot) && rightSlots.Contains(left.ValueSlot))
+                {
+                    buildKey = right.ValueSlot;
+                    probeKey = left.ValueSlot;
+                    return true;
+                }
+            }
+
+            buildKey = null!;
+            probeKey = null!;
+            return false;
+        }
+
+        // FULL OUTER JOIN expanded into operators nested loops can run. This is the
+        // fallback for a non-equi condition; an equi full outer goes to a hash match
+        // above (one pass over each input, no double scan or clone).
         //
         //   (L LEFT OUTER JOIN R ON p)
         //   UNION ALL
@@ -114,11 +207,6 @@ namespace NQuery.Planning
         // each gets a slot-disjoint clone of the inputs (and the condition); the union
         // re-defines the join's original output slots by unifying the branches column by
         // column.
-        //
-        // TODO: Once a hash-match join exists, prefer it for an equi-condition full outer
-        //       join -- it produces FULL OUTER directly in a single pass over each input,
-        //       avoiding this expansion's double scan and clone. Fall back to this
-        //       expansion only for non-equi (or subquery) conditions a hash match can't do.
         private static LogicalOperator ExpandFullOuterJoin(LogicalJoin node)
         {
             var outputs = node.OutputValueSlots;

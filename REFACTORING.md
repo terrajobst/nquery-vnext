@@ -21,18 +21,34 @@
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
-  - Add hash match for equi joins
   - Subqueries in join conditions (is that where passthru comes from?)
   - Instantiating CTEs
   - Should Empty/Constant just be a node that can return a table of literals?
   - Look at the legacy optimizer and compare it against the new pipeline. What
     optimizations are we performing already and which ones do we need to port?
+  - The binder is doing a lot of algebrization we could keep it separate and
+    make sure the bound nodes are a shallow representation to the syntax, mapped
+    1:1
+  - Review naming of various constructs and check whether there a better
+    industrial terms
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
 * What properties do we need to track?
     - Like sort order?
     - And where would those be tracked? On the logical operator?
+* Unique state
+  - Keep track of which keys are unique
+  - Add support for tables to declare unique combinations of keys
+* Null state
+  - Keep track of null state
+  - Leverage null state from columns (`Nullable<T>`, nullable reference types)
+* Sort state
+  - Add supported for table symbols declaring a sort order
+  - Keep track of sorted keys to avoid re-sorting
+  - Add MergeJoin for cases where the input is pre-sorted
+  - Pass sort keys down such that we can use it to choose a stream aggregate +
+    sort over a hash aggregate
 
 ## Missing
 
@@ -49,7 +65,8 @@
 ### Planning (Logical → Physical)
 
 - Any cost basis — no cardinality/cost estimation; join-algorithm and join-order
-  choices are purely syntactic.
+  choices are purely syntactic. (An equi-join inner/left-outer/full-outer becomes a
+  hash match, everything else nested loops; there is no smaller-side build choice.)
 - Aggregate strategy — always a stream aggregate: PhysicalStreamAggregates over a
   PhysicalSort on the grouping columns. No hash-aggregate alternative, and no use
   of existing ordering to elide the sort.
@@ -69,13 +86,13 @@
 
 ### EmittedIterators
 
-- No hash match. The nested-loops family is ported (inner, left outer, left semi, left
-  anti-semi, probing left semi) and serves joins, applies, and INTERSECT/EXCEPT (the
-  latter lowered in the planner, so there is no dedicated set-difference iterator); a
-  stream aggregate (EmittedStreamAggregateIterator) and a concatenation
-  (EmittedConcatenationIterator) are ported; the legacy NQuery.Iterators also has hash
-  match and table spool, deliberately not ported yet — they need the compile-once
-  treatment, not a copy.
+- The nested-loops family is ported (inner, left outer, left semi, left anti-semi,
+  probing left semi) and serves joins, applies, and INTERSECT/EXCEPT (the latter lowered
+  in the planner, so there is no dedicated set-difference iterator); a hash match
+  (EmittedHashMatchIterator, inner/left-outer/full-outer over an equi-key), a stream
+  aggregate (EmittedStreamAggregateIterator), and a concatenation
+  (EmittedConcatenationIterator) are ported; the legacy NQuery.Iterators also has a table
+  spool, deliberately not ported yet — it needs the compile-once treatment, not a copy.
 - ExecutableNestedLoops compiles its predicates against the combined (left ++
   right) slot map via CreateSlotIndices. A dependent (apply) nested loops uses the
   same combined-buffer trick for correlation — its right subtree's filters/computes
@@ -99,10 +116,13 @@
   (UNION ALL and UNION, the latter via a distinct sort), INTERSECT/EXCEPT
   (including NULL-equals-NULL matching and multi-column predicates), scalar
   subqueries (the cardinality guard's assert firing on multi-row, passing on a
-  unique-key single row, and skipped for a provably single-row aggregate), and
-  FULL OUTER JOIN (the algebra keeps it as a single join; the planner expands it to
-  left-outer UNION ALL right-anti-semi with the left null-padded, cloning the inputs
-  with LogicalOperatorCloner so each branch is slot-disjoint).
-- The next piece is a hash-match join node, reusing the combined-buffer predicate
-  compilation that ExecutableNestedLoops established. It would also let the planner
-  keep a FULL OUTER as a single physical join (when hash-matchable) instead of expanding.
+  unique-key single row, and skipped for a provably single-row aggregate),
+  hash-match joins (inner/left-outer/full-outer over an equi-key, including a
+  nullable key and a non-equi residual remainder), and FULL OUTER JOIN (an equi
+  condition goes to a hash match; a non-equi one the planner expands to left-outer
+  UNION ALL right-anti-semi with the left null-padded, cloning the inputs with
+  LogicalOperatorCloner so each branch is slot-disjoint).
+- A hash match builds on the join's left and probes with its right (no smaller-side
+  choice yet). Semi/anti joins and non-equi conditions stay nested loops. The next
+  natural step is a merge join for pre-sorted inputs and cost-based build-side / join
+  algorithm selection.

@@ -11,6 +11,7 @@ namespace NQuery.Planning
         ComputeScalar,
         Project,
         NestedLoops,
+        HashMatch,
         StreamAggregates,
         Sort,
         Top,

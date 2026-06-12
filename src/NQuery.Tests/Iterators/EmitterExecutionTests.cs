@@ -77,6 +77,11 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT g.City, c.City FROM (SELECT e.City, COUNT(*) AS n FROM Employees e GROUP BY e.City) g FULL JOIN Customers c ON g.City = c.City ORDER BY g.City, c.City")]
         // FULL OUTER over a computed side -> the cloner must duplicate a compute subtree.
         [InlineData("SELECT t.c, o.OrderID FROM (SELECT e.EmployeeID + 0 AS c FROM Employees e) t FULL JOIN Orders o ON t.c = o.EmployeeID ORDER BY t.c, o.OrderID")]
+        // Hash match on a nullable key (ReportsTo) -> NULL keys never match, so the boss
+        // row surfaces only via the left-outer path.
+        [InlineData("SELECT e.EmployeeID, m.EmployeeID FROM Employees e LEFT JOIN Employees m ON e.ReportsTo = m.EmployeeID ORDER BY e.EmployeeID")]
+        // Non-equi FULL OUTER -> no hash key, so the planner's expansion still runs.
+        [InlineData("SELECT e.EmployeeID, t.n FROM Employees e FULL JOIN (SELECT e2.EmployeeID AS n FROM Employees e2 WHERE e2.EmployeeID <= 3) t ON e.EmployeeID < t.n ORDER BY e.EmployeeID, t.n")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);
