@@ -67,6 +67,16 @@ namespace NQuery.Tests.Iterators
         // Correlated scalar subquery that IS provably single-row (a scalar aggregate) ->
         // the guard is skipped, leaving a plain apply.
         [InlineData("SELECT c.CustomerID, (SELECT MAX(o.OrderID) FROM Orders o WHERE o.CustomerID = c.CustomerID) FROM Customers c ORDER BY c.CustomerID")]
+        // FULL OUTER JOIN -> (left outer) UNION ALL (right-anti-semi, left null-padded).
+        // City has unmatched rows on both sides, exercising both branches and the nulls.
+        [InlineData("SELECT e.City, c.City FROM Employees e FULL JOIN Customers c ON e.City = c.City ORDER BY e.City, c.City")]
+        // FULL OUTER where the condition rarely matches, stressing the null-padding.
+        [InlineData("SELECT e.City, c.Country FROM Employees e FULL JOIN Customers c ON e.City = c.Country ORDER BY e.City, c.Country")]
+        // FULL OUTER over a grouped/aggregated side -> the cloner must duplicate an
+        // aggregate subtree (group keys + aggregate outputs) with fresh slots.
+        [InlineData("SELECT g.City, c.City FROM (SELECT e.City, COUNT(*) AS n FROM Employees e GROUP BY e.City) g FULL JOIN Customers c ON g.City = c.City ORDER BY g.City, c.City")]
+        // FULL OUTER over a computed side -> the cloner must duplicate a compute subtree.
+        [InlineData("SELECT t.c, o.OrderID FROM (SELECT e.EmployeeID + 0 AS c FROM Employees e) t FULL JOIN Orders o ON t.c = o.EmployeeID ORDER BY t.c, o.OrderID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

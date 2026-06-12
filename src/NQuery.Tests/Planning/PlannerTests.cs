@@ -43,14 +43,16 @@ namespace NQuery.Tests.Planning
         }
 
         [Fact]
-        public void Planner_RejectsFullOuterJoin_AtPlanTime()
+        public void Planner_ExpandsFullOuterJoin_IntoConcatenation()
         {
-            // Nested loops can't produce a full outer join and there's no hash match
-            // yet, so PhysicalJoinKind has no FullOuter to map to. The planner surfaces
-            // that here rather than letting it reach the executor.
+            // Nested loops can't produce a full outer join, so the algebrizer expands it
+            // into (left outer) UNION ALL (right-anti-semi with the left null-padded).
             var text = "SELECT e.City, c.City FROM Employees e FULL JOIN Customers c ON e.City = c.City";
+            var plan = Plan(text);
 
-            Assert.Throws<NotSupportedException>(() => Plan(text));
+            Assert.NotEmpty(plan.DescendantsAndSelf().OfType<PhysicalConcatenation>());
+            Assert.Contains(plan.DescendantsAndSelf().OfType<PhysicalNestedLoops>(), j => j.JoinKind == PhysicalJoinKind.LeftAntiSemi);
+            Assert.Contains(plan.DescendantsAndSelf().OfType<PhysicalNestedLoops>(), j => j.JoinKind == PhysicalJoinKind.LeftOuter);
         }
 
         private static PhysicalOperator Plan(string text)

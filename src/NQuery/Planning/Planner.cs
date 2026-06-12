@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
@@ -91,14 +92,79 @@ namespace NQuery.Planning
 
         private static PhysicalOperator PlanNestedLoops(LogicalJoin node)
         {
+            // Nested loops can't produce a full outer join. Expanding it into operators
+            // that can is a planning-time strategy choice, so it happens here rather than
+            // in the algebra: the logical tree keeps the FULL OUTER as a single join.
+            if (node.JoinKind == LogicalJoinKind.FullOuter)
+                return PlanOperator(ExpandFullOuterJoin(node));
+
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
             return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
         }
 
-        // A full outer join can't be produced by nested loops -- it needs a hash match,
-        // which isn't built yet -- so it has no PhysicalJoinKind to map to. This is the
-        // single point where that gap surfaces, rather than at execution time.
+        // FULL OUTER JOIN expanded into operators nested loops can run:
+        //
+        //   (L LEFT OUTER JOIN R ON p)
+        //   UNION ALL
+        //   (project (NULL-as-L, R) over (R LEFT ANTI SEMI JOIN L ON p))
+        //
+        // The second branch contributes the right rows with no left match, the left
+        // columns padded with NULL. Each branch is an independent scan of L and R, so
+        // each gets a slot-disjoint clone of the inputs (and the condition); the union
+        // re-defines the join's original output slots by unifying the branches column by
+        // column.
+        //
+        // TODO: Once a hash-match join exists, prefer it for an equi-condition full outer
+        //       join -- it produces FULL OUTER directly in a single pass over each input,
+        //       avoiding this expansion's double scan and clone. Fall back to this
+        //       expansion only for non-equi (or subquery) conditions a hash match can't do.
+        private static LogicalOperator ExpandFullOuterJoin(LogicalJoin node)
+        {
+            var outputs = node.OutputValueSlots;
+
+            // Branch 1: L LEFT OUTER JOIN R -- outputs L's columns then R's.
+            var cloner1 = new LogicalOperatorCloner();
+            var branch1 = new LogicalJoin(
+                LogicalJoinKind.LeftOuter,
+                cloner1.Clone(node.Left),
+                cloner1.Clone(node.Right),
+                node.Conditions.Select(cloner1.CloneExpression).ToImmutableArray(),
+                probe: null,
+                passthruPredicate: null);
+
+            // Branch 2: the right rows with no left match, left columns padded with NULL.
+            var cloner2 = new LogicalOperatorCloner();
+            var right2 = cloner2.Clone(node.Right);
+            var left2 = cloner2.Clone(node.Left);
+            var antiSemi = new LogicalJoin(
+                LogicalJoinKind.LeftAntiSemi,
+                right2,
+                left2,
+                node.Conditions.Select(cloner2.CloneExpression).ToImmutableArray(),
+                probe: null,
+                passthruPredicate: null);
+
+            var nullSlots = left2.OutputValueSlots.Select(s => s.Duplicate()).ToImmutableArray();
+            var nullValues = nullSlots.Select(s => new LogicalComputedValue(new LogicalLiteralExpression(null), s)).ToImmutableArray();
+            var compute = new LogicalCompute(antiSemi, nullValues);
+
+            // Reorder to (NULL-as-L ++ R), matching branch 1's (L ++ R) column order.
+            var branch2 = new LogicalProject(compute, nullSlots.Concat(right2.OutputValueSlots).ToImmutableArray());
+
+            var firstOutputs = branch1.OutputValueSlots;
+            var secondOutputs = branch2.OutputValueSlots;
+            var unifiedValues = Enumerable.Range(0, outputs.Length)
+                                          .Select(i => new BoundUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
+                                          .ToImmutableArray();
+
+            return new LogicalUnion(isUnionAll: true, ImmutableArray.Create<LogicalOperator>(branch1, branch2), unifiedValues, ImmutableArray<IComparer>.Empty);
+        }
+
+        // A full outer join has no PhysicalJoinKind: nested loops can't produce it.
+        // PlanNestedLoops expands it (into left-outer UNION ALL right-anti-semi) before
+        // mapping, so it shouldn't reach here; this is a defensive guard in case a
+        // LogicalJoin with that kind reaches MapJoinKind by another path.
         private static PhysicalJoinKind MapJoinKind(LogicalJoinKind kind)
         {
             return kind switch

@@ -21,10 +21,12 @@
     - Simplify the value slot assignments
     - Is `ValueSlot` a good term? Or should we go with `ColumnId`?
 * Missing
-  - Full outer join
+  - Add hash match for equi joins
   - Subqueries in join conditions (is that where passthru comes from?)
   - Instantiating CTEs
   - Should Empty/Constant just be a node that can return a table of literals?
+  - Look at the legacy optimizer and compare it against the new pipeline. What
+    optimizations are we performing already and which ones do we need to port?
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
@@ -40,7 +42,9 @@
   NotSupportedException (Algebrizer.cs:145). An Apply attaches to one input, but
   a join condition sees both sides, so this case isn't lowered.
 - CTE cloning — the "non-trivial transform needs a pass" case we discussed; no
-  pass exists (only trivial derived-table inlining is done).
+  instantiation pass exists yet (only trivial derived-table inlining is done). The
+  slot-remapping machinery it needs is now available: LogicalOperatorCloner (built
+  for the FULL OUTER expansion) deep-copies a logical subtree with fresh value slots.
 
 ### Planning (Logical → Physical)
 
@@ -93,8 +97,12 @@
   (a surviving TOP-1 scalar subquery), stream aggregates (scalar and grouped,
   including empty input and NULL grouping/argument handling), concatenation
   (UNION ALL and UNION, the latter via a distinct sort), INTERSECT/EXCEPT
-  (including NULL-equals-NULL matching and multi-column predicates), and scalar
+  (including NULL-equals-NULL matching and multi-column predicates), scalar
   subqueries (the cardinality guard's assert firing on multi-row, passing on a
-  unique-key single row, and skipped for a provably single-row aggregate).
+  unique-key single row, and skipped for a provably single-row aggregate), and
+  FULL OUTER JOIN (the algebra keeps it as a single join; the planner expands it to
+  left-outer UNION ALL right-anti-semi with the left null-padded, cloning the inputs
+  with LogicalOperatorCloner so each branch is slot-disjoint).
 - The next piece is a hash-match join node, reusing the combined-buffer predicate
-  compilation that ExecutableNestedLoops established.
+  compilation that ExecutableNestedLoops established. It would also let the planner
+  keep a FULL OUTER as a single physical join (when hash-matchable) instead of expanding.
