@@ -146,9 +146,46 @@ namespace NQuery.Planning
 
         private static PhysicalOperator PlanIntersectOrExcept(LogicalIntersectOrExcept node)
         {
+            // INTERSECT / EXCEPT lower to a distinct sort on the left feeding a semi-join
+            // (intersect) or anti-semi-join (except) against the right, matching on every
+            // column with NULLs treated as equal. The intersect-vs-except split is made
+            // here, so there is no dedicated physical or executable set-operation node.
             var left = PlanOperator(node.Left);
             var right = PlanOperator(node.Right);
-            return new PhysicalIntersectOrExcept(node.IsIntersect, left, right, node.Comparers);
+
+            var leftValues = left.OutputValueSlots;
+            var rightValues = right.OutputValueSlots;
+
+            var sortedValues = leftValues.Zip(node.Comparers, (v, c) => new BoundComparedValue(v, c)).ToImmutableArray();
+            var distinctLeft = new PhysicalSort(isDistinct: true, left, sortedValues);
+
+            var conditions = Enumerable.Range(0, leftValues.Length)
+                                       .Select(i => BuildNullSafeEquality(leftValues[i], rightValues[i]))
+                                       .ToImmutableArray();
+
+            var joinKind = node.IsIntersect ? LogicalJoinKind.LeftSemi : LogicalJoinKind.LeftAntiSemi;
+
+            return new PhysicalNestedLoops(joinKind, distinctLeft, right, conditions, probe: null, passthruPredicate: null, ImmutableArray<ValueSlot>.Empty);
+        }
+
+        // (l = r) OR (l IS NULL AND r IS NULL). Plain equality yields NULL when either
+        // side is NULL, so two NULLs would not match; the second disjunct restores the
+        // set-operation rule that NULL equals NULL. A single-NULL pair stays NULL, which
+        // the nested-loops predicate compiles to a non-match.
+        private static LogicalExpression BuildNullSafeEquality(ValueSlot left, ValueSlot right)
+        {
+            var leftExpr = new LogicalValueSlotExpression(left);
+            var rightExpr = new LogicalValueSlotExpression(right);
+
+            var equal = Binary(leftExpr, BinaryOperatorKind.Equal, rightExpr);
+            var bothNull = Binary(new LogicalIsNullExpression(leftExpr), BinaryOperatorKind.LogicalAnd, new LogicalIsNullExpression(rightExpr));
+            return Binary(equal, BinaryOperatorKind.LogicalOr, bothNull);
+        }
+
+        private static LogicalBinaryExpression Binary(LogicalExpression left, BinaryOperatorKind kind, LogicalExpression right)
+        {
+            var result = BinaryOperator.Resolve(kind, left.Type, right.Type);
+            return new LogicalBinaryExpression(left, kind, result, right);
         }
 
         private static PhysicalOperator PlanSort(LogicalSort node)

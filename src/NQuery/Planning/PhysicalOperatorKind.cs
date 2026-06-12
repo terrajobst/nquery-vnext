@@ -14,7 +14,6 @@ namespace NQuery.Planning
         StreamAggregates,
         Sort,
         Top,
-        Concatenation,
-        IntersectOrExcept
+        Concatenation
     }
 }

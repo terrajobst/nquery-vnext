@@ -53,6 +53,14 @@ namespace NQuery.Tests.Iterators
         [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c ORDER BY 1")]
         // Three-way UNION ALL with differing column sources to check per-input projection.
         [InlineData("SELECT e.EmployeeID FROM Employees e UNION ALL SELECT o.OrderID FROM Orders o UNION ALL SELECT od.ProductID FROM [Order Details] od ORDER BY 1")]
+        // INTERSECT -> distinct sort on the left + left-semi join; cities in both tables.
+        [InlineData("SELECT e.City FROM Employees e INTERSECT SELECT c.City FROM Customers c ORDER BY 1")]
+        // EXCEPT -> distinct sort on the left + left-anti-semi join; cities only employees have.
+        [InlineData("SELECT e.City FROM Employees e EXCEPT SELECT c.City FROM Customers c ORDER BY 1")]
+        // INTERSECT/EXCEPT over a NULL-bearing column to exercise NULL-equals-NULL matching.
+        [InlineData("SELECT e.ReportsTo FROM Employees e EXCEPT SELECT o.EmployeeID FROM Orders o ORDER BY 1")]
+        // Multi-column INTERSECT to check the all-columns-equal predicate.
+        [InlineData("SELECT e.Country, e.City FROM Employees e INTERSECT SELECT c.Country, c.City FROM Customers c ORDER BY 1, 2")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);

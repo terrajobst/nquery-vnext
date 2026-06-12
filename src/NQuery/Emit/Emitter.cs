@@ -59,8 +59,6 @@ namespace NQuery.Emit
                     return EmitStreamAggregates((PhysicalStreamAggregates)node, outerSlots);
                 case PhysicalOperatorKind.Concatenation:
                     return EmitConcatenation((PhysicalConcatenation)node, outerSlots);
-                case PhysicalOperatorKind.IntersectOrExcept:
-                    return EmitIntersectOrExcept((PhysicalIntersectOrExcept)node, outerSlots);
                 default:
                     throw ExceptionBuilder.UnexpectedValue(node.Kind);
             }
@@ -132,13 +130,6 @@ namespace NQuery.Emit
         {
             var inputs = node.Inputs.Select(i => EmitOperator(i, outerSlots)).ToImmutableArray();
             return new ExecutableConcatenation(node.OutputValueSlots, inputs, node.DefinedValues);
-        }
-
-        private static ExecutableOperator EmitIntersectOrExcept(PhysicalIntersectOrExcept node, ImmutableArray<ValueSlot> outerSlots)
-        {
-            var left = EmitOperator(node.Left, outerSlots);
-            var right = EmitOperator(node.Right, outerSlots);
-            return new ExecutableIntersectOrExcept(node.OutputValueSlots, left, right);
         }
     }
 }
