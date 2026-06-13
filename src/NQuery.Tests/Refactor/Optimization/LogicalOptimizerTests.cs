@@ -236,6 +236,57 @@ namespace NQuery.Tests.Refactor.Optimization
             Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter });
         }
 
+        [Fact]
+        public void ProjectMerger_LeavesNoRedundantProjects_AfterAggregateDecorrelation()
+        {
+            // Decorrelating the correlated COUNT subquery used to stack two identical
+            // projections (the push-through wrapper over DecorrelateAggregate's own). Neither
+            // a project directly over a project nor an identity project should survive.
+            var text = "SELECT (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e";
+            var optimized = Optimize(text);
+
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalProject { Input: LogicalProject });
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(),
+                                  o => o is LogicalProject p && p.Outputs.SequenceEqual(p.Input.OutputValueSlots));
+        }
+
+        [Fact]
+        public void ProjectMerger_MergesAdjacentProjects_AndDropsIdentity()
+        {
+            var root = Algebrizer.Algebrize(Bind("SELECT e.FirstName, e.LastName FROM Employees e")).Root;
+            var scan = root.DescendantsAndSelf().OfType<LogicalTableScan>().Single();
+
+            // Project(Project(scan)): the inner is an identity layer, the outer narrows to a
+            // single slot. The pair collapses to one project reading straight off the scan.
+            var inner = new LogicalProject(scan, scan.OutputValueSlots);
+            var outer = new LogicalProject(inner, ImmutableArray.Create(scan.OutputValueSlots[0]));
+
+            var merged = Assert.IsType<LogicalProject>(ProjectMerger.Instance.RewriteRelation(outer));
+            Assert.Same(scan, merged.Input);
+            Assert.Equal(ImmutableArray.Create(scan.OutputValueSlots[0]), merged.Outputs);
+
+            // An identity project disappears entirely.
+            var identity = new LogicalProject(scan, scan.OutputValueSlots);
+            Assert.Same(scan, ProjectMerger.Instance.RewriteRelation(identity));
+        }
+
+        [Fact]
+        public void ProjectMerger_MergesAdjacentProjects_WhenOuterReadsASlotTheInnerDropped()
+        {
+            // The interesting case: the inner project outputs only slot 0, yet the outer reads
+            // slot 1 -- legal because a project exposes its input's whole *defined* set, not
+            // just its outputs. The merge must reach past the inner straight to the scan.
+            var root = Algebrizer.Algebrize(Bind("SELECT e.FirstName, e.LastName FROM Employees e")).Root;
+            var scan = root.DescendantsAndSelf().OfType<LogicalTableScan>().Single();
+
+            var inner = new LogicalProject(scan, ImmutableArray.Create(scan.OutputValueSlots[0]));
+            var outer = new LogicalProject(inner, ImmutableArray.Create(scan.OutputValueSlots[1]));
+
+            var merged = Assert.IsType<LogicalProject>(ProjectMerger.Instance.RewriteRelation(outer));
+            Assert.Same(scan, merged.Input);
+            Assert.Equal(ImmutableArray.Create(scan.OutputValueSlots[1]), merged.Outputs);
+        }
+
         private static LogicalOperator Optimize(string text)
         {
             return LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance).Root;

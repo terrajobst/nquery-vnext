@@ -39,8 +39,10 @@ namespace NQuery.Refactor.Optimization
             return
             [
                 // Decorrelate applies into joins and push selections down, to a fixed
-                // point (both are oriented downward and converge).
-                new("Decorrelation", BatchStrategy.FixedPoint, applyPushdown, SelectionPushdown.Instance),
+                // point (both are oriented downward and converge). ProjectMerger rides
+                // along to collapse the redundant projection layers decorrelation leaves
+                // behind; it only ever removes projects, so it keeps the batch convergent.
+                new("Decorrelation", BatchStrategy.FixedPoint, applyPushdown, SelectionPushdown.Instance, ProjectMerger.Instance),
 
                 // Tighten outer joins into inner ones where a predicate above rejects the
                 // null-supplied side. Runs before join ordering so a freed inner join can
