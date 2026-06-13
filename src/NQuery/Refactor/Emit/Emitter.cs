@@ -129,7 +129,7 @@ namespace NQuery.Refactor.Emit
         {
             var build = EmitOperator(node.Build, outerSlots);
             var probe = EmitOperator(node.Probe, outerSlots);
-            return new ExecutableHashMatch(node.OutputValueSlots, build, probe, node.HashMatchKind, node.BuildKey, node.ProbeKey, node.Remainder);
+            return new ExecutableHashMatch(node.OutputValueSlots, build, probe, node.HashMatchKind, node.BuildKey, node.ProbeKey, node.Remainder, node.ProbeColumn);
         }
 
         private static ExecutableOperator EmitStreamAggregates(PhysicalStreamAggregates node, ImmutableArray<ValueSlot> outerSlots)

@@ -303,5 +303,99 @@ namespace NQuery.Tests.Refactor.Iterators
 
             Assert.False(iterator.Read());
         }
+
+        // Semi/anti consume the probe only to mark matches and then output the build side:
+        // semi keeps the build rows that matched, anti the ones that did not.
+        [Fact]
+        public void Iterators_EmittedHashMatch_Semi_EmitsMatchedBuildRows()
+        {
+            var buildRows = new object[] { 1, 2, 3 };
+            var probeRows = new object[] { 2, 3, 4 };
+
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: true);
+
+            var rows = Drain(iterator);
+            Assert.Equal(1, iterator.RowBuffer.Count);
+            Assert.Equal(new object[] { 2, 3 }, SingleColumn(rows));
+        }
+
+        [Fact]
+        public void Iterators_EmittedHashMatch_AntiSemi_EmitsUnmatchedBuildRows()
+        {
+            var buildRows = new object[] { 1, 2, 3 };
+            var probeRows = new object[] { 2, 3, 4 };
+
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
+
+            var rows = Drain(iterator);
+            Assert.Equal(1, iterator.RowBuffer.Count);
+            Assert.Equal(new object[] { 1 }, SingleColumn(rows));
+        }
+
+        // A NULL build key never matches, so semi excludes it and anti keeps it.
+        [Fact]
+        public void Iterators_EmittedHashMatch_AntiSemi_KeepsNullKeyBuildRow()
+        {
+            var buildRows = new object[] { 1, null };
+            var probeRows = new object[] { 1, null };
+
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
+
+            var rows = Drain(iterator);
+            Assert.Equal(new object[] { null }, SingleColumn(rows));
+        }
+
+        // A probing semi (decorrelated EXISTS) emits every build row with a trailing boolean
+        // marker reporting whether it matched.
+        [Fact]
+        public void Iterators_EmittedHashMatch_ProbingSemi_EmitsAllBuildRowsWithMarker()
+        {
+            var buildRows = new object[] { 1, 2, 3 };
+            var probeRows = new object[] { 2, 3, 4 };
+
+            using var build = new MockedIterator(buildRows);
+            using var probe = new MockedIterator(probeRows);
+
+            using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: true, anti: false, probing: true);
+
+            var rows = Drain(iterator);
+            Assert.Equal(2, iterator.RowBuffer.Count);
+
+            var byKey = rows.ToDictionary(r => r[0], r => r[1]);
+            Assert.Equal(false, byKey[1]);
+            Assert.Equal(true, byKey[2]);
+            Assert.Equal(true, byKey[3]);
+        }
+
+        // Collects every produced row; the assertions compare the build column
+        // order-independently so they don't pin down the flush order.
+        private static List<object[]> Drain(Iterator iterator)
+        {
+            var result = new List<object[]>();
+            iterator.Open();
+            while (iterator.Read())
+            {
+                var row = new object[iterator.RowBuffer.Count];
+                for (var i = 0; i < row.Length; i++)
+                    row[i] = iterator.RowBuffer[i];
+                result.Add(row);
+            }
+
+            return result;
+        }
+
+        private static object[] SingleColumn(List<object[]> rows)
+        {
+            return rows.Select(r => r[0]).OrderBy(v => v).ToArray();
+        }
     }
 }

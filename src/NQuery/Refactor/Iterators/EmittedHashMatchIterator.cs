@@ -14,6 +14,13 @@ namespace NQuery.Refactor.Iterators
     // probe row is emitted (build NULL-padded) when preserveProbe is set. Inner = neither,
     // left outer = build, full outer = both. A NULL key never matches (SQL equality), so
     // a NULL-keyed row is unmatched and surfaces only through the outer paths.
+    //
+    // semi / anti carry the existence-join semantics. They consume the probe purely to
+    // mark which build rows matched (no joined row is produced) and then output the build
+    // side only: semi emits the build rows that matched, anti the ones that did not. A
+    // probing semi (probe set) instead emits *every* build row with a trailing boolean
+    // reporting whether it matched -- the decorrelated form of EXISTS, whose enclosing
+    // filter then tests that boolean.
     internal sealed class EmittedHashMatchIterator : Iterator
     {
         private static readonly object NullKey = new();
@@ -25,15 +32,20 @@ namespace NQuery.Refactor.Iterators
         private readonly EmittedPredicate _remainder;
         private readonly bool _preserveBuild;
         private readonly bool _preserveProbe;
+        private readonly bool _semi;
+        private readonly bool _anti;
         private readonly HashMatchRowBuffer _rowBuffer;
+        private readonly RowBuffer _outputRowBuffer;
+        private readonly ProbedRowBuffer? _probedRowBuffer;
 
         private Dictionary<object, HashMatchEntry> _hashTable = null!;
+        private List<HashMatchEntry> _buildRows = null!;
         private HashMatchEntry? _entry;
-        private IEnumerator<HashMatchEntry>? _entryEnumerator;
+        private int _flushIndex;
         private Phase _currentPhase;
         private bool _probeMatched;
 
-        public EmittedHashMatchIterator(Iterator build, Iterator probe, int buildIndex, int probeIndex, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe)
+        public EmittedHashMatchIterator(Iterator build, Iterator probe, int buildIndex, int probeIndex, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false)
         {
             _build = build;
             _probe = probe;
@@ -42,10 +54,40 @@ namespace NQuery.Refactor.Iterators
             _remainder = remainder;
             _preserveBuild = preserveBuild;
             _preserveProbe = preserveProbe;
+            _semi = semi;
+            _anti = anti;
             _rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+
+            // Inner/outer output the combined row; semi/anti output the build side only,
+            // with a probing semi appending its boolean match-marker column.
+            if (semi || anti)
+            {
+                if (probing)
+                {
+                    _probedRowBuffer = new ProbedRowBuffer(_rowBuffer.Build);
+                    _outputRowBuffer = _probedRowBuffer;
+                }
+                else
+                {
+                    _outputRowBuffer = _rowBuffer.Build;
+                }
+            }
+            else
+            {
+                _outputRowBuffer = _rowBuffer;
+            }
         }
 
-        public override RowBuffer RowBuffer => _rowBuffer;
+        public override RowBuffer RowBuffer => _outputRowBuffer;
+
+        // Whether a probe-time match yields a joined output row. Semi/anti consume the
+        // probe only to mark matches; their output comes entirely from the build flush.
+        private bool EmitMatches => !_semi && !_anti;
+
+        // Whether the post-probe pass over the build rows runs: to flush unmatched build
+        // rows (left/full outer), or to emit the build rows a semi/anti existence test
+        // selected.
+        private bool FlushBuild => _preserveBuild || _semi || _anti;
 
         public override void Open()
         {
@@ -54,7 +96,7 @@ namespace NQuery.Refactor.Iterators
             BuildHashtable();
 
             _entry = null;
-            _entryEnumerator = null;
+            _flushIndex = 0;
             _currentPhase = Phase.ProduceMatch;
             _probeMatched = true;
         }
@@ -68,6 +110,7 @@ namespace NQuery.Refactor.Iterators
         private void BuildHashtable()
         {
             _hashTable = new Dictionary<object, HashMatchEntry>();
+            _buildRows = new List<HashMatchEntry>();
 
             while (_build.Read())
             {
@@ -80,10 +123,14 @@ namespace NQuery.Refactor.Iterators
 
         private void AddToHashtable(object keyValue, object[] values)
         {
-            _hashTable.TryGetValue(keyValue, out var entry);
-            entry = entry is null ? new HashMatchEntry() : new HashMatchEntry { Next = entry };
-            entry.RowValues = values;
+            _hashTable.TryGetValue(keyValue, out var existing);
+            var entry = new HashMatchEntry { RowValues = values, Next = existing };
             _hashTable[keyValue] = entry;
+
+            // Keep the build rows in scan order as well; the flush pass walks this list (not
+            // the hash table's unordered values) so unmatched/semi/anti rows preserve the
+            // build input's order.
+            _buildRows.Add(entry);
         }
 
         public override bool Read()
@@ -103,7 +150,7 @@ namespace NQuery.Refactor.Iterators
                         {
                             // The chain for the current probe key is exhausted. An
                             // unmatched probe row is an output for a full outer join.
-                            if (!_probeMatched && _preserveProbe)
+                            if (EmitMatches && !_probeMatched && _preserveProbe)
                             {
                                 _probeMatched = true;
                                 _rowBuffer.SetBuild(null);
@@ -112,13 +159,13 @@ namespace NQuery.Refactor.Iterators
 
                             if (!_probe.Read())
                             {
-                                // Probe exhausted. A left/full outer must still flush the
-                                // build rows that were never matched.
-                                if (_preserveBuild)
+                                // Probe exhausted. A left/full outer flushes its unmatched
+                                // build rows; a semi/anti now emits its selected build rows.
+                                if (FlushBuild)
                                 {
-                                    _currentPhase = Phase.ReturnUnmatchedRowsFromBuildInput;
+                                    _currentPhase = Phase.FlushBuildInput;
                                     _entry = null;
-                                    goto case Phase.ReturnUnmatchedRowsFromBuildInput;
+                                    goto case Phase.FlushBuildInput;
                                 }
 
                                 return false;
@@ -137,8 +184,12 @@ namespace NQuery.Refactor.Iterators
                             if (_remainder(_rowBuffer))
                             {
                                 _entry.Matched = true;
-                                matchFound = true;
                                 _probeMatched = true;
+
+                                // Semi/anti keep scanning to mark every matched build row;
+                                // only an inner/outer match produces a row here.
+                                if (EmitMatches)
+                                    matchFound = true;
                             }
                         }
                     }
@@ -146,30 +197,27 @@ namespace NQuery.Refactor.Iterators
                     return true;
                 }
 
-                case Phase.ReturnUnmatchedRowsFromBuildInput:
+                case Phase.FlushBuildInput:
                 {
-                    var unmatchedFound = false;
                     _rowBuffer.SetProbe(null);
 
-                    while (!unmatchedFound)
+                    while (_flushIndex < _buildRows.Count)
                     {
-                        _entry = _entry?.Next;
+                        var entry = _buildRows[_flushIndex++];
 
-                        if (_entry is null)
-                        {
-                            _entryEnumerator ??= _hashTable.Values.GetEnumerator();
+                        // A probing semi emits every build row (the marker, set below, carries
+                        // whether it matched). A plain semi emits the matched build rows; anti
+                        // and left/full outer emit the unmatched ones.
+                        var emit = _probedRowBuffer is not null || (_semi ? entry.Matched : !entry.Matched);
+                        if (!emit)
+                            continue;
 
-                            if (!_entryEnumerator.MoveNext())
-                                return false;
-
-                            _entry = _entryEnumerator.Current;
-                        }
-
-                        unmatchedFound = !_entry.Matched;
+                        _rowBuffer.SetBuild(entry);
+                        _probedRowBuffer?.SetProbe(entry.Matched);
+                        return true;
                     }
 
-                    _rowBuffer.SetBuild(_entry);
-                    return true;
+                    return false;
                 }
 
                 default:
@@ -180,7 +228,7 @@ namespace NQuery.Refactor.Iterators
         private enum Phase
         {
             ProduceMatch,
-            ReturnUnmatchedRowsFromBuildInput
+            FlushBuildInput
         }
     }
 }

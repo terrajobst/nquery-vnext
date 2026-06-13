@@ -32,6 +32,12 @@ namespace NQuery.Tests.Refactor.Emit
         [InlineData("SELECT e.EmployeeID FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) ORDER BY e.EmployeeID")]
         // Correlated NOT EXISTS -> probing left-semi join (probe = false path).
         [InlineData("SELECT c.CustomerID FROM Customers c WHERE NOT EXISTS (SELECT * FROM Orders o WHERE o.CustomerID = c.CustomerID) ORDER BY c.CustomerID")]
+        // EXISTS with both an equi correlation (the hash key) and a cross-input non-equi
+        // correlation (the semi hash match's residual remainder).
+        [InlineData("SELECT e.EmployeeID FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.Freight > e.EmployeeID) ORDER BY e.EmployeeID")]
+        // IN over an equi key -> a (probing) semi hash match through the live engine; the
+        // outer's row order must survive the build flush.
+        [InlineData("SELECT e.EmployeeID, e.ReportsTo FROM Employees e WHERE e.ReportsTo IN (SELECT o.EmployeeID FROM Orders o) ORDER BY e.EmployeeID")]
         // Correlated scalar subquery that survives decorrelation (Top blocks it) ->
         // a left-outer apply executed as correlated nested loops.
         [InlineData("SELECT e.EmployeeID, (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID ORDER BY o.OrderID) FROM Employees e ORDER BY e.EmployeeID")]

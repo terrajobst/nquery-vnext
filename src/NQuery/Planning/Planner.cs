@@ -95,8 +95,9 @@ namespace NQuery.Planning
         private static PhysicalOperator PlanJoin(LogicalJoin node)
         {
             // Prefer a hash match for an equi-join it supports (inner / left outer / full
-            // outer). It produces FULL OUTER directly, so an equi full outer skips the
-            // nested-loops expansion below.
+            // outer / left semi / left anti-semi). It produces FULL OUTER directly, so an
+            // equi full outer skips the nested-loops expansion below; an equi EXISTS /
+            // NOT EXISTS (a probing semi join) likewise beats the nested-loops re-scan.
             //
             // TODO: Build is always the join's left -- there is no cost model, so we don't
             //       choose the smaller input to hash, nor decide hash-vs-loops by estimated
@@ -118,7 +119,7 @@ namespace NQuery.Planning
                 if (key.ProbeComputedValue is not null)
                     probe = new PhysicalComputeScalar(probe, ImmutableArray.Create(key.ProbeComputedValue));
 
-                return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder);
+                return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe);
             }
 
             // Nested loops can't produce a full outer join. Expanding it into operators
@@ -132,14 +133,17 @@ namespace NQuery.Planning
             return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
         }
 
-        // TODO: Semi/anti joins are excluded, so an equi EXISTS / NOT EXISTS still runs as
-        //       (probing) nested loops. A hash match can do left-semi / left-anti-semi too
-        //       (probe a row, emit/suppress it on first build match), which would beat the
-        //       nested-loops re-scan for an equi correlation. Extend PhysicalHashMatchKind
-        //       and EmittedHashMatchIterator to cover them and widen this guard.
+        // A hash match can serve inner / left outer / full outer, and -- by hashing the
+        // build (left) side and emitting or suppressing each build row on whether the
+        // probe matched -- left semi / left anti-semi too. So an equi EXISTS / NOT EXISTS
+        // becomes a hash match rather than a (probing) nested-loops re-scan.
         private static bool CanHashMatch(LogicalJoinKind kind)
         {
-            return kind is LogicalJoinKind.Inner or LogicalJoinKind.LeftOuter or LogicalJoinKind.FullOuter;
+            return kind is LogicalJoinKind.Inner
+                        or LogicalJoinKind.LeftOuter
+                        or LogicalJoinKind.FullOuter
+                        or LogicalJoinKind.LeftSemi
+                        or LogicalJoinKind.LeftAntiSemi;
         }
 
         private static PhysicalHashMatchKind MapHashMatchKind(LogicalJoinKind kind)
@@ -149,6 +153,8 @@ namespace NQuery.Planning
                 LogicalJoinKind.Inner => PhysicalHashMatchKind.Inner,
                 LogicalJoinKind.LeftOuter => PhysicalHashMatchKind.LeftOuter,
                 LogicalJoinKind.FullOuter => PhysicalHashMatchKind.FullOuter,
+                LogicalJoinKind.LeftSemi => PhysicalHashMatchKind.LeftSemi,
+                LogicalJoinKind.LeftAntiSemi => PhysicalHashMatchKind.LeftAntiSemi,
                 _ => throw ExceptionBuilder.UnexpectedValue(kind)
             };
         }

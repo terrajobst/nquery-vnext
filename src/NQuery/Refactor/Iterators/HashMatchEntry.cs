@@ -3,7 +3,8 @@
 namespace NQuery.Refactor.Iterators
 {
     // One build-side row in a hash bucket. Rows sharing a key are chained through Next;
-    // Matched records whether the row was joined (so outer joins can find the leftovers).
+    // Matched records whether the row was joined -- so an outer join can find the
+    // leftovers and a semi/anti/probing join can decide it from the build flush.
     internal sealed class HashMatchEntry
     {
         public object[] RowValues = null!;

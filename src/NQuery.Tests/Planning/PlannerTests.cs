@@ -46,6 +46,19 @@ namespace NQuery.Tests.Planning
         }
 
         [Fact]
+        public void Planner_BuildsHashMatch_ForEquiExists()
+        {
+            // A correlated EXISTS decorrelates to a probing left-semi join on an equi key,
+            // so it becomes a (semi) hash match rather than a nested-loops re-scan. The
+            // probe column carries the per-row match marker the enclosing filter tests.
+            var text = "SELECT e.FirstName FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)";
+            var hashMatch = Plan(text).DescendantsAndSelf().OfType<PhysicalHashMatch>().Single();
+
+            Assert.Equal(PhysicalHashMatchKind.LeftSemi, hashMatch.HashMatchKind);
+            Assert.NotNull(hashMatch.ProbeColumn);
+        }
+
+        [Fact]
         public void Planner_BuildsNestedLoops_ForNonEquiJoin()
         {
             var text = "SELECT o.OrderID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID <> od.OrderID";

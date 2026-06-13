@@ -35,6 +35,10 @@ namespace NQuery.Refactor.Iterators
             _probe.ActiveRowBuffer = rowBuffer ?? _probeNull;
         }
 
+        // The build half on its own -- the output of a semi/anti hash match, which emits
+        // build rows only. It tracks the same SetBuild as the combined buffer.
+        public RowBuffer Build => _build;
+
         public override int Count => _buildNull.Count + _probeNull.Count;
 
         public override object this[int index] =>

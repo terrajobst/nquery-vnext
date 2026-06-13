@@ -1,5 +1,9 @@
 # NQuery Major Refactoring
 
+* Planning should move to Refactor/Planning
+* Fix both NQuery and NQuery.Test
+* FIx namespaces
+
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).
@@ -24,12 +28,7 @@ CardinalityEstimator / CardinalityEstimate aren't ported. Planner is a
 one-to-one lowering: hash-match build side is always the join's left, and
 hash-vs-loops is structural (equi-key present), not cost-based.
 
-3. Hash match for semi/anti joins.
-
-Planner.CanHashMatch only allows Inner/LeftOuter/FullOuter, so an equi
-EXISTS/NOT EXISTS still runs as (probing) nested loops.
-
-4. Subqueries inside a non-inner join's ON condition
+3. Subqueries inside a non-inner join's ON condition
 
 Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
@@ -136,8 +135,9 @@ I'd like to have an architecture document that covers
 ### Planning (Logical → Physical)
 
 - Any cost basis — no cardinality/cost estimation; join-algorithm and join-order
-  choices are purely syntactic. (An equi-join inner/left-outer/full-outer becomes a
-  hash match, everything else nested loops; there is no smaller-side build choice.)
+  choices are purely syntactic. (An equi-join inner/left-outer/full-outer/left-semi/
+  left-anti-semi becomes a hash match, everything else nested loops; there is no
+  smaller-side build choice.)
 - Aggregate strategy — always a stream aggregate: PhysicalStreamAggregates over a
   PhysicalSort on the grouping columns. No hash-aggregate alternative, and no use
   of existing ordering to elide the sort.
@@ -160,7 +160,8 @@ I'd like to have an architecture document that covers
 - The nested-loops family is ported (inner, left outer, left semi, left anti-semi,
   probing left semi) and serves joins, applies, and INTERSECT/EXCEPT (the latter lowered
   in the planner, so there is no dedicated set-difference iterator); a hash match
-  (EmittedHashMatchIterator, inner/left-outer/full-outer over an equi-key), a stream
+  (EmittedHashMatchIterator, inner/left-outer/full-outer/left-semi/left-anti-semi over
+  an equi-key, semi/anti including the probing variant for EXISTS), a stream
   aggregate (EmittedStreamAggregateIterator), and a concatenation
   (EmittedConcatenationIterator) are ported; the legacy NQuery.Iterators also has a table
   spool, deliberately not ported yet — it needs the compile-once treatment, not a copy.
@@ -190,7 +191,8 @@ I'd like to have an architecture document that covers
   subqueries (the cardinality guard's assert firing on multi-row, passing on a
   unique-key single row, and skipped for a provably single-row aggregate),
   hash-match joins (inner/left-outer/full-outer over an equi-key, including a
-  nullable key and a non-equi residual remainder), FULL OUTER JOIN (an equi
+  nullable key and a non-equi residual remainder; left-semi/left-anti-semi and the
+  probing semi an equi EXISTS / NOT EXISTS / IN decorrelates to), FULL OUTER JOIN (an equi
   condition goes to a hash match; a non-equi one the planner expands to left-outer
   UNION ALL right-anti-semi with the left null-padded, cloning the inputs with
   LogicalOperatorCloner so each branch is slot-disjoint), subqueries in an inner
@@ -198,6 +200,7 @@ I'd like to have an architecture document that covers
   subqueries guarded by passthru (a multi-row subquery in a never-taken THEN/ELSE is
   skipped rather than asserting, and a conditional guard still yields the right values).
 - A hash match builds on the join's left and probes with its right (no smaller-side
-  choice yet). Semi/anti joins and non-equi conditions stay nested loops. The next
-  natural step is a merge join for pre-sorted inputs and cost-based build-side / join
-  algorithm selection.
+  choice yet), and now serves left-semi/left-anti-semi too -- the build rows are flushed
+  in scan order so the existence join preserves the outer's row order. Non-equi
+  conditions still stay nested loops. The next natural step is a merge join for
+  pre-sorted inputs and cost-based build-side / join algorithm selection.
