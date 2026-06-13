@@ -38,6 +38,11 @@ namespace NQuery.Refactor.Optimization
             // Ordering places single-table conjuncts as join conditions; push those
             // down to the leaves.
             new("Selection", BatchStrategy.FixedPoint, SelectionPushdown.Instance),
+
+            // Drop value slots nothing references (e.g. unread table columns), so the
+            // narrowest possible rows flow into sorts/spools. Runs last, after pushdown
+            // has settled which slots each predicate truly needs.
+            new("Column pruning", BatchStrategy.Once, ColumnPruner.Instance),
         ];
 
         public static LogicalQuery Optimize(LogicalQuery query)
