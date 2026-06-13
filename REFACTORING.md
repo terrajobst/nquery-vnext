@@ -20,12 +20,8 @@ execution; no evaluation test drives a CTE through the new engine.
 
 2. Incomplete decorrelation
 
-ApplyPushdown covers only the base case (uncorrelated → join) and the
-correlated-filter case. It explicitly does not push Apply through GroupBy or
-joins (the "magic decorrelation" / count-bug rule). A guarded scalar subquery
-(Apply(L, Assert(Aggregate(...)))) falls through and runs as correlated nested
-loops — correct but a re-scan per outer row. Legacy Decorrelator was more
-complete.
+Mostly done, some TODO markers are left. But those extend past what the old
+engine did.
 
 3. Optimizer passes with no new equivalent:
 

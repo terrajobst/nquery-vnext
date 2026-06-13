@@ -1,7 +1,9 @@
 #nullable enable
 
+using System.Collections;
 using System.Collections.Immutable;
 
+using NQuery;
 using NQuery.Refactor.Algebra;
 
 namespace NQuery.Refactor.Optimization
@@ -23,44 +25,65 @@ namespace NQuery.Refactor.Optimization
     {
         private const int MaxIterations = 100;
 
-        // The pipeline is a fixed, immutable list of batches. Rewriter passes hold
-        // no instance state, so they are shared singletons (selection pushdown is
-        // reused across two batches).
-        private static readonly ImmutableArray<Batch> Batches =
-        [
-            // Decorrelate applies into joins and push selections down, to a fixed
-            // point (both are oriented downward and converge).
-            new("Decorrelation", BatchStrategy.FixedPoint, ApplyPushdown.Instance, SelectionPushdown.Instance),
+        // The batch list is built per call: ApplyPushdown needs the DataContext's comparers
+        // (for the aggregate-decorrelation domain), so unlike the stateless singletons it is
+        // constructed fresh each time.
+        private static ImmutableArray<Batch> BuildBatches(DataContext dataContext)
+        {
+            var applyPushdown = new ApplyPushdown(type => ResolveComparer(dataContext, type));
 
-            // Reorder inner-join regions and turn predicates into join conditions.
-            new("Join ordering", BatchStrategy.Once, JoinOrderer.Instance),
+            return
+            [
+                // Decorrelate applies into joins and push selections down, to a fixed
+                // point (both are oriented downward and converge).
+                new("Decorrelation", BatchStrategy.FixedPoint, applyPushdown, SelectionPushdown.Instance),
 
-            // Ordering places single-table conjuncts as join conditions; push those
-            // down to the leaves.
-            new("Selection", BatchStrategy.FixedPoint, SelectionPushdown.Instance),
+                // Reorder inner-join regions and turn predicates into join conditions.
+                new("Join ordering", BatchStrategy.Once, JoinOrderer.Instance),
 
-            // Drop value slots nothing references (e.g. unread table columns), so the
-            // narrowest possible rows flow into sorts/spools. Runs last, after pushdown
-            // has settled which slots each predicate truly needs.
-            new("Column pruning", BatchStrategy.Once, ColumnPruner.Instance),
-        ];
+                // Ordering places single-table conjuncts as join conditions; push those
+                // down to the leaves.
+                new("Selection", BatchStrategy.FixedPoint, SelectionPushdown.Instance),
 
-        public static LogicalQuery Optimize(LogicalQuery query)
+                // Drop value slots nothing references (e.g. unread table columns), so the
+                // narrowest possible rows flow into sorts/spools. Runs last, after pushdown
+                // has settled which slots each predicate truly needs.
+                new("Column pruning", BatchStrategy.Once, ColumnPruner.Instance),
+            ];
+        }
+
+        public static LogicalQuery Optimize(LogicalQuery query, DataContext dataContext)
         {
             ArgumentNullException.ThrowIfNull(query);
+            ArgumentNullException.ThrowIfNull(dataContext);
 
-            var root = Optimize(query.Root);
+            var root = Optimize(query.Root, dataContext);
             return new LogicalQuery(root, query.OutputColumns);
         }
 
-        public static LogicalOperator Optimize(LogicalOperator root)
+        public static LogicalOperator Optimize(LogicalOperator root, DataContext dataContext)
         {
             ArgumentNullException.ThrowIfNull(root);
+            ArgumentNullException.ThrowIfNull(dataContext);
 
-            foreach (var batch in Batches)
+            foreach (var batch in BuildBatches(dataContext))
                 root = RunBatch(batch, root);
 
             return root;
+        }
+
+        // The engine's comparer for a type: a DataContext-registered comparer (walking up the
+        // base-type chain), else Comparer.Default for a comparable type. Mirrors
+        // GlobalBinder.LookupComparer so the domain grouping matches the binder's semantics.
+        private static IComparer? ResolveComparer(DataContext dataContext, Type type)
+        {
+            for (var key = type; key is not null; key = key.BaseType)
+            {
+                if (dataContext.Comparers.TryGetValue(key, out var comparer))
+                    return comparer;
+            }
+
+            return type.IsComparable() ? Comparer.Default : null;
         }
 
         private static LogicalOperator RunBatch(Batch batch, LogicalOperator root)

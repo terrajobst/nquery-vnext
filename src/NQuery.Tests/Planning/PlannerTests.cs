@@ -16,7 +16,7 @@ namespace NQuery.Tests.Planning
         [InlineData("SELECT e.FirstName FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)")]
         public void Planner_PreservesOutput(string text)
         {
-            var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)));
+            var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance);
             var physicalQuery = Planner.Plan(logicalQuery);
 
             // Planning chooses algorithms; it does not change the data flow.
@@ -77,7 +77,7 @@ namespace NQuery.Tests.Planning
 
         private static PhysicalOperator Plan(string text)
         {
-            return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)))).Root;
+            return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance)).Root;
         }
 
         private static BoundQuery Bind(string text)

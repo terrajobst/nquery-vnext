@@ -10,6 +10,8 @@ namespace NQuery.Tests.Refactor.Optimization
         [InlineData("SELECT e.FirstName FROM Employees e")]
         [InlineData("SELECT e.FirstName FROM Employees e INNER JOIN Orders o ON e.EmployeeID = o.EmployeeID WHERE e.City = 'London'")]
         [InlineData("SELECT (SELECT COUNT(*) FROM Orders o) FROM Employees e")]
+        [InlineData("SELECT (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e")]
+        [InlineData("SELECT (SELECT MAX(o.OrderID) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e")]
         [InlineData("SELECT e.FirstName FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)")]
         [InlineData("SELECT e.FirstName FROM Employees e WHERE NOT EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)")]
         [InlineData("SELECT o.OrderID FROM Orders o, [Order Details] od WHERE o.OrderID = od.OrderID")]
@@ -17,7 +19,7 @@ namespace NQuery.Tests.Refactor.Optimization
         public void Optimizer_PreservesOutput(string text)
         {
             var logicalQuery = Algebrizer.Algebrize(Bind(text));
-            var optimized = LogicalOptimizer.Optimize(logicalQuery);
+            var optimized = LogicalOptimizer.Optimize(logicalQuery, NorthwindDataContext.Instance);
 
             Assert.Equal(logicalQuery.Root.OutputValueSlots, optimized.Root.OutputValueSlots);
             Assert.Equal(logicalQuery.OutputColumns, optimized.OutputColumns);
@@ -48,6 +50,19 @@ namespace NQuery.Tests.Refactor.Optimization
             var join = optimized.DescendantsAndSelf().OfType<LogicalJoin>().Single();
             Assert.Equal(LogicalJoinKind.LeftOuter, join.JoinKind);
             Assert.Empty(join.Conditions);      // uncorrelated -> no join predicate
+        }
+
+        [Fact]
+        public void ApplyPushdown_Decorrelates_CorrelatedAggregate_IntoJoinAndAggregate()
+        {
+            // The correlated COUNT subquery should decorrelate: no apply survives, and the
+            // tree gains a join (the domain join-back) and an aggregate (the per-key counts).
+            var text = "SELECT (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e";
+            var optimized = Optimize(text);
+
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalApply);
+            Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalJoin);
+            Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalAggregate);
         }
 
         [Fact]
@@ -121,7 +136,7 @@ namespace NQuery.Tests.Refactor.Optimization
 
         private static LogicalOperator Optimize(string text)
         {
-            return LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text))).Root;
+            return LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance).Root;
         }
 
         private static BoundQuery Bind(string text)

@@ -110,6 +110,31 @@ namespace NQuery.Tests.Refactor.Emit
                 Assert.Equal(expected[i], actual[i]);
         }
 
+        [Theory]
+        // Correlated aggregate subqueries that now decorrelate. Each is checked against the
+        // nested-loops reference (RunUnoptimized), so the decorrelated plan must agree row for
+        // row. The Customers cases are the COUNT-bug trigger: many customers have no orders, so
+        // the count must come out 0 (not NULL, and not 1 from a null-padded row).
+        [InlineData("SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e ORDER BY e.EmployeeID")]
+        [InlineData("SELECT c.CustomerID, (SELECT COUNT(*) FROM Orders o WHERE o.CustomerID = c.CustomerID) FROM Customers c ORDER BY c.CustomerID")]
+        [InlineData("SELECT e.EmployeeID, (SELECT MAX(o.OrderID) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e ORDER BY e.EmployeeID")]
+        [InlineData("SELECT e.EmployeeID, (SELECT SUM(o.Freight) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e ORDER BY e.EmployeeID")]
+        // A correlation key with duplicates in the outer (City) must keep the right
+        // cardinality through the domain join-back.
+        [InlineData("SELECT e.City, (SELECT COUNT(*) FROM Orders o WHERE o.ShipCity = e.City) FROM Employees e ORDER BY e.City, 2")]
+        // Correlation on a NULL-bearing key: rows whose key is NULL must group with the NULL
+        // domain key (null-safe join-back), not vanish.
+        [InlineData("SELECT e.EmployeeID, (SELECT COUNT(*) FROM Employees m WHERE m.ReportsTo = e.ReportsTo) FROM Employees e ORDER BY e.EmployeeID")]
+        public void Decorrelation_MatchesNestedLoops_ForCorrelatedAggregate(string text)
+        {
+            var decorrelated = RunNewPipeline(text);
+            var nestedLoops = RunUnoptimized(text);
+
+            Assert.Equal(nestedLoops.Count, decorrelated.Count);
+            for (var i = 0; i < nestedLoops.Count; i++)
+                Assert.Equal(nestedLoops[i], decorrelated[i]);
+        }
+
         [Fact]
         public void ExecutablePlan_IsReusable_AcrossCreateIterator()
         {
@@ -117,7 +142,7 @@ namespace NQuery.Tests.Refactor.Emit
             // emitted plan can produce independent iterators -- each run yields the
             // same rows.
             var text = "SELECT e.FirstName, e.EmployeeID + 1 FROM Employees e WHERE e.City = 'London'";
-            var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)))));
+            var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance)));
 
             var first = Drain(plan.CreateIterator());
             var second = Drain(plan.CreateIterator());
@@ -151,7 +176,17 @@ namespace NQuery.Tests.Refactor.Emit
 
         private static List<object[]> RunNewPipeline(string text)
         {
-            var physicalQuery = Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text))));
+            var physicalQuery = Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance));
+            var plan = Emitter.Emit(physicalQuery);
+            return Drain(plan.CreateIterator());
+        }
+
+        // The pipeline with no logical optimization: a correlated subquery stays an Apply and
+        // runs as nested loops. That is the semantically-correct reference for decorrelation,
+        // and -- unlike the Query API, which now also decorrelates -- an independent oracle.
+        private static List<object[]> RunUnoptimized(string text)
+        {
+            var physicalQuery = Planner.Plan(Algebrizer.Algebrize(Bind(text)));
             var plan = Emitter.Emit(physicalQuery);
             return Drain(plan.CreateIterator());
         }

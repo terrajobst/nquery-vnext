@@ -34,7 +34,7 @@ namespace NQuery
                 throw new CompilationException(diagnostics);
 
             var boundQuery = (Refactor.Binding.BoundQuery)bindingResult.BoundRoot;
-            var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(boundQuery));
+            var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(boundQuery), DataContext);
             var physicalQuery = Planner.Plan(logicalQuery);
             var plan = Emitter.Emit(physicalQuery);
 
