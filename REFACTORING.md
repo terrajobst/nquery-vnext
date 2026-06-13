@@ -24,10 +24,6 @@ CardinalityEstimator / CardinalityEstimate aren't ported. Planner is a
 one-to-one lowering: hash-match build side is always the join's left, and
 hash-vs-loops is structural (equi-key present), not cost-based.
 
-3. Subqueries inside a non-inner join's ON condition
-
-Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
-
 ## Other features
 
 * Make LogicalConstant hold a static table and use it cases like this:
@@ -62,8 +58,6 @@ Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
     already used by ColumnSymbol / ColumnInstanceSymbol / BoundColumnExpression, so
     IBoundColumn/BoundColumn will crowd that space; the slot rename is a large member
     churn (OutputValueSlots, DefinedValueSlots, LogicalValueSlotExpression, ...).
-  - Subqueries in a non-inner join's ON (inner joins are handled by hoisting the
-    subquery conjunct into a filter above the join)
   - Instantiating CTEs
   - Add BoundCommonTableExpression that has AnchorMembers and RecursiveMembers
   - Should Empty/Constant just be a node that can return a table of literals?
@@ -107,9 +101,13 @@ Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 - Subqueries inside an INNER join's ON are lowered: subquery-free conjuncts stay on
   the join (preserving hash-match eligibility), and a subquery-bearing conjunct is
   hoisted into a filter above the join, with its Apply correlated to the join's whole
-  (left ++ right) output. Subqueries in a non-inner join's ON are still unlowered
-  (moving the conjunct above the join changes outer-join semantics) and throw
-  NotSupportedException. A bound join's Probe/PassthruPredicate are always null here
+  (left ++ right) output. Subqueries in a non-inner join's ON can't be hoisted above
+  the join (that would change outer-join null-padding / existence semantics), so the
+  subquery-bearing conjunct stays on the join and its Apply is pushed onto the join's
+  right input instead -- the subquery slots become columns of the right, which the
+  condition references. That is only sound when the subquery is correlated to the right
+  (or uncorrelated); one correlated to the join's left can't see the left's slots from
+  inside the right subtree and throws NotSupportedException. A bound join's Probe/PassthruPredicate are always null here
   (the binder never sets them; only the legacy SubqueryExpander does), so a bound-tree
   passthru can't arise — the algebrizer just asserts that invariant.
 - CASE short-circuiting is honored: a subquery in a THEN/ELSE branch is evaluated only
@@ -189,9 +187,12 @@ Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
   condition goes to a hash match; a non-equi one the planner expands to left-outer
   UNION ALL right-anti-semi with the left null-padded, cloning the inputs with
   LogicalOperatorCloner so each branch is slot-disjoint), subqueries in an inner
-  join's ON (EXISTS / NOT EXISTS / uncorrelated scalar aggregate), and CASE-branch
-  subqueries guarded by passthru (a multi-row subquery in a never-taken THEN/ELSE is
-  skipped rather than asserting, and a conditional guard still yields the right values).
+  join's ON (EXISTS / NOT EXISTS / uncorrelated scalar aggregate), subqueries in a
+  non-inner (LEFT) join's ON correlated to the right side or uncorrelated (EXISTS /
+  NOT EXISTS / uncorrelated and correlated scalar aggregate, the Apply pushed onto the
+  join's right so the null-padding is preserved), and CASE-branch subqueries guarded by
+  passthru (a multi-row subquery in a never-taken THEN/ELSE is skipped rather than
+  asserting, and a conditional guard still yields the right values).
 - A hash match builds on the join's left and probes with its right (no smaller-side
   choice yet), and now serves left-semi/left-anti-semi too -- the build rows are flushed
   in scan order so the existence join preserves the outer's row order. Non-equi

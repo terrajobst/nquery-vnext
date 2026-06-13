@@ -30,7 +30,8 @@ namespace NQuery.Refactor.Algebra
     // -- pushing those applies down until the right no longer depends on the left, turning them
     // into ordinary joins -- is a separate optimizer pass.
     //
-    // Out of scope: subqueries inside a non-inner join's ON condition -- these throw.
+    // Limitation: a subquery inside a non-inner join's ON may only be correlated to the join's
+    // right side (or be uncorrelated); a left-correlated one throws (see AlgebrizeJoinTableReference).
     internal sealed class Algebrizer
     {
         private readonly ValueSlotFactory _valueSlotFactory = new();
@@ -183,12 +184,31 @@ namespace NQuery.Refactor.Algebra
             var left = AlgebrizeTableReference(node.Left);
             var right = AlgebrizeTableReference(node.Right);
 
+            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical layer never
+            // sees a right-outer join. The conditions reference slots by identity, so swapping the
+            // operands preserves meaning.
+            LogicalJoinKind joinKind;
+            LogicalOperator joinLeft;
+            LogicalOperator joinRight;
+            if (node.JoinType == BoundJoinType.RightOuter)
+            {
+                joinKind = LogicalJoinKind.LeftOuter;
+                joinLeft = right;
+                joinRight = left;
+            }
+            else
+            {
+                joinKind = MapJoinKind(node.JoinType);
+                joinLeft = left;
+                joinRight = right;
+            }
+
             // Split the ON condition into conjuncts. A subquery-free conjunct stays as the join's
             // own condition (so an equi-join can still become a hash match). A conjunct that
             // introduces a subquery turns into an Apply, which can't live inside the join
-            // expression -- so it is hoisted into a filter above the join.
+            // expression -- where that Apply has to go depends on the join kind (see below).
             var joinConditions = new List<LogicalExpression>();
-            var filterConditions = new List<LogicalExpression>();
+            var subqueryConditions = new List<LogicalExpression>();
             var applies = new List<PendingApply>();
 
             foreach (var conjunct in SplitConjuncts(node.Condition))
@@ -202,29 +222,52 @@ namespace NQuery.Refactor.Algebra
                 else
                 {
                     applies.AddRange(conjunctApplies);
-                    filterConditions.Add(algebrized);
+                    subqueryConditions.Add(algebrized);
                 }
             }
 
-            var conditions = joinConditions.ToImmutableArray();
-
-            // Normalize RIGHT OUTER to LEFT OUTER by swapping inputs, so the logical layer never
-            // sees a right-outer join. The conditions reference slots by identity, so swapping the
-            // operands preserves meaning.
-            var join = node.JoinType == BoundJoinType.RightOuter
-                ? new LogicalJoin(LogicalJoinKind.LeftOuter, right, left, conditions, probe: null, passthruPredicate: null)
-                : new LogicalJoin(MapJoinKind(node.JoinType), left, right, conditions, probe: null, passthruPredicate: null);
-
             if (applies.Count == 0)
-                return join;
+                return new LogicalJoin(joinKind, joinLeft, joinRight, joinConditions.ToImmutableArray(), probe: null, passthruPredicate: null);
 
-            // Hoisting a conjunct out of the ON clause into a filter above the join only preserves
-            // semantics for an inner join, where ON is a plain filter.
-            if (node.JoinType != BoundJoinType.Inner)
-                throw new NotSupportedException("Subqueries inside a non-inner join's ON condition are not yet supported.");
+            // For an inner join, ON is a plain filter, so a subquery-bearing conjunct can be hoisted
+            // into a filter above the join, with its Apply correlated to the whole (left ++ right)
+            // output. The subquery-free conjuncts stay on the join, keeping it hash-match eligible.
+            if (node.JoinType == BoundJoinType.Inner)
+            {
+                var innerJoin = new LogicalJoin(joinKind, joinLeft, joinRight, joinConditions.ToImmutableArray(), probe: null, passthruPredicate: null);
+                var withApplies = WrapInApplies(innerJoin, applies);
+                return new LogicalFilter(withApplies, subqueryConditions.ToImmutableArray());
+            }
 
-            var withApplies = WrapInApplies(join, applies);
-            return new LogicalFilter(withApplies, filterConditions.ToImmutableArray());
+            // For an outer/semi join, hoisting the conjunct above the join would change which rows
+            // are null-padded (or which pass the existence test), so the subquery must be evaluated
+            // as part of the join condition. Push its Apply onto the right input -- the subquery
+            // slots then become columns of the right, and the join condition (which keeps the
+            // subquery-bearing conjunct) references them. This is only valid when the subquery is
+            // correlated to the right (or uncorrelated): a subquery correlated to the join's left
+            // can't see the left's slots from inside the right subtree, so it is rejected.
+            EnsureSubqueriesNotCorrelatedToLeft(joinLeft, applies);
+
+            joinRight = WrapInApplies(joinRight, applies);
+            var conditions = joinConditions.Concat(subqueryConditions).ToImmutableArray();
+            return new LogicalJoin(joinKind, joinLeft, joinRight, conditions, probe: null, passthruPredicate: null);
+        }
+
+        // A subquery's Apply can only be pushed onto a join's right input if the subquery doesn't
+        // reference the join's left columns; otherwise those slots wouldn't be in scope inside the
+        // right subtree. (Inner joins sidestep this by hoisting the Apply above the join, where both
+        // sides are in scope.)
+        private static void EnsureSubqueriesNotCorrelatedToLeft(LogicalOperator joinLeft, List<PendingApply> applies)
+        {
+            foreach (var apply in applies)
+            {
+                var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(apply.Relation);
+                if (apply.Passthru is not null)
+                    referenced.UnionWith(LogicalSlotReferenceFinder.FindReferencedSlots(apply.Passthru));
+
+                if (referenced.Overlaps(joinLeft.DefinedValueSlots))
+                    throw new NotSupportedException("A subquery inside a non-inner join's ON condition may only be correlated to the join's right side.");
+            }
         }
 
         private LogicalOperator AlgebrizeUnionQuery(BoundUnionQuery node)

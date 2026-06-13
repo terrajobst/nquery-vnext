@@ -106,6 +106,16 @@ namespace NQuery.Tests.Refactor.Emit
         // CASE passthru that is conditional: the correlated subquery runs only for the UK
         // rows the WHEN selects, and the values still come out right.
         [InlineData("SELECT e.EmployeeID, CASE WHEN e.Country = 'UK' THEN (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) ELSE -1 END FROM Employees e ORDER BY e.EmployeeID")]
+        // EXISTS in a LEFT join's ON, correlated to the right side -> the Apply is pushed onto
+        // the join's right input (not hoisted above), so the outer-join null-padding is preserved.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID AND c.Country = 'Germany') ORDER BY e.EmployeeID, o.OrderID")]
+        // NOT EXISTS in a LEFT join's ON, correlated to the right side.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND NOT EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID AND c.Country = 'Germany') ORDER BY e.EmployeeID, o.OrderID")]
+        // Uncorrelated scalar aggregate subquery in a LEFT join's ON -> a single-row value the
+        // join condition tests; pushed onto the right, the unmatched left rows still null-pad.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.Freight > (SELECT AVG(o2.Freight) FROM Orders o2) ORDER BY e.EmployeeID, o.OrderID")]
+        // Correlated scalar subquery in a LEFT join's ON, correlated to the right side.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.Freight > (SELECT MAX(o2.Freight) FROM Orders o2 WHERE o2.CustomerID = o.CustomerID) ORDER BY e.EmployeeID, o.OrderID")]
         public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
         {
             var expected = RunExistingEngine(text);
@@ -187,11 +197,12 @@ namespace NQuery.Tests.Refactor.Emit
         }
 
         [Fact]
-        public void NewPipeline_DoesNotSupport_SubqueryInOuterJoinCondition()
+        public void NewPipeline_DoesNotSupport_SubqueryCorrelatedToLeftInOuterJoinCondition()
         {
-            // Hoisting an ON conjunct above the join changes outer-join semantics, so a
-            // subquery in a non-inner join's ON isn't lowered (yet).
-            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID)";
+            // A subquery in a non-inner join's ON is pushed onto the join's right input, so it
+            // can only see the right's columns. One correlated to the left side (here e.EmployeeID)
+            // has no in-scope slot there, so it is rejected.
+            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID)";
 
             Assert.Throws<NotSupportedException>(() => RunNewPipeline(text));
         }

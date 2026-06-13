@@ -93,6 +93,34 @@ namespace NQuery.Tests.Refactor.Algebra
         }
 
         [Fact]
+        public void Algebrizer_PushesSubqueryApplyOntoRight_ForOuterJoinCondition()
+        {
+            // A subquery in a LEFT join's ON can't be hoisted above the join (that would change
+            // null-padding), so it is pushed onto the join's right input -- the join condition
+            // then references the probe slot the Apply exposes there.
+            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Customers c WHERE c.CustomerID = o.CustomerID)";
+            var logicalQuery = Algebrizer.Algebrize(Bind(text));
+
+            var join = logicalQuery.Root.DescendantsAndSelf().OfType<LogicalJoin>().Single();
+            Assert.Equal(LogicalJoinKind.LeftOuter, join.JoinKind);
+
+            // There is exactly one Apply, and it sits inside the join's right subtree (not above
+            // the join, where an inner join would have hoisted it).
+            var apply = logicalQuery.Root.DescendantsAndSelf().OfType<LogicalApply>().Single();
+            Assert.Contains(apply, join.Right.DescendantsAndSelf().OfType<LogicalApply>());
+        }
+
+        [Fact]
+        public void Algebrizer_Throws_ForOuterJoinConditionSubqueryCorrelatedToLeft()
+        {
+            // Pushing the Apply onto the right can't satisfy a correlation to the join's left
+            // (here e.EmployeeID), so the algebrizer rejects it.
+            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID)";
+
+            Assert.Throws<NotSupportedException>(() => Algebrizer.Algebrize(Bind(text)));
+        }
+
+        [Fact]
         public void Algebrizer_NormalizesRightOuterJoin_ToLeftOuter()
         {
             var text = "SELECT e.FirstName FROM Orders o RIGHT JOIN Employees e ON e.EmployeeID = o.EmployeeID";
