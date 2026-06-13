@@ -1,5 +1,73 @@
 # NQuery Major Refactoring
 
+## Completing the port
+
+1. Common Table Expressions — bound but not executable (biggest gap).
+
+The new binder fully binds CTEs (BindCommonTableExpressionQuery, recursive
+validation via RecursiveCommonTableExpressionChecker), but nothing instantiates
+them downstream. A CTE reference becomes a BoundNamedTableReference →
+Algebrizer.AlgebrizeNamedTableReference → a plain LogicalTableScan over the
+CommonTableExpressionSymbol. Then Emitter.EmitTableScan does
+(SchemaTableSymbol)node.TableInstance.Table — which throws for a CTE-backed
+instance. There is no equivalent of legacy CommonTableExpressionInstantiator.
+The AlgebrizerTests CTE case (line 27) only asserts the logical shape, never
+execution; no evaluation test drives a CTE through the new engine.
+
+- Missing iterators: TableSpoolIterator, TableSpoolRefIterator, TableSpoolStack
+  (the recursive-CTE execution machinery) have no Emitted* counterparts.
+- Recursive CTEs are therefore unsupported end-to-end.
+
+2. Incomplete decorrelation
+
+ApplyPushdown covers only the base case (uncorrelated → join) and the
+correlated-filter case. It explicitly does not push Apply through GroupBy or
+joins (the "magic decorrelation" / count-bug rule). A guarded scalar subquery
+(Apply(L, Assert(Aggregate(...)))) falls through and runs as correlated nested
+loops — correct but a re-scan per outer row. Legacy Decorrelator was more
+complete.
+
+3. Optimizer passes with no new equivalent:
+
+- OuterJoinRemover — null-rejection-based outer→inner join simplification.
+- SemiJoinSimplifier.
+- JoinLinearizer — separate join linearization (may be partly subsumed by
+  JoinOrderer, but not a clear port).
+- JoinConditionValueSlotExtractor — hoisting computed values out of join
+  conditions.
+
+4. No cost model / cardinality estimation.
+
+CardinalityEstimator / CardinalityEstimate aren't ported. Planner is a
+one-to-one lowering: hash-match build side is always the join's left, and
+hash-vs-loops is structural (equi-key present), not cost-based.
+
+5. Hash match for semi/anti joins.
+
+Planner.CanHashMatch only allows Inner/LeftOuter/FullOuter, so an equi
+EXISTS/NOT EXISTS still runs as (probing) nested loops.
+
+6. Subqueries inside a non-inner join's ON condition
+
+Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
+
+7. Bare expressions (Expression<T>, e.g. aggregate type resolution)
+
+CompileNewEngine falls back to CompileLegacy; the new engine only handles
+top-level QuerySyntax.
+
+8. ShowPlan is legacy-only.
+
+GetShowPlanSteps operate on the legacy BoundRelation tree
+via NQuery.Optimization; there's no show-plan over the new logical/physical
+tree.
+
+9.  SemanticModel is still legacy-only.
+
+GetSemanticModel (and thus all authoring/IDE features) still uses the
+legacy NQuery.Binding.Binder — the Refactor.Binding.Binder is a fork used solely
+for compilation.
+
 ## Increase test coverage:
 
 * A correctness test that runs in debug builds and asserts the bound tree is
