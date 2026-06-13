@@ -135,6 +135,33 @@ namespace NQuery.Tests.Refactor.Emit
                 Assert.Equal(nestedLoops[i], decorrelated[i]);
         }
 
+        [Theory]
+        // Null-rejection outer-join removal: WHERE rejects the right's NULLs, so the LEFT
+        // JOIN becomes an INNER JOIN -- the rows must match the un-simplified plan.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID WHERE o.OrderID < 10260 ORDER BY e.EmployeeID, o.OrderID")]
+        // A non-rejecting WHERE (IS NULL keeps the padded rows) must NOT be tightened.
+        [InlineData("SELECT c.CustomerID FROM Customers c LEFT JOIN Orders o ON c.CustomerID = o.CustomerID WHERE o.OrderID IS NULL ORDER BY c.CustomerID")]
+        // Rejection harvested from an inner join's own condition frees a deeper LEFT JOIN.
+        [InlineData("SELECT e.EmployeeID, od.ProductID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID INNER JOIN [Order Details] od ON od.OrderID = o.OrderID WHERE od.ProductID < 20 ORDER BY e.EmployeeID, od.ProductID")]
+        // FULL OUTER with only the right rejected -> swapped to a LEFT OUTER (Customers left).
+        [InlineData("SELECT e.City, c.City FROM Employees e FULL JOIN Customers c ON e.City = c.City WHERE c.City = 'London' ORDER BY e.City, c.City")]
+        // Computed equi-join key: ON e.EmployeeID + 0 = o.EmployeeID becomes slot = slot and
+        // hash-matches; rows must match the nested-loops plan.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e INNER JOIN Orders o ON e.EmployeeID + 0 = o.EmployeeID WHERE o.OrderID < 10260 ORDER BY e.EmployeeID, o.OrderID")]
+        // Left-outer pull-up: Orders (preserved side) joins Employees in the inner region and
+        // the LEFT JOIN to [Order Details] is re-applied on top; rows must match the
+        // un-reordered plan, including the null-padded rows for orders with no details.
+        [InlineData("SELECT e.EmployeeID, od.ProductID FROM Employees e, (Orders o LEFT JOIN [Order Details] od ON o.OrderID = od.OrderID) WHERE e.EmployeeID = o.EmployeeID AND o.OrderID < 10250 ORDER BY e.EmployeeID, od.ProductID")]
+        public void Optimization_MatchesUnoptimized(string text)
+        {
+            var optimized = RunNewPipeline(text);
+            var reference = RunUnoptimized(text);
+
+            Assert.Equal(reference.Count, optimized.Count);
+            for (var i = 0; i < reference.Count; i++)
+                Assert.Equal(reference[i], optimized[i]);
+        }
+
         [Fact]
         public void ExecutablePlan_IsReusable_AcrossCreateIterator()
         {

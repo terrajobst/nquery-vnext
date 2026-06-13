@@ -32,11 +32,20 @@ namespace NQuery.Refactor.Optimization
         {
             var applyPushdown = new ApplyPushdown(type => ResolveComparer(dataContext, type));
 
+            // OuterJoinRemover accumulates per-tree state, so (like ApplyPushdown) it is a
+            // fresh instance rather than a shared singleton.
+            var outerJoinRemover = new OuterJoinRemover();
+
             return
             [
                 // Decorrelate applies into joins and push selections down, to a fixed
                 // point (both are oriented downward and converge).
                 new("Decorrelation", BatchStrategy.FixedPoint, applyPushdown, SelectionPushdown.Instance),
+
+                // Tighten outer joins into inner ones where a predicate above rejects the
+                // null-supplied side. Runs before join ordering so a freed inner join can
+                // join its region and accept pushed-down selections.
+                new("Outer join removal", BatchStrategy.Once, outerJoinRemover),
 
                 // Reorder inner-join regions and turn predicates into join conditions.
                 new("Join ordering", BatchStrategy.Once, JoinOrderer.Instance),

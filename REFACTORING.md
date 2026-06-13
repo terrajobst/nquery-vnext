@@ -23,14 +23,9 @@ execution; no evaluation test drives a CTE through the new engine.
 Mostly done, some TODO markers are left. But those extend past what the old
 engine did.
 
-3. Optimizer passes with no new equivalent:
+3. Optimizer passes with no new equivalent
 
-- OuterJoinRemover — null-rejection-based outer→inner join simplification.
-- SemiJoinSimplifier.
-- JoinLinearizer — separate join linearization (may be partly subsumed by
-  JoinOrderer, but not a clear port).
-- JoinConditionValueSlotExtractor — hoisting computed values out of join
-  conditions.
+Done
 
 4. No cost model / cardinality estimation.
 

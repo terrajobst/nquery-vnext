@@ -34,6 +34,18 @@ namespace NQuery.Tests.Planning
         }
 
         [Fact]
+        public void Planner_BuildsHashMatch_ForComputedEquiKey()
+        {
+            // ON e.EmployeeID + 0 = o.EmployeeID isn't slot = slot, so the planner
+            // materializes the computed side into a key slot (a compute on that input) and
+            // hash-matches on it.
+            var text = "SELECT e.FirstName FROM Employees e INNER JOIN Orders o ON e.EmployeeID + 0 = o.EmployeeID";
+            var hashMatch = Plan(text).DescendantsAndSelf().OfType<PhysicalHashMatch>().Single();
+
+            Assert.Equal(PhysicalHashMatchKind.Inner, hashMatch.HashMatchKind);
+        }
+
+        [Fact]
         public void Planner_BuildsNestedLoops_ForNonEquiJoin()
         {
             var text = "SELECT o.OrderID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID <> od.OrderID";

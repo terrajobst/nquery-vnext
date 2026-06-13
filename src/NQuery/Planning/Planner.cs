@@ -102,11 +102,23 @@ namespace NQuery.Planning
             //       choose the smaller input to hash, nor decide hash-vs-loops by estimated
             //       cardinality. Once cardinality estimation exists, pick the build side
             //       (and the algorithm) by cost.
-            if (CanHashMatch(node.JoinKind) && TryGetEquiKey(node, out var buildKey, out var probeKey, out var remainder))
+            if (CanHashMatch(node.JoinKind) && TryGetEquiKey(node, out var key))
             {
                 var build = PlanOperator(node.Left);
                 var probe = PlanOperator(node.Right);
-                return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, buildKey, probeKey, remainder);
+
+                // A computed key (e.g. ON a.x + 1 = b.y) isn't a slot the hash table can key
+                // on, so materialize it with a compute on that input. Doing it here, rather
+                // than as a logical rewrite, keeps the nested-loops fallback's predicate
+                // inline -- only the chosen hash match pays for the compute. The extra slot
+                // leaks into the hash match's output but is dropped by the enclosing
+                // projection (a join is never the query's output).
+                if (key.BuildComputedValue is not null)
+                    build = new PhysicalComputeScalar(build, ImmutableArray.Create(key.BuildComputedValue));
+                if (key.ProbeComputedValue is not null)
+                    probe = new PhysicalComputeScalar(probe, ImmutableArray.Create(key.ProbeComputedValue));
+
+                return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder);
             }
 
             // Nested loops can't produce a full outer join. Expanding it into operators
@@ -141,59 +153,122 @@ namespace NQuery.Planning
             };
         }
 
-        // Finds the first conjunct of the form (leftSlot = rightSlot); it becomes the
-        // hash key and the remaining conjuncts the residual remainder. A non-equi or
-        // single-sided condition yields no key, so the caller falls back to nested loops.
-        private static bool TryGetEquiKey(LogicalJoin node, out ValueSlot buildKey, out ValueSlot probeKey, out ImmutableArray<LogicalExpression> remainder)
+        // Finds a conjunct that is a cross-input equality -- one side over only the left
+        // input, the other over only the right -- to use as the hash key, with the rest as
+        // the residual remainder. A plain slot side is the key directly; a computed side
+        // (ON a.x + 1 = b.y) is paired with the compute that materializes it. A plain
+        // slot = slot key is preferred, so a computed key is only chosen when no plain one
+        // exists. A non-equi, constant, mixed, or single-sided condition yields no key, so
+        // the caller falls back to nested loops.
+        private static bool TryGetEquiKey(LogicalJoin node, out EquiKey key)
         {
             var leftSlots = node.Left.OutputValueSlots;
             var rightSlots = node.Right.OutputValueSlots;
 
+            return TryFindEquiKey(node, leftSlots, rightSlots, plainOnly: true, out key) ||
+                   TryFindEquiKey(node, leftSlots, rightSlots, plainOnly: false, out key);
+        }
+
+        private static bool TryFindEquiKey(LogicalJoin node, ImmutableArray<ValueSlot> leftSlots, ImmutableArray<ValueSlot> rightSlots, bool plainOnly, out EquiKey key)
+        {
             for (var i = 0; i < node.Conditions.Length; i++)
             {
-                if (TryGetEquiSlots(node.Conditions[i], leftSlots, rightSlots, out buildKey, out probeKey))
+                if (node.Conditions[i] is LogicalBinaryExpression { OperatorKind: BinaryOperatorKind.Equal } equal &&
+                    TryOrientSides(equal, leftSlots, rightSlots, out var buildSide, out var probeSide))
                 {
-                    remainder = node.Conditions.RemoveAt(i);
+                    var isPlain = buildSide is LogicalValueSlotExpression && probeSide is LogicalValueSlotExpression;
+                    if (plainOnly && !isPlain)
+                        continue;
+
+                    var buildKey = AsKeySlot(buildSide, out var buildComputedValue);
+                    var probeKey = AsKeySlot(probeSide, out var probeComputedValue);
+                    key = new EquiKey(buildKey, probeKey, buildComputedValue, probeComputedValue, node.Conditions.RemoveAt(i));
                     return true;
                 }
             }
 
-            buildKey = null!;
-            probeKey = null!;
-            remainder = default;
+            key = default;
             return false;
         }
 
-        // TODO: This treats the `=` operator as satisfiable by the hash match's runtime
-        //       key equality (Dictionary<object>, i.e. object.Equals/GetHashCode). That
-        //       holds for the current value types, but a type whose `=` operator disagrees
-        //       with object equality (e.g. a culture-sensitive string compare) would make
-        //       the hash match diverge from nested loops. Guard by the key type's
-        //       comparer, or thread the operator's comparer into the hash table.
-        private static bool TryGetEquiSlots(LogicalExpression condition, ImmutableArray<ValueSlot> leftSlots, ImmutableArray<ValueSlot> rightSlots, out ValueSlot buildKey, out ValueSlot probeKey)
+        // Orients an equality so buildSide is over the left input only and probeSide over the
+        // right input only (swapping if it was written the other way). Fails for a constant,
+        // mixed, or single-input equality -- none of which is a usable hash key.
+        //
+        // TODO: This treats the `=` operator as satisfiable by the hash match's runtime key
+        //       equality (Dictionary<object>, i.e. object.Equals/GetHashCode). That holds for
+        //       the current value types, but a type whose `=` operator disagrees with object
+        //       equality (e.g. a culture-sensitive string compare) would make the hash match
+        //       diverge from nested loops. Guard by the key type's comparer, or thread the
+        //       operator's comparer into the hash table.
+        private static bool TryOrientSides(LogicalBinaryExpression equal, ImmutableArray<ValueSlot> leftSlots, ImmutableArray<ValueSlot> rightSlots, out LogicalExpression buildSide, out LogicalExpression probeSide)
         {
-            if (condition is LogicalBinaryExpression { OperatorKind: BinaryOperatorKind.Equal } binary &&
-                binary.Left is LogicalValueSlotExpression left &&
-                binary.Right is LogicalValueSlotExpression right)
+            if (ReferencesOnly(equal.Left, leftSlots) && ReferencesOnly(equal.Right, rightSlots))
             {
-                if (leftSlots.Contains(left.ValueSlot) && rightSlots.Contains(right.ValueSlot))
-                {
-                    buildKey = left.ValueSlot;
-                    probeKey = right.ValueSlot;
-                    return true;
-                }
-
-                if (leftSlots.Contains(right.ValueSlot) && rightSlots.Contains(left.ValueSlot))
-                {
-                    buildKey = right.ValueSlot;
-                    probeKey = left.ValueSlot;
-                    return true;
-                }
+                buildSide = equal.Left;
+                probeSide = equal.Right;
+                return true;
             }
 
-            buildKey = null!;
-            probeKey = null!;
+            if (ReferencesOnly(equal.Left, rightSlots) && ReferencesOnly(equal.Right, leftSlots))
+            {
+                buildSide = equal.Right;
+                probeSide = equal.Left;
+                return true;
+            }
+
+            buildSide = null!;
+            probeSide = null!;
             return false;
+        }
+
+        // Whether the expression references at least one slot and all of them come from the
+        // given input, so it can be evaluated on that side alone.
+        private static bool ReferencesOnly(LogicalExpression expression, ImmutableArray<ValueSlot> slots)
+        {
+            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(expression);
+            return referenced.Count > 0 && referenced.All(slots.Contains);
+        }
+
+        // A plain slot reference is the key directly; any other expression is materialized
+        // into a fresh slot by a compute the caller places on the input.
+        private static ValueSlot AsKeySlot(LogicalExpression expression, out LogicalComputedValue? computedValue)
+        {
+            if (expression is LogicalValueSlotExpression slot)
+            {
+                computedValue = null;
+                return slot.ValueSlot;
+            }
+
+            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(expression);
+            var key = referenced.First().Factory.CreateTemporary(expression.Type);
+            computedValue = new LogicalComputedValue(expression, key);
+            return key;
+        }
+
+        private readonly struct EquiKey
+        {
+            public EquiKey(ValueSlot buildKey, ValueSlot probeKey, LogicalComputedValue? buildComputedValue, LogicalComputedValue? probeComputedValue, ImmutableArray<LogicalExpression> remainder)
+            {
+                BuildKey = buildKey;
+                ProbeKey = probeKey;
+                BuildComputedValue = buildComputedValue;
+                ProbeComputedValue = probeComputedValue;
+                Remainder = remainder;
+            }
+
+            public ValueSlot BuildKey { get; }
+
+            public ValueSlot ProbeKey { get; }
+
+            // The compute that materializes the build/probe key, or null when the key is
+            // already a plain slot.
+            public LogicalComputedValue? BuildComputedValue { get; }
+
+            public LogicalComputedValue? ProbeComputedValue { get; }
+
+            // The join condition's conjuncts other than the chosen hash-key equality.
+            public ImmutableArray<LogicalExpression> Remainder { get; }
         }
 
         // FULL OUTER JOIN expanded into operators nested loops can run. This is the

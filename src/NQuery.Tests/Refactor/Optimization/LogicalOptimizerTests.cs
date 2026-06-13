@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Optimization;
@@ -132,6 +134,106 @@ namespace NQuery.Tests.Refactor.Optimization
             // Every join carries a predicate -- no cartesian products were introduced.
             Assert.All(joins, j => Assert.NotEmpty(j.Conditions));
             Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalFilter);
+        }
+
+        [Fact]
+        public void OuterJoinRemover_RewritesLeftOuterAsInner_WhenPredicateRejectsNulls()
+        {
+            // WHERE o.OrderID = 10248 can never hold for a null-padded Orders row, so the
+            // LEFT JOIN tightens to an INNER JOIN.
+            var text = "SELECT e.FirstName FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID WHERE o.OrderID = 10248";
+            var optimized = Optimize(text);
+
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter });
+            Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.Inner });
+        }
+
+        [Fact]
+        public void OuterJoinRemover_KeepsLeftOuter_WhenPredicateDoesNotRejectNulls()
+        {
+            // WHERE o.OrderID IS NULL keeps exactly the null-padded rows, so the LEFT JOIN
+            // must survive.
+            var text = "SELECT e.FirstName FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID WHERE o.OrderID IS NULL";
+            var optimized = Optimize(text);
+
+            Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter });
+        }
+
+        [Fact]
+        public void OuterJoinRemover_SwapsFullOuterToLeftOuter_WhenOnlyRightIsRejected()
+        {
+            // WHERE c.City = 'London' rejects the right's NULLs, so the FULL OUTER keeps only
+            // rows where Customers is present -- a RIGHT OUTER, swapped to a LEFT OUTER with
+            // Customers on the left.
+            var text = "SELECT e.City, c.City FROM Employees e FULL JOIN Customers c ON e.City = c.City WHERE c.City = 'London'";
+            var optimized = Optimize(text);
+
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.FullOuter });
+
+            var join = optimized.DescendantsAndSelf().OfType<LogicalJoin>().Single(j => j.JoinKind == LogicalJoinKind.LeftOuter);
+            var leftScan = Assert.IsType<LogicalTableScan>(join.Left);
+            Assert.Equal("Customers", leftScan.TableInstance.Table.Name);
+        }
+
+        [Fact]
+        public void OuterJoinRemover_RemovesConstantSide_OfInnerJoin()
+        {
+            // An inner join against the single-row constant relation collapses to the other
+            // side. The algebrizer rarely emits a bare constant join, so build it directly.
+            var employees = Algebrizer.Algebrize(Bind("SELECT e.City FROM Employees e")).Root;
+            var join = new LogicalJoin(LogicalJoinKind.Inner, new LogicalConstant(), employees,
+                                       ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null);
+
+            var result = new OuterJoinRemover().RewriteRelation(join);
+
+            // No condition, so the constant side drops with nothing left to filter.
+            Assert.Same(employees, result);
+        }
+
+        [Fact]
+        public void Optimizer_LeavesComputedJoinKeyInline()
+        {
+            // ON e.EmployeeID + 0 = o.EmployeeID stays a computed condition in the logical
+            // tree -- materializing it into a hash key is the planner's job (see
+            // PlannerTests), so the nested-loops fallback keeps the predicate inline.
+            var text = "SELECT e.FirstName FROM Employees e INNER JOIN Orders o ON e.EmployeeID + 0 = o.EmployeeID";
+            var optimized = Optimize(text);
+
+            var join = optimized.DescendantsAndSelf().OfType<LogicalJoin>().Single();
+            var equal = Assert.IsType<LogicalBinaryExpression>(join.Conditions.Single());
+            Assert.IsType<LogicalBinaryExpression>(equal.Left);   // e.EmployeeID + 0, not hoisted
+            Assert.DoesNotContain(optimized.DescendantsAndSelf(), o => o is LogicalCompute);
+        }
+
+        [Fact]
+        public void JoinOrderer_PullsUpLeftOuterJoin_WhenNoPredicateReferencesNullSuppliedSide()
+        {
+            // od is referenced by no region predicate, so the preserved side (Orders) is
+            // pulled into the inner region with Employees and the LEFT JOIN to od re-applied
+            // on top -- the topmost join becomes the left outer.
+            var text = "SELECT e.EmployeeID FROM Employees e, (Orders o LEFT JOIN [Order Details] od ON o.OrderID = od.OrderID) WHERE e.EmployeeID = o.EmployeeID";
+            var optimized = Optimize(text);
+
+            var topmostJoin = optimized.DescendantsAndSelf().OfType<LogicalJoin>().First();
+            Assert.Equal(LogicalJoinKind.LeftOuter, topmostJoin.JoinKind);
+
+            // ...and below it, an inner join between Employees and Orders carrying the predicate.
+            var inner = optimized.DescendantsAndSelf().OfType<LogicalJoin>().Single(j => j.JoinKind == LogicalJoinKind.Inner);
+            Assert.NotEmpty(inner.Conditions);
+        }
+
+        [Fact]
+        public void JoinOrderer_KeepsLeftOuterJoin_WhenPredicateReferencesNullSuppliedSide()
+        {
+            // od.ProductID IS NULL references the null-supplied side (and doesn't reject its
+            // NULLs, so OuterJoinRemover leaves it), which makes the outer join un-poolable:
+            // it stays an opaque region leaf under the inner join.
+            var text = "SELECT e.EmployeeID FROM Employees e, (Orders o LEFT JOIN [Order Details] od ON o.OrderID = od.OrderID) WHERE e.EmployeeID = o.EmployeeID AND od.ProductID IS NULL";
+            var optimized = Optimize(text);
+
+            var topmostJoin = optimized.DescendantsAndSelf().OfType<LogicalJoin>().First();
+            Assert.Equal(LogicalJoinKind.Inner, topmostJoin.JoinKind);
+            Assert.Contains(optimized.DescendantsAndSelf(), o => o is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter });
         }
 
         private static LogicalOperator Optimize(string text)

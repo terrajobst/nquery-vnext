@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.Refactor.Algebra;
@@ -16,9 +17,12 @@ namespace NQuery.Refactor.Optimization
     //
     // Only inner joins reorder; outer/semi/anti joins bound the region -- their
     // conditions are not interchangeable with a WHERE -- so they are treated as
-    // opaque inputs and optimized recursively. Ordering is heuristic (prefer an
-    // input connected by a predicate, to avoid cartesian products); a cost-based
-    // PickNext can replace it later.
+    // opaque inputs and optimized recursively. The one exception is a left outer join
+    // whose null-supplied side no region predicate references: its preserved side is
+    // pulled into the region (so it can join and reorder with the rest) and the outer
+    // join re-applied above, the sound case of the legacy JoinLinearizer's re-association
+    // (see PullUpOuterJoins). Ordering is heuristic (prefer an input connected by a
+    // predicate, to avoid cartesian products); a cost-based PickNext can replace it later.
     //
     // The pass rebuilds regions unconditionally, so it is not idempotent by
     // reference and must run in a Once batch rather than a fixed point.
@@ -59,6 +63,8 @@ namespace NQuery.Refactor.Optimization
             var predicates = new List<LogicalExpression>(extraPredicates);
             Collect(regionRoot, inputs, predicates);
 
+            var deferred = PullUpOuterJoins(inputs, predicates);
+
             var remaining = new List<LogicalOperator>(inputs);
             var acc = remaining[0];
             remaining.RemoveAt(0);
@@ -76,11 +82,78 @@ namespace NQuery.Refactor.Optimization
             }
 
             // Anything not coverable by the region (e.g. an outer reference) stays as
-            // a filter on top.
+            // a filter on top. It can't reference a deferred null-supplied side -- that is
+            // exactly what PullUpOuterJoins guards against -- so it is safe below them.
             if (predicates.Count > 0)
                 acc = new LogicalFilter(acc, predicates.ToImmutableArray());
 
+            // Re-apply the deferred outer joins, innermost (most recently peeled) first, so a
+            // nested chain is rebuilt in its original order.
+            for (var i = deferred.Count - 1; i >= 0; i--)
+                acc = new LogicalJoin(LogicalJoinKind.LeftOuter, acc, deferred[i].NullSupplied, deferred[i].Conditions, probe: null, passthruPredicate: null);
+
             return acc;
+        }
+
+        // Subsumes the sound case of the legacy JoinLinearizer's re-association across an
+        // inner/outer boundary: R ⋈ₚ (L ⟕_q M) == (R ⋈ₚ L) ⟕_q M, valid when no region
+        // predicate references the null-supplied side M (so L can join and reorder with the
+        // rest of the region while M is re-attached above). Each peeled outer join is
+        // returned to be re-applied over the assembled region; the loop repeats so a nested
+        // outer join ((D ⟕ E) ⟕ C) peels one level per pass.
+        private static List<DeferredOuterJoin> PullUpOuterJoins(List<LogicalOperator> inputs, List<LogicalExpression> predicates)
+        {
+            var deferred = new List<DeferredOuterJoin>();
+
+            bool changed;
+            do
+            {
+                changed = false;
+
+                for (var i = 0; i < inputs.Count; i++)
+                {
+                    if (inputs[i] is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter, Probe: null, PassthruPredicate: null } outer &&
+                        !AnyPredicateReferences(predicates, outer.Right.DefinedValueSlots))
+                    {
+                        inputs[i] = outer.Left;
+                        deferred.Add(new DeferredOuterJoin(outer.Right, outer.Conditions));
+                        changed = true;
+                    }
+                }
+            }
+            while (changed);
+
+            return deferred;
+        }
+
+        private static bool AnyPredicateReferences(List<LogicalExpression> predicates, FrozenSet<ValueSlot> slots)
+        {
+            foreach (var predicate in predicates)
+            {
+                foreach (var slot in LogicalSlotReferenceFinder.FindReferencedSlots(predicate))
+                {
+                    if (slots.Contains(slot))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private readonly struct DeferredOuterJoin
+        {
+            public DeferredOuterJoin(LogicalOperator nullSupplied, ImmutableArray<LogicalExpression> conditions)
+            {
+                NullSupplied = nullSupplied;
+                Conditions = conditions;
+            }
+
+            // The null-supplied (right) side of the peeled left outer join.
+            public LogicalOperator NullSupplied { get; }
+
+            // The peeled join's own condition (references the preserved side, now in the
+            // region, and the null-supplied side).
+            public ImmutableArray<LogicalExpression> Conditions { get; }
         }
 
         private void Collect(LogicalOperator node, List<LogicalOperator> inputs, List<LogicalExpression> predicates)
