@@ -28,6 +28,19 @@ hash-vs-loops is structural (equi-key present), not cost-based.
 
 Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
+## Other features
+
+* Make LogicalConstant hold a static table and use it cases like this:
+  ```SQL
+  SELECT 1, 2, 3
+  UNION ALL
+  SELECT 4, 5, 6
+  UNION ALL
+  SELECT 7, 8, 9
+  ```
+* Add SQL's `VALUE()` constructor and use LogicalConstant
+* Merge ComputeScalar() nodes
+* Detect Filters/Join condition that are always false
 
 ## Increase test coverage:
 
