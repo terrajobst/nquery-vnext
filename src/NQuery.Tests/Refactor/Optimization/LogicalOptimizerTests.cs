@@ -2,7 +2,7 @@ using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Optimization;
 
-namespace NQuery.Tests.AlgebraOptimization
+namespace NQuery.Tests.Refactor.Optimization
 {
     public class LogicalOptimizerTests
     {

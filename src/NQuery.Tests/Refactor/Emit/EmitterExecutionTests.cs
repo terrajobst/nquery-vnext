@@ -5,7 +5,7 @@ using NQuery.Refactor.Iterators;
 using NQuery.Refactor.Optimization;
 using NQuery.Planning;
 
-namespace NQuery.Tests.Iterators
+namespace NQuery.Tests.Refactor.Emit
 {
     // End-to-end execution through the new pipeline
     // (Bind -> Algebrize -> Optimize -> Plan -> Emit -> CreateIterator), checked

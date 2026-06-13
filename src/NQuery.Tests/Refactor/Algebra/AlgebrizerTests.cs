@@ -1,7 +1,7 @@
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Tests.Algebra
+namespace NQuery.Tests.Refactor.Algebra
 {
     public class AlgebrizerTests
     {
