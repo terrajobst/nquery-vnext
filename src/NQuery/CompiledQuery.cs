@@ -5,7 +5,15 @@ using NQuery.Iterators;
 
 namespace NQuery
 {
-    public sealed class CompiledQuery
+    // Engine-agnostic surface. How the reader's iterator is produced (BuildIterator) and
+    // where the output columns come from (OutputColumns) differ per engine and live in
+    // CompiledQuery.Baseline.cs / CompiledQuery.NewEngine.cs.
+    //
+    // The legacy BoundQuery artifact is kept here because bare-expression compilation
+    // (Expression<T>, e.g. aggregate type resolution) always runs on the legacy engine in
+    // both builds -- the new pipeline only handles top-level queries. CreateExpressionEvaluator
+    // is therefore only ever reached for an expression-backed instance (where _query is set).
+    public sealed partial class CompiledQuery
     {
         private readonly BoundQuery _query;
 
@@ -26,9 +34,8 @@ namespace NQuery
 
         private QueryReader CreateReader(bool schemaOnly)
         {
-            var columnNamesAndTypes = _query.OutputColumns.Select(c => (c.Name, c.Type.ToOutputType())).ToImmutableArray();
-            var iterator = IteratorBuilder.Build(_query.Relation);
-            return new QueryReader(iterator, columnNamesAndTypes, schemaOnly);
+            var columnNamesAndTypes = OutputColumns.Select(c => (c.Name, c.Type.ToOutputType())).ToImmutableArray();
+            return new QueryReader(BuildIterator(), columnNamesAndTypes, schemaOnly);
         }
 
         public ExpressionEvaluator CreateExpressionEvaluator()

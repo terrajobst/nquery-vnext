@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <!-- BenchmarkDotNet generates and JIT-compiles its own runner; Release is required. -->
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      The live engine (assembly "NQuery") is the new version; the baseline variant
+      re-links the same sources as assembly "NQuery.Baseline" with BASELINE defined.
+      Both expose the same NQuery.* types, so the Aliases metadata gives each its own
+      root: address them as current::NQuery.* and baseline::NQuery.* (see the extern
+      alias lines in QueryBenchmarks.cs).
+    -->
+    <ProjectReference Include="..\..\NQuery\NQuery.csproj" Aliases="current" />
+    <ProjectReference Include="..\NQuery.Baseline\NQuery.Baseline.csproj" Aliases="baseline" />
+  </ItemGroup>
+
+</Project>

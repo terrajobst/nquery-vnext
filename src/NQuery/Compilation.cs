@@ -6,7 +6,7 @@ using NQuery.Symbols;
 
 namespace NQuery
 {
-    public sealed class Compilation
+    public sealed partial class Compilation
     {
         private Compilation(DataContext dataContext, SyntaxTree syntaxTree)
         {
@@ -29,6 +29,19 @@ namespace NQuery
         }
 
         public CompiledQuery Compile()
+        {
+#if BASELINE
+            return CompileLegacy();
+#else
+            // New engine pipeline lives in Compilation.NewEngine.cs. It falls back to
+            // CompileLegacy for bare expressions.
+            return CompileNewEngine();
+#endif
+        }
+
+        // The legacy pipeline: legacy bind -> optimize -> BoundQuery-backed CompiledQuery.
+        // Used directly by the baseline build, and by the new build for bare expressions.
+        private CompiledQuery CompileLegacy()
         {
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
             var boundQuery = GetBoundQuery(bindingResult.BoundRoot);

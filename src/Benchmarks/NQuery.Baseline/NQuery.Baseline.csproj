@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Baseline ("old") variant of the NQuery engine. Re-links the exact same sources as
+    ..\..\NQuery but emits a distinctly-named assembly (NQuery.Baseline) and defines
+    BASELINE. The live NQuery project is the new version (edit it with full code
+    completion); divergent code paths are gated with #if BASELINE ... #else ... #endif,
+    so the new path is what you read and edit by default. The distinct assembly name is
+    what lets this load side-by-side with the new NQuery assembly in the benchmark host.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NQuery</RootNamespace>
+    <AssemblyName>NQuery.Baseline</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <!-- Don't auto-glob this (empty) folder; we link the real sources below. -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <DefineConstants>$(DefineConstants);BASELINE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\NQuery\**\*.cs"
+             Exclude="..\..\NQuery\obj\**;..\..\NQuery\bin\**" />
+    <!--
+      Resources.Designer.cs calls new ResourceManager("NQuery.Resources", ...) with a
+      hardcoded name, so the manifest name must be pinned regardless of this project's
+      folder/RootNamespace.
+    -->
+    <EmbeddedResource Include="..\..\NQuery\Resources.resx">
+      <LogicalName>NQuery.Resources.resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
