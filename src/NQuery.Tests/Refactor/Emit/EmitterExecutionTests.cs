@@ -9,10 +9,12 @@ namespace NQuery.Tests.Refactor.Emit
 {
     // End-to-end execution through the new pipeline
     // (Bind -> Algebrize -> Optimize -> Plan -> Emit -> CreateIterator), checked
-    // differentially against the existing engine. Covers the operators the Emitter
-    // wires so far: scan, filter, compute, project, sort, top, and nested-loops joins
-    // (inner, cross, left outer, and probing semi via EXISTS / NOT EXISTS). Queries
-    // carry an ORDER BY so the row order is deterministic across both engines.
+    // differentially against the unoptimized pipeline (RunUnoptimized) -- the nested-loops
+    // reference that skips logical optimization, an independent oracle for the optimized
+    // plan. Covers the operators the Emitter wires so far: scan, filter, compute, project,
+    // sort, top, and nested-loops joins (inner, cross, left outer, and probing semi via
+    // EXISTS / NOT EXISTS). Queries carry an ORDER BY so the row order is deterministic
+    // across both pipelines.
     public class EmitterExecutionTests
     {
         [Theory]
@@ -116,9 +118,26 @@ namespace NQuery.Tests.Refactor.Emit
         [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.Freight > (SELECT AVG(o2.Freight) FROM Orders o2) ORDER BY e.EmployeeID, o.OrderID")]
         // Correlated scalar subquery in a LEFT join's ON, correlated to the right side.
         [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.Freight > (SELECT MAX(o2.Freight) FROM Orders o2 WHERE o2.CustomerID = o.CustomerID) ORDER BY e.EmployeeID, o.OrderID")]
-        public void NewPipeline_ProducesSameRows_AsExistingEngine(string text)
+        // EXISTS in a LEFT join's ON correlated to the join's LEFT (e.EmployeeID) -> the whole join
+        // is lowered as a LeftOuter dependent join (the right-side push can't reach the left). The
+        // left rows whose subquery is empty must still null-pad.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID) ORDER BY e.EmployeeID, o.OrderID")]
+        // Left-correlated subquery in a LEFT join's ON that ALSO references the right (both sides):
+        // decorrelation moves the predicate onto the inner semi join, whose condition then
+        // references the outer e.EmployeeID -- a correlation on the join itself, now supported.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID AND o2.OrderID < o.OrderID) ORDER BY e.EmployeeID, o.OrderID")]
+        // NOT EXISTS in a LEFT join's ON correlated to the left.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND NOT EXISTS (SELECT * FROM Customers c WHERE c.Country = e.Country) ORDER BY e.EmployeeID, o.OrderID")]
+        // Left-correlated scalar aggregate subquery in a LEFT join's ON.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND o.Freight > (SELECT MAX(o2.Freight) FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID) ORDER BY e.EmployeeID, o.OrderID")]
+        // FULL OUTER JOIN whose ON has a subquery correlated to the left -> no single Apply form,
+        // so it is expanded into (LEFT OUTER) UNION ALL (right-anti-semi), each branch a dependent
+        // join. The subquery is selective (only employees with a high-freight order satisfy it), so
+        // both the null-padded-right and null-padded-left sides are exercised with the correlation.
+        [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e FULL JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID AND o2.Freight > 500) ORDER BY e.EmployeeID, o.OrderID")]
+        public void NewPipeline_ProducesSameRows_AsUnoptimized(string text)
         {
-            var expected = RunExistingEngine(text);
+            var expected = RunUnoptimized(text);
             var actual = RunNewPipeline(text);
 
             Assert.Equal(expected.Count, actual.Count);
@@ -197,24 +216,13 @@ namespace NQuery.Tests.Refactor.Emit
         }
 
         [Fact]
-        public void NewPipeline_DoesNotSupport_SubqueryCorrelatedToLeftInOuterJoinCondition()
-        {
-            // A subquery in a non-inner join's ON is pushed onto the join's right input, so it
-            // can only see the right's columns. One correlated to the left side (here e.EmployeeID)
-            // has no in-scope slot there, so it is rejected.
-            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID)";
-
-            Assert.Throws<NotSupportedException>(() => RunNewPipeline(text));
-        }
-
-        [Fact]
         public void NewPipeline_ThrowsForMultiRowScalarSubquery()
         {
-            // A scalar subquery that returns more than one row is a runtime error in
-            // both engines (the cardinality guard's assert fires).
+            // A scalar subquery that returns more than one row is a runtime error: the
+            // cardinality guard's assert fires, optimized or not.
             var text = "SELECT (SELECT e.City FROM Employees e) FROM Customers c";
 
-            Assert.Throws<InvalidOperationException>(() => RunExistingEngine(text));
+            Assert.Throws<InvalidOperationException>(() => RunUnoptimized(text));
             Assert.Throws<InvalidOperationException>(() => RunNewPipeline(text));
         }
 
@@ -253,22 +261,6 @@ namespace NQuery.Tests.Refactor.Emit
 
                 return rows;
             }
-        }
-
-        private static List<object[]> RunExistingEngine(string text)
-        {
-            using var reader = Query.Create(NorthwindDataContext.Instance, text).ExecuteReader();
-
-            var rows = new List<object[]>();
-            while (reader.Read())
-            {
-                var row = new object[reader.ColumnCount];
-                for (var i = 0; i < row.Length; i++)
-                    row[i] = reader[i];
-                rows.Add(row);
-            }
-
-            return rows;
         }
 
         private static BoundQuery Bind(string text)

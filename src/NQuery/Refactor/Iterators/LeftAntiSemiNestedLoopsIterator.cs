@@ -8,18 +8,23 @@ namespace NQuery.Refactor.Iterators
         private readonly Iterator _right;
         private readonly EmittedPredicate _predicate;
         private readonly EmittedPredicate _passthruPredicate;
-        private readonly CombinedRowBuffer _predicateRowBuffer;
+        private readonly RowBuffer _predicateRowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public LeftAntiSemiNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, EmittedPredicate passthruPredicate)
+        public LeftAntiSemiNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, EmittedPredicate passthruPredicate, RowBuffer? outer = null)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
             _passthruPredicate = passthruPredicate;
-            _predicateRowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+
+            // When correlated (inside an Apply), the outer buffer is prepended to the
+            // (left ++ right) buffer, matching the (outer ++ left ++ right) layout the
+            // predicate was compiled against.
+            var combined = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+            _predicateRowBuffer = outer is null ? combined : new CombinedRowBuffer(outer, combined);
         }
 
         public override RowBuffer RowBuffer

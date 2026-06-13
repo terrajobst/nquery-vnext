@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Refactor.Binding;
@@ -30,8 +31,10 @@ namespace NQuery.Refactor.Algebra
     // -- pushing those applies down until the right no longer depends on the left, turning them
     // into ordinary joins -- is a separate optimizer pass.
     //
-    // Limitation: a subquery inside a non-inner join's ON may only be correlated to the join's
-    // right side (or be uncorrelated); a left-correlated one throws (see AlgebrizeJoinTableReference).
+    // A subquery inside a non-inner join's ON correlated to the join's *left* can't be pushed
+    // onto the right input; it is lowered as a dependent join instead (see
+    // AlgebrizeJoinTableReference). A FULL OUTER JOIN has no single Apply form, so that case is
+    // expanded into two dependent-join branches and unioned (BuildDependentFullOuterJoin).
     internal sealed class Algebrizer
     {
         private readonly ValueSlotFactory _valueSlotFactory = new();
@@ -241,23 +244,28 @@ namespace NQuery.Refactor.Algebra
 
             // For an outer/semi join, hoisting the conjunct above the join would change which rows
             // are null-padded (or which pass the existence test), so the subquery must be evaluated
-            // as part of the join condition. Push its Apply onto the right input -- the subquery
-            // slots then become columns of the right, and the join condition (which keeps the
-            // subquery-bearing conjunct) references them. This is only valid when the subquery is
-            // correlated to the right (or uncorrelated): a subquery correlated to the join's left
-            // can't see the left's slots from inside the right subtree, so it is rejected.
-            EnsureSubqueriesNotCorrelatedToLeft(joinLeft, applies);
+            // as part of the join condition. When it is correlated only to the right (or
+            // uncorrelated), push its Apply onto the right input -- the subquery slots become
+            // columns of the right that the (retained) join condition references, and the join
+            // stays a plain LogicalJoin (hash-match eligible, decorrelated the usual way).
+            if (!IsCorrelatedToLeft(joinLeft, applies))
+            {
+                joinRight = WrapInApplies(joinRight, applies);
+                var conditions = joinConditions.Concat(subqueryConditions).ToImmutableArray();
+                return new LogicalJoin(joinKind, joinLeft, joinRight, conditions, probe: null, passthruPredicate: null);
+            }
 
-            joinRight = WrapInApplies(joinRight, applies);
-            var conditions = joinConditions.Concat(subqueryConditions).ToImmutableArray();
-            return new LogicalJoin(joinKind, joinLeft, joinRight, conditions, probe: null, passthruPredicate: null);
+            // The subquery is correlated to the join's left, which the right-side push can't
+            // satisfy (the left's slots aren't in scope inside the right subtree). Lower the whole
+            // join as a dependent join instead.
+            return BuildDependentJoin(joinKind, joinLeft, joinRight, joinConditions, subqueryConditions, applies);
         }
 
-        // A subquery's Apply can only be pushed onto a join's right input if the subquery doesn't
-        // reference the join's left columns; otherwise those slots wouldn't be in scope inside the
-        // right subtree. (Inner joins sidestep this by hoisting the Apply above the join, where both
-        // sides are in scope.)
-        private static void EnsureSubqueriesNotCorrelatedToLeft(LogicalOperator joinLeft, List<PendingApply> applies)
+        // Whether any subquery Apply references the join's left columns -- i.e. the subquery is
+        // correlated to the left. (An Apply pushed onto the right can satisfy a correlation to the
+        // right or none at all, but not one to the left; inner joins sidestep this entirely by
+        // hoisting the Apply above the join, where both sides are in scope.)
+        private static bool IsCorrelatedToLeft(LogicalOperator joinLeft, List<PendingApply> applies)
         {
             foreach (var apply in applies)
             {
@@ -266,8 +274,86 @@ namespace NQuery.Refactor.Algebra
                     referenced.UnionWith(LogicalSlotReferenceFinder.FindReferencedSlots(apply.Passthru));
 
                 if (referenced.Overlaps(joinLeft.DefinedValueSlots))
-                    throw new NotSupportedException("A subquery inside a non-inner join's ON condition may only be correlated to the join's right side.");
+                    return true;
             }
+
+            return false;
+        }
+
+        // Lowers an outer/semi join whose ON subquery is correlated to the left as a dependent
+        // join: an Apply of the join's kind whose Left is joinLeft -- exposing the left to the
+        // *entire* right subtree -- and whose Right is the right input carrying the subquery
+        // Applies under a Filter of the full join condition. The outer Apply exposes the left, the
+        // inner Applies expose the right, so a subquery correlated to either side resolves. The
+        // Apply has no condition of its own (the correlation lives in the right subtree's Filter),
+        // matching the physical nested-loops contract. ApplyPushdown decorrelates this where it
+        // can; otherwise it runs as correlated nested loops (the legacy engine's behavior for this
+        // shape). For LeftSemi/LeftAntiSemi the Apply's probe is null so it *filters* the left rows
+        // (the join's own semantics), while each inner EXISTS Apply keeps its own probe.
+        private static LogicalOperator BuildDependentJoin(LogicalJoinKind joinKind, LogicalOperator joinLeft, LogicalOperator joinRight, List<LogicalExpression> joinConditions, List<LogicalExpression> subqueryConditions, List<PendingApply> applies)
+        {
+            // FULL OUTER has no single Apply form, so it is expanded into two dependent-join
+            // branches and unioned (see below).
+            if (joinKind == LogicalJoinKind.FullOuter)
+                return BuildDependentFullOuterJoin(joinLeft, joinRight, joinConditions, subqueryConditions, applies);
+
+            var applyKind = MapJoinToApplyKind(joinKind);
+            var rightWithApplies = WrapInApplies(joinRight, applies);
+            var conditions = joinConditions.Concat(subqueryConditions).ToImmutableArray();
+            var filteredRight = new LogicalFilter(rightWithApplies, conditions);
+            return new LogicalApply(applyKind, joinLeft, filteredRight, probe: null);
+        }
+
+        // A FULL OUTER JOIN whose ON subquery is correlated to the left has no single Apply form
+        // (an Apply keeps every left row but never synthesizes the unmatched right rows a full
+        // outer needs). Expand it -- as the planner does for an ordinary full outer -- into
+        //
+        //   (L LEFT OUTER JOIN R ON c)
+        //   UNION ALL
+        //   (project (NULL-as-L, R) over (R LEFT ANTI SEMI JOIN L ON c))
+        //
+        // but build each branch with the dependent-join lowering so the correlated subquery
+        // resolves. In branch 2, R is the preserved side and L the inner one, so the subquery
+        // (correlated to L) is now correlated to the anti-semi's right -- handled the same way.
+        // Each branch is cloned into its own slot space so the two are disjoint, which lets the
+        // union redefine the join's original output slots by unifying them column by column.
+        private static LogicalOperator BuildDependentFullOuterJoin(LogicalOperator joinLeft, LogicalOperator joinRight, List<LogicalExpression> joinConditions, List<LogicalExpression> subqueryConditions, List<PendingApply> applies)
+        {
+            var outputs = joinLeft.OutputValueSlots.Concat(joinRight.OutputValueSlots).ToImmutableArray();
+
+            // Branch 1: L LEFT OUTER JOIN R, projected down to (L ++ R) -- the dependent join also
+            // exposes the EXISTS probe columns, which branch 2 lacks, so they are dropped to keep
+            // the two branches' columns aligned for the union.
+            var leftOuter = BuildDependentJoin(LogicalJoinKind.LeftOuter, joinLeft, joinRight, joinConditions, subqueryConditions, applies);
+            var branch1 = (LogicalProject)new LogicalOperatorCloner().Clone(new LogicalProject(leftOuter, outputs));
+
+            // Branch 2: the right rows with no matching left, the left columns padded with NULL.
+            var antiSemi = BuildDependentJoin(LogicalJoinKind.LeftAntiSemi, joinRight, joinLeft, joinConditions, subqueryConditions, applies);
+            var nullSlots = joinLeft.OutputValueSlots.Select(s => s.Duplicate()).ToImmutableArray();
+            var nullValues = nullSlots.Select(s => new LogicalComputedValue(new LogicalLiteralExpression(null), s)).ToImmutableArray();
+            var compute = new LogicalCompute(antiSemi, nullValues);
+            var branch2Project = new LogicalProject(compute, nullSlots.Concat(joinRight.OutputValueSlots).ToImmutableArray());
+            var branch2 = (LogicalProject)new LogicalOperatorCloner().Clone(branch2Project);
+
+            var firstOutputs = branch1.OutputValueSlots;
+            var secondOutputs = branch2.OutputValueSlots;
+            var unifiedValues = Enumerable.Range(0, outputs.Length)
+                                          .Select(i => new LogicalUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
+                                          .ToImmutableArray();
+
+            return new LogicalUnion(isUnionAll: true, ImmutableArray.Create<LogicalOperator>(branch1, branch2), unifiedValues, ImmutableArray<IComparer>.Empty);
+        }
+
+        // The Apply kind an outer/semi join lowers to.
+        private static LogicalApplyKind MapJoinToApplyKind(LogicalJoinKind joinKind)
+        {
+            return joinKind switch
+            {
+                LogicalJoinKind.LeftOuter => LogicalApplyKind.LeftOuter,
+                LogicalJoinKind.LeftSemi => LogicalApplyKind.LeftSemi,
+                LogicalJoinKind.LeftAntiSemi => LogicalApplyKind.LeftAntiSemi,
+                _ => throw ExceptionBuilder.UnexpectedValue(joinKind)
+            };
         }
 
         private LogicalOperator AlgebrizeUnionQuery(BoundUnionQuery node)

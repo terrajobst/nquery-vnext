@@ -30,7 +30,7 @@ namespace NQuery.Refactor.Emit
         private readonly EmittedPredicate _predicate;
         private readonly EmittedPredicate _passthruPredicate;
 
-        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, PhysicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
+        public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, PhysicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences, ImmutableArray<ValueSlot> outerSlots)
             : base(outputValueSlots)
         {
             _left = left;
@@ -43,11 +43,15 @@ namespace NQuery.Refactor.Emit
             // left's output (which is the left iterator's row-buffer layout).
             _outerReferenceIndices = outerReferences.Select(s => left.OutputValueSlots.IndexOf(s)).ToImmutableArray();
 
-            // The predicates see both sides, so compile them against the combined slot
-            // layout; that is exactly the order of the CombinedRowBuffer the iterators
-            // feed them at run time.
+            // The predicates see both sides, and -- when this join is inside an Apply -- the
+            // ambient outer scope ahead of them, so a join condition can reference an outer slot
+            // (correlation on the join itself, just like a correlated Filter). Compile against
+            // (outer ++ left ++ right), which is exactly the order the iterators feed at run time
+            // (the outer buffer prepended to the CombinedRowBuffer). outerSlots is empty iff no
+            // Apply encloses this join, in which case the layout is just (left ++ right).
             var combined = left.OutputValueSlots.AddRange(right.OutputValueSlots);
-            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(combined);
+            var predicateSlots = outerSlots.IsEmpty ? combined : outerSlots.AddRange(combined);
+            var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(predicateSlots);
             _predicate = CompileConjunction(conditions, slotIndices);
             _passthruPredicate = passthruPredicate is null
                 ? AlwaysFalse
@@ -74,15 +78,15 @@ namespace NQuery.Refactor.Emit
             switch (_joinKind)
             {
                 case PhysicalJoinKind.Inner:
-                    return new InnerNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
+                    return new InnerNestedLoopsIterator(left, right, _predicate, _passthruPredicate, outer);
                 case PhysicalJoinKind.LeftOuter:
-                    return new LeftOuterNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
+                    return new LeftOuterNestedLoopsIterator(left, right, _predicate, _passthruPredicate, outer);
                 case PhysicalJoinKind.LeftSemi:
                     return _probe is null
-                        ? new LeftSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate)
-                        : new ProbingLeftSemiNestedLoopsIterator(left, right, _predicate);
+                        ? new LeftSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate, outer)
+                        : new ProbingLeftSemiNestedLoopsIterator(left, right, _predicate, outer);
                 case PhysicalJoinKind.LeftAntiSemi:
-                    return new LeftAntiSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate);
+                    return new LeftAntiSemiNestedLoopsIterator(left, right, _predicate, _passthruPredicate, outer);
                 default:
                     throw ExceptionBuilder.UnexpectedValue(_joinKind);
             }

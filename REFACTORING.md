@@ -1,5 +1,9 @@
 # NQuery Major Refactoring
 
+* I don't think bare expressions work -- I believe they only go through the
+  legacy path
+* Double check that Query goes through either path, depending on `BASELINE`
+
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).
@@ -37,6 +41,8 @@ hash-vs-loops is structural (equi-key present), not cost-based.
 * Add SQL's `VALUE()` constructor and use LogicalConstant
 * Merge ComputeScalar() nodes
 * Detect Filters/Join condition that are always false
+* Add `CROSS APPLY` and `OUTER APPLY`
+  - Allows us to increase test coverage
 
 ## Increase test coverage:
 
@@ -105,11 +111,23 @@ hash-vs-loops is structural (equi-key present), not cost-based.
   the join (that would change outer-join null-padding / existence semantics), so the
   subquery-bearing conjunct stays on the join and its Apply is pushed onto the join's
   right input instead -- the subquery slots become columns of the right, which the
-  condition references. That is only sound when the subquery is correlated to the right
-  (or uncorrelated); one correlated to the join's left can't see the left's slots from
-  inside the right subtree and throws NotSupportedException. A bound join's Probe/PassthruPredicate are always null here
-  (the binder never sets them; only the legacy SubqueryExpander does), so a bound-tree
-  passthru can't arise — the algebrizer just asserts that invariant.
+  condition references. That works when the subquery is correlated to the right (or
+  uncorrelated). One correlated to the join's left can't see the left's slots from inside
+  the right subtree, so that case is lowered differently: the whole join becomes a
+  dependent join -- an Apply of the join's kind whose left is the join's left (exposing it
+  to the entire right subtree) and whose right is the right input with the subquery Applies
+  under a Filter of the full join condition. ApplyPushdown decorrelates this where it can,
+  else it runs as correlated nested loops (the legacy engine's behavior). A subquery
+  correlated to *both* sides decorrelates into a join condition that references an outer
+  slot; the nested-loops emitter now compiles such conditions against the (outer ++ left ++
+  right) layout (see the "correlation on a join condition" note below), so this works too. A
+  FULL OUTER JOIN has no single Apply form (an Apply keeps every left row but never
+  synthesizes the unmatched right rows), so a left-correlated subquery in a FULL OUTER ON is
+  expanded into (L LEFT OUTER JOIN R) UNION ALL (project NULL-as-L over (R LEFT ANTI SEMI L)),
+  each branch built as a dependent join and cloned into its own slot space -- mirroring the
+  planner's ordinary full-outer expansion. A bound join's Probe/PassthruPredicate are always
+  null here (the binder never sets them; only the legacy SubqueryExpander does), so a
+  bound-tree passthru can't arise — the algebrizer just asserts that invariant.
 - CASE short-circuiting is honored: a subquery in a THEN/ELSE branch is evaluated only
   when that branch is selected. The algebrizer threads a passthru guard (the condition
   under which a branch isn't taken) through CASE branches and stamps it onto the Apply
@@ -156,14 +174,14 @@ hash-vs-loops is structural (equi-key present), not cost-based.
   aggregate (EmittedStreamAggregateIterator), and a concatenation
   (EmittedConcatenationIterator) are ported; the legacy NQuery.Iterators also has a table
   spool, deliberately not ported yet — it needs the compile-once treatment, not a copy.
-- ExecutableNestedLoops compiles its predicates against the combined (left ++
-  right) slot map via CreateSlotIndices. A dependent (apply) nested loops uses the
-  same combined-buffer trick for correlation — its right subtree's filters/computes
-  compile against (outer ++ input) and read an outer buffer threaded through
-  CreateIterator.
-- No spool/rewind iterator for correlated Apply (naive re-scan only). Join
-  predicates that reference outer slots (correlation on a join, not a filter) are
-  not handled — decorrelation routes correlation through filters.
+- ExecutableNestedLoops compiles its predicates against the (outer ++ left ++ right)
+  slot map via CreateSlotIndices — outer is the ambient Apply scope (empty for an
+  uncorrelated join). A join condition can therefore reference an outer slot
+  (correlation on the join itself, not just inside its right subtree's filters); the
+  iterators prepend the outer buffer to their (left ++ right) CombinedRowBuffer when
+  evaluating the predicate, exactly as EmittedFilterIterator does. A dependent (apply)
+  nested loops additionally exposes its own left to the right subtree.
+- No spool/rewind iterator for correlated Apply (naive re-scan only).
 
 ### Cross-cutting
 

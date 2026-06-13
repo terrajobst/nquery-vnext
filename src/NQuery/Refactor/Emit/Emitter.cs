@@ -122,7 +122,7 @@ namespace NQuery.Refactor.Emit
                 ? outerSlots
                 : outerSlots.AddRange(node.OuterReferences);
             var right = EmitOperator(node.Right, rightOuterSlots);
-            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.OuterReferences);
+            return new ExecutableNestedLoops(node.OutputValueSlots, left, right, node.JoinKind, node.Conditions, node.Probe, node.PassthruPredicate, node.OuterReferences, outerSlots);
         }
 
         private static ExecutableOperator EmitHashMatch(PhysicalHashMatch node, ImmutableArray<ValueSlot> outerSlots)

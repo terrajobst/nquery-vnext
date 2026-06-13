@@ -111,13 +111,40 @@ namespace NQuery.Tests.Refactor.Algebra
         }
 
         [Fact]
-        public void Algebrizer_Throws_ForOuterJoinConditionSubqueryCorrelatedToLeft()
+        public void Algebrizer_LowersAsDependentJoin_ForOuterJoinConditionSubqueryCorrelatedToLeft()
         {
             // Pushing the Apply onto the right can't satisfy a correlation to the join's left
-            // (here e.EmployeeID), so the algebrizer rejects it.
+            // (here e.EmployeeID), so the whole join is lowered as a dependent join: a LeftOuter
+            // Apply whose left is Employees and whose right (the Orders side + subquery + condition)
+            // is correlated back to it. There is no plain LogicalJoin for this shape.
             var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e LEFT JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID)";
+            var logicalQuery = Algebrizer.Algebrize(Bind(text));
 
-            Assert.Throws<NotSupportedException>(() => Algebrizer.Algebrize(Bind(text)));
+            var outerApply = logicalQuery.Root.DescendantsAndSelf()
+                                         .OfType<LogicalApply>()
+                                         .First(a => a.Left is LogicalTableScan { TableInstance.Table.Name: "Employees" });
+            Assert.Equal(LogicalApplyKind.LeftOuter, outerApply.ApplyKind);
+
+            // The left (Employees) is referenced from inside the apply's right subtree -- that
+            // correlation is exactly what couldn't be satisfied by a right-side push.
+            Assert.NotEmpty(outerApply.OuterReferences);
+        }
+
+        [Fact]
+        public void Algebrizer_ExpandsToUnion_ForFullOuterJoinConditionSubqueryCorrelatedToLeft()
+        {
+            // FULL OUTER has no single Apply form, so a left-correlated subquery in its ON is
+            // expanded into (LEFT OUTER) UNION ALL (right-anti-semi), each branch built as a
+            // dependent join. There is no LogicalJoin with FullOuter kind left in the tree.
+            var text = "SELECT e.EmployeeID, o.OrderID FROM Employees e FULL JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID)";
+            var logicalQuery = Algebrizer.Algebrize(Bind(text));
+
+            var nodes = logicalQuery.Root.DescendantsAndSelf().ToArray();
+            Assert.Contains(nodes, o => o is LogicalUnion { IsUnionAll: true });
+            Assert.DoesNotContain(nodes, o => o is LogicalJoin { JoinKind: LogicalJoinKind.FullOuter });
+            // Both an outer and an anti-semi dependent join (one per branch).
+            Assert.Contains(nodes, o => o is LogicalApply { ApplyKind: LogicalApplyKind.LeftOuter });
+            Assert.Contains(nodes, o => o is LogicalApply { ApplyKind: LogicalApplyKind.LeftAntiSemi });
         }
 
         [Fact]
