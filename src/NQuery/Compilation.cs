@@ -24,7 +24,13 @@ namespace NQuery
 
         public SemanticModel GetSemanticModel()
         {
+#if BASELINE
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
+#else
+            // Authoring/IDE features bind through the new pipeline's fork of the binder so the
+            // SemanticModel reflects the engine that actually compiles the query.
+            var bindingResult = Refactor.Binding.Binder.Bind(SyntaxTree.Root, DataContext);
+#endif
             return new SemanticModel(this, bindingResult);
         }
 

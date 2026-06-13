@@ -1,6 +1,17 @@
-﻿using NQuery.Binding;
-using NQuery.Symbols;
+﻿using NQuery.Symbols;
 using NQuery.Syntax;
+
+#if BASELINE
+using NQuery.Binding;
+#else
+// The new pipeline forks the binder into NQuery.Refactor.Binding. Its bound tree has the
+// same shape and member names the SemanticModel reads, so swapping the namespace is enough
+// -- except for a few table-reference types the new binder renamed, bridged via aliases.
+using NQuery.Refactor.Binding;
+using BoundRelation = NQuery.Refactor.Binding.BoundTableReference;
+using BoundTableRelation = NQuery.Refactor.Binding.BoundNamedTableReference;
+using BoundDerivedTableRelation = NQuery.Refactor.Binding.BoundDerivedTableReference;
+#endif
 
 namespace NQuery
 {

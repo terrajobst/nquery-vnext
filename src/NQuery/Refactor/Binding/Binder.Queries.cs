@@ -746,7 +746,7 @@ namespace NQuery.Refactor.Binding
 
         private BoundQuery BindCommonTableExpressionRecursiveMember(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, QuerySyntax recursiveMember)
         {
-            var boundAnchorQuery = symbol.Anchor;
+            var boundAnchorQuery = symbol.AnchorRefactor;
             var name = commonTableExpression.Name;
             var diagnosticSpan = name.Span;
             var boundRecursiveMember = BindQuery(recursiveMember);

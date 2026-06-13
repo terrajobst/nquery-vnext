@@ -33,12 +33,6 @@ EXISTS/NOT EXISTS still runs as (probing) nested loops.
 
 Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
-5.  SemanticModel is still legacy-only.
-
-GetSemanticModel (and thus all authoring/IDE features) still uses the
-legacy NQuery.Binding.Binder — the Refactor.Binding.Binder is a fork used solely
-for compilation.
-
 ## Documentation
 
 I'd like to have an architecture document that covers
