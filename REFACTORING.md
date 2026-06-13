@@ -28,22 +28,6 @@ hash-vs-loops is structural (equi-key present), not cost-based.
 
 Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
-## Documentation
-
-I'd like to have an architecture document that covers
-
-* Query Pipeline
-  - Overview
-  - Lexing/Parsing
-  - Binding
-  - Algebrization
-  - Optimization (with rules)
-  - Planner
-  - Executable
-  - Iterators
-* Authoring
-* Authoring VS
-* Authoring Actipro
 
 ## Increase test coverage:
 
