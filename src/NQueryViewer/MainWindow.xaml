@@ -51,6 +51,13 @@
                 <MenuItem x:Name="ToolsGenerateParserTestMenuItem"
                           Header="Generate _Parser Tests to clipboard"
                           Click="ToolsGenerateParserTestMenuItem_OnClick" />
+                <Separator />
+                <MenuItem x:Name="ToolsCopyShowPlanMenuItem"
+                          Header="Copy Show _Plan"
+                          Click="ToolsCopyShowPlanMenuItem_OnClick" />
+                <MenuItem x:Name="ToolsCopyQueryAndPlansMenuItem"
+                          Header="Copy _Query and Plans"
+                          Click="ToolsCopyQueryAndPlansMenuItem_OnClick" />
             </MenuItem>
         </Menu>
         <Grid Grid.Row="1">

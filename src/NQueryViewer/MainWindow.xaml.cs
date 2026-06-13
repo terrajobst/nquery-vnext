@@ -2,6 +2,7 @@
 using System.ComponentModel.Composition;
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -353,6 +354,89 @@ namespace NQueryViewer
         {
             if (SyntaxTreeVisualizer.IsKeyboardFocusWithin)
                 UpdateSelectedText();
+        }
+
+        private void ToolsCopyShowPlanMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ShowPlanComboBox.SelectedItem is not ShowPlan showPlan)
+                return;
+
+            var text = FormatShowPlan(showPlan.Root);
+            Clipboard.SetText(text);
+        }
+
+        private async void ToolsCopyQueryAndPlansMenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (CurrentEditorView is null)
+                return;
+
+            var document = CurrentEditorView.Workspace.CurrentDocument;
+            var queryText = document.Text.GetText();
+            var semanticModel = await document.GetSemanticModelAsync();
+            if (semanticModel is null)
+                return;
+
+            var steps = semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
+            if (steps.Length < 2)
+                return;
+
+            var unoptimizedStep = steps.First();
+            var physicalStep = steps.Last();
+
+            var sb = new StringBuilder();
+            sb.AppendLine(queryText);
+            sb.AppendLine();
+            sb.AppendLine("-- Unoptimized");
+            sb.AppendLine();
+            sb.Append(FormatShowPlan(unoptimizedStep.Root));
+            sb.AppendLine();
+            sb.AppendLine("-- Physical");
+            sb.AppendLine();
+            sb.Append(FormatShowPlan(physicalStep.Root));
+
+            Clipboard.SetText(sb.ToString());
+        }
+
+        private static string FormatShowPlan(ShowPlanNode node)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(node.OperatorName);
+            FormatShowPlanItems(sb, node.Properties, node.Children, "");
+            return sb.ToString();
+        }
+
+        private static void FormatShowPlanItems(StringBuilder sb, ImmutableArray<KeyValuePair<string, string>> properties, ImmutableArray<ShowPlanNode> children, string prefix)
+        {
+            var propertyCount = properties.Length;
+            var childCount = children.Length;
+            var total = propertyCount + childCount;
+            var index = 0;
+
+            foreach (var property in properties)
+            {
+                var isLast = ++index == total;
+                var branch = isLast ? "└── " : "├── ";
+                var childPrefix = isLast ? "    " : "│   ";
+
+                sb.Append(prefix);
+                sb.Append(branch);
+                sb.Append(property.Key);
+                sb.Append(": ");
+                sb.AppendLine(property.Value);
+            }
+
+            foreach (var child in children)
+            {
+                var isLast = ++index == total;
+                var branch = isLast ? "└── " : "├── ";
+                var childPrefix = isLast ? "    " : "│   ";
+
+                sb.Append(prefix);
+                sb.Append(branch);
+                sb.AppendLine(child.OperatorName);
+
+                FormatShowPlanItems(sb, child.Properties, child.Children, prefix + childPrefix);
+            }
         }
 
         private void TabControlOnSelectionChanged(object sender, SelectionChangedEventArgs e)
