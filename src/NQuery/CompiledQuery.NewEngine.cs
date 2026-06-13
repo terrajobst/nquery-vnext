@@ -8,10 +8,10 @@ using NQuery.Symbols;
 
 namespace NQuery
 {
-    // New engine: a top-level query is an emitted ExecutablePlan. An instance can instead
-    // be backed by the legacy _query (base ctor) when Compilation falls back to the legacy
-    // engine for a bare expression -- in that case it is only used via CreateExpressionEvaluator,
-    // never CreateReader, so BuildIterator is unreachable for it.
+    // New engine: every compilation -- top-level query and bare expression alike -- is an
+    // emitted ExecutablePlan. (A bare expression is wrapped in a one-row projection by the
+    // algebrizer, so it plans and emits like any other query.) The legacy _query field stays
+    // null in this build; the legacy-backed ctor is used only by the BASELINE build.
     public sealed partial class CompiledQuery
     {
         private readonly ExecutablePlan _plan;
@@ -21,14 +21,10 @@ namespace NQuery
             _plan = plan;
         }
 
-        private ImmutableArray<QueryColumnInstanceSymbol> OutputColumns =>
-            _plan is not null ? _plan.OutputColumns : _query.OutputColumns;
+        private ImmutableArray<QueryColumnInstanceSymbol> OutputColumns => _plan.OutputColumns;
 
         private Iterator BuildIterator()
         {
-            if (_plan is null)
-                throw new InvalidOperationException("This compiled query is expression-backed; use CreateExpressionEvaluator.");
-
             return _plan.CreateIterator();
         }
     }

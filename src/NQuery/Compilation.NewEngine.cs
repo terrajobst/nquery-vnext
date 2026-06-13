@@ -6,7 +6,6 @@ using NQuery.Planning;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Emit;
 using NQuery.Refactor.Optimization;
-using NQuery.Syntax;
 
 namespace NQuery
 {
@@ -18,13 +17,6 @@ namespace NQuery
     {
         private CompiledQuery CompileNewEngine()
         {
-            // The new pipeline only handles top-level queries. Bare expressions
-            // (Expression<T>, e.g. aggregate type resolution) keep using the legacy
-            // engine -- its binder/diagnostics are what callers like the aggregate
-            // definitions depend on.
-            if (SyntaxTree.Root.Root is not QuerySyntax)
-                return CompileLegacy();
-
             var bindingResult = Refactor.Binding.Binder.Bind(SyntaxTree.Root, DataContext);
 
             var diagnostics = SyntaxTree.GetDiagnostics()
@@ -33,8 +25,17 @@ namespace NQuery
             if (diagnostics.Any())
                 throw new CompilationException(diagnostics);
 
-            var boundQuery = (Refactor.Binding.BoundQuery)bindingResult.BoundRoot;
-            var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(boundQuery), DataContext);
+            // A top-level query binds to a BoundQuery; a bare expression (Expression<T>, e.g.
+            // aggregate type resolution) binds to a BoundExpression. The algebrizer wraps the
+            // latter in a one-row projection so both feed the same Optimize/Plan/Emit pipeline.
+            var logicalQuery = bindingResult.BoundRoot switch
+            {
+                Refactor.Binding.BoundQuery boundQuery => Algebrizer.Algebrize(boundQuery),
+                Refactor.Binding.BoundExpression boundExpression => Algebrizer.Algebrize(boundExpression),
+                _ => throw ExceptionBuilder.UnexpectedValue(bindingResult.BoundRoot)
+            };
+
+            logicalQuery = LogicalOptimizer.Optimize(logicalQuery, DataContext);
             var physicalQuery = Planner.Plan(logicalQuery);
             var plan = Emitter.Emit(physicalQuery);
 

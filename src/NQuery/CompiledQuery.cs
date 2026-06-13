@@ -9,10 +9,11 @@ namespace NQuery
     // where the output columns come from (OutputColumns) differ per engine and live in
     // CompiledQuery.Baseline.cs / CompiledQuery.NewEngine.cs.
     //
-    // The legacy BoundQuery artifact is kept here because bare-expression compilation
-    // (Expression<T>, e.g. aggregate type resolution) always runs on the legacy engine in
-    // both builds -- the new pipeline only handles top-level queries. CreateExpressionEvaluator
-    // is therefore only ever reached for an expression-backed instance (where _query is set).
+    // The legacy BoundQuery artifact (_query) backs the BASELINE build, where it serves both
+    // queries and bare expressions (Expression<T>, e.g. aggregate type resolution). In the new
+    // build _query is always null -- bare expressions are wrapped into a query and emitted like
+    // any other, so CreateExpressionEvaluator runs over the plan (CreateExpression's trivial
+    // fast path is BASELINE-only).
     public sealed partial class CompiledQuery
     {
         private readonly BoundQuery _query;
@@ -41,10 +42,10 @@ namespace NQuery
         public ExpressionEvaluator CreateExpressionEvaluator()
         {
             // If the query is empty, just return null
-            if (_query.OutputColumns.Length == 0)
+            if (OutputColumns.Length == 0)
                 return new ExpressionEvaluator(typeof(object), () => null);
 
-            var expressionType = _query.OutputColumns.First().ValueSlot.Type;
+            var expressionType = OutputColumns[0].Type;
             var expression = CreateExpression();
             return new ExpressionEvaluator(expressionType, expression);
         }
@@ -61,8 +62,12 @@ namespace NQuery
             // Thus, let's first check whether the query is trivial, i.e. only contains
             // a compute node whose input is a constant relation. That means we can
             // just evaluate the expression being defined.
+            //
+            // This fast path only applies to the legacy, BoundQuery-backed instance. The
+            // new engine produces a plan-backed instance (_query is null) and always
+            // evaluates the expression by running its executable plan.
 
-            if (_query.Relation is BoundProjectRelation projectRelation)
+            if (_query?.Relation is BoundProjectRelation projectRelation)
             {
                 var computeRelation = projectRelation.Input as BoundComputeRelation;
                 if (computeRelation?.Input is BoundConstantRelation)

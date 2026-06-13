@@ -54,6 +54,32 @@ namespace NQuery.Refactor.Algebra
             return new LogicalQuery(root, query.OutputColumns);
         }
 
+        // A bare expression (Expression<T>) has no query around it. Wrap it the way the legacy
+        // pipeline did (Compilation.CreateBoundQuery): evaluate it as the single computed column
+        // of a one-row (constant) relation, then project that column. The resulting LogicalQuery
+        // flows through Optimize/Plan/Emit exactly like a FROM-less SELECT. A subquery in the
+        // expression is fine -- AlgebrizeCompute hoists its Apply above the constant.
+        public static LogicalQuery Algebrize(BoundExpression expression)
+        {
+            ArgumentNullException.ThrowIfNull(expression);
+
+            var algebrizer = new Algebrizer();
+            return algebrizer.AlgebrizeBareExpression(expression);
+        }
+
+        private LogicalQuery AlgebrizeBareExpression(BoundExpression expression)
+        {
+            var result = new BoundValue(@"result", expression.Type);
+            var computedValue = new BoundComputedValue(expression, result);
+
+            LogicalOperator input = new LogicalConstant();
+            input = AlgebrizeCompute(input, ImmutableArray.Create(computedValue));
+            input = new LogicalProject(input, ImmutableArray.Create(GetSlot(result)));
+
+            var outputColumn = new QueryColumnInstanceSymbol(result.Name, result);
+            return new LogicalQuery(input, ImmutableArray.Create(outputColumn));
+        }
+
         private LogicalOperator AlgebrizeQuery(BoundQuery node)
         {
             return node switch

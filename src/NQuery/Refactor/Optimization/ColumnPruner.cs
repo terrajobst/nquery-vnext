@@ -138,9 +138,15 @@ namespace NQuery.Refactor.Optimization
 
             private LogicalOperator RewriteProject(LogicalProject node)
             {
+                // A project whose outputs are all unused (e.g. the discarded right of a semi
+                // join) prunes to zero columns -- that's a valid relation, the same shape the
+                // Constant operator already emits (one row, no columns), so it still iterates.
                 var kept = node.Outputs.RemoveAll(s => !_used.Contains(s));
-                if (kept.IsEmpty)
-                    kept = node.Outputs;
+
+                // A project's outputs are references to its input's slots, so whatever we keep
+                // must stay live in the input below -- otherwise the input is pruned out from
+                // under it.
+                MarkUsed(kept);
 
                 var input = Rewrite(node.Input);
                 return input == node.Input && kept.Length == node.Outputs.Length

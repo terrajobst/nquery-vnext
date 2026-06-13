@@ -44,8 +44,7 @@ Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
 7. Bare expressions (Expression<T>, e.g. aggregate type resolution)
 
-CompileNewEngine falls back to CompileLegacy; the new engine only handles
-top-level QuerySyntax.
+Done.
 
 8. ShowPlan is legacy-only.
 
@@ -58,6 +57,23 @@ tree.
 GetSemanticModel (and thus all authoring/IDE features) still uses the
 legacy NQuery.Binding.Binder — the Refactor.Binding.Binder is a fork used solely
 for compilation.
+
+## Documentation
+
+I'd like to have an architecture document that covers
+
+* Query Pipeline
+  - Overview
+  - Lexing/Parsing
+  - Binding
+  - Algebrization
+  - Optimization (with rules)
+  - Planner
+  - Executable
+  - Iterators
+* Authoring
+* Authoring VS
+* Authoring Actipro
 
 ## Increase test coverage:
 
@@ -112,6 +128,10 @@ for compilation.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
+* Fully split definitions and symbols
+  - Make DataContext only deal with definitions
+  - Simplify symbols
+  - Replace ErrorTableSymbol with a BoundErrorTable
 
 ## Missing
 
