@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Pure concatenation (UNION ALL): the inputs' rows in order. A plain UNION's
     // distinctness is a separate distinct sort the planner places above this node, so

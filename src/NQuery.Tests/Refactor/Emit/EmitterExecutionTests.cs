@@ -3,7 +3,7 @@ using NQuery.Refactor.Binding;
 using NQuery.Refactor.Emit;
 using NQuery.Refactor.Iterators;
 using NQuery.Refactor.Optimization;
-using NQuery.Planning;
+using NQuery.Refactor.Planning;
 
 namespace NQuery.Tests.Refactor.Emit
 {

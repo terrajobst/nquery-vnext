@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // The nested-loops realization of a logical join: for each outer (left) row it
     // rescans the inner (right). It is the general-purpose join algorithm -- it works

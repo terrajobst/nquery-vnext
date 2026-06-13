@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Base of the physical operator tree produced by the Planner (Logical ->
     // Physical). Same slot-flow as the logical layer -- planning chooses algorithms,

@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // The join kinds a nested-loops join can physically produce. This is a subset of
     // the logical LogicalJoinKind: FullOuter is absent, because nested loops cannot

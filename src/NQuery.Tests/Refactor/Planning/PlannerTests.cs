@@ -1,9 +1,9 @@
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Optimization;
-using NQuery.Planning;
+using NQuery.Refactor.Planning;
 
-namespace NQuery.Tests.Planning
+namespace NQuery.Tests.Refactor.Planning
 {
     public class PlannerTests
     {

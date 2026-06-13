@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 using NQuery.Refactor.Iterators;
-using NQuery.Planning;
+using NQuery.Refactor.Planning;
 
 namespace NQuery.Refactor.Emit
 {

@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Hash join over an equi-key (BuildKey == ProbeKey): the build input is hashed and
     // the probe input streamed against it. Remainder is the non-equi residual of the

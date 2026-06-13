@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Binding;
 using NQuery.Symbols;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     internal sealed class PhysicalTableScan : PhysicalOperator
     {

@@ -1,9 +1,5 @@
 # NQuery Major Refactoring
 
-* Planning should move to Refactor/Planning
-* Fix both NQuery and NQuery.Test
-* FIx namespaces
-
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).

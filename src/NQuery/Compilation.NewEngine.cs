@@ -2,10 +2,10 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Planning;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Emit;
 using NQuery.Refactor.Optimization;
+using NQuery.Refactor.Planning;
 
 namespace NQuery
 {

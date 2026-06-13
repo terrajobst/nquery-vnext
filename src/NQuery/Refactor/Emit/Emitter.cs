@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 using NQuery.Refactor.Binding;
-using NQuery.Planning;
+using NQuery.Refactor.Planning;
 using NQuery.Symbols;
 
 namespace NQuery.Refactor.Emit

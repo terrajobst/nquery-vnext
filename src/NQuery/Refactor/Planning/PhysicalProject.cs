@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     internal sealed class PhysicalProject : PhysicalOperator
     {

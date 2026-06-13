@@ -2,7 +2,7 @@
 
 using NQuery.Refactor.Algebra;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Builds a ShowPlanNode tree for the new pipeline's physical plan. The relational
     // operators differ from the logical layer (algorithm choices: nested loops vs hash

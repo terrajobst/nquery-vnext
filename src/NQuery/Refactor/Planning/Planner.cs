@@ -8,7 +8,7 @@ using NQuery.Refactor.Binding;
 using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
 using BinaryOperator = NQuery.Binding.BinaryOperator;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Translates the optimized logical algebra into a physical operator tree
     // (Logical -> Physical). Currently a one-to-one lowering: every join becomes

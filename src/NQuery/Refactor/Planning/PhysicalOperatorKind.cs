@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     internal enum PhysicalOperatorKind
     {

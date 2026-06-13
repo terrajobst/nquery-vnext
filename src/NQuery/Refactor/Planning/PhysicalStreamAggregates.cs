@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Aggregation as a stream aggregate: it consumes input the planner has sorted on
     // the grouping columns and collapses each run of equal-group rows. Choosing a hash

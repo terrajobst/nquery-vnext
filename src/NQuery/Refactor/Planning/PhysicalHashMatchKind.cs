@@ -1,6 +1,6 @@
 #nullable enable
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // The join kinds a hash match can produce. Inner and left outer, and -- unlike
     // nested loops -- full outer, since a hash match sees all of both inputs in one

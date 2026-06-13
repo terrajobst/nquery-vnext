@@ -5,11 +5,11 @@ using System.Collections.Immutable;
 
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
-    internal sealed class PhysicalEmpty : PhysicalOperator
+    internal sealed class PhysicalConstant : PhysicalOperator
     {
-        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Empty;
+        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Constant;
 
         protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
 

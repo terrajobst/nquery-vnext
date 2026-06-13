@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
 
-namespace NQuery.Planning
+namespace NQuery.Refactor.Planning
 {
     // Passes its input through unchanged, raising an error on any row that fails the
     // condition. It guards a scalar subquery's at-most-one-row rule (the condition is
