@@ -69,6 +69,18 @@ namespace NQuery
 
         public IEnumerable<ShowPlan> GetShowPlanSteps()
         {
+#if BASELINE
+            return GetShowPlanStepsLegacy();
+#else
+            // The new-pipeline show plan lives in Compilation.NewEngine.cs, mirroring Compile().
+            return GetShowPlanStepsNewEngine();
+#endif
+        }
+
+        // The legacy show plan: legacy bind -> optimize, rendering the BoundRelation tree at
+        // each optimization step. Used by the baseline build.
+        private IEnumerable<ShowPlan> GetShowPlanStepsLegacy()
+        {
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
 
             if (GetDiagnostics(bindingResult).Any())

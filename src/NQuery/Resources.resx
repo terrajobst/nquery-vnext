@@ -747,6 +747,9 @@
   <data name="ShowPlanOptimized" xml:space="preserve">
     <value>Optimized</value>
   </data>
+  <data name="ShowPlanPhysical" xml:space="preserve">
+    <value>Physical</value>
+  </data>
   <data name="SeparatedSyntaxListInvalidSequence" xml:space="preserve">
     <value>The sequence of nodes and tokens is invalid.</value>
   </data>

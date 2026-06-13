@@ -95,6 +95,38 @@ namespace NQuery.Refactor.Optimization
             return type.IsComparable() ? Comparer.Default : null;
         }
 
+        // The per-pass replay used by ShowPlan: like Optimize, but it yields the tree (and
+        // the pass that produced it) after each pass that actually changed it. It mirrors
+        // RunBatch's batching but, unlike compilation, does not assert convergence -- a
+        // non-idempotent pass would simply produce the per-iteration steps up to the cap.
+        public static IEnumerable<(string Name, LogicalOperator Root)> GetOptimizationSteps(LogicalOperator root, DataContext dataContext)
+        {
+            ArgumentNullException.ThrowIfNull(root);
+            ArgumentNullException.ThrowIfNull(dataContext);
+
+            foreach (var batch in BuildBatches(dataContext))
+            {
+                var iterations = batch.Strategy == BatchStrategy.Once ? 1 : MaxIterations;
+
+                for (var iteration = 0; iteration < iterations; iteration++)
+                {
+                    var before = root;
+
+                    foreach (var pass in batch.Passes)
+                    {
+                        var rewritten = pass.RewriteRelation(root);
+                        if (!ReferenceEquals(rewritten, root))
+                            yield return (pass.GetType().Name, rewritten);
+
+                        root = rewritten;
+                    }
+
+                    if (ReferenceEquals(root, before))
+                        break;
+                }
+            }
+        }
+
         private static LogicalOperator RunBatch(Batch batch, LogicalOperator root)
         {
             if (batch.Strategy == BatchStrategy.Once)

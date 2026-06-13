@@ -1607,7 +1607,16 @@ namespace NQuery {
                 return ResourceManager.GetString("ShowPlanOptimized", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Physical.
+        /// </summary>
+        internal static string ShowPlanPhysical {
+            get {
+                return ResourceManager.GetString("ShowPlanPhysical", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to ASC.
         /// </summary>

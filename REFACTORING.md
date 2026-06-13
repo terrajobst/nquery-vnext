@@ -18,41 +18,22 @@ execution; no evaluation test drives a CTE through the new engine.
   (the recursive-CTE execution machinery) have no Emitted* counterparts.
 - Recursive CTEs are therefore unsupported end-to-end.
 
-2. Incomplete decorrelation
-
-Mostly done, some TODO markers are left. But those extend past what the old
-engine did.
-
-3. Optimizer passes with no new equivalent
-
-Done
-
-4. No cost model / cardinality estimation.
+2. No cost model / cardinality estimation.
 
 CardinalityEstimator / CardinalityEstimate aren't ported. Planner is a
 one-to-one lowering: hash-match build side is always the join's left, and
 hash-vs-loops is structural (equi-key present), not cost-based.
 
-5. Hash match for semi/anti joins.
+3. Hash match for semi/anti joins.
 
 Planner.CanHashMatch only allows Inner/LeftOuter/FullOuter, so an equi
 EXISTS/NOT EXISTS still runs as (probing) nested loops.
 
-6. Subqueries inside a non-inner join's ON condition
+4. Subqueries inside a non-inner join's ON condition
 
 Algebrizer.AlgebrizeJoinTableReference throws NotSupportedException for these.
 
-7. Bare expressions (Expression<T>, e.g. aggregate type resolution)
-
-Done.
-
-8. ShowPlan is legacy-only.
-
-GetShowPlanSteps operate on the legacy BoundRelation tree
-via NQuery.Optimization; there's no show-plan over the new logical/physical
-tree.
-
-9.  SemanticModel is still legacy-only.
+5.  SemanticModel is still legacy-only.
 
 GetSemanticModel (and thus all authoring/IDE features) still uses the
 legacy NQuery.Binding.Binder — the Refactor.Binding.Binder is a fork used solely
@@ -203,7 +184,8 @@ I'd like to have an architecture document that covers
 - The whole new pipeline is parallel and test-only — Query/QueryReader still run
   on the old IteratorBuilder/ExpressionBuilder. Nothing public routes through
   it.
-- No ShowPlan/explain for physical or executable plans.
+- ShowPlan/explain covers the logical and physical trees (see item 8); there is no
+  ShowPlan over the emitted executable plan yet.
 - End-to-end execution (the differential test vs. the existing engine) currently
   covers scan, filter, compute, project, sort, top, nested-loops joins (inner,
   cross, left outer, probing semi via EXISTS / NOT EXISTS), correlated apply
