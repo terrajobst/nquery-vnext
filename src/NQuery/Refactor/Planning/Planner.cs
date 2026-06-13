@@ -2,6 +2,7 @@
 
 using System.Collections;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 using NQuery.Refactor.Algebra;
 using NQuery.Refactor.Binding;
@@ -344,7 +345,7 @@ namespace NQuery.Refactor.Planning
                 LogicalJoinKind.LeftOuter => PhysicalJoinKind.LeftOuter,
                 LogicalJoinKind.LeftSemi => PhysicalJoinKind.LeftSemi,
                 LogicalJoinKind.LeftAntiSemi => PhysicalJoinKind.LeftAntiSemi,
-                LogicalJoinKind.FullOuter => throw new NotSupportedException("FULL OUTER JOIN requires a hash match, which is not yet implemented."),
+                LogicalJoinKind.FullOuter => throw new UnreachableException("FULL OUTER JOIN has no nested-loops form; PlanNestedLoops expands or hash-matches it before reaching MapJoinKind."),
                 _ => throw ExceptionBuilder.UnexpectedValue(kind)
             };
         }
