@@ -1,13 +1,13 @@
 ﻿using NQuery.Symbols;
 using NQuery.Syntax;
 
-// The binder lives in NQuery.Refactor.Binding. Its bound tree has the same shape and member
+// The binder lives in NQuery.Binding. Its bound tree has the same shape and member
 // names the SemanticModel reads, except for a few table-reference types whose names differ,
 // bridged via aliases.
-using NQuery.Refactor.Binding;
-using BoundRelation = NQuery.Refactor.Binding.BoundTableReference;
-using BoundTableRelation = NQuery.Refactor.Binding.BoundNamedTableReference;
-using BoundDerivedTableRelation = NQuery.Refactor.Binding.BoundDerivedTableReference;
+using NQuery.Binding;
+using BoundRelation = NQuery.Binding.BoundTableReference;
+using BoundTableRelation = NQuery.Binding.BoundNamedTableReference;
+using BoundDerivedTableRelation = NQuery.Binding.BoundDerivedTableReference;
 
 namespace NQuery
 {

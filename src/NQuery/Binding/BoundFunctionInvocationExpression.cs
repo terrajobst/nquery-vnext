@@ -2,6 +2,8 @@ using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundFunctionInvocationExpression : BoundExpression
@@ -30,16 +32,6 @@ namespace NQuery.Binding
         public ImmutableArray<BoundExpression> Arguments { get; }
 
         public OverloadResolutionResult<FunctionSymbolSignature> Result { get; }
-
-        public BoundFunctionInvocationExpression Update(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
-        {
-            var newArguments = arguments.ToImmutableArray();
-
-            if (newArguments == Arguments && result == Result)
-                return this;
-
-            return new BoundFunctionInvocationExpression(newArguments, result);
-        }
 
         public override string ToString()
         {

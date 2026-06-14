@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 
-using NQuery.Refactor.Algebra;
-using NQuery.Refactor.Binding;
-using NQuery.Refactor.Optimization;
+using NQuery.Algebra;
+using NQuery.Binding;
+using NQuery.Optimization;
 
 namespace NQuery.Tests.Refactor.Optimization
 {

@@ -1,10 +1,10 @@
-﻿using NQuery.Symbols.Aggregation;
+using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundAggregatedValue
     {
-        public BoundAggregatedValue(ValueSlot output, AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
+        public BoundAggregatedValue(IBoundValue output, AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
         {
             Output = output;
             Aggregate = aggregate;
@@ -12,20 +12,12 @@ namespace NQuery.Binding
             Argument = argument;
         }
 
-        public ValueSlot Output { get; }
+        public IBoundValue Output { get; }
 
         public AggregateSymbol Aggregate { get; }
 
         public IAggregatable Aggregatable { get; }
 
         public BoundExpression Argument { get; }
-
-        public BoundAggregatedValue Update(ValueSlot output, AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
-        {
-            if (output == Output && aggregate == Aggregate && aggregatable == Aggregatable && argument == Argument)
-                return this;
-
-            return new BoundAggregatedValue(output, aggregate, aggregatable, argument);
-        }
     }
 }

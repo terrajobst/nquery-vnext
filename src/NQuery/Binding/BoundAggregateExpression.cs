@@ -1,5 +1,7 @@
 using NQuery.Symbols.Aggregation;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundAggregateExpression : BoundExpression
@@ -36,14 +38,6 @@ namespace NQuery.Binding
         public IAggregatable Aggregatable { get; }
 
         public BoundExpression Argument { get; }
-
-        public BoundAggregateExpression Update(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
-        {
-            if (aggregate == Symbol && aggregatable == Aggregatable && argument == Argument)
-                return this;
-
-            return new BoundAggregateExpression(aggregate, aggregatable, argument);
-        }
 
         public override string ToString()
         {

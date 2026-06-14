@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace NQuery.Iterators
 {
     internal struct RowBufferEntry : IEquatable<RowBufferEntry>
@@ -23,7 +25,7 @@ namespace NQuery.Iterators
                    Index == other.Index;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj))
                 return false;

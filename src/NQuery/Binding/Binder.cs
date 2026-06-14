@@ -1,5 +1,7 @@
 using NQuery.Syntax;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal abstract partial class Binder
@@ -19,9 +21,9 @@ namespace NQuery.Binding
             get { return _sharedBinderState.Diagnostics; }
         }
 
-        private ValueSlotFactory ValueSlotFactory
+        private BoundValueFactory ValueFactory
         {
-            get { return _sharedBinderState.ValueSlotFactory; }
+            get { return _sharedBinderState.ValueFactory; }
         }
 
         protected virtual bool InWhereClause
@@ -54,7 +56,7 @@ namespace NQuery.Binding
             return CreateLocalBinder(symbols.AsEnumerable());
         }
 
-        private Binder CreateJoinConditionBinder(BoundRelation left, BoundRelation right)
+        private Binder CreateJoinConditionBinder(BoundTableReference left, BoundTableReference right)
         {
             var leftTables = left.GetDeclaredTableInstances();
             var rightTables = right.GetDeclaredTableInstances();

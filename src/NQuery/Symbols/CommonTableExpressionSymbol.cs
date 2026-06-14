@@ -1,52 +1,29 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
-        private readonly BoundQuery _anchor;
-        private readonly NQuery.Refactor.Binding.BoundQuery _anchorRefactor;
-        private readonly ImmutableArray<BoundQuery> _recursiveMembers;
-        private readonly ImmutableArray<NQuery.Refactor.Binding.BoundQuery> _recursiveMembersRefactor;
+        private readonly NQuery.Binding.BoundQuery _anchor;
+        private readonly ImmutableArray<NQuery.Binding.BoundQuery> _recursiveMembers;
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
+            Func<CommonTableExpressionSymbol, (NQuery.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
         )
-            : this(name, anchorBinder, _ => ImmutableArray<BoundQuery>.Empty)
+            : this(name, anchorBinder, _ => ImmutableArray<NQuery.Binding.BoundQuery>.Empty)
         {
         }
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
-            Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> recursiveBinder
+            Func<CommonTableExpressionSymbol, (NQuery.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
+            Func<CommonTableExpressionSymbol, ImmutableArray<NQuery.Binding.BoundQuery>> recursiveBinder
         )
             : base(name)
         {
             (_anchor, Columns) = anchorBinder(this);
             _recursiveMembers = recursiveBinder(this);
-        }
-
-        internal CommonTableExpressionSymbol(
-            string name,
-            Func<CommonTableExpressionSymbol, (NQuery.Refactor.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
-        )
-            : this(name, anchorBinder, _ => ImmutableArray<NQuery.Refactor.Binding.BoundQuery>.Empty)
-        {
-        }
-
-        internal CommonTableExpressionSymbol(
-            string name,
-            Func<CommonTableExpressionSymbol, (NQuery.Refactor.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
-            Func<CommonTableExpressionSymbol, ImmutableArray<NQuery.Refactor.Binding.BoundQuery>> recursiveBinder
-        )
-            : base(name)
-        {
-            (_anchorRefactor, Columns) = anchorBinder(this);
-            _recursiveMembersRefactor = recursiveBinder(this);
         }
 
         public override SymbolKind Kind
@@ -61,12 +38,8 @@ namespace NQuery.Symbols
 
         public override ImmutableArray<ColumnSymbol> Columns { get; }
 
-        internal BoundQuery Anchor => _anchor ?? throw new InvalidOperationException("This CTE was bound by the AlgebraBinding binder; use AnchorRefactor.");
+        internal NQuery.Binding.BoundQuery Anchor => _anchor;
 
-        internal NQuery.Refactor.Binding.BoundQuery AnchorRefactor => _anchorRefactor ?? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use Anchor.");
-
-        internal ImmutableArray<BoundQuery> RecursiveMembers => _recursiveMembers.IsDefault ? throw new InvalidOperationException("This CTE was bound by the AlgebraBinding binder; use RecursiveMembersRefactor.") : _recursiveMembers;
-
-        internal ImmutableArray<NQuery.Refactor.Binding.BoundQuery> RecursiveMembersRefactor => _recursiveMembersRefactor.IsDefault ? throw new InvalidOperationException("This CTE was bound by the legacy Binding binder; use RecursiveMembers.") : _recursiveMembersRefactor;
+        internal ImmutableArray<NQuery.Binding.BoundQuery> RecursiveMembers => _recursiveMembers;
     }
 }

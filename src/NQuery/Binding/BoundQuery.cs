@@ -4,21 +4,12 @@ using NQuery.Symbols;
 
 namespace NQuery.Binding
 {
-    internal sealed class BoundQuery : BoundNode
+    // Base of the syntax-shaped query tree the AlgebraBinding binder produces. Unlike the
+    // legacy binder, it does not carry a relational algebra tree -- relational lowering is
+    // the algebrizer's job. All that is common across query forms is the set of output
+    // columns (name + value slot) the query exposes.
+    internal abstract class BoundQuery : BoundNode
     {
-        public BoundQuery(BoundRelation relation, IEnumerable<QueryColumnInstanceSymbol> output)
-        {
-            Relation = relation;
-            OutputColumns = output.ToImmutableArray();
-        }
-
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.Query; }
-        }
-
-        public ImmutableArray<QueryColumnInstanceSymbol> OutputColumns { get; }
-
-        public BoundRelation Relation { get; }
+        public abstract ImmutableArray<QueryColumnInstanceSymbol> OutputColumns { get; }
     }
 }

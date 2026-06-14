@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundConversionExpression : BoundExpression
@@ -24,14 +26,6 @@ namespace NQuery.Binding
         public BoundExpression Expression { get; }
 
         public Conversion Conversion { get; }
-
-        public BoundConversionExpression Update(BoundExpression expression, Type type, Conversion conversion)
-        {
-            if (expression == Expression && type == _type && conversion == Conversion)
-                return this;
-
-            return new BoundConversionExpression(expression, type, conversion);
-        }
 
         public override string ToString()
         {

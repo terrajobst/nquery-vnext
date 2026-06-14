@@ -1,132 +1,170 @@
+#nullable enable
+
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
+using NQuery.Algebra;
 using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
-    internal sealed class OuterJoinRemover : BoundTreeRewriter
+    // Null-rejection outer-join simplification. When a predicate above an outer join is
+    // guaranteed to reject the rows where the null-supplied side is NULL, those padded
+    // rows can never survive, so the join can be tightened:
+    //
+    //   * LEFT OUTER  -> INNER       when the right side is null-rejected.
+    //   * FULL OUTER  -> INNER       when both sides are null-rejected.
+    //   * FULL OUTER  -> LEFT OUTER  when only the left side is null-rejected.
+    //   * FULL OUTER  -> LEFT OUTER (operands swapped) when only the right is null-rejected
+    //     -- that case is a RIGHT OUTER, which the logical layer doesn't model, so it is
+    //     swapped to the equivalent left outer (the same normalization the algebrizer uses
+    //     for a RIGHT JOIN; safe because operands are referenced by identity and the
+    //     enclosing projection fixes column order).
+    //
+    // Rejection is collected top-down: a filter's conjuncts, and an inner/semi join's own
+    // condition conjuncts, contribute the slots they reject. The accumulating set is never
+    // cleared as we descend -- a value slot is a unique identity, so a rejection that
+    // "leaks" to a sibling subtree can't match a slot defined there. Running this before
+    // join ordering lets a tightened inner join join its region and accept pushed-down
+    // selections.
+    //
+    // The pass also folds in one non-null-rejection simplification the legacy
+    // OuterJoinRemover carried (it composes naturally once an outer join becomes inner):
+    // an inner join against the single-row constant relation (a query with no FROM) is the
+    // other side with the join condition as a filter.
+    internal sealed class OuterJoinRemover : LogicalOperatorRewriter
     {
-        private readonly HashSet<ValueSlot> _nullRejectedRowBufferEntries = new();
+        // Slots known to be null-rejected by a predicate above the current node. Instance
+        // state, so OuterJoinRemover is constructed per optimization rather than shared.
+        private readonly HashSet<ValueSlot> _nullRejected = new();
 
-        private void AddNullRejectedTable(ValueSlot valueSlot)
+        protected override LogicalOperator RewriteFilter(LogicalFilter node)
         {
-            _nullRejectedRowBufferEntries.Add(valueSlot);
+            // A filter rejecting the null-supplied side of a join below it is exactly what
+            // drives the simplification, so record its rejections before descending.
+            AddRejected(node.Conditions);
+            return base.RewriteFilter(node);
         }
 
-        private bool IsAnyNullRejected(ImmutableArray<ValueSlot> valueSlots)
+        protected override LogicalOperator RewriteJoin(LogicalJoin node)
         {
-            return valueSlots.Any(_nullRejectedRowBufferEntries.Contains);
+            node = Simplify(node);
+
+            // Harvest rejection from this join's own condition for the subtree below. An
+            // outer join's condition can't reject its preserved side (an unmatched row is
+            // still emitted), so a full outer contributes nothing and a left outer only its
+            // right; an inner/semi join contributes both sides.
+            HarvestFromCondition(node);
+
+            var rewritten = base.RewriteJoin(node);
+
+            // Once the children are rewritten (and any outer join above has been tightened
+            // to inner), drop a constant-relation side. Children are already simplified, so
+            // this needs no re-run.
+            return rewritten is LogicalJoin { JoinKind: LogicalJoinKind.Inner } inner ? RemoveConstantSide(inner) : rewritten;
         }
 
-        private static BoundRelation WrapWithFilter(BoundRelation input, BoundExpression predicate)
+        // An inner join against the single-row, no-column constant relation is just the
+        // other side, with the join condition (which can only reference that other side)
+        // applied as a filter.
+        private static LogicalOperator RemoveConstantSide(LogicalJoin node)
         {
-            return predicate is null
-                ? input
-                : new BoundFilterRelation(input, predicate);
+            if (node.Left is LogicalConstant)
+                return WrapWithFilter(node.Right, node.Conditions);
+
+            if (node.Right is LogicalConstant)
+                return WrapWithFilter(node.Left, node.Conditions);
+
+            return node;
         }
 
-        protected override BoundRelation RewriteFilterRelation(BoundFilterRelation node)
+        private static LogicalOperator WrapWithFilter(LogicalOperator input, ImmutableArray<LogicalExpression> conditions)
         {
-            // Check for null rejecting conditions.
+            return conditions.IsEmpty ? input : new LogicalFilter(input, conditions);
+        }
 
-            var dependencyFinder = new ValueSlotDependencyFinder();
+        private LogicalJoin Simplify(LogicalJoin node)
+        {
+            var leftRejected = AnyRejected(node.Left.DefinedValueSlots);
+            var rightRejected = AnyRejected(node.Right.DefinedValueSlots);
 
-            foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
+            switch (node.JoinKind)
             {
-                dependencyFinder.ValueSlots.Clear();
-                dependencyFinder.VisitExpression(conjunction);
+                case LogicalJoinKind.LeftOuter when rightRejected:
+                    return WithKind(node, LogicalJoinKind.Inner);
 
-                var slots = dependencyFinder.ValueSlots;
-                var nullRejectedSlots = slots.Where(v => NullRejection.IsRejectingNull(conjunction, v));
+                case LogicalJoinKind.FullOuter when leftRejected && rightRejected:
+                    return WithKind(node, LogicalJoinKind.Inner);
 
-                foreach (var valueSlot in nullRejectedSlots)
-                    AddNullRejectedTable(valueSlot);
+                case LogicalJoinKind.FullOuter when leftRejected:
+                    return WithKind(node, LogicalJoinKind.LeftOuter);
+
+                case LogicalJoinKind.FullOuter when rightRejected:
+                    // Right-only rejection makes this a RIGHT OUTER, which the logical layer
+                    // doesn't model -- so swap to the equivalent LEFT OUTER. Operands
+                    // reference slots by identity, and a join's output column order is always
+                    // re-established by the enclosing projection, so the swap is transparent
+                    // (the same normalization the algebrizer applies to a RIGHT JOIN).
+                    return new LogicalJoin(LogicalJoinKind.LeftOuter, node.Right, node.Left, node.Conditions, node.Probe, node.PassthruPredicate);
+
+                default:
+                    return node;
             }
-
-            return base.RewriteFilterRelation(node);
         }
 
-        protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
+        private static LogicalJoin WithKind(LogicalJoin node, LogicalJoinKind kind)
         {
-            // Get declared tables of left and right
+            return new LogicalJoin(kind, node.Left, node.Right, node.Conditions, node.Probe, node.PassthruPredicate);
+        }
 
-            var leftDefinedValues = node.Left.GetDefinedValues().ToImmutableArray();
-            var rightDefinedValues = node.Right.GetDefinedValues().ToImmutableArray();
+        private void HarvestFromCondition(LogicalJoin node)
+        {
+            if (node.JoinKind == LogicalJoinKind.FullOuter)
+                return;
 
-            // Replace outer joins by left-/right-/inner joins
+            var leftDefined = node.Left.DefinedValueSlots;
+            var rightDefined = node.Right.DefinedValueSlots;
 
-            if (node.JoinType == BoundJoinType.RightOuter ||
-                node.JoinType == BoundJoinType.FullOuter)
+            // The left is preserved under a left outer join, so its condition rejections
+            // don't constrain it; every other (inner/semi/anti) kind does.
+            var harvestLeft = node.JoinKind != LogicalJoinKind.LeftOuter;
+
+            foreach (var condition in node.Conditions)
             {
-                if (IsAnyNullRejected(leftDefinedValues))
+                foreach (var slot in LogicalSlotReferenceFinder.FindReferencedSlots(condition))
                 {
-                    var newType = node.JoinType == BoundJoinType.RightOuter
-                        ? BoundJoinType.Inner
-                        : BoundJoinType.LeftOuter;
+                    if (!NullRejection.IsRejectingNull(condition, slot))
+                        continue;
 
-                    node = node.WithJoinType(newType);
+                    if (harvestLeft && leftDefined.Contains(slot))
+                        _nullRejected.Add(slot);
+                    else if (rightDefined.Contains(slot))
+                        _nullRejected.Add(slot);
                 }
             }
+        }
 
-            if (node.JoinType == BoundJoinType.LeftOuter ||
-                node.JoinType == BoundJoinType.FullOuter)
+        private void AddRejected(ImmutableArray<LogicalExpression> conditions)
+        {
+            foreach (var condition in conditions)
             {
-                if (IsAnyNullRejected(rightDefinedValues))
+                foreach (var slot in LogicalSlotReferenceFinder.FindReferencedSlots(condition))
                 {
-                    var newType = node.JoinType == BoundJoinType.LeftOuter
-                        ? BoundJoinType.Inner
-                        : BoundJoinType.RightOuter;
-
-                    node = node.WithJoinType(newType);
+                    if (NullRejection.IsRejectingNull(condition, slot))
+                        _nullRejected.Add(slot);
                 }
             }
+        }
 
-            // After converting an outer join to an inner one we can
-            // sometimes eliminate the whole join.
-
-            if (node.JoinType == BoundJoinType.Inner)
+        private bool AnyRejected(FrozenSet<ValueSlot> slots)
+        {
+            foreach (var slot in slots)
             {
-                if (node.Left is BoundConstantRelation && !node.Left.GetDefinedValues().Any())
-                    return RewriteRelation(WrapWithFilter(node.Right, node.Condition));
-
-                if (node.Right is BoundConstantRelation && !node.Right.GetDefinedValues().Any())
-                    return RewriteRelation(WrapWithFilter(node.Left, node.Condition));
+                if (_nullRejected.Contains(slot))
+                    return true;
             }
 
-            // Analyze AND-parts of Condition
-
-            if (node.JoinType != BoundJoinType.FullOuter)
-            {
-                var dependencyFinder = new ValueSlotDependencyFinder();
-
-                foreach (var conjunction in Expression.SplitConjunctions(node.Condition))
-                {
-                    // Check if we can derive from this conjunction that a table it depends on
-                    // is null-rejected.
-
-                    dependencyFinder.ValueSlots.Clear();
-                    dependencyFinder.VisitExpression(conjunction);
-
-                    var slots = dependencyFinder.ValueSlots;
-                    var nullRejectedSlots = slots.Where(v => NullRejection.IsRejectingNull(conjunction, v));
-
-                    foreach (var valueSlot in nullRejectedSlots)
-                    {
-                        if (node.JoinType != BoundJoinType.LeftOuter && leftDefinedValues.Contains(valueSlot))
-                        {
-                            AddNullRejectedTable(valueSlot);
-                        }
-                        else if (node.JoinType != BoundJoinType.RightOuter && rightDefinedValues.Contains(valueSlot))
-                        {
-                            AddNullRejectedTable(valueSlot);
-                        }
-                    }
-                }
-            }
-
-            // Visit children
-
-            return base.RewriteJoinRelation(node);
+            return false;
         }
     }
 }

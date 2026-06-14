@@ -1,9 +1,18 @@
+using System.Collections.Immutable;
+
 using NQuery.Symbols;
 using NQuery.Syntax;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
-    internal sealed class RecursiveCommonTableExpressionChecker : BoundTreeWalker
+    // Walks the recursive member of a recursive CTE (now a syntax-shaped BoundQuery tree rather
+    // than a relational tree) and reports the constructs that aren't allowed in a recursive
+    // member: UNION (other than the recursive UNION ALL itself, which is handled elsewhere),
+    // DISTINCT, TOP, GROUP BY/aggregates, outer joins, and recursive references that appear more
+    // than once or inside a subquery.
+    internal sealed class RecursiveCommonTableExpressionChecker
     {
         private readonly CommonTableExpressionSyntax _syntax;
         private readonly List<Diagnostic> _diagnostics;
@@ -19,78 +28,147 @@ namespace NQuery.Binding
             _symbol = symbol;
         }
 
-        protected override void VisitSingleRowSubselect(BoundSingleRowSubselect node)
+        public void Check(BoundQuery query)
         {
-            _subqueryCounter++;
-            base.VisitSingleRowSubselect(node);
-            _subqueryCounter--;
+            WalkQuery(query);
         }
 
-        protected override void VisitExistsSubselect(BoundExistsSubselect node)
+        private void WalkQuery(BoundQuery node)
         {
-            _subqueryCounter++;
-            base.VisitExistsSubselect(node);
-            _subqueryCounter--;
+            switch (node)
+            {
+                case BoundSelectQuery select:
+                    WalkSelectQuery(select);
+                    break;
+                case BoundUnionQuery union:
+                    _diagnostics.ReportCteContainsUnion(_syntax.Name);
+                    foreach (var input in union.Inputs)
+                        WalkQuery(input.Query);
+                    break;
+                case BoundIntersectOrExceptQuery intersectOrExcept:
+                    WalkQuery(intersectOrExcept.Left.Query);
+                    WalkQuery(intersectOrExcept.Right.Query);
+                    break;
+                case BoundOrderedQuery ordered:
+                    WalkQuery(ordered.Query);
+                    break;
+                case BoundEmptyQuery:
+                    break;
+            }
         }
 
-        protected override void VisitTableRelation(BoundTableRelation node)
+        private void WalkSelectQuery(BoundSelectQuery node)
         {
-            var hasRecursiveReference = node.TableInstance.Table == _symbol;
-            var hasRecursiveReferenceInSubquery = _subqueryCounter > 0 && hasRecursiveReference;
-            var hasMultipleRecursiveReferences = _hasSeenRecursiveReference && hasRecursiveReference;
-            if (hasRecursiveReference)
-                _hasSeenRecursiveReference = true;
+            if (node.Top is not null)
+                _diagnostics.ReportCteContainsTop(_syntax.Name);
 
-            if (hasRecursiveReferenceInSubquery)
-                _diagnostics.ReportCteContainsRecursiveReferenceInSubquery(_syntax.Name);
-
-            if (hasMultipleRecursiveReferences)
-                _diagnostics.ReportCteContainsMultipleRecursiveReferences(_syntax.Name);
-
-            base.VisitTableRelation(node);
-        }
-
-        protected override void VisitDerivedTableRelation(BoundDerivedTableRelation node)
-        {
-            // Don't visit children.
-        }
-
-        protected override void VisitUnionRelation(BoundUnionRelation node)
-        {
-            _diagnostics.ReportCteContainsUnion(_syntax.Name);
-            base.VisitUnionRelation(node);
-        }
-
-        protected override void VisitSortRelation(BoundSortRelation node)
-        {
-            if (node.IsDistinct)
+            if (node.Select.IsDistinct)
                 _diagnostics.ReportCteContainsDistinct(_syntax.Name);
 
-            base.VisitSortRelation(node);
-        }
+            if (node.GroupBy is not null || !node.Select.Aggregates.IsEmpty)
+                _diagnostics.ReportCteContainsGroupByHavingOrAggregate(_syntax.Name);
 
-        protected override void VisitTopRelation(BoundTopRelation node)
-        {
-            _diagnostics.ReportCteContainsTop(_syntax.Name);
-            base.VisitTopRelation(node);
-        }
+            if (node.From is not null)
+                WalkTableReference(node.From.Root);
 
-        protected override void VisitJoinRelation(BoundJoinRelation node)
-        {
-            if (node.JoinType == BoundJoinType.FullOuter ||
-                node.JoinType == BoundJoinType.LeftOuter ||
-                node.JoinType == BoundJoinType.RightOuter)
+            if (node.Where is not null)
+                WalkExpression(node.Where.Condition);
+
+            if (node.Having is not null)
+                WalkExpression(node.Having.Condition);
+
+            foreach (var projection in node.Select.Projections)
+                WalkExpression(projection.Expression);
+
+            if (node.GroupBy is not null)
             {
-                _diagnostics.ReportCteContainsOuterJoin(_syntax.Name);
+                foreach (var computedGroup in node.GroupBy.ComputedGroups)
+                    WalkExpression(computedGroup.Expression);
             }
 
-            base.VisitJoinRelation(node);
+            foreach (var aggregate in node.Select.Aggregates)
+                WalkExpression(aggregate.Argument);
         }
 
-        protected override void VisitGroupByAndAggregationRelation(BoundGroupByAndAggregationRelation node)
+        private void WalkTableReference(BoundTableReference node)
         {
-            _diagnostics.ReportCteContainsGroupByHavingOrAggregate(_syntax.Name);
-            base.VisitGroupByAndAggregationRelation(node);
+            switch (node)
+            {
+                case BoundNamedTableReference named:
+                    var hasRecursiveReference = named.TableInstance.Table == _symbol;
+                    if (_subqueryCounter > 0 && hasRecursiveReference)
+                        _diagnostics.ReportCteContainsRecursiveReferenceInSubquery(_syntax.Name);
+                    if (_hasSeenRecursiveReference && hasRecursiveReference)
+                        _diagnostics.ReportCteContainsMultipleRecursiveReferences(_syntax.Name);
+                    if (hasRecursiveReference)
+                        _hasSeenRecursiveReference = true;
+                    break;
+                case BoundDerivedTableReference:
+                    // Legacy behaviour: don't descend into derived tables.
+                    break;
+                case BoundJoinTableReference join:
+                    if (join.JoinType is BoundJoinType.FullOuter or BoundJoinType.LeftOuter or BoundJoinType.RightOuter)
+                        _diagnostics.ReportCteContainsOuterJoin(_syntax.Name);
+                    WalkTableReference(join.Left);
+                    WalkTableReference(join.Right);
+                    if (join.Condition is not null)
+                        WalkExpression(join.Condition);
+                    break;
+            }
+        }
+
+        private void WalkExpression(BoundExpression node)
+        {
+            switch (node)
+            {
+                case BoundUnaryExpression unary:
+                    WalkExpression(unary.Expression);
+                    break;
+                case BoundBinaryExpression binary:
+                    WalkExpression(binary.Left);
+                    WalkExpression(binary.Right);
+                    break;
+                case BoundConversionExpression conversion:
+                    WalkExpression(conversion.Expression);
+                    break;
+                case BoundIsNullExpression isNull:
+                    WalkExpression(isNull.Expression);
+                    break;
+                case BoundCaseExpression caseExpression:
+                    foreach (var label in caseExpression.CaseLabels)
+                    {
+                        WalkExpression(label.Condition);
+                        WalkExpression(label.ThenExpression);
+                    }
+                    if (caseExpression.ElseExpression is not null)
+                        WalkExpression(caseExpression.ElseExpression);
+                    break;
+                case BoundFunctionInvocationExpression function:
+                    foreach (var argument in function.Arguments)
+                        WalkExpression(argument);
+                    break;
+                case BoundAggregateExpression aggregate:
+                    WalkExpression(aggregate.Argument);
+                    break;
+                case BoundPropertyAccessExpression propertyAccess:
+                    WalkExpression(propertyAccess.Target);
+                    break;
+                case BoundMethodInvocationExpression method:
+                    WalkExpression(method.Target);
+                    foreach (var argument in method.Arguments)
+                        WalkExpression(argument);
+                    break;
+                case BoundSingleRowSubselect singleRow:
+                    _subqueryCounter++;
+                    WalkQuery(singleRow.Query);
+                    _subqueryCounter--;
+                    break;
+                case BoundExistsSubselect exists:
+                    _subqueryCounter++;
+                    WalkQuery(exists.Query);
+                    _subqueryCounter--;
+                    break;
+            }
         }
     }
 }

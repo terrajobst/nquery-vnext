@@ -4,7 +4,7 @@ namespace NQuery.Binding
 {
     internal struct BoundComputedValueWithSyntax
     {
-        public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, ValueSlot result)
+        public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, IBoundValue result)
         {
             Syntax = syntax;
             Expression = expression;
@@ -15,6 +15,6 @@ namespace NQuery.Binding
 
         public BoundExpression Expression { get; }
 
-        public ValueSlot Result { get; }
+        public IBoundValue Result { get; }
     }
 }

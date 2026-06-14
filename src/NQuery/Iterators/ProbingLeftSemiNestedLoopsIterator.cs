@@ -1,21 +1,30 @@
+#nullable enable
+
 namespace NQuery.Iterators
 {
     internal sealed class ProbingLeftSemiNestedLoopsIterator : NestedLoopsIterator
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
-        private readonly IteratorPredicate _predicate;
+        private readonly EmittedPredicate _predicate;
         private readonly ProbedRowBuffer _rowBuffer;
+        private readonly RowBuffer _predicateRowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public ProbingLeftSemiNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate)
+        public ProbingLeftSemiNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, RowBuffer? outer = null)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
             _rowBuffer = new ProbedRowBuffer(left.RowBuffer);
+
+            // When correlated (inside an Apply), the outer buffer is prepended to the
+            // (left ++ right) buffer, matching the (outer ++ left ++ right) layout the
+            // predicate was compiled against.
+            var combined = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+            _predicateRowBuffer = outer is null ? combined : new CombinedRowBuffer(outer, combined);
         }
 
         public override RowBuffer RowBuffer
@@ -69,7 +78,7 @@ namespace NQuery.Iterators
                 }
 
                 // Check predicate.
-                matchingRowFound = _predicate();
+                matchingRowFound = _predicate(_predicateRowBuffer);
 
                 if (matchingRowFound)
                     _advanceOuter = true;

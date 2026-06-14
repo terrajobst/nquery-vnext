@@ -1,3 +1,5 @@
+#nullable enable
+
 using System.Collections.Immutable;
 
 using NQuery.Binding;
@@ -8,14 +10,7 @@ namespace NQuery.Iterators
     {
         private readonly Dictionary<ValueSlot, int> _mapping;
 
-        public static readonly RowBufferAllocation Empty = new();
-
-        private RowBufferAllocation()
-        {
-            _mapping = new Dictionary<ValueSlot, int>();
-        }
-
-        public RowBufferAllocation(RowBufferAllocation parent, RowBuffer rowBuffer, IEnumerable<ValueSlot> valueSlots)
+        public RowBufferAllocation(RowBufferAllocation? parent, RowBuffer rowBuffer, IEnumerable<ValueSlot> valueSlots)
         {
             Parent = parent;
             RowBuffer = rowBuffer;
@@ -35,7 +30,7 @@ namespace NQuery.Iterators
             return dictionary;
         }
 
-        public RowBufferAllocation Parent { get; }
+        public RowBufferAllocation? Parent { get; }
 
         public RowBuffer RowBuffer { get; }
 

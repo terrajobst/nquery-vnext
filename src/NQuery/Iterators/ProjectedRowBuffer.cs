@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+#nullable enable
+
+using System.Collections.Immutable;
 
 namespace NQuery.Iterators
 {
@@ -24,7 +26,7 @@ namespace NQuery.Iterators
         public override void CopyTo(object[] array, int destinationIndex)
         {
             for (var i = 0; i < _projectedIndices.Length; i++)
-                array[i] = _projectedIndices[i].GetValue();
+                array[destinationIndex + i] = _projectedIndices[i].GetValue();
         }
     }
 }

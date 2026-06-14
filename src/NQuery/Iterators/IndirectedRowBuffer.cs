@@ -1,10 +1,15 @@
-﻿namespace NQuery.Iterators
+#nullable enable
+
+namespace NQuery.Iterators
 {
+    // A buffer whose backing buffer can be swapped at run time. Outer joins use it to
+    // flip the right side between the real row and an all-NULL row.
     internal sealed class IndirectedRowBuffer : RowBuffer
     {
-        public IndirectedRowBuffer(int count)
+        public IndirectedRowBuffer(int count, RowBuffer activeRowBuffer)
         {
             Count = count;
+            ActiveRowBuffer = activeRowBuffer;
         }
 
         public RowBuffer ActiveRowBuffer { get; set; }

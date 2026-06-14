@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
@@ -29,14 +31,6 @@ namespace NQuery.Binding
         public OverloadResolutionResult<UnaryOperatorSignature> Result { get; }
 
         public BoundExpression Expression { get; }
-
-        public BoundUnaryExpression Update(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
-        {
-            if (operatorKind == OperatorKind && result == Result && expression == Expression)
-                return this;
-
-            return new BoundUnaryExpression(operatorKind, result, expression);
-        }
 
         public override string ToString()
         {

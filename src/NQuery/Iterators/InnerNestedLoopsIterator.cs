@@ -1,25 +1,35 @@
-﻿namespace NQuery.Iterators
+#nullable enable
+
+namespace NQuery.Iterators
 {
     internal sealed class InnerNestedLoopsIterator : NestedLoopsIterator
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
-        private readonly IteratorPredicate _predicate;
-        private readonly IteratorPredicate _passthruPredicate;
+        private readonly EmittedPredicate _predicate;
+        private readonly EmittedPredicate _passthruPredicate;
+        private readonly CombinedRowBuffer _rowBuffer;
+        private readonly RowBuffer _predicateRowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
 
-        public InnerNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate, IteratorPredicate passthruPredicate)
+        public InnerNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, EmittedPredicate passthruPredicate, RowBuffer? outer = null)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
             _passthruPredicate = passthruPredicate;
-            RowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+            _rowBuffer = new CombinedRowBuffer(left.RowBuffer, right.RowBuffer);
+
+            // When this join is the correlated part of an Apply's right side, its predicate
+            // references the outer (left) row. The outer buffer is then prepended to the
+            // (left ++ right) buffer, matching the (outer ++ left ++ right) slot layout the
+            // predicate was compiled against; the rows this iterator exposes are unchanged.
+            _predicateRowBuffer = outer is null ? _rowBuffer : new CombinedRowBuffer(outer, _rowBuffer);
         }
 
-        public override RowBuffer RowBuffer { get; }
+        public override RowBuffer RowBuffer => _rowBuffer;
 
         public override void Open()
         {
@@ -46,7 +56,7 @@
                     if (!_left.Read())
                         return false;
 
-                    if (_passthruPredicate())
+                    if (_passthruPredicate(_predicateRowBuffer))
                     {
                         _advanceOuter = true;
                         return true;
@@ -66,7 +76,7 @@
                 }
 
                 // Check predicate.
-                matchingRowFound = _predicate();
+                matchingRowFound = _predicate(_predicateRowBuffer);
             }
 
             return true;

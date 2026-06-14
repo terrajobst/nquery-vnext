@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 
-using NQuery.Refactor.Emit;
-using NQuery.Refactor.Iterators;
+using NQuery.Emit;
+using NQuery.Iterators;
 using NQuery.Symbols;
 
 namespace NQuery

@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class SharedBinderState
@@ -8,6 +10,6 @@ namespace NQuery.Binding
 
         public List<Diagnostic> Diagnostics { get; } = new();
 
-        public ValueSlotFactory ValueSlotFactory { get; } = new();
+        public BoundValueFactory ValueFactory { get; } = new();
     }
 }

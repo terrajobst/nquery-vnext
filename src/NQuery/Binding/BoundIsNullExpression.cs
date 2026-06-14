@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundIsNullExpression : BoundExpression
@@ -18,14 +20,6 @@ namespace NQuery.Binding
         }
 
         public BoundExpression Expression { get; }
-
-        public BoundIsNullExpression Update(BoundExpression expression)
-        {
-            if (expression == Expression)
-                return this;
-
-            return new BoundIsNullExpression(expression);
-        }
 
         public override string ToString()
         {

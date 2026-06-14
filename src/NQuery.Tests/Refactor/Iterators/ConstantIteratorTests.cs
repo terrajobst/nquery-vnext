@@ -1,4 +1,4 @@
-using NQuery.Refactor.Iterators;
+using NQuery.Iterators;
 
 namespace NQuery.Tests.Refactor.Iterators
 {

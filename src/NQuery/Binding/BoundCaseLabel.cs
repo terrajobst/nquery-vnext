@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundCaseLabel
@@ -11,14 +13,6 @@ namespace NQuery.Binding
         public BoundExpression Condition { get; }
 
         public BoundExpression ThenExpression { get; }
-
-        public BoundCaseLabel Update(BoundExpression condition, BoundExpression thenExpression)
-        {
-            if (condition == Condition && thenExpression == ThenExpression)
-                return this;
-
-            return new BoundCaseLabel(condition, thenExpression);
-        }
 
         public override string ToString()
         {

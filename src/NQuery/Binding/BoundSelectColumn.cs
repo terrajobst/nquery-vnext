@@ -1,5 +1,7 @@
 using NQuery.Symbols;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundSelectColumn : BoundNode

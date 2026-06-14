@@ -1,4 +1,6 @@
-﻿using System.Collections;
+#nullable enable
+
+using System.Collections;
 using System.Collections.Immutable;
 
 namespace NQuery.Iterators
@@ -43,7 +45,7 @@ namespace NQuery.Iterators
 
         protected object[] GetCurrentRow()
         {
-            return _spooledRowBuffer.Rows[_spooledRowBuffer.RowIndex];
+            return _spooledRowBuffer.Rows![_spooledRowBuffer.RowIndex];
         }
 
         private IReadOnlyList<object[]> SortInput()
@@ -87,13 +89,15 @@ namespace NQuery.Iterators
 
         public override bool Read()
         {
-            if (_spooledRowBuffer.Rows is null)
+            var rows = _spooledRowBuffer.Rows;
+            if (rows is null)
             {
-                _spooledRowBuffer.Rows = SortInput();
+                rows = SortInput();
+                _spooledRowBuffer.Rows = rows;
                 _spooledRowBuffer.RowIndex = -1;
             }
 
-            if (_spooledRowBuffer.RowIndex == _spooledRowBuffer.Rows.Count - 1)
+            if (_spooledRowBuffer.RowIndex == rows.Count - 1)
                 return false;
 
             _spooledRowBuffer.RowIndex++;
@@ -108,7 +112,7 @@ namespace NQuery.Iterators
                 SpooledCount = spooledCount;
             }
 
-            public IReadOnlyList<object[]> Rows { get; set; }
+            public IReadOnlyList<object[]>? Rows { get; set; }
 
             public int RowIndex { get; set; }
 
@@ -118,12 +122,12 @@ namespace NQuery.Iterators
 
             public override object this[int index]
             {
-                get { return Rows[RowIndex][index]; }
+                get { return Rows![RowIndex][index]; }
             }
 
             public override void CopyTo(object[] array, int destinationIndex)
             {
-                var source = Rows[RowIndex];
+                var source = Rows![RowIndex];
                 Array.Copy(source, 0, array, destinationIndex, Count);
             }
         }
@@ -139,7 +143,7 @@ namespace NQuery.Iterators
                 _comparers = comparers;
             }
 
-            public int Compare(object[] x, object[] y)
+            public int Compare(object[]? x, object[]? y)
             {
                 // Compare all columns
 
@@ -148,8 +152,8 @@ namespace NQuery.Iterators
                 {
                     var valueIndex = _sortEntries[index];
 
-                    var value1 = x[valueIndex];
-                    var value2 = y[valueIndex];
+                    var value1 = x![valueIndex];
+                    var value2 = y![valueIndex];
 
                     if (value1 is null && value2 is not null)
                         return -1;

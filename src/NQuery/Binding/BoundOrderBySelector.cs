@@ -2,13 +2,13 @@ namespace NQuery.Binding
 {
     internal struct BoundOrderBySelector
     {
-        public BoundOrderBySelector(ValueSlot valueSlot, BoundComputedValueWithSyntax? computedValue)
+        public BoundOrderBySelector(IBoundValue value, BoundComputedValueWithSyntax? computedValue)
         {
-            ValueSlot = valueSlot;
+            Value = value;
             ComputedValue = computedValue;
         }
 
-        public ValueSlot ValueSlot { get; }
+        public IBoundValue Value { get; }
 
         public BoundComputedValueWithSyntax? ComputedValue { get; }
     }

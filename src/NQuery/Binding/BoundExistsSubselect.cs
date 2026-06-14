@@ -1,10 +1,23 @@
+using System.Collections.Immutable;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundExistsSubselect : BoundExpression
     {
-        public BoundExistsSubselect(BoundRelation relation)
+        public BoundExistsSubselect(BoundQuery query)
+            : this(query, ImmutableArray<BoundComputedValue>.Empty, null)
         {
-            Relation = relation;
+        }
+
+        // ALL/ANY subselects are rewritten into an EXISTS over the subquery with an extra
+        // predicate (and possibly a computed value for a type conversion). Rather than lower that
+        // into Compute/Filter relations at bind time, we carry the resolved pieces and let the
+        // algebrizer apply them over the lowered query.
+        public BoundExistsSubselect(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, BoundExpression filter)
+        {
+            Query = query;
+            ComputedValues = computedValues;
+            Filter = filter;
         }
 
         public override BoundNodeKind Kind
@@ -12,24 +25,20 @@ namespace NQuery.Binding
             get { return BoundNodeKind.ExistsSubselect; }
         }
 
-        public BoundRelation Relation { get; }
+        public BoundQuery Query { get; }
+
+        public ImmutableArray<BoundComputedValue> ComputedValues { get; }
+
+        public BoundExpression Filter { get; }
 
         public override Type Type
         {
             get { return typeof(bool); }
         }
 
-        public BoundExistsSubselect Update(BoundRelation relation)
-        {
-            if (relation == Relation)
-                return this;
-
-            return new BoundExistsSubselect(relation);
-        }
-
         public override string ToString()
         {
-            return $"EXISTS ({Relation})";
+            return $"EXISTS ({Query})";
         }
     }
 }

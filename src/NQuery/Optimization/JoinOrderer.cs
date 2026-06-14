@@ -1,254 +1,211 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+#nullable enable
 
+using System.Collections.Frozen;
+using System.Collections.Immutable;
+
+using NQuery.Algebra;
 using NQuery.Binding;
 
 namespace NQuery.Optimization
 {
-    internal sealed class JoinOrderer : BoundTreeRewriter
+    // Normalizes and reorders inner-join regions. A connected region of inner joins
+    // (cross products included) is collapsed into its set of leaf inputs plus a pool
+    // of predicates -- the joins' own conditions, and, when a filter sits on top of
+    // the region, that filter's conjuncts. The region is then rebuilt as a left-deep
+    // tree, with each predicate attached to the lowest join whose inputs cover all
+    // its slots. This is where a WHERE over cross products becomes equi-joins.
+    //
+    // Only inner joins reorder; outer/semi/anti joins bound the region -- their
+    // conditions are not interchangeable with a WHERE -- so they are treated as
+    // opaque inputs and optimized recursively. The one exception is a left outer join
+    // whose null-supplied side no region predicate references: its preserved side is
+    // pulled into the region (so it can join and reorder with the rest) and the outer
+    // join re-applied above, the sound case of the legacy JoinLinearizer's re-association
+    // (see PullUpOuterJoins). Ordering is heuristic (prefer an input connected by a
+    // predicate, to avoid cartesian products); a cost-based PickNext can replace it later.
+    //
+    // The pass rebuilds regions unconditionally, so it is not idempotent by
+    // reference and must run in a Once batch rather than a fixed point.
+    internal sealed class JoinOrderer : LogicalOperatorRewriter
     {
-        protected override BoundRelation RewriteJoinRelation(BoundJoinRelation node)
+        public static readonly JoinOrderer Instance = new();
+
+        private JoinOrderer()
         {
-            // Extract relations and predicates
-
-            ExtractRelationsAndPredicates(node, out var relations, out var predicates);
-
-            // Build a graph where the nodes are relations and edges are the predicates
-            // connecting them.
-
-            BuildGraph(relations, predicates, out var nodes, out var edges);
-
-            // Given the graph, compute a join order that uses the predicates.
-
-            var result = AssembleJoin(nodes, edges);
-
-            return result;
         }
 
-        private void ExtractRelationsAndPredicates(BoundRelation node, out List<BoundRelation> relations, out List<BoundExpression> predicates)
+        protected override LogicalOperator RewriteFilter(LogicalFilter node)
         {
-            relations = new List<BoundRelation>();
-            predicates = new List<BoundExpression>();
+            // A filter on top of an inner-join region: fold its conjuncts into the
+            // predicate pool so they can become join conditions.
+            if (IsRegionJoin(node.Input))
+                return OrderRegion(node.Input, node.Conditions);
 
-            var stack = new Stack<BoundRelation>();
-            stack.Push(node);
+            return base.RewriteFilter(node);
+        }
 
-            while (stack.Count > 0)
+        protected override LogicalOperator RewriteJoin(LogicalJoin node)
+        {
+            if (IsRegionJoin(node))
+                return OrderRegion(node, ImmutableArray<LogicalExpression>.Empty);
+
+            return base.RewriteJoin(node);
+        }
+
+        private static bool IsRegionJoin(LogicalOperator node)
+        {
+            return node is LogicalJoin { JoinKind: LogicalJoinKind.Inner, Probe: null, PassthruPredicate: null };
+        }
+
+        private LogicalOperator OrderRegion(LogicalOperator regionRoot, ImmutableArray<LogicalExpression> extraPredicates)
+        {
+            var inputs = new List<LogicalOperator>();
+            var predicates = new List<LogicalExpression>(extraPredicates);
+            Collect(regionRoot, inputs, predicates);
+
+            var deferred = PullUpOuterJoins(inputs, predicates);
+
+            var remaining = new List<LogicalOperator>(inputs);
+            var acc = remaining[0];
+            remaining.RemoveAt(0);
+
+            while (remaining.Count > 0)
             {
-                var current = stack.Pop();
-                if (current is not BoundJoinRelation join || join.JoinType != BoundJoinType.Inner)
-                {
-                    // NOTE: We generally want to rewrite joins that we can't extract
-                    //       ourselves. However, we've to be careful not to rewrite the
-                    //       node that we started from -- otherwise we stack overflow.
-                    var rewrittenCurrent = current == node ? current : RewriteRelation(current);
-                    relations.Add(rewrittenCurrent);
-                }
-                else
-                {
-                    if (join.Condition is not null)
-                    {
-                        var conjunctions = Expression.SplitConjunctions(join.Condition);
-                        predicates.AddRange(conjunctions);
-                    }
+                var next = PickNext(acc, remaining, predicates);
+                remaining.Remove(next);
 
-                    stack.Push(join.Right);
-                    stack.Push(join.Left);
+                var available = new HashSet<ValueSlot>(acc.DefinedValueSlots);
+                available.UnionWith(next.DefinedValueSlots);
+                var conditions = TakeCoverable(predicates, available);
+
+                acc = new LogicalJoin(LogicalJoinKind.Inner, acc, next, conditions, probe: null, passthruPredicate: null);
+            }
+
+            // Anything not coverable by the region (e.g. an outer reference) stays as
+            // a filter on top. It can't reference a deferred null-supplied side -- that is
+            // exactly what PullUpOuterJoins guards against -- so it is safe below them.
+            if (predicates.Count > 0)
+                acc = new LogicalFilter(acc, predicates.ToImmutableArray());
+
+            // Re-apply the deferred outer joins, innermost (most recently peeled) first, so a
+            // nested chain is rebuilt in its original order.
+            for (var i = deferred.Count - 1; i >= 0; i--)
+                acc = new LogicalJoin(LogicalJoinKind.LeftOuter, acc, deferred[i].NullSupplied, deferred[i].Conditions, probe: null, passthruPredicate: null);
+
+            return acc;
+        }
+
+        // Subsumes the sound case of the legacy JoinLinearizer's re-association across an
+        // inner/outer boundary: R ⋈ₚ (L ⟕_q M) == (R ⋈ₚ L) ⟕_q M, valid when no region
+        // predicate references the null-supplied side M (so L can join and reorder with the
+        // rest of the region while M is re-attached above). Each peeled outer join is
+        // returned to be re-applied over the assembled region; the loop repeats so a nested
+        // outer join ((D ⟕ E) ⟕ C) peels one level per pass.
+        private static List<DeferredOuterJoin> PullUpOuterJoins(List<LogicalOperator> inputs, List<LogicalExpression> predicates)
+        {
+            var deferred = new List<DeferredOuterJoin>();
+
+            bool changed;
+            do
+            {
+                changed = false;
+
+                for (var i = 0; i < inputs.Count; i++)
+                {
+                    if (inputs[i] is LogicalJoin { JoinKind: LogicalJoinKind.LeftOuter, Probe: null, PassthruPredicate: null } outer &&
+                        !AnyPredicateReferences(predicates, outer.Right.DefinedValueSlots))
+                    {
+                        inputs[i] = outer.Left;
+                        deferred.Add(new DeferredOuterJoin(outer.Right, outer.Conditions));
+                        changed = true;
+                    }
                 }
             }
+            while (changed);
+
+            return deferred;
         }
 
-        private static void BuildGraph(List<BoundRelation> relations, List<BoundExpression> predicates, out ICollection<JoinNode> nodes, out ICollection<JoinEdge> edges)
+        private static bool AnyPredicateReferences(List<LogicalExpression> predicates, FrozenSet<ValueSlot> slots)
         {
-            var nodeByRelation = relations.Select(r => new JoinNode(r)).ToDictionary(n => n.Relation);
-            nodes = nodeByRelation.Values;
-            edges = new List<JoinEdge>();
-            var edgeByNodes = new Dictionary<(JoinNode, JoinNode), JoinEdge>();
-
-            var relationByValueSlot = relations.SelectMany(r => r.GetDefinedValues(), (r, v) => (Relation: r, ValueSlot: v))
-                                               .ToDictionary(t => t.ValueSlot, t => t.Relation);
-
-            var dependencyFinder = new ValueSlotDependencyFinder();
-
             foreach (var predicate in predicates)
             {
-                dependencyFinder.ValueSlots.Clear();
-                dependencyFinder.VisitExpression(predicate);
-
-                var referencedSlots = dependencyFinder.ValueSlots;
-                var referencedRelations = referencedSlots.Where(v => relationByValueSlot.ContainsKey(v))
-                                                         .Select(v => relationByValueSlot[v])
-                                                         .ToImmutableArray();
-
-                if (referencedRelations.Length == 2)
+                foreach (var slot in LogicalSlotReferenceFinder.FindReferencedSlots(predicate))
                 {
-                    var left = nodeByRelation[referencedRelations[0]];
-                    var right = nodeByRelation[referencedRelations[1]];
-                    var leftRight = (left, right);
-                    var rightLeft = (right, left);
-
-                    if (!edgeByNodes.TryGetValue(leftRight, out var edge))
-                    {
-                        if (!edgeByNodes.TryGetValue(rightLeft, out edge))
-                        {
-                            edge = new JoinEdge(left, right);
-
-                            left.Edges.Add(edge);
-                            right.Edges.Add(edge);
-
-                            edges.Add(edge);
-                            edgeByNodes.Add(leftRight, edge);
-                        }
-                    }
-
-                    edge.Conditions.Add(predicate);
+                    if (slots.Contains(slot))
+                        return true;
                 }
             }
+
+            return false;
         }
 
-        private static BoundRelation AssembleJoin(ICollection<JoinNode> nodes, ICollection<JoinEdge> edges)
+        private readonly struct DeferredOuterJoin
         {
-            var nodeComparer = Comparer<JoinNode>.Create(CompareNode);
-
-            var remainingNodes = new HashSet<JoinNode>(nodes);
-            var remainingEdges = new HashSet<JoinEdge>(edges);
-            var candidateNodes = new HashSet<JoinNode>();
-
-            BoundRelation result = null;
-
-            while (remainingNodes.Count > 0)
+            public DeferredOuterJoin(LogicalOperator nullSupplied, ImmutableArray<LogicalExpression> conditions)
             {
-                var start = remainingNodes.OrderBy(n => n, nodeComparer).First();
-                remainingNodes.Remove(start);
+                NullSupplied = nullSupplied;
+                Conditions = conditions;
+            }
 
-                var relation = start.Relation;
+            // The null-supplied (right) side of the peeled left outer join.
+            public LogicalOperator NullSupplied { get; }
 
-                candidateNodes.UnionWith(start.Edges.Select(e => e.Other(start)));
+            // The peeled join's own condition (references the preserved side, now in the
+            // region, and the null-supplied side).
+            public ImmutableArray<LogicalExpression> Conditions { get; }
+        }
 
-                while (candidateNodes.Count > 0)
+        private void Collect(LogicalOperator node, List<LogicalOperator> inputs, List<LogicalExpression> predicates)
+        {
+            if (node is LogicalJoin join && IsRegionJoin(join))
+            {
+                predicates.AddRange(join.Conditions);
+                Collect(join.Left, inputs, predicates);
+                Collect(join.Right, inputs, predicates);
+            }
+            else
+            {
+                // A region leaf: optimize it recursively (it may contain its own
+                // regions, e.g. under an outer join), then treat it as a unit.
+                inputs.Add(RewriteRelation(node));
+            }
+        }
+
+        private static LogicalOperator PickNext(LogicalOperator acc, List<LogicalOperator> remaining, List<LogicalExpression> predicates)
+        {
+            var accSlots = acc.DefinedValueSlots;
+
+            foreach (var candidate in remaining)
+            {
+                var candidateSlots = candidate.DefinedValueSlots;
+                foreach (var predicate in predicates)
                 {
-                    var usableEdges = candidateNodes.SelectMany(n => n.Edges)
-                                                    .Where(e => remainingEdges.Contains(e))
-                                                    .Where(n => !remainingNodes.Contains(n.Left) || !remainingNodes.Contains(n.Right))
-                                                    .Where(e => e.Conditions.Any(IsRelation))
-                                                    .ToImmutableArray();
-
-                    if (!usableEdges.Any())
-                    {
-                        usableEdges = candidateNodes.SelectMany(n => n.Edges)
-                                                    .Where(e => remainingEdges.Contains(e))
-                                                    .Where(n => !remainingNodes.Contains(n.Left) || !remainingNodes.Contains(n.Right))
-                                                    .ToImmutableArray();
-                    }
-
-                    var nextNode = usableEdges.SelectMany(e => new[] { e.Left, e.Right })
-                                              .Where(candidateNodes.Contains)
-                                              .OrderBy(n => n, nodeComparer)
-                                              .FirstOrDefault();
-
-                    if (nextNode is not null)
-                    {
-                        candidateNodes.Remove(nextNode);
-                        candidateNodes.UnionWith(nextNode.Edges.Select(e => e.Other(nextNode)).Where(n => remainingNodes.Contains(n)));
-
-                        var edge = usableEdges.First(e => !remainingNodes.Contains(e.Left) && e.Right == nextNode ||
-                                                          !remainingNodes.Contains(e.Right) && e.Left == nextNode);
-
-                        remainingNodes.Remove(nextNode);
-                        remainingEdges.Remove(edge);
-
-                        var left = relation;
-                        var right = nextNode.Relation;
-                        var condition = Expression.And(edge.Conditions);
-                        relation = new BoundJoinRelation(BoundJoinType.Inner, left, right, condition, null, null);
-                    }
+                    var references = LogicalSlotReferenceFinder.FindReferencedSlots(predicate);
+                    if (references.Any(accSlots.Contains) && references.Any(candidateSlots.Contains))
+                        return candidate;
                 }
-
-                result = result is null
-                    ? relation
-                    : new BoundJoinRelation(BoundJoinType.Inner, result, relation, null, null, null);
             }
 
-            Debug.Assert(remainingNodes.Count == 0, @"Found remaining nodes");
-
-            // Add filter for remaining predicates
-
-            var remainingPredicates = remainingEdges.SelectMany(e => e.Conditions);
-            var remainingCondition = Expression.And(remainingPredicates);
-            if (remainingCondition is not null)
-                result = new BoundFilterRelation(result, remainingCondition);
-
-            return result;
+            // No connecting predicate: a cartesian product is unavoidable here.
+            return remaining[0];
         }
 
-        private static int CompareNode(JoinNode x, JoinNode y)
+        private static ImmutableArray<LogicalExpression> TakeCoverable(List<LogicalExpression> pool, HashSet<ValueSlot> available)
         {
-            var xEstimate = CardinalityEstimator.Estimate(x.Relation).Maximum;
-            var yEstimate = CardinalityEstimator.Estimate(y.Relation).Maximum;
+            var taken = ImmutableArray.CreateBuilder<LogicalExpression>();
 
-            if (xEstimate is null && yEstimate is null)
-                return 0;
-
-            if (xEstimate is null)
-                return -1;
-
-            if (yEstimate is null)
-                return 1;
-
-            return -xEstimate.Value.CompareTo(yEstimate.Value);
-        }
-
-        private static bool IsRelation(BoundExpression condition)
-        {
-            if (condition is not BoundBinaryExpression binary || binary.OperatorKind != BinaryOperatorKind.Equal)
-                return false;
-
-            if (binary.Left is not BoundValueSlotExpression left || binary.Right is not BoundValueSlotExpression right)
-                return false;
-
-            // TODO: We should somehow compute from the actual data context
-            return left.ValueSlot.Name.Contains(@"ID:") &&
-                   right.ValueSlot.Name.Contains(@"ID:");
-        }
-
-        private sealed class JoinNode
-        {
-            public JoinNode(BoundRelation relation)
+            for (var i = pool.Count - 1; i >= 0; i--)
             {
-                Relation = relation;
+                var references = LogicalSlotReferenceFinder.FindReferencedSlots(pool[i]);
+                if (references.All(available.Contains))
+                {
+                    taken.Add(pool[i]);
+                    pool.RemoveAt(i);
+                }
             }
 
-            public BoundRelation Relation { get; }
-            public List<JoinEdge> Edges { get; } = new();
-
-            public override string ToString()
-            {
-                return Relation.ToString();
-            }
-        }
-
-        private sealed class JoinEdge
-        {
-            public JoinEdge(JoinNode left, JoinNode right)
-            {
-                Left = left;
-                Right = right;
-            }
-
-            public JoinNode Left { get; }
-            public JoinNode Right { get; }
-            public List<BoundExpression> Conditions { get; } = new();
-
-            public JoinNode Other(JoinNode node)
-            {
-                Debug.Assert(node == Left || node == Right);
-                return node == Left ? Right : Left;
-            }
-
-            public override string ToString()
-            {
-                return Expression.And(Conditions).ToString();
-            }
+            return taken.ToImmutable();
         }
     }
 }

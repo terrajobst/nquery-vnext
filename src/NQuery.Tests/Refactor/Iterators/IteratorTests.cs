@@ -1,9 +1,9 @@
-using NQuery.Refactor.Iterators;
+using NQuery.Iterators;
 
 namespace NQuery.Tests.Refactor.Iterators
 {
     // Mirrors NQuery.Tests.Iterators.IteratorTests, but against the emitted iterator
-    // contract (NQuery.Refactor.Iterators) rather than the legacy one.
+    // contract (NQuery.Iterators) rather than the legacy one.
     public class IteratorTests
     {
         internal static void AssertEmpty(Iterator iterator)

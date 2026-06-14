@@ -2,10 +2,10 @@ namespace NQuery.Binding
 {
     internal sealed class BoundSingleRowSubselect : BoundExpression
     {
-        public BoundSingleRowSubselect(ValueSlot value, BoundRelation relation)
+        public BoundSingleRowSubselect(IBoundValue value, BoundQuery query)
         {
             Value = value;
-            Relation = relation;
+            Query = query;
         }
 
         public override BoundNodeKind Kind
@@ -18,21 +18,13 @@ namespace NQuery.Binding
             get { return Value.Type; }
         }
 
-        public ValueSlot Value { get; }
+        public IBoundValue Value { get; }
 
-        public BoundRelation Relation { get; }
-
-        public BoundSingleRowSubselect Update(ValueSlot value, BoundRelation relation)
-        {
-            if (value == Value && relation == Relation)
-                return this;
-
-            return new BoundSingleRowSubselect(value, relation);
-        }
+        public BoundQuery Query { get; }
 
         public override string ToString()
         {
-            return $"({Relation})";
+            return $"({Query})";
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+#nullable enable
+
+using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
@@ -11,7 +13,7 @@ namespace NQuery.Iterators
         private readonly ImmutableArray<Func<object, object>> _definedValues;
         private readonly ArrayRowBuffer _rowBuffer;
 
-        private IEnumerator _rows;
+        private IEnumerator? _rows;
 
         public TableIterator(TableDefinition table, IEnumerable<Func<object, object>> valueSelectors)
         {
@@ -43,11 +45,12 @@ namespace NQuery.Iterators
 
         public override bool Read()
         {
-            if (!_rows.MoveNext())
+            var rows = _rows!;
+            if (!rows.MoveNext())
                 return false;
 
             for (var i = 0; i < _definedValues.Length; i++)
-                _rowBuffer.Array[i] = _definedValues[i](_rows.Current);
+                _rowBuffer.Array[i] = _definedValues[i](rows.Current!);
 
             return true;
         }

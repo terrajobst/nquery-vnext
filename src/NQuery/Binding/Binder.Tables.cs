@@ -3,16 +3,18 @@ using System.Collections.Immutable;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     partial class Binder
     {
-        private BoundRelation BindTableReference(TableReferenceSyntax node)
+        private BoundTableReference BindTableReference(TableReferenceSyntax node)
         {
             return Bind(node, BindTableReferenceInternal);
         }
 
-        private BoundRelation BindTableReferenceInternal(TableReferenceSyntax node)
+        private BoundTableReference BindTableReferenceInternal(TableReferenceSyntax node)
         {
             switch (node.Kind)
             {
@@ -39,12 +41,12 @@ namespace NQuery.Binding
             }
         }
 
-        private BoundRelation BindParenthesizedTableReference(ParenthesizedTableReferenceSyntax node)
+        private BoundTableReference BindParenthesizedTableReference(ParenthesizedTableReferenceSyntax node)
         {
             return BindTableReference(node.TableReference);
         }
 
-        private BoundRelation BindNamedTableReference(NamedTableReferenceSyntax node)
+        private BoundTableReference BindNamedTableReference(NamedTableReferenceSyntax node)
         {
             var symbols = LookupTable(node.TableName).ToImmutableArray();
 
@@ -56,8 +58,8 @@ namespace NQuery.Binding
                 var errorAlias = node.Alias is null
                                    ? errorTable.Name
                                    : node.Alias.Identifier.ValueText;
-                var errorInstance = new TableInstanceSymbol(errorAlias, errorTable, ValueSlotFactory);
-                return new BoundTableRelation(errorInstance);
+                var errorInstance = new TableInstanceSymbol(errorAlias, errorTable);
+                return new BoundNamedTableReference(errorInstance);
             }
 
             if (symbols.Length > 1)
@@ -70,21 +72,21 @@ namespace NQuery.Binding
 
             var alias = aliasIdentifier.ValueText;
 
-            var tableInstance = new TableInstanceSymbol(alias, table, ValueSlotFactory);
+            var tableInstance = new TableInstanceSymbol(alias, table);
 
             QueryState.IntroducedTables.Add(tableInstance, aliasIdentifier);
 
-            return new BoundTableRelation(tableInstance);
+            return new BoundNamedTableReference(tableInstance);
         }
 
-        private BoundRelation BindCrossJoinedTableReference(CrossJoinedTableReferenceSyntax node)
+        private BoundTableReference BindCrossJoinedTableReference(CrossJoinedTableReferenceSyntax node)
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
-            return new BoundJoinRelation(BoundJoinType.Inner, left, right, null, null, null);
+            return new BoundJoinTableReference(BoundJoinType.Inner, left, right, null);
         }
 
-        private BoundRelation BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
+        private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)
         {
             var left = BindTableReference(node.Left);
             var right = BindTableReference(node.Right);
@@ -95,10 +97,10 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinRelation(BoundJoinType.Inner, left, right, condition, null, null);
+            return new BoundJoinTableReference(BoundJoinType.Inner, left, right, condition);
         }
 
-        private BoundRelation BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
+        private BoundTableReference BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
         {
             var joinType = node.TypeKeyword.Kind == SyntaxKind.LeftKeyword
                                ? BoundJoinType.LeftOuter
@@ -115,10 +117,10 @@ namespace NQuery.Binding
             if (condition.Type.IsNonBoolean())
                 Diagnostics.ReportOnClauseMustEvaluateToBool(node.Condition.Span);
 
-            return new BoundJoinRelation(joinType, left, right, condition, null, null);
+            return new BoundJoinTableReference(joinType, left, right, condition);
         }
 
-        private BoundRelation BindDerivedTableReference(DerivedTableReferenceSyntax node)
+        private BoundTableReference BindDerivedTableReference(DerivedTableReferenceSyntax node)
         {
             // TODO: Ensure query has no ORDER BY unless TOP is also specified
 
@@ -126,19 +128,19 @@ namespace NQuery.Binding
 
             var namedQueryColumns = query.OutputColumns.Where(c => !string.IsNullOrEmpty(c.Name));
             var columns = new List<ColumnSymbol>();
-            var valueSlotFromColumn = new Dictionary<ColumnSymbol, ValueSlot>();
+            var valueFromColumn = new Dictionary<ColumnSymbol, IBoundValue>();
 
             foreach (var queryColumn in namedQueryColumns)
             {
                 var columnSymbol = new ColumnSymbol(queryColumn.Name, queryColumn.Type);
                 columns.Add(columnSymbol);
-                valueSlotFromColumn.Add(columnSymbol, queryColumn.ValueSlot);
+                valueFromColumn.Add(columnSymbol, queryColumn.BoundValue);
             }
 
             var derivedTable = new DerivedTableSymbol(columns);
-            var valueSlotFactory = new Func<TableInstanceSymbol, ColumnSymbol, ValueSlot>((_, c) => valueSlotFromColumn[c]);
-            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, valueSlotFactory);
-            var boundTableReference = new BoundDerivedTableRelation(derivedTableInstance, query.Relation);
+            var aliasFactory = new Func<TableInstanceSymbol, ColumnSymbol, IBoundValue>((_, c) => valueFromColumn[c]);
+            var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, aliasFactory);
+            var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
             QueryState.IntroducedTables.Add(derivedTableInstance, node.Name);
 

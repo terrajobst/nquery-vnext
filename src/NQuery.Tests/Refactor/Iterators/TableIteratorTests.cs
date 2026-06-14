@@ -1,7 +1,7 @@
 using System.Collections;
 
 using NQuery.Hosting;
-using NQuery.Refactor.Iterators;
+using NQuery.Iterators;
 using NQuery.Symbols;
 
 namespace NQuery.Tests.Refactor.Iterators

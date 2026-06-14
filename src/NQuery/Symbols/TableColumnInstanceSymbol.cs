@@ -1,39 +1,25 @@
-using NQuery.Binding;
-
 namespace NQuery.Symbols
 {
-    public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, NQuery.Refactor.Binding.IBoundValue
+    public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, NQuery.Binding.IBoundValue
     {
-        private readonly ValueSlot _valueSlot;
-        private readonly bool _isRefactor;
-        private readonly NQuery.Refactor.Binding.IBoundValue _aliased;
+        private readonly NQuery.Binding.IBoundValue _aliased;
 
-        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, Func<TableInstanceSymbol, ColumnSymbol, ValueSlot> valueSlotFactory)
-            : base(column.Name)
-        {
-            TableInstance = tableInstance;
-            Column = column;
-            _valueSlot = valueSlotFactory(tableInstance, column);
-        }
-
-        // Refactor pipeline, real table: the column is its own value identity (its slot is minted
-        // by the algebrizer at the table scan).
+        // Real table: the column is its own value identity (its slot is minted by the algebrizer
+        // at the table scan).
         internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column)
             : base(column.Name)
         {
             TableInstance = tableInstance;
             Column = column;
-            _isRefactor = true;
         }
 
-        // Refactor pipeline, derived table: the column aliases the inner query's value, so it
-        // resolves to that value rather than introducing one of its own.
-        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, NQuery.Refactor.Binding.IBoundValue aliased)
+        // Derived table: the column aliases the inner query's value, so it resolves to that value
+        // rather than introducing one of its own.
+        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, NQuery.Binding.IBoundValue aliased)
             : base(column.Name)
         {
             TableInstance = tableInstance;
             Column = column;
-            _isRefactor = true;
             _aliased = aliased;
         }
 
@@ -42,13 +28,9 @@ namespace NQuery.Symbols
             get { return SymbolKind.TableColumnInstance; }
         }
 
-        internal override ValueSlot ValueSlot => _valueSlot ?? throw new InvalidOperationException("This symbol was bound by the AlgebraBinding binder; use BoundValue.");
+        internal override NQuery.Binding.IBoundValue BoundValue => _aliased ?? this;
 
-        internal override NQuery.Refactor.Binding.IBoundValue BoundValue => _isRefactor
-            ? _aliased ?? this
-            : throw new InvalidOperationException("This symbol was bound by the legacy Binding binder; use ValueSlot.");
-
-        private protected override Type SlotType => _valueSlot is not null ? _valueSlot.Type : Column.Type;
+        private protected override Type SlotType => Column.Type;
 
         public TableInstanceSymbol TableInstance { get; }
 

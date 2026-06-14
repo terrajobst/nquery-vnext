@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-using Iterator = NQuery.Refactor.Iterators.Iterator;
+using Iterator = NQuery.Iterators.Iterator;
 
 namespace NQuery
 {

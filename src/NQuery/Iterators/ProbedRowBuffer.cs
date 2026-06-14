@@ -1,12 +1,16 @@
-﻿namespace NQuery.Iterators
+#nullable enable
+
+namespace NQuery.Iterators
 {
+    // Wraps a buffer and appends a single boolean "probe" column at the end. A
+    // probing semi join uses it to report, per outer row, whether a match existed.
     internal sealed class ProbedRowBuffer : RowBuffer
     {
         private static readonly object BoxedTrue = true;
         private static readonly object BoxedFalse = false;
 
         private readonly RowBuffer _rowBuffer;
-        private object _value;
+        private object _value = BoxedFalse;
 
         public ProbedRowBuffer(RowBuffer rowBuffer)
         {

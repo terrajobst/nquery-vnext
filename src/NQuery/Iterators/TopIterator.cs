@@ -1,4 +1,6 @@
-﻿namespace NQuery.Iterators
+#nullable enable
+
+namespace NQuery.Iterators
 {
     internal class TopIterator : Iterator
     {

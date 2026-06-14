@@ -1,5 +1,9 @@
+#nullable enable
+
 namespace NQuery.Iterators
 {
+    // A fixed-width buffer of all-NULL values, used as the right side of an
+    // unmatched outer-join row.
     internal sealed class NullRowBuffer : RowBuffer
     {
         private readonly int _count;
@@ -16,7 +20,7 @@ namespace NQuery.Iterators
 
         public override object this[int index]
         {
-            get { return null; }
+            get { return null!; }
         }
 
         public override void CopyTo(object[] array, int destinationIndex)

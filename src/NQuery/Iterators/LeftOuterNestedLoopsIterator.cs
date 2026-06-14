@@ -1,24 +1,34 @@
-﻿namespace NQuery.Iterators
+#nullable enable
+
+namespace NQuery.Iterators
 {
     internal sealed class LeftOuterNestedLoopsIterator : NestedLoopsIterator
     {
         private readonly Iterator _left;
         private readonly Iterator _right;
-        private readonly IteratorPredicate _predicate;
-        private readonly IteratorPredicate _passthruPredicate;
+        private readonly EmittedPredicate _predicate;
+        private readonly EmittedPredicate _passthruPredicate;
         private readonly LeftOuterNestedLoopsRowBuffer _rowBuffer;
+        private readonly RowBuffer _predicateRowBuffer;
 
         private bool _bof;
         private bool _advanceOuter;
         private bool _outerRowHadMatchingInnerRow;
 
-        public LeftOuterNestedLoopsIterator(Iterator left, Iterator right, IteratorPredicate predicate, IteratorPredicate passthruPredicate)
+        public LeftOuterNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, EmittedPredicate passthruPredicate, RowBuffer? outer = null)
         {
             _left = left;
             _right = right;
             _predicate = predicate;
             _passthruPredicate = passthruPredicate;
             _rowBuffer = new LeftOuterNestedLoopsRowBuffer(_left.RowBuffer, _right.RowBuffer);
+
+            // The predicate must always see the real right row (the exposed buffer may
+            // be showing the all-NULL right of a previous unmatched outer row). When this
+            // join is correlated (inside an Apply), the outer buffer is prepended too,
+            // matching the (outer ++ left ++ right) layout the predicate was compiled against.
+            var combined = new CombinedRowBuffer(_left.RowBuffer, _right.RowBuffer);
+            _predicateRowBuffer = outer is null ? combined : new CombinedRowBuffer(outer, combined);
         }
 
         public override RowBuffer RowBuffer
@@ -53,7 +63,7 @@
                     if (!_left.Read())
                         return false;
 
-                    if (_passthruPredicate())
+                    if (_passthruPredicate(_predicateRowBuffer))
                     {
                         _rowBuffer.SetRightToNull();
                         _advanceOuter = true;
@@ -83,7 +93,7 @@
                     continue;
                 }
 
-                matchingRowFound = _predicate();
+                matchingRowFound = _predicate(_predicateRowBuffer);
             }
 
             _rowBuffer.SetRight();
@@ -91,7 +101,7 @@
             return true;
         }
 
-        private class LeftOuterNestedLoopsRowBuffer : RowBuffer
+        private sealed class LeftOuterNestedLoopsRowBuffer : RowBuffer
         {
             private readonly RowBuffer _left;
             private readonly RowBuffer _right;
@@ -102,8 +112,7 @@
             {
                 _left = left;
                 _right = right;
-                _indirectedRowBuffer = new IndirectedRowBuffer(_right.Count);
-                _indirectedRowBuffer.ActiveRowBuffer = _right;
+                _indirectedRowBuffer = new IndirectedRowBuffer(_right.Count, _right);
                 _rightNullRowBuffer = new NullRowBuffer(right.Count);
             }
 

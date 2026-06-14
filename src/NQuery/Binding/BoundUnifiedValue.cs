@@ -1,27 +1,17 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace NQuery.Binding
 {
     internal sealed class BoundUnifiedValue
     {
-        public BoundUnifiedValue(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
+        public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
         {
-            ValueSlot = valueSlot;
-            InputValueSlots = inputValueSlots.ToImmutableArray();
+            Value = value;
+            InputValues = inputValues.ToImmutableArray();
         }
 
-        public ValueSlot ValueSlot { get; }
+        public IBoundValue Value { get; }
 
-        public ImmutableArray<ValueSlot> InputValueSlots { get; }
-
-        public BoundUnifiedValue Update(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
-        {
-            var newInputValueSlots = inputValueSlots.ToImmutableArray();
-
-            if (valueSlot == ValueSlot && newInputValueSlots == InputValueSlots)
-                return this;
-
-            return new BoundUnifiedValue(valueSlot, newInputValueSlots);
-        }
+        public ImmutableArray<IBoundValue> InputValues { get; }
     }
 }

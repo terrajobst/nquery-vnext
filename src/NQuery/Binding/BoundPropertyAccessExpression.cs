@@ -1,5 +1,7 @@
 using NQuery.Symbols;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundPropertyAccessExpression : BoundExpression
@@ -27,14 +29,6 @@ namespace NQuery.Binding
         public PropertySymbol PropertySymbol
         {
             get { return Symbol; }
-        }
-
-        public BoundPropertyAccessExpression Update(BoundExpression target, PropertySymbol propertySymbol)
-        {
-            if (target == Target && propertySymbol == Symbol)
-                return this;
-
-            return new BoundPropertyAccessExpression(target, propertySymbol);
         }
 
         public override string ToString()

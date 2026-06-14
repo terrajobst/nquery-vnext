@@ -6,6 +6,8 @@ using NQuery.Symbols;
 using NQuery.Syntax;
 using NQuery.Text;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     partial class Binder
@@ -58,7 +60,7 @@ namespace NQuery.Binding
             return null;
         }
 
-        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out ValueSlot valueSlot)
+        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue valueSlot)
         {
             var queryState = QueryState;
 
@@ -67,7 +69,7 @@ namespace NQuery.Binding
             var columnInstance = boundExpression is not BoundColumnExpression columnExpression ? null : columnExpression.Symbol;
             if (columnInstance is not null && queryState is not null)
             {
-                valueSlot = columnInstance.ValueSlot;
+                valueSlot = columnInstance.BoundValue;
                 queryState.ReplacedExpression.Add(expression, valueSlot);
                 return true;
             }
@@ -94,19 +96,19 @@ namespace NQuery.Binding
             return false;
         }
 
-        private static bool TryGetExistingValue(BoundExpression boundExpression, out ValueSlot valueSlot)
+        private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue valueSlot)
         {
-            if (boundExpression is not BoundValueSlotExpression boundValueSlot)
+            if (boundExpression is not BoundValueExpression boundValueSlot)
             {
                 valueSlot = null;
                 return false;
             }
 
-            valueSlot = boundValueSlot.ValueSlot;
+            valueSlot = boundValueSlot.Value;
             return true;
         }
 
-        private static ValueSlot FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
+        private static IBoundValue FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
         {
             return (from c in candidates
                     where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
@@ -210,7 +212,7 @@ namespace NQuery.Binding
                                      let bw = GetBoundNode<BoundWildcardSelectColumn>(n)
                                      where bw is not null
                                      from c in bw.TableColumns
-                                     where !IsGroupedOrAggregated(c.ValueSlot)
+                                     where !IsGroupedOrAggregated(c.BoundValue)
                                      select (Syntax: (SyntaxNode)n, Symbol: c);
 
             var expressionReferences = from n in node.DescendantNodes().OfType<ExpressionSyntax>()
@@ -240,7 +242,7 @@ namespace NQuery.Binding
             return IsGroupedOrAggregated(valueSlot);
         }
 
-        private bool IsGroupedOrAggregated(ValueSlot valueSlot)
+        private bool IsGroupedOrAggregated(IBoundValue valueSlot)
         {
             var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
             return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
@@ -312,11 +314,9 @@ namespace NQuery.Binding
             }
         }
 
-        private static BoundNode BindEmptyQuery()
+        private static BoundQuery BindEmptyQuery()
         {
-            var relation = new BoundEmptyRelation();
-            var output = Enumerable.Empty<QueryColumnInstanceSymbol>();
-            return new BoundQuery(relation, output);
+            return new BoundEmptyQuery();
         }
 
         private BoundQuery BindUnionQuery(UnionQuerySyntax node)
@@ -343,18 +343,17 @@ namespace NQuery.Binding
             var inputs = BindToCommonTypes(diagnosticSpan, queries);
             var columnCount = queries.Select(q => q.OutputColumns.Length).Min();
             var outputValues = inputs.First()
-                .GetOutputValues()
+                .OutputValues
                 .Take(columnCount)
-                .Select(v => ValueSlotFactory.CreateTemporary(v.Type))
+                .Select(v => (IBoundValue)ValueFactory.CreateTemporary(v.Type))
                 .ToImmutableArray();
-            var definedValues = outputValues.Select((valueSlot, columnIndex) => new BoundUnifiedValue(valueSlot, inputs.Select(input => input.GetOutputValues().ElementAt(columnIndex))));
+            var definedValues = outputValues.Select((value, columnIndex) => new BoundUnifiedValue(value, inputs.Select(input => input.OutputValues[columnIndex]))).ToImmutableArray();
             var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
-            var comparers = isUnionAll
+            var comparers = (isUnionAll
                 ? Enumerable.Empty<IComparer>()
-                : outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, DiagnosticId.InvalidDataTypeInUnion));
+                : outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, DiagnosticId.InvalidDataTypeInUnion))).ToImmutableArray();
 
-            var relation = new BoundUnionRelation(isUnionAll, inputs, definedValues, comparers);
-            return new BoundQuery(relation, outputColumns);
+            return new BoundUnionQuery(isUnionAll, inputs, definedValues, comparers, outputColumns);
         }
 
         private ImmutableArray<BoundQuery> BindUnionInputs(UnionQuerySyntax node)
@@ -408,35 +407,34 @@ namespace NQuery.Binding
             if (boundLeft.OutputColumns.Length != boundRight.OutputColumns.Length)
                 Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
 
-            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput, out var leftValues, out _);
+            BindToCommonTypes(diagnosticSpan, boundLeft, boundRight, out var leftInput, out var rightInput);
 
-            var outputValues = leftValues;
+            var outputValues = leftInput.OutputValues;
             var outputColumns = BindOutputColumns(columns, outputValues);
 
             var diagnosticId = isIntersect
                 ? DiagnosticId.InvalidDataTypeInIntersect
                 : DiagnosticId.InvalidDataTypeInExcept;
 
-            var comparers = outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, diagnosticId));
+            var comparers = outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, diagnosticId)).ToImmutableArray();
 
-            var relation = new BoundIntersectOrExceptRelation(isIntersect, leftInput, rightInput, comparers);
-            return new BoundQuery(relation, outputColumns);
+            return new BoundIntersectOrExceptQuery(isIntersect, leftInput, rightInput, comparers, outputColumns);
         }
 
-        private void BindToCommonTypes(TextSpan diagnosticSpan, BoundQuery left, BoundQuery right, out BoundRelation newLeft, out BoundRelation newRight, out ImmutableArray<ValueSlot> leftValues, out ImmutableArray<ValueSlot> rightValues)
+        private void BindToCommonTypes(TextSpan diagnosticSpan, BoundQuery left, BoundQuery right, out BoundQueryInput newLeft, out BoundQueryInput newRight)
         {
             var columnCount = Math.Min(left.OutputColumns.Length, right.OutputColumns.Length);
 
             var leftComputedValues = new List<BoundComputedValue>(columnCount);
-            var leftOutputs = new List<ValueSlot>(columnCount);
+            var leftOutputs = new List<IBoundValue>(columnCount);
 
             var rightComputedValues = new List<BoundComputedValue>(columnCount);
-            var rightOutputs = new List<ValueSlot>(columnCount);
+            var rightOutputs = new List<IBoundValue>(columnCount);
 
             for (var i = 0; i < columnCount; i++)
             {
-                var leftValue = left.OutputColumns[i].ValueSlot;
-                var rightValue = right.OutputColumns[i].ValueSlot;
+                var leftValue = left.OutputColumns[i].BoundValue;
+                var rightValue = right.OutputColumns[i].BoundValue;
 
                 BindToCommonType(diagnosticSpan, leftValue, rightValue, out var convertedLeft, out var convertedRight);
 
@@ -446,7 +444,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    var newLeftValue = ValueSlotFactory.CreateTemporary(convertedLeft.Type);
+                    var newLeftValue = ValueFactory.CreateTemporary(convertedLeft.Type);
                     var computedValue = new BoundComputedValue(convertedLeft, newLeftValue);
                     leftComputedValues.Add(computedValue);
                     leftOutputs.Add(newLeftValue);
@@ -458,37 +456,29 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    var newRightValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
+                    var newRightValue = ValueFactory.CreateTemporary(convertedRight.Type);
                     var computedValue = new BoundComputedValue(convertedRight, newRightValue);
                     rightComputedValues.Add(computedValue);
                     rightOutputs.Add(newRightValue);
                 }
             }
 
-            newLeft = leftComputedValues.Count == 0
-                ? left.Relation
-                : new BoundProjectRelation(new BoundComputeRelation(left.Relation, leftComputedValues), leftOutputs);
-
-            newRight = rightComputedValues.Count == 0
-                ? right.Relation
-                : new BoundProjectRelation(new BoundComputeRelation(right.Relation, rightComputedValues), rightOutputs);
-
-            leftValues = leftOutputs.ToImmutableArray();
-            rightValues = rightOutputs.ToImmutableArray();
+            newLeft = new BoundQueryInput(left, leftComputedValues.ToImmutableArray(), leftOutputs.ToImmutableArray());
+            newRight = new BoundQueryInput(right, rightComputedValues.ToImmutableArray(), rightOutputs.ToImmutableArray());
         }
 
-        private ImmutableArray<BoundRelation> BindToCommonTypes(TextSpan diagnosticSpan, ImmutableArray<BoundQuery> queries)
+        private ImmutableArray<BoundQueryInput> BindToCommonTypes(TextSpan diagnosticSpan, ImmutableArray<BoundQuery> queries)
         {
             var columnCount = queries.Select(q => q.OutputColumns.Length).Min();
             var computations = new List<BoundComputedValue>[queries.Length];
 
-            var outputs = new List<ValueSlot>[queries.Length];
+            var outputs = new List<IBoundValue>[queries.Length];
             for (var i = 0; i < outputs.Length; i++)
-                outputs[i] = new List<ValueSlot>();
+                outputs[i] = new List<IBoundValue>();
 
             for (var columnIndex = 0; columnIndex < columnCount; columnIndex++)
             {
-                var expressions = queries.Select(q => new BoundValueSlotExpression(q.OutputColumns[columnIndex].ValueSlot)).OfType<BoundExpression>().ToImmutableArray();
+                var expressions = queries.Select(q => new BoundValueExpression(q.OutputColumns[columnIndex].BoundValue)).OfType<BoundExpression>().ToImmutableArray();
                 var convertedExpressions = BindToCommonType(expressions, diagnosticSpan);
 
                 for (var queryIndex = 0; queryIndex < expressions.Length; queryIndex++)
@@ -500,14 +490,14 @@ namespace NQuery.Binding
                     {
                         // Nothing to do.
 
-                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].ValueSlot;
+                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].BoundValue;
                         outputs[queryIndex].Add(originalValueSlot);
                     }
                     else
                     {
                         computations[queryIndex] ??= new List<BoundComputedValue>();
 
-                        var computedValueSlot = ValueSlotFactory.CreateTemporary(converted.Type);
+                        var computedValueSlot = ValueFactory.CreateTemporary(converted.Type);
                         var computedValue = new BoundComputedValue(converted, computedValueSlot);
                         computations[queryIndex].Add(computedValue);
 
@@ -516,29 +506,21 @@ namespace NQuery.Binding
                 }
             }
 
-            var result = new List<BoundRelation>();
+            var result = new List<BoundQueryInput>();
 
             for (var queryIndex = 0; queryIndex < queries.Length; queryIndex++)
             {
                 var computedValues = computations[queryIndex];
-                var queryRelation = queries[queryIndex].Relation;
-                if (computedValues is null)
-                {
-                    result.Add(queryRelation);
-                }
-                else
-                {
-                    var computeRelation = new BoundComputeRelation(queryRelation, computedValues);
-                    var projectedOutputs = outputs[queryIndex];
-                    var projectRelation = new BoundProjectRelation(computeRelation, projectedOutputs);
-                    result.Add(projectRelation);
-                }
+                result.Add(new BoundQueryInput(
+                    queries[queryIndex],
+                    computedValues is null ? ImmutableArray<BoundComputedValue>.Empty : computedValues.ToImmutableArray(),
+                    outputs[queryIndex].ToImmutableArray()));
             }
 
             return result.ToImmutableArray();
         }
 
-        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<ValueSlot> outputValues)
+        private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<IBoundValue> outputValues)
         {
             var result = new List<QueryColumnInstanceSymbol>(inputColumns.Length);
 
@@ -550,7 +532,7 @@ namespace NQuery.Binding
                 var queryColumn = inputColumns[i];
                 var valueSlot = outputValues[i];
 
-                var resultColumn = queryColumn.ValueSlot == valueSlot
+                var resultColumn = queryColumn.BoundValue == valueSlot
                     ? queryColumn
                     : new QueryColumnInstanceSymbol(queryColumn.Name, valueSlot);
 
@@ -609,7 +591,7 @@ namespace NQuery.Binding
             var firstFromClauseSyntax = firstQuerySyntax.FromClause;
             var firstFromClause = firstFromClauseSyntax is null
                                     ? null
-                                    : GetBoundNode<BoundRelation>(firstFromClauseSyntax);
+                                    : GetBoundNode<BoundTableReference>(firstFromClauseSyntax);
 
             var binder = firstFromClause is null
                             ? this
@@ -627,8 +609,7 @@ namespace NQuery.Binding
             var outputQueryColumns = query.OutputColumns;
             var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryColumns);
 
-            var relation = new BoundSortRelation(false, query.Relation, orderByClause.Columns.Select(c => c.ComparedValue).ToImmutableArray());
-            return new BoundQuery(relation, outputQueryColumns);
+            return new BoundOrderedQuery(query, orderByClause.SortedValues, outputQueryColumns);
         }
 
         private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
@@ -783,7 +764,7 @@ namespace NQuery.Binding
             }
 
             var checker = new RecursiveCommonTableExpressionChecker(commonTableExpression, Diagnostics, symbol);
-            checker.VisitRelation(boundRecursiveMember.Relation);
+            checker.Check(boundRecursiveMember);
 
             return boundRecursiveMember;
         }
@@ -887,7 +868,7 @@ namespace NQuery.Binding
 
             var havingClause = fromAwareBinder.BindHavingClause(node.HavingClause);
 
-            var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns);
+            var selectColumns = fromAwareBinder.BindSelectColumns(node.SelectClause.Columns).ToImmutableArray();
 
             var outputColumns = selectColumns.Select(s => s.Column).ToImmutableArray();
 
@@ -920,21 +901,21 @@ namespace NQuery.Binding
             }
             else
             {
-                var outputValueSet = new HashSet<ValueSlot>(outputColumns.Select(c => c.ValueSlot));
+                var outputValueSet = new HashSet<IBoundValue>(outputColumns.Select(c => c.BoundValue));
 
                 for (var i = 0; i < orderByClause.Columns.Length; i++)
                 {
                     var column = orderedQueryNode.Columns[i];
                     var boundColumn = orderByClause.Columns[i];
-                    var orderedValue = boundColumn.ComparedValue.ValueSlot;
+                    var orderedValue = boundColumn.ComparedValue.Value;
 
                     if (!outputValueSet.Contains(orderedValue))
                         Diagnostics.ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(column.Span);
                 }
 
-                var orderByValueSet = new HashSet<ValueSlot>(orderByClause.Columns.Select(c => c.ComparedValue.ValueSlot));
-                distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.ValueSlot, distinctComparer[i]))
-                                                 .Where(s => !orderByValueSet.Contains(s.ValueSlot))
+                var orderByValueSet = new HashSet<IBoundValue>(orderByClause.Columns.Select(c => c.ComparedValue.Value));
+                distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.BoundValue, distinctComparer[i]))
+                                                 .Where(s => !orderByValueSet.Contains(s.Value))
                                                  .ToImmutableArray();
             }
 
@@ -950,69 +931,36 @@ namespace NQuery.Binding
             if (withTies && orderedQueryNode is null)
                 Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause.Span);
 
-            // Putting it together
-
-            var fromRelation = fromClause ?? new BoundConstantRelation();
-
-            var whereRelation = whereClause is null
-                ? fromRelation
-                : new BoundFilterRelation(fromRelation, whereClause);
+            // Assemble the syntax-shaped query node. Unlike the legacy binder we do NOT lower
+            // this into Filter/Compute/GroupBy/Sort/Top/Project relations here -- that is the
+            // algebrizer's job. We only carry the resolved ingredients it needs.
 
             var computedGroups = queryBinder.QueryState
                                             .ComputedGroupings
-                                            .Where(g => g.Expression is not BoundValueSlotExpression)
+                                            .Where(g => g.Expression is not BoundValueExpression)
                                             .Select(g => new BoundComputedValue(g.Expression, g.Result))
                                             .ToImmutableArray();
-            var groupComputeRelation = !computedGroups.Any()
-                                            ? whereRelation
-                                            : new BoundComputeRelation(whereRelation, computedGroups);
-
-            var groupByAndAggregationRelation = !groups.Any() && !aggregates.Any()
-                ? groupComputeRelation
-                : new BoundGroupByAndAggregationRelation(groupComputeRelation, groups, aggregates);
-
-            var havingRelation = havingClause is null
-                ? groupByAndAggregationRelation
-                : new BoundFilterRelation(groupByAndAggregationRelation, havingClause);
-
-            var selectComputeRelation = projections.Length == 0
-                ? havingRelation
-                : new BoundComputeRelation(havingRelation, projections);
 
             var sortedValues = orderByClause is null
                 ? ImmutableArray<BoundComparedValue>.Empty
                 : orderByClause.Columns.Select(c => c.ComparedValue).Concat(distinctSortValues).ToImmutableArray();
 
-            var sortRelation = sortedValues.IsEmpty
-                ? selectComputeRelation
-                : new BoundSortRelation(isDistinct, selectComputeRelation, sortedValues);
-
-            var tieEntries = top is null || sortedValues.IsEmpty || !withTies
+            // SELECT DISTINCT with no ORDER BY is implemented as a group-by over the output
+            // columns (an ORDER BY instead turns it into a distinct-sort over SortedValues).
+            var distinctValues = !isDistinct || orderByClause is not null
                 ? ImmutableArray<BoundComparedValue>.Empty
-                : sortedValues;
+                : outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
+                               .ToImmutableArray();
 
-            var topRelation = top is null
-                ? sortRelation
-                : new BoundTopRelation(sortRelation, top.Value, tieEntries);
+            var boundFrom = fromClause is null ? null : new BoundFromClause(fromClause);
+            var boundWhere = whereClause is null ? null : new BoundWhereClause(whereClause);
+            var boundGroupBy = groups.IsEmpty && computedGroups.IsEmpty ? null : new BoundGroupByClause(groups, computedGroups);
+            var boundHaving = havingClause is null ? null : new BoundHavingClause(havingClause);
+            var boundSelect = new BoundSelectClause(selectColumns, isDistinct, aggregates, projections, distinctValues);
+            var boundOrderBy = orderByClause is null ? null : new BoundOrderByClause(orderByClause.Columns, sortedValues);
+            var boundTop = top is null ? null : new BoundTopClause(top.Value, withTies);
 
-            var projectRelation = new BoundProjectRelation(topRelation, outputColumns.Select(c => c.ValueSlot).ToImmutableArray());
-
-            BoundRelation distinctRelation;
-
-            if (!isDistinct || orderByClause is not null)
-            {
-                distinctRelation = projectRelation;
-            }
-            else
-            {
-                var distinctValues = from column in outputColumns
-                                     let comparer = BindComparer(distinctKeyword.Span, column.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)
-                                     select new BoundComparedValue(column.ValueSlot, comparer);
-
-                distinctRelation = new BoundGroupByAndAggregationRelation(projectRelation, distinctValues, Enumerable.Empty<BoundAggregatedValue>());
-            }
-
-            return new BoundQuery(distinctRelation, outputColumns);
+            return new BoundSelectQuery(boundFrom, boundWhere, boundGroupBy, boundHaving, boundSelect, boundOrderBy, boundTop);
         }
 
         private IEnumerable<BoundSelectColumn> BindSelectColumns(IEnumerable<SelectColumnSyntax> nodes)
@@ -1057,7 +1005,7 @@ namespace NQuery.Binding
 
             if (!TryGetExistingValue(boundExpression, out var valueSlot))
             {
-                valueSlot = ValueSlotFactory.CreateTemporary(boundExpression.Type);
+                valueSlot = ValueFactory.CreateTemporary(boundExpression.Type);
                 QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
             }
 
@@ -1140,7 +1088,7 @@ namespace NQuery.Binding
             for (var columnIndex = 0; columnIndex < columns.Count; columnIndex++)
             {
                 var column = columns[columnIndex];
-                var columnType = outputColumns[columnIndex].ValueSlot.Type;
+                var columnType = outputColumns[columnIndex].Type;
                 var comparer = BindComparer(column.Span, columnType, DiagnosticId.InvalidDataTypeInSelectDistinct);
                 comparers.Add(comparer);
             }
@@ -1148,7 +1096,7 @@ namespace NQuery.Binding
             return comparers.ToImmutableArray();
         }
 
-        private BoundRelation BindFromClause(FromClauseSyntax node)
+        private BoundTableReference BindFromClause(FromClauseSyntax node)
         {
             if (node is null)
                 return null;
@@ -1179,9 +1127,9 @@ namespace NQuery.Binding
             return boundNode;
         }
 
-        private BoundRelation BindFromClauseInternal(FromClauseSyntax node)
+        private BoundTableReference BindFromClauseInternal(FromClauseSyntax node)
         {
-            BoundRelation lastTableReference = null;
+            BoundTableReference lastTableReference = null;
 
             foreach (var tableReference in node.TableReferences)
             {
@@ -1193,7 +1141,7 @@ namespace NQuery.Binding
                 }
                 else
                 {
-                    lastTableReference = new BoundJoinRelation(BoundJoinType.Inner, lastTableReference, boundTableReference, null, null, null);
+                    lastTableReference = new BoundJoinTableReference(BoundJoinType.Inner, lastTableReference, boundTableReference, null);
                 }
             }
 
@@ -1234,7 +1182,7 @@ namespace NQuery.Binding
                 var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
                 if (!TryGetExistingValue(boundExpression, out var valueSlot))
-                    valueSlot = ValueSlotFactory.CreateTemporary(expressionType);
+                    valueSlot = ValueFactory.CreateTemporary(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
@@ -1284,7 +1232,7 @@ namespace NQuery.Binding
             // we will use their ordinals.
 
             var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
-            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (c.ValueSlot, Index: i))
+            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (ValueSlot: c.BoundValue, Index: i))
                                                                       .GroupBy(t => t.ValueSlot, t => t.Index)
                                                                       .ToDictionary(g => g.Key, g => g.First());
 
@@ -1321,7 +1269,7 @@ namespace NQuery.Binding
                 // However, if the query we are applied to is a combined query, it must exist
                 // in the input.
 
-                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.ValueSlot, out var columnOrdinal))
+                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.Value, out var columnOrdinal))
                 {
                     columnOrdinal = -1;
                     if (selectorsMustBeInInput)
@@ -1332,8 +1280,8 @@ namespace NQuery.Binding
                                       ? resultQueryColumns[columnOrdinal]
                                       : null;
                 var valueSlot = queryColumn is not null
-                                    ? queryColumn.ValueSlot
-                                    : boundSelector.ValueSlot;
+                                    ? queryColumn.BoundValue
+                                    : boundSelector.Value;
 
                 // Almost there. Now the only thing left for us to do is getting
                 // the associated comparer.
@@ -1349,7 +1297,7 @@ namespace NQuery.Binding
                 boundColumns.Add(boundColumn);
             }
 
-            return new BoundOrderByClause(boundColumns);
+            return new BoundOrderByClause(boundColumns, boundColumns.Select(c => c.ComparedValue).ToImmutableArray());
         }
 
         private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)
@@ -1378,13 +1326,13 @@ namespace NQuery.Binding
                 var index = position - 1;
                 var indexValid = 0 <= index && index < queryColumns.Length;
                 if (indexValid)
-                    return new BoundOrderBySelector(queryColumns[index].ValueSlot, null);
+                    return new BoundOrderBySelector(queryColumns[index].BoundValue, null);
 
                 // Report that the given position isn't valid.
                 Diagnostics.ReportOrderByColumnPositionIsOutOfRange(selector.Span, position, queryColumns.Length);
 
                 // And to avoid cascading errors, we'll fake up an invalid slot.
-                var errorSlot = ValueSlotFactory.CreateTemporary(TypeFacts.Missing);
+                var errorSlot = ValueFactory.CreateTemporary(TypeFacts.Missing);
                 return new BoundOrderBySelector(errorSlot, null);
             }
 
@@ -1404,7 +1352,7 @@ namespace NQuery.Binding
                     // This ensures that this name appears to be bound like any other expression.
                     Bind(selectorAsName, new BoundColumnExpression(queryColumn));
 
-                    return new BoundOrderBySelector(queryColumn.ValueSlot, null);
+                    return new BoundOrderBySelector(queryColumn.BoundValue, null);
                 }
             }
 
@@ -1418,7 +1366,7 @@ namespace NQuery.Binding
             if (TryGetExistingValue(boundSelector, out var valueSlot))
                 return new BoundOrderBySelector(valueSlot, null);
 
-            valueSlot = ValueSlotFactory.CreateTemporary(boundSelector.Type);
+            valueSlot = ValueFactory.CreateTemporary(boundSelector.Type);
             var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
             return new BoundOrderBySelector(valueSlot, computedValue);
         }

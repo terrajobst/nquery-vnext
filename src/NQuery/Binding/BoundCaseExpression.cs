@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Text;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal sealed class BoundCaseExpression : BoundExpression
@@ -24,16 +26,6 @@ namespace NQuery.Binding
         public ImmutableArray<BoundCaseLabel> CaseLabels { get; }
 
         public BoundExpression ElseExpression { get; }
-
-        public BoundCaseExpression Update(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
-        {
-            var newCaseLabels = caseLabels.ToImmutableArray();
-
-            if (newCaseLabels == CaseLabels && elseExpression == ElseExpression)
-                return this;
-
-            return new BoundCaseExpression(newCaseLabels, elseExpression);
-        }
 
         public override string ToString()
         {

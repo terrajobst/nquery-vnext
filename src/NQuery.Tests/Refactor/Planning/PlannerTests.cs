@@ -1,7 +1,7 @@
-using NQuery.Refactor.Algebra;
-using NQuery.Refactor.Binding;
-using NQuery.Refactor.Optimization;
-using NQuery.Refactor.Planning;
+using NQuery.Algebra;
+using NQuery.Binding;
+using NQuery.Optimization;
+using NQuery.Planning;
 
 namespace NQuery.Tests.Refactor.Planning
 {

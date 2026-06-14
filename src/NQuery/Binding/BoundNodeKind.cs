@@ -1,3 +1,5 @@
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     internal enum BoundNodeKind
@@ -19,28 +21,19 @@ namespace NQuery.Binding
         CaseExpression,
         SingleRowSubselect,
         ExistsSubselect,
-        ValueSlotExpression,
+        ValueExpression,
 
-        // Relations
-        EmptyRelation,
-        TableRelation,
-        DerivedTableRelation,
-        JoinRelation,
-        HashMatchRelation,
-        ComputeRelation,
-        FilterRelation,
-        GroupByAndAggregationRelation,
-        StreamAggregatesRelation,
-        ConstantRelation,
-        UnionRelation,
-        ConcatenationRelation,
-        IntersectOrExceptRelation,
-        ProjectRelation,
-        SortRelation,
-        TopRelation,
-        AssertRelation,
-        TableSpoolPusher,
-        TableSpoolPopper,
+        // Table references
+        NamedTableReference,
+        DerivedTableReference,
+        JoinTableReference,
+
+        // Queries
+        SelectQuery,
+        UnionQuery,
+        IntersectOrExceptQuery,
+        OrderedQuery,
+        EmptyQuery,
 
         // Other
         Query,

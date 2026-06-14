@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Refactor.Iterators;
+using NQuery.Iterators;
 using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Tests.Refactor.Iterators

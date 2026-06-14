@@ -5,6 +5,8 @@ using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 using NQuery.Text;
 
+using NQuery.Binding;
+
 namespace NQuery.Binding
 {
     partial class Binder
@@ -138,7 +140,7 @@ namespace NQuery.Binding
             return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
         }
 
-        private void BindToCommonType(TextSpan diagnosticSpan, ValueSlot left, ValueSlot right, out BoundExpression newLeft, out BoundExpression newRight)
+        private void BindToCommonType(TextSpan diagnosticSpan, IBoundValue left, IBoundValue right, out BoundExpression newLeft, out BoundExpression newRight)
         {
             newLeft = null;
             newRight = null;
@@ -156,11 +158,11 @@ namespace NQuery.Binding
 
             if (conversionLeftToRight.IsImplicit)
             {
-                newLeft = BindConversion(diagnosticSpan, new BoundValueSlotExpression(left), right.Type);
+                newLeft = BindConversion(diagnosticSpan, new BoundValueExpression(left), right.Type);
             }
             else
             {
-                newRight = BindConversion(diagnosticSpan, new BoundValueSlotExpression(right), left.Type);
+                newRight = BindConversion(diagnosticSpan, new BoundValueExpression(right), left.Type);
             }
         }
 
@@ -194,7 +196,7 @@ namespace NQuery.Binding
             // we want our caller to refer to this value slot.
 
             if (TryReplaceExpression(node, result, out var valueSlot))
-                return new BoundValueSlotExpression(valueSlot);
+                return new BoundValueExpression(valueSlot);
 
             return result;
         }
@@ -913,7 +915,7 @@ namespace NQuery.Binding
                 var existingSlot = FindComputedValue(aggregate, queryState.ComputedAggregates);
                 if (existingSlot is null)
                 {
-                    var slot = ValueSlotFactory.CreateTemporary(boundAggregate.Type);
+                    var slot = ValueFactory.CreateTemporary(boundAggregate.Type);
                     queryState.ComputedAggregates.Add(new BoundComputedValueWithSyntax(aggregate, boundAggregate, slot));
                 }
             }
@@ -997,9 +999,9 @@ namespace NQuery.Binding
             if (boundQuery.OutputColumns.Length > 1)
                 Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(node.Span);
 
-            var value = boundQuery.OutputColumns.First().ValueSlot;
+            var value = boundQuery.OutputColumns.First().BoundValue;
 
-            return new BoundSingleRowSubselect(value, boundQuery.Relation);
+            return new BoundSingleRowSubselect(value, boundQuery);
         }
 
         private BoundExpression BindExistsSubselect(ExistsSubselectSyntax node)
@@ -1010,7 +1012,7 @@ namespace NQuery.Binding
 
             // NOTE: Number of columns doesn't matter here
 
-            return new BoundExistsSubselect(boundQuery.Relation);
+            return new BoundExistsSubselect(boundQuery);
         }
 
         private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
@@ -1034,15 +1036,15 @@ namespace NQuery.Binding
 
             if (boundQuery.OutputColumns.Length == 0)
             {
-                var outputValue = ValueSlotFactory.CreateTemporary(typeof(bool));
-                return new BoundValueSlotExpression(outputValue);
+                var outputValue = ValueFactory.CreateTemporary(typeof(bool));
+                return new BoundValueExpression(outputValue);
             }
 
             if (boundQuery.OutputColumns.Length > 1)
                 Diagnostics.ReportTooManyExpressionsInSelectListOfSubquery(queryNode.Span);
 
             var rightColumn = boundQuery.OutputColumns[0];
-            var right = new BoundValueSlotExpression(rightColumn.ValueSlot);
+            var right = new BoundValueExpression(rightColumn.BoundValue);
 
             // Now we need to bind the binary operator.
             //
@@ -1067,24 +1069,17 @@ namespace NQuery.Binding
             var convertedLeft = BindArgument(left, result, 0);
             var convertedRight = BindArgument(right, result, 1);
 
-            // If we need to convert the right side, then we must insert a BoundComputeRelation
-            // that produces a derived value.
+            // If we need to convert the right side, then we must compute a derived value over the
+            // subquery. We carry that as a computed value on the EXISTS subselect rather than
+            // building Compute/Project relations here; the algebrizer applies it.
 
-            BoundRelation relation;
+            var computedValues = ImmutableArray<BoundComputedValue>.Empty;
 
-            if (convertedRight == right)
+            if (convertedRight != right)
             {
-                relation = boundQuery.Relation;
-            }
-            else
-            {
-                var outputValue = ValueSlotFactory.CreateTemporary(convertedRight.Type);
-                var outputValues = new[] { outputValue };
-                var computedValue = new BoundComputedValue(convertedRight, outputValue);
-                var computedValues = new[] { computedValue };
-                var computeRelation = new BoundComputeRelation(boundQuery.Relation, computedValues);
-                relation = new BoundProjectRelation(computeRelation, outputValues);
-                convertedRight = new BoundValueSlotExpression(outputValue);
+                var outputValue = ValueFactory.CreateTemporary(convertedRight.Type);
+                computedValues = ImmutableArray.Create(new BoundComputedValue(convertedRight, outputValue));
+                convertedRight = new BoundValueExpression(outputValue);
             }
 
             // In order to simplify later phases, we'll rewrite the ALL/ANY subselect into
@@ -1108,8 +1103,7 @@ namespace NQuery.Binding
             if (!isAll)
             {
                 var condition = new BoundBinaryExpression(convertedLeft, operatorKind, result, convertedRight);
-                var filter = new BoundFilterRelation(relation, condition);
-                return new BoundExistsSubselect(filter);
+                return new BoundExistsSubselect(boundQuery, computedValues, condition);
             }
             else
             {
@@ -1119,8 +1113,7 @@ namespace NQuery.Binding
                 var rightIsNull = new BoundIsNullExpression(right);
                 var eitherSideIsNull = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, leftIsNull, rightIsNull);
                 var condition = BindBinaryExpression(diagnosticSpan, BinaryOperatorKind.LogicalOr, negatedComparison, eitherSideIsNull);
-                var filter = new BoundFilterRelation(relation, condition);
-                var existsSubselect = new BoundExistsSubselect(filter);
+                var existsSubselect = new BoundExistsSubselect(boundQuery, computedValues, condition);
                 return BindUnaryExpression(diagnosticSpan, UnaryOperatorKind.LogicalNot, existsSubselect);
             }
         }
