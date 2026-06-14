@@ -5,11 +5,6 @@ using NQuery.Binding;
 using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 
-using BinaryOperator = NQuery.Binding.BinaryOperator;
-using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
-using UnaryOperator = NQuery.Binding.UnaryOperator;
-using UnaryOperatorKind = NQuery.Binding.UnaryOperatorKind;
-
 namespace NQuery.Algebra;
 
 // Translates the binder's syntax-shaped query tree (BoundQuery) into the logical algebra

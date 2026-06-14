@@ -1,13 +1,7 @@
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-// The binder lives in NQuery.Binding. Its bound tree has the same shape and member
-// names the SemanticModel reads, except for a few table-reference types whose names differ,
-// bridged via aliases.
 using NQuery.Binding;
-using BoundRelation = NQuery.Binding.BoundTableReference;
-using BoundTableRelation = NQuery.Binding.BoundNamedTableReference;
-using BoundDerivedTableRelation = NQuery.Binding.BoundDerivedTableReference;
 
 namespace NQuery;
 
@@ -156,7 +150,7 @@ public sealed class SemanticModel
     {
         ThrowIfNull(tableReference);
 
-        var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
+        var result = _bindingResult.GetBoundNode(tableReference) as BoundTableReference;
         return result?.GetDeclaredTableInstances().AsEnumerable();
     }
 
@@ -198,7 +192,7 @@ public sealed class SemanticModel
     {
         ThrowIfNull(tableReference);
 
-        var result = _bindingResult.GetBoundNode(tableReference) as BoundTableRelation;
+        var result = _bindingResult.GetBoundNode(tableReference) as BoundNamedTableReference;
         return result?.TableInstance;
     }
 
@@ -206,7 +200,7 @@ public sealed class SemanticModel
     {
         ThrowIfNull(tableReference);
 
-        var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableRelation;
+        var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableReference;
         return result?.TableInstance;
     }
 

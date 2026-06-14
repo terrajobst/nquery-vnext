@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
+using NQuery.Binding;
 using NQuery.Symbols.Aggregation;
-
-using BinaryOperator = NQuery.Binding.BinaryOperator;
-using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
 
 namespace NQuery.Optimization;
 
