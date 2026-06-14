@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Wraps a buffer and appends a single boolean "probe" column at the end. A

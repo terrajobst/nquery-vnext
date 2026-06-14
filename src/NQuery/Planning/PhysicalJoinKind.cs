@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Planning;
 
 // The join kinds a nested-loops join can physically produce. This is a subset of

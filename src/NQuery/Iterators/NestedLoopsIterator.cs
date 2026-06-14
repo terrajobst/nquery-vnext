@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Marker base for the nested-loops join family. Unlike the bound iterators, the

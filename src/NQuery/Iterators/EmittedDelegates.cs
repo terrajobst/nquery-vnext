@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Unlike the bound ExpressionBuilder -- which bakes the specific RowBuffer

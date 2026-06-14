@@ -1,5 +1,3 @@
-#nullable enable
-
 using NQuery.Symbols;
 
 namespace NQuery.Algebra;

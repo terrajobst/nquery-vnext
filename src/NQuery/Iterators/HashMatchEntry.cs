@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // One build-side row in a hash bucket. Rows sharing a key are chained through Next;

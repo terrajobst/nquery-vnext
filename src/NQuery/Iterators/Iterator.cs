@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // The runtime cursor of the new pipeline. It is intentionally a separate type

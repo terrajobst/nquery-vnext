@@ -1,5 +1,3 @@
-#nullable enable
-
 using NQuery.Algebra;
 
 using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;

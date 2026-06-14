@@ -2,8 +2,6 @@
 
 using System.Runtime.CompilerServices;
 
-#nullable enable
-
 namespace NQuery
 {
     // .NET Framework lacks ArgumentOutOfRangeException.ThrowIfNegative/ThrowIfGreaterThan. These

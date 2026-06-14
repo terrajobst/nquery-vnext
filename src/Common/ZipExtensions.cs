@@ -2,8 +2,6 @@
 
 using System.Collections.Generic;
 
-#nullable enable
-
 namespace System.Linq;
 
 internal static class ZipExtensions

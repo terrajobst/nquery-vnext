@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // The sole variable leaf of the logical expression language: a reference to a

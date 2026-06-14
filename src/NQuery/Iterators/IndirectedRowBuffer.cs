@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // A buffer whose backing buffer can be swapped at run time. Outer joins use it to

@@ -1,5 +1,3 @@
-#nullable enable
-
 using System.Collections;
 
 namespace NQuery.Iterators;

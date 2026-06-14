@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Planning;
 
 // The join kinds a hash match can produce. Inner and left outer, and -- unlike

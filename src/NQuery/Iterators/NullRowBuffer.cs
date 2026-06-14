@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // A fixed-width buffer of all-NULL values, used as the right side of an

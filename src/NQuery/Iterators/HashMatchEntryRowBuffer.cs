@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Exposes the current build-side HashMatchEntry's stored row as a RowBuffer, so the

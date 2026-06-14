@@ -1,5 +1,3 @@
-#nullable enable
-
 using NQuery.Algebra;
 
 namespace NQuery.Optimization;

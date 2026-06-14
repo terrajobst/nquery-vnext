@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // Collects the value slots *referenced* by a logical expression or operator

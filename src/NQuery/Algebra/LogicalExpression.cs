@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // Base of the logical row-expression language: scalar expressions evaluated

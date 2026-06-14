@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // The logical layer's closed set of join kinds. Note there is no RightOuter:

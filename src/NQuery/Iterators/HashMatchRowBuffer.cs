@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // The combined build ++ probe output of a hash match. Each side is an indirected

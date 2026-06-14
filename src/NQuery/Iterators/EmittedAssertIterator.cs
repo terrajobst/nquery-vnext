@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Like FilterIterator, but a row that fails the predicate is an error rather than

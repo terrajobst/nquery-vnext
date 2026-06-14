@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Like FilterIterator, but its predicate takes the row buffer as a parameter, so

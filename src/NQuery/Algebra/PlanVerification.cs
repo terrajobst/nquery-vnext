@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // Shared slot-availability check for the logical and physical plan verifiers (both

@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 // Hash match (hash join) over an equi-key. The build input is consumed in full into

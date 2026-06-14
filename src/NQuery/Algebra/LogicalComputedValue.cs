@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Algebra;
 
 // The logical counterpart of BoundComputedValue: a computed expression bound

@@ -1,5 +1,3 @@
-#nullable enable
-
 namespace NQuery.Iterators;
 
 internal struct RowBufferEntry : IEquatable<RowBufferEntry>
