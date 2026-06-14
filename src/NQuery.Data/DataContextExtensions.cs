@@ -67,7 +67,7 @@ public static class DataContextExtensions
         ThrowIfNull(dataContext);
         ThrowIfNull(dataRelations);
 
-        var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r));
+        var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r)).OfType<TableRelation>();
         return dataContext.AddRelations(tableRelations);
     }
 

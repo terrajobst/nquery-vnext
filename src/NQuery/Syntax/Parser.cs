@@ -235,7 +235,7 @@ internal sealed class Parser
         var end = tokens.Last().FullSpan.End;
         var span = TextSpan.FromBounds(start, end);
         var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-        return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, null, span, structure, Array.Empty<Diagnostic>());
+        return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, string.Empty, span, structure, Array.Empty<Diagnostic>());
     }
 
     private bool CurrentIsStartingQuery()
@@ -883,9 +883,6 @@ internal sealed class Parser
     {
         var leftQuery = ParseIntersectionalQuery();
 
-        if (leftQuery is null)
-            return null;
-
         while (Current.Kind == SyntaxKind.UnionKeyword ||
                Current.Kind == SyntaxKind.ExceptKeyword)
         {
@@ -911,16 +908,10 @@ internal sealed class Parser
     {
         var leftQuery = ParseSelectQuery();
 
-        if (leftQuery is null)
-            return null;
-
         while (Current.Kind == SyntaxKind.IntersectKeyword)
         {
             var intersectKeyword = Match(SyntaxKind.IntersectKeyword);
             var rightQuery = ParseSelectQuery();
-
-            if (rightQuery is null)
-                return null;
 
             leftQuery = new IntersectQuerySyntax(_syntaxTree, leftQuery, intersectKeyword, rightQuery);
         }

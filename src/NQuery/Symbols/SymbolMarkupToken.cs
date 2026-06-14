@@ -14,7 +14,8 @@ public sealed class SymbolMarkupToken : IEquatable<SymbolMarkupToken>
 
     public bool Equals(SymbolMarkupToken? other)
     {
-        return Kind == other.Kind &&
+        return other is not null &&
+               Kind == other.Kind &&
                string.Equals(Text, other.Text);
     }
 

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using NQuery.Text;
 
 namespace NQuery.Authoring;
@@ -21,7 +23,7 @@ public sealed class Document
 
     public SourceText Text { get; }
 
-    public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
+    public bool TryGetSyntaxTree([NotNullWhen(true)] out SyntaxTree? syntaxTree)
     {
         if (_syntaxTreeTask is not null && _syntaxTreeTask.IsCompleted)
         {
@@ -33,7 +35,7 @@ public sealed class Document
         return false;
     }
 
-    public bool TryGetCompilation(out Compilation compilation)
+    public bool TryGetCompilation([NotNullWhen(true)] out Compilation? compilation)
     {
         if (_compilationTask is not null && _compilationTask.IsCompleted)
         {
@@ -45,7 +47,7 @@ public sealed class Document
         return false;
     }
 
-    public bool TryGetSemanticModel(out SemanticModel semanticModel)
+    public bool TryGetSemanticModel([NotNullWhen(true)] out SemanticModel? semanticModel)
     {
         if (_semanticModelTask is not null && _semanticModelTask.IsCompleted)
         {
@@ -59,35 +61,32 @@ public sealed class Document
 
     public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
-        if (_syntaxTreeTask is not null)
-            return _syntaxTreeTask;
+        var task = _syntaxTreeTask;
+        if (task is not null)
+            return task;
 
-        var task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
-        Interlocked.CompareExchange(ref _syntaxTreeTask, task, null);
-
-        return _syntaxTreeTask;
+        task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
+        return Interlocked.CompareExchange(ref _syntaxTreeTask, task, null) ?? task;
     }
 
     public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
-        if (_compilationTask is not null)
-            return _compilationTask;
+        var task = _compilationTask;
+        if (task is not null)
+            return task;
 
-        var task = ComputeCompilationAsync(cancellationToken);
-        Interlocked.CompareExchange(ref _compilationTask, task, null);
-
-        return _compilationTask;
+        task = ComputeCompilationAsync(cancellationToken);
+        return Interlocked.CompareExchange(ref _compilationTask, task, null) ?? task;
     }
 
     public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
-        if (_semanticModelTask is not null)
-            return _semanticModelTask;
+        var task = _semanticModelTask;
+        if (task is not null)
+            return task;
 
-        var task = ComputeSemanticModelAsync(cancellationToken);
-        Interlocked.CompareExchange(ref _semanticModelTask, task, null);
-
-        return _semanticModelTask;
+        task = ComputeSemanticModelAsync(cancellationToken);
+        return Interlocked.CompareExchange(ref _semanticModelTask, task, null) ?? task;
     }
 
     private SyntaxTree ComputeSyntaxTree()

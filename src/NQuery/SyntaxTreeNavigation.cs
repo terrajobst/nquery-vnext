@@ -274,9 +274,13 @@ internal static class SyntaxTreeNavigation
             }
         }
 
-        var isTrailing = triviaList == trivia.Parent.TrailingTrivia;
-        if (returnNext && isTrailing && tokenPredicate(trivia.Parent))
-            return trivia.Parent;
+        var parent = trivia.Parent;
+        if (parent is null)
+            return null;
+
+        var isTrailing = triviaList == parent.TrailingTrivia;
+        if (returnNext && isTrailing && tokenPredicate(parent))
+            return parent;
 
         return null;
     }
@@ -400,9 +404,13 @@ internal static class SyntaxTreeNavigation
             }
         }
 
-        var isLeading = triviaList == trivia.Parent.LeadingTrivia;
-        if (returnNext && isLeading && tokenPredicate(trivia.Parent))
-            return trivia.Parent;
+        var parent = trivia.Parent;
+        if (parent is null)
+            return null;
+
+        var isLeading = triviaList == parent.LeadingTrivia;
+        if (returnNext && isLeading && tokenPredicate(parent))
+            return parent;
 
         return null;
     }

@@ -37,28 +37,27 @@ public sealed class Expression<T>
         return new Expression<T>(dataContext, text, nullValue, targetType);
     }
 
-    private void EnsureCompiled()
+    private ExpressionEvaluator EnsureCompiled()
     {
-        if (_expressionEvaluator is not null)
-            return;
+        var expressionEvaluator = _expressionEvaluator;
+        if (expressionEvaluator is not null)
+            return expressionEvaluator;
 
         var syntaxTree = SyntaxTree.ParseExpression(Text);
         var compilation = Compilation.Create(DataContext, syntaxTree);
         var compiledQuery = compilation.Compile();
-        var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
-        Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);
+        expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
+        return Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null) ?? expressionEvaluator;
     }
 
     public Type Resolve()
     {
-        EnsureCompiled();
-        return _expressionEvaluator.Type;
+        return EnsureCompiled().Type;
     }
 
     public T Evaluate()
     {
-        EnsureCompiled();
-        var result = _expressionEvaluator.Evaluate();
+        var result = EnsureCompiled().Evaluate();
         return result is null
             ? NullValue
             : (T)result;

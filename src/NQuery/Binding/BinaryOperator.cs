@@ -215,7 +215,7 @@ internal static class BinaryOperator
         var result = ResolveOverloads(kind, leftOperandType, rightOperandType);
 
         var signature = result.Best;
-        if (result.Best is null || !IsObjectComparison(signature.Signature))
+        if (signature is null || !IsObjectComparison(signature.Signature))
             return result;
 
         // C# doesn't bind to reference equality unless both operands are considered reference types.
@@ -223,7 +223,7 @@ internal static class BinaryOperator
         if (leftOperandType.IsValueType || rightOperandType.IsValueType)
         {
             var newCandidates = result.Candidates.ToList();
-            var i = newCandidates.IndexOf(result.Best);
+            var i = newCandidates.IndexOf(signature);
             newCandidates[i] = newCandidates[i].MarkNotApplicable();
             return new OverloadResolutionResult<BinaryOperatorSignature>(null, null, newCandidates);
         }

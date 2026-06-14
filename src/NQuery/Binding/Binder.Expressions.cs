@@ -593,7 +593,7 @@ partial class Binder
                                let boundComparision = BindBinaryExpression(a.Span, BinaryOperatorKind.Equal, boundExpression, boundArgument)
                                select boundComparision;
 
-        var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression>(null, (c, b) => c is null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
+        var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression?>(null, (c, b) => c is null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
         return BindOptionalNegation(node.Span, node.NotKeyword, inExpressionsAggregate);
     }
 

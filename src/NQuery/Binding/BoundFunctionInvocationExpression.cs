@@ -33,6 +33,6 @@ internal sealed class BoundFunctionInvocationExpression : BoundExpression
 
     public override string ToString()
     {
-        return $"{Symbol.Name}({string.Join(@",", Arguments)})";
+        return $"{Symbol?.Name}({string.Join(@",", Arguments)})";
     }
 }

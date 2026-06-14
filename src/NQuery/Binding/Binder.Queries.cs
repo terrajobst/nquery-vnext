@@ -1285,7 +1285,7 @@ partial class Binder
             // the associated comparer.
 
             var baseComparer = BindComparer(selector.Span, value.Type, DiagnosticId.InvalidDataTypeInOrderBy);
-            var comparer = isAscending || baseComparer is null
+            var comparer = isAscending
                                ? baseComparer
                                : new NegatedComparer(baseComparer);
 

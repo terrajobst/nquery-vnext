@@ -77,6 +77,9 @@ internal sealed class NQueryCompletionSet : CompletionSet
 
     private void UpdateModel(CompletionModel? model)
     {
+        if (model is null)
+            return;
+
         ApplicableTo = ToTrackingSpan(model.ApplicableSpan);
 
         var builders = model.Items.Where(item => item.IsBuilder);

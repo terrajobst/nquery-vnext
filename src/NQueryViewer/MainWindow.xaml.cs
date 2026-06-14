@@ -69,7 +69,10 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
 
     private void NewEditor(IEditorViewFactory? editorViewFactory)
     {
-        var editorView = editorViewFactory?.CreateEditorView();
+        if (editorViewFactory is null)
+            return;
+
+        var editorView = editorViewFactory.CreateEditorView();
         if (editorView is null)
             return;
 

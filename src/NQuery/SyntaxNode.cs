@@ -40,7 +40,7 @@ public abstract class SyntaxNode
 
     public IEnumerable<SyntaxNode> AncestorsAndSelf(bool ascendOutOfTrivia = true)
     {
-        var node = this;
+        SyntaxNode? node = this;
         while (node is not null)
         {
             yield return node;
@@ -57,8 +57,8 @@ public abstract class SyntaxNode
                 // the structure to its containing token which we can then use
                 // to return the logical parent.
                 var parentTrivia = structuredTrivia.ParentTrivia;
-                var parentToken = parentTrivia.Parent;
-                node = parentToken.Parent;
+                var parentToken = parentTrivia?.Parent;
+                node = parentToken?.Parent;
             }
         }
     }

@@ -52,8 +52,8 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
             var previousToken = _node.FirstToken().GetPreviousToken();
             var nextToken = _node.LastToken().GetNextToken();
 
-            var isFirst = previousToken.Kind == SyntaxKind.WithKeyword;
-            var isLast = nextToken.Kind != SyntaxKind.CommaToken;
+            var isFirst = previousToken?.Kind == SyntaxKind.WithKeyword;
+            var isLast = nextToken?.Kind != SyntaxKind.CommaToken;
             var isSingle = isFirst && isLast;
 
             var removePreviousToken = isLast;

@@ -41,6 +41,8 @@ internal sealed class NQueryQuickInfoSource : IQuickInfoSource
             return;
 
         var model = quickInfoManager.Model;
+        if (model is null)
+            return;
         var textSpan = model.Span;
         var span = new Span(textSpan.Start, textSpan.Length);
         var currentSnapshot = session.TextView.TextBuffer.CurrentSnapshot;

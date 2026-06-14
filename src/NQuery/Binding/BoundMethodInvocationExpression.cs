@@ -23,7 +23,7 @@ internal sealed class BoundMethodInvocationExpression : BoundExpression
         get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
     }
 
-    public MethodSymbol Symbol
+    public MethodSymbol? Symbol
     {
         get { return Result.Selected?.Signature.Symbol; }
     }
@@ -36,6 +36,6 @@ internal sealed class BoundMethodInvocationExpression : BoundExpression
 
     public override string ToString()
     {
-        return $"{Target}.{Symbol.Name}({string.Join(@", ", Arguments)})";
+        return $"{Target}.{Symbol?.Name}({string.Join(@", ", Arguments)})";
     }
 }

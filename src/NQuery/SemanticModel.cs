@@ -275,7 +275,7 @@ public sealed class SemanticModel
     private SyntaxNode? FindClosestNodeWithBinder(SyntaxNode root, int position)
     {
         var token = root.FindTokenContext(position);
-        return (from n in token.Parent.AncestorsAndSelf()
+        return (from n in token.Parent?.AncestorsAndSelf() ?? Enumerable.Empty<SyntaxNode>()
                 let bc = _bindingResult.GetBinder(n)
                 where bc is not null
                 select n).FirstOrDefault();

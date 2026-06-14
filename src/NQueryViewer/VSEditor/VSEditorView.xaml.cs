@@ -30,13 +30,13 @@ internal sealed partial class VSEditorView : IVSEditorView
         EditorHost.Content = _textViewHost.HostControl;
     }
 
-    private void SelectionOnSelectionChanged(object sender, EventArgs e)
+    private void SelectionOnSelectionChanged(object? sender, EventArgs e)
     {
         OnCaretPositionChanged();
         OnSelectionChanged();
     }
 
-    private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
+    private void TextViewOnZoomLevelChanged(object? sender, ZoomLevelChangedEventArgs e)
     {
         OnZoomLevelChanged();
     }

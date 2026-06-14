@@ -18,14 +18,16 @@ public sealed class Query
         return new Query(dataContext, text);
     }
 
-    private void EnsureCompiled()
+    private CompiledQuery EnsureCompiled()
     {
-        if (_query is not null)
-            return;
+        var query = _query;
+        if (query is not null)
+            return query;
 
         var syntaxTree = SyntaxTree.ParseQuery(Text);
         var compilation = Compilation.Create(DataContext, syntaxTree);
-        Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
+        query = compilation.Compile();
+        return Interlocked.CompareExchange(ref _query, query, null) ?? query;
     }
 
     public object? ExecuteScalar()
@@ -43,14 +45,12 @@ public sealed class Query
 
     public QueryReader ExecuteReader()
     {
-        EnsureCompiled();
-        return _query.CreateReader();
+        return EnsureCompiled().CreateReader();
     }
 
     public QueryReader ExecuteSchemaReader()
     {
-        EnsureCompiled();
-        return _query.CreateSchemaReader();
+        return EnsureCompiled().CreateSchemaReader();
     }
 
     public DataContext DataContext { get; }

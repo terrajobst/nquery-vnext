@@ -8,6 +8,7 @@
     <UseArtifactsOutput>true</UseArtifactsOutput>
     <ArtifactsPath>$(MSBuildThisFileDirectory)../artifacts</ArtifactsPath>
     <LangVersion>14.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(MSBuildProjectName) == 'NQueryViewer' OR $(MSBuildProjectName.EndsWith('.Testing'))">

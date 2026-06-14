@@ -32,7 +32,7 @@ public static class SyntaxExtensions
         //       order of nodes.
         var seenNodes = new HashSet<SyntaxNode>();
         return root.FindStartTokens(position)
-                   .SelectMany(t => t.Parent.AncestorsAndSelf())
+                   .SelectMany(t => t.Parent?.AncestorsAndSelf() ?? Enumerable.Empty<SyntaxNode>())
                    .Where(seenNodes.Add);
     }
 
@@ -176,7 +176,8 @@ public static class SyntaxExtensions
         ThrowIfNull(root);
 
         var node = root.FindTokenOnLeft(position).Parent;
-        return node.Span.ContainsOrTouches(position) &&
+        return node is not null &&
+               node.Span.ContainsOrTouches(position) &&
                (node is CommonTableExpressionColumnNameSyntax ||
                 node is CommonTableExpressionColumnNameListSyntax);
     }

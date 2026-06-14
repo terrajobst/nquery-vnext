@@ -18,6 +18,9 @@ public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
 
     public bool Equals(SymbolMarkup? other)
     {
+        if (other is null)
+            return false;
+
         if (other.Tokens.Length != Tokens.Length)
             return false;
 

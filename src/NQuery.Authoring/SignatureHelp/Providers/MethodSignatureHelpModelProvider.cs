@@ -11,6 +11,9 @@ internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvi
         // TODO: We need to use the resolved symbol as the selected one.
 
         var targetType = semanticModel.GetExpressionType(node.Target);
+        if (targetType is null)
+            return null;
+
         var name = node.Name;
         var signatures = semanticModel.LookupMethods(targetType)
                                       .Where(m => name.Matches(m.Name))
