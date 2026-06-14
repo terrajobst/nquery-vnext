@@ -9,16 +9,16 @@ public static class DataContextExtensions
 {
     public static DataContext AddTablesAndRelations(this DataContext dataContext, DataSet dataSet)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(dataSet);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(dataSet);
 
         return dataContext.AddTables(dataSet).AddRelations(dataSet);
     }
 
     public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(dataSet);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(dataSet);
 
         var dataTables = dataSet.Tables.OfType<DataTable>();
         return dataContext.AddTables(dataTables);
@@ -26,7 +26,7 @@ public static class DataContextExtensions
 
     public static DataContext AddTables(this DataContext dataContext, params DataTable[] dataTables)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(dataContext);
 
         if (dataTables is null || dataTables.Length == 0)
             return dataContext;
@@ -36,8 +36,8 @@ public static class DataContextExtensions
 
     public static DataContext AddTables(this DataContext dataContext, IEnumerable<DataTable> dataTables)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(dataTables);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(dataTables);
 
         var tableSymbols = dataTables.Select(CreateTable);
         return dataContext.AddTables(tableSymbols);
@@ -45,8 +45,8 @@ public static class DataContextExtensions
 
     public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(dataSet);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(dataSet);
 
         var dataRelations = dataSet.Relations.OfType<DataRelation>();
         return dataContext.AddRelations(dataRelations);
@@ -54,7 +54,7 @@ public static class DataContextExtensions
 
     public static DataContext AddRelations(this DataContext dataContext, params DataRelation[] dataRelations)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(dataContext);
 
         if (dataRelations is null || dataRelations.Length == 0)
             return dataContext;
@@ -64,8 +64,8 @@ public static class DataContextExtensions
 
     public static DataContext AddRelations(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(dataRelations);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(dataRelations);
 
         var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r));
         return dataContext.AddRelations(tableRelations);

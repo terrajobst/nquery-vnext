@@ -5,7 +5,7 @@ public class ColumnSymbol : Symbol
     internal ColumnSymbol(string name, Type type)
         : base(name)
     {
-        ArgumentNullException.ThrowIfNull(type);
+        ThrowIfNull(type);
 
         Type = type;
     }

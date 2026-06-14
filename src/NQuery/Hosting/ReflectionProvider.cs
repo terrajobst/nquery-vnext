@@ -198,7 +198,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
 
     public IEnumerable<PropertySymbol> GetProperties(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type);
+        ThrowIfNull(type);
 
         var propertyTable = new PropertyTable();
         var propertyList = new List<PropertySymbol>();
@@ -251,7 +251,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     /// <param name="methodInfo">The method info to check.</param>
     public static bool IsInvocable(MethodInfo methodInfo)
     {
-        ArgumentNullException.ThrowIfNull(methodInfo);
+        ThrowIfNull(methodInfo);
 
         if (methodInfo.IsSpecialName ||
             methodInfo.IsAbstract ||
@@ -273,7 +273,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
 
     public IEnumerable<MethodSymbol> GetMethods(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type);
+        ThrowIfNull(type);
 
         var methodTable = new MethodTable();
         var methodList = new List<MethodSymbol>();
@@ -301,7 +301,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     /// <returns>If the method should not be visible this method returns <see langword="null"/>.</returns>
     protected virtual MethodSymbol CreateMethod(MethodInfo methodInfo)
     {
-        ArgumentNullException.ThrowIfNull(methodInfo);
+        ThrowIfNull(methodInfo);
 
         return new ReflectionMethodSymbol(methodInfo, methodInfo.Name);
     }
@@ -313,7 +313,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     /// <returns>If the property should not be visible this method returns <see langword="null"/>.</returns>
     protected virtual PropertySymbol CreateProperty(PropertyInfo propertyInfo)
     {
-        ArgumentNullException.ThrowIfNull(propertyInfo);
+        ThrowIfNull(propertyInfo);
 
         return new ReflectionPropertySymbol(propertyInfo, propertyInfo.Name);
     }
@@ -325,7 +325,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     /// <returns>If the field should not be visible this method returns <see langword="null"/>.</returns>
     protected virtual PropertySymbol CreateProperty(FieldInfo fieldInfo)
     {
-        ArgumentNullException.ThrowIfNull(fieldInfo);
+        ThrowIfNull(fieldInfo);
 
         return new ReflectionFieldSymbol(fieldInfo, fieldInfo.Name);
     }

@@ -608,7 +608,7 @@ internal static class BuiltInFunctions
 
     private static CultureInfo GetCultureInfo(string culture)
     {
-        ArgumentNullException.ThrowIfNull(culture);
+        ThrowIfNull(culture);
 
         return CultureInfo.GetCultureInfo(culture);
     }

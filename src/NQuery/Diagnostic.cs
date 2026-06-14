@@ -8,7 +8,7 @@ public sealed class Diagnostic
 {
     public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
     {
-        ArgumentNullException.ThrowIfNull(message);
+        ThrowIfNull(message);
 
         Span = textSpan;
         DiagnosticId = diagnosticId;

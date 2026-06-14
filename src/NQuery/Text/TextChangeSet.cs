@@ -8,7 +8,7 @@ public sealed class TextChangeSet : IEnumerable<TextChange>
 
     public void ReplaceText(TextSpan span, string newText)
     {
-        ArgumentNullException.ThrowIfNull(newText);
+        ThrowIfNull(newText);
 
         var change = TextChange.ForReplacement(span, newText);
         RegisterChange(change);
@@ -16,7 +16,7 @@ public sealed class TextChangeSet : IEnumerable<TextChange>
 
     public void InsertText(int position, string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var change = TextChange.ForInsertion(position, text);
         RegisterChange(change);

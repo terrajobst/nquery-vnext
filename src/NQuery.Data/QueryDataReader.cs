@@ -180,7 +180,7 @@ public sealed class QueryDataReader : IDataReader
     /// </returns>
     public int GetValues(object[] values)
     {
-        ArgumentNullException.ThrowIfNull(values);
+        ThrowIfNull(values);
 
         EnsureNotDisposed();
 
@@ -201,7 +201,7 @@ public sealed class QueryDataReader : IDataReader
     /// </returns>
     public int GetOrdinal(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         EnsureNotDisposed();
 
@@ -256,7 +256,7 @@ public sealed class QueryDataReader : IDataReader
     /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
     public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
     {
-        ArgumentNullException.ThrowIfNull(buffer);
+        ThrowIfNull(buffer);
 
         var fieldData = (byte[])GetValue(i);
 
@@ -298,7 +298,7 @@ public sealed class QueryDataReader : IDataReader
     /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
     public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
     {
-        ArgumentNullException.ThrowIfNull(buffer);
+        ThrowIfNull(buffer);
 
         var fieldData = (char[])GetValue(i);
 

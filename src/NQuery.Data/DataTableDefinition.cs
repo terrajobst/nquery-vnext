@@ -9,7 +9,7 @@ public sealed class DataTableDefinition : TableDefinition
 {
     public DataTableDefinition(DataTable dataTable)
     {
-        ArgumentNullException.ThrowIfNull(dataTable);
+        ThrowIfNull(dataTable);
 
         DataTable = dataTable;
         Name = DataTable.TableName;
@@ -17,7 +17,7 @@ public sealed class DataTableDefinition : TableDefinition
 
     public DataTableDefinition(DataTable dataTable, string name)
     {
-        ArgumentNullException.ThrowIfNull(dataTable);
+        ThrowIfNull(dataTable);
 
         if (string.IsNullOrEmpty(name))
             throw new ArgumentException(@"The table name must not be null or empty.", nameof(name));

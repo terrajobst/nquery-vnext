@@ -13,14 +13,14 @@ public static class VisualStudioTextExtensions
 
     public static SourceTextContainer ToSourceTextContainer(this ITextBuffer textBuffer)
     {
-        ArgumentNullException.ThrowIfNull(textBuffer);
+        ThrowIfNull(textBuffer);
 
         return ProviderMap.GetValue(textBuffer, tb => new VisualStudioSourceTextContainer(tb));
     }
 
     public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
     {
-        ArgumentNullException.ThrowIfNull(textSnapshot);
+        ThrowIfNull(textSnapshot);
 
         var container = (VisualStudioSourceTextContainer)textSnapshot.TextBuffer.ToSourceTextContainer();
         return SnapshotMap.GetValue(textSnapshot, ts => new VisualStudioSourceText(container, ts));
@@ -28,7 +28,7 @@ public static class VisualStudioTextExtensions
 
     public static ITextSnapshot ToTextSnapshot(this SourceText text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         if (text is not VisualStudioSourceText visualStudioSourceText)
             throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(text));
@@ -38,7 +38,7 @@ public static class VisualStudioTextExtensions
 
     public static ITextBuffer ToTextBuffer(this SourceTextContainer container)
     {
-        ArgumentNullException.ThrowIfNull(container);
+        ThrowIfNull(container);
 
         if (container is not VisualStudioSourceTextContainer visualStudioSourceTextContainer)
             throw new ArgumentException(Resources.SourceTextMustOriginateFromTextBuffer, nameof(container));

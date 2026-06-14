@@ -13,7 +13,7 @@ public class ReflectionFieldSymbol : PropertySymbol
     public ReflectionFieldSymbol(FieldInfo fieldInfo, string name)
         : base(name, fieldInfo?.FieldType)
     {
-        ArgumentNullException.ThrowIfNull(fieldInfo);
+        ThrowIfNull(fieldInfo);
 
         FieldInfo = fieldInfo;
     }

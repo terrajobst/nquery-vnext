@@ -7,7 +7,7 @@ internal sealed class StringText : SourceText
 
     public StringText(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         _text = text;
         _lines = Parse(this, text);

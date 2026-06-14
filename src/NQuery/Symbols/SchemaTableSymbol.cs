@@ -13,7 +13,7 @@ public sealed class SchemaTableSymbol : TableSymbol
 
     private static string GetName(TableDefinition tableDefinition)
     {
-        ArgumentNullException.ThrowIfNull(tableDefinition);
+        ThrowIfNull(tableDefinition);
 
         return tableDefinition.Name;
     }

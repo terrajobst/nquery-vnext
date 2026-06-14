@@ -27,15 +27,15 @@ public sealed class SemanticModel
 
     public Conversion ClassifyConversion(Type sourceType, Type targetType)
     {
-        ArgumentNullException.ThrowIfNull(sourceType);
-        ArgumentNullException.ThrowIfNull(targetType);
+        ThrowIfNull(sourceType);
+        ThrowIfNull(targetType);
 
         return Conversion.Classify(sourceType, targetType);
     }
 
     public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax selectColumn)
     {
-        ArgumentNullException.ThrowIfNull(selectColumn);
+        ThrowIfNull(selectColumn);
 
         var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
         return boundExpression?.Table;
@@ -43,7 +43,7 @@ public sealed class SemanticModel
 
     public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
     {
-        ArgumentNullException.ThrowIfNull(selectColumn);
+        ThrowIfNull(selectColumn);
 
         var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
         return boundExpression?.TableColumns ?? Enumerable.Empty<TableColumnInstanceSymbol>();
@@ -51,7 +51,7 @@ public sealed class SemanticModel
 
     public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
         return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
@@ -59,7 +59,7 @@ public sealed class SemanticModel
 
     public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
     {
-        ArgumentNullException.ThrowIfNull(orderByColumn);
+        ThrowIfNull(orderByColumn);
 
         var boundOrderByColumn = _bindingResult.GetBoundNode(orderByColumn) as BoundOrderByColumn;
         return boundOrderByColumn?.QueryColumn;
@@ -67,7 +67,7 @@ public sealed class SemanticModel
 
     public Symbol GetSymbol(ExpressionSyntax expression)
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        ThrowIfNull(expression);
 
         var boundExpression = GetBoundExpression(expression);
         return boundExpression is null ? null : GetSymbol(boundExpression);
@@ -133,7 +133,7 @@ public sealed class SemanticModel
 
     public Type GetExpressionType(ExpressionSyntax expression)
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        ThrowIfNull(expression);
 
         var boundExpression = GetBoundExpression(expression);
         return boundExpression?.Type;
@@ -141,7 +141,7 @@ public sealed class SemanticModel
 
     public Conversion GetConversion(CastExpressionSyntax expression)
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        ThrowIfNull(expression);
 
         var boundExpression = GetBoundExpression(expression) as BoundConversionExpression;
         return boundExpression?.Conversion;
@@ -154,7 +154,7 @@ public sealed class SemanticModel
 
     public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
     {
-        ArgumentNullException.ThrowIfNull(tableReference);
+        ThrowIfNull(tableReference);
 
         var result = _bindingResult.GetBoundNode(tableReference) as BoundRelation;
         return result?.GetDeclaredTableInstances().AsEnumerable();
@@ -162,7 +162,7 @@ public sealed class SemanticModel
 
     public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
     {
-        ArgumentNullException.ThrowIfNull(commonTableExpression);
+        ThrowIfNull(commonTableExpression);
 
         var result = _bindingResult.GetBoundNode(commonTableExpression) as BoundCommonTableExpression;
         return result?.TableSymbol;
@@ -170,7 +170,7 @@ public sealed class SemanticModel
 
     public ColumnSymbol GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
     {
-        ArgumentNullException.ThrowIfNull(commonTableExpressionColumnName);
+        ThrowIfNull(commonTableExpressionColumnName);
 
         if (commonTableExpressionColumnName.Parent is not CommonTableExpressionColumnNameListSyntax { Parent: CommonTableExpressionSyntax commonTableExpression } columnList)
             return null;
@@ -196,7 +196,7 @@ public sealed class SemanticModel
 
     public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
     {
-        ArgumentNullException.ThrowIfNull(tableReference);
+        ThrowIfNull(tableReference);
 
         var result = _bindingResult.GetBoundNode(tableReference) as BoundTableRelation;
         return result?.TableInstance;
@@ -204,7 +204,7 @@ public sealed class SemanticModel
 
     public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
     {
-        ArgumentNullException.ThrowIfNull(tableReference);
+        ThrowIfNull(tableReference);
 
         var result = _bindingResult.GetBoundNode(tableReference) as BoundDerivedTableRelation;
         return result?.TableInstance;
@@ -212,7 +212,7 @@ public sealed class SemanticModel
 
     public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
     {
-        ArgumentNullException.ThrowIfNull(selectColumn);
+        ThrowIfNull(selectColumn);
 
         var result = _bindingResult.GetBoundNode(selectColumn) as BoundSelectColumn;
         return result?.Column;
@@ -220,7 +220,7 @@ public sealed class SemanticModel
 
     public IEnumerable<QueryColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
     {
-        ArgumentNullException.ThrowIfNull(selectColumn);
+        ThrowIfNull(selectColumn);
 
         var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
         return boundExpression?.QueryColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
@@ -283,14 +283,14 @@ public sealed class SemanticModel
 
     public IEnumerable<MethodSymbol> LookupMethods(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type);
+        ThrowIfNull(type);
 
         return _bindingResult.RootBinder.LookupMethods(type);
     }
 
     public IEnumerable<PropertySymbol> LookupProperties(Type type)
     {
-        ArgumentNullException.ThrowIfNull(type);
+        ThrowIfNull(type);
 
         return _bindingResult.RootBinder.LookupProperties(type);
     }

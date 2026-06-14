@@ -7,7 +7,7 @@ internal sealed class SymbolReferenceHighlighter : IHighlighter
 {
     public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
     {
-        ArgumentNullException.ThrowIfNull(semanticModel);
+        ThrowIfNull(semanticModel);
 
         var symbolAtPosition = semanticModel.FindSymbol(position);
         if (symbolAtPosition is null)

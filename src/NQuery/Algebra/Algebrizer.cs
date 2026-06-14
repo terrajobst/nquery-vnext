@@ -51,7 +51,7 @@ internal sealed class Algebrizer
 
     public static LogicalQuery Algebrize(BoundQuery query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         var algebrizer = new Algebrizer();
         var root = algebrizer.AlgebrizeQuery(query);
@@ -65,7 +65,7 @@ internal sealed class Algebrizer
     // expression is fine -- AlgebrizeCompute hoists its Apply above the constant.
     public static LogicalQuery Algebrize(BoundExpression expression)
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        ThrowIfNull(expression);
 
         var algebrizer = new Algebrizer();
         return algebrizer.AlgebrizeBareExpression(expression);

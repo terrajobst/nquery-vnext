@@ -13,7 +13,7 @@ public class ReflectionPropertySymbol : PropertySymbol
     public ReflectionPropertySymbol(PropertyInfo propertyInfo, string name)
         : base(name, propertyInfo?.PropertyType)
     {
-        ArgumentNullException.ThrowIfNull(propertyInfo);
+        ThrowIfNull(propertyInfo);
 
         PropertyInfo = propertyInfo;
     }

@@ -19,7 +19,7 @@ public abstract class SourceText
 
     public static SourceText From(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         return new StringText(text);
     }
@@ -90,7 +90,7 @@ public abstract class SourceText
 
     public SourceText WithChanges(IEnumerable<TextChange> changes)
     {
-        ArgumentNullException.ThrowIfNull(changes);
+        ThrowIfNull(changes);
 
         var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
                                       .ToImmutableArray();
@@ -146,7 +146,7 @@ public abstract class SourceText
 
     public IEnumerable<TextChange> GetChanges(SourceText oldText)
     {
-        ArgumentNullException.ThrowIfNull(oldText);
+        ThrowIfNull(oldText);
 
         if (oldText == this)
             return Enumerable.Empty<TextChange>();
@@ -191,14 +191,14 @@ public abstract class SourceText
 
     public SourceText Replace(TextSpan span, string newText)
     {
-        ArgumentNullException.ThrowIfNull(newText);
+        ThrowIfNull(newText);
 
         return WithChanges(new TextChange(span, newText));
     }
 
     public SourceText Replace(int start, int length, string newText)
     {
-        ArgumentNullException.ThrowIfNull(newText);
+        ThrowIfNull(newText);
 
         var span = new TextSpan(start, length);
         return Replace(span, newText);

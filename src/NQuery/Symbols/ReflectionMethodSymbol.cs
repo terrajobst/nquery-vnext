@@ -14,7 +14,7 @@ public class ReflectionMethodSymbol : MethodSymbol
     public ReflectionMethodSymbol(MethodInfo methodInfo, string name)
         : base(name, methodInfo?.ReturnType, ConvertParameters(methodInfo))
     {
-        ArgumentNullException.ThrowIfNull(methodInfo);
+        ThrowIfNull(methodInfo);
 
         MethodInfo = methodInfo;
     }

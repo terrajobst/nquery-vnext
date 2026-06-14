@@ -6,14 +6,14 @@ public static class QueryReaderExtensions
 {
     public static QueryDataReader ToDataReader(this QueryReader queryReader)
     {
-        ArgumentNullException.ThrowIfNull(queryReader);
+        ThrowIfNull(queryReader);
 
         return new QueryDataReader(queryReader);
     }
 
     public static DataTable ExecuteDataTable(this QueryReader queryReader)
     {
-        ArgumentNullException.ThrowIfNull(queryReader);
+        ThrowIfNull(queryReader);
 
         var dataTable = queryReader.CreateSchemaTable();
         var values = new object[queryReader.ColumnCount];
@@ -31,7 +31,7 @@ public static class QueryReaderExtensions
 
     public static DataTable CreateSchemaTable(this QueryReader queryReader)
     {
-        ArgumentNullException.ThrowIfNull(queryReader);
+        ThrowIfNull(queryReader);
 
         var dataTable = new DataTable(@"Results");
         var existingColumnNames = new HashSet<string>();
@@ -65,21 +65,21 @@ public static class QueryReaderExtensions
 
     public static QueryDataReader ExecuteDataReader(this Query query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         return query.ExecuteReader().ToDataReader();
     }
 
     public static DataTable ExecuteDataTable(this Query query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         return query.ExecuteReader().ExecuteDataTable();
     }
 
     public static DataTable ExecuteSchemaDataTable(this Query query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         return query.ExecuteReader().CreateSchemaTable();
     }

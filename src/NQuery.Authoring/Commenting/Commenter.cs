@@ -8,7 +8,7 @@ public static class Commenter
 {
     public static SyntaxTree ToggleSingleLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
     {
-        ArgumentNullException.ThrowIfNull(syntaxTree);
+        ThrowIfNull(syntaxTree);
 
         var comments = syntaxTree.GetConsecutiveSingleLineComments(textSpan);
         return comments.IsDefaultOrEmpty
@@ -69,7 +69,7 @@ public static class Commenter
 
     public static SyntaxTree ToggleMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
     {
-        ArgumentNullException.ThrowIfNull(syntaxTree);
+        ThrowIfNull(syntaxTree);
 
         var comment = syntaxTree.GetMultiLineComment(textSpan);
         return comment is not null

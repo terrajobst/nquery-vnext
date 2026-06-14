@@ -23,7 +23,7 @@ internal static class SyntaxTreeNavigation
 
     public static SyntaxToken GetFirstToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        ThrowIfNull(node);
 
         var tokenPredicate = GetTokenPredicate(includeZeroLength);
         var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -32,7 +32,7 @@ internal static class SyntaxTreeNavigation
 
     public static SyntaxToken GetLastToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
     {
-        ArgumentNullException.ThrowIfNull(node);
+        ThrowIfNull(node);
 
         var tokenPredicate = GetTokenPredicate(includeZeroLength);
         var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -41,7 +41,7 @@ internal static class SyntaxTreeNavigation
 
     public static SyntaxToken GetPreviousToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         var tokenPredicate = GetTokenPredicate(includeZeroLength);
         var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);
@@ -50,7 +50,7 @@ internal static class SyntaxTreeNavigation
 
     public static SyntaxToken GetNextToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         var tokenPredicate = GetTokenPredicate(includeZeroLength);
         var triviaPredicate = GetTriviaPredicate(includeSkippedTokens);

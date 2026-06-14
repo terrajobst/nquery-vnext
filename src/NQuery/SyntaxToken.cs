@@ -71,7 +71,7 @@ public sealed class SyntaxToken
 
     public void WriteTo(TextWriter writer)
     {
-        ArgumentNullException.ThrowIfNull(writer);
+        ThrowIfNull(writer);
 
         foreach (var syntaxTrivia in LeadingTrivia)
             syntaxTrivia.WriteTo(writer);
@@ -84,14 +84,14 @@ public sealed class SyntaxToken
 
     public bool IsEquivalentTo(SyntaxToken other)
     {
-        ArgumentNullException.ThrowIfNull(other);
+        ThrowIfNull(other);
 
         return SyntaxTreeEquivalence.AreEquivalent(this, other);
     }
 
     public SyntaxToken WithDiagnostics(IEnumerable<Diagnostic> diagnostics)
     {
-        ArgumentNullException.ThrowIfNull(diagnostics);
+        ThrowIfNull(diagnostics);
 
         return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
     }
@@ -103,14 +103,14 @@ public sealed class SyntaxToken
 
     public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        ThrowIfNull(trivia);
 
         return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, trivia, TrailingTrivia, Diagnostics);
     }
 
     public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        ThrowIfNull(trivia);
 
         return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, trivia, Diagnostics);
     }

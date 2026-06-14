@@ -6,8 +6,8 @@ public sealed class TableRelation
 {
     public TableRelation(TableSymbol parentTable, IReadOnlyCollection<ColumnSymbol> parentColumns, TableSymbol childTable, IReadOnlyCollection<ColumnSymbol> childColumns)
     {
-        ArgumentNullException.ThrowIfNull(parentColumns);
-        ArgumentNullException.ThrowIfNull(childColumns);
+        ThrowIfNull(parentColumns);
+        ThrowIfNull(childColumns);
 
         if (parentColumns.Count == 0)
             throw new ArgumentException(Resources.ParentColumnsMustContainAtLeastOneColumn, nameof(parentColumns));

@@ -63,8 +63,8 @@ internal static class LogicalOptimizer
 
     public static LogicalQuery Optimize(LogicalQuery query, DataContext dataContext)
     {
-        ArgumentNullException.ThrowIfNull(query);
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(query);
+        ThrowIfNull(dataContext);
 
         var root = Optimize(query.Root, dataContext);
         return new LogicalQuery(root, query.OutputColumns);
@@ -72,8 +72,8 @@ internal static class LogicalOptimizer
 
     public static LogicalOperator Optimize(LogicalOperator root, DataContext dataContext)
     {
-        ArgumentNullException.ThrowIfNull(root);
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(root);
+        ThrowIfNull(dataContext);
 
         foreach (var batch in BuildBatches(dataContext))
             root = RunBatch(batch, root);
@@ -101,8 +101,8 @@ internal static class LogicalOptimizer
     // non-idempotent pass would simply produce the per-iteration steps up to the cap.
     public static IEnumerable<(string Name, LogicalOperator Root)> GetOptimizationSteps(LogicalOperator root, DataContext dataContext)
     {
-        ArgumentNullException.ThrowIfNull(root);
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(root);
+        ThrowIfNull(dataContext);
 
         foreach (var batch in BuildBatches(dataContext))
         {

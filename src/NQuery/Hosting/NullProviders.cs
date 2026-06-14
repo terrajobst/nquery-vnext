@@ -8,7 +8,7 @@ public static class NullProviders
     {
         public IEnumerable<PropertySymbol> GetProperties(Type type)
         {
-            ArgumentNullException.ThrowIfNull(type);
+            ThrowIfNull(type);
 
             return Enumerable.Empty<PropertySymbol>();
         }
@@ -18,7 +18,7 @@ public static class NullProviders
     {
         public IEnumerable<MethodSymbol> GetMethods(Type type)
         {
-            ArgumentNullException.ThrowIfNull(type);
+            ThrowIfNull(type);
 
             return Enumerable.Empty<MethodSymbol>();
         }

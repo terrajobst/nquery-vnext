@@ -6,7 +6,7 @@ internal sealed class StringTextLineCollection : TextLineCollection
 
     public StringTextLineCollection(IReadOnlyList<TextLine> lines)
     {
-        ArgumentNullException.ThrowIfNull(lines);
+        ThrowIfNull(lines);
 
         _lines = lines;
     }

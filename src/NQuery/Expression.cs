@@ -6,9 +6,9 @@ public sealed class Expression<T>
 
     private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(text);
-        ArgumentNullException.ThrowIfNull(targetType);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(text);
+        ThrowIfNull(targetType);
 
         if (!typeof(T).IsAssignableFrom(targetType))
         {

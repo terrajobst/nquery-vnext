@@ -6,7 +6,7 @@ public abstract class Symbol
 {
     private protected Symbol(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         Name = name;
     }

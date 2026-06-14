@@ -29,27 +29,27 @@ public abstract class TableDefinition
 
     public static TableDefinition Create<T>(string name, IEnumerable<T> source)
     {
-        ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(source);
+        ThrowIfNull(name);
+        ThrowIfNull(source);
 
         return Create(name, source, new ReflectionProvider());
     }
 
     public static TableDefinition Create<T>(string name, IEnumerable<T> source, IPropertyProvider propertyProvider)
     {
-        ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(propertyProvider);
+        ThrowIfNull(name);
+        ThrowIfNull(source);
+        ThrowIfNull(propertyProvider);
 
         return Create(name, source, typeof(T), propertyProvider);
     }
 
     public static TableDefinition Create(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
     {
-        ArgumentNullException.ThrowIfNull(name);
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(rowType);
-        ArgumentNullException.ThrowIfNull(propertyProvider);
+        ThrowIfNull(name);
+        ThrowIfNull(source);
+        ThrowIfNull(rowType);
+        ThrowIfNull(propertyProvider);
 
         return new EnumerableTableDefinition(name, source, rowType, propertyProvider);
     }

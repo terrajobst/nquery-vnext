@@ -9,7 +9,7 @@ public static class SyntaxFacts
 {
     public static SyntaxToken ParseToken(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var tokens = ParseTokens(text).ToArray();
         if (tokens.Length == 1 || tokens.Length == 2)
@@ -20,7 +20,7 @@ public static class SyntaxFacts
 
     public static IEnumerable<SyntaxToken> ParseTokens(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var syntaxTree = SyntaxTree.ParseTokens(text);
         return syntaxTree.Root.DescendantTokens(descendIntoTrivia: true);
@@ -28,7 +28,7 @@ public static class SyntaxFacts
 
     public static ExpressionSyntax ParseExpression(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var tree = SyntaxTree.ParseExpression(text);
         return (ExpressionSyntax)tree.Root.Root;
@@ -300,7 +300,7 @@ public static class SyntaxFacts
 
     public static string GetDisplayText(this SyntaxToken token)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         var result = token.Text;
         return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
@@ -415,7 +415,7 @@ public static class SyntaxFacts
 
     public static string GetValidIdentifier(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         return IsValidIdentifier(name)
                    ? name
@@ -424,7 +424,7 @@ public static class SyntaxFacts
 
     public static bool IsValidIdentifier(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         if (name.Length == 0)
             return false;
@@ -441,7 +441,7 @@ public static class SyntaxFacts
 
     public static string GetParenthesizedIdentifier(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         var sb = new StringBuilder();
 
@@ -461,7 +461,7 @@ public static class SyntaxFacts
 
     public static string GetQuotedIdentifier(string name)
     {
-        ArgumentNullException.ThrowIfNull(name);
+        ThrowIfNull(name);
 
         var sb = new StringBuilder();
 
@@ -481,7 +481,7 @@ public static class SyntaxFacts
 
     public static SyntaxKind GetKeywordKind(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         switch (text.ToUpper())
         {
@@ -639,7 +639,7 @@ public static class SyntaxFacts
 
     public static SyntaxKind GetContextualKeywordKind(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         switch (text.ToUpper())
         {
@@ -656,7 +656,7 @@ public static class SyntaxFacts
 
     public static bool IsQuotedIdentifier(this SyntaxToken token)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         return token.Kind == SyntaxKind.IdentifierToken &&
                token.Text.Length > 0 &&
@@ -665,7 +665,7 @@ public static class SyntaxFacts
 
     public static bool IsParenthesizedIdentifier(this SyntaxToken token)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         return token.Kind == SyntaxKind.IdentifierToken &&
                token.Text.Length > 0 &&
@@ -674,8 +674,8 @@ public static class SyntaxFacts
 
     public static bool Matches(this SyntaxToken token, string text)
     {
-        ArgumentNullException.ThrowIfNull(token);
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(token);
+        ThrowIfNull(text);
 
         var comparison = token.IsQuotedIdentifier()
                              ? StringComparison.Ordinal
@@ -685,7 +685,7 @@ public static class SyntaxFacts
 
     public static bool IsTerminated(this SyntaxToken token)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         switch (token.Kind)
         {
@@ -706,7 +706,7 @@ public static class SyntaxFacts
 
     public static bool IsTerminated(this SyntaxTrivia trivia)
     {
-        ArgumentNullException.ThrowIfNull(trivia);
+        ThrowIfNull(trivia);
 
         switch (trivia.Kind)
         {
@@ -1325,7 +1325,7 @@ public static class SyntaxFacts
 
     public static bool ParenthesisIsRedundant(ParenthesizedExpressionSyntax expression)
     {
-        ArgumentNullException.ThrowIfNull(expression);
+        ThrowIfNull(expression);
 
         var childExpression = expression.Expression;
 

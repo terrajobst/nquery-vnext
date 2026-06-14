@@ -33,7 +33,7 @@ public sealed class SyntaxTrivia
 
     public void WriteTo(TextWriter writer)
     {
-        ArgumentNullException.ThrowIfNull(writer);
+        ThrowIfNull(writer);
 
         writer.Write(Text);
     }

@@ -6,7 +6,7 @@ public static class SyntaxExtensions
 {
     public static SyntaxToken FindTokenOnLeft(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindToken(position, descendIntoTrivia: true);
         return token.GetPreviousTokenIfTouchingEndOrCurrentIsEndOfFile(position);
@@ -14,7 +14,7 @@ public static class SyntaxExtensions
 
     public static IEnumerable<SyntaxToken> FindStartTokens(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindToken(position);
         yield return token;
@@ -26,7 +26,7 @@ public static class SyntaxExtensions
 
     public static IEnumerable<SyntaxNode> FindNodes(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         // NOTE: We don't use Distinct() because we want to preserve the
         //       order of nodes.
@@ -39,14 +39,14 @@ public static class SyntaxExtensions
     public static IEnumerable<T> FindNodes<T>(this SyntaxNode root, int position)
         where T : SyntaxNode
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         return root.FindNodes(position).OfType<T>();
     }
 
     public static SyntaxToken GetPreviousTokenIfEndOfFile(this SyntaxToken token)
     {
-        ArgumentNullException.ThrowIfNull(token);
+        ThrowIfNull(token);
 
         return token.Kind != SyntaxKind.EndOfFileToken
                    ? token
@@ -74,7 +74,7 @@ public static class SyntaxExtensions
 
     public static SyntaxToken FindTokenContext(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
 
@@ -99,7 +99,7 @@ public static class SyntaxExtensions
 
     public static bool InComment(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         return (from t in token.LeadingTrivia.Concat(token.TrailingTrivia)
@@ -111,7 +111,7 @@ public static class SyntaxExtensions
 
     public static bool InLiteral(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         return token.Span.ContainsOrTouches(position) && token.Kind.IsLiteral();
@@ -119,7 +119,7 @@ public static class SyntaxExtensions
 
     public static bool GuaranteedInUserGivenName(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         return root.GuaranteedInAlias(position) ||
                root.GuaranteedInCteName(position) ||
@@ -129,7 +129,7 @@ public static class SyntaxExtensions
 
     public static bool PossiblyInUserGivenName(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         return root.PossiblyInAlias(position) ||
                root.PossiblyInCteName(position) ||
@@ -139,7 +139,7 @@ public static class SyntaxExtensions
 
     private static bool GuaranteedInAlias(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         var node = token.Parent as AliasSyntax;
@@ -148,7 +148,7 @@ public static class SyntaxExtensions
 
     private static bool PossiblyInAlias(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         return token.Parent is AliasSyntax node && node.Span.ContainsOrTouches(position);
@@ -156,7 +156,7 @@ public static class SyntaxExtensions
 
     private static bool GuaranteedInCteName(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         var cte = token.Parent as CommonTableExpressionSyntax;
@@ -165,7 +165,7 @@ public static class SyntaxExtensions
 
     private static bool PossiblyInCteName(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var token = root.FindTokenOnLeft(position);
         return token.Parent is CommonTableExpressionSyntax cte && cte.Name.Span.ContainsOrTouches(position);
@@ -173,7 +173,7 @@ public static class SyntaxExtensions
 
     private static bool InCteColumnList(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var node = root.FindTokenOnLeft(position).Parent;
         return node.Span.ContainsOrTouches(position) &&
@@ -183,7 +183,7 @@ public static class SyntaxExtensions
 
     private static bool InDerivedTableName(this SyntaxNode root, int position)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         var syntaxToken = root.FindTokenOnLeft(position);
         return syntaxToken.Parent is DerivedTableReferenceSyntax derivedTable && derivedTable.Name.FullSpan.ContainsOrTouches(position);
@@ -191,7 +191,7 @@ public static class SyntaxExtensions
 
     public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         var node = query.Query;
 

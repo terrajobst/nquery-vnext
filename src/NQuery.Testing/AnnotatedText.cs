@@ -15,7 +15,7 @@ public sealed partial class AnnotatedText
 
     public static AnnotatedText Parse(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var parser = new Parser(text);
         return parser.Parse();

@@ -91,7 +91,7 @@ public sealed class DataContext
 
     public DataContext AddTables(IEnumerable<TableSymbol> tables)
     {
-        ArgumentNullException.ThrowIfNull(tables);
+        ThrowIfNull(tables);
 
         var newTables = Tables.AddRange(tables);
         return WithTables(newTables);
@@ -107,7 +107,7 @@ public sealed class DataContext
 
     public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
     {
-        ArgumentNullException.ThrowIfNull(tables);
+        ThrowIfNull(tables);
 
         var newTables = Tables.RemoveRange(tables);
         return WithTables(newTables);
@@ -121,7 +121,7 @@ public sealed class DataContext
 
     public DataContext WithTables(IEnumerable<TableSymbol> tables)
     {
-        ArgumentNullException.ThrowIfNull(tables);
+        ThrowIfNull(tables);
 
         if (ReferenceEquals(tables, Tables))
             return this;
@@ -142,7 +142,7 @@ public sealed class DataContext
 
     public DataContext AddRelations(IEnumerable<TableRelation> relations)
     {
-        ArgumentNullException.ThrowIfNull(relations);
+        ThrowIfNull(relations);
 
         var newRelations = Relations.AddRange(relations);
         return WithRelations(newRelations);
@@ -158,7 +158,7 @@ public sealed class DataContext
 
     public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
     {
-        ArgumentNullException.ThrowIfNull(relations);
+        ThrowIfNull(relations);
 
         var newRelations = Relations.RemoveRange(relations);
         return WithRelations(newRelations);
@@ -172,7 +172,7 @@ public sealed class DataContext
 
     public DataContext WithRelations(IEnumerable<TableRelation> relations)
     {
-        ArgumentNullException.ThrowIfNull(relations);
+        ThrowIfNull(relations);
 
         if (ReferenceEquals(relations, Relations))
             return this;
@@ -193,7 +193,7 @@ public sealed class DataContext
 
     public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
     {
-        ArgumentNullException.ThrowIfNull(functions);
+        ThrowIfNull(functions);
 
         var newFunctions = Functions.AddRange(functions);
         return WithFunctions(newFunctions);
@@ -209,7 +209,7 @@ public sealed class DataContext
 
     public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
     {
-        ArgumentNullException.ThrowIfNull(functions);
+        ThrowIfNull(functions);
 
         var newFunctions = Functions.RemoveRange(functions);
         return WithFunctions(newFunctions);
@@ -223,7 +223,7 @@ public sealed class DataContext
 
     public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
     {
-        ArgumentNullException.ThrowIfNull(functions);
+        ThrowIfNull(functions);
 
         if (ReferenceEquals(functions, Functions))
             return this;
@@ -244,7 +244,7 @@ public sealed class DataContext
 
     public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
     {
-        ArgumentNullException.ThrowIfNull(aggregates);
+        ThrowIfNull(aggregates);
 
         var newAggregates = Aggregates.AddRange(aggregates);
         return WithAggregates(newAggregates);
@@ -260,7 +260,7 @@ public sealed class DataContext
 
     public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
     {
-        ArgumentNullException.ThrowIfNull(aggregates);
+        ThrowIfNull(aggregates);
 
         var newAggregates = Aggregates.RemoveRange(aggregates);
         return WithAggregates(newAggregates);
@@ -274,7 +274,7 @@ public sealed class DataContext
 
     public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
     {
-        ArgumentNullException.ThrowIfNull(aggregates);
+        ThrowIfNull(aggregates);
 
         if (ReferenceEquals(aggregates, Aggregates))
             return this;
@@ -295,7 +295,7 @@ public sealed class DataContext
 
     public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
     {
-        ArgumentNullException.ThrowIfNull(variables);
+        ThrowIfNull(variables);
 
         var newVariables = Variables.AddRange(variables);
         return WithVariables(newVariables);
@@ -311,7 +311,7 @@ public sealed class DataContext
 
     public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
     {
-        ArgumentNullException.ThrowIfNull(variables);
+        ThrowIfNull(variables);
 
         var newVariables = Variables.RemoveRange(variables);
         return WithVariables(newVariables);
@@ -325,7 +325,7 @@ public sealed class DataContext
 
     public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
     {
-        ArgumentNullException.ThrowIfNull(variables);
+        ThrowIfNull(variables);
 
         if (ReferenceEquals(variables, Variables))
             return this;
@@ -338,8 +338,8 @@ public sealed class DataContext
 
     public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
     {
-        ArgumentNullException.ThrowIfNull(type);
-        ArgumentNullException.ThrowIfNull(provider);
+        ThrowIfNull(type);
+        ThrowIfNull(provider);
 
         var newProviders = PropertyProviders.Add(type, provider);
         return WithPropertyProviders(newProviders);
@@ -347,7 +347,7 @@ public sealed class DataContext
 
     public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
     {
-        ArgumentNullException.ThrowIfNull(providers);
+        ThrowIfNull(providers);
 
         var newProviders = PropertyProviders.AddRange(providers);
         return WithPropertyProviders(newProviders);
@@ -363,7 +363,7 @@ public sealed class DataContext
 
     public DataContext RemovePropertyProviders(IEnumerable<Type> types)
     {
-        ArgumentNullException.ThrowIfNull(types);
+        ThrowIfNull(types);
 
         var newProviders = PropertyProviders.RemoveRange(types);
         return WithPropertyProviders(newProviders);
@@ -377,7 +377,7 @@ public sealed class DataContext
 
     public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
     {
-        ArgumentNullException.ThrowIfNull(providers);
+        ThrowIfNull(providers);
 
         if (ReferenceEquals(PropertyProviders, providers))
             return this;
@@ -389,8 +389,8 @@ public sealed class DataContext
 
     public DataContext AddMethodProvider(Type type, IMethodProvider provider)
     {
-        ArgumentNullException.ThrowIfNull(type);
-        ArgumentNullException.ThrowIfNull(provider);
+        ThrowIfNull(type);
+        ThrowIfNull(provider);
 
         var newProviders = MethodProviders.Add(type, provider);
         return WithMethodProviders(newProviders);
@@ -398,7 +398,7 @@ public sealed class DataContext
 
     public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
     {
-        ArgumentNullException.ThrowIfNull(providers);
+        ThrowIfNull(providers);
 
         var newProviders = MethodProviders.AddRange(providers);
         return WithMethodProviders(newProviders);
@@ -414,7 +414,7 @@ public sealed class DataContext
 
     public DataContext RemoveMethodProviders(IEnumerable<Type> types)
     {
-        ArgumentNullException.ThrowIfNull(types);
+        ThrowIfNull(types);
 
         var newProviders = MethodProviders.RemoveRange(types);
         return WithMethodProviders(newProviders);
@@ -428,7 +428,7 @@ public sealed class DataContext
 
     public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
     {
-        ArgumentNullException.ThrowIfNull(providers);
+        ThrowIfNull(providers);
 
         if (ReferenceEquals(MethodProviders, providers))
             return this;
@@ -440,8 +440,8 @@ public sealed class DataContext
 
     public DataContext AddComparer(Type type, IComparer comparer)
     {
-        ArgumentNullException.ThrowIfNull(type);
-        ArgumentNullException.ThrowIfNull(comparer);
+        ThrowIfNull(type);
+        ThrowIfNull(comparer);
 
         var newProviders = Comparers.Add(type, comparer);
         return WithComparers(newProviders);
@@ -449,7 +449,7 @@ public sealed class DataContext
 
     public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
     {
-        ArgumentNullException.ThrowIfNull(comparer);
+        ThrowIfNull(comparer);
 
         var newProviders = Comparers.AddRange(comparer);
         return WithComparers(newProviders);
@@ -465,7 +465,7 @@ public sealed class DataContext
 
     public DataContext RemoveComparers(IEnumerable<Type> types)
     {
-        ArgumentNullException.ThrowIfNull(types);
+        ThrowIfNull(types);
 
         var newProviders = Comparers.RemoveRange(types);
         return WithComparers(newProviders);
@@ -479,7 +479,7 @@ public sealed class DataContext
 
     public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
     {
-        ArgumentNullException.ThrowIfNull(comparers);
+        ThrowIfNull(comparers);
 
         if (ReferenceEquals(Comparers, comparers))
             return this;

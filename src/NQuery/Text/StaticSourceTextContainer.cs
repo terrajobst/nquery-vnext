@@ -4,8 +4,8 @@ internal class StaticSourceTextContainer : SourceTextContainer
 {
     public StaticSourceTextContainer(SourceText current)
     {
-        ArgumentNullException.ThrowIfNull(current);
-        ArgumentNullException.ThrowIfNull(current);
+        ThrowIfNull(current);
+        ThrowIfNull(current);
 
         Current = current;
     }

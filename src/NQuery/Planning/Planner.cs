@@ -18,7 +18,7 @@ internal static class Planner
 {
     public static PhysicalQuery Plan(LogicalQuery query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         var root = Plan(query.Root);
         return new PhysicalQuery(root, query.OutputColumns);
@@ -26,7 +26,7 @@ internal static class Planner
 
     public static PhysicalOperator Plan(LogicalOperator root)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         return PlanOperator(root);
     }

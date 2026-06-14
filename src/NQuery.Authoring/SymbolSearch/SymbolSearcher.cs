@@ -6,7 +6,7 @@ public static class SymbolSearcher
 {
     public static SymbolSpan? FindSymbol(this SemanticModel semanticModel, int position)
     {
-        ArgumentNullException.ThrowIfNull(semanticModel);
+        ThrowIfNull(semanticModel);
 
         var syntaxTree = semanticModel.SyntaxTree;
         return syntaxTree.Root.FindNodes(position)
@@ -17,8 +17,8 @@ public static class SymbolSearcher
 
     public static IEnumerable<SymbolSpan> FindUsages(this SemanticModel semanticModel, Symbol symbol)
     {
-        ArgumentNullException.ThrowIfNull(semanticModel);
-        ArgumentNullException.ThrowIfNull(symbol);
+        ThrowIfNull(semanticModel);
+        ThrowIfNull(symbol);
 
         var syntaxTree = semanticModel.SyntaxTree;
 

@@ -7,7 +7,7 @@ public struct TextLine : IEquatable<TextLine>
 
     public TextLine(SourceText text, int start, int length)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         Text = text;
         _start = start;

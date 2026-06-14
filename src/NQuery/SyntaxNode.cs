@@ -184,7 +184,7 @@ public abstract class SyntaxNode
 
     public bool IsEquivalentTo(SyntaxNode other)
     {
-        ArgumentNullException.ThrowIfNull(other);
+        ThrowIfNull(other);
 
         return SyntaxTreeEquivalence.AreEquivalent(this, other);
     }
@@ -227,7 +227,7 @@ public abstract class SyntaxNode
 
     public void WriteTo(TextWriter writer)
     {
-        ArgumentNullException.ThrowIfNull(writer);
+        ThrowIfNull(writer);
 
         foreach (var syntaxNode in ChildNodesAndTokens())
         {

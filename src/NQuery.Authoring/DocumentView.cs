@@ -11,7 +11,7 @@ public sealed class DocumentView
 
     public DocumentView(Document document, int position, TextSpan selection)
     {
-        ArgumentNullException.ThrowIfNull(document);
+        ThrowIfNull(document);
 
         if (position < 0 || position > document.Text.Length)
             throw new ArgumentOutOfRangeException(nameof(position));

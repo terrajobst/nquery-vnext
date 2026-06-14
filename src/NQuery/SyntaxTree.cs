@@ -16,7 +16,7 @@ public sealed class SyntaxTree
 
     public static SyntaxTree ParseQuery(string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var sourceText = SourceText.From(text);
         return ParseQuery(sourceText);
@@ -24,14 +24,14 @@ public sealed class SyntaxTree
 
     public static SyntaxTree ParseQuery(SourceText text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         return new SyntaxTree(text, p => p.ParseRootQuery());
     }
 
     public static SyntaxTree ParseExpression(string source)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ThrowIfNull(source);
 
         var textBuffer = SourceText.From(source);
         return ParseExpression(textBuffer);
@@ -39,14 +39,14 @@ public sealed class SyntaxTree
 
     public static SyntaxTree ParseExpression(SourceText sourceText)
     {
-        ArgumentNullException.ThrowIfNull(sourceText);
+        ThrowIfNull(sourceText);
 
         return new SyntaxTree(sourceText, p => p.ParseRootExpression());
     }
 
     public static SyntaxTree ParseTokens(string source)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ThrowIfNull(source);
 
         var textBuffer = SourceText.From(source);
         return ParseTokens(textBuffer);
@@ -54,7 +54,7 @@ public sealed class SyntaxTree
 
     public static SyntaxTree ParseTokens(SourceText sourceText)
     {
-        ArgumentNullException.ThrowIfNull(sourceText);
+        ThrowIfNull(sourceText);
 
         return new SyntaxTree(sourceText, p => p.ParseRootTokens());
     }
@@ -145,7 +145,7 @@ public sealed class SyntaxTree
 
     public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
     {
-        ArgumentNullException.ThrowIfNull(textChanges);
+        ThrowIfNull(textChanges);
 
         var newText = Text.WithChanges(textChanges);
         if (newText == Text)

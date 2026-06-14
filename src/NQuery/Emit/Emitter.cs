@@ -21,14 +21,14 @@ internal static class Emitter
 {
     public static ExecutablePlan Emit(PhysicalQuery query)
     {
-        ArgumentNullException.ThrowIfNull(query);
+        ThrowIfNull(query);
 
         return new ExecutablePlan(EmitOperator(query.Root, ImmutableArray<ValueSlot>.Empty), query.OutputColumns);
     }
 
     public static ExecutablePlan Emit(PhysicalOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
-        ArgumentNullException.ThrowIfNull(root);
+        ThrowIfNull(root);
 
         return new ExecutablePlan(EmitOperator(root, ImmutableArray<ValueSlot>.Empty), outputColumns);
     }

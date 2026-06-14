@@ -7,9 +7,9 @@ internal sealed class ChangedSourceText : SourceText
     public ChangedSourceText(SourceText oldText, SourceText newText, IEnumerable<TextChange> changes)
         : base(newText.Container)
     {
-        ArgumentNullException.ThrowIfNull(oldText);
-        ArgumentNullException.ThrowIfNull(newText);
-        ArgumentNullException.ThrowIfNull(changes);
+        ThrowIfNull(oldText);
+        ThrowIfNull(newText);
+        ThrowIfNull(changes);
 
         OldText = oldText;
         NewText = newText;

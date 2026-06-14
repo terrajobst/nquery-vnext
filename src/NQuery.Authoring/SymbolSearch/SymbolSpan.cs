@@ -6,7 +6,7 @@ public struct SymbolSpan : IEquatable<SymbolSpan>
 {
     public SymbolSpan(SymbolSpanKind kind, Symbol symbol, TextSpan span)
     {
-        ArgumentNullException.ThrowIfNull(symbol);
+        ThrowIfNull(symbol);
 
         Kind = kind;
         Symbol = symbol;

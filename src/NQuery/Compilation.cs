@@ -18,8 +18,8 @@ public sealed class Compilation
 
     public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(syntaxTree);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(syntaxTree);
 
         return new Compilation(dataContext, syntaxTree);
     }
@@ -107,14 +107,14 @@ public sealed class Compilation
 
     public Compilation WithSyntaxTree(SyntaxTree syntaxTree)
     {
-        ArgumentNullException.ThrowIfNull(syntaxTree);
+        ThrowIfNull(syntaxTree);
 
         return SyntaxTree == syntaxTree ? this : Create(DataContext, syntaxTree);
     }
 
     public Compilation WithDataContext(DataContext dataContext)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
+        ThrowIfNull(dataContext);
 
         return DataContext == dataContext ? this : Create(dataContext, SyntaxTree);
     }

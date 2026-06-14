@@ -12,8 +12,8 @@ public sealed class Query
 
     public static Query Create(DataContext dataContext, string text)
     {
-        ArgumentNullException.ThrowIfNull(dataContext);
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(dataContext);
+        ThrowIfNull(text);
 
         return new Query(dataContext, text);
     }

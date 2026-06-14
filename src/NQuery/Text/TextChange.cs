@@ -4,14 +4,14 @@ public struct TextChange : IEquatable<TextChange>
 {
     public static TextChange ForReplacement(TextSpan span, string newText)
     {
-        ArgumentNullException.ThrowIfNull(newText);
+        ThrowIfNull(newText);
 
         return new TextChange(span, newText);
     }
 
     public static TextChange ForInsertion(int position, string text)
     {
-        ArgumentNullException.ThrowIfNull(text);
+        ThrowIfNull(text);
 
         var span = new TextSpan(position, 0);
         return new TextChange(span, text);
@@ -24,7 +24,7 @@ public struct TextChange : IEquatable<TextChange>
 
     public TextChange(TextSpan span, string newText)
     {
-        ArgumentNullException.ThrowIfNull(newText);
+        ThrowIfNull(newText);
 
         Span = span;
         NewText = newText;

@@ -14,7 +14,7 @@ public sealed class DataColumnDefinition : ColumnDefinition
 
     public DataColumnDefinition(DataColumn dataColumn)
     {
-        ArgumentNullException.ThrowIfNull(dataColumn);
+        ThrowIfNull(dataColumn);
 
         DataColumn = dataColumn;
     }
