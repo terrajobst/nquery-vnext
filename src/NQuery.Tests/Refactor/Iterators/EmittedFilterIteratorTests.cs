@@ -53,7 +53,7 @@ public class EmittedFilterIteratorTests : IteratorTests
         AssertProduces(iterator, expected);
     }
 
-    // Hole: the outer-correlation path (no legacy equivalent). When an outer buffer is
+    // Hole: the outer-correlation path. When an outer buffer is
     // supplied, the predicate sees (outer ++ input), so it can reference the outer row.
     [Fact]
     public void Iterators_EmittedFilter_EvaluatesPredicateAgainstOuterThenInput()

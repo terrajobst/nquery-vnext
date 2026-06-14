@@ -90,7 +90,7 @@ internal sealed class Algebrizer
         };
     }
 
-    // Lowers a per-clause SELECT into the relational pipeline. The order mirrors the legacy
+    // Lowers a per-clause SELECT into the relational pipeline. The order mirrors the
     // binder's "putting it together" assembly: FROM -> WHERE -> compute group expressions ->
     // GROUP BY/aggregate -> HAVING -> compute SELECT expressions -> sort -> top -> project ->
     // distinct (when there is no ORDER BY).
@@ -296,8 +296,7 @@ internal sealed class Algebrizer
     // inner Applies expose the right, so a subquery correlated to either side resolves. The
     // Apply has no condition of its own (the correlation lives in the right subtree's Filter),
     // matching the physical nested-loops contract. ApplyPushdown decorrelates this where it
-    // can; otherwise it runs as correlated nested loops (the legacy engine's behavior for this
-    // shape). For LeftSemi/LeftAntiSemi the Apply's probe is null so it *filters* the left rows
+    // can; otherwise it runs as correlated nested loops. For LeftSemi/LeftAntiSemi the Apply's probe is null so it *filters* the left rows
     // (the join's own semantics), while each inner EXISTS Apply keeps its own probe.
     private static LogicalOperator BuildDependentJoin(LogicalJoinKind joinKind, LogicalOperator joinLeft, LogicalOperator joinRight, List<LogicalExpression> joinConditions, List<LogicalExpression> subqueryConditions, List<PendingApply> applies)
     {

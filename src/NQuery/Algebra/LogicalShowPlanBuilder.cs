@@ -2,8 +2,7 @@ using System.Collections.Immutable;
 
 namespace NQuery.Algebra;
 
-// Builds a ShowPlanNode tree for the new pipeline's logical algebra, mirroring the
-// legacy ShowPlanBuilder (which renders the legacy BoundRelation tree). The physical
+// Builds a ShowPlanNode tree for the logical algebra. The physical
 // side has its own builder; both share BuildExpression because the row-expression
 // language (LogicalExpression) is the same in both layers.
 internal static class LogicalShowPlanBuilder

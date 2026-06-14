@@ -2,7 +2,7 @@ using NQuery.Iterators;
 
 namespace NQuery.Tests.Refactor.Iterators;
 
-// The legacy BoundHashMatchOperator maps to two booleans:
+// The BoundHashMatchOperator maps to two booleans:
 //   Inner       = (preserveBuild: false, preserveProbe: false)
 //   LeftOuter   = (preserveBuild: true,  preserveProbe: false)
 //   RightOuter  = (preserveBuild: false, preserveProbe: true)

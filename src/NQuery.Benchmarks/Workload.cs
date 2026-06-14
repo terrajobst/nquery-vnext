@@ -11,7 +11,7 @@ public static class Workload
         // Scan + filter + project: isolates raw per-row cost (no sort/aggregate).
         Scan,
 
-        // Filter + group + aggregate: the new engine sorts on the grouping columns
+        // Filter + group + aggregate: the engine sorts on the grouping columns
         // (no hash aggregate yet), so this is where the sort gap shows up.
         Aggregate,
     }

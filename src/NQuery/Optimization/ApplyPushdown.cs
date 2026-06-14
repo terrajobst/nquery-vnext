@@ -98,8 +98,8 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
             case LogicalAggregate aggregate when apply.ApplyKind == LogicalApplyKind.LeftOuter && aggregate.Groups.IsEmpty:
                 return DecorrelateAggregate(apply, aggregate);
 
-            // TODO: Push Apply into one side of an inner Join on the right (the legacy
-            //       Decorrelator's cross-join predicate movement), and handle a subquery
+            // TODO: Push Apply into one side of an inner Join on the right (the
+            //       cross-join predicate movement), and handle a subquery
             //       with its own GROUP BY (aggregate.Groups non-empty) and the
             //       Assert-guarded multi-row scalar case. Until then these stay nested
             //       loops -- correct, but a re-scan per left row.

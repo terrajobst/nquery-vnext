@@ -27,7 +27,7 @@ internal sealed class ExecutableAssert : ExecutableOperator
         // NOTE: CompilePredicate coalesces a NULL result to false, so a NULL condition
         //       fires the assert. That suits the only current use (count <= 1, never
         //       NULL); a nullable assert condition would need NULL-passes semantics
-        //       (the legacy assert treated NULL as success).
+        //       (the assert treated NULL as success).
         _predicate = EmittedExpressionCompiler.CompilePredicate(condition, slotIndices);
     }
 

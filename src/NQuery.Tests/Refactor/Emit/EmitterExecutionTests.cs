@@ -7,7 +7,7 @@ using NQuery.Planning;
 
 namespace NQuery.Tests.Refactor.Emit;
 
-// End-to-end execution through the new pipeline
+// End-to-end execution through the pipeline
 // (Bind -> Algebrize -> Optimize -> Plan -> Emit -> CreateIterator), checked
 // differentially against the unoptimized pipeline (RunUnoptimized) -- the nested-loops
 // reference that skips logical optimization, an independent oracle for the optimized

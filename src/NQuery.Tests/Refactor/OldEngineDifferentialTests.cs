@@ -2,16 +2,11 @@ using System.Collections.Generic;
 
 namespace NQuery.Tests.Refactor;
 
-// Differential correctness gate against the OLD engine: each query runs through both the
-// live engine and the previous-version NQuery from the "nquery-baseline" worktree, over the
-// same Northwind data, and the result rows must match. This is the cross-version analogue of
-// EmitterExecutionTests.NewPipeline_ProducesSameRows_AsUnoptimized, which compares the new
-// pipeline to the in-tree unoptimized reference; here the reference is the shipped engine at
-// the comparison commit.
-//
-// The old engine is reached through the OldEngine helper, which keeps the extern alias to
-// itself, so this file speaks only standard types. Every query carries an ORDER BY (or is a
-// single-row aggregate) so the row order is deterministic and the comparison is positional.
+// Differential correctness gate: each query runs through both the current engine and the
+// baseline NQuery from the "nquery-baseline" worktree (via the OldEngine helper) over the
+// same Northwind data, and the result rows must match. Every query carries an ORDER BY
+// (or is a single-row aggregate) so the row order is deterministic and the comparison is
+// positional.
 public class OldEngineDifferentialTests
 {
     [Theory]

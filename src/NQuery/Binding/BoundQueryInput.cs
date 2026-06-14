@@ -6,7 +6,7 @@ namespace NQuery.Binding;
 // inputs need type coercion to a common type, the conversions are captured as ComputedValues
 // (expression -> new value) and OutputValues references the resulting values; otherwise
 // OutputValues are the input query's own output values and ComputedValues is empty. The
-// algebrizer reproduces the legacy Compute/Project wrapping from this.
+// algebrizer reproduces the Compute/Project wrapping from this.
 internal sealed class BoundQueryInput
 {
     public BoundQueryInput(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, ImmutableArray<IBoundValue> outputValues)

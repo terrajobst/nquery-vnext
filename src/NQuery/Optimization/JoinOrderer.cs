@@ -17,8 +17,7 @@ namespace NQuery.Optimization;
 // opaque inputs and optimized recursively. The one exception is a left outer join
 // whose null-supplied side no region predicate references: its preserved side is
 // pulled into the region (so it can join and reorder with the rest) and the outer
-// join re-applied above, the sound case of the legacy JoinLinearizer's re-association
-// (see PullUpOuterJoins). Ordering is heuristic (prefer an input connected by a
+// join re-applied above (see PullUpOuterJoins). Ordering is heuristic (prefer an input connected by a
 // predicate, to avoid cartesian products); a cost-based PickNext can replace it later.
 //
 // The pass rebuilds regions unconditionally, so it is not idempotent by
@@ -92,12 +91,11 @@ internal sealed class JoinOrderer : LogicalOperatorRewriter
         return acc;
     }
 
-    // Subsumes the sound case of the legacy JoinLinearizer's re-association across an
-    // inner/outer boundary: R ⋈ₚ (L ⟕_q M) == (R ⋈ₚ L) ⟕_q M, valid when no region
-    // predicate references the null-supplied side M (so L can join and reorder with the
-    // rest of the region while M is re-attached above). Each peeled outer join is
-    // returned to be re-applied over the assembled region; the loop repeats so a nested
-    // outer join ((D ⟕ E) ⟕ C) peels one level per pass.
+    // Re-association across an inner/outer boundary: R ⋈ₚ (L ⟕_q M) == (R ⋈ₚ L) ⟕_q M,
+    // valid when no region predicate references the null-supplied side M (so L can join
+    // and reorder with the rest of the region while M is re-attached above). Each peeled
+    // outer join is returned to be re-applied over the assembled region; the loop repeats
+    // so a nested outer join ((D ⟕ E) ⟕ C) peels one level per pass.
     private static List<DeferredOuterJoin> PullUpOuterJoins(List<LogicalOperator> inputs, List<LogicalExpression> predicates)
     {
         var deferred = new List<DeferredOuterJoin>();

@@ -929,8 +929,8 @@ partial class Binder
         if (withTies && orderedQueryNode is null)
             Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause!.Span);
 
-        // Assemble the syntax-shaped query node. Unlike the legacy binder we do NOT lower
-        // this into Filter/Compute/GroupBy/Sort/Top/Project relations here -- that is the
+        // Assemble the syntax-shaped query node. We do NOT lower this into
+        // Filter/Compute/GroupBy/Sort/Top/Project relations here -- that is the
         // algebrizer's job. We only carry the resolved ingredients it needs.
 
         var computedGroups = queryBinder.QueryState

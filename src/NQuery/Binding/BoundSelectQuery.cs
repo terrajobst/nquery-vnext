@@ -6,9 +6,8 @@ namespace NQuery.Binding;
 
 // A bound SELECT query, kept in syntax-shaped (per-clause) form. It carries the resolved
 // ingredients the algebrizer needs to lower it into relational/logical operators -- it does
-// NOT itself perform that lowering (the legacy binder used to, building Filter/Compute/
-// GroupBy/Sort/Top/Project relations inline). The resolved sort lives on the ORDER BY clause
-// and the DISTINCT keys on the SELECT clause; the output columns are the SELECT columns.
+// NOT itself perform that lowering. The resolved sort lives on the ORDER BY clause and the
+// DISTINCT keys on the SELECT clause; the output columns are the SELECT columns.
 internal sealed class BoundSelectQuery : BoundQuery
 {
     public BoundSelectQuery(

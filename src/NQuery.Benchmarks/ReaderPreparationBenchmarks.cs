@@ -10,12 +10,10 @@ using CurrentSymbols = NQuery.Symbols;
 namespace NQuery.Benchmarks;
 
 // Reader preparation: a fresh Query is compiled and a reader opened every iteration, but
-// no rows are read. ExecuteReader() does all the codegen for both engines -- the old
-// engine's iterator/expression build and the new engine's emit both run here -- while
-// Open() on a (blocking) sort does not yet sort. This is the apples-to-apples codegen
-// comparison: CompilationBenchmarks understates the old engine (it defers codegen to
-// ExecuteReader), and reading the first row would drag a blocking sort's full execution
-// into the Aggregate measurement.
+// no rows are read. ExecuteReader() does all the codegen while Open() on a (blocking)
+// sort does not yet sort. This avoids distorting the measurement: CompilationBenchmarks
+// defers codegen to ExecuteReader, and reading the first row would drag a blocking sort's
+// full execution into the Aggregate measurement.
 [MemoryDiagnoser]
 public class ReaderPreparationBenchmarks
 {

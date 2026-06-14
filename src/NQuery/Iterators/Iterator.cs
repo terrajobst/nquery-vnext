@@ -1,7 +1,7 @@
 namespace NQuery.Iterators;
 
-// The runtime cursor of the new pipeline. It is intentionally a separate type
-// from NQuery.Iterators.Iterator so the emitted layer is fully self-contained.
+// The runtime cursor of the pipeline. It is intentionally a separate type
+// so the emitted layer is fully self-contained.
 internal abstract class Iterator : IDisposable
 {
     public abstract RowBuffer RowBuffer { get; }

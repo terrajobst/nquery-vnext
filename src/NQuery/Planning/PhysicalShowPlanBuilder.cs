@@ -2,9 +2,9 @@ using NQuery.Algebra;
 
 namespace NQuery.Planning;
 
-// Builds a ShowPlanNode tree for the new pipeline's physical plan. The relational
-// operators differ from the logical layer (algorithm choices: nested loops vs hash
-// match, stream aggregate, concatenation), but the row-expression language is shared,
+// Builds a ShowPlanNode tree for the physical plan. The relational operators differ
+// from the logical layer (algorithm choices: nested loops vs hash match, stream
+// aggregate, concatenation), but the row-expression language is shared,
 // so expression rendering is delegated to LogicalShowPlanBuilder.BuildExpression.
 internal static class PhysicalShowPlanBuilder
 {

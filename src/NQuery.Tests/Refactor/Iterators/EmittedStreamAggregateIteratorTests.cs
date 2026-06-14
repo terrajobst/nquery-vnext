@@ -6,8 +6,7 @@ using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Tests.Refactor.Iterators;
 
-// The legacy iterator took group RowBufferEntries and IteratorFunctions; the emitted
-// one takes group *indices* into the read buffer and EmittedFunctions that receive it.
+// The emitted iterator takes group *indices* into the read buffer and EmittedFunctions that receive it.
 // With outer == null the read buffer is just the input, so a group index is a column
 // index and an argument function reads rb[column].
 public class EmittedStreamAggregateIteratorTests : IteratorTests

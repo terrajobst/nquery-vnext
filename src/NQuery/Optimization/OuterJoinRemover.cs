@@ -25,7 +25,7 @@ namespace NQuery.Optimization;
 // join ordering lets a tightened inner join join its region and accept pushed-down
 // selections.
 //
-// The pass also folds in one non-null-rejection simplification the legacy
+// The pass also folds in one non-null-rejection simplification the
 // OuterJoinRemover carried (it composes naturally once an outer join becomes inner):
 // an inner join against the single-row constant relation (a query with no FROM) is the
 // other side with the join condition as a filter.

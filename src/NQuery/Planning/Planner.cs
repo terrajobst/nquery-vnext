@@ -388,7 +388,7 @@ internal static class Planner
         if (node.IsUnionAll)
             return concatenation;
 
-        // A plain UNION removes duplicates. Mirror the legacy lowering: a distinct
+        // A plain UNION removes duplicates. Mirror the lowering: a distinct
         // sort over the unified columns (with their comparers) above the concatenation.
         var sortedValues = node.DefinedValues
                                .Zip(node.Comparers, (v, c) => new LogicalComparedValue(v.ValueSlot, c))

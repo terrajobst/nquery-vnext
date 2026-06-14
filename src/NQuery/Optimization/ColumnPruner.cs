@@ -4,8 +4,7 @@ using NQuery.Algebra;
 
 namespace NQuery.Optimization;
 
-// Removes value slots that nothing references, the analog of the legacy
-// UnusedValueSlotRemover. The new pipeline's table scan defines a slot for every
+// Removes value slots that nothing references. The table scan defines a slot for every
 // table column (Algebrizer.AlgebrizeNamedTableReference), so a query that touches
 // only some columns still carries the rest through filters and -- crucially -- into
 // the sort a stream aggregate inserts, where each spooled row is `new object[width]`.

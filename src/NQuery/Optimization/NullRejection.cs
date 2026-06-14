@@ -4,8 +4,7 @@ using NQuery.Binding;
 namespace NQuery.Optimization;
 
 // Whether a predicate is guaranteed to evaluate to FALSE/UNKNOWN (i.e. reject the
-// row) when the given value slot is NULL. The logical-expression counterpart of the
-// legacy NQuery.Binding.NullRejection; used by OuterJoinRemover to tighten an outer
+// row) when the given value slot is NULL. Used by OuterJoinRemover to tighten an outer
 // join into an inner one when a predicate above it rejects the null-supplied side.
 //
 // Conservative: only the node kinds below let us prove rejection; everything else
