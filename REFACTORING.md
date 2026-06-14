@@ -1,9 +1,5 @@
 # NQuery Major Refactoring
 
-* I don't think bare expressions work -- I believe they only go through the
-  legacy path
-* Double check that Query goes through either path, depending on `BASELINE`
-
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).

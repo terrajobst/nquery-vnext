@@ -1,12 +1,14 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-using NQuery.Optimization;
-using NQuery.Symbols;
+using NQuery.Refactor.Algebra;
+using NQuery.Refactor.Binding;
+using NQuery.Refactor.Emit;
+using NQuery.Refactor.Optimization;
+using NQuery.Refactor.Planning;
 
 namespace NQuery
 {
-    public sealed partial class Compilation
+    public sealed class Compilation
     {
         private Compilation(DataContext dataContext, SyntaxTree syntaxTree)
         {
@@ -24,41 +26,40 @@ namespace NQuery
 
         public SemanticModel GetSemanticModel()
         {
-#if BASELINE
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
-#else
-            // Authoring/IDE features bind through the new pipeline's fork of the binder so the
-            // SemanticModel reflects the engine that actually compiles the query.
-            var bindingResult = Refactor.Binding.Binder.Bind(SyntaxTree.Root, DataContext);
-#endif
             return new SemanticModel(this, bindingResult);
         }
 
+        // The query pipeline: Bind -> Algebrize -> Optimize -> Plan -> Emit, mirroring the
+        // sequence the differential tests drive.
         public CompiledQuery Compile()
         {
-#if BASELINE
-            return CompileLegacy();
-#else
-            // New engine pipeline lives in Compilation.NewEngine.cs. It falls back to
-            // CompileLegacy for bare expressions.
-            return CompileNewEngine();
-#endif
-        }
-
-        // The legacy pipeline: legacy bind -> optimize -> BoundQuery-backed CompiledQuery.
-        // Used directly by the baseline build, and by the new build for bare expressions.
-        private CompiledQuery CompileLegacy()
-        {
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
-            var boundQuery = GetBoundQuery(bindingResult.BoundRoot);
-            var diagnostics = GetDiagnostics(bindingResult);
 
+            var diagnostics = GetDiagnostics(bindingResult);
             if (diagnostics.Any())
                 throw new CompilationException(diagnostics);
 
-            var optimizedQuery = Optimizer.Optimize(boundQuery);
+            var logicalQuery = Algebrize(bindingResult);
 
-            return new CompiledQuery(optimizedQuery);
+            logicalQuery = LogicalOptimizer.Optimize(logicalQuery, DataContext);
+            var physicalQuery = Planner.Plan(logicalQuery);
+            var plan = Emitter.Emit(physicalQuery);
+
+            return new CompiledQuery(plan);
+        }
+
+        // A top-level query binds to a BoundQuery; a bare expression (Expression<T>, e.g.
+        // aggregate type resolution) binds to a BoundExpression. The algebrizer wraps the
+        // latter in a one-row projection so both feed the same Optimize/Plan/Emit pipeline.
+        private static LogicalQuery Algebrize(BindingResult bindingResult)
+        {
+            return bindingResult.BoundRoot switch
+            {
+                BoundQuery boundQuery => Algebrizer.Algebrize(boundQuery),
+                BoundExpression boundExpression => Algebrizer.Algebrize(boundExpression),
+                _ => throw ExceptionBuilder.UnexpectedValue(bindingResult.BoundRoot)
+            };
         }
 
         private ImmutableArray<Diagnostic> GetDiagnostics(BindingResult bindingResult)
@@ -73,69 +74,35 @@ namespace NQuery
             return GetShowPlanSteps().LastOrDefault();
         }
 
+        // The show plan, mirroring Compile's stages: the algebrized (unoptimized) logical tree,
+        // each logical optimization pass that changed it, the optimized logical tree, and finally
+        // the physical plan the planner produced.
         public IEnumerable<ShowPlan> GetShowPlanSteps()
-        {
-#if BASELINE
-            return GetShowPlanStepsLegacy();
-#else
-            // The new-pipeline show plan lives in Compilation.NewEngine.cs, mirroring Compile().
-            return GetShowPlanStepsNewEngine();
-#endif
-        }
-
-        // The legacy show plan: legacy bind -> optimize, rendering the BoundRelation tree at
-        // each optimization step. Used by the baseline build.
-        private IEnumerable<ShowPlan> GetShowPlanStepsLegacy()
         {
             var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
 
             if (GetDiagnostics(bindingResult).Any())
                 yield break;
 
-            var inputQuery = GetBoundQuery(bindingResult.BoundRoot);
-            yield return ShowPlanBuilder.Build(Resources.ShowPlanUnoptimized, inputQuery);
+            var logicalQuery = Algebrize(bindingResult);
 
-            var relation = inputQuery.Relation;
+            yield return LogicalShowPlanBuilder.Build(Resources.ShowPlanUnoptimized, logicalQuery);
 
-            foreach (var rewriter in Optimizer.GetOptimizationSteps())
+            var outputColumns = logicalQuery.OutputColumns;
+            var root = logicalQuery.Root;
+
+            foreach (var (name, stepRoot) in LogicalOptimizer.GetOptimizationSteps(root, DataContext))
             {
-                var step = rewriter.RewriteRelation(relation);
-                if (step != relation)
-                {
-                    var stepName = string.Format(Resources.ShowPlanStepFmt, rewriter.GetType().Name);
-                    var stepQuery = new BoundQuery(step, inputQuery.OutputColumns);
-                    yield return ShowPlanBuilder.Build(stepName, stepQuery);
-                }
-
-                relation = step;
+                var stepName = string.Format(Resources.ShowPlanStepFmt, name);
+                yield return LogicalShowPlanBuilder.Build(stepName, new LogicalQuery(stepRoot, outputColumns));
+                root = stepRoot;
             }
 
-            var outputQuery = new BoundQuery(relation, inputQuery.OutputColumns);
-            yield return ShowPlanBuilder.Build(Resources.ShowPlanOptimized, outputQuery);
-        }
+            var optimizedQuery = new LogicalQuery(root, outputColumns);
+            yield return LogicalShowPlanBuilder.Build(Resources.ShowPlanOptimized, optimizedQuery);
 
-        private static BoundQuery GetBoundQuery(BoundNode boundRoot)
-        {
-            if (boundRoot is null)
-                return null;
-
-            if (boundRoot is BoundQuery query)
-                return query;
-
-            var expression = (BoundExpression)boundRoot;
-            return CreateBoundQuery(expression);
-        }
-
-        private static BoundQuery CreateBoundQuery(BoundExpression expression)
-        {
-            var factory = new ValueSlotFactory();
-            var valueSlot = new ValueSlot(factory, @"result", 0, expression.Type);
-            var computedValue = new BoundComputedValue(expression, valueSlot);
-            var constantRelation = new BoundConstantRelation();
-            var computeRelation = new BoundComputeRelation(constantRelation, new[] { computedValue });
-            var projectRelation = new BoundProjectRelation(computeRelation, new[] { valueSlot });
-            var columnSymbol = new QueryColumnInstanceSymbol(valueSlot.Name, valueSlot);
-            return new BoundQuery(projectRelation, new[] { columnSymbol });
+            var physicalQuery = Planner.Plan(optimizedQuery);
+            yield return PhysicalShowPlanBuilder.Build(Resources.ShowPlanPhysical, physicalQuery);
         }
 
         public Compilation WithSyntaxTree(SyntaxTree syntaxTree)

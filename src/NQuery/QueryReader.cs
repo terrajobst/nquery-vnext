@@ -1,13 +1,6 @@
 using System.Collections.Immutable;
 
-// The two engines have structurally identical iterator contracts (Open/Read/Dispose/
-// RowBuffer). Aliasing the type is all that's needed to host either one; the reader
-// body below is engine-agnostic.
-#if BASELINE
-using Iterator = NQuery.Iterators.Iterator;
-#else
 using Iterator = NQuery.Refactor.Iterators.Iterator;
-#endif
 
 namespace NQuery
 {

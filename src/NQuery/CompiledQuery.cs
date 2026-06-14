@@ -1,27 +1,24 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-using NQuery.Iterators;
+using NQuery.Refactor.Emit;
+using NQuery.Refactor.Iterators;
+using NQuery.Symbols;
 
 namespace NQuery
 {
-    // Engine-agnostic surface. How the reader's iterator is produced (BuildIterator) and
-    // where the output columns come from (OutputColumns) differ per engine and live in
-    // CompiledQuery.Baseline.cs / CompiledQuery.NewEngine.cs.
-    //
-    // The legacy BoundQuery artifact (_query) backs the BASELINE build, where it serves both
-    // queries and bare expressions (Expression<T>, e.g. aggregate type resolution). In the new
-    // build _query is always null -- bare expressions are wrapped into a query and emitted like
-    // any other, so CreateExpressionEvaluator runs over the plan (CreateExpression's trivial
-    // fast path is BASELINE-only).
-    public sealed partial class CompiledQuery
+    // Every compilation -- top-level query and bare expression alike -- is an emitted
+    // ExecutablePlan. (A bare expression is wrapped in a one-row projection by the algebrizer,
+    // so it plans and emits like any other query.)
+    public sealed class CompiledQuery
     {
-        private readonly BoundQuery _query;
+        private readonly ExecutablePlan _plan;
 
-        internal CompiledQuery(BoundQuery query)
+        internal CompiledQuery(ExecutablePlan plan)
         {
-            _query = query;
+            _plan = plan;
         }
+
+        private ImmutableArray<QueryColumnInstanceSymbol> OutputColumns => _plan.OutputColumns;
 
         public QueryReader CreateReader()
         {
@@ -39,6 +36,11 @@ namespace NQuery
             return new QueryReader(BuildIterator(), columnNamesAndTypes, schemaOnly);
         }
 
+        private Iterator BuildIterator()
+        {
+            return _plan.CreateIterator();
+        }
+
         public ExpressionEvaluator CreateExpressionEvaluator()
         {
             // If the query is empty, just return null
@@ -46,49 +48,14 @@ namespace NQuery
                 return new ExpressionEvaluator(typeof(object), () => null);
 
             var expressionType = OutputColumns[0].Type;
-            var expression = CreateExpression();
-            return new ExpressionEvaluator(expressionType, expression);
-        }
-
-        private Func<object> CreateExpression()
-        {
-            // In the general case evaluating an expression means evaluating the query.
-            // That's because an expression might contain sub queries.
-            //
-            // However, in many cases expressions don't contain sub queries and
-            // evaluating a query is considerably more expensive than just evaluating an
-            // expression directly.
-            //
-            // Thus, let's first check whether the query is trivial, i.e. only contains
-            // a compute node whose input is a constant relation. That means we can
-            // just evaluate the expression being defined.
-            //
-            // This fast path only applies to the legacy, BoundQuery-backed instance. The
-            // new engine produces a plan-backed instance (_query is null) and always
-            // evaluates the expression by running its executable plan.
-
-            if (_query?.Relation is BoundProjectRelation projectRelation)
-            {
-                var computeRelation = projectRelation.Input as BoundComputeRelation;
-                if (computeRelation?.Input is BoundConstantRelation)
-                {
-                    // This means this is a trivial query.
-                    return CreateTrivialExpression(computeRelation);
-                }
-            }
-
-            // Too bad, we need to evaluate the expression as a regular query.
-            return EvaluateQueryAsExpression;
-        }
-
-        private static Func<object> CreateTrivialExpression(BoundComputeRelation computeRelation)
-        {
-            var computedValue = computeRelation.DefinedValues.First();
-            return ExpressionBuilder.BuildFunction(computedValue.Expression);
+            return new ExpressionEvaluator(expressionType, EvaluateQueryAsExpression);
         }
 
         private object EvaluateQueryAsExpression()
         {
+            // Evaluating an expression means evaluating its query: a bare expression is wrapped
+            // into a one-row projection by the algebrizer and emitted like any other query, so we
+            // just run that plan and read the single output value.
             using var reader = CreateReader();
             return !reader.Read() || reader.ColumnCount == 0
                 ? null
