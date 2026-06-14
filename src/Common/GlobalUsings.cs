@@ -5,9 +5,12 @@
 global using static System.ArgumentException;
 
 #if NETFRAMEWORK
-// .NET Framework's ArgumentNullException has no ThrowIfNull, so we import the type that
-// supplies it as an extension member to keep the unqualified call form working.
+// .NET Framework's ArgumentNullException/ArgumentOutOfRangeException lack the ThrowIf* guard
+// helpers, so we import the types that supply them as extension members to keep the unqualified
+// call form working.
 global using static NQuery.ArgumentNullExceptionExtensions;
+global using static NQuery.ArgumentOutOfRangeExceptionExtensions;
 #else
 global using static System.ArgumentNullException;
+global using static System.ArgumentOutOfRangeException;
 #endif

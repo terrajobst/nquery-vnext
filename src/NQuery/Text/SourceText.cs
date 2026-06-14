@@ -39,8 +39,8 @@ public abstract class SourceText
 
     public TextLine GetLineFromPosition(int position)
     {
-        if (position < 0 || position > Length)
-            throw new ArgumentOutOfRangeException(nameof(position));
+        ThrowIfNegative(position);
+        ThrowIfGreaterThan(position, Length);
 
         var lineNumber = GetLineNumberFromPosition(position);
         return Lines[lineNumber];

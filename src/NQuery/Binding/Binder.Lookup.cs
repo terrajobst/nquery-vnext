@@ -155,7 +155,7 @@ partial class Binder
 
     private OverloadResolutionResult<MethodSymbolSignature> LookupMethod(Type type, SyntaxToken name, ImmutableArray<Type> argumentTypes)
     {
-        if (name is null) throw new ArgumentNullException(nameof(name));
+        ThrowIfNull(name);
         var signatures = from m in LookupMethod(type, name)
                          select new MethodSymbolSignature(m);
         return OverloadResolution.Perform(signatures, argumentTypes);

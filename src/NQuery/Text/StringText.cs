@@ -70,8 +70,8 @@ internal sealed class StringText : SourceText
 
     public override int GetLineNumberFromPosition(int position)
     {
-        if (position < 0 || position > Length)
-            throw new ArgumentOutOfRangeException(nameof(position));
+        ThrowIfNegative(position);
+        ThrowIfGreaterThan(position, Length);
 
         var lower = 0;
         var upper = _lines.Count - 1;
