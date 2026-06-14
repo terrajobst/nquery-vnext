@@ -15,7 +15,7 @@ namespace NQuery.Authoring.VSEditorWpf.BraceMatching;
 internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
 {
     [Import]
-    public IBraceMatcherService BraceMatcherService { get; set; }
+    public IBraceMatcherService BraceMatcherService { get; set; } = null!;
 
     public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {

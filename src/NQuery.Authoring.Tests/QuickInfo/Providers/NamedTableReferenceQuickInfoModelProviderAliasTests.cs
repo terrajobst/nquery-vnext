@@ -16,9 +16,9 @@ public class NamedTableReferenceQuickInfoModelProviderAliasTests : QuickInfoMode
     {
         var syntaxTree = semanticModel.SyntaxTree;
         var syntax = syntaxTree.Root.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single();
-        var span = syntax.Alias.Span;
+        var span = syntax.Alias!.Span;
         var symbol = semanticModel.GetDeclaredSymbol(syntax);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.TableInstance, markup);
     }
 

@@ -7,12 +7,12 @@ namespace NQuery.Symbols;
 public class ReflectionMethodSymbol : MethodSymbol
 {
     public ReflectionMethodSymbol(MethodInfo methodInfo)
-        : this(methodInfo, methodInfo?.Name)
+        : this(methodInfo, methodInfo?.Name!)
     {
     }
 
     public ReflectionMethodSymbol(MethodInfo methodInfo, string name)
-        : base(name, methodInfo?.ReturnType, ConvertParameters(methodInfo))
+        : base(name, methodInfo?.ReturnType!, ConvertParameters(methodInfo!))
     {
         ThrowIfNull(methodInfo);
 

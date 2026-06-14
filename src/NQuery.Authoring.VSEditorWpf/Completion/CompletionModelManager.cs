@@ -71,7 +71,7 @@ internal sealed class CompletionModelManager : ICompletionModelManager
     public async Task TriggerCompletionAsync(bool autoComplete)
     {
         if (_session is not null)
-            _session.Dismiss();
+            _session!.Dismiss();
         else
             await UpdateModelAsync();
     }
@@ -94,15 +94,15 @@ internal sealed class CompletionModelManager : ICompletionModelManager
         if (_session is null)
             return false;
 
-        var isBuilder = _session.SelectedCompletionSet?.SelectionStatus?.Completion is not null &&
-                        _session.SelectedCompletionSet.CompletionBuilders is not null &&
-                        _session.SelectedCompletionSet.CompletionBuilders.Contains(_session.SelectedCompletionSet.SelectionStatus.Completion);
+        var isBuilder = _session!.SelectedCompletionSet?.SelectionStatus?.Completion is not null &&
+                        _session!.SelectedCompletionSet.CompletionBuilders is not null &&
+                        _session!.SelectedCompletionSet.CompletionBuilders.Contains(_session!.SelectedCompletionSet.SelectionStatus.Completion);
 
         // If it's a builder, we don't want to eat the enter key.
         var sendThrough = isBuilder;
 
         _workspace.CurrentDocumentChanged -= WorkspaceOnCurrentDocumentChanged;
-        _session.Commit();
+        _session!.Commit();
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
 
         return !sendThrough;
@@ -127,25 +127,25 @@ internal sealed class CompletionModelManager : ICompletionModelManager
             _model = value;
             OnModelChanged(EventArgs.Empty);
 
-            var hasData = _model is not null && _model.Items.Length > 0;
+            var hasData = _model is not null && _model!.Items.Length > 0;
             var showSession = _session is null && hasData;
             var hideSession = _session is not null && !hasData;
 
             if (hideSession)
             {
-                _session.Dismiss();
+                _session!.Dismiss();
             }
             else if (showSession)
             {
-                var syntaxTree = _model.SemanticModel.SyntaxTree;
+                var syntaxTree = _model!.SemanticModel.SyntaxTree;
                 var snapshot = syntaxTree.Text.ToTextSnapshot();
-                var triggerPosition = _model.ApplicableSpan.Start;
+                var triggerPosition = _model!.ApplicableSpan.Start;
                 var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 
                 _session = _completionBroker.CreateCompletionSession(_textView, triggerPoint, true);
-                _session.Properties.AddProperty(typeof(ICompletionModelManager), this);
-                _session.Dismissed += SessionOnDismissed;
-                _session.Start();
+                _session!.Properties.AddProperty(typeof(ICompletionModelManager), this);
+                _session!.Dismissed += SessionOnDismissed;
+                _session!.Start();
             }
         }
     }

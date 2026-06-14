@@ -18,7 +18,7 @@ public class DerivedTableReferenceQuickInfoModelProviderTests : QuickInfoModelPr
         var syntax = syntaxTree.Root.DescendantNodes().OfType<DerivedTableReferenceSyntax>().Single();
         var span = syntax.Name.Span;
         var symbol = semanticModel.GetDeclaredSymbol(syntax);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.TableInstance, markup);
     }
 

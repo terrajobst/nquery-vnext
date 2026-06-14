@@ -184,7 +184,7 @@ internal sealed class EmittedExpressionCompiler
     {
         var liftedInput = BuildCachedExpression(expression.Expression);
         var nullableResultType = expression.Type.GetNullableType();
-        var signature = expression.Result.Best.Signature;
+        var signature = expression.Result.Best!.Signature;
 
         return Expression.Condition(
             BuildNullCheck(liftedInput),
@@ -215,7 +215,7 @@ internal sealed class EmittedExpressionCompiler
         var liftedLeft = BuildCachedExpression(expression.Left);
         var liftedRight = BuildCachedExpression(expression.Right);
         var nullableResultType = expression.Type.GetNullableType();
-        var signature = expression.Result.Best.Signature;
+        var signature = expression.Result.Best!.Signature;
 
         var result = Expression.Condition(
                         Expression.OrElse(BuildNullCheck(liftedLeft), BuildNullCheck(liftedRight)),
@@ -283,7 +283,7 @@ internal sealed class EmittedExpressionCompiler
             case BinaryOperatorKind.Like:
             case BinaryOperatorKind.SimilarTo:
             case BinaryOperatorKind.SoundsLike:
-                return Expression.Call(signature.MethodInfo, left, right);
+                return Expression.Call(signature.MethodInfo!, left, right);
             default:
                 throw ExceptionBuilder.UnexpectedValue(signature.Kind);
         }

@@ -194,7 +194,7 @@ internal sealed class SemanticClassificationWorker
         if (tableInstanceSymbol is null)
             return;
 
-        AddClassification(node.TableName, tableInstanceSymbol);
+        AddClassification(node.TableName!, tableInstanceSymbol);
     }
 
     private void ClassifyExpressionSelectColumn(ExpressionSelectColumnSyntax node)
@@ -205,7 +205,7 @@ internal sealed class SemanticClassificationWorker
             return;
 
         var queryColumnInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-        AddClassification(node.Alias.Identifier, queryColumnInstanceSymbol);
+        AddClassification(node.Alias.Identifier, queryColumnInstanceSymbol!);
     }
 
     private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)

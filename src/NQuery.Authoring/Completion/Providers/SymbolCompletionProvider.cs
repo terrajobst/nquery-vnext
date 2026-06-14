@@ -39,7 +39,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
 
         var syntaxTree = semanticModel.SyntaxTree;
         var findTokenContext = syntaxTree.Root.FindTokenContext(position);
-        var isTableContext = findTokenContext.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().Any();
+        var isTableContext = findTokenContext.Parent!.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().Any();
 
         var filteredSymbols = from s in symbols
                               let isTable = s is TableSymbol
@@ -83,7 +83,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
                       ? previous
                       : token;
 
-        var p = dot.Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
+        var p = dot.Parent!.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
 
         if (p is not null)
         {

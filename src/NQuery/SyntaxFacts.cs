@@ -31,7 +31,7 @@ public static class SyntaxFacts
         ThrowIfNull(text);
 
         var tree = SyntaxTree.ParseExpression(text);
-        return (ExpressionSyntax)tree.Root.Root;
+        return (ExpressionSyntax)tree.Root.Root!;
     }
 
     public static bool IsLiteral(this SyntaxKind kind)

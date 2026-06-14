@@ -20,7 +20,7 @@ internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificatio
         if (_workspace is null)
             return;
 
-        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        _workspace!.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         UpdateTagsAsync();
     }
 
@@ -31,7 +31,7 @@ internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificatio
 
     private async void UpdateTagsAsync()
     {
-        var document = _workspace.CurrentDocument;
+        var document = _workspace!.CurrentDocument;
         var semanticModel = await document.GetSemanticModelAsync();
         var classificationSpans = await ClassifyAsync(semanticModel);
 

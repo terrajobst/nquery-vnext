@@ -13,8 +13,8 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
         if (node.OnKeyword.IsMissing || position < node.OnKeyword.Span.End)
             return Enumerable.Empty<CompletionItem>();
 
-        var leftInstances = semanticModel.GetDeclaredSymbols(node.Left).ToImmutableArray();
-        var rightInstances = semanticModel.GetDeclaredSymbols(node.Right).ToImmutableArray();
+        var leftInstances = semanticModel.GetDeclaredSymbols(node.Left)!.ToImmutableArray();
+        var rightInstances = semanticModel.GetDeclaredSymbols(node.Right)!.ToImmutableArray();
         var relations = semanticModel.Compilation.DataContext.Relations;
 
         return from left in leftInstances

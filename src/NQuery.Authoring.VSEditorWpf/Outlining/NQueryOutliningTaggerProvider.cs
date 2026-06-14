@@ -14,7 +14,7 @@ namespace NQuery.Authoring.VSEditorWpf.Outlining;
 internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
 {
     [Import]
-    public IOutliningService OutliningService { get; set; }
+    public IOutliningService OutliningService { get; set; } = null!;
 
     public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag
     {

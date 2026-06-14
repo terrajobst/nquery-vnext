@@ -16,9 +16,9 @@ public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelPro
     {
         var syntaxTree = semanticModel.SyntaxTree;
         var syntax = syntaxTree.Root.DescendantNodes().OfType<WildcardSelectColumnSyntax>().Single();
-        var span = syntax.TableName.Span;
+        var span = syntax.TableName!.Span;
         var symbol = semanticModel.GetTableInstance(syntax);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.TableInstance, markup);
     }
 

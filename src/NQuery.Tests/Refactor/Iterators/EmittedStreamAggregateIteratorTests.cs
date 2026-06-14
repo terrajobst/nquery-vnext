@@ -74,8 +74,8 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
         var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-            new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator());
+            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator(),
+            new MinAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
 
         var function = new EmittedFunction(rb => rb[0]);
         var argumentFunctions = ImmutableArray.Create(function, function);
@@ -105,8 +105,8 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         var groupIndices = ImmutableArray.Create(0);
         var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
         var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator(),
-            new MinAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator());
+            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator(),
+            new MinAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
 
         var function = new EmittedFunction(rb => rb[1]);
         var argumentFunctions = ImmutableArray.Create(function, function);
@@ -130,7 +130,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
         var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int)).CreateAggregator());
+            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
 
         // rb[0] is the outer value (100), rb[1] is the input value.
         var argumentFunctions = ImmutableArray.Create<EmittedFunction>(rb => (int)rb[0] + (int)rb[1]);

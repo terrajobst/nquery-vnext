@@ -33,14 +33,14 @@ internal sealed class OrderByExpressionsCodeIssueProvider : CodeIssueProvider<Or
 
             var boundSymbol = semanticModel.GetSymbol(orderByColumn);
             var expressionColumns = semanticModel.GetOutputColumns(node.Query).ToImmutableArray();
-            var index = expressionColumns.IndexOf(boundSymbol);
+            var index = expressionColumns.IndexOf(boundSymbol!);
             if (index < 0)
                 continue;
 
             // The expression is found. Now we only need to compute a
             // reference to the underlying SELECT list.
 
-            var columnReference = GetColumnReference(index, boundSymbol);
+            var columnReference = GetColumnReference(index, boundSymbol!);
 
             var codeAction = new[] { new ReplaceSelectorCodeAction(selector, columnReference) };
             yield return new CodeIssue(CodeIssueKind.Warning, selector.Span, codeAction);

@@ -11,12 +11,12 @@ internal sealed class NQueryParseDataSynchronizer
     {
         _codeDocument = codeDocument;
         _workspace = workspace;
-        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        _workspace!.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
     }
 
     private async void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
-        var document = _workspace.CurrentDocument;
+        var document = _workspace!.CurrentDocument;
         var syntaxTree = await document.GetSyntaxTreeAsync();
         _codeDocument.ParseData = new NQueryParseData(syntaxTree);
     }

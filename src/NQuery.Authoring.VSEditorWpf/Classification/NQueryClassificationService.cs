@@ -20,14 +20,14 @@ internal sealed class NQueryClassificationService : INQueryClassificationService
     private IClassificationType? _variable;
 
     [Import]
-    public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; }
+    public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; } = null!;
 
     [Import]
-    public IStandardClassificationService StandardClassificationService { get; set; }
+    public IStandardClassificationService StandardClassificationService { get; set; } = null!;
 
     private IClassificationType GetOrRetrieveClassification(ref IClassificationType? target, string name)
     {
-        return target ?? (target = ClassificationTypeRegistryService.GetClassificationType(name));
+        return target ??= ClassificationTypeRegistryService.GetClassificationType(name)!;
     }
 
     public IClassificationType WhiteSpace

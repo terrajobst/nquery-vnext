@@ -18,7 +18,7 @@ public class NameExpressionQuickInfoModelProviderTests : QuickInfoModelProviderT
         var syntax = syntaxTree.Root.DescendantNodes().OfType<NameExpressionSyntax>().Single();
         var span = syntax.Span;
         var symbol = semanticModel.GetSymbol(syntax);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.Column, markup);
     }
 

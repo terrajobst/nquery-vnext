@@ -114,15 +114,15 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
         private int GetInsertPosition()
         {
             if (_selectQuery.GroupByClause is not null)
-                return _selectQuery.GroupByClause.LastToken().Span.End;
+                return _selectQuery.GroupByClause.LastToken()!.Span.End;
 
             if (_selectQuery.WhereClause is not null)
-                return _selectQuery.WhereClause.LastToken().Span.End;
+                return _selectQuery.WhereClause.LastToken()!.Span.End;
 
             if (_selectQuery.FromClause is not null)
-                return _selectQuery.FromClause.LastToken().Span.End;
+                return _selectQuery.FromClause.LastToken()!.Span.End;
 
-            return _selectQuery.SelectClause.LastToken().Span.End;
+            return _selectQuery.SelectClause.LastToken()!.Span.End;
         }
 
         private string GetTextToInsert()

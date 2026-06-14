@@ -53,7 +53,7 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var span = TextSpan.FromBounds(_node.ColumnSelector.Span.End, _node.Modifier.Span.End);
+            var span = TextSpan.FromBounds(_node.ColumnSelector.Span.End, _node.Modifier!.Span.End);
             changeSet.DeleteText(span);
         }
     }

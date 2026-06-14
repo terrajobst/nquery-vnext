@@ -9,13 +9,13 @@ internal sealed class NQuerySyntaxErrorSquiggleClassifier : NQuerySquiggleClassi
     private readonly Workspace? _workspace;
 
     public NQuerySyntaxErrorSquiggleClassifier(ICodeDocument document)
-        : base(ClassificationTypes.SyntaxError, nameof(NQuerySemanticErrorSquiggleClassifier), null, document, true)
+        : base(ClassificationTypes.SyntaxError, nameof(NQuerySemanticErrorSquiggleClassifier), null!, document, true)
     {
         _workspace = document.GetWorkspace();
         if (_workspace is null)
             return;
 
-        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        _workspace!.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         UpdateTagsAsync();
     }
 
@@ -26,7 +26,7 @@ internal sealed class NQuerySyntaxErrorSquiggleClassifier : NQuerySquiggleClassi
 
     protected override async Task<(SourceText Text, IEnumerable<Diagnostic> Diagnostics)> GetDiagnosticsAsync()
     {
-        var document = _workspace.CurrentDocument;
+        var document = _workspace!.CurrentDocument;
         var syntaxTree = await document.GetSyntaxTreeAsync();
         var diagnostics = await Task.Run(() => syntaxTree.GetDiagnostics());
         return (document.Text, diagnostics);

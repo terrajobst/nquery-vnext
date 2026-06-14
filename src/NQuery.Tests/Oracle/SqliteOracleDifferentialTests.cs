@@ -117,7 +117,7 @@ public class SqliteOracleDifferentialTests
         {
             var row = new object[reader.ColumnCount];
             for (var i = 0; i < row.Length; i++)
-                row[i] = RowSet.Normalize(reader[i]);
+                row[i] = RowSet.Normalize(reader[i])!;
             rows.Add(row);
         }
 

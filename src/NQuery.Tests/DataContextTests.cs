@@ -7,7 +7,7 @@ public class DataContextTests
     {
         var before = DataContext.Empty;
         var after1 = before.AddTables();
-        var after2 = before.AddTables(null);
+        var after2 = before.AddTables(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }
@@ -25,7 +25,7 @@ public class DataContextTests
     {
         var before = DataContext.Empty;
         var after1 = before.AddRelations();
-        var after2 = before.AddRelations(null);
+        var after2 = before.AddRelations(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }
@@ -43,7 +43,7 @@ public class DataContextTests
     {
         var before = DataContext.Empty;
         var after1 = before.AddFunctions();
-        var after2 = before.AddFunctions(null);
+        var after2 = before.AddFunctions(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }
@@ -61,7 +61,7 @@ public class DataContextTests
     {
         var before = DataContext.Empty;
         var after1 = before.AddAggregates();
-        var after2 = before.AddAggregates(null);
+        var after2 = before.AddAggregates(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }
@@ -79,7 +79,7 @@ public class DataContextTests
     {
         var before = DataContext.Empty;
         var after1 = before.AddVariables();
-        var after2 = before.AddVariables(null);
+        var after2 = before.AddVariables(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }

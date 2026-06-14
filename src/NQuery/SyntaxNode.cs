@@ -116,7 +116,7 @@ public abstract class SyntaxNode
                     var token = child.AsToken();
                     var structures = token.TrailingTrivia.Select(t => t.Structure).Where(s => s is not null);
                     foreach (var structure in structures)
-                        stack.Push(structure);
+                        stack.Push(structure!);
                 }
 
                 stack.Push(child);
@@ -126,7 +126,7 @@ public abstract class SyntaxNode
                     var token = child.AsToken();
                     var structures = token.LeadingTrivia.Select(t => t.Structure).Where(s => s is not null);
                     foreach (var structure in structures)
-                        stack.Push(structure);
+                        stack.Push(structure!);
                 }
             }
         }

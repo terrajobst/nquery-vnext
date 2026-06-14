@@ -13,7 +13,7 @@ public sealed class CastExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var returnType = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var returnType = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
         Assert.Equal(typeof(string), returnType);

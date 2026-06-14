@@ -9,7 +9,7 @@ public class HashMatchEntryRowBufferTests : RowBufferTests
     {
         var buffer = new HashMatchEntryRowBuffer
         {
-            Entry = new HashMatchEntry { RowValues = new object[] { 1, "Two", null } }
+            Entry = new HashMatchEntry { RowValues = new object[] { 1, "Two", null! } }
         };
 
         AssertContract(buffer, 1, "Two", null);

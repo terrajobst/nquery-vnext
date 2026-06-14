@@ -9,7 +9,7 @@ public abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
     where TTag : ITag
 {
     private ImmutableArray<TRawTag> _rawTags = ImmutableArray<TRawTag>.Empty;
-    private ITextSnapshot _rawTagsSnapshot;
+    private ITextSnapshot _rawTagsSnapshot = null!;
 
     protected async void InvalidateTagsAsync()
     {

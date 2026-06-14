@@ -22,7 +22,7 @@ internal sealed partial class App
         var aggregateCatalog = GetCatalog(paths);
         var compositionContainer = new CompositionContainer(aggregateCatalog);
         var mainWindowProvider = compositionContainer.GetExportedValue<IMainWindowProvider>();
-        var mainWindow = mainWindowProvider.Window;
+        var mainWindow = mainWindowProvider!.Window;
         mainWindow.Show();
     }
 
@@ -45,7 +45,7 @@ internal sealed partial class App
 
         var uniqueAssemblyPaths = (from p in pathSet
                                    let a = TryGetAssemblyName(p)
-                                   where a is not null && !a.Name.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
+                                   where a is not null && !a.Name!.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
                                    let t = (a.FullName, Path: p)
                                    group t by t.FullName
                                        into g
@@ -78,6 +78,6 @@ internal sealed partial class App
 
     private static string GetApplicationDirectoryPath()
     {
-        return Path.GetDirectoryName(GetApplicationPath());
+        return Path.GetDirectoryName(GetApplicationPath())!;
     }
 }

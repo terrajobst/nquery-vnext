@@ -12,7 +12,7 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
         var referencedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
                                     .Select(semanticModel.GetDeclaredSymbol)
                                     .Where(s => s is not null)
-                                    .Select(s => s.Table);
+                                    .Select(s => s!.Table);
         var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
 
         return from tableExpression in node.CommonTableExpressions
@@ -49,8 +49,8 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var previousToken = _node.FirstToken().GetPreviousToken();
-            var nextToken = _node.LastToken().GetNextToken();
+            var previousToken = _node.FirstToken()!.GetPreviousToken();
+            var nextToken = _node.LastToken()!.GetNextToken();
 
             var isFirst = previousToken?.Kind == SyntaxKind.WithKeyword;
             var isLast = nextToken?.Kind != SyntaxKind.CommaToken;
@@ -59,11 +59,11 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
             var removePreviousToken = isLast;
             var removeNextToken = !isLast;
 
-            var start = removePreviousToken ? previousToken.Span.Start : _node.FullSpan.Start;
+            var start = removePreviousToken ? previousToken!.Span.Start : _node.FullSpan.Start;
             var end = removeNextToken
-                ? nextToken.FullSpan.End
+                ? nextToken!.FullSpan.End
                 : isSingle
-                    ? nextToken.Span.Start
+                    ? nextToken!.Span.Start
                     : _node.Span.End;
             var span = TextSpan.FromBounds(start, end);
 

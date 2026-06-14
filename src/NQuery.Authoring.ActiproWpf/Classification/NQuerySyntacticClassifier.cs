@@ -26,7 +26,7 @@ internal sealed class NQuerySyntacticClassifier : CollectionTagger<IClassificati
 
     private async void UpdateTagsAsync()
     {
-        var document = Document.GetDocument();
+        var document = Document.GetDocument()!;
         var syntaxTree = await document.GetSyntaxTreeAsync();
         var classificationSpans = await ClassifyTreeAsync(syntaxTree);
 

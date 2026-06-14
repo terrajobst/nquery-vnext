@@ -24,7 +24,7 @@ internal sealed class RemoveRedundantBracketsCodeRefactoringProvider : ICodeRefa
         private readonly SyntaxToken _token;
 
         public RemoveRedundantBracketsCodeAction(SyntaxToken token)
-            : base(token.Parent.SyntaxTree)
+            : base(token.Parent!.SyntaxTree)
         {
             _token = token;
         }

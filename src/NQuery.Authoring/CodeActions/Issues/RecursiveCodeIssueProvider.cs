@@ -47,7 +47,7 @@ internal sealed class RecursiveCodeIssueProvider : CodeIssueProvider<CommonTable
         private readonly SyntaxToken _recursiveKeyword;
 
         public RemoveUnnecessaryRecursiveKeywordCodeAction(SyntaxToken recursiveKeyword)
-            : base(recursiveKeyword.Parent.SyntaxTree)
+            : base(recursiveKeyword.Parent!.SyntaxTree)
         {
             _recursiveKeyword = recursiveKeyword;
         }

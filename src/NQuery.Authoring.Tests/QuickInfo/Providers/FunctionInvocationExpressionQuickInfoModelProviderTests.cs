@@ -18,7 +18,7 @@ public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfo
         var syntax = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Last();
         var span = syntax.Name.Span;
         var symbol = semanticModel.GetSymbol(syntax);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
     }
 

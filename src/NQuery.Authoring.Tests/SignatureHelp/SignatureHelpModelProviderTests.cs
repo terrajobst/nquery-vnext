@@ -39,7 +39,7 @@ public abstract class SignatureHelpModelProviderTests
 
     private void AssertIsMatch(SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers, TextSpan expectedApplicableSpan, int expectedSelectedParameter)
     {
-        var actualModel = semanticModel.GetSignatureHelpModel(position, providers);
+        var actualModel = semanticModel.GetSignatureHelpModel(position, providers)!;
         var expectedSignatures = GetExpectedSignatures(semanticModel).ToImmutableArray();
 
         Assert.Equal(expectedApplicableSpan, actualModel.ApplicableSpan);

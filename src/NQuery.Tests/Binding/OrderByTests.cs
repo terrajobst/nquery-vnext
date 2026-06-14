@@ -57,7 +57,7 @@ public class OrderByTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
         var firstQuery = unionQuery.LeftQuery;
 
@@ -113,7 +113,7 @@ public class OrderByTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
         var firstQuery = unionQuery.LeftQuery;
 
@@ -164,7 +164,7 @@ public class OrderByTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var unionQuery = (UnionQuerySyntax)orderedQuery.Query;
         var firstQuery = unionQuery.LeftQuery;
 
@@ -202,7 +202,7 @@ public class OrderByTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root;
+        var orderedQuery = (OrderedQuerySyntax)syntaxTree.Root.Root!;
         var exceptQuery = (ExceptQuerySyntax)orderedQuery.Query;
         var parenthesizedQuery = (ParenthesizedQuerySyntax)exceptQuery.LeftQuery;
         var unionQuery = (UnionQuerySyntax)parenthesizedQuery.Query;

@@ -22,7 +22,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         Assert.Equal(2, cteSymbol.Columns.Length);
         Assert.Equal("A", cteSymbol.Columns[0].Name);
@@ -45,7 +45,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         Assert.Equal(2, cteSymbol.Columns.Length);
         Assert.Equal("C1", cteSymbol.Columns[0].Name);
@@ -77,7 +77,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteNodes = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().ToImmutableArray();
-        var cteSymbols = cteNodes.Select(semanticModel.GetDeclaredSymbol).ToImmutableArray();
+        var cteSymbols = cteNodes.Select(n => semanticModel.GetDeclaredSymbol(n)!).ToImmutableArray();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         var tableInstances = (from n in cteNodes
@@ -123,10 +123,10 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode)!;
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"))!;
 
         Assert.Equal(cteSymbol, tableInstance.Table);
 
@@ -164,10 +164,10 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode)!;
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"))!;
 
         Assert.Equal(cteSymbol, tableInstance.Table);
 
@@ -190,7 +190,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
         var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.NoColumnAliasSpecified);
@@ -218,7 +218,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
         var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
@@ -249,7 +249,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
         var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
@@ -313,7 +313,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
         var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasFewerColumnsThanSpecified);
@@ -341,7 +341,7 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax)!;
 
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
         var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasMoreColumnsThanSpecified);
@@ -432,9 +432,9 @@ public class CommonTableExpressions
         var semanticModel = compilation.GetSemanticModel();
 
         var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode)!;
 
-        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"))!;
 
         var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveUnionAll);
 

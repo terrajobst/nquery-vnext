@@ -15,7 +15,7 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles;
 internal sealed class NQueryCodeIssueTaggerProvider : IViewTaggerProvider
 {
     [Import]
-    public ICodeIssueProviderService CodeIssueProviderService { get; set; }
+    public ICodeIssueProviderService CodeIssueProviderService { get; set; } = null!;
 
     public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {

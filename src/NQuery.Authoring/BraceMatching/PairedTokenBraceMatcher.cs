@@ -24,13 +24,13 @@ public abstract class PairedTokenBraceMatcher : BraceMatcher
         if (isLeft)
         {
             var left = token.Span;
-            if (FindMatchingBrace(position, 1, token.Parent, _rightKind, out var right))
+            if (FindMatchingBrace(position, 1, token.Parent!, _rightKind, out var right))
                 return new BraceMatchingResult(left, right);
         }
         else if (isRight)
         {
             var right = token.Span;
-            if (FindMatchingBrace(position, -1, token.Parent, _leftKind, out var left))
+            if (FindMatchingBrace(position, -1, token.Parent!, _leftKind, out var left))
                 return new BraceMatchingResult(left, right);
         }
 

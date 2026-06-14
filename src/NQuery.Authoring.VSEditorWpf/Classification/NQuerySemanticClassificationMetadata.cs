@@ -49,57 +49,57 @@ internal sealed class NQuerySemanticClassificationMetadata
     [Export]
     [Name(PunctuationClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition PunctuationType;
+    public ClassificationTypeDefinition PunctuationType = null!;
 
     [Export]
     [Name(SchemaTableClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition ClassType;
+    public ClassificationTypeDefinition ClassType = null!;
 
     [Export]
     [Name(DerivedTableClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition DelegateType;
+    public ClassificationTypeDefinition DelegateType = null!;
 
     [Export]
     [Name(CommonTableExpressionClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition EnumType;
+    public ClassificationTypeDefinition EnumType = null!;
 
     [Export]
     [Name(FunctionClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition EventType;
+    public ClassificationTypeDefinition EventType = null!;
 
     [Export]
     [Name(ColumnClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition FieldType;
+    public ClassificationTypeDefinition FieldType = null!;
 
     [Export]
     [Name(MethodClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition MethodType;
+    public ClassificationTypeDefinition MethodType = null!;
 
     [Export]
     [Name(AggregateClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition MutableLocalVariableType;
+    public ClassificationTypeDefinition MutableLocalVariableType = null!;
 
     [Export]
     [Name(PropertyClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition NamespaceType;
+    public ClassificationTypeDefinition NamespaceType = null!;
 
     [Export]
     [Name(VariableClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition VariableType;
+    public ClassificationTypeDefinition VariableType = null!;
 
     [Export]
     [Name(UnnecessaryClassificationTypeName)]
     [BaseDefinition(PredefinedClassificationTypeNames.FormalLanguage)]
-    public ClassificationTypeDefinition UnnecessaryType;
+    public ClassificationTypeDefinition UnnecessaryType = null!;
 
 #pragma warning restore 649
 

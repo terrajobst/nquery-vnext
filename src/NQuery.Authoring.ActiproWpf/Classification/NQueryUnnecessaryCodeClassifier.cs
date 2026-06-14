@@ -23,7 +23,7 @@ internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassi
         if (_workspace is null)
             return;
 
-        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        _workspace!.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         UpdateTagsAsync();
     }
 
@@ -34,7 +34,7 @@ internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassi
 
     private async void UpdateTagsAsync()
     {
-        var document = _workspace.CurrentDocument;
+        var document = _workspace!.CurrentDocument;
         var semanticModel = await document.GetSemanticModelAsync();
         var unnecessaryCodeSpans = await GetUnnecessaryCodeSpansAsync(semanticModel);
 

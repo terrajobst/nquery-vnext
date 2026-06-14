@@ -6,12 +6,12 @@ namespace NQuery.Symbols;
 public class ReflectionPropertySymbol : PropertySymbol
 {
     public ReflectionPropertySymbol(PropertyInfo propertyInfo)
-        : this(propertyInfo, propertyInfo?.Name)
+        : this(propertyInfo, propertyInfo?.Name!)
     {
     }
 
     public ReflectionPropertySymbol(PropertyInfo propertyInfo, string name)
-        : base(name, propertyInfo?.PropertyType)
+        : base(name, propertyInfo?.PropertyType!)
     {
         ThrowIfNull(propertyInfo);
 

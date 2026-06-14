@@ -26,7 +26,7 @@ public class NullIfExpressionTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(double), type);

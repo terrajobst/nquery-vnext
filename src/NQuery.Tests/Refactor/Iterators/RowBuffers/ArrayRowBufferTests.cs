@@ -17,7 +17,7 @@ public class ArrayRowBufferTests : RowBufferTests
         var buffer = new ArrayRowBuffer(3);
         buffer.Array[0] = 1;
         buffer.Array[1] = "Two";
-        buffer.Array[2] = null;
+        buffer.Array[2] = null!;
 
         AssertContract(buffer, 1, "Two", null);
     }

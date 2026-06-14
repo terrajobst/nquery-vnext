@@ -19,7 +19,7 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
         var syntax = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
         var span = syntax.Name.Span;
         var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);
-        var markup = SymbolMarkup.ForSymbol(symbol);
+        var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
     }
 

@@ -6,7 +6,7 @@ internal sealed class MultiLineCommentOutliner : SyntaxTokenOutliner
 {
     protected override IEnumerable<OutliningRegionSpan> FindRegions(SyntaxToken token)
     {
-        var sourceText = token.Parent.SyntaxTree.Text;
+        var sourceText = token.Parent!.SyntaxTree.Text;
         var trivias = token.LeadingTrivia.Concat(token.TrailingTrivia);
         var comments = trivias.Where(t => t.Kind == SyntaxKind.MultiLineCommentTrivia);
 

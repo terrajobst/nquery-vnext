@@ -15,7 +15,7 @@ public class EditorView : UserControl, IEditorView
 
     public virtual Workspace Workspace
     {
-        get { return null; }
+        get { return null!; }
     }
 
     public virtual double ZoomLevel { get; set; }
@@ -30,7 +30,7 @@ public class EditorView : UserControl, IEditorView
 
     public virtual DocumentView GetDocumentView()
     {
-        return null;
+        return null!;
     }
 
     protected virtual void OnCaretPositionChanged()

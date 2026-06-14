@@ -464,7 +464,7 @@ internal sealed class Algebrizer
     private LogicalAggregatedValue AlgebrizeAggregatedValue(BoundAggregatedValue value, List<PendingApply> applies)
     {
         var argument = AlgebrizeExpression(value.Argument, applies);
-        return new LogicalAggregatedValue(GetSlot(value.Output), value.Aggregate, value.Aggregatable, argument);
+        return new LogicalAggregatedValue(GetSlot(value.Output), value.Aggregate, value.Aggregatable!, argument);
     }
 
     // Each operator collects the applies produced while translating its own expressions, then
@@ -660,13 +660,13 @@ internal sealed class Algebrizer
         var any = new LogicalAggregatedValue(
             anyOutput,
             BuiltInAggregates.Any,
-            BuiltInAggregates.Any.Definition.CreateAggregatable(value.Type),
+            BuiltInAggregates.Any.Definition.CreateAggregatable(value.Type)!,
             new LogicalValueSlotExpression(value));
 
         var count = new LogicalAggregatedValue(
             countOutput,
             BuiltInAggregates.Count,
-            BuiltInAggregates.Count.Definition.CreateAggregatable(typeof(int)),
+            BuiltInAggregates.Count.Definition.CreateAggregatable(typeof(int))!,
             new LogicalLiteralExpression(0));
 
         var aggregate = new LogicalAggregate(relation, ImmutableArray<LogicalComparedValue>.Empty, ImmutableArray.Create(any, count));

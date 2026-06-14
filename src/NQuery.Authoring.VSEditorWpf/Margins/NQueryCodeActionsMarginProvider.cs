@@ -17,16 +17,16 @@ namespace NQuery.Authoring.VSEditorWpf.Margins;
 internal sealed class NQueryCodeActionsMarginProvider : IWpfTextViewMarginProvider
 {
     [Import]
-    public ICodeFixProviderService CodeFixProviderService { get; set; }
+    public ICodeFixProviderService CodeFixProviderService { get; set; } = null!;
 
     [Import]
-    public ICodeIssueProviderService CodeIssueProviderService { get; set; }
+    public ICodeIssueProviderService CodeIssueProviderService { get; set; } = null!;
 
     [Import]
-    public ICodeRefactoringProviderService CodeRefactoringProviderService { get; set; }
+    public ICodeRefactoringProviderService CodeRefactoringProviderService { get; set; } = null!;
 
     [Import]
-    public ITextBufferUndoManagerProvider TextBufferUndoManagerProvider { get; set; }
+    public ITextBufferUndoManagerProvider TextBufferUndoManagerProvider { get; set; } = null!;
 
     public IWpfTextViewMargin CreateMargin(IWpfTextViewHost wpfTextViewHost, IWpfTextViewMargin marginContainer)
     {

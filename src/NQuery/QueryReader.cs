@@ -40,7 +40,7 @@ public sealed class QueryReader : IDisposable
         if (_schemaOnly)
             return false;
 
-        if (_iterator.Read())
+        if (_iterator!.Read())
         {
             _isBof = false;
             return true;
@@ -72,6 +72,6 @@ public sealed class QueryReader : IDisposable
 
     public int ColumnCount
     {
-        get { return _iterator.RowBuffer.Count; }
+        get { return _iterator!.RowBuffer.Count; }
     }
 }

@@ -10,7 +10,7 @@ namespace NQuery.Authoring.VSEditorWpf.Selection;
 internal sealed class NQuerySelectionProviderService : INQuerySelectionProviderService
 {
     [Import]
-    public ISelectionSpanProviderService SelectionSpanProviderService { get; set; }
+    public ISelectionSpanProviderService SelectionSpanProviderService { get; set; } = null!;
 
     public INQuerySelectionProvider GetSelectionProvider(ITextView textView)
     {

@@ -40,7 +40,7 @@ public sealed class Query
 
     public T ExecuteScalar<T>()
     {
-        return (T)ExecuteScalar();
+        return (T)ExecuteScalar()!;
     }
 
     public QueryReader ExecuteReader()

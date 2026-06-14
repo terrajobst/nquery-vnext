@@ -121,7 +121,7 @@ internal static class HtmlMarkupEmitter
         if (color is null)
             return;
 
-        var value = color.ToString();
+        var value = color.ToString()!;
         sb.AppendKeyValue(key, value);
     }
 

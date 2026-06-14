@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Classification;
 internal sealed class NQueryUnnecessaryCodeClassifierProvider : ITaggerProvider
 {
     [Import]
-    public INQueryClassificationService ClassificationService { get; set; }
+    public INQueryClassificationService ClassificationService { get; set; } = null!;
 
     public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag
     {

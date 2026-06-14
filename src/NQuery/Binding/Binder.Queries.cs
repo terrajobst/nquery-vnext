@@ -12,7 +12,7 @@ partial class Binder
 {
     public virtual BoundQueryState QueryState
     {
-        get { return Parent?.QueryState; }
+        get { return Parent?.QueryState!; }
     }
 
     private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
@@ -603,11 +603,11 @@ partial class Binder
         // will perform that mapping for us, but we have to pass in the values
         // of the first query and the query columns of our input.
 
-        var inputQueryColumns = firstQuery.OutputColumns;
+        var inputQueryColumns = firstQuery!.OutputColumns;
         var outputQueryColumns = query.OutputColumns;
         var orderByClause = binder.BindOrderByClause(node, inputQueryColumns, outputQueryColumns);
 
-        return new BoundOrderedQuery(query, orderByClause.SortedValues, outputQueryColumns);
+        return new BoundOrderedQuery(query, orderByClause!.SortedValues, outputQueryColumns);
     }
 
     private BoundQuery BindParenthesizedQuery(ParenthesizedQuerySyntax node)
@@ -749,7 +749,7 @@ partial class Binder
         var diagnosticSpan = name.Span;
         var boundRecursiveMember = BindQuery(recursiveMember);
 
-        if (boundRecursiveMember.OutputColumns.Length != boundAnchorQuery.OutputColumns.Length)
+        if (boundRecursiveMember.OutputColumns.Length != boundAnchorQuery!.OutputColumns.Length)
             Diagnostics.ReportDifferentExpressionCountInBinaryQuery(diagnosticSpan);
 
         var columnCount = Math.Min(boundAnchorQuery.OutputColumns.Length, boundRecursiveMember.OutputColumns.Length);
@@ -903,7 +903,7 @@ partial class Binder
 
             for (var i = 0; i < orderByClause.Columns.Length; i++)
             {
-                var column = orderedQueryNode.Columns[i];
+                var column = orderedQueryNode!.Columns[i];
                 var boundColumn = orderByClause.Columns[i];
                 var orderedValue = boundColumn.ComparedValue.Value;
 
@@ -927,7 +927,7 @@ partial class Binder
         var withTies = topClause?.WithKeyword is not null;
 
         if (withTies && orderedQueryNode is null)
-            Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause.Span);
+            Diagnostics.ReportTopWithTiesRequiresOrderBy(topClause!.Span);
 
         // Assemble the syntax-shaped query node. Unlike the legacy binder we do NOT lower
         // this into Filter/Compute/GroupBy/Sort/Top/Project relations here -- that is the
@@ -947,7 +947,7 @@ partial class Binder
         // columns (an ORDER BY instead turns it into a distinct-sort over SortedValues).
         var distinctValues = !isDistinct || orderByClause is not null
             ? ImmutableArray<BoundComparedValue>.Empty
-            : outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
+            : outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword!.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
                            .ToImmutableArray();
 
         var boundFrom = fromClause is null ? null : new BoundFromClause(fromClause);
@@ -1007,7 +1007,7 @@ partial class Binder
             QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
         }
 
-        var queryColumn = new QueryColumnInstanceSymbol(name, value);
+        var queryColumn = new QueryColumnInstanceSymbol(name, value!);
 
         return new BoundSelectColumn(queryColumn);
     }
@@ -1057,11 +1057,11 @@ partial class Binder
             //
             // We want, however, skip any parenthesized queries in the process.
 
-            var query = asteriskToken.Parent.AncestorsAndSelf()
+            var query = asteriskToken.Parent!.AncestorsAndSelf()
                                      .OfType<SelectQuerySyntax>()
                                      .First();
 
-            var firstRealParent = query.Parent.AncestorsAndSelf()
+            var firstRealParent = query.Parent!.AncestorsAndSelf()
                                        .SkipWhile(n => n is ParenthesizedQuerySyntax)
                                        .FirstOrDefault();
 
@@ -1099,7 +1099,7 @@ partial class Binder
         if (node is null)
             return null;
 
-        var boundNode = BindFromClauseInternal(node);
+        var boundNode = BindFromClauseInternal(node)!;
         var binder = CreateLocalBinder(boundNode.GetDeclaredTableInstances());
 
         _sharedBinderState.BoundNodeFromSyntaxNode.Add(node, boundNode);
@@ -1184,9 +1184,9 @@ partial class Binder
 
             // NOTE: Keep this outside the if check because we assume all groups are recorded
             //       -- independent from whether they are based on existing values or not.
-            QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
+            QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value!));
 
-            var group = new BoundComparedValue(value, comparer);
+            var group = new BoundComparedValue(value!, comparer);
             groups.Add(group);
         }
 
@@ -1362,7 +1362,7 @@ partial class Binder
             Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
 
         if (TryGetExistingValue(boundSelector, out var value))
-            return new BoundOrderBySelector(value, null);
+            return new BoundOrderBySelector(value!, null);
 
         value = ValueFactory.CreateTemporary(boundSelector.Type);
         var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, value);

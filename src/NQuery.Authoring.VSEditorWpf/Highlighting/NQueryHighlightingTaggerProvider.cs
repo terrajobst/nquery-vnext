@@ -15,7 +15,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting;
 internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
 {
     [Import]
-    public IHighlighterService HighlighterService { get; set; }
+    public IHighlighterService HighlighterService { get; set; } = null!;
 
     public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {

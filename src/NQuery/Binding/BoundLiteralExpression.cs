@@ -31,7 +31,7 @@ internal sealed class BoundLiteralExpression : BoundExpression
             null => @"NULL",
             string => $"'{Value}'",
             DateTime => $"#{Value}#",
-            _ => Value.ToString()
+            _ => Value.ToString()!
         };
     }
 }

@@ -59,7 +59,7 @@ internal static class TreeViewExtensions
 
         private void ItemContainerGeneratorStatusChanged(object? sender, EventArgs e)
         {
-            var generator = (ItemContainerGenerator)sender;
+            var generator = (ItemContainerGenerator)sender!;
             if (generator.Status == GeneratorStatus.ContainersGenerated)
             {
                 generator.StatusChanged -= ItemContainerGeneratorStatusChanged;

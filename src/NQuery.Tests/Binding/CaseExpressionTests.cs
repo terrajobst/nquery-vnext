@@ -40,7 +40,7 @@ public class CaseExpressionTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(int), type);
@@ -54,7 +54,7 @@ public class CaseExpressionTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(double), type);
@@ -94,7 +94,7 @@ public class CaseExpressionTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(int), type);
@@ -108,7 +108,7 @@ public class CaseExpressionTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root);
+        var type = semanticModel.GetExpressionType((ExpressionSyntax)syntaxTree.Root.Root!);
 
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(double), type);

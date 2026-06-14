@@ -15,7 +15,7 @@ public class SymbolSearcherTests
 
         foreach (var span in textSpans)
         {
-            var symbolSpan = semanticModel.FindSymbol(span.End).Value;
+            var symbolSpan = semanticModel.FindSymbol(span.End)!.Value;
 
             Assert.NotNull(symbolSpan.Symbol);
             Assert.Equal(span, symbolSpan.Span);

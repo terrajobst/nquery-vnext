@@ -7,7 +7,7 @@ public abstract class CompletionProvider<T> : ICompletionProvider
     {
         var syntaxTree = semanticModel.SyntaxTree;
         var token = syntaxTree.Root.FindTokenOnLeft(position);
-        var node = token.Parent.AncestorsAndSelf()
+        var node = token.Parent!.AncestorsAndSelf()
                                .OfType<T>()
                                .FirstOrDefault();
 

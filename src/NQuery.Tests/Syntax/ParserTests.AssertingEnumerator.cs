@@ -41,8 +41,8 @@ partial class ParserTests
             var syntaxTree = factory(annotatedText.Text);
             var span = annotatedText.Spans.Any()
                 ? annotatedText.Spans.Single()
-                : syntaxTree.Root.Root.Span;
-            var enumerator = syntaxTree.Root.Root
+                : syntaxTree.Root.Root!.Span;
+            var enumerator = syntaxTree.Root.Root!
                                        .DescendantNodesAndTokensAndSelf(true)
                                        .Where(n => span.Contains(n.Span))
                                        .GetEnumerator();
@@ -122,7 +122,7 @@ partial class ParserTests
                 Assert.True(_enumerator.Current.IsToken);
 
                 var token = _enumerator.Current.AsToken();
-                var sourceText = token.Parent.SyntaxTree.Text;
+                var sourceText = token.Parent!.SyntaxTree.Text;
 
                 Assert.False(token.IsMissing);
                 Assert.Equal(text, token.Text);

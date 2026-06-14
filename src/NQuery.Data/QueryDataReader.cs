@@ -23,7 +23,7 @@ public sealed class QueryDataReader : IDataReader
         if (_queryReader is null)
             return;
 
-        _queryReader.Dispose();
+        _queryReader!.Dispose();
         _queryReader = null;
     }
 
@@ -62,7 +62,7 @@ public sealed class QueryDataReader : IDataReader
     public bool Read()
     {
         EnsureNotDisposed();
-        return _queryReader.Read();
+        return _queryReader!.Read();
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public sealed class QueryDataReader : IDataReader
     public DataTable GetSchemaTable()
     {
         EnsureNotDisposed();
-        return _queryReader.CreateSchemaTable();
+        return _queryReader!.CreateSchemaTable();
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ public sealed class QueryDataReader : IDataReader
     public string GetName(int i)
     {
         EnsureNotDisposed();
-        return _queryReader.GetColumnName(i);
+        return _queryReader!.GetColumnName(i);
     }
 
     /// <summary>
@@ -136,7 +136,7 @@ public sealed class QueryDataReader : IDataReader
     public string GetDataTypeName(int i)
     {
         EnsureNotDisposed();
-        return _queryReader.GetColumnType(i).FullName;
+        return _queryReader!.GetColumnType(i).FullName!;
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public sealed class QueryDataReader : IDataReader
     public Type GetFieldType(int i)
     {
         EnsureNotDisposed();
-        return _queryReader.GetColumnType(i);
+        return _queryReader!.GetColumnType(i);
     }
 
     /// <summary>
@@ -168,7 +168,7 @@ public sealed class QueryDataReader : IDataReader
     public object GetValue(int i)
     {
         EnsureNotDisposed();
-        return _queryReader[i];
+        return _queryReader![i];
     }
 
     /// <summary>
@@ -184,10 +184,10 @@ public sealed class QueryDataReader : IDataReader
 
         EnsureNotDisposed();
 
-        var upperBound = Math.Min(values.Length, _queryReader.ColumnCount);
+        var upperBound = Math.Min(values.Length, _queryReader!.ColumnCount);
 
         for (var i = 0; i < upperBound; i++)
-            values[i] = _queryReader[i];
+            values[i] = _queryReader![i];
 
         return upperBound;
     }
@@ -205,9 +205,9 @@ public sealed class QueryDataReader : IDataReader
 
         EnsureNotDisposed();
 
-        for (var i = 0; i < _queryReader.ColumnCount; i++)
+        for (var i = 0; i < _queryReader!.ColumnCount; i++)
         {
-            var columnName = _queryReader.GetColumnName(i);
+            var columnName = _queryReader!.GetColumnName(i);
             if (string.Compare(columnName, name, StringComparison.OrdinalIgnoreCase) == 0)
                 return i;
         }
@@ -466,7 +466,7 @@ public sealed class QueryDataReader : IDataReader
         get
         {
             EnsureNotDisposed();
-            return _queryReader.ColumnCount;
+            return _queryReader!.ColumnCount;
         }
     }
 

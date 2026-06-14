@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
 internal sealed class NQueryQuickInfoTriggerProvider : IWpfTextViewCreationListener
 {
     [Import]
-    public IQuickInfoManagerProvider QuickInfoManagerProvider { get; set; }
+    public IQuickInfoManagerProvider QuickInfoManagerProvider { get; set; } = null!;
 
     public void TextViewCreated(IWpfTextView textView)
     {

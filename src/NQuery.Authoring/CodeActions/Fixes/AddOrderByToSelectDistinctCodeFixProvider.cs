@@ -63,7 +63,7 @@ internal sealed class AddOrderByToSelectDistinctCodeFixProvider : CodeFixProvide
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var insertPosition = _selectQuery.SelectClause.LastToken().Span.End;
+            var insertPosition = _selectQuery.SelectClause.LastToken()!.Span.End;
             var text = GetInsertionText();
             changeSet.InsertText(insertPosition, text);
         }

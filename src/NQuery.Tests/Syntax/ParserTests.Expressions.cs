@@ -107,7 +107,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             if (betweenPrecedence > opPrecedence)
             {
@@ -172,7 +172,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             //  BETWEEN
             // a   op   b
@@ -213,7 +213,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             //  BETWEEN
             // a   b   op
@@ -251,7 +251,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             if (betweenPrecedence > opPrecedence)
             {
@@ -312,7 +312,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             //  BETWEEN
             // a   op   b
@@ -351,7 +351,7 @@ partial class ParserTests
             var syntaxTree = SyntaxTree.ParseExpression(text);
             Assert.Empty(syntaxTree.GetDiagnostics());
 
-            var expression = syntaxTree.Root.Root;
+            var expression = syntaxTree.Root.Root!;
 
             //  BETWEEN
             // a   b   op
@@ -402,7 +402,7 @@ partial class ParserTests
                 var syntaxTree = SyntaxTree.ParseExpression(text);
                 Assert.Empty(syntaxTree.GetDiagnostics());
 
-                var expression = syntaxTree.Root.Root;
+                var expression = syntaxTree.Root.Root!;
 
                 var op1ExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op1);
                 var op2ExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op2);
@@ -1434,7 +1434,7 @@ partial class ParserTests
                 var syntaxTree = SyntaxTree.ParseExpression(text);
                 Assert.Empty(syntaxTree.GetDiagnostics());
 
-                var expression = syntaxTree.Root.Root;
+                var expression = syntaxTree.Root.Root!;
 
                 var op1ExpressionKind = SyntaxFacts.GetUnaryOperatorExpression(op1);
                 var op2ExpressionKind = SyntaxFacts.GetBinaryOperatorExpression(op2);

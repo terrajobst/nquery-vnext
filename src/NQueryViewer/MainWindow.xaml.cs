@@ -23,7 +23,7 @@ namespace NQueryViewer;
 internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSatisfiedNotification
 {
     [ImportMany]
-    public IEnumerable<IEditorViewFactory> EditorViewFactories { get; set; }
+    public IEnumerable<IEditorViewFactory> EditorViewFactories { get; set; } = null!;
 
     public MainWindow()
     {
@@ -489,9 +489,9 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
 
     private void DataGridAutoGeneratingColumn(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
-        var dataView = (DataView)DataGrid.ItemsSource;
-        var dataTable = dataView.Table;
-        var dataColumn = dataTable.Columns[e.PropertyName];
+        var dataView = (DataView)DataGrid.ItemsSource!;
+        var dataTable = dataView.Table!;
+        var dataColumn = dataTable.Columns[e.PropertyName]!;
         var columnName = string.IsNullOrWhiteSpace(dataColumn.Caption)
                              ? "(No column name)"
                              : dataColumn.Caption;

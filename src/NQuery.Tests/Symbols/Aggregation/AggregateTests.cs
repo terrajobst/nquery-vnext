@@ -6,7 +6,7 @@ public abstract class AggregateTests
 {
     internal void AssertProduces(object? expected, Type argumentType, object?[] values)
     {
-        var aggregator = CreateAggregateDefinition().CreateAggregatable(argumentType).CreateAggregator();
+        var aggregator = CreateAggregateDefinition().CreateAggregatable(argumentType)!.CreateAggregator();
         aggregator.Initialize();
 
         foreach (var value in values)

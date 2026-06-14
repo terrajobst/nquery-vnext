@@ -27,7 +27,7 @@ internal sealed class MockedRowBuffer : RowBuffer
             if (index < 0 || Count <= index)
                 throw new IndexOutOfRangeException();
 
-            return Value[index];
+            return Value[index]!;
         }
     }
 

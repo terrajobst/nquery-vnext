@@ -6,12 +6,12 @@ namespace NQuery.Symbols;
 public class ReflectionFieldSymbol : PropertySymbol
 {
     public ReflectionFieldSymbol(FieldInfo fieldInfo)
-        : this(fieldInfo, fieldInfo?.Name)
+        : this(fieldInfo, fieldInfo?.Name!)
     {
     }
 
     public ReflectionFieldSymbol(FieldInfo fieldInfo, string name)
-        : base(name, fieldInfo?.FieldType)
+        : base(name, fieldInfo?.FieldType!)
     {
         ThrowIfNull(fieldInfo);
 

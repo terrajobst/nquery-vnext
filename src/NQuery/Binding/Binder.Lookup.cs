@@ -120,7 +120,7 @@ partial class Binder
 
     public virtual IEnumerable<PropertySymbol> LookupProperties(Type type)
     {
-        return Parent.LookupProperties(type);
+        return Parent!.LookupProperties(type);
     }
 
     private IEnumerable<PropertySymbol> LookupProperty(Type type, SyntaxToken name)
@@ -145,7 +145,7 @@ partial class Binder
 
     public virtual IEnumerable<MethodSymbol> LookupMethods(Type type)
     {
-        return Parent.LookupMethods(type);
+        return Parent!.LookupMethods(type);
     }
 
     private IEnumerable<MethodSymbol> LookupMethod(Type type, SyntaxToken name)
@@ -183,6 +183,6 @@ partial class Binder
 
     public virtual IComparer? LookupComparer(Type type)
     {
-        return Parent.LookupComparer(type);
+        return Parent!.LookupComparer(type);
     }
 }

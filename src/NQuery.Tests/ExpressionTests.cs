@@ -21,7 +21,7 @@ public partial class ExpressionTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Expression<object>.Create(null, string.Empty);
+            Expression<object>.Create(null!, string.Empty);
         });
     }
 
@@ -30,7 +30,7 @@ public partial class ExpressionTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Expression<object>.Create(DataContext.Empty, null);
+            Expression<object>.Create(DataContext.Empty, null!);
         });
     }
 

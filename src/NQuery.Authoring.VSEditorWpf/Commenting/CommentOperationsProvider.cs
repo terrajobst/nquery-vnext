@@ -9,7 +9,7 @@ namespace NQuery.Authoring.VSEditorWpf.Commenting;
 internal sealed class CommentOperationsProvider : ICommentOperationsProvider
 {
     [Import]
-    public ITextBufferUndoManagerProvider TextBufferUndoManagerProvider { get; set; }
+    public ITextBufferUndoManagerProvider TextBufferUndoManagerProvider { get; set; } = null!;
 
     public ICommentOperations GetCommentOperations(ITextView textView)
     {

@@ -24,6 +24,6 @@ internal sealed class CountAllSignatureHelpModelProvider : SignatureHelpModelPro
         var span = node.Span;
         var selected = signatures.FirstOrDefault();
 
-        return new SignatureHelpModel(span, signatures, selected, 0);
+        return new SignatureHelpModel(span, signatures, selected!, 0);
     }
 }

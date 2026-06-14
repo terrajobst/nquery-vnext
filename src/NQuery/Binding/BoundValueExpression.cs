@@ -24,6 +24,6 @@ internal sealed class BoundValueExpression : BoundExpression
 
     public override string ToString()
     {
-        return Value.ToString();
+        return Value.ToString()!;
     }
 }

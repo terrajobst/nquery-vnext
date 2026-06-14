@@ -45,7 +45,7 @@ public class SelectStarTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableReferenceSymbol = semanticModel.GetDeclaredSymbol(tableInstance);
+        var tableReferenceSymbol = semanticModel.GetDeclaredSymbol(tableInstance)!;
         var selectStarSymbol = semanticModel.GetTableInstance(selectStar);
 
         Assert.Empty(diagnostics);
@@ -86,7 +86,7 @@ public class SelectStarTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableSymbols = semanticModel.GetDeclaredSymbol(tableInstance).ColumnInstances;
+        var tableSymbols = semanticModel.GetDeclaredSymbol(tableInstance)!.ColumnInstances;
         var selectStartSymbols = semanticModel.GetColumnInstances(selectStar).ToImmutableArray();
 
         Assert.Empty(diagnostics);
@@ -109,7 +109,7 @@ public class SelectStarTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)
+        var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)!
                                             .ColumnInstances
                                             .Select(c => c.Name)
                                             .ToImmutableArray();
@@ -137,7 +137,7 @@ public class SelectStarTests
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-        var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)
+        var tableColumnNames = semanticModel.GetDeclaredSymbol(tableInstance)!
                                             .ColumnInstances
                                             .Select(c => c.Name)
                                             .ToImmutableArray();

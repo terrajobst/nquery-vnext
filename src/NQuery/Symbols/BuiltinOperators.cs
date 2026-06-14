@@ -15,19 +15,19 @@ internal static class BuiltInOperators
     public static readonly MethodInfo SoundsLikeMethod = new Func<string, string, bool>(SoundsLike).Method;
     public static readonly MethodInfo PowerMethod = new Func<double, double, double>(Math.Pow).Method;
 
-    public static readonly MethodInfo DecimalAddMethod = typeof(decimal).GetMethod("op_Addition", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalDivideMethod = typeof(decimal).GetMethod("op_Division", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalEqualsMethod = typeof(decimal).GetMethod("op_Equality", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalNotEqualsMethod = typeof(decimal).GetMethod("op_Inequality", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalGreaterMethod = typeof(decimal).GetMethod("op_GreaterThan", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalGreaterOrEqualMethod = typeof(decimal).GetMethod("op_GreaterThanOrEqual", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalLessMethod = typeof(decimal).GetMethod("op_LessThan", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalLessOrEqualMethod = typeof(decimal).GetMethod("op_LessThanOrEqual", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalModulusMethod = typeof(decimal).GetMethod("op_Modulus", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalMultiplyMethod = typeof(decimal).GetMethod("op_Multiply", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalSubtractMethod = typeof(decimal).GetMethod("op_Subtraction", new[] { typeof(decimal), typeof(decimal) });
-    public static readonly MethodInfo DecimalUnaryNegationMethod = typeof(decimal).GetMethod("op_UnaryNegation", new[] { typeof(decimal) });
-    public static readonly MethodInfo DecimalUnaryIdentityMethod = typeof(decimal).GetMethod("op_UnaryPlus", new[] { typeof(decimal) });
+    public static readonly MethodInfo DecimalAddMethod = typeof(decimal).GetMethod("op_Addition", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalDivideMethod = typeof(decimal).GetMethod("op_Division", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalEqualsMethod = typeof(decimal).GetMethod("op_Equality", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalNotEqualsMethod = typeof(decimal).GetMethod("op_Inequality", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalGreaterMethod = typeof(decimal).GetMethod("op_GreaterThan", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalGreaterOrEqualMethod = typeof(decimal).GetMethod("op_GreaterThanOrEqual", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalLessMethod = typeof(decimal).GetMethod("op_LessThan", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalLessOrEqualMethod = typeof(decimal).GetMethod("op_LessThanOrEqual", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalModulusMethod = typeof(decimal).GetMethod("op_Modulus", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalMultiplyMethod = typeof(decimal).GetMethod("op_Multiply", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalSubtractMethod = typeof(decimal).GetMethod("op_Subtraction", new[] { typeof(decimal), typeof(decimal) })!;
+    public static readonly MethodInfo DecimalUnaryNegationMethod = typeof(decimal).GetMethod("op_UnaryNegation", new[] { typeof(decimal) })!;
+    public static readonly MethodInfo DecimalUnaryIdentityMethod = typeof(decimal).GetMethod("op_UnaryPlus", new[] { typeof(decimal) })!;
 
     private static bool SimilarTo(string str, string regex)
     {

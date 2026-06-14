@@ -37,7 +37,7 @@ public static class SymbolSearcher
                 var expression = (NameExpressionSyntax)node;
                 var symbol = semanticModel.GetSymbol(expression);
                 if (symbol is not null)
-                    yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
+                    yield return SymbolSpan.CreateReference(symbol!, expression.Name.Span);
                 break;
             }
             case SyntaxKind.PropertyAccessExpression:
@@ -45,7 +45,7 @@ public static class SymbolSearcher
                 var expression = (PropertyAccessExpressionSyntax)node;
                 var symbol = semanticModel.GetSymbol(expression);
                 if (symbol is not null)
-                    yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
+                    yield return SymbolSpan.CreateReference(symbol!, expression.Name.Span);
                 break;
             }
             case SyntaxKind.MethodInvocationExpression:
@@ -53,7 +53,7 @@ public static class SymbolSearcher
                 var expression = (MethodInvocationExpressionSyntax)node;
                 var symbol = semanticModel.GetSymbol(expression);
                 if (symbol is not null)
-                    yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
+                    yield return SymbolSpan.CreateReference(symbol!, expression.Name.Span);
                 break;
             }
             case SyntaxKind.FunctionInvocationExpression:
@@ -61,14 +61,14 @@ public static class SymbolSearcher
                 var expression = (FunctionInvocationExpressionSyntax)node;
                 var symbol = semanticModel.GetSymbol(expression);
                 if (symbol is not null)
-                    yield return SymbolSpan.CreateReference(symbol, expression.Name.Span);
+                    yield return SymbolSpan.CreateReference(symbol!, expression.Name.Span);
                 break;
             }
             case SyntaxKind.CountAllExpression:
             {
                 var countAllExpression = (CountAllExpressionSyntax)node;
                 var symbol = semanticModel.GetSymbol(countAllExpression);
-                yield return SymbolSpan.CreateReference(symbol, countAllExpression.Name.Span);
+                yield return SymbolSpan.CreateReference(symbol!, countAllExpression.Name.Span);
                 break;
             }
             case SyntaxKind.ExpressionSelectColumn:
@@ -77,7 +77,7 @@ public static class SymbolSearcher
                 if (selectColumn.Alias is not null)
                 {
                     var symbol = semanticModel.GetDeclaredSymbol(selectColumn);
-                    yield return SymbolSpan.CreateDefinition(symbol, selectColumn.Alias.Identifier.Span);
+                    yield return SymbolSpan.CreateDefinition(symbol!, selectColumn.Alias.Identifier.Span);
                 }
                 break;
             }
@@ -85,7 +85,7 @@ public static class SymbolSearcher
             {
                 var commonTableExpression = (CommonTableExpressionSyntax)node;
                 var symbol = semanticModel.GetDeclaredSymbol(commonTableExpression);
-                yield return SymbolSpan.CreateDefinition(symbol, commonTableExpression.Name.Span);
+                yield return SymbolSpan.CreateDefinition(symbol!, commonTableExpression.Name.Span);
 
                 if (commonTableExpression.ColumnNameList is not null)
                 {
@@ -102,7 +102,7 @@ public static class SymbolSearcher
             {
                 var derivedTable = (DerivedTableReferenceSyntax)node;
                 var symbol = semanticModel.GetDeclaredSymbol(derivedTable);
-                yield return SymbolSpan.CreateDefinition(symbol, derivedTable.Name.Span);
+                yield return SymbolSpan.CreateDefinition(symbol!, derivedTable.Name.Span);
                 break;
             }
             case SyntaxKind.NamedTableReference:

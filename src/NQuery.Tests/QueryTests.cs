@@ -23,7 +23,7 @@ public class QueryTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Query.Create(null, string.Empty);
+            Query.Create(null!, string.Empty);
         });
     }
 
@@ -32,7 +32,7 @@ public class QueryTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Query.Create(DataContext.Empty, null);
+            Query.Create(DataContext.Empty, null!);
         });
     }
 

@@ -306,7 +306,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null)
             return false;
 
-        var selectQuery = token.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+        var selectQuery = token.Parent!.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
         return selectQuery is not null && token == selectQuery.LastToken();
     }
 
@@ -316,7 +316,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null || !token.Span.ContainsOrTouches(position))
             return false;
 
-        var propertyAccess = token.Parent.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
+        var propertyAccess = token.Parent!.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
         return propertyAccess is not null &&
                (propertyAccess.Dot == token || propertyAccess.Name == token);
     }
@@ -328,7 +328,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null)
             return false;
 
-        return token.Parent
+        return token.Parent!
             .AncestorsAndSelf()
             .OfType<T>()
             .Any(parent => parent.LastToken() == token ||
@@ -342,7 +342,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null)
             return false;
 
-        return token.Parent
+        return token.Parent!
             .AncestorsAndSelf()
             .OfType<T>()
             .Any(parent => parent.FirstToken() == token ||
@@ -377,7 +377,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         // (|
         // (S|
 
-        var parenthesizedExpression = token.Parent.AncestorsAndSelf().OfType<ParenthesizedExpressionSyntax>().FirstOrDefault();
+        var parenthesizedExpression = token.Parent!.AncestorsAndSelf().OfType<ParenthesizedExpressionSyntax>().FirstOrDefault();
         if (parenthesizedExpression is not null)
         {
             if (token == parenthesizedExpression.LeftParenthesis ||
@@ -388,7 +388,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         // expression IN (|
         // expression IN (S|
 
-        var inExpression = token.Parent.AncestorsAndSelf().OfType<InExpressionSyntax>().FirstOrDefault();
+        var inExpression = token.Parent!.AncestorsAndSelf().OfType<InExpressionSyntax>().FirstOrDefault();
         if (inExpression is not null)
         {
             if (token == inExpression.ArgumentList.LeftParenthesis ||
@@ -404,7 +404,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
         var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
 
-        var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+        var selectQuery = token?.Parent!.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
         if (selectQuery is null)
             return false;
 
@@ -421,7 +421,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
         var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
 
-        var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+        var selectQuery = token?.Parent!.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
         if (selectQuery is null)
             return false;
 
@@ -441,7 +441,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
         var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
 
-        var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+        var selectQuery = token?.Parent!.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
         if (selectQuery is null)
             return false;
 
@@ -462,7 +462,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var tokenAtCaret = syntaxTree.Root.FindTokenOnLeft(position);
         var token = tokenAtCaret.GetPreviousIfCurrentContainsOrTouchesPosition(position);
 
-        var selectQuery = token?.Parent.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
+        var selectQuery = token?.Parent!.AncestorsAndSelf().OfType<SelectQuerySyntax>().FirstOrDefault();
         if (selectQuery is null)
             return false;
 
@@ -512,7 +512,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
     {
         var token = syntaxTree.Root.FindTokenOnLeft(position).GetPreviousIfCurrentContainsOrTouchesPosition(position);
 
-        var orderByColumn = token?.Parent.AncestorsAndSelf().OfType<OrderByColumnSyntax>().FirstOrDefault();
+        var orderByColumn = token?.Parent!.AncestorsAndSelf().OfType<OrderByColumnSyntax>().FirstOrDefault();
         if (orderByColumn is null)
             return false;
 
@@ -540,14 +540,14 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
     private static bool IsAfterExpressionSelectColumn(SyntaxTree syntaxTree, int position)
     {
         var token = syntaxTree.Root.FindTokenContext(position);
-        var node = token.Parent.AncestorsAndSelf().OfType<ExpressionSelectColumnSyntax>().FirstOrDefault();
+        var node = token.Parent!.AncestorsAndSelf().OfType<ExpressionSelectColumnSyntax>().FirstOrDefault();
         return node is not null && node.Alias is null;
     }
 
     private static bool IsAfterNamedTableReference(SyntaxTree syntaxTree, int position)
     {
         var token = syntaxTree.Root.FindTokenContext(position);
-        var node = token.Parent.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().FirstOrDefault();
+        var node = token.Parent!.AncestorsAndSelf().OfType<NamedTableReferenceSyntax>().FirstOrDefault();
         return node is not null && node.Alias is null;
     }
 
@@ -563,7 +563,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null)
             return false;
 
-        var castExpression = token.Parent.AncestorsAndSelf().OfType<CastExpressionSyntax>().FirstOrDefault();
+        var castExpression = token.Parent!.AncestorsAndSelf().OfType<CastExpressionSyntax>().FirstOrDefault();
         return castExpression is not null &&
                castExpression.Expression.Span.End <= position;
     }
@@ -572,7 +572,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
     {
         var token = syntaxTree.Root.FindTokenContext(position);
 
-        var expression = token?.Parent.AncestorsAndSelf().OfType<CommonTableExpressionSyntax>().FirstOrDefault();
+        var expression = token?.Parent!.AncestorsAndSelf().OfType<CommonTableExpressionSyntax>().FirstOrDefault();
         if (expression is null)
             return false;
 
@@ -587,11 +587,11 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (token is null)
             return false;
 
-        var allAny = token.Parent.AncestorsAndSelf().OfType<AllAnySubselectSyntax>().FirstOrDefault();
+        var allAny = token.Parent!.AncestorsAndSelf().OfType<AllAnySubselectSyntax>().FirstOrDefault();
         if (allAny is not null && allAny.Keyword == tokenAtCaret)
             return true;
 
-        var binaryExpression = token.Parent.AncestorsAndSelf().OfType<BinaryExpressionSyntax>().FirstOrDefault();
+        var binaryExpression = token.Parent!.AncestorsAndSelf().OfType<BinaryExpressionSyntax>().FirstOrDefault();
         return binaryExpression is not null &&
                binaryExpression.Kind.IsValidAllAnyOperator() &&
                token == binaryExpression.OperatorToken;
@@ -609,7 +609,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
 
         // JOIN foo f |
 
-        var join = token?.Parent.AncestorsAndSelf().OfType<ConditionedJoinedTableReferenceSyntax>().FirstOrDefault();
+        var join = token?.Parent!.AncestorsAndSelf().OfType<ConditionedJoinedTableReferenceSyntax>().FirstOrDefault();
         if (@join is null)
             return false;
 

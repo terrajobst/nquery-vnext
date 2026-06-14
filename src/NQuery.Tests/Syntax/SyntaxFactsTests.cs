@@ -11,7 +11,7 @@ public class SyntaxFactsTests
 
         Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
         Assert.Equal("a", token.ValueText);
-        Assert.NotNull(token.Parent.SyntaxTree);
+        Assert.NotNull(token.Parent!.SyntaxTree);
     }
 
     [Fact]
@@ -30,9 +30,9 @@ public class SyntaxFactsTests
         Assert.Equal(SyntaxKind.MinusToken, tokens[1].Kind);
         Assert.Equal(SyntaxKind.EndOfFileToken, tokens[2].Kind);
 
-        Assert.NotNull(tokens[0].Parent.SyntaxTree);
-        Assert.NotNull(tokens[1].Parent.SyntaxTree);
-        Assert.NotNull(tokens[2].Parent.SyntaxTree);
+        Assert.NotNull(tokens[0].Parent!.SyntaxTree);
+        Assert.NotNull(tokens[1].Parent!.SyntaxTree);
+        Assert.NotNull(tokens[2].Parent!.SyntaxTree);
     }
 
     [Fact]
@@ -94,7 +94,7 @@ public class SyntaxFactsTests
     [Fact]
     public void SyntaxFacts_Keyword_GetKeywordKind_ThrowsArgumentNullException_IfTextIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => SyntaxFacts.GetKeywordKind(null));
+        Assert.Throws<ArgumentNullException>(() => SyntaxFacts.GetKeywordKind(null!));
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public class SyntaxFactsTests
     [Fact]
     public void SyntaxFacts_Keyword_GetContextualKeywordKind_ThrowsArgumentNullException_IfTextIsNull()
     {
-        Assert.Throws<ArgumentNullException>(() => SyntaxFacts.GetContextualKeywordKind(null));
+        Assert.Throws<ArgumentNullException>(() => SyntaxFacts.GetContextualKeywordKind(null!));
     }
 
     [Fact]

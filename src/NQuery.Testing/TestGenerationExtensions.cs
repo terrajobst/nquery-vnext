@@ -19,7 +19,7 @@ public static class TestGenerationExtensions
         var syntaxTree = await document.GetSyntaxTreeAsync();
         var node = syntaxTree.Root.DescendantNodes()
                                   .Last(n => n.Span.Contains(textSpan));
-        var nodeOrTokens = syntaxTree.Root.Root.DescendantNodesAndTokensAndSelf(true)
+        var nodeOrTokens = syntaxTree.Root.Root!.DescendantNodesAndTokensAndSelf(true)
                                                .Where(n => textSpan.Contains(n.Span));
 
         var isExpression = node is ExpressionSyntax;
@@ -30,7 +30,7 @@ public static class TestGenerationExtensions
         {
             text = document.Text.GetText(node.Span);
         }
-        else if (syntaxTree.Root.Root.Span == textSpan)
+        else if (syntaxTree.Root.Root!.Span == textSpan)
         {
             text = document.Text.GetText();
         }

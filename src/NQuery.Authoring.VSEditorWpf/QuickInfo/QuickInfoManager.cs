@@ -55,19 +55,19 @@ internal sealed class QuickInfoManager : IQuickInfoManager
 
                 if (hideSession)
                 {
-                    _session.Dismiss();
+                    _session!.Dismiss();
                 }
                 else if (showSession)
                 {
-                    var syntaxTree = _model.SemanticModel.SyntaxTree;
+                    var syntaxTree = _model!.SemanticModel.SyntaxTree;
                     var snapshot = syntaxTree.Text.ToTextSnapshot();
-                    var triggerPosition = _model.Span.Start;
+                    var triggerPosition = _model!.Span.Start;
                     var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 
                     _session = _quickInfoBroker.CreateQuickInfoSession(_textView, triggerPoint, true);
-                    _session.Properties.AddProperty(typeof(IQuickInfoManager), this);
-                    _session.Dismissed += SessionOnDismissed;
-                    _session.Start();
+                    _session!.Properties.AddProperty(typeof(IQuickInfoManager), this);
+                    _session!.Dismissed += SessionOnDismissed;
+                    _session!.Start();
                 }
             }
         }

@@ -15,7 +15,7 @@ internal sealed class AddMissingKeywordCodeRefactoringProvider : CodeRefactoring
         private readonly SyntaxToken _keyword;
 
         public AddMissingKeywordCodeAction(SyntaxToken keyword)
-            : base(keyword.Parent.SyntaxTree)
+            : base(keyword.Parent!.SyntaxTree)
         {
             _keyword = keyword;
         }

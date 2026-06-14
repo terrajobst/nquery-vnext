@@ -194,7 +194,7 @@ partial class Binder
         // we want our caller to refer to this value.
 
         if (TryReplaceExpression(node, result, out var value))
-            return new BoundValueExpression(value);
+            return new BoundValueExpression(value!);
 
         return result;
     }
@@ -503,7 +503,7 @@ partial class Binder
         //   ELSE re
         // END CASE
 
-        var boundInput = BindExpression(node.InputExpression);
+        var boundInput = BindExpression(node.InputExpression!);
         var boundResults = BindCaseResultExpressions(node);
 
         var boundCaseLabels = (from t in node.CaseLabels.Select((c, i) => (CaseLabel: c, Index: i))
@@ -594,7 +594,7 @@ partial class Binder
                                select boundComparision;
 
         var inExpressionsAggregate = boundComparisons.Aggregate<BoundExpression, BoundExpression?>(null, (c, b) => c is null ? b : BindBinaryExpression(node.Span, BinaryOperatorKind.LogicalOr, c, b));
-        return BindOptionalNegation(node.Span, node.NotKeyword, inExpressionsAggregate);
+        return BindOptionalNegation(node.Span, node.NotKeyword, inExpressionsAggregate!);
     }
 
     private BoundExpression BindInQueryExpression(InQueryExpressionSyntax node)
@@ -717,7 +717,7 @@ partial class Binder
                     }
                 }
 
-                return new BoundTableExpression(tableInstance);
+                return new BoundTableExpression(tableInstance!);
             }
             default:
                 throw ExceptionBuilder.UnexpectedValue(symbol.Kind);
@@ -891,7 +891,7 @@ partial class Binder
         var affectedQueryScopes = aggregate.DescendantNodes()
                                            .Select(GetBoundNode<BoundColumnExpression>)
                                            .Where(n => n is not null)
-                                           .Select(b => b.Symbol)
+                                           .Select(b => b!.Symbol)
                                            .OfType<TableColumnInstanceSymbol>()
                                            .Select(c => FindQueryState(c.TableInstance))
                                            .Distinct()

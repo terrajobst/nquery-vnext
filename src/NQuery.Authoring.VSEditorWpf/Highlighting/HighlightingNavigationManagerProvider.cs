@@ -9,7 +9,7 @@ namespace NQuery.Authoring.VSEditorWpf.Highlighting;
 internal sealed class HighlightingNavigationManagerProvider : IHighlightingNavigationManagerProvider
 {
     [Import]
-    public IViewTagAggregatorFactoryService AggregatorFactoryService { get; set; }
+    public IViewTagAggregatorFactoryService AggregatorFactoryService { get; set; } = null!;
 
     public IHighlightingNavigationManager GetHighlightingNavigationManager(ITextView textView)
     {

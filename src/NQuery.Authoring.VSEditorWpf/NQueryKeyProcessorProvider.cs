@@ -19,22 +19,22 @@ namespace NQuery.Authoring.VSEditorWpf;
 internal sealed class NQueryKeyProcessorProvider : IKeyProcessorProvider
 {
     [Import]
-    public IIntellisenseSessionStackMapService IntellisenseSessionStackMapService { get; set; }
+    public IIntellisenseSessionStackMapService IntellisenseSessionStackMapService { get; set; } = null!;
 
     [Import]
-    public ICompletionModelManagerProvider CompletionModelManagerProvider { get; set; }
+    public ICompletionModelManagerProvider CompletionModelManagerProvider { get; set; } = null!;
 
     [Import]
-    public ISignatureHelpManagerProvider SignatureHelpManagerProvider { get; set; }
+    public ISignatureHelpManagerProvider SignatureHelpManagerProvider { get; set; } = null!;
 
     [Import]
-    public IHighlightingNavigationManagerProvider HighlightingNavigationManagerProvider { get; set; }
+    public IHighlightingNavigationManagerProvider HighlightingNavigationManagerProvider { get; set; } = null!;
 
     [Import]
-    public ICodeActionGlyphBroker CodeActionGlyphBroker { get; set; }
+    public ICodeActionGlyphBroker CodeActionGlyphBroker { get; set; } = null!;
 
     [Import]
-    public ICommentOperationsProvider CommentOperationsProvider { get; set; }
+    public ICommentOperationsProvider CommentOperationsProvider { get; set; } = null!;
 
     public KeyProcessor GetAssociatedProcessor(IWpfTextView wpfTextView)
     {

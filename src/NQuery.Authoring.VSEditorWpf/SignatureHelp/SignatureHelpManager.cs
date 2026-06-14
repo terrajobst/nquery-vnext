@@ -28,17 +28,17 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
 
     private void SessionOnDismissed(object? sender, EventArgs e)
     {
-        _session.Dismissed -= SessionOnDismissed;
-        _session.SelectedSignatureChanged -= SessionOnDismissed;
+        _session!.Dismissed -= SessionOnDismissed;
+        _session!.SelectedSignatureChanged -= SessionOnDismissed;
         _session = null;
     }
 
     private void SessionOnSelectedSignatureChanged(object? sender, SelectedSignatureChangedEventArgs e)
     {
-        var selectedItemIndex = _session.Signatures.IndexOf(e.NewSelectedSignature);
+        var selectedItemIndex = _session!.Signatures.IndexOf(e.NewSelectedSignature);
 
-        _session.Properties.RemoveProperty(_selectedItemIndexKey);
-        _session.Properties.AddProperty(_selectedItemIndexKey, selectedItemIndex);
+        _session!.Properties.RemoveProperty(_selectedItemIndexKey);
+        _session!.Properties.AddProperty(_selectedItemIndexKey, selectedItemIndex);
     }
 
     private void CaretOnPositionChanged(object? sender, CaretPositionChangedEventArgs e)
@@ -71,7 +71,7 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
     {
         if (_session is not null)
         {
-            _session.Dismiss();
+            _session!.Dismiss();
         }
         else
         {
@@ -84,7 +84,7 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         if (_session is null)
             return null;
 
-        if (!_session.Properties.TryGetProperty(_selectedItemIndexKey, out int selectedIndex))
+        if (!_session!.Properties.TryGetProperty(_selectedItemIndexKey, out int selectedIndex))
             return null;
 
         return selectedIndex;
@@ -125,8 +125,8 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         if (_session is null)
             return;
 
-        _session.Recalculate();
-        _session.Match();
+        _session!.Recalculate();
+        _session!.Match();
     }
 
     private void OnModelChanged(EventArgs e)
@@ -143,26 +143,26 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
             _model = value;
             OnModelChanged(EventArgs.Empty);
 
-            var hasData = _model is not null && _model.Signatures.Length > 0;
+            var hasData = _model is not null && _model!.Signatures.Length > 0;
             var showSession = _session is null && hasData;
             var hideSession = _session is not null && !hasData;
 
             if (hideSession)
             {
-                _session.Dismiss();
+                _session!.Dismiss();
             }
             else if (showSession)
             {
                 var snapshot = _textView.TextBuffer.CurrentSnapshot;
-                var triggerPosition = _model.ApplicableSpan.Start;
+                var triggerPosition = _model!.ApplicableSpan.Start;
                 var triggerPoint = snapshot.CreateTrackingPoint(triggerPosition, PointTrackingMode.Negative);
 
                 _session = _signatureHelpBroker.CreateSignatureHelpSession(_textView, triggerPoint, true);
-                _session.Properties.AddProperty(typeof(ISignatureHelpManager), this);
-                _session.Dismissed += SessionOnDismissed;
-                _session.SelectedSignatureChanged += SessionOnSelectedSignatureChanged;
-                _session.Start();
-                _session.Match();
+                _session!.Properties.AddProperty(typeof(ISignatureHelpManager), this);
+                _session!.Dismissed += SessionOnDismissed;
+                _session!.SelectedSignatureChanged += SessionOnSelectedSignatureChanged;
+                _session!.Start();
+                _session!.Match();
             }
         }
     }

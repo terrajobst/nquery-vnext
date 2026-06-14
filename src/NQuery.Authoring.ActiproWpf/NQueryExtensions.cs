@@ -32,7 +32,7 @@ public static class NQueryExtensions
 
     public static DocumentView GetDocumentView(this SyntaxEditor syntaxEditor)
     {
-        var document = syntaxEditor.Document.GetDocument();
+        var document = syntaxEditor.Document.GetDocument()!;
         var snapshot = document.Text.ToTextSnapshot();
         var offset = syntaxEditor.ActiveView.Selection.CaretOffset;
         var selection = syntaxEditor.ActiveView.Selection.SnapshotRange.TranslateTo(snapshot, TextRangeTrackingModes.Default).ToTextSpan();
@@ -50,7 +50,7 @@ public static class NQueryExtensions
     public static Document ToDocument(this ITextSnapshot snapshot)
     {
         var sourceText = snapshot.ToSourceText();
-        var document = snapshot.Document.GetDocument();
+        var document = snapshot.Document.GetDocument()!;
         if (document.Text != snapshot.ToSourceText())
             document = document.WithText(sourceText);
 

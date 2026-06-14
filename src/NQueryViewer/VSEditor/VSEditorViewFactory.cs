@@ -18,22 +18,22 @@ namespace NQueryViewer.VSEditor;
 internal sealed class VSEditorViewFactory : IVSEditorViewFactory, IPartImportsSatisfiedNotification
 {
     [Import]
-    public IClassificationFormatMapService ClassificationFormatMapService { get; set; }
+    public IClassificationFormatMapService ClassificationFormatMapService { get; set; } = null!;
 
     [Import]
-    public IContentTypeRegistryService ContentTypeRegistryService { get; set; }
+    public IContentTypeRegistryService ContentTypeRegistryService { get; set; } = null!;
 
     [Import]
-    public ITextBufferFactoryService TextBufferFactoryService { get; set; }
+    public ITextBufferFactoryService TextBufferFactoryService { get; set; } = null!;
 
     [Import]
-    public ITextEditorFactoryService TextEditorFactoryService { get; set; }
+    public ITextEditorFactoryService TextEditorFactoryService { get; set; } = null!;
 
     [Import]
-    public IEditorFormatMapService EditorFormatMapService { get; set; }
+    public IEditorFormatMapService EditorFormatMapService { get; set; } = null!;
 
     [Import]
-    public INQuerySelectionProviderService SelectionProviderService { get; set; }
+    public INQuerySelectionProviderService SelectionProviderService { get; set; } = null!;
 
     public void OnImportsSatisfied()
     {

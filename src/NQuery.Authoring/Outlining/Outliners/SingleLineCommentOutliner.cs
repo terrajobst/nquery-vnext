@@ -30,7 +30,7 @@ internal sealed class SingleLineCommentOutliner : SyntaxTokenOutliner
                     break;
                 default:
                     if (firstComment is not null)
-                        yield return CreateRegionSpan(firstComment, lastComment);
+                        yield return CreateRegionSpan(firstComment, lastComment!);
 
                     firstComment = null;
                     lastComment = null;
@@ -39,7 +39,7 @@ internal sealed class SingleLineCommentOutliner : SyntaxTokenOutliner
         }
 
         if (firstComment is not null)
-            yield return CreateRegionSpan(firstComment, lastComment);
+            yield return CreateRegionSpan(firstComment, lastComment!);
     }
 
     private static OutliningRegionSpan CreateRegionSpan(SyntaxTrivia firstComment, SyntaxTrivia lastComment)

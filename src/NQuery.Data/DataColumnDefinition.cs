@@ -9,8 +9,8 @@ namespace NQuery.Data;
 
 public sealed class DataColumnDefinition : ColumnDefinition
 {
-    private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) });
-    private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull");
+    private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) })!;
+    private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull")!;
 
     public DataColumnDefinition(DataColumn dataColumn)
     {

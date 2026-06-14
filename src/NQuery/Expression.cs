@@ -24,7 +24,7 @@ public sealed class Expression<T>
 
     public static Expression<T> Create(DataContext dataContext, string text)
     {
-        return Create(dataContext, text, default(T));
+        return Create(dataContext, text, default(T)!);
     }
 
     public static Expression<T> Create(DataContext dataContext, string text, T nullValue)

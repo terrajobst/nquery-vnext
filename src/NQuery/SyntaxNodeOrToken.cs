@@ -25,12 +25,12 @@ public struct SyntaxNodeOrToken
 
     public SyntaxToken AsToken()
     {
-        return _syntaxToken;
+        return _syntaxToken!;
     }
 
     public SyntaxNode AsNode()
     {
-        return _syntaxNode;
+        return _syntaxNode!;
     }
 
     public bool IsEquivalentTo(SyntaxNodeOrToken other)
@@ -40,7 +40,7 @@ public struct SyntaxNodeOrToken
 
     public SyntaxNode? Parent => IsNode ? AsNode().Parent : AsToken().Parent;
 
-    public SyntaxTree SyntaxTree => Parent.SyntaxTree;
+    public SyntaxTree SyntaxTree => Parent!.SyntaxTree;
 
     public SyntaxKind Kind => IsNode ? AsNode().Kind : AsToken().Kind;
 

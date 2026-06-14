@@ -5,7 +5,7 @@ namespace NQuery.Symbols;
 public class ReflectionParameterSymbol : ParameterSymbol
 {
     public ReflectionParameterSymbol(ParameterInfo parameterInfo)
-        : this(parameterInfo, parameterInfo?.Name)
+        : this(parameterInfo, parameterInfo?.Name!)
     {
         ThrowIfNull(parameterInfo);
 
@@ -13,7 +13,7 @@ public class ReflectionParameterSymbol : ParameterSymbol
     }
 
     public ReflectionParameterSymbol(ParameterInfo parameterInfo, string name)
-        : base(name, parameterInfo?.ParameterType)
+        : base(name, parameterInfo?.ParameterType!)
     {
         ThrowIfNull(parameterInfo);
 

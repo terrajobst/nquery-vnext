@@ -53,7 +53,7 @@ public class ShowPlanTests
     {
         var compilation = Compile("SELECT e.FirstName FROM Employees e");
 
-        var plan = compilation.GetShowPlan();
+        var plan = compilation.GetShowPlan()!;
         var lastStep = compilation.GetShowPlanSteps().Last();
 
         Assert.Equal("Physical", plan.Name);
@@ -73,7 +73,7 @@ public class ShowPlanTests
     public void ShowPlan_Physical_RendersHashMatch_ForEquiJoin()
     {
         var text = "SELECT o.OrderID FROM Orders o INNER JOIN [Order Details] od ON o.OrderID = od.OrderID";
-        var physical = Compile(text).GetShowPlan();
+        var physical = Compile(text).GetShowPlan()!;
 
         Assert.Contains(DescendantsAndSelf(physical.Root), n => n.OperatorName.StartsWith("Hash Match (Inner)"));
     }

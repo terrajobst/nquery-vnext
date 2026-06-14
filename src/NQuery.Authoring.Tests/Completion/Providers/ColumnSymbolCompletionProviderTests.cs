@@ -37,7 +37,7 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
             .Select(semanticModel.GetDeclaredSymbol)
             .Single(s => s is not null && s.Name == tableInstanceName);
 
-        column = tableReference.ColumnInstances.Single(c => c.Name == columnName);
+        column = tableReference!.ColumnInstances.Single(c => c.Name == columnName);
         columnItem = completionModel.Items.Single(i => i.InsertionText == columnName);
         columnMarkup = SymbolMarkup.ForSymbol(column);
     }

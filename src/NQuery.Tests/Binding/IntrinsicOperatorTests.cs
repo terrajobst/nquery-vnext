@@ -19,7 +19,7 @@ public sealed partial class IntrinsicOperatorTests
             if (syntaxTreeSource != source)
                 Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
 
-            var expression = (UnaryExpressionSyntax)syntaxTree.Root.Root;
+            var expression = (UnaryExpressionSyntax)syntaxTree.Root.Root!;
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
 
@@ -64,7 +64,7 @@ public sealed partial class IntrinsicOperatorTests
             if (syntaxTreeSource != source)
                 Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
 
-            var expression = (BinaryExpressionSyntax)syntaxTree.Root.Root;
+            var expression = (BinaryExpressionSyntax)syntaxTree.Root.Root!;
             var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
             var semanticModel = compilation.GetSemanticModel();
 

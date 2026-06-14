@@ -11,10 +11,10 @@ namespace NQuery.Authoring.VSEditorWpf.Completion;
 internal sealed class CompletionModelManagerProvider : ICompletionModelManagerProvider
 {
     [Import]
-    public ICompletionBroker CompletionBroker { get; set; }
+    public ICompletionBroker CompletionBroker { get; set; } = null!;
 
     [Import]
-    public ICompletionProviderService CompletionProviderService { get; set; }
+    public ICompletionProviderService CompletionProviderService { get; set; } = null!;
 
     public ICompletionModelManager GetCompletionModel(ITextView textView)
     {

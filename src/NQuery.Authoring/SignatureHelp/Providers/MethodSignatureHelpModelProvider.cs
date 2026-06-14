@@ -27,6 +27,6 @@ internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvi
         var parameterIndex = node.ArgumentList.GetParameterIndex(position);
         var selected = signatures.FirstOrDefault(s => s.Parameters.Length > parameterIndex);
 
-        return new SignatureHelpModel(span, signatures, selected, parameterIndex);
+        return new SignatureHelpModel(span, signatures, selected!, parameterIndex);
     }
 }

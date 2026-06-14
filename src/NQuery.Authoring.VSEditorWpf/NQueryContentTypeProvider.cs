@@ -10,6 +10,6 @@ internal sealed class NQueryContentTypeProvider
     [Export]
     [BaseDefinition(@"Code")]
     [Name(@"NQuery")]
-    public ContentTypeDefinition NQueryContentTypeDefinition;
+    public ContentTypeDefinition NQueryContentTypeDefinition = null!;
 #pragma warning restore 649
 }

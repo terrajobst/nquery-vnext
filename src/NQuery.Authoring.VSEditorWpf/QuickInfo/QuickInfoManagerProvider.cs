@@ -11,10 +11,10 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
 internal sealed class QuickInfoManagerProvider : IQuickInfoManagerProvider
 {
     [Import]
-    public IQuickInfoBroker QuickInfoBroker { get; set; }
+    public IQuickInfoBroker QuickInfoBroker { get; set; } = null!;
 
     [Import]
-    public IQuickInfoModelProviderService QuickInfoModelProviderService { get; set; }
+    public IQuickInfoModelProviderService QuickInfoModelProviderService { get; set; } = null!;
 
     public IQuickInfoManager GetQuickInfoManager(ITextView textView)
     {

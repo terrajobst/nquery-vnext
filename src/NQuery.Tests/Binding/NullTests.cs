@@ -13,7 +13,7 @@ public class NullTests
         var compilation = CompilationFactory.CreateQuery(text);
         var syntaxTree = compilation.SyntaxTree;
         var semanticModel = compilation.GetSemanticModel();
-        var query = (SelectQuerySyntax)syntaxTree.Root.Root;
+        var query = (SelectQuerySyntax)syntaxTree.Root.Root!;
         var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
         Assert.Single(columns);
@@ -28,7 +28,7 @@ public class NullTests
         var compilation = CompilationFactory.CreateQuery(text);
         var syntaxTree = compilation.SyntaxTree;
         var semanticModel = compilation.GetSemanticModel();
-        var query = (SelectQuerySyntax)syntaxTree.Root.Root;
+        var query = (SelectQuerySyntax)syntaxTree.Root.Root!;
         var columns = semanticModel.GetOutputColumns(query).ToImmutableArray();
 
         Assert.Single(columns);

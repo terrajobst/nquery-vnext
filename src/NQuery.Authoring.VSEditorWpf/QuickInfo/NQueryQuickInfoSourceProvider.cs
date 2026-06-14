@@ -15,13 +15,13 @@ namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
 internal sealed class NQueryQuickInfoSourceProvider : IQuickInfoSourceProvider
 {
     [Import]
-    public IClassificationFormatMapService ClassificationFormatMapService { get; set; }
+    public IClassificationFormatMapService ClassificationFormatMapService { get; set; } = null!;
 
     [Import]
-    public IEditorFormatMapService EditorFormatMapService { get; set; }
+    public IEditorFormatMapService EditorFormatMapService { get; set; } = null!;
 
     [Import]
-    public INQueryClassificationService ClassificationService { get; set; }
+    public INQueryClassificationService ClassificationService { get; set; } = null!;
 
     public IQuickInfoSource TryCreateQuickInfoSource(ITextBuffer textBuffer)
     {

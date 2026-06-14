@@ -11,10 +11,10 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp;
 internal sealed class SignatureHelpManagerProvider : ISignatureHelpManagerProvider
 {
     [Import]
-    public ISignatureHelpBroker SignatureHelpBroker { get; set; }
+    public ISignatureHelpBroker SignatureHelpBroker { get; set; } = null!;
 
     [Import]
-    public ISignatureHelpModelProviderService SignatureHelpModelProviderService { get; set; }
+    public ISignatureHelpModelProviderService SignatureHelpModelProviderService { get; set; } = null!;
 
     public ISignatureHelpManager GetSignatureHelpManager(ITextView textView)
     {

@@ -107,7 +107,7 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
     private void StoreAggregates()
     {
         for (var i = 0; i < _aggregators.Length; i++)
-            _rowBuffer.Array[_groupIndices.Length + i] = _aggregators[i].GetResult();
+            _rowBuffer.Array[_groupIndices.Length + i] = _aggregators[i].GetResult()!;
     }
 
     private void StoreGroupValues()
