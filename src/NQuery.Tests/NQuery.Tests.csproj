@@ -14,7 +14,7 @@
     <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
     <!--
-      The old engine, for differential tests (see Refactor\OldEngine.cs). These are the NQuery
+      The old engine, for differential tests (see OldEngine.cs). These are the NQuery
       and NQuery.Data projects from the sibling "nquery-baseline" worktree (checked out at the
       comparison point, e.g. main), which must be built separately beforehand:
 
