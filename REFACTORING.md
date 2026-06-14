@@ -37,8 +37,8 @@ hash-vs-loops is structural (equi-key present), not cost-based.
 * Add SQL's `VALUE()` constructor and use LogicalConstant
 * Merge ComputeScalar() nodes
 * Detect Filters/Join condition that are always false
-* Add `CROSS APPLY` and `OUTER APPLY`
-  - Allows us to increase test coverage
+* Add more correlation tests exploiting the new `CROSS APPLY` and `OUTER APPLY`
+  to reach more cases
 
 ## Increase test coverage:
 

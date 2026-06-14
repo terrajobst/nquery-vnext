@@ -834,6 +834,18 @@ public class KeywordCompletionProviderTests
     }
 
     [Fact]
+    public void KeywordCompletionProvider_ReturnsApply_IfAfterOuter()
+    {
+        var query = @"
+                SELECT  *
+                FROM    Employees e
+                            OUTER |
+            ";
+
+        AssertIsMatch(query, "APPLY");
+    }
+
+    [Fact]
     public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
     {
         var query = @"

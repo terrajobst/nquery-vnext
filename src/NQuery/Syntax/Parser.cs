@@ -1112,6 +1112,9 @@ internal sealed class Parser
                                ? ParseCrossApplyTableReference(left)
                                : ParseCrossJoinTableReference(left);
                     break;
+                case SyntaxKind.OuterKeyword when Lookahead.ContextualKind == SyntaxKind.ApplyKeyword:
+                    left = ParseOuterApplyTableReference(left);
+                    break;
                 case SyntaxKind.InnerKeyword:
                 case SyntaxKind.JoinKeyword:
                     left = ParseInnerJoinTableReference(left);
@@ -1161,6 +1164,14 @@ internal sealed class Parser
         var applyKeyword = NextTokenAsKeyword();
         var right = ParseTableReference();
         return new CrossAppliedTableReferenceSyntax(_syntaxTree, left, crossKeyword, applyKeyword, right);
+    }
+
+    private TableReferenceSyntax ParseOuterApplyTableReference(TableReferenceSyntax left)
+    {
+        var outerKeyword = Match(SyntaxKind.OuterKeyword);
+        var applyKeyword = NextTokenAsKeyword();
+        var right = ParseTableReference();
+        return new OuterAppliedTableReferenceSyntax(_syntaxTree, left, outerKeyword, applyKeyword, right);
     }
 
     private TableReferenceSyntax ParseInnerJoinTableReference(TableReferenceSyntax left)

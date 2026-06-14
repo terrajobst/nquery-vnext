@@ -61,6 +61,25 @@ public class SqliteOracleDifferentialTests
     // assignment table directly.
     [InlineData("SELECT e.EmployeeID, x.Territory FROM Employees e CROSS APPLY (SELECT t.TerritoryDescription AS Territory FROM Territories t WHERE EXISTS (SELECT * FROM EmployeeTerritories et WHERE t.TerritoryID = et.TerritoryID AND et.EmployeeID = e.EmployeeID)) x",
                 "SELECT e.EmployeeID, t.TerritoryDescription AS Territory FROM Employees e INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID INNER JOIN Territories t ON t.TerritoryID = et.TerritoryID")]
+    // OUTER APPLY, uncorrelated: the right is independent of the left and its scalar aggregate
+    // always yields exactly one row, so no left row is ever dropped -- the same as a CROSS JOIN.
+    [InlineData("SELECT e.EmployeeID, x.OrderCount FROM Employees e OUTER APPLY (SELECT COUNT(*) AS OrderCount FROM Orders o) x",
+                "SELECT e.EmployeeID, x.OrderCount FROM Employees e CROSS JOIN (SELECT COUNT(*) AS OrderCount FROM Orders o) x")]
+    // OUTER APPLY, correlated to the left: equivalent to a LEFT JOIN on the correlation predicate.
+    // The defining difference from CROSS APPLY -- a left row with no matching right rows survives,
+    // null-padded -- so customers with no orders still appear (oa.OrderID NULL).
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c OUTER APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID) oa",
+                "SELECT c.CustomerID, o.OrderID FROM Customers c LEFT JOIN Orders o ON o.CustomerID = c.CustomerID")]
+    // OUTER APPLY whose body further filters the correlated rows: the predicate belongs inside the
+    // apply, so the LEFT JOIN oracle carries it in the ON clause (not WHERE, which would drop the
+    // preserved null rows). Left rows whose only matches fail the filter still survive.
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c OUTER APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID AND o.OrderID < 10260) oa",
+                "SELECT c.CustomerID, o.OrderID FROM Customers c LEFT JOIN Orders o ON o.CustomerID = c.CustomerID AND o.OrderID < 10260")]
+    // OUTER APPLY over a correlated scalar aggregate: COUNT(*) yields one row (0 for an employee
+    // with no orders), so every left row survives either way -- same as the scalar subquery form,
+    // and here indistinguishable from the CROSS APPLY equivalent.
+    [InlineData("SELECT e.EmployeeID, s.OrderCount FROM Employees e OUTER APPLY (SELECT COUNT(*) AS OrderCount FROM Orders o WHERE o.EmployeeID = e.EmployeeID) s",
+                "SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) AS OrderCount FROM Employees e")]
     // Set operators.
     [InlineData("SELECT e.City FROM Employees e UNION ALL SELECT c.City FROM Customers c")]
     [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c")]

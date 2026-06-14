@@ -255,7 +255,8 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
 
         // APPLY
 
-        if (IsAfterCrossKeyword(syntaxTree, position))
+        if (IsAfterCrossKeyword(syntaxTree, position) ||
+            IsAfterOuterKeyword(syntaxTree, position))
         {
             yield return SyntaxKind.ApplyKeyword;
         }

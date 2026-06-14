@@ -28,6 +28,9 @@ partial class Binder
             case SyntaxKind.CrossAppliedTableReference:
                 return BindCrossAppliedTableReference((CrossAppliedTableReferenceSyntax)node);
 
+            case SyntaxKind.OuterAppliedTableReference:
+                return BindOuterAppliedTableReference((OuterAppliedTableReferenceSyntax)node);
+
             case SyntaxKind.InnerJoinedTableReference:
                 return BindInnerJoinedTableReference((InnerJoinedTableReferenceSyntax)node);
 
@@ -99,6 +102,21 @@ partial class Binder
         var right = leftBinder.BindTableReference(node.Right);
 
         return new BoundApplyTableReference(BoundJoinType.Inner, left, right);
+    }
+
+    private BoundTableReference BindOuterAppliedTableReference(OuterAppliedTableReferenceSyntax node)
+    {
+        var left = BindTableReference(node.Left);
+
+        // Same correlated binding as CROSS APPLY: the right is bound with the left's tables in
+        // scope so it may reference the left's columns. The only difference is the apply kind --
+        // OUTER APPLY is a left-outer apply, so a left row with no matching right rows survives
+        // (null-padded) instead of being dropped, which the algebrizer maps to a left-outer
+        // dependent join.
+        var leftBinder = CreateLocalBinder(left.GetDeclaredTableInstances());
+        var right = leftBinder.BindTableReference(node.Right);
+
+        return new BoundApplyTableReference(BoundJoinType.LeftOuter, left, right);
     }
 
     private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)

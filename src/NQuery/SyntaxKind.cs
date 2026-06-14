@@ -175,6 +175,7 @@ public enum SyntaxKind
     NamedTableReference,
     CrossJoinedTableReference,
     CrossAppliedTableReference,
+    OuterAppliedTableReference,
     InnerJoinedTableReference,
     OuterJoinedTableReference,
     DerivedTableReference,

@@ -98,6 +98,54 @@ partial class ParserTests
     }
 
     [Fact]
+    public void Parser_Parse_Table_OuterApplied()
+    {
+        const string text = @"
+                SELECT  *
+                FROM    {Employees e
+                            OUTER APPLY (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa}
+            ";
+
+        using var enumerator = AssertingEnumerator.ForQuery(text);
+        enumerator.AssertNode(SyntaxKind.OuterAppliedTableReference);
+        enumerator.AssertNode(SyntaxKind.NamedTableReference);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Employees");
+        enumerator.AssertNode(SyntaxKind.Alias);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+        enumerator.AssertToken(SyntaxKind.OuterKeyword, @"OUTER");
+        enumerator.AssertToken(SyntaxKind.ApplyKeyword, @"APPLY");
+        enumerator.AssertNode(SyntaxKind.DerivedTableReference);
+        enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+        enumerator.AssertNode(SyntaxKind.SelectQuery);
+        enumerator.AssertNode(SyntaxKind.SelectClause);
+        enumerator.AssertToken(SyntaxKind.SelectKeyword, @"SELECT");
+        enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
+        enumerator.AssertToken(SyntaxKind.AsteriskToken, @"*");
+        enumerator.AssertNode(SyntaxKind.FromClause);
+        enumerator.AssertToken(SyntaxKind.FromKeyword, @"FROM");
+        enumerator.AssertNode(SyntaxKind.NamedTableReference);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"Orders");
+        enumerator.AssertNode(SyntaxKind.Alias);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"o");
+        enumerator.AssertNode(SyntaxKind.WhereClause);
+        enumerator.AssertToken(SyntaxKind.WhereKeyword, @"WHERE");
+        enumerator.AssertNode(SyntaxKind.EqualExpression);
+        enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+        enumerator.AssertNode(SyntaxKind.NameExpression);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"o");
+        enumerator.AssertToken(SyntaxKind.DotToken, @".");
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+        enumerator.AssertToken(SyntaxKind.EqualsToken, @"=");
+        enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
+        enumerator.AssertNode(SyntaxKind.NameExpression);
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"e");
+        enumerator.AssertToken(SyntaxKind.DotToken, @".");
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"EmployeeID");
+        enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+        enumerator.AssertToken(SyntaxKind.IdentifierToken, @"oa");
+    }
+
+    [Fact]
     public void Parser_Parse_Table_InnerJoined_WithJoinKeyword()
     {
         const string text = @"
