@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
-namespace NQuery.Binding
+namespace NQuery.Algebra
 {
     internal sealed class ValueSlotFactory
     {

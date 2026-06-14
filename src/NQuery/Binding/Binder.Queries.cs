@@ -60,51 +60,51 @@ namespace NQuery.Binding
             return null;
         }
 
-        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue valueSlot)
+        private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue value)
         {
             var queryState = QueryState;
 
-            // If the expression refers to a column we already know the value slot.
+            // If the expression refers to a column we already know the value.
 
             var columnInstance = boundExpression is not BoundColumnExpression columnExpression ? null : columnExpression.Symbol;
             if (columnInstance is not null && queryState is not null)
             {
-                valueSlot = columnInstance.BoundValue;
-                queryState.ReplacedExpression.Add(expression, valueSlot);
+                value = columnInstance.BoundValue;
+                queryState.ReplacedExpression.Add(expression, value);
                 return true;
             }
 
             // Replace existing expression for which we've already allocated
-            // a value slot, such as aggregates and groups.
+            // a value, such as aggregates and groups.
 
             while (queryState is not null)
             {
                 var candidates = queryState.AccessibleComputedValues
                                            .Concat(queryState.ComputedAggregates);
-                valueSlot = FindComputedValue(expression, candidates);
+                value = FindComputedValue(expression, candidates);
 
-                if (valueSlot is not null)
+                if (value is not null)
                 {
-                    queryState.ReplacedExpression.Add(expression, valueSlot);
+                    queryState.ReplacedExpression.Add(expression, value);
                     return true;
                 }
 
                 queryState = queryState.Parent;
             }
 
-            valueSlot = null;
+            value = null;
             return false;
         }
 
-        private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue valueSlot)
+        private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue value)
         {
-            if (boundExpression is not BoundValueExpression boundValueSlot)
+            if (boundExpression is not BoundValueExpression boundValueExpression)
             {
-                valueSlot = null;
+                value = null;
                 return false;
             }
 
-            valueSlot = boundValueSlot.Value;
+            value = boundValueExpression.Value;
             return true;
         }
 
@@ -236,16 +236,16 @@ namespace NQuery.Binding
             if (QueryState is null)
                 return false;
 
-            if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out var valueSlot))
+            if (!QueryState.ReplacedExpression.TryGetValue(expressionSyntax, out var value))
                 return false;
 
-            return IsGroupedOrAggregated(valueSlot);
+            return IsGroupedOrAggregated(value);
         }
 
-        private bool IsGroupedOrAggregated(IBoundValue valueSlot)
+        private bool IsGroupedOrAggregated(IBoundValue value)
         {
             var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
-            return groupsAndAggregates.Select(c => c.Result).Contains(valueSlot);
+            return groupsAndAggregates.Select(c => c.Result).Contains(value);
         }
 
         private IComparer BindComparer(TextSpan diagnosticSpan, Type type, DiagnosticId errorId)
@@ -490,18 +490,18 @@ namespace NQuery.Binding
                     {
                         // Nothing to do.
 
-                        var originalValueSlot = queries[queryIndex].OutputColumns[columnIndex].BoundValue;
-                        outputs[queryIndex].Add(originalValueSlot);
+                        var originalValue = queries[queryIndex].OutputColumns[columnIndex].BoundValue;
+                        outputs[queryIndex].Add(originalValue);
                     }
                     else
                     {
                         computations[queryIndex] ??= new List<BoundComputedValue>();
 
-                        var computedValueSlot = ValueFactory.CreateTemporary(converted.Type);
-                        var computedValue = new BoundComputedValue(converted, computedValueSlot);
+                        var value = ValueFactory.CreateTemporary(converted.Type);
+                        var computedValue = new BoundComputedValue(converted, value);
                         computations[queryIndex].Add(computedValue);
 
-                        outputs[queryIndex].Add(computedValueSlot);
+                        outputs[queryIndex].Add(value);
                     }
                 }
             }
@@ -530,11 +530,11 @@ namespace NQuery.Binding
                     break;
 
                 var queryColumn = inputColumns[i];
-                var valueSlot = outputValues[i];
+                var value = outputValues[i];
 
-                var resultColumn = queryColumn.BoundValue == valueSlot
+                var resultColumn = queryColumn.BoundValue == value
                     ? queryColumn
-                    : new QueryColumnInstanceSymbol(queryColumn.Name, valueSlot);
+                    : new QueryColumnInstanceSymbol(queryColumn.Name, value);
 
                 result.Add(resultColumn);
             }
@@ -598,11 +598,11 @@ namespace NQuery.Binding
                             : _sharedBinderState.BinderFromBoundNode[firstFromClause];
 
             // Now, when we bind the ORDER BY clause we have to bind the expressions in
-            // in the context of the first query. This also means that all value slots
+            // in the context of the first query. This also means that all values
             // will be local to that query. However, the bound ORDER BY we want to return
-            // here has to use the value slots that correspond to our input query.
+            // here has to use the values that correspond to our input query.
             // The correspondence is based on their position. Fortunately, BindOrderByClause
-            // will perform that mapping for us, but we have to pass in the value slots
+            // will perform that mapping for us, but we have to pass in the values
             // of the first query and the query columns of our input.
 
             var inputQueryColumns = firstQuery.OutputColumns;
@@ -1003,13 +1003,13 @@ namespace NQuery.Binding
                            ? node.Alias.Identifier.ValueText
                            : InferColumnName(expression);
 
-            if (!TryGetExistingValue(boundExpression, out var valueSlot))
+            if (!TryGetExistingValue(boundExpression, out var value))
             {
-                valueSlot = ValueFactory.CreateTemporary(boundExpression.Type);
-                QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
+                value = ValueFactory.CreateTemporary(boundExpression.Type);
+                QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
             }
 
-            var queryColumn = new QueryColumnInstanceSymbol(name, valueSlot);
+            var queryColumn = new QueryColumnInstanceSymbol(name, value);
 
             return new BoundSelectColumn(queryColumn);
         }
@@ -1181,14 +1181,14 @@ namespace NQuery.Binding
 
                 var comparer = BindComparer(expression.Span, expressionType, DiagnosticId.InvalidDataTypeInGroupBy);
 
-                if (!TryGetExistingValue(boundExpression, out var valueSlot))
-                    valueSlot = ValueFactory.CreateTemporary(expressionType);
+                if (!TryGetExistingValue(boundExpression, out var value))
+                    value = ValueFactory.CreateTemporary(expressionType);
 
                 // NOTE: Keep this outside the if check because we assume all groups are recorded
                 //       -- independent from whether they are based on existing values or not.
-                QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, valueSlot));
+                QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
 
-                var group = new BoundComparedValue(valueSlot, comparer);
+                var group = new BoundComparedValue(value, comparer);
                 groups.Add(group);
             }
 
@@ -1232,9 +1232,9 @@ namespace NQuery.Binding
             // we will use their ordinals.
 
             var selectorsMustBeInInput = selectorQueryColumns != resultQueryColumns;
-            var getOrdinalFromSelectorValueSlot = selectorQueryColumns.Select((c, i) => (ValueSlot: c.BoundValue, Index: i))
-                                                                      .GroupBy(t => t.ValueSlot, t => t.Index)
-                                                                      .ToDictionary(g => g.Key, g => g.First());
+            var getOrdinalFromSelectorValue = selectorQueryColumns.Select((c, i) => (Value: c.BoundValue, Index: i))
+                                                                  .GroupBy(t => t.Value, t => t.Index)
+                                                                  .ToDictionary(g => g.Key, g => g.First());
 
             var selectorBinder = CreateLocalBinder(selectorQueryColumns);
 
@@ -1269,7 +1269,7 @@ namespace NQuery.Binding
                 // However, if the query we are applied to is a combined query, it must exist
                 // in the input.
 
-                if (!getOrdinalFromSelectorValueSlot.TryGetValue(boundSelector.Value, out var columnOrdinal))
+                if (!getOrdinalFromSelectorValue.TryGetValue(boundSelector.Value, out var columnOrdinal))
                 {
                     columnOrdinal = -1;
                     if (selectorsMustBeInInput)
@@ -1279,19 +1279,19 @@ namespace NQuery.Binding
                 var queryColumn = columnOrdinal >= 0
                                       ? resultQueryColumns[columnOrdinal]
                                       : null;
-                var valueSlot = queryColumn is not null
+                var value = queryColumn is not null
                                     ? queryColumn.BoundValue
                                     : boundSelector.Value;
 
                 // Almost there. Now the only thing left for us to do is getting
                 // the associated comparer.
 
-                var baseComparer = BindComparer(selector.Span, valueSlot.Type, DiagnosticId.InvalidDataTypeInOrderBy);
+                var baseComparer = BindComparer(selector.Span, value.Type, DiagnosticId.InvalidDataTypeInOrderBy);
                 var comparer = isAscending || baseComparer is null
                                    ? baseComparer
                                    : new NegatedComparer(baseComparer);
 
-                var sortedValue = new BoundComparedValue(valueSlot, comparer);
+                var sortedValue = new BoundComparedValue(value, comparer);
                 var boundColumn = new BoundOrderByColumn(queryColumn, sortedValue);
                 Bind(column, boundColumn);
                 boundColumns.Add(boundColumn);
@@ -1363,12 +1363,12 @@ namespace NQuery.Binding
             if (boundSelector is BoundLiteralExpression)
                 Diagnostics.ReportConstantExpressionInOrderBy(selector.Span);
 
-            if (TryGetExistingValue(boundSelector, out var valueSlot))
-                return new BoundOrderBySelector(valueSlot, null);
+            if (TryGetExistingValue(boundSelector, out var value))
+                return new BoundOrderBySelector(value, null);
 
-            valueSlot = ValueFactory.CreateTemporary(boundSelector.Type);
-            var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, valueSlot);
-            return new BoundOrderBySelector(valueSlot, computedValue);
+            value = ValueFactory.CreateTemporary(boundSelector.Type);
+            var computedValue = new BoundComputedValueWithSyntax(selector, boundSelector, value);
+            return new BoundOrderBySelector(value, computedValue);
         }
     }
 }

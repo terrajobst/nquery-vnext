@@ -1,5 +1,9 @@
 # NQuery Major Refactoring
 
+* Remove namespace-qualified type references across the NQuery project
+* Use namespaces with braces
+* Sqlite tests so we have a test oracle for correct results
+
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).

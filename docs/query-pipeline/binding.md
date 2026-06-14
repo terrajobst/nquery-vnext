@@ -62,11 +62,11 @@ BoundNode
     └── BoundErrorExpression
 ```
 
-## Value slots
+## Values
 
-The binder introduces **value slots** (`ValueSlot`) as the unit of data flow. Every column reference, computed value, and intermediate expression is assigned a slot. The `ValueSlotFactory` owns slot creation, and the `BoundValueFactory` maps `IBoundValue` instances to their `ValueSlot`.
+The binder introduces **value identities** (`IBoundValue`) as the unit of data flow. Every column reference, computed value, and intermediate expression resolves to an `IBoundValue` — a single, typed value with stable reference identity. A column symbol *is* its own identity; anonymous values (computed expressions, aggregate outputs, set-op unified values, subquery results) are minted as `BoundValue` instances by the `BoundValueFactory`. The binder deals in identity only — it allocates no storage and assigns no slots.
 
-Value slots flow through the entire pipeline: they appear in the bound tree, the logical algebra, the physical plan, the executable plan, and finally as indices into the runtime row buffer.
+The `ValueSlot` (and the indices into the runtime row buffer it ultimately becomes) is **not** a binder concept. It belongs to the algebra: the [algebrizer](algebrization.md) maps each `IBoundValue` to exactly one `ValueSlot`, minted on first use. See `IBoundValue` for the invariant that keeps this boundary clean (a binder identity must never carry a slot).
 
 ## Diagnostics
 

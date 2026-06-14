@@ -192,11 +192,11 @@ namespace NQuery.Binding
         {
             var result = Bind(node, BindExpressionInternal);
 
-            // If we've already allocated a value slot for the given expression,
-            // we want our caller to refer to this value slot.
+            // If we've already allocated a value for the given expression,
+            // we want our caller to refer to this value.
 
-            if (TryReplaceExpression(node, result, out var valueSlot))
-                return new BoundValueExpression(valueSlot);
+            if (TryReplaceExpression(node, result, out var value))
+                return new BoundValueExpression(value);
 
             return result;
         }
