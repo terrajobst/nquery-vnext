@@ -14,7 +14,7 @@
     <Project Path="NQuery.Tests/NQuery.Tests.csproj" />
   </Folder>
   <Folder Name="/Benchmarks/">
-    <Project Path="Benchmarks/NQuery.Benchmarks/NQuery.Benchmarks.csproj" />
+    <Project Path="NQuery.Benchmarks/NQuery.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/Core/">
     <Project Path="NQuery.Data/NQuery.Data.csproj" />

@@ -22,7 +22,7 @@
       main), which must be built separately beforehand (benchmarks run in Release, so build it
       Release):
 
-        dotnet build ..\..\..\..\nquery-baseline\src\NQuery -c Release
+        dotnet build ..\..\..\nquery-baseline\src\NQuery -c Release
 
       That project sets AssemblyName=NQuery.Baseline so it loads side-by-side with the live
       NQuery (same NQuery.* types otherwise); we consume it as a plain aliased Reference,
@@ -32,9 +32,9 @@
       NQuery in deps.json (both keyed by project name) and one engine would fail to load at run
       time.
     -->
-    <ProjectReference Include="..\..\NQuery\NQuery.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
     <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
-      <HintPath>..\..\..\..\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</HintPath>
+      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</HintPath>
     </Reference>
   </ItemGroup>
 
