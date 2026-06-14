@@ -3,8 +3,6 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // Logical grouping + aggregation. The choice of a physical implementation

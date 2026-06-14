@@ -1,7 +1,6 @@
 #nullable enable
 
 using NQuery.Algebra;
-using NQuery.Binding;
 
 using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
 using UnaryOperatorKind = NQuery.Binding.UnaryOperatorKind;

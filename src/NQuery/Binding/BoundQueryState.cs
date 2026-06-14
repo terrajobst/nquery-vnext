@@ -1,8 +1,6 @@
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal sealed class BoundQueryState

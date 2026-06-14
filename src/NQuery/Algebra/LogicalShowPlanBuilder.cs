@@ -2,8 +2,6 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // Builds a ShowPlanNode tree for the new pipeline's logical algebra, mirroring the

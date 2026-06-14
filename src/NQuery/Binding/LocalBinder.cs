@@ -1,7 +1,5 @@
 using NQuery.Symbols;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal class LocalBinder : Binder

@@ -1,7 +1,5 @@
 using NQuery.Symbols.Aggregation;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal sealed class BoundAggregateExpression : BoundExpression

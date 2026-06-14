@@ -3,8 +3,6 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // A dependent join: for each row of Left, the Right subtree is evaluated and

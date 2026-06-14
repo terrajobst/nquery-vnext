@@ -1,7 +1,5 @@
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal sealed class BindingResult

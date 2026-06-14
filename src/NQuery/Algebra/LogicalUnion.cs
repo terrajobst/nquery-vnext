@@ -4,8 +4,6 @@ using System.Collections;
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     internal sealed class LogicalUnion : LogicalOperator

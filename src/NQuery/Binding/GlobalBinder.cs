@@ -3,8 +3,6 @@ using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal sealed class GlobalBinder : Binder

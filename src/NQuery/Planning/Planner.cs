@@ -5,7 +5,6 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 
 using NQuery.Algebra;
-using NQuery.Binding;
 using BinaryOperatorKind = NQuery.Binding.BinaryOperatorKind;
 using BinaryOperator = NQuery.Binding.BinaryOperator;
 

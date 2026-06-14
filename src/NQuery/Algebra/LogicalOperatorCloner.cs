@@ -2,9 +2,6 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-using NQuery.Symbols;
-
 namespace NQuery.Algebra
 {
     // Produces a deep copy of a logical subtree with every value slot it *defines*

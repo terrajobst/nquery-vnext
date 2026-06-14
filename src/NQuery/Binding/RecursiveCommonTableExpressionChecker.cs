@@ -1,9 +1,5 @@
-using System.Collections.Immutable;
-
 using NQuery.Symbols;
 using NQuery.Syntax;
-
-using NQuery.Binding;
 
 namespace NQuery.Binding
 {

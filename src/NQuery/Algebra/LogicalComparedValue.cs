@@ -2,8 +2,6 @@
 
 using System.Collections;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // The logical counterpart of BoundComparedValue: the value slot to group/sort/dedupe by, plus

@@ -1,5 +1,3 @@
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal enum BoundJoinType

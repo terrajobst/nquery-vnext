@@ -2,8 +2,6 @@
 
 using System.Collections;
 using System.Collections.Immutable;
-
-using NQuery;
 using NQuery.Algebra;
 
 namespace NQuery.Optimization

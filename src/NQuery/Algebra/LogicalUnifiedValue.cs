@@ -2,8 +2,6 @@
 
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // The logical counterpart of BoundUnifiedValue: the output slot of a set operation and the

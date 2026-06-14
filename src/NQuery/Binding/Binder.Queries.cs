@@ -6,8 +6,6 @@ using NQuery.Symbols;
 using NQuery.Syntax;
 using NQuery.Text;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     partial class Binder

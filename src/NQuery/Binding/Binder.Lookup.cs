@@ -4,8 +4,6 @@ using System.Collections.Immutable;
 using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     partial class Binder

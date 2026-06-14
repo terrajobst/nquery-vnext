@@ -1,8 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal sealed class BoundCaseExpression : BoundExpression

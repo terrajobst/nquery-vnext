@@ -4,7 +4,6 @@ using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.Algebra;
-using NQuery.Binding;
 
 namespace NQuery.Planning
 {

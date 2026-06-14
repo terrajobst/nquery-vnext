@@ -3,7 +3,6 @@
 using System.Collections.Immutable;
 
 using NQuery.Binding;
-using NQuery.Binding;
 using NQuery.Symbols;
 
 namespace NQuery.Algebra

@@ -1,6 +1,5 @@
 #nullable enable
 
-using NQuery.Binding;
 using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Algebra

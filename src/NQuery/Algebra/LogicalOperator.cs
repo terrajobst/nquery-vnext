@@ -3,8 +3,6 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // Base of the logical relational algebra produced by the Algebrizer

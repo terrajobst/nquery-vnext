@@ -3,8 +3,6 @@
 using System.Collections.Frozen;
 using System.Collections.Immutable;
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // Conditions are an implicit conjunction (AND of all); an empty list means

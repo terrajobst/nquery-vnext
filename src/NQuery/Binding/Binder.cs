@@ -1,7 +1,5 @@
 using NQuery.Syntax;
 
-using NQuery.Binding;
-
 namespace NQuery.Binding
 {
     internal abstract partial class Binder

@@ -1,7 +1,5 @@
 #nullable enable
 
-using NQuery.Binding;
-
 namespace NQuery.Algebra
 {
     // The logical counterpart of BoundComputedValue: a computed expression bound
