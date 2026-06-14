@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class CommonTableExpressionColumnNameQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionColumnNameSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionColumnNameSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionColumnNameSyntax node)
     {
         var symbol = semanticModel.GetDeclaredSymbol(node);
         return symbol is null

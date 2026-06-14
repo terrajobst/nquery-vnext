@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class FunctionInvocationExpressionQuickInfoModelProvider : QuickInfoModelProvider<FunctionInvocationExpressionSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, FunctionInvocationExpressionSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, FunctionInvocationExpressionSyntax node)
     {
         if (!node.Name.Span.ContainsOrTouches(position))
             return null;

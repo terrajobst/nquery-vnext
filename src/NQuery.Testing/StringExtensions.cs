@@ -18,7 +18,7 @@ public static class StringExtensions
 
         using (var stringReader = new StringReader(text))
         {
-            string line;
+            string? line;
             while ((line = stringReader.ReadLine()) is not null)
             {
                 if (string.IsNullOrWhiteSpace(line))
@@ -32,7 +32,7 @@ public static class StringExtensions
         var sb = new StringBuilder();
         using (var stringReader = new StringReader(text))
         {
-            string line;
+            string? line;
             while ((line = stringReader.ReadLine()) is not null)
             {
                 var unindentedLine = line.Length < minIndent

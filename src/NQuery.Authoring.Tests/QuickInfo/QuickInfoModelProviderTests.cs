@@ -14,7 +14,7 @@ public abstract class QuickInfoModelProviderTests
         AssertIsMatch(query, null);
     }
 
-    protected void AssertIsMatch(string query, Func<DataContext, DataContext> dataContextModifer)
+    protected void AssertIsMatch(string query, Func<DataContext, DataContext>? dataContextModifer)
     {
         GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
 
@@ -30,7 +30,7 @@ public abstract class QuickInfoModelProviderTests
         AssertIsNotMatch(query, null);
     }
 
-    protected void AssertIsNotMatch(string query, Func<DataContext, DataContext> dataContextModifer)
+    protected void AssertIsNotMatch(string query, Func<DataContext, DataContext>? dataContextModifer)
     {
         GetModels(query, dataContextModifer, out _, out var startModel, out var middleModel, out var endModel);
 
@@ -39,7 +39,7 @@ public abstract class QuickInfoModelProviderTests
         Assert.Null(endModel);
     }
 
-    private static void AssertIsMatch(QuickInfoModel expectedModel, QuickInfoModel actualModel)
+    private static void AssertIsMatch(QuickInfoModel expectedModel, QuickInfoModel? actualModel)
     {
         Assert.NotNull(actualModel);
 
@@ -49,7 +49,7 @@ public abstract class QuickInfoModelProviderTests
         Assert.Equal(expectedModel.Markup, actualModel.Markup);
     }
 
-    private void GetModels(string query, Func<DataContext, DataContext> dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel startModel, out QuickInfoModel middleModel, out QuickInfoModel endModel)
+    private void GetModels(string query, Func<DataContext, DataContext>? dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel? startModel, out QuickInfoModel? middleModel, out QuickInfoModel? endModel)
     {
         var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
 

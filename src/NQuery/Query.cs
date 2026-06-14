@@ -2,7 +2,7 @@ namespace NQuery;
 
 public sealed class Query
 {
-    private CompiledQuery _query;
+    private CompiledQuery? _query;
 
     private Query(DataContext dataContext, string text)
     {
@@ -28,7 +28,7 @@ public sealed class Query
         Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
     }
 
-    public object ExecuteScalar()
+    public object? ExecuteScalar()
     {
         using var reader = ExecuteReader();
         return !reader.Read() || reader.ColumnCount == 0

@@ -39,7 +39,7 @@ public struct TextChange : IEquatable<TextChange>
         return Span.Equals(other.Span) && string.Equals(NewText, other.NewText);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is TextChange other && Equals(other);
     }

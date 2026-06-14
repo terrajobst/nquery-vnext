@@ -15,8 +15,8 @@ internal sealed class QuickInfoManager : IQuickInfoManager
     private readonly IQuickInfoBroker _quickInfoBroker;
     private readonly IQuickInfoModelProviderService _quickInfoModelProviderService;
 
-    private QuickInfoModel _model;
-    private IQuickInfoSession _session;
+    private QuickInfoModel? _model;
+    private IQuickInfoSession? _session;
 
     public QuickInfoManager(Workspace workspace, ITextView textView, IQuickInfoBroker quickInfoBroker, IQuickInfoModelProviderService quickInfoModelProviderService)
     {
@@ -39,7 +39,7 @@ internal sealed class QuickInfoManager : IQuickInfoManager
         handler?.Invoke(this, e);
     }
 
-    public QuickInfoModel Model
+    public QuickInfoModel? Model
     {
         get { return _model; }
         private set
@@ -73,10 +73,10 @@ internal sealed class QuickInfoManager : IQuickInfoManager
         }
     }
 
-    private void SessionOnDismissed(object sender, EventArgs e)
+    private void SessionOnDismissed(object? sender, EventArgs e)
     {
         _session = null;
     }
 
-    public event EventHandler<EventArgs> ModelChanged;
+    public event EventHandler<EventArgs>? ModelChanged;
 }

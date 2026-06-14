@@ -21,7 +21,7 @@ internal static class SyntaxTreeNavigation
         return includeSkippedTokens ? SkippedTokensTriviaPredicate : NoTriviaPredicate;
     }
 
-    public static SyntaxToken GetFirstToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
+    public static SyntaxToken? GetFirstToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
     {
         ThrowIfNull(node);
 
@@ -30,7 +30,7 @@ internal static class SyntaxTreeNavigation
         return GetFirstToken(node, tokenPredicate, triviaPredicate);
     }
 
-    public static SyntaxToken GetLastToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
+    public static SyntaxToken? GetLastToken(SyntaxNode node, bool includeZeroLength, bool includeSkippedTokens)
     {
         ThrowIfNull(node);
 
@@ -39,7 +39,7 @@ internal static class SyntaxTreeNavigation
         return GetLastToken(node, tokenPredicate, triviaPredicate);
     }
 
-    public static SyntaxToken GetPreviousToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
+    public static SyntaxToken? GetPreviousToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
     {
         ThrowIfNull(token);
 
@@ -48,7 +48,7 @@ internal static class SyntaxTreeNavigation
         return GetPreviousToken(token, true, tokenPredicate, triviaPredicate);
     }
 
-    public static SyntaxToken GetNextToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
+    public static SyntaxToken? GetNextToken(SyntaxToken token, bool includeZeroLength, bool includeSkippedTokens)
     {
         ThrowIfNull(token);
 
@@ -57,7 +57,7 @@ internal static class SyntaxTreeNavigation
         return GetNextToken(token, true, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetFirstToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetFirstToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         foreach (var nodeOrToken in node.ChildNodesAndTokens())
         {
@@ -78,7 +78,7 @@ internal static class SyntaxTreeNavigation
         return null;
     }
 
-    private static SyntaxToken GetFirstToken(SyntaxToken token, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetFirstToken(SyntaxToken token, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         var lt = GetFirstToken(token.LeadingTrivia, tokenPredicate, triviaPredicate);
         if (lt is not null)
@@ -91,7 +91,7 @@ internal static class SyntaxTreeNavigation
         return tt;
     }
 
-    private static SyntaxToken GetFirstToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetFirstToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         foreach (var trivia in triviaList)
         {
@@ -106,7 +106,7 @@ internal static class SyntaxTreeNavigation
         return null;
     }
 
-    private static SyntaxToken GetLastToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetLastToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         foreach (var nodeOrToken in node.ChildNodesAndTokens().Reverse())
         {
@@ -127,7 +127,7 @@ internal static class SyntaxTreeNavigation
         return null;
     }
 
-    private static SyntaxToken GetLastToken(SyntaxToken token, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetLastToken(SyntaxToken token, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         var tt = GetLastToken(token.TrailingTrivia, tokenPredicate, triviaPredicate);
         if (tt is not null)
@@ -140,7 +140,7 @@ internal static class SyntaxTreeNavigation
         return lt;
     }
 
-    private static SyntaxToken GetLastToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetLastToken(IEnumerable<SyntaxTrivia> triviaList, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         foreach (var trivia in triviaList.Reverse())
         {
@@ -155,7 +155,7 @@ internal static class SyntaxTreeNavigation
         return null;
     }
 
-    private static SyntaxToken GetPreviousToken(SyntaxToken token, bool searchLeadingTrivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetPreviousToken(SyntaxToken token, bool searchLeadingTrivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (searchLeadingTrivia)
         {
@@ -196,7 +196,7 @@ internal static class SyntaxTreeNavigation
         return GetPreviousToken(token.Parent, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetPreviousToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetPreviousToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (node.Parent is not null)
         {
@@ -236,7 +236,7 @@ internal static class SyntaxTreeNavigation
                    : GetPreviousToken(trivia, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetPreviousToken(SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetPreviousToken(SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (trivia.Parent is null)
             return null;
@@ -252,7 +252,7 @@ internal static class SyntaxTreeNavigation
         return GetPreviousToken(trivia.Parent, false, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetPreviousToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetPreviousToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         var returnNext = false;
 
@@ -281,7 +281,7 @@ internal static class SyntaxTreeNavigation
         return null;
     }
 
-    private static SyntaxToken GetNextToken(SyntaxToken token, bool searchTrailingTrivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetNextToken(SyntaxToken token, bool searchTrailingTrivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (searchTrailingTrivia)
         {
@@ -322,7 +322,7 @@ internal static class SyntaxTreeNavigation
         return GetNextToken(token.Parent, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetNextToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetNextToken(SyntaxNode node, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (node.Parent is not null)
         {
@@ -362,7 +362,7 @@ internal static class SyntaxTreeNavigation
                    : GetNextToken(trivia, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetNextToken(SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetNextToken(SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         if (trivia.Parent is null)
             return null;
@@ -378,7 +378,7 @@ internal static class SyntaxTreeNavigation
         return GetNextToken(trivia.Parent, false, tokenPredicate, triviaPredicate);
     }
 
-    private static SyntaxToken GetNextToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
+    private static SyntaxToken? GetNextToken(ImmutableArray<SyntaxTrivia> triviaList, SyntaxTrivia trivia, Func<SyntaxToken, bool> tokenPredicate, Func<SyntaxTrivia, bool> triviaPredicate)
     {
         var returnNext = false;
 

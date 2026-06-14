@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class DerivedTableReferenceSyntax : TableReferenceSyntax
 {
-    internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken asKeyword, SyntaxToken name)
+    internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name)
         : base(syntaxTree)
     {
         LeftParenthesis = leftParenthesis;
@@ -33,7 +33,7 @@ public sealed class DerivedTableReferenceSyntax : TableReferenceSyntax
 
     public SyntaxToken RightParenthesis { get; }
 
-    public SyntaxToken AsKeyword { get; }
+    public SyntaxToken? AsKeyword { get; }
 
     public SyntaxToken Name { get; }
 }

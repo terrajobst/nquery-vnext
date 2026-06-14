@@ -19,7 +19,7 @@ internal sealed class NQuerySyntaxClassifier : AsyncTagger<IClassificationTag, S
         InvalidateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         InvalidateTagsAsync();
     }

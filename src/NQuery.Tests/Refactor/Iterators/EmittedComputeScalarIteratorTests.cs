@@ -48,7 +48,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
             4, 6, 8
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {4, 12},
             {6, 18},
@@ -68,7 +68,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
     public void Iterators_EmittedComputeScalar_ComputesValues_UsingOuter()
     {
         var rows = new object[] { 4, 6, 8 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {4, 14},
             {6, 16},

@@ -7,7 +7,7 @@ namespace NQuery.Data;
 /// </summary>
 public sealed class QueryDataReader : IDataReader
 {
-    private QueryReader _queryReader;
+    private QueryReader? _queryReader;
 
     internal QueryDataReader(QueryReader queryReader)
     {
@@ -254,7 +254,7 @@ public sealed class QueryDataReader : IDataReader
     /// The actual number of bytes read.
     /// </returns>
     /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
-    public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+    public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferoffset, int length)
     {
         ThrowIfNull(buffer);
 
@@ -296,7 +296,7 @@ public sealed class QueryDataReader : IDataReader
     /// The actual number of characters read.
     /// </returns>
     /// <exception cref="T:System.IndexOutOfRangeException">The index passed was outside the range of 0 through <see cref="P:System.Data.IDataRecord.FieldCount" />. </exception>
-    public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
+    public long GetChars(int i, long fieldoffset, char[]? buffer, int bufferoffset, int length)
     {
         ThrowIfNull(buffer);
 

@@ -85,7 +85,7 @@ public class SqliteOracleDifferentialTests
     [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c")]
     [InlineData("SELECT e.City FROM Employees e INTERSECT SELECT c.City FROM Customers c")]
     [InlineData("SELECT e.City FROM Employees e EXCEPT SELECT c.City FROM Customers c")]
-    public void NQuery_ProducesSameRows_AsSqlite(string nqueryText, string sqliteText = null)
+    public void NQuery_ProducesSameRows_AsSqlite(string nqueryText, string? sqliteText = null)
     {
         var expected = SqliteOracle.RunQuery(sqliteText ?? nqueryText);
         var actual = RunNQuery(nqueryText);
@@ -100,7 +100,7 @@ public class SqliteOracleDifferentialTests
     // Sort + row limit (dialect differs: TOP vs LIMIT); the limit makes order observable.
     [InlineData("SELECT TOP 3 e.EmployeeID FROM Employees e ORDER BY e.EmployeeID",
                 "SELECT e.EmployeeID FROM Employees e ORDER BY e.EmployeeID LIMIT 3")]
-    public void NQuery_ProducesRowsInSameOrder_AsSqlite(string nqueryText, string sqliteText = null)
+    public void NQuery_ProducesRowsInSameOrder_AsSqlite(string nqueryText, string? sqliteText = null)
     {
         var expected = SqliteOracle.RunQuery(sqliteText ?? nqueryText);
         var actual = RunNQuery(nqueryText);

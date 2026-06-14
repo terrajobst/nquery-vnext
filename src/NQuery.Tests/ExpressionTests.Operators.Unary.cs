@@ -4,7 +4,7 @@ namespace NQuery.Tests;
 
 public partial class ExpressionTests
 {
-    private static object EvaluateUnary(string op, Type argumentType, object argument)
+    private static object? EvaluateUnary(string op, Type argumentType, object? argument)
     {
         var variable = new VariableSymbol("arg", argumentType, argument);
         var dataContext = DataContext.Default.AddVariables(variable);

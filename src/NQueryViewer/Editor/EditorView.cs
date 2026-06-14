@@ -51,9 +51,9 @@ public class EditorView : UserControl, IEditorView
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    public event EventHandler CaretPositionChanged;
+    public event EventHandler? CaretPositionChanged;
 
-    public event EventHandler SelectionChanged;
+    public event EventHandler? SelectionChanged;
 
-    public event EventHandler ZoomLevelChanged;
+    public event EventHandler? ZoomLevelChanged;
 }

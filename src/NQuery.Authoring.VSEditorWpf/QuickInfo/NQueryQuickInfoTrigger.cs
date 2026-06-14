@@ -14,7 +14,7 @@ internal sealed class NQueryQuickInfoTrigger
         _quickInfoManager = quickInfoManager;
     }
 
-    private void WpfTextViewOnMouseHover(object sender, MouseHoverEventArgs e)
+    private void WpfTextViewOnMouseHover(object? sender, MouseHoverEventArgs e)
     {
         _quickInfoManager.TriggerQuickInfoAsync(e.Position);
     }

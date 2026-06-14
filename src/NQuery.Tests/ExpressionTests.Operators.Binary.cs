@@ -4,7 +4,7 @@ namespace NQuery.Tests;
 
 public partial class ExpressionTests
 {
-    private static object EvaluateBinary(string op, Type leftType, Type rightType, object left, object right)
+    private static object? EvaluateBinary(string op, Type leftType, Type rightType, object? left, object? right)
     {
         var leftVariable = new VariableSymbol("left", leftType, left);
         var rightVariable = new VariableSymbol("right", rightType, right);

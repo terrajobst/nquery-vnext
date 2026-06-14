@@ -12,7 +12,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification;
 internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassificationTag>
 {
     private readonly INQueryClassificationTypes _classificationTypes;
-    private readonly Workspace _workspace;
+    private readonly Workspace? _workspace;
 
     public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
         : base(nameof(NQueryUnnecessaryCodeClassifier), null, document, true)
@@ -27,7 +27,7 @@ internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassi
         UpdateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateTagsAsync();
     }

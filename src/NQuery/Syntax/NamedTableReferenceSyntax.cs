@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class NamedTableReferenceSyntax : TableReferenceSyntax
 {
-    internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax alias)
+    internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax? alias)
         : base(syntaxTree)
     {
         TableName = tableName;
@@ -23,5 +23,5 @@ public sealed class NamedTableReferenceSyntax : TableReferenceSyntax
 
     public SyntaxToken TableName { get; }
 
-    public AliasSyntax Alias { get; }
+    public AliasSyntax? Alias { get; }
 }

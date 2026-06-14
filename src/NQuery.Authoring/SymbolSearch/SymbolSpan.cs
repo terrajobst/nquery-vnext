@@ -26,7 +26,7 @@ public struct SymbolSpan : IEquatable<SymbolSpan>
                Span == other.Span;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is SymbolSpan other && Equals(other);
     }

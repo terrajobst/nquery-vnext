@@ -51,7 +51,7 @@ public sealed class CompiledQuery
         return new ExpressionEvaluator(expressionType, EvaluateQueryAsExpression);
     }
 
-    private object EvaluateQueryAsExpression()
+    private object? EvaluateQueryAsExpression()
     {
         // Evaluating an expression means evaluating its query: a bare expression is wrapped
         // into a one-row projection by the algebrizer and emitted like any other query, so we

@@ -4,14 +4,14 @@ public sealed class VariableSymbol : Symbol
 {
     private readonly Type _type;
 
-    private object _value;
+    private object? _value;
 
     public VariableSymbol(string name, Type type)
         : this(name, type, null)
     {
     }
 
-    public VariableSymbol(string name, Type type, object value)
+    public VariableSymbol(string name, Type type, object? value)
         : base(name)
     {
         _type = type;
@@ -28,7 +28,7 @@ public sealed class VariableSymbol : Symbol
         get { return _type; }
     }
 
-    public object Value
+    public object? Value
     {
         get { return _value; }
         set

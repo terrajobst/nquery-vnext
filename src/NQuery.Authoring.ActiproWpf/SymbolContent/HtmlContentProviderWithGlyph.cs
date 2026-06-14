@@ -18,7 +18,7 @@ internal sealed class HtmlContentProviderWithGlyph : HtmlContentProvider
     {
     }
 
-    protected override Image GetImage(string source)
+    protected override Image? GetImage(string source)
     {
         if (!Enum.TryParse(source, out Glyph glyph))
             return null;

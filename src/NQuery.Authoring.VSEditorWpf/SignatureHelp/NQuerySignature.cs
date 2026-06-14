@@ -10,7 +10,7 @@ namespace NQuery.Authoring.VSEditorWpf.SignatureHelp;
 
 internal class NQuerySignature : ISignature
 {
-    private IParameter _currentParameter;
+    private IParameter? _currentParameter;
 
     internal NQuerySignature(ITrackingSpan applicableSpan, SignatureItem signatureItem, int selectedParameter)
     {
@@ -29,7 +29,7 @@ internal class NQuerySignature : ISignature
         return new NQueryParameter(this, p.Name, string.Empty, new Span(p.Span.Start, p.Span.Length));
     }
 
-    public IParameter CurrentParameter
+    public IParameter? CurrentParameter
     {
         get { return _currentParameter; }
         internal set
@@ -43,7 +43,7 @@ internal class NQuerySignature : ISignature
         }
     }
 
-    private void RaiseCurrentParameterChanged(IParameter prevCurrentParameter, IParameter newCurrentParameter)
+    private void RaiseCurrentParameterChanged(IParameter? prevCurrentParameter, IParameter? newCurrentParameter)
     {
         var tempHandler = CurrentParameterChanged;
         tempHandler?.Invoke(this, new CurrentParameterChangedEventArgs(prevCurrentParameter, newCurrentParameter));
@@ -51,8 +51,8 @@ internal class NQuerySignature : ISignature
 
     public ITrackingSpan ApplicableToSpan { get; private set; }
     public string Content { get; private set; }
-    public string PrettyPrintedContent { get; private set; }
-    public string Documentation { get; private set; }
+    public string? PrettyPrintedContent { get; private set; }
+    public string? Documentation { get; private set; }
     public ReadOnlyCollection<IParameter> Parameters { get; internal set; }
-    public event EventHandler<CurrentParameterChangedEventArgs> CurrentParameterChanged;
+    public event EventHandler<CurrentParameterChangedEventArgs>? CurrentParameterChanged;
 }

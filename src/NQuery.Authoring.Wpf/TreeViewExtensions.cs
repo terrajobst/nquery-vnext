@@ -13,7 +13,7 @@ internal static class TreeViewExtensions
 
         private ItemContainerGenerator _parentGenerator;
         private int _next;
-        private TreeViewItem _lastItem;
+        private TreeViewItem? _lastItem;
 
         public Expander(TreeView treeView, IEnumerable<object> items, bool expandLastItem)
         {
@@ -57,7 +57,7 @@ internal static class TreeViewExtensions
             }
         }
 
-        private void ItemContainerGeneratorStatusChanged(object sender, EventArgs e)
+        private void ItemContainerGeneratorStatusChanged(object? sender, EventArgs e)
         {
             var generator = (ItemContainerGenerator)sender;
             if (generator.Status == GeneratorStatus.ContainersGenerated)
@@ -74,7 +74,7 @@ internal static class TreeViewExtensions
         expander.ExpandNext();
     }
 
-    public static void SelectNode<T>(this TreeView treeView, T node, Func<T, T> getParentNode, bool expandNode = false)
+    public static void SelectNode<T>(this TreeView treeView, T? node, Func<T, T?> getParentNode, bool expandNode = false)
         where T : class
     {
         if (node is null)

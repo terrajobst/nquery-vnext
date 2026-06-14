@@ -23,7 +23,7 @@ internal static class RowSet
     //   any integral type    -> long
     //   float / double       -> double
     //   everything else (string, decimal, DateTime, byte[]) is left as-is and compared by Signature.
-    public static object Normalize(object value)
+    public static object? Normalize(object? value)
     {
         if (value is null or DBNull)
             return null;

@@ -12,7 +12,7 @@ internal sealed class VisualStudioSourceTextContainer : SourceTextContainer
         TextBuffer.ChangedHighPriority += TextBufferOnPostChanged;
     }
 
-    private void TextBufferOnPostChanged(object sender, EventArgs e)
+    private void TextBufferOnPostChanged(object? sender, EventArgs e)
     {
         OnCurrentChanged();
     }
@@ -30,5 +30,5 @@ internal sealed class VisualStudioSourceTextContainer : SourceTextContainer
 
     public ITextBuffer TextBuffer { get; }
 
-    public override event EventHandler<EventArgs> CurrentChanged;
+    public override event EventHandler<EventArgs>? CurrentChanged;
 }

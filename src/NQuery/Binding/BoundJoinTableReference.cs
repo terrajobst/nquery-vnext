@@ -5,7 +5,7 @@ namespace NQuery.Binding;
 // algebrizer, so they have no place on a syntax-shaped table reference.
 internal sealed class BoundJoinTableReference : BoundTableReference
 {
-    public BoundJoinTableReference(BoundJoinType joinType, BoundTableReference left, BoundTableReference right, BoundExpression condition)
+    public BoundJoinTableReference(BoundJoinType joinType, BoundTableReference left, BoundTableReference right, BoundExpression? condition)
     {
         JoinType = joinType;
         Left = left;
@@ -21,7 +21,7 @@ internal sealed class BoundJoinTableReference : BoundTableReference
 
     public BoundTableReference Right { get; }
 
-    public BoundExpression Condition { get; }
+    public BoundExpression? Condition { get; }
 
     public override IEnumerable<IBoundValue> GetDefinedValues()
     {

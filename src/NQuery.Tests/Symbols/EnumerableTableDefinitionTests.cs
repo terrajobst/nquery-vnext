@@ -14,11 +14,11 @@ public class EnumerableTableDefinitionTests
 
         public int Id { get; }
         public string Name { get; }
-        private string City { get; set; }
+        private string? City { get; set; }
 #pragma warning disable 628
-        protected string Country { get; set; }
+        protected string? Country { get; set; }
 #pragma warning restore 628
-        public static string Birthday { get; set; }
+        public static string? Birthday { get; set; }
     }
 
     private sealed class FieldTableRow
@@ -26,12 +26,12 @@ public class EnumerableTableDefinitionTests
 #pragma warning disable 649
 #pragma warning disable 169
         public int Id;
-        public string Name;
-        private string City;
+        public string? Name;
+        private string? City;
 #pragma warning disable 628
-        protected string Country;
+        protected string? Country;
 #pragma warning restore 628
-        public static string Birthday;
+        public static string? Birthday;
 #pragma warning restore 169
 #pragma warning restore 649
     }

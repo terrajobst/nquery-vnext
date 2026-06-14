@@ -4,7 +4,7 @@ namespace NQuery.Tests.Symbols.Aggregation;
 
 public abstract class AggregateTests
 {
-    internal void AssertProduces(object expected, Type argumentType, object[] values)
+    internal void AssertProduces(object? expected, Type argumentType, object?[] values)
     {
         var aggregator = CreateAggregateDefinition().CreateAggregatable(argumentType).CreateAggregator();
         aggregator.Initialize();

@@ -13,7 +13,7 @@ internal sealed class BoundExistsSubselect : BoundExpression
     // predicate (and possibly a computed value for a type conversion). Rather than lower that
     // into Compute/Filter relations at bind time, we carry the resolved pieces and let the
     // algebrizer apply them over the lowered query.
-    public BoundExistsSubselect(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, BoundExpression filter)
+    public BoundExistsSubselect(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, BoundExpression? filter)
     {
         Query = query;
         ComputedValues = computedValues;
@@ -29,7 +29,7 @@ internal sealed class BoundExistsSubselect : BoundExpression
 
     public ImmutableArray<BoundComputedValue> ComputedValues { get; }
 
-    public BoundExpression Filter { get; }
+    public BoundExpression? Filter { get; }
 
     public override Type Type
     {

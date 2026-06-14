@@ -12,7 +12,7 @@ internal sealed class NQueryBraceMatcher : INQueryBraceMatcher
 {
     public Collection<IBraceMatcher> Matchers { get; } = new();
 
-    public IStructureMatchResultSet Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
+    public IStructureMatchResultSet? Match(TextSnapshotOffset snapshotOffset, IStructureMatchOptions options)
     {
         var snapshot = snapshotOffset.GetDocumentView();
         if (snapshot is null)

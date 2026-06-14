@@ -59,7 +59,7 @@ internal sealed class BetweenCodeRefactoringProvider : CodeRefactoringProvider<B
         return new[] { new BetweenCodeAction(node, expression1, lowerBound, upperBound) };
     }
 
-    private static bool TryGetLessThanBounds(BinaryExpressionSyntax expression, out ExpressionSyntax lowerBound, out ExpressionSyntax upperBound)
+    private static bool TryGetLessThanBounds(BinaryExpressionSyntax expression, out ExpressionSyntax? lowerBound, out ExpressionSyntax? upperBound)
     {
         if (expression.Kind == SyntaxKind.LessOrEqualExpression)
         {

@@ -53,7 +53,7 @@ internal sealed class SyntaxNodeViewModel
             nodeViewModel.Parent = this;
     }
 
-    public SyntaxNodeViewModel Parent { get; private set; }
+    public SyntaxNodeViewModel? Parent { get; private set; }
 
     public object Data { get; private set; }
 

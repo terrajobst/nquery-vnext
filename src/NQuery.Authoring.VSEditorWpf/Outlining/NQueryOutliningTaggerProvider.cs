@@ -16,7 +16,7 @@ internal sealed class NQueryOutliningTaggerProvider : ITaggerProvider
     [Import]
     public IOutliningService OutliningService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQueryOutliningTagger(workspace, OutliningService) as ITagger<T>;

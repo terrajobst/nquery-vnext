@@ -33,7 +33,7 @@ public sealed class SemanticModel
         return Conversion.Classify(sourceType, targetType);
     }
 
-    public TableInstanceSymbol GetTableInstance(WildcardSelectColumnSyntax selectColumn)
+    public TableInstanceSymbol? GetTableInstance(WildcardSelectColumnSyntax selectColumn)
     {
         ThrowIfNull(selectColumn);
 
@@ -57,7 +57,7 @@ public sealed class SemanticModel
         return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
     }
 
-    public QueryColumnInstanceSymbol GetSymbol(OrderByColumnSyntax orderByColumn)
+    public QueryColumnInstanceSymbol? GetSymbol(OrderByColumnSyntax orderByColumn)
     {
         ThrowIfNull(orderByColumn);
 
@@ -65,7 +65,7 @@ public sealed class SemanticModel
         return boundOrderByColumn?.QueryColumn;
     }
 
-    public Symbol GetSymbol(ExpressionSyntax expression)
+    public Symbol? GetSymbol(ExpressionSyntax expression)
     {
         ThrowIfNull(expression);
 
@@ -73,7 +73,7 @@ public sealed class SemanticModel
         return boundExpression is null ? null : GetSymbol(boundExpression);
     }
 
-    private static Symbol GetSymbol(BoundExpression expression)
+    private static Symbol? GetSymbol(BoundExpression expression)
     {
         switch (expression.Kind)
         {
@@ -111,7 +111,7 @@ public sealed class SemanticModel
         return expression.Symbol;
     }
 
-    private static Symbol GetSymbol(BoundFunctionInvocationExpression expression)
+    private static Symbol? GetSymbol(BoundFunctionInvocationExpression expression)
     {
         return expression.Symbol;
     }
@@ -126,12 +126,12 @@ public sealed class SemanticModel
         return expression.Symbol;
     }
 
-    private static Symbol GetSymbol(BoundMethodInvocationExpression expression)
+    private static Symbol? GetSymbol(BoundMethodInvocationExpression expression)
     {
         return expression.Symbol;
     }
 
-    public Type GetExpressionType(ExpressionSyntax expression)
+    public Type? GetExpressionType(ExpressionSyntax expression)
     {
         ThrowIfNull(expression);
 
@@ -139,7 +139,7 @@ public sealed class SemanticModel
         return boundExpression?.Type;
     }
 
-    public Conversion GetConversion(CastExpressionSyntax expression)
+    public Conversion? GetConversion(CastExpressionSyntax expression)
     {
         ThrowIfNull(expression);
 
@@ -147,12 +147,12 @@ public sealed class SemanticModel
         return boundExpression?.Conversion;
     }
 
-    private BoundExpression GetBoundExpression(ExpressionSyntax expression)
+    private BoundExpression? GetBoundExpression(ExpressionSyntax expression)
     {
         return _bindingResult.GetBoundNode(expression) as BoundExpression;
     }
 
-    public IEnumerable<TableInstanceSymbol> GetDeclaredSymbols(TableReferenceSyntax tableReference)
+    public IEnumerable<TableInstanceSymbol>? GetDeclaredSymbols(TableReferenceSyntax tableReference)
     {
         ThrowIfNull(tableReference);
 
@@ -160,7 +160,7 @@ public sealed class SemanticModel
         return result?.GetDeclaredTableInstances().AsEnumerable();
     }
 
-    public CommonTableExpressionSymbol GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
+    public CommonTableExpressionSymbol? GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
     {
         ThrowIfNull(commonTableExpression);
 
@@ -168,7 +168,7 @@ public sealed class SemanticModel
         return result?.TableSymbol;
     }
 
-    public ColumnSymbol GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
+    public ColumnSymbol? GetDeclaredSymbol(CommonTableExpressionColumnNameSyntax commonTableExpressionColumnName)
     {
         ThrowIfNull(commonTableExpressionColumnName);
 
@@ -194,7 +194,7 @@ public sealed class SemanticModel
         return null;
     }
 
-    public TableInstanceSymbol GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
+    public TableInstanceSymbol? GetDeclaredSymbol(NamedTableReferenceSyntax tableReference)
     {
         ThrowIfNull(tableReference);
 
@@ -202,7 +202,7 @@ public sealed class SemanticModel
         return result?.TableInstance;
     }
 
-    public TableInstanceSymbol GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
+    public TableInstanceSymbol? GetDeclaredSymbol(DerivedTableReferenceSyntax tableReference)
     {
         ThrowIfNull(tableReference);
 
@@ -210,7 +210,7 @@ public sealed class SemanticModel
         return result?.TableInstance;
     }
 
-    public QueryColumnInstanceSymbol GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
+    public QueryColumnInstanceSymbol? GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
     {
         ThrowIfNull(selectColumn);
 
@@ -240,7 +240,7 @@ public sealed class SemanticModel
                    : LookupSymbols(binder);
     }
 
-    private static IEnumerable<Symbol> LookupSymbols(Binder binder)
+    private static IEnumerable<Symbol> LookupSymbols(Binder? binder)
     {
         // NOTE: We want to only show the *available* symbols. That means, we need to
         //       hide symbols from the parent binder that have same name as the ones
@@ -272,7 +272,7 @@ public sealed class SemanticModel
         }
     }
 
-    private SyntaxNode FindClosestNodeWithBinder(SyntaxNode root, int position)
+    private SyntaxNode? FindClosestNodeWithBinder(SyntaxNode root, int position)
     {
         var token = root.FindTokenContext(position);
         return (from n in token.Parent.AncestorsAndSelf()

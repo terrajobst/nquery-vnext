@@ -13,7 +13,7 @@ public sealed class QuickInfoModel
         Markup = markup;
     }
 
-    public static QuickInfoModel ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
+    public static QuickInfoModel? ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
     {
         if (symbol.Kind == SymbolKind.ErrorTable)
             return null;

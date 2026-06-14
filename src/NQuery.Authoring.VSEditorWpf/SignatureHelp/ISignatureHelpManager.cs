@@ -8,6 +8,6 @@ public interface ISignatureHelpManager
     void HandlePreviewTextInput(string text);
     Task TriggerSignatureHelpAsync();
 
-    SignatureHelpModel Model { get; }
-    event EventHandler<EventArgs> ModelChanged;
+    SignatureHelpModel? Model { get; }
+    event EventHandler<EventArgs>? ModelChanged;
 }

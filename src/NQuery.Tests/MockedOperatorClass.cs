@@ -113,7 +113,7 @@ public class MockedOperatorClass
         return new MockedOperatorClass(left + " >> " + right);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return !(obj is not MockedOperatorClass other) &&
                string.Equals(_text, other._text, StringComparison.Ordinal);

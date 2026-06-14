@@ -14,7 +14,7 @@ internal sealed class NQuerySemanticClassifierProvider : ITaggerProvider
     [Import]
     public INQueryClassificationService ClassificationService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag
     {
         var semanticClassificationService = ClassificationService;
         var workspace = buffer.GetWorkspace();

@@ -60,7 +60,7 @@ public struct TextLine : IEquatable<TextLine>
                _length == other._length;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is TextLine other && Equals(other);
     }

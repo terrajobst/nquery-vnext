@@ -77,7 +77,7 @@ public static class DataContextExtensions
         return new SchemaTableSymbol(tableDefinition);
     }
 
-    private static TableRelation CreateRelation(IReadOnlyList<TableSymbol> tables, DataRelation dataRelation)
+    private static TableRelation? CreateRelation(IReadOnlyList<TableSymbol> tables, DataRelation dataRelation)
     {
         var parentTable = ResolveTable(tables, dataRelation.ParentTable.TableName);
         var childTable = ResolveTable(tables, dataRelation.ChildTable.TableName);
@@ -95,7 +95,7 @@ public static class DataContextExtensions
         return new TableRelation(parentTable, parentColumns, childTable, childColumns);
     }
 
-    private static TableSymbol ResolveTable(IEnumerable<TableSymbol> tables, string tableName)
+    private static TableSymbol? ResolveTable(IEnumerable<TableSymbol> tables, string tableName)
     {
         return tables.FirstOrDefault(t => string.Equals(t.Name, tableName, StringComparison.OrdinalIgnoreCase));
     }

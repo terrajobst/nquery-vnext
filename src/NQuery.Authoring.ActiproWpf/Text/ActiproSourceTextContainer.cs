@@ -12,7 +12,7 @@ internal sealed class ActiproSourceTextContainer : SourceTextContainer
         TextDocument.TextChanged += TextDocumentOnTextChanged;
     }
 
-    private void TextDocumentOnTextChanged(object sender, TextSnapshotChangedEventArgs e)
+    private void TextDocumentOnTextChanged(object? sender, TextSnapshotChangedEventArgs e)
     {
         OnCurrentChanged();
     }
@@ -30,5 +30,5 @@ internal sealed class ActiproSourceTextContainer : SourceTextContainer
 
     public ITextDocument TextDocument { get; }
 
-    public override event EventHandler<EventArgs> CurrentChanged;
+    public override event EventHandler<EventArgs>? CurrentChanged;
 }

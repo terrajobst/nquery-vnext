@@ -2,7 +2,7 @@ namespace NQuery;
 
 public sealed class Expression<T>
 {
-    private ExpressionEvaluator _expressionEvaluator;
+    private ExpressionEvaluator? _expressionEvaluator;
 
     private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
     {

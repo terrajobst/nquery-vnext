@@ -113,7 +113,7 @@ public class LeftSemiNestedLoopsIteratorTests : IteratorTests
     [Fact]
     public void Iterators_LeftSemiNestedLoops_MatchesRows()
     {
-        var leftRows = new object[,]
+        var leftRows = new object?[,]
         {
             {1, "1-Left"},
             {2, "2-Left-A"},
@@ -125,7 +125,7 @@ public class LeftSemiNestedLoopsIteratorTests : IteratorTests
 
         var rightRows = new object[] { 2, 3, 3, 5 };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {2, "2-Left-A"},
             {2, "2-Left-B"},

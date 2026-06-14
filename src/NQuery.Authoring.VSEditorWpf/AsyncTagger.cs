@@ -34,5 +34,5 @@ public abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
         handler?.Invoke(this, e);
     }
 
-    public event EventHandler<SnapshotSpanEventArgs> TagsChanged;
+    public event EventHandler<SnapshotSpanEventArgs>? TagsChanged;
 }

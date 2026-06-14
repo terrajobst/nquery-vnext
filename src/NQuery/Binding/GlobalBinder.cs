@@ -56,7 +56,7 @@ internal sealed class GlobalBinder : Binder
         return result;
     }
 
-    public override IComparer LookupComparer(Type type)
+    public override IComparer? LookupComparer(Type type)
     {
         var registeredComparer = Lookup(_dataContext.Comparers, type);
         if (registeredComparer is not null)
@@ -65,7 +65,7 @@ internal sealed class GlobalBinder : Binder
         return type.IsComparable() ? Comparer.Default : null;
     }
 
-    private static T Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type key) where T : class
+    private static T? Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type? key) where T : class
     {
         while (key is not null)
         {

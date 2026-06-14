@@ -26,6 +26,6 @@ public class NullRowBufferTests : RowBufferTests
 
         buffer.CopyTo(array, 1);
 
-        Assert.Equal(new object[] { "a", null, null }, array);
+        Assert.Equal(new object?[] { "a", null, null }, array);
     }
 }

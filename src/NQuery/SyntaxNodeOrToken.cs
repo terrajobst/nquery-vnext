@@ -4,8 +4,8 @@ namespace NQuery;
 
 public struct SyntaxNodeOrToken
 {
-    private readonly SyntaxNode _syntaxNode;
-    private readonly SyntaxToken _syntaxToken;
+    private readonly SyntaxNode? _syntaxNode;
+    private readonly SyntaxToken? _syntaxToken;
 
     internal SyntaxNodeOrToken(SyntaxToken syntaxToken)
     {
@@ -38,7 +38,7 @@ public struct SyntaxNodeOrToken
         return SyntaxTreeEquivalence.AreEquivalent(this, other);
     }
 
-    public SyntaxNode Parent => IsNode ? AsNode().Parent : AsToken().Parent;
+    public SyntaxNode? Parent => IsNode ? AsNode().Parent : AsToken().Parent;
 
     public SyntaxTree SyntaxTree => Parent.SyntaxTree;
 

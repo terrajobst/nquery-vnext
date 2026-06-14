@@ -69,17 +69,17 @@ internal sealed class NQueryEditorViewCodeActionMargin : Canvas, IEditorViewMarg
                             .Select(a => new TextDocumentCodeActionModel(CodeActionKind.Refactoring, a, textDocument));
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateGlyphAsync();
     }
 
-    private void ViewOnSelectionChanged(object sender, EditorViewSelectionEventArgs e)
+    private void ViewOnSelectionChanged(object? sender, EditorViewSelectionEventArgs e)
     {
         UpdateGlyphAsync();
     }
 
-    private void ViewOnTextAreaLayout(object sender, TextViewTextAreaLayoutEventArgs e)
+    private void ViewOnTextAreaLayout(object? sender, TextViewTextAreaLayoutEventArgs e)
     {
         UpdateGlyphAsync();
     }

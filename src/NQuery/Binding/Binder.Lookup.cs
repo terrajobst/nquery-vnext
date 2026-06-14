@@ -13,7 +13,7 @@ partial class Binder
         get { return SymbolTable.Empty; }
     }
 
-    private static Type LookupType(SyntaxToken name)
+    private static Type? LookupType(SyntaxToken name)
     {
         var normalizedName = name.IsQuotedIdentifier()
                                  ? name.ValueText
@@ -181,7 +181,7 @@ partial class Binder
         return LookupSymbols<AggregateSymbol>(name);
     }
 
-    public virtual IComparer LookupComparer(Type type)
+    public virtual IComparer? LookupComparer(Type type)
     {
         return Parent.LookupComparer(type);
     }

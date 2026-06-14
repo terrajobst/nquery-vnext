@@ -12,7 +12,7 @@ internal sealed class NQueryOutliner : INQueryOutliner
 {
     public Collection<IAuthoringOutliner> Outliners { get; } = new();
 
-    public IOutliningSource GetOutliningSource(ITextSnapshot snapshot)
+    public IOutliningSource? GetOutliningSource(ITextSnapshot snapshot)
     {
         var document = snapshot.ToDocument();
 

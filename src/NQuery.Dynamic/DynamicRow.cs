@@ -11,7 +11,7 @@ internal sealed class DynamicRow : DynamicObject
         _values = values;
     }
 
-    public override bool TryGetMember(GetMemberBinder binder, out object result)
+    public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
         return _values.TryGetValue(binder.Name, out result);
     }

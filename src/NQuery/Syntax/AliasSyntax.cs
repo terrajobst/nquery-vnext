@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class AliasSyntax : SyntaxNode
 {
-    internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken asKeyword, SyntaxToken identifier)
+    internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifier)
         : base(syntaxTree)
     {
         AsKeyword = asKeyword;
@@ -21,7 +21,7 @@ public sealed class AliasSyntax : SyntaxNode
         yield return Identifier;
     }
 
-    public SyntaxToken AsKeyword { get; }
+    public SyntaxToken? AsKeyword { get; }
 
     public SyntaxToken Identifier { get; }
 }

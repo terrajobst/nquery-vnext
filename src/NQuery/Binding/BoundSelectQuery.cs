@@ -12,13 +12,13 @@ namespace NQuery.Binding;
 internal sealed class BoundSelectQuery : BoundQuery
 {
     public BoundSelectQuery(
-        BoundFromClause from,
-        BoundWhereClause where,
-        BoundGroupByClause groupBy,
-        BoundHavingClause having,
+        BoundFromClause? from,
+        BoundWhereClause? where,
+        BoundGroupByClause? groupBy,
+        BoundHavingClause? having,
         BoundSelectClause select,
-        BoundOrderByClause orderBy,
-        BoundTopClause top)
+        BoundOrderByClause? orderBy,
+        BoundTopClause? top)
     {
         From = from;
         Where = where;
@@ -32,19 +32,19 @@ internal sealed class BoundSelectQuery : BoundQuery
 
     public override BoundNodeKind Kind => BoundNodeKind.SelectQuery;
 
-    public BoundFromClause From { get; }
+    public BoundFromClause? From { get; }
 
-    public BoundWhereClause Where { get; }
+    public BoundWhereClause? Where { get; }
 
-    public BoundGroupByClause GroupBy { get; }
+    public BoundGroupByClause? GroupBy { get; }
 
-    public BoundHavingClause Having { get; }
+    public BoundHavingClause? Having { get; }
 
     public BoundSelectClause Select { get; }
 
-    public BoundOrderByClause OrderBy { get; }
+    public BoundOrderByClause? OrderBy { get; }
 
-    public BoundTopClause Top { get; }
+    public BoundTopClause? Top { get; }
 
     public override ImmutableArray<QueryColumnInstanceSymbol> OutputColumns { get; }
 }

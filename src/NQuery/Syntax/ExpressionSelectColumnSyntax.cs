@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class ExpressionSelectColumnSyntax : SelectColumnSyntax
 {
-    internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax alias)
+    internal ExpressionSelectColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, AliasSyntax? alias)
         : base(syntaxTree)
     {
         Expression = expression;
@@ -23,5 +23,5 @@ public sealed class ExpressionSelectColumnSyntax : SelectColumnSyntax
 
     public ExpressionSyntax Expression { get; }
 
-    public AliasSyntax Alias { get; }
+    public AliasSyntax? Alias { get; }
 }

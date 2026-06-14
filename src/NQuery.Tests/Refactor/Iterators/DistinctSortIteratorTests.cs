@@ -9,7 +9,7 @@ public class DistinctSortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_DistinctSort_ForwardsProperly()
     {
-        var rows = new object[] { 1, 2 };
+        var rows = new object?[] { 1, 2 };
         var expected = rows;
 
         using var input = new MockedIterator(rows);
@@ -45,8 +45,8 @@ public class DistinctSortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_DistinctSort_Sorts_SingleEntry()
     {
-        var rows = new object[] { null, 1, 2, 1 };
-        var expected = new object[] { null, 2, 1 };
+        var rows = new object?[] { null, 1, 2, 1 };
+        var expected = new object?[] { null, 2, 1 };
 
         using var input = new MockedIterator(rows);
         var sortEntries = new[]
@@ -66,7 +66,7 @@ public class DistinctSortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_DistinctSort_Sorts_TwoEntries()
     {
-        var rows = new object[,]
+        var rows = new object?[,]
         {
             {"Kirkland", "USA"},
             {"London", "UK"},
@@ -81,7 +81,7 @@ public class DistinctSortIteratorTests : IteratorTests
             {null, null}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {null, null},
             {"London", null},

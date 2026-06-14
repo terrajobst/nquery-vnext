@@ -12,7 +12,7 @@ namespace NQuery.Authoring.VSEditorWpf.Squiggles;
 [ContentType(@"NQuery")]
 internal sealed class NQuerySemanticErrorTaggerProvider : IViewTaggerProvider
 {
-    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQuerySemanticErrorTagger(workspace) as ITagger<T>;

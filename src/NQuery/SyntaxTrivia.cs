@@ -9,7 +9,7 @@ public sealed class SyntaxTrivia
 {
     private readonly SyntaxTree _syntaxTree;
 
-    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax structure, IEnumerable<Diagnostic> diagnostics)
+    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax? structure, IEnumerable<Diagnostic> diagnostics)
     {
         _syntaxTree = syntaxTree;
         Kind = kind;
@@ -19,7 +19,7 @@ public sealed class SyntaxTrivia
         Diagnostics = diagnostics.ToImmutableArray();
     }
 
-    public SyntaxToken Parent => _syntaxTree?.GetParentToken(this);
+    public SyntaxToken? Parent => _syntaxTree?.GetParentToken(this);
 
     public SyntaxKind Kind { get; }
 
@@ -27,7 +27,7 @@ public sealed class SyntaxTrivia
 
     public TextSpan Span { get; }
 
-    public StructuredTriviaSyntax Structure { get; }
+    public StructuredTriviaSyntax? Structure { get; }
 
     public ImmutableArray<Diagnostic> Diagnostics { get; }
 

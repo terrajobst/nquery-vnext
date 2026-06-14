@@ -35,7 +35,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         get { return this; }
     }
 
-    private IEditorView CurrentEditorView
+    private IEditorView? CurrentEditorView
     {
         get { return DocumentTabControl.SelectedContent as IEditorView; }
     }
@@ -67,7 +67,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         NewEditor(editorViewFactory);
     }
 
-    private void NewEditor(IEditorViewFactory editorViewFactory)
+    private void NewEditor(IEditorViewFactory? editorViewFactory)
     {
         var editorView = editorViewFactory?.CreateEditorView();
         if (editorView is null)
@@ -133,8 +133,8 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
 
         var stopwatch = Stopwatch.StartNew();
 
-        DataTable dataTable = null;
-        Exception exception = null;
+        DataTable? dataTable = null;
+        Exception? exception = null;
 
         try
         {
@@ -308,39 +308,39 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         base.OnPreviewKeyDown(e);
     }
 
-    private void FileExitMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void FileExitMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         Close();
     }
 
-    private void QueryExecuteMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void QueryExecuteMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         ExecuteQueryAsync();
     }
 
-    private void QueryExplainMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void QueryExplainMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         ExplainQuery();
     }
 
-    private void QueryModeQueryMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void QueryModeQueryMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         SetDocumentKind(DocumentKind.Query);
     }
 
-    private void QueryModeExpressionMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void QueryModeExpressionMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         SetDocumentKind(DocumentKind.Expression);
     }
 
-    private void ToolsViewSyntaxMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void ToolsViewSyntaxMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         ToolsViewSyntaxMenuItem.IsChecked = !ToolsViewSyntaxMenuItem.IsChecked;
 
         UpdateTreeAsync();
     }
 
-    private async void ToolsGenerateParserTestMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private async void ToolsGenerateParserTestMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         var documentView = CurrentEditorView?.GetDocumentView();
         if (documentView is null)
@@ -350,13 +350,13 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         Clipboard.SetText(test);
     }
 
-    private void SyntaxTreeVisualizerSelectedNodeChanged(object sender, EventArgs e)
+    private void SyntaxTreeVisualizerSelectedNodeChanged(object? sender, EventArgs e)
     {
         if (SyntaxTreeVisualizer.IsKeyboardFocusWithin)
             UpdateSelectedText();
     }
 
-    private void ToolsCopyShowPlanMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private void ToolsCopyShowPlanMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         if (ShowPlanComboBox.SelectedItem is not ShowPlan showPlan)
             return;
@@ -365,7 +365,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         Clipboard.SetText(text);
     }
 
-    private async void ToolsCopyQueryAndPlansMenuItem_OnClick(object sender, RoutedEventArgs e)
+    private async void ToolsCopyQueryAndPlansMenuItem_OnClick(object? sender, RoutedEventArgs e)
     {
         if (CurrentEditorView is null)
             return;
@@ -439,7 +439,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         }
     }
 
-    private void TabControlOnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void TabControlOnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(UpdateEditorState));
 
@@ -448,13 +448,13 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
                                     : Visibility.Collapsed;
     }
 
-    private void EditorViewOnCaretPositionChanged(object sender, EventArgs e)
+    private void EditorViewOnCaretPositionChanged(object? sender, EventArgs e)
     {
         if (CurrentEditorView is not null && CurrentEditorView.Element.IsKeyboardFocusWithin)
             UpdateTreeExpansion();
     }
 
-    private void EditorViewOnZoomLevelChanged(object sender, EventArgs e)
+    private void EditorViewOnZoomLevelChanged(object? sender, EventArgs e)
     {
         if (sender is not IEditorView changedView)
             return;
@@ -469,12 +469,12 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
         BottomToolWindowTabControl.FontSize = FontSize * percent;
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateDocumentState();
     }
 
-    private void DiagnosticGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void DiagnosticGridMouseDoubleClick(object? sender, MouseButtonEventArgs e)
     {
         var diagnostic = DiagnosticGrid.SelectedDiagnostic;
         if (diagnostic is null)
@@ -484,7 +484,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
             CurrentEditorView.Selection = diagnostic.Span;
     }
 
-    private void DataGridAutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+    private void DataGridAutoGeneratingColumn(object? sender, DataGridAutoGeneratingColumnEventArgs e)
     {
         var dataView = (DataView)DataGrid.ItemsSource;
         var dataTable = dataView.Table;

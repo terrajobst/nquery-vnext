@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class CompilationUnitSyntax : SyntaxNode
 {
-    internal CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode root, SyntaxToken endOfFileToken)
+    internal CompilationUnitSyntax(SyntaxTree syntaxTree, SyntaxNode? root, SyntaxToken endOfFileToken)
         : base(syntaxTree)
     {
         Root = root;
@@ -21,7 +21,7 @@ public sealed class CompilationUnitSyntax : SyntaxNode
         yield return EndOfFileToken;
     }
 
-    public SyntaxNode Root { get; }
+    public SyntaxNode? Root { get; }
 
     public SyntaxToken EndOfFileToken { get; }
 }

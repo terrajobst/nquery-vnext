@@ -16,7 +16,7 @@ public sealed class CodeIssue
     {
     }
 
-    public CodeIssue(CodeIssueKind kind, TextSpan span, string description, IEnumerable<ICodeAction> actions)
+    public CodeIssue(CodeIssueKind kind, TextSpan span, string? description, IEnumerable<ICodeAction> actions)
     {
         Kind = kind;
         Span = span;
@@ -28,7 +28,7 @@ public sealed class CodeIssue
 
     public TextSpan Span { get; }
 
-    public string Description { get; }
+    public string? Description { get; }
 
     public ImmutableArray<ICodeAction> Actions { get; }
 }

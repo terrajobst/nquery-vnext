@@ -4,7 +4,7 @@ namespace NQuery.Authoring.SignatureHelp.Providers;
 
 internal sealed class CoalesceSignatureHelpModelProvider : SignatureHelpModelProvider<CoalesceExpressionSyntax>
 {
-    protected override SignatureHelpModel GetModel(SemanticModel semanticModel, CoalesceExpressionSyntax node, int position)
+    protected override SignatureHelpModel? GetModel(SemanticModel semanticModel, CoalesceExpressionSyntax node, int position)
     {
         var span = node.Span;
         var signature = SignatureHelpExtensions.GetCoalesceSignatureItem();

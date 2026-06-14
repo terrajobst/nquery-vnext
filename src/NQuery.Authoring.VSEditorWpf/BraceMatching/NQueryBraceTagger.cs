@@ -23,12 +23,12 @@ internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSp
         InvalidateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         InvalidateTagsAsync();
     }
 
-    private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
+    private void CaretOnPositionChanged(object? sender, CaretPositionChangedEventArgs e)
     {
         InvalidateTagsAsync();
     }

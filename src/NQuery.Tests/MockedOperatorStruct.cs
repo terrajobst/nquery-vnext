@@ -113,7 +113,7 @@ public struct MockedOperatorStruct
         return new MockedOperatorStruct(left + " >> " + right);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is MockedOperatorStruct other && string.Equals(_text, other._text, StringComparison.Ordinal);
     }

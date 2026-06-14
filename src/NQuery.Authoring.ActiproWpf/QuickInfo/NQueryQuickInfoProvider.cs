@@ -27,7 +27,7 @@ internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQu
 
     public Collection<IQuickInfoModelProvider> Providers { get; } = new();
 
-    public override object GetContext(IEditorView view, int offset)
+    public override object? GetContext(IEditorView view, int offset)
     {
         var documentView = view.SyntaxEditor.GetDocumentView();
         var document = documentView.Document;

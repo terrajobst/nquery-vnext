@@ -17,7 +17,7 @@ internal sealed class Lexer
 
     private SyntaxKind _kind;
     private SyntaxKind _contextualKind;
-    private object _value;
+    private object? _value;
     private int _start;
 
     public Lexer(SyntaxTree syntaxTree, SourceText text)

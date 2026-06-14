@@ -61,7 +61,7 @@ public static class TestGenerationExtensions
             {
                 writer.Indent++;
 
-                string line;
+                string? line;
                 while ((line = stringReader.ReadLine()) is not null)
                 {
                     writer.WriteLine(line.Replace("\"", "\"\""));

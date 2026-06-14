@@ -9,8 +9,8 @@ public class SortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Sort_ForwardsProperly()
     {
-        var rows = new object[] { 1, 2 };
-        var expected = new object[] { 1, 2 };
+        var rows = new object?[] { 1, 2 };
+        var expected = new object?[] { 1, 2 };
 
         using var input = new MockedIterator(rows);
         var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
@@ -45,8 +45,8 @@ public class SortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Sort_Sorts_SingleEntry()
     {
-        var rows = new object[] { null, 1, 2, 1 };
-        var expected = new object[] { null, 2, 1, 1 };
+        var rows = new object?[] { null, 1, 2, 1 };
+        var expected = new object?[] { null, 2, 1, 1 };
 
         using var input = new MockedIterator(rows);
         var sortEntries = new[]
@@ -66,7 +66,7 @@ public class SortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Sort_Sorts_TwoEntries()
     {
-        var rows = new object[,]
+        var rows = new object?[,]
         {
             {"Kirkland", "USA"},
             {"London", "UK"},
@@ -81,7 +81,7 @@ public class SortIteratorTests : IteratorTests
             {null, null}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {null, null},
             {"London", null},
@@ -116,8 +116,8 @@ public class SortIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Sort_Sorts_WithOuterEntries()
     {
-        var rows = new object[] { null, 1, 2, 1 };
-        var expected = new object[] { null, 1, 1, 2 };
+        var rows = new object?[] { null, 1, 2, 1 };
+        var expected = new object?[] { null, 1, 1, 2 };
 
         var outerRowBuffer = new MockedRowBuffer(new object[] { "Outer Reference" });
 

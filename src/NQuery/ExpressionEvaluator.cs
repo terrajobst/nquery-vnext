@@ -2,9 +2,9 @@ namespace NQuery;
 
 public sealed class ExpressionEvaluator
 {
-    private readonly Func<object> _evaluator;
+    private readonly Func<object?> _evaluator;
 
-    internal ExpressionEvaluator(Type type, Func<object> evaluator)
+    internal ExpressionEvaluator(Type type, Func<object?> evaluator)
     {
         Type = type;
         _evaluator = evaluator;
@@ -12,7 +12,7 @@ public sealed class ExpressionEvaluator
 
     public Type Type { get; }
 
-    public object Evaluate()
+    public object? Evaluate()
     {
         return _evaluator();
     }

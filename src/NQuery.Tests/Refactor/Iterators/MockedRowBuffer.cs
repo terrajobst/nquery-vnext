@@ -7,10 +7,10 @@ internal sealed class MockedRowBuffer : RowBuffer
     public MockedRowBuffer(int count)
     {
         Count = count;
-        Value = new object[count];
+        Value = new object?[count];
     }
 
-    public MockedRowBuffer(object[] value)
+    public MockedRowBuffer(object?[] value)
     {
         Count = value.Length;
         Value = value;
@@ -18,7 +18,7 @@ internal sealed class MockedRowBuffer : RowBuffer
 
     public override int Count { get; }
 
-    public object[] Value { get; set; }
+    public object?[] Value { get; set; }
 
     public override object this[int index]
     {

@@ -47,7 +47,7 @@ public static class NQueryGlyphImageSource
         }
     }
 
-    public static ImageSource Get(Glyph glyph)
+    public static ImageSource? Get(Glyph glyph)
     {
         var imageUri = FromGlyph(glyph);
         if (imageUri is null)
@@ -62,7 +62,7 @@ public static class NQueryGlyphImageSource
         return result;
     }
 
-    public static ImageSource Get(Symbol symbol)
+    public static ImageSource? Get(Symbol symbol)
     {
         var glyph = symbol.GetGlyph();
         return Get(glyph);

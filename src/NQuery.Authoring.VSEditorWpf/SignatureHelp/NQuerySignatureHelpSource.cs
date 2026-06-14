@@ -51,7 +51,7 @@ internal class NQuerySignatureHelpSource : ISignatureHelpSource
         return signatures.ToDictionary(s => s, s => (ISignature)new NQuerySignature(applicableSpan, s, selectedParameter));
     }
 
-    public ISignature GetBestMatch(ISignatureHelpSession session)
+    public ISignature? GetBestMatch(ISignatureHelpSession session)
     {
         if (!session.Properties.TryGetProperty(typeof(ISignatureHelpManager), out ISignatureHelpManager signatureHelpManager))
             return null;

@@ -8,16 +8,16 @@ namespace NQuery.Authoring.VSEditorWpf.Classification;
 [Export(typeof(INQueryClassificationService))]
 internal sealed class NQueryClassificationService : INQueryClassificationService
 {
-    private IClassificationType _punctuation;
-    private IClassificationType _schemaTable;
-    private IClassificationType _derivedTable;
-    private IClassificationType _cteTable;
-    private IClassificationType _column;
-    private IClassificationType _method;
-    private IClassificationType _property;
-    private IClassificationType _function;
-    private IClassificationType _aggregate;
-    private IClassificationType _variable;
+    private IClassificationType? _punctuation;
+    private IClassificationType? _schemaTable;
+    private IClassificationType? _derivedTable;
+    private IClassificationType? _cteTable;
+    private IClassificationType? _column;
+    private IClassificationType? _method;
+    private IClassificationType? _property;
+    private IClassificationType? _function;
+    private IClassificationType? _aggregate;
+    private IClassificationType? _variable;
 
     [Import]
     public IClassificationTypeRegistryService ClassificationTypeRegistryService { get; set; }
@@ -25,7 +25,7 @@ internal sealed class NQueryClassificationService : INQueryClassificationService
     [Import]
     public IStandardClassificationService StandardClassificationService { get; set; }
 
-    private IClassificationType GetOrRetrieveClassification(ref IClassificationType target, string name)
+    private IClassificationType GetOrRetrieveClassification(ref IClassificationType? target, string name)
     {
         return target ?? (target = ClassificationTypeRegistryService.GetClassificationType(name));
     }

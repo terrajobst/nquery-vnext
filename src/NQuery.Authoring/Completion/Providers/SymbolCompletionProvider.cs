@@ -75,7 +75,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
         return CreateSymbolCompletions(members);
     }
 
-    private static PropertyAccessExpressionSyntax GetPropertyAccessExpression(SyntaxNode root, int position)
+    private static PropertyAccessExpressionSyntax? GetPropertyAccessExpression(SyntaxNode root, int position)
     {
         var token = root.FindTokenOnLeft(position);
         var previous = token.GetPreviousToken(false, true);

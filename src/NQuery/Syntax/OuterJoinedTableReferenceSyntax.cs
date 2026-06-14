@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableReferenceSyntax
 {
-    internal OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+    internal OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
         : base(syntaxTree, left, right, onKeyword, condition)
     {
         TypeKeyword = typeKeyword;
@@ -29,7 +29,7 @@ public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableRefe
 
     public SyntaxToken TypeKeyword { get; }
 
-    public SyntaxToken OuterKeyword { get; }
+    public SyntaxToken? OuterKeyword { get; }
 
     public SyntaxToken JoinKeyword { get; }
 }

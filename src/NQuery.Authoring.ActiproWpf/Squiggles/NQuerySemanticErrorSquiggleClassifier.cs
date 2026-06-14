@@ -6,7 +6,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles;
 
 internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClassifier
 {
-    private readonly Workspace _workspace;
+    private readonly Workspace? _workspace;
 
     public NQuerySemanticErrorSquiggleClassifier(ICodeDocument document)
         : base(ClassificationTypes.CompilerError, nameof(NQuerySemanticErrorSquiggleClassifier), null, document, true)
@@ -19,7 +19,7 @@ internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClas
         UpdateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateTagsAsync();
     }

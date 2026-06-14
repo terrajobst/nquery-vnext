@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class ExpressionSelectColumnQuickInfoModelProvider : QuickInfoModelProvider<ExpressionSelectColumnSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, ExpressionSelectColumnSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, ExpressionSelectColumnSyntax node)
     {
         if (node.Alias is null || !node.Alias.Identifier.Span.ContainsOrTouches(position))
             return null;

@@ -7,7 +7,7 @@ namespace NQuery.Authoring.SignatureHelp.Providers;
 
 internal sealed class CountAllSignatureHelpModelProvider : SignatureHelpModelProvider<CountAllExpressionSyntax>
 {
-    protected override SignatureHelpModel GetModel(SemanticModel semanticModel, CountAllExpressionSyntax node, int position)
+    protected override SignatureHelpModel? GetModel(SemanticModel semanticModel, CountAllExpressionSyntax node, int position)
     {
         // TODO: We need to use the resolved symbol as the currently selected one.
 

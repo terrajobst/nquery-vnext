@@ -6,6 +6,6 @@ public interface IQuickInfoManager
 {
     Task TriggerQuickInfoAsync(int offset);
 
-    QuickInfoModel Model { get; }
-    event EventHandler<EventArgs> ModelChanged;
+    QuickInfoModel? Model { get; }
+    event EventHandler<EventArgs>? ModelChanged;
 }

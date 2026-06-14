@@ -7,7 +7,7 @@ public abstract class StructuredTriviaSyntax : SyntaxNode
     {
     }
 
-    public SyntaxTrivia ParentTrivia
+    public SyntaxTrivia? ParentTrivia
     {
         get { return SyntaxTree?.GetParentTrivia(this); }
     }

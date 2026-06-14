@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class CommonTableExpressionSyntax : SyntaxNode
 {
-    internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken? recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax? columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
         : base(syntaxTree)
     {
         RecursiveKeyword = recursiveKeyword;
@@ -32,11 +32,11 @@ public sealed class CommonTableExpressionSyntax : SyntaxNode
         yield return RightParenthesis;
     }
 
-    public SyntaxToken RecursiveKeyword { get; }
+    public SyntaxToken? RecursiveKeyword { get; }
 
     public SyntaxToken Name { get; }
 
-    public CommonTableExpressionColumnNameListSyntax ColumnNameList { get; }
+    public CommonTableExpressionColumnNameListSyntax? ColumnNameList { get; }
 
     public SyntaxToken AsKeyword { get; }
 

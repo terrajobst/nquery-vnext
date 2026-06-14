@@ -9,7 +9,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2 };
         var rightRows = new object[] { 3, 4, 5 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             { 1, 3 },
             { 1, 4 },
@@ -42,13 +42,13 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
     public void Iterators_LeftOuterNestedLoops_NoReadsOnRight_WhenPassthruIsTrue()
     {
         var leftRows = new object[] { 1, 2, 3, 4, 5 };
-        var rightRows = new object[,]
+        var rightRows = new object?[,]
         {
             {1, "One" },
             {2, "Two" },
             {3, "Three" }
         };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, 1, "One"},
             {2, null, null},
@@ -107,7 +107,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2, 3 };
         var rightRows = Array.Empty<object>();
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, null},
             {2, null},
@@ -126,7 +126,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2, 3 };
         var rightRows = Array.Empty<object>();
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, null},
             {2, null},
@@ -143,7 +143,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
     [Fact]
     public void Iterators_LeftOuterNestedLoops_MatchesRows()
     {
-        var leftRows = new object[,]
+        var leftRows = new object?[,]
         {
             {1, "1-Left"},
             {2, "2-Left-A"},
@@ -153,7 +153,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
             {5, "5-Left"}
         };
 
-        var rightRows = new object[,]
+        var rightRows = new object?[,]
         {
             {2, "2-Right"},
             {3, "3-Right-A"},
@@ -161,7 +161,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
             {5, "5-Right"}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, "1-Left", null, null},
             {2, "2-Left-A", 2, "2-Right"},

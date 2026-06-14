@@ -21,7 +21,7 @@ public static class NQueryExtensions
         });
     }
 
-    public static Document GetDocument(this ITextDocument textDocument)
+    public static Document? GetDocument(this ITextDocument textDocument)
     {
         if (textDocument is not ICodeDocument codeDocument)
             return null;

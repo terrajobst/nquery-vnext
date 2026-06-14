@@ -11,7 +11,7 @@ internal sealed class NegatedComparer : IComparer
         _comparer = comparer;
     }
 
-    public int Compare(object x, object y)
+    public int Compare(object? x, object? y)
     {
         return -_comparer.Compare(x, y);
     }

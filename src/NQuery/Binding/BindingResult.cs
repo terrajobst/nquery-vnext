@@ -27,19 +27,19 @@ internal sealed class BindingResult
 
     public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-    public BoundNode GetBoundNode(SyntaxNode syntaxNode)
+    public BoundNode? GetBoundNode(SyntaxNode syntaxNode)
     {
         _boundNodeFromSyntaxNode.TryGetValue(syntaxNode, out var result);
         return result;
     }
 
-    public Binder GetBinder(SyntaxNode syntaxNode)
+    public Binder? GetBinder(SyntaxNode syntaxNode)
     {
         var boundNode = GetBoundNode(syntaxNode);
         return boundNode is null ? null : GetBinder(boundNode);
     }
 
-    public Binder GetBinder(BoundNode boundNode)
+    public Binder? GetBinder(BoundNode boundNode)
     {
         _binderFromBoundNode.TryGetValue(boundNode, out var result);
         return result;

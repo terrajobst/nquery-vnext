@@ -67,7 +67,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     public void Iterators_EmittedStreamAggregate_ComputeAggregates_WhenNotGrouped()
     {
         var rows = new object[] { 1, 2, 3 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {3, 1}
         };
@@ -88,14 +88,14 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     [Fact]
     public void Iterators_EmittedStreamAggregate_ComputeAggregates_WhenGrouped()
     {
-        var rows = new object[,]
+        var rows = new object?[,]
         {
             {"One", 1},
             {"One", 2},
             {"Two", 3}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {"One", 2, 1},
             {"Two", 3, 3}
@@ -122,7 +122,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     public void Iterators_EmittedStreamAggregate_ComputeAggregates_UsingOuter()
     {
         var rows = new object[] { 1, 2, 3 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {103}
         };

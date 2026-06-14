@@ -9,6 +9,6 @@ public interface ICompletionModelManager
     Task TriggerCompletionAsync(bool autoComplete);
     bool Commit();
 
-    CompletionModel Model { get; }
-    event EventHandler<EventArgs> ModelChanged;
+    CompletionModel? Model { get; }
+    event EventHandler<EventArgs>? ModelChanged;
 }

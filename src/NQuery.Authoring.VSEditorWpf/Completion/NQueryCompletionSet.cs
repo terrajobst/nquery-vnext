@@ -23,13 +23,13 @@ internal sealed class NQueryCompletionSet : CompletionSet
         Refresh();
     }
 
-    private void SessionOnDismissed(object sender, EventArgs e)
+    private void SessionOnDismissed(object? sender, EventArgs e)
     {
         _session.Dismissed -= SessionOnDismissed;
         _completionModelManager.ModelChanged -= CompletionModelManagerOnModelChanged;
     }
 
-    private void CompletionModelManagerOnModelChanged(object sender, EventArgs e)
+    private void CompletionModelManagerOnModelChanged(object? sender, EventArgs e)
     {
         Refresh();
     }
@@ -75,7 +75,7 @@ internal sealed class NQueryCompletionSet : CompletionSet
         UpdateModel(_completionModelManager.Model);
     }
 
-    private void UpdateModel(CompletionModel model)
+    private void UpdateModel(CompletionModel? model)
     {
         ApplicableTo = ToTrackingSpan(model.ApplicableSpan);
 
@@ -135,7 +135,7 @@ internal sealed class NQueryCompletionSet : CompletionSet
         return new Microsoft.VisualStudio.Language.Intellisense.Completion(displayText, insertionText, description, image, null);
     }
 
-    private static ImageSource ToImage(Glyph? glyph)
+    private static ImageSource? ToImage(Glyph? glyph)
     {
         return glyph is null ? null : NQueryGlyphImageSource.Get(glyph.Value);
     }

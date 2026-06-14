@@ -22,7 +22,7 @@ internal sealed class NQueryCodeIssueTagger : AsyncTagger<IErrorTag, CodeIssue>
         InvalidateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         InvalidateTagsAsync();
     }

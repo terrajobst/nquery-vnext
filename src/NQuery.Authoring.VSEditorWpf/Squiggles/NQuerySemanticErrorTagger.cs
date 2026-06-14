@@ -15,7 +15,7 @@ internal sealed class NQuerySemanticErrorTagger : NQueryErrorTagger
         InvalidateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         InvalidateTagsAsync();
     }

@@ -65,7 +65,7 @@ public static class SyntaxExtensions
         return token;
     }
 
-    public static SyntaxToken GetPreviousIfCurrentContainsOrTouchesPosition(this SyntaxToken token, int position)
+    public static SyntaxToken? GetPreviousIfCurrentContainsOrTouchesPosition(this SyntaxToken? token, int position)
     {
         return token is not null && token.Span.ContainsOrTouches(position)
                    ? token.GetPreviousToken()
@@ -189,7 +189,7 @@ public static class SyntaxExtensions
         return syntaxToken.Parent is DerivedTableReferenceSyntax derivedTable && derivedTable.Name.FullSpan.ContainsOrTouches(position);
     }
 
-    public static SelectQuerySyntax GetAppliedSelectQuery(this OrderedQuerySyntax query)
+    public static SelectQuerySyntax? GetAppliedSelectQuery(this OrderedQuerySyntax query)
     {
         ThrowIfNull(query);
 

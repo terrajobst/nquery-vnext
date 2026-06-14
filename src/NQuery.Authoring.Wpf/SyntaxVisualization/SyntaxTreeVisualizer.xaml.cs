@@ -19,7 +19,7 @@ public sealed partial class SyntaxTreeVisualizer
             sender.UpdateViewModel();
     }
 
-    private static SyntaxNodeViewModel FindViewModelNode(IEnumerable<SyntaxNodeViewModel> roots, int position)
+    private static SyntaxNodeViewModel? FindViewModelNode(IEnumerable<SyntaxNodeViewModel> roots, int position)
     {
         var nonTrivia = from r in roots
                         where r.NodeType != SyntaxNodeViewModelKind.Trivia
@@ -45,13 +45,13 @@ public sealed partial class SyntaxTreeVisualizer
         return null;
     }
 
-    public SyntaxTree SyntaxTree
+    public SyntaxTree? SyntaxTree
     {
         get { return (SyntaxTree)GetValue(SyntaxTreeProperty); }
         set { SetValue(SyntaxTreeProperty, value); }
     }
 
-    private SyntaxTreeViewModel SyntaxTreeViewModel
+    private SyntaxTreeViewModel? SyntaxTreeViewModel
     {
         get { return DataContext as SyntaxTreeViewModel; }
     }
@@ -103,5 +103,5 @@ public sealed partial class SyntaxTreeVisualizer
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    public event EventHandler SelectedNodeChanged;
+    public event EventHandler? SelectedNodeChanged;
 }

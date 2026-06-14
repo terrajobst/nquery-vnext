@@ -77,7 +77,7 @@ public sealed class Compilation
         return syntaxDiagnostics.Concat(semanticDiagnostics).ToImmutableArray();
     }
 
-    public ShowPlan GetShowPlan()
+    public ShowPlan? GetShowPlan()
     {
         return GetShowPlanSteps().LastOrDefault();
     }

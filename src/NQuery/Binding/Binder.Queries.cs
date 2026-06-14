@@ -44,7 +44,7 @@ partial class Binder
         return columnExpression?.Symbol.Name ?? string.Empty;
     }
 
-    private BoundQueryState FindQueryState(TableInstanceSymbol tableInstanceSymbol)
+    private BoundQueryState? FindQueryState(TableInstanceSymbol tableInstanceSymbol)
     {
         var queryState = QueryState;
         while (queryState is not null)
@@ -58,7 +58,7 @@ partial class Binder
         return null;
     }
 
-    private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue value)
+    private bool TryReplaceExpression(ExpressionSyntax expression, BoundExpression boundExpression, out IBoundValue? value)
     {
         var queryState = QueryState;
 
@@ -94,7 +94,7 @@ partial class Binder
         return false;
     }
 
-    private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue value)
+    private static bool TryGetExistingValue(BoundExpression boundExpression, out IBoundValue? value)
     {
         if (boundExpression is not BoundValueExpression boundValueExpression)
         {
@@ -106,14 +106,14 @@ partial class Binder
         return true;
     }
 
-    private static IBoundValue FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
+    private static IBoundValue? FindComputedValue(ExpressionSyntax expressionSyntax, IEnumerable<BoundComputedValueWithSyntax> candidates)
     {
         return (from c in candidates
                 where c.Syntax.IsEquivalentTo(expressionSyntax) // TODO: We need to compare symbols as well!
                 select c.Result).FirstOrDefault();
     }
 
-    private void EnsureAllColumnReferencesAreLegal(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
+    private void EnsureAllColumnReferencesAreLegal(SelectQuerySyntax node, OrderedQuerySyntax? orderedQueryNode)
     {
         var isAggregated = QueryState.ComputedAggregates.Count > 0;
         var isGrouped = QueryState.ComputedGroupings.Count > 0;
@@ -850,7 +850,7 @@ partial class Binder
         return BindSelectQuery(node, null);
     }
 
-    private BoundQuery BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax orderedQueryNode)
+    private BoundQuery BindSelectQuery(SelectQuerySyntax node, OrderedQuerySyntax? orderedQueryNode)
     {
         var queryBinder = CreateQueryBinder();
 
@@ -1094,7 +1094,7 @@ partial class Binder
         return comparers.ToImmutableArray();
     }
 
-    private BoundTableReference BindFromClause(FromClauseSyntax node)
+    private BoundTableReference? BindFromClause(FromClauseSyntax? node)
     {
         if (node is null)
             return null;
@@ -1125,9 +1125,9 @@ partial class Binder
         return boundNode;
     }
 
-    private BoundTableReference BindFromClauseInternal(FromClauseSyntax node)
+    private BoundTableReference? BindFromClauseInternal(FromClauseSyntax node)
     {
-        BoundTableReference lastTableReference = null;
+        BoundTableReference? lastTableReference = null;
 
         foreach (var tableReference in node.TableReferences)
         {
@@ -1146,7 +1146,7 @@ partial class Binder
         return lastTableReference;
     }
 
-    private BoundExpression BindWhereClause(WhereClauseSyntax node)
+    private BoundExpression? BindWhereClause(WhereClauseSyntax? node)
     {
         if (node is null)
             return null;
@@ -1160,7 +1160,7 @@ partial class Binder
         return predicate;
     }
 
-    private BoundGroupByClause BindGroupByClause(GroupByClauseSyntax groupByClause)
+    private BoundGroupByClause? BindGroupByClause(GroupByClauseSyntax? groupByClause)
     {
         if (groupByClause is null)
             return null;
@@ -1196,7 +1196,7 @@ partial class Binder
         return new BoundGroupByClause(groups.ToImmutableArray());
     }
 
-    private BoundExpression BindHavingClause(HavingClauseSyntax node)
+    private BoundExpression? BindHavingClause(HavingClauseSyntax? node)
     {
         if (node is null)
             return null;
@@ -1209,7 +1209,7 @@ partial class Binder
         return predicate;
     }
 
-    private BoundOrderByClause BindOrderByClause(OrderedQuerySyntax node, ImmutableArray<QueryColumnInstanceSymbol> selectorQueryColumns, ImmutableArray<QueryColumnInstanceSymbol> resultQueryColumns)
+    private BoundOrderByClause? BindOrderByClause(OrderedQuerySyntax? node, ImmutableArray<QueryColumnInstanceSymbol> selectorQueryColumns, ImmutableArray<QueryColumnInstanceSymbol> resultQueryColumns)
     {
         if (node is null)
             return null;

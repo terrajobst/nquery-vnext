@@ -4,7 +4,7 @@ namespace NQuery.Binding;
 
 internal sealed class BoundAggregateExpression : BoundExpression
 {
-    public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
+    public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable? aggregatable, BoundExpression argument)
     {
         Symbol = aggregate;
         Aggregatable = aggregatable;
@@ -33,7 +33,7 @@ internal sealed class BoundAggregateExpression : BoundExpression
         get { return Symbol; }
     }
 
-    public IAggregatable Aggregatable { get; }
+    public IAggregatable? Aggregatable { get; }
 
     public BoundExpression Argument { get; }
 

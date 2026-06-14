@@ -59,7 +59,7 @@ public struct TextSpan : IEquatable<TextSpan>
                Length == other.Length;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is TextSpan other && Equals(other);
     }

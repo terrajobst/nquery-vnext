@@ -8,7 +8,7 @@ namespace NQuery.Tests.Refactor.Iterators.RowBuffers;
 // probing, ...) is tested on top.
 public abstract class RowBufferTests
 {
-    private protected static void AssertContract(RowBuffer buffer, params object[] expected)
+    private protected static void AssertContract(RowBuffer buffer, params object?[] expected)
     {
         // Count
         Assert.Equal(expected.Length, buffer.Count);

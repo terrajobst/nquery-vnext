@@ -6,13 +6,13 @@ internal abstract partial class Binder
 {
     private readonly SharedBinderState _sharedBinderState;
 
-    protected Binder(SharedBinderState sharedBinderState, Binder parent)
+    protected Binder(SharedBinderState sharedBinderState, Binder? parent)
     {
         Parent = parent;
         _sharedBinderState = sharedBinderState;
     }
 
-    public Binder Parent { get; }
+    public Binder? Parent { get; }
 
     private List<Diagnostic> Diagnostics
     {
@@ -90,7 +90,7 @@ internal abstract partial class Binder
         return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSyntaxNode, sharedBinderState.BinderFromBoundNode, sharedBinderState.Diagnostics);
     }
 
-    private BoundNode BindRoot(SyntaxNode root)
+    private BoundNode BindRoot(SyntaxNode? root)
     {
         return root switch
         {
@@ -121,7 +121,7 @@ internal abstract partial class Binder
             _sharedBinderState.BinderFromBoundNode.Add(boundNode, this);
     }
 
-    private T GetBoundNode<T>(SyntaxNode node)
+    private T? GetBoundNode<T>(SyntaxNode node)
         where T : BoundNode
     {
         _sharedBinderState.BoundNodeFromSyntaxNode.TryGetValue(node, out var result);

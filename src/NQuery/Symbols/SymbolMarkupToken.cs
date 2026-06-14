@@ -12,13 +12,13 @@ public sealed class SymbolMarkupToken : IEquatable<SymbolMarkupToken>
 
     public string Text { get; }
 
-    public bool Equals(SymbolMarkupToken other)
+    public bool Equals(SymbolMarkupToken? other)
     {
         return Kind == other.Kind &&
                string.Equals(Text, other.Text);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is SymbolMarkupToken other && Equals(other);
     }

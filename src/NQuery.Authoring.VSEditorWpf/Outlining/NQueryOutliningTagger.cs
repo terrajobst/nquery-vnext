@@ -19,7 +19,7 @@ internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, O
         InvalidateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         InvalidateTagsAsync();
     }

@@ -11,7 +11,7 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2 };
         var rightRows = new object[] { 3, 4, 5 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, 3},
             {1, 4},
@@ -44,13 +44,13 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
     public void Iterators_InnerNestedLoops_NoReadsOnRight_WhenPassthruIsTrue()
     {
         var leftRows = new object[] { 1, 2, 3, 4, 5 };
-        var rightRows = new object[,]
+        var rightRows = new object?[,]
         {
             {1, "One" },
             {2, "Two" },
             {3, "Three" }
         };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, 1, "One"},
             {2, 3, "Three"},
@@ -121,7 +121,7 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2, 3 };
         var rightRows = Array.Empty<object>();
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {2, null}
         };
@@ -137,7 +137,7 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
     [Fact]
     public void Iterators_InnerNestedLoops_MatchesRows()
     {
-        var leftRows = new object[,]
+        var leftRows = new object?[,]
         {
             {1, "1-Left"},
             {2, "2-Left-A"},
@@ -147,7 +147,7 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
             {5, "5-Left"}
         };
 
-        var rightRows = new object[,]
+        var rightRows = new object?[,]
         {
             {2, "2-Right"},
             {3, "3-Right-A"},
@@ -155,7 +155,7 @@ public class InnerNestedLoopsIteratorTests : IteratorTests
             {5, "5-Right"}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {2, "2-Left-A", 2, "2-Right" },
             {2, "2-Left-B", 2, "2-Right" },

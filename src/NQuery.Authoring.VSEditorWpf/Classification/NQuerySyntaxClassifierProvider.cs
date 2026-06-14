@@ -15,7 +15,7 @@ internal sealed class NQuerySyntaxClassifierProvider : ITaggerProvider
     [Import]
     public INQueryClassificationService ClassificationService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQuerySyntaxClassifier(ClassificationService, workspace) as ITagger<T>;

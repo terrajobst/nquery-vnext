@@ -8,7 +8,7 @@ internal sealed class BinaryOperatorSignature : Signature
     private readonly Type _leftParameterType;
     private readonly Type _rightParameterType;
 
-    public BinaryOperatorSignature(BinaryOperatorKind kind, Type returnType, Type leftParameterType, Type rightParameterType, MethodInfo methodInfo)
+    public BinaryOperatorSignature(BinaryOperatorKind kind, Type returnType, Type leftParameterType, Type rightParameterType, MethodInfo? methodInfo)
     {
         Kind = kind;
         _returnType = returnType;
@@ -54,7 +54,7 @@ internal sealed class BinaryOperatorSignature : Signature
 
     public BinaryOperatorKind Kind { get; }
 
-    public MethodInfo MethodInfo { get; }
+    public MethodInfo? MethodInfo { get; }
 
     public override string ToString()
     {

@@ -14,14 +14,14 @@ public sealed class SignatureItem : IEquatable<SignatureItem>
 
     public ImmutableArray<ParameterItem> Parameters { get; }
 
-    public bool Equals(SignatureItem other)
+    public bool Equals(SignatureItem? other)
     {
         return other is not null &&
                Content == other.Content &&
                Parameters.SequenceEqual(other.Parameters);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is SignatureItem other && Equals(other);
     }

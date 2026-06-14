@@ -78,7 +78,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
         return GetEnumerator();
     }
 
-    public SyntaxToken GetSeparator(int index)
+    public SyntaxToken? GetSeparator(int index)
     {
         return _entries[index].Separator;
     }
@@ -201,7 +201,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
 
     private struct Entry
     {
-        public Entry(TNode node, SyntaxToken separator)
+        public Entry(TNode node, SyntaxToken? separator)
         {
             Node = node;
             Separator = separator;
@@ -209,6 +209,6 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
 
         public TNode Node { get; }
 
-        public SyntaxToken Separator { get; }
+        public SyntaxToken? Separator { get; }
     }
 }

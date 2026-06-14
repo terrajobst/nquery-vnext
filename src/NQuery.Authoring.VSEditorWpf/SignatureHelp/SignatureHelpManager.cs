@@ -14,8 +14,8 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
     private readonly ISignatureHelpModelProviderService _signatureHelpModelProviderService;
     private readonly object _selectedItemIndexKey = new();
 
-    private ISignatureHelpSession _session;
-    private SignatureHelpModel _model;
+    private ISignatureHelpSession? _session;
+    private SignatureHelpModel? _model;
 
     public SignatureHelpManager(ITextView textView, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
     {
@@ -26,14 +26,14 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         _signatureHelpModelProviderService = signatureHelpModelProviderService;
     }
 
-    private void SessionOnDismissed(object sender, EventArgs e)
+    private void SessionOnDismissed(object? sender, EventArgs e)
     {
         _session.Dismissed -= SessionOnDismissed;
         _session.SelectedSignatureChanged -= SessionOnDismissed;
         _session = null;
     }
 
-    private void SessionOnSelectedSignatureChanged(object sender, SelectedSignatureChangedEventArgs e)
+    private void SessionOnSelectedSignatureChanged(object? sender, SelectedSignatureChangedEventArgs e)
     {
         var selectedItemIndex = _session.Signatures.IndexOf(e.NewSelectedSignature);
 
@@ -41,12 +41,12 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         _session.Properties.AddProperty(_selectedItemIndexKey, selectedItemIndex);
     }
 
-    private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
+    private void CaretOnPositionChanged(object? sender, CaretPositionChangedEventArgs e)
     {
         UpdateSessionAsync();
     }
 
-    private void TextBufferOnPostChanged(object sender, EventArgs e)
+    private void TextBufferOnPostChanged(object? sender, EventArgs e)
     {
         UpdateSessionAsync();
     }
@@ -135,7 +135,7 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         handler?.Invoke(this, e);
     }
 
-    public SignatureHelpModel Model
+    public SignatureHelpModel? Model
     {
         get { return _model; }
         private set
@@ -167,5 +167,5 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
         }
     }
 
-    public event EventHandler<EventArgs> ModelChanged;
+    public event EventHandler<EventArgs>? ModelChanged;
 }

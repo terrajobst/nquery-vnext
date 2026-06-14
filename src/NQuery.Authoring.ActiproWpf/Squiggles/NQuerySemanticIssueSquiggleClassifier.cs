@@ -9,7 +9,7 @@ namespace NQuery.Authoring.ActiproWpf.Squiggles;
 
 internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
 {
-    private readonly Workspace _workspace;
+    private readonly Workspace? _workspace;
 
     public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
         : base(nameof(NQuerySemanticIssueSquiggleClassifier), null, document, true)
@@ -22,7 +22,7 @@ internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<I
         UpdateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateTagsAsync();
     }

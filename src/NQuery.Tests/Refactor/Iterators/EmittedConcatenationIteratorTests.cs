@@ -79,11 +79,11 @@ public class EmittedConcatenationIteratorTests : IteratorTests
     [Fact]
     public void Iterators_EmittedConcatenation_RemapsColumnsPerInput()
     {
-        using var first = new MockedIterator(new object[,]
+        using var first = new MockedIterator(new object?[,]
         {
             {1, "One"}
         });
-        using var second = new MockedIterator(new object[,]
+        using var second = new MockedIterator(new object?[,]
         {
             {"Two", 2}
         });
@@ -97,7 +97,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
             ImmutableArray.Create(new RowBufferEntry(second.RowBuffer, 1), new RowBufferEntry(second.RowBuffer, 0))
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, "One"},
             {2, "Two"}

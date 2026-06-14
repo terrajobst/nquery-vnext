@@ -34,8 +34,8 @@ internal static class BuiltInFunctions
             new FunctionSymbol<object, string, sbyte>(@"TO_SBYTE", @"value", @"culture", ToSByte),
             new FunctionSymbol<object, float>(@"TO_SINGLE", @"value", ToSingle),
             new FunctionSymbol<object, string, float>(@"TO_SINGLE", @"value", @"culture", ToSingle),
-            new FunctionSymbol<object, string>(@"TO_STRING", @"value", ToString),
-            new FunctionSymbol<object, string, string>(@"TO_STRING", @"value", @"culture", ToString),
+            new FunctionSymbol<object, string?>(@"TO_STRING", @"value", ToString),
+            new FunctionSymbol<object, string, string?>(@"TO_STRING", @"value", @"culture", ToString),
             new FunctionSymbol<object, ushort>(@"TO_UINT16", @"value", ToUInt16),
             new FunctionSymbol<object, string, ushort>(@"TO_UINT16", @"value", @"culture", ToUInt16),
             new FunctionSymbol<object, uint>(@"TO_UINT32", @"value", ToUInt32),
@@ -81,32 +81,32 @@ internal static class BuiltInFunctions
             new FunctionSymbol<short, int>(@"SIGN", @"basis", Math.Sign),
             new FunctionSymbol<sbyte, int>(@"SIGN", @"basis", Math.Sign),
 
-            new FunctionSymbol<string, string>(@"SOUNDEX", @"text", GetSoundexCode),
+            new FunctionSymbol<string, string?>(@"SOUNDEX", @"text", GetSoundexCode),
             new FunctionSymbol<string, int>(@"LEN", @"text", StringLength),
             new FunctionSymbol<string, string, int>(@"CHARINDEX", @"chars", @"text", CharIndex),
-            new FunctionSymbol<string, int, int, string>(@"SUBSTRING", @"text", @"start", @"length", Substring),
-            new FunctionSymbol<string, int, string>(@"SUBSTRING", @"text", @"start", Substring),
-            new FunctionSymbol<string, string>(@"UPPER", @"text", Upper),
-            new FunctionSymbol<string, string, string>(@"UPPER", @"text", @"culture", Upper),
-            new FunctionSymbol<string, string>(@"LOWER", @"text", Lower),
-            new FunctionSymbol<string, string, string>(@"LOWER", @"text", @"culture", Lower),
-            new FunctionSymbol<string, string>(@"TRIM", @"text", Trim),
-            new FunctionSymbol<string, string>(@"LTRIM", @"text", LTrim),
-            new FunctionSymbol<string, string>(@"RTRIM", @"text", RTrim),
-            new FunctionSymbol<string, string, string, string>(@"REPLACE", @"text", @"oldValue", @"newValue", Replace),
-            new FunctionSymbol<string, string, string, string>(@"REGEX_REPLACE", @"text", @"pattern", @"replacementPattern", RegexReplace),
+            new FunctionSymbol<string, int, int, string?>(@"SUBSTRING", @"text", @"start", @"length", Substring),
+            new FunctionSymbol<string, int, string?>(@"SUBSTRING", @"text", @"start", Substring),
+            new FunctionSymbol<string, string?>(@"UPPER", @"text", Upper),
+            new FunctionSymbol<string, string, string?>(@"UPPER", @"text", @"culture", Upper),
+            new FunctionSymbol<string, string?>(@"LOWER", @"text", Lower),
+            new FunctionSymbol<string, string, string?>(@"LOWER", @"text", @"culture", Lower),
+            new FunctionSymbol<string, string?>(@"TRIM", @"text", Trim),
+            new FunctionSymbol<string, string?>(@"LTRIM", @"text", LTrim),
+            new FunctionSymbol<string, string?>(@"RTRIM", @"text", RTrim),
+            new FunctionSymbol<string, string, string, string?>(@"REPLACE", @"text", @"oldValue", @"newValue", Replace),
+            new FunctionSymbol<string, string, string, string?>(@"REGEX_REPLACE", @"text", @"pattern", @"replacementPattern", RegexReplace),
             new FunctionSymbol<string, string, bool>(@"REGEX_MATCH", @"text", @"pattern", RegexMatch),
-            new FunctionSymbol<string, string>(@"REGEX_ESCAPE", @"text", RegexEscape),
-            new FunctionSymbol<string, string>(@"REGEX_UNESCAPE", @"text", RegexUnescape),
-            new FunctionSymbol<object, string, string>(@"FORMAT", @"value", @"format", Format),
-            new FunctionSymbol<object, string, string, string>(@"FORMAT", @"value", @"format", @"culture", Format),
-            new FunctionSymbol<string, int, string>(@"REPLICATE", @"text", @"count", Replicate),
-            new FunctionSymbol<string, string>(@"REVERSE", @"text", Reverse),
-            new FunctionSymbol<string, int, string>(@"LEFT", @"text", @"numberOfChars", Left),
-            new FunctionSymbol<string, int, string>(@"RIGHT", @"text", @"numberOfChars", Right),
-            new FunctionSymbol<int, string>(@"SPACE", @"numberOfSpaces", Space),
-            new FunctionSymbol<string, int, string>(@"LPAD", @"text", @"totalWidth", LPad),
-            new FunctionSymbol<string, int, string>(@"RPAD", @"text", @"totalWidth", RPad),
+            new FunctionSymbol<string, string?>(@"REGEX_ESCAPE", @"text", RegexEscape),
+            new FunctionSymbol<string, string?>(@"REGEX_UNESCAPE", @"text", RegexUnescape),
+            new FunctionSymbol<object, string, string?>(@"FORMAT", @"value", @"format", Format),
+            new FunctionSymbol<object, string, string, string?>(@"FORMAT", @"value", @"format", @"culture", Format),
+            new FunctionSymbol<string, int, string?>(@"REPLICATE", @"text", @"count", Replicate),
+            new FunctionSymbol<string, string?>(@"REVERSE", @"text", Reverse),
+            new FunctionSymbol<string, int, string?>(@"LEFT", @"text", @"numberOfChars", Left),
+            new FunctionSymbol<string, int, string?>(@"RIGHT", @"text", @"numberOfChars", Right),
+            new FunctionSymbol<int, string?>(@"SPACE", @"numberOfSpaces", Space),
+            new FunctionSymbol<string, int, string?>(@"LPAD", @"text", @"totalWidth", LPad),
+            new FunctionSymbol<string, int, string?>(@"RPAD", @"text", @"totalWidth", RPad),
 
             new FunctionSymbol<DateTime>(@"GETDATE", GetDate),
             new FunctionSymbol<DateTime>(@"GETUTCDATE", GetUtcDate),
@@ -292,7 +292,7 @@ internal static class BuiltInFunctions
         return Convert.ToSingle(value, GetCultureInfo(culture));
     }
 
-    private static string ToString(object value)
+    private static string? ToString(object value)
     {
         if (value is null)
             return null;
@@ -300,7 +300,7 @@ internal static class BuiltInFunctions
         return Convert.ToString(value, CultureInfo.InvariantCulture);
     }
 
-    private static string ToString(object value, string culture)
+    private static string? ToString(object value, string culture)
     {
         if (value is null)
             return null;
@@ -376,7 +376,7 @@ internal static class BuiltInFunctions
         return Math.Round(v, decimals, MidpointRounding.AwayFromZero);
     }
 
-    private static string GetSoundexCode(string text)
+    private static string? GetSoundexCode(string text)
     {
         if (text is null)
             return null;
@@ -403,7 +403,7 @@ internal static class BuiltInFunctions
         return text.IndexOf(chars, StringComparison.InvariantCulture) + 1;
     }
 
-    private static string Substring(string text, int start, int length)
+    private static string? Substring(string text, int start, int length)
     {
         if (text is null)
             return null;
@@ -420,7 +420,7 @@ internal static class BuiltInFunctions
         return text.Substring(start - 1, length);
     }
 
-    private static string Substring(string text, int start)
+    private static string? Substring(string text, int start)
     {
         if (text is null)
             return null;
@@ -428,42 +428,42 @@ internal static class BuiltInFunctions
         return Substring(text, start, text.Length);
     }
 
-    private static string Upper(string text)
+    private static string? Upper(string text)
     {
         return text?.ToUpper(CultureInfo.InvariantCulture);
     }
 
-    private static string Upper(string text, string culture)
+    private static string? Upper(string text, string culture)
     {
         return text?.ToUpper(GetCultureInfo(culture));
     }
 
-    private static string Lower(string text)
+    private static string? Lower(string text)
     {
         return text?.ToLower(CultureInfo.InvariantCulture);
     }
 
-    private static string Lower(string text, string culture)
+    private static string? Lower(string text, string culture)
     {
         return text?.ToLower(GetCultureInfo(culture));
     }
 
-    private static string Trim(string text)
+    private static string? Trim(string text)
     {
         return text?.Trim();
     }
 
-    private static string LTrim(string text)
+    private static string? LTrim(string text)
     {
         return text?.TrimStart(' ', '\t');
     }
 
-    private static string RTrim(string text)
+    private static string? RTrim(string text)
     {
         return text?.TrimEnd(' ', '\t');
     }
 
-    private static string Replace(string text, string oldValue, string newValue)
+    private static string? Replace(string text, string oldValue, string newValue)
     {
         if (text is null || oldValue is null || newValue is null)
             return null;
@@ -471,7 +471,7 @@ internal static class BuiltInFunctions
         return text.Replace(oldValue, newValue);
     }
 
-    private static string RegexReplace(string text, string pattern, string replacementPattern)
+    private static string? RegexReplace(string text, string pattern, string replacementPattern)
     {
         if (text is null || pattern is null || replacementPattern is null)
             return null;
@@ -487,7 +487,7 @@ internal static class BuiltInFunctions
         return Regex.IsMatch(text, pattern);
     }
 
-    private static string RegexEscape(string text)
+    private static string? RegexEscape(string text)
     {
         if (text is null)
             return null;
@@ -495,7 +495,7 @@ internal static class BuiltInFunctions
         return Regex.Escape(text);
     }
 
-    private static string RegexUnescape(string text)
+    private static string? RegexUnescape(string text)
     {
         if (text is null)
             return null;
@@ -503,23 +503,23 @@ internal static class BuiltInFunctions
         return Regex.Unescape(text);
     }
 
-    private static string Format(object value, string format)
+    private static string? Format(object value, string format)
     {
         return Format(value, format, CultureInfo.InvariantCulture);
     }
 
-    private static string Format(object value, string format, string culture)
+    private static string? Format(object value, string format, string culture)
     {
         return Format(value, format, GetCultureInfo(culture));
     }
 
-    private static string Format(object value, string format, IFormatProvider formatProvider)
+    private static string? Format(object value, string format, IFormatProvider formatProvider)
     {
         var embeddedFormatString = string.Format(CultureInfo.InvariantCulture, @"{{0:{0}}}", format);
         return string.Format(formatProvider, embeddedFormatString, value);
     }
 
-    private static string Replicate(string text, int count)
+    private static string? Replicate(string text, int count)
     {
         if (text is null)
             return null;
@@ -530,7 +530,7 @@ internal static class BuiltInFunctions
         return sb.ToString();
     }
 
-    private static string Reverse(string text)
+    private static string? Reverse(string text)
     {
         if (text is null)
             return null;
@@ -541,7 +541,7 @@ internal static class BuiltInFunctions
         return sb.ToString();
     }
 
-    private static string Left(string text, int numberOfChars)
+    private static string? Left(string text, int numberOfChars)
     {
         if (text is null)
             return null;
@@ -552,7 +552,7 @@ internal static class BuiltInFunctions
         return text[..numberOfChars];
     }
 
-    private static string Right(string text, int numberOfChars)
+    private static string? Right(string text, int numberOfChars)
     {
         if (text is null)
             return null;
@@ -563,7 +563,7 @@ internal static class BuiltInFunctions
         return text[^numberOfChars..];
     }
 
-    private static string Space(int numberOfSpaces)
+    private static string? Space(int numberOfSpaces)
     {
         if (numberOfSpaces <= 0)
             return string.Empty;
@@ -571,12 +571,12 @@ internal static class BuiltInFunctions
         return Replicate(@" ", numberOfSpaces);
     }
 
-    private static string LPad(string text, int totalWidth)
+    private static string? LPad(string text, int totalWidth)
     {
         return text?.PadLeft(totalWidth);
     }
 
-    private static string RPad(string text, int totalWidth)
+    private static string? RPad(string text, int totalWidth)
     {
         return text?.PadRight(totalWidth);
     }

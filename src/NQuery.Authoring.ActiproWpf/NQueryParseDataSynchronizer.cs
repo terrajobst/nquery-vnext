@@ -5,7 +5,7 @@ namespace NQuery.Authoring.ActiproWpf;
 internal sealed class NQueryParseDataSynchronizer
 {
     private readonly ICodeDocument _codeDocument;
-    private readonly Workspace _workspace;
+    private readonly Workspace? _workspace;
 
     public NQueryParseDataSynchronizer(ICodeDocument codeDocument, Workspace workspace)
     {
@@ -14,7 +14,7 @@ internal sealed class NQueryParseDataSynchronizer
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
     }
 
-    private async void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private async void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         var document = _workspace.CurrentDocument;
         var syntaxTree = await document.GetSyntaxTreeAsync();

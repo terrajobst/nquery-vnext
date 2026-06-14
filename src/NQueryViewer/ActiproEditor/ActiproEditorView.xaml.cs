@@ -50,13 +50,13 @@ internal sealed partial class ActiproEditorView : IActiproEditorView
         EditorHost.Content = _syntaxEditor;
     }
 
-    private void SyntaxEditorOnViewSelectionChanged(object sender, EditorViewSelectionEventArgs e)
+    private void SyntaxEditorOnViewSelectionChanged(object? sender, EditorViewSelectionEventArgs e)
     {
         OnCaretPositionChanged();
         OnSelectionChanged();
     }
 
-    private void SyntaxEditorOnLayoutUpdated(object sender, EventArgs e)
+    private void SyntaxEditorOnLayoutUpdated(object? sender, EventArgs e)
     {
         OnZoomLevelChanged();
     }

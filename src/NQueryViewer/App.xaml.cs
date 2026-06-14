@@ -59,7 +59,7 @@ internal sealed partial class App
         return new AggregateCatalog(assemblyCatalogs);
     }
 
-    private static AssemblyName TryGetAssemblyName(string path)
+    private static AssemblyName? TryGetAssemblyName(string path)
     {
         try
         {

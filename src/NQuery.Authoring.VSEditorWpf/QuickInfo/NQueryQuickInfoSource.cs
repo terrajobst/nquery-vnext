@@ -33,7 +33,7 @@ internal sealed class NQueryQuickInfoSource : IQuickInfoSource
     {
     }
 
-    public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan)
+    public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan? applicableToSpan)
     {
         applicableToSpan = null;
 
@@ -52,7 +52,7 @@ internal sealed class NQueryQuickInfoSource : IQuickInfoSource
         quickInfoContent.Add(content);
     }
 
-    private FrameworkElement GetContent(QuickInfoModel model)
+    private FrameworkElement? GetContent(QuickInfoModel model)
     {
         if (model.Markup.Tokens.Length == 0)
             return null;

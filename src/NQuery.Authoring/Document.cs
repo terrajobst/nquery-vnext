@@ -4,9 +4,9 @@ namespace NQuery.Authoring;
 
 public sealed class Document
 {
-    private Task<SyntaxTree> _syntaxTreeTask;
-    private Task<Compilation> _compilationTask;
-    private Task<SemanticModel> _semanticModelTask;
+    private Task<SyntaxTree>? _syntaxTreeTask;
+    private Task<Compilation>? _compilationTask;
+    private Task<SemanticModel>? _semanticModelTask;
 
     public Document(DocumentKind kind, DataContext dataContext, SourceText text)
     {

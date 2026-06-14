@@ -17,7 +17,7 @@ internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
     [Import]
     public IBraceMatcherService BraceMatcherService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQueryBraceTagger(workspace, textView, BraceMatcherService) as ITagger<T>;

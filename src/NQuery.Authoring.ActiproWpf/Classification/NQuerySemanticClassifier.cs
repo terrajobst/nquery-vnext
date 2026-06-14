@@ -9,7 +9,7 @@ namespace NQuery.Authoring.ActiproWpf.Classification;
 internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificationTag>
 {
     private readonly INQueryClassificationTypes _classificationTypes;
-    private readonly Workspace _workspace;
+    private readonly Workspace? _workspace;
 
     public NQuerySemanticClassifier(ICodeDocument document)
         : base(nameof(NQuerySemanticClassifier), null, document, true)
@@ -24,7 +24,7 @@ internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificatio
         UpdateTagsAsync();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateTagsAsync();
     }

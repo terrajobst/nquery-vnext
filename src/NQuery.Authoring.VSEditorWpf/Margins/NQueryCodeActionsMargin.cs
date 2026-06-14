@@ -79,22 +79,22 @@ internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICod
         return new TextBufferCodeActionModel(kind, a, _textViewHost.TextView.TextBuffer, _textBufferUndoManager);
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         UpdateGlyphAsync();
     }
 
-    private void CaretOnPositionChanged(object sender, CaretPositionChangedEventArgs e)
+    private void CaretOnPositionChanged(object? sender, CaretPositionChangedEventArgs e)
     {
         UpdateGlyphAsync();
     }
 
-    private void TextViewOnLayoutChanged(object sender, TextViewLayoutChangedEventArgs e)
+    private void TextViewOnLayoutChanged(object? sender, TextViewLayoutChangedEventArgs e)
     {
         UpdateGlyphAsync();
     }
 
-    private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
+    private void TextViewOnZoomLevelChanged(object? sender, ZoomLevelChangedEventArgs e)
     {
         LayoutTransform = e.ZoomTransform;
     }
@@ -133,7 +133,7 @@ internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICod
     {
     }
 
-    public ITextViewMargin GetTextViewMargin(string marginName)
+    public ITextViewMargin? GetTextViewMargin(string marginName)
     {
         return null;
     }

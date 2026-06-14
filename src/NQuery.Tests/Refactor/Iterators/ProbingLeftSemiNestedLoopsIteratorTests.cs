@@ -9,7 +9,7 @@ public class ProbingLeftSemiNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2 };
         var rightRows = new object[] { 3, 4 };
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, true},
             {2, true}
@@ -65,7 +65,7 @@ public class ProbingLeftSemiNestedLoopsIteratorTests : IteratorTests
     {
         var leftRows = new object[] { 1, 2, 3 };
         var rightRows = Array.Empty<object>();
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, false},
             {2, false},
@@ -82,7 +82,7 @@ public class ProbingLeftSemiNestedLoopsIteratorTests : IteratorTests
     [Fact]
     public void Iterators_ProbingLeftSemiNestedLoops_MatchesRows()
     {
-        var leftRows = new object[,]
+        var leftRows = new object?[,]
         {
             {1, "1-Left"},
             {2, "2-Left-A"},
@@ -94,7 +94,7 @@ public class ProbingLeftSemiNestedLoopsIteratorTests : IteratorTests
 
         var rightRows = new object[] { 2, 3, 3, 5 };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {1, "1-Left", false},
             {2, "2-Left-A", true},

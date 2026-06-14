@@ -99,7 +99,7 @@ internal static class OverloadResolution
         return -betterConversionsInX.CompareTo(betterConversionsInY);
     }
 
-    private static void GetBestAndSelectedCandidate<T>(IEnumerable<OverloadResolutionCandidate<T>> candidates, out OverloadResolutionCandidate<T> best, out OverloadResolutionCandidate<T> selected)
+    private static void GetBestAndSelectedCandidate<T>(IEnumerable<OverloadResolutionCandidate<T>> candidates, out OverloadResolutionCandidate<T>? best, out OverloadResolutionCandidate<T>? selected)
         where T : Signature
     {
         best = null;

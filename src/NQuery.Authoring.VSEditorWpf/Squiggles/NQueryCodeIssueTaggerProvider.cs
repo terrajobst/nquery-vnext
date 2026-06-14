@@ -17,7 +17,7 @@ internal sealed class NQueryCodeIssueTaggerProvider : IViewTaggerProvider
     [Import]
     public ICodeIssueProviderService CodeIssueProviderService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQueryCodeIssueTagger(workspace, CodeIssueProviderService) as ITagger<T>;

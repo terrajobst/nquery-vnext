@@ -26,13 +26,13 @@ public static class QuickInfoExtensions
                };
     }
 
-    public static QuickInfoModel GetQuickInfoModel(this SemanticModel semanticModel, int position)
+    public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position)
     {
         var providers = GetStandardQuickInfoModelProviders();
         return semanticModel.GetQuickInfoModel(position, providers);
     }
 
-    public static QuickInfoModel GetQuickInfoModel(this SemanticModel semanticModel, int position, IEnumerable<IQuickInfoModelProvider> providers)
+    public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position, IEnumerable<IQuickInfoModelProvider> providers)
     {
         return (from p in providers
                 let m = p.GetModel(semanticModel, position)

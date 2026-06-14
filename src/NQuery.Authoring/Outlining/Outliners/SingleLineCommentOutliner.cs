@@ -13,8 +13,8 @@ internal sealed class SingleLineCommentOutliner : SyntaxTokenOutliner
 
     private static IEnumerable<OutliningRegionSpan> GetConsecutiveCommentSpans(IEnumerable<SyntaxTrivia> trivias)
     {
-        SyntaxTrivia firstComment = null;
-        SyntaxTrivia lastComment = null;
+        SyntaxTrivia? firstComment = null;
+        SyntaxTrivia? lastComment = null;
 
         foreach (var trivia in trivias)
         {

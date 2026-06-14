@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class CommonTableExpressionQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionSyntax node)
     {
         if (!node.Name.Span.ContainsOrTouches(position))
             return null;

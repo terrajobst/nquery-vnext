@@ -17,7 +17,7 @@ internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
     [Import]
     public IHighlighterService HighlighterService { get; set; }
 
-    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    public ITagger<T>? CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
     {
         var workspace = buffer.GetWorkspace();
         return new NQueryHighlightingTagger(workspace, textView, HighlighterService.Highlighters) as ITagger<T>;

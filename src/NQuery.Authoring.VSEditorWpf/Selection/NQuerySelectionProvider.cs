@@ -62,12 +62,12 @@ internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
         _selectionStack.Clear();
     }
 
-    private void SelectionOnSelectionChanged(object sender, EventArgs e)
+    private void SelectionOnSelectionChanged(object? sender, EventArgs e)
     {
         ClearStack();
     }
 
-    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         ClearStack();
     }

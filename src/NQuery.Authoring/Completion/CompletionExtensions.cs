@@ -38,7 +38,7 @@ public static class CompletionExtensions
         return new CompletionModel(semanticModel, applicableSpan, sortedItems);
     }
 
-    private static SyntaxToken GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
+    private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
     {
         var syntaxToken = root.FindTokenOnLeft(position);
         return syntaxToken.Kind.IsIdentifierOrKeyword() && syntaxToken.Span.ContainsOrTouches(position)

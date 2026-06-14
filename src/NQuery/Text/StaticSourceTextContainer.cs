@@ -12,7 +12,7 @@ internal class StaticSourceTextContainer : SourceTextContainer
 
     public override SourceText Current { get; }
 
-    public override event EventHandler<EventArgs> CurrentChanged
+    public override event EventHandler<EventArgs>? CurrentChanged
     {
         add { }
         remove { }

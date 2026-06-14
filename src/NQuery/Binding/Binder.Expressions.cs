@@ -19,7 +19,7 @@ partial class Binder
         }
     }
 
-    private static Type FindCommonType(ImmutableArray<BoundExpression> boundExpressions)
+    private static Type? FindCommonType(ImmutableArray<BoundExpression> boundExpressions)
     {
         // The common type C among a type set T1..TN is defined as follows:
         //
@@ -31,7 +31,7 @@ partial class Binder
         //
         // (3) C has to be the only type for which (1) and (2) hold.
 
-        Type commonType = null;
+        Type? commonType = null;
 
         foreach (var target in boundExpressions)
         {
@@ -138,7 +138,7 @@ partial class Binder
         return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
     }
 
-    private void BindToCommonType(TextSpan diagnosticSpan, IBoundValue left, IBoundValue right, out BoundExpression newLeft, out BoundExpression newRight)
+    private void BindToCommonType(TextSpan diagnosticSpan, IBoundValue left, IBoundValue right, out BoundExpression? newLeft, out BoundExpression? newRight)
     {
         newLeft = null;
         newRight = null;
@@ -343,7 +343,7 @@ partial class Binder
         return new BoundUnaryExpression(operatorKind, result, convertedArgument);
     }
 
-    private BoundExpression BindOptionalNegation(TextSpan diagnosticSpan, SyntaxToken notKeyword, BoundExpression expression)
+    private BoundExpression BindOptionalNegation(TextSpan diagnosticSpan, SyntaxToken? notKeyword, BoundExpression expression)
     {
         return notKeyword is null
                    ? expression
@@ -399,7 +399,7 @@ partial class Binder
         return new BoundBinaryExpression(convertedLeft, operatorKind, result, convertedRight);
     }
 
-    private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, SyntaxToken notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
+    private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, SyntaxToken? notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
     {
         var expression = BindBinaryExpression(diagnosticSpan, operatorKind, left, right);
         return BindOptionalNegation(diagnosticSpan, notKeyword, expression);
@@ -874,7 +874,7 @@ partial class Binder
         return BindAggregate(node, boundAggregate);
     }
 
-    private IAggregatable BindAggregatable(TextSpan errorSpan, AggregateSymbol aggregate, BoundExpression boundArgument)
+    private IAggregatable? BindAggregatable(TextSpan errorSpan, AggregateSymbol aggregate, BoundExpression boundArgument)
     {
         var aggregatable = boundArgument.Type.IsError()
             ? null

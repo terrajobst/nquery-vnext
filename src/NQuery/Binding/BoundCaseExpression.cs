@@ -5,7 +5,7 @@ namespace NQuery.Binding;
 
 internal sealed class BoundCaseExpression : BoundExpression
 {
-    public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
+    public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression? elseExpression)
     {
         CaseLabels = caseLabels.ToImmutableArray();
         ElseExpression = elseExpression;
@@ -23,7 +23,7 @@ internal sealed class BoundCaseExpression : BoundExpression
 
     public ImmutableArray<BoundCaseLabel> CaseLabels { get; }
 
-    public BoundExpression ElseExpression { get; }
+    public BoundExpression? ElseExpression { get; }
 
     public override string ToString()
     {

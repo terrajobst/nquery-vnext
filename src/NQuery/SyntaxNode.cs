@@ -139,12 +139,12 @@ public abstract class SyntaxNode
                select n.AsToken();
     }
 
-    public SyntaxToken FirstToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+    public SyntaxToken? FirstToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
     {
         return SyntaxTreeNavigation.GetFirstToken(this, includeZeroLength, includeSkippedTokens);
     }
 
-    public SyntaxToken LastToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+    public SyntaxToken? LastToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
     {
         return SyntaxTreeNavigation.GetLastToken(this, includeZeroLength, includeSkippedTokens);
     }
@@ -191,7 +191,7 @@ public abstract class SyntaxNode
 
     public SyntaxTree SyntaxTree { get; }
 
-    public SyntaxNode Parent
+    public SyntaxNode? Parent
     {
         get { return SyntaxTree.GetParentNode(this); }
     }

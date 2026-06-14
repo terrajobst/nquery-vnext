@@ -6,12 +6,12 @@ namespace NQuery.Symbols;
 
 public sealed class CommonTableExpressionSymbol : TableSymbol
 {
-    private readonly BoundQuery _anchor;
+    private readonly BoundQuery? _anchor;
     private readonly ImmutableArray<BoundQuery> _recursiveMembers;
 
     internal CommonTableExpressionSymbol(
         string name,
-        Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
+        Func<CommonTableExpressionSymbol, (BoundQuery? Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
     )
         : this(name, anchorBinder, _ => ImmutableArray<BoundQuery>.Empty)
     {
@@ -19,7 +19,7 @@ public sealed class CommonTableExpressionSymbol : TableSymbol
 
     internal CommonTableExpressionSymbol(
         string name,
-        Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
+        Func<CommonTableExpressionSymbol, (BoundQuery? Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
         Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> recursiveBinder
     )
         : base(name)
@@ -40,7 +40,7 @@ public sealed class CommonTableExpressionSymbol : TableSymbol
 
     public override ImmutableArray<ColumnSymbol> Columns { get; }
 
-    internal BoundQuery Anchor => _anchor;
+    internal BoundQuery? Anchor => _anchor;
 
     internal ImmutableArray<BoundQuery> RecursiveMembers => _recursiveMembers;
 }

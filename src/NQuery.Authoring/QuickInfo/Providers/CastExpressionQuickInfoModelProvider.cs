@@ -5,7 +5,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class CastExpressionQuickInfoModelProvider : QuickInfoModelProvider<CastExpressionSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CastExpressionSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, CastExpressionSyntax node)
     {
         var keywordSpan = node.CastKeyword.Span;
         return !keywordSpan.ContainsOrTouches(position)

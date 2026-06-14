@@ -9,14 +9,14 @@ public sealed partial class DiagnosticGrid
         InitializeComponent();
     }
 
-    public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
+    public void UpdateGrid(IEnumerable<Diagnostic>? diagnostics, SourceText? sourceText)
     {
         DataContext = diagnostics is null || sourceText is null
                           ? null
                           : new DiagnosticsViewModel(diagnostics, sourceText);
     }
 
-    public Diagnostic SelectedDiagnostic
+    public Diagnostic? SelectedDiagnostic
     {
         get
         {

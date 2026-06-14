@@ -2,7 +2,7 @@ namespace NQuery.Binding;
 
 internal sealed class BoundLiteralExpression : BoundExpression
 {
-    public BoundLiteralExpression(object value)
+    public BoundLiteralExpression(object? value)
     {
         Value = value;
     }
@@ -22,7 +22,7 @@ internal sealed class BoundLiteralExpression : BoundExpression
         }
     }
 
-    public object Value { get; }
+    public object? Value { get; }
 
     public override string ToString()
     {

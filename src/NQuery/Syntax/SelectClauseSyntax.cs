@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class SelectClauseSyntax : SyntaxNode
 {
-    internal SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken distinctAllKeyword, TopClauseSyntax topClause, SeparatedSyntaxList<SelectColumnSyntax> selectColumns)
+    internal SelectClauseSyntax(SyntaxTree syntaxTree, SyntaxToken selectKeyword, SyntaxToken? distinctAllKeyword, TopClauseSyntax? topClause, SeparatedSyntaxList<SelectColumnSyntax> selectColumns)
         : base(syntaxTree)
     {
         SelectKeyword = selectKeyword;
@@ -29,9 +29,9 @@ public sealed class SelectClauseSyntax : SyntaxNode
 
     public SyntaxToken SelectKeyword { get; }
 
-    public SyntaxToken DistinctAllKeyword { get; }
+    public SyntaxToken? DistinctAllKeyword { get; }
 
-    public TopClauseSyntax TopClause { get; }
+    public TopClauseSyntax? TopClause { get; }
 
     public SeparatedSyntaxList<SelectColumnSyntax> Columns { get; }
 }

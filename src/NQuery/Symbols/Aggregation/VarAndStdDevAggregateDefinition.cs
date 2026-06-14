@@ -16,7 +16,7 @@ public abstract class VarAndStdDevAggregateDefinition : AggregateDefinition
         get { return _isVar ? @"VAR" : @"STDEV"; }
     }
 
-    public override IAggregatable CreateAggregatable(Type argumentType)
+    public override IAggregatable? CreateAggregatable(Type argumentType)
     {
         if (argumentType == typeof(byte) ||
             argumentType == typeof(sbyte) ||
@@ -79,7 +79,7 @@ public abstract class VarAndStdDevAggregateDefinition : AggregateDefinition
             _count = 0;
         }
 
-        public void Accumulate(object value)
+        public void Accumulate(object? value)
         {
             var valueAsDecimal = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
             _sum += valueAsDecimal;
@@ -87,7 +87,7 @@ public abstract class VarAndStdDevAggregateDefinition : AggregateDefinition
             _count++;
         }
 
-        public object GetResult()
+        public object? GetResult()
         {
             if (_count < 2)
                 return null;

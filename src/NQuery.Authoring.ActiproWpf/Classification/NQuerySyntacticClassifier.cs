@@ -19,7 +19,7 @@ internal sealed class NQuerySyntacticClassifier : CollectionTagger<IClassificati
         UpdateTagsAsync();
     }
 
-    private void DocumentOnParseDataChanged(object sender, ParseDataPropertyChangedEventArgs e)
+    private void DocumentOnParseDataChanged(object? sender, ParseDataPropertyChangedEventArgs e)
     {
         UpdateTagsAsync();
     }

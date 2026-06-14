@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class InExpressionSyntax : ExpressionSyntax
 {
-    internal InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
+    internal InExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, ArgumentListSyntax argumentList)
         : base(syntaxTree)
     {
         Expression = expression;
@@ -27,7 +27,7 @@ public sealed class InExpressionSyntax : ExpressionSyntax
 
     public ExpressionSyntax Expression { get; }
 
-    public SyntaxToken NotKeyword { get; }
+    public SyntaxToken? NotKeyword { get; }
 
     public SyntaxToken InKeyword { get; }
 

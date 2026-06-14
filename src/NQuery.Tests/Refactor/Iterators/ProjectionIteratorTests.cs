@@ -42,13 +42,13 @@ public class ProjectionIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Projection_SwapsEntries()
     {
-        var rows = new object[,]
+        var rows = new object?[,]
         {
             {1, "One"},
             {2, "Two"}
         };
 
-        var expected = new object[,]
+        var expected = new object?[,]
         {
             {"One", 1},
             {"Two", 2}
@@ -68,7 +68,7 @@ public class ProjectionIteratorTests : IteratorTests
     [Fact]
     public void Iterators_Projection_RemovesEntries()
     {
-        var rows = new object[,]
+        var rows = new object?[,]
         {
             {1, "One"},
             {2, "Two"}

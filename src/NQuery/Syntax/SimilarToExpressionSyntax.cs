@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class SimilarToExpressionSyntax : ExpressionSyntax
 {
-    internal SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
+    internal SimilarToExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken similarKeyword, SyntaxToken toKeyword, ExpressionSyntax right)
         : base(syntaxTree)
     {
         Left = left;
@@ -29,7 +29,7 @@ public sealed class SimilarToExpressionSyntax : ExpressionSyntax
 
     public ExpressionSyntax Left { get; }
 
-    public SyntaxToken NotKeyword { get; }
+    public SyntaxToken? NotKeyword { get; }
 
     public SyntaxToken SimilarKeyword { get; }
 

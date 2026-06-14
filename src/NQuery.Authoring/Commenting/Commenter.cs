@@ -77,7 +77,7 @@ public static class Commenter
             : syntaxTree.CommentMultiLineComment(textSpan);
     }
 
-    private static SyntaxTrivia GetMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
+    private static SyntaxTrivia? GetMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
     {
         if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
             return null;

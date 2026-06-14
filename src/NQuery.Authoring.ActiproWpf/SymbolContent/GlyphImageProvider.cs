@@ -15,7 +15,7 @@ internal sealed class GlyphImageProvider : IImageSourceProvider
         _glyph = glyph;
     }
 
-    public ImageSource GetImageSource()
+    public ImageSource? GetImageSource()
     {
         return NQueryGlyphImageSource.Get(_glyph);
     }

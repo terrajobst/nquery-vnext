@@ -8,7 +8,7 @@ internal sealed class BoundWildcardSelectColumn : BoundNode
 {
     private readonly ImmutableArray<TableColumnInstanceSymbol> _tableColumns;
 
-    public BoundWildcardSelectColumn(TableInstanceSymbol table, IEnumerable<TableColumnInstanceSymbol> columns)
+    public BoundWildcardSelectColumn(TableInstanceSymbol? table, IEnumerable<TableColumnInstanceSymbol> columns)
     {
         Table = table;
         _tableColumns = columns.ToImmutableArray();
@@ -20,7 +20,7 @@ internal sealed class BoundWildcardSelectColumn : BoundNode
         get { return BoundNodeKind.WildcardSelectColumn; }
     }
 
-    public TableInstanceSymbol Table { get; }
+    public TableInstanceSymbol? Table { get; }
 
     public ImmutableArray<TableColumnInstanceSymbol> TableColumns
     {

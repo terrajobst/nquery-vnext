@@ -71,7 +71,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
             _table.Remove(entry.PropertySymbol.Name);
         }
 
-        public Entry this[string propertyName]
+        public Entry? this[string propertyName]
         {
             get
             {
@@ -135,7 +135,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
             _table.Remove(entry.Key);
         }
 
-        public Entry this[string methodName, IEnumerable<Type> parameterTypes]
+        public Entry? this[string methodName, IEnumerable<Type> parameterTypes]
         {
             get
             {

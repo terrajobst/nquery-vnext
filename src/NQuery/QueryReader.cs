@@ -10,7 +10,7 @@ public sealed class QueryReader : IDisposable
     private readonly ImmutableArray<Type> _columnTypes;
     private readonly bool _schemaOnly;
 
-    private Iterator _iterator;
+    private Iterator? _iterator;
     private bool _isBof;
 
     internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, bool schemaOnly)

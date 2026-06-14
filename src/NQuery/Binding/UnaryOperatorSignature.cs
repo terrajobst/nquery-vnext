@@ -7,7 +7,7 @@ internal sealed class UnaryOperatorSignature : Signature
     private readonly Type _returnType;
     private readonly Type _argumentType;
 
-    private UnaryOperatorSignature(UnaryOperatorKind kind, Type returnType, Type argumentType, MethodInfo methodInfo)
+    private UnaryOperatorSignature(UnaryOperatorKind kind, Type returnType, Type argumentType, MethodInfo? methodInfo)
     {
         Kind = kind;
         _returnType = returnType;
@@ -42,7 +42,7 @@ internal sealed class UnaryOperatorSignature : Signature
 
     public UnaryOperatorKind Kind { get; }
 
-    public MethodInfo MethodInfo { get; }
+    public MethodInfo? MethodInfo { get; }
 
     public override string ToString()
     {

@@ -97,7 +97,7 @@ public sealed partial class IntrinsicOperatorTests
         }
     }
 
-    private static string GetExpressionTypeString(Type type)
+    private static string GetExpressionTypeString(Type? type)
     {
         if (type == typeof(byte))
             return "byte";

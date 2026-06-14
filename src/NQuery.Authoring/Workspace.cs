@@ -47,7 +47,7 @@ public sealed class Workspace
         }
     }
 
-    private void TextContainerOnCurrentChanged(object sender, EventArgs e)
+    private void TextContainerOnCurrentChanged(object? sender, EventArgs e)
     {
         OnCurrentDocumentChanged();
     }
@@ -58,5 +58,5 @@ public sealed class Workspace
         handler?.Invoke(this, EventArgs.Empty);
     }
 
-    public event EventHandler<EventArgs> CurrentDocumentChanged;
+    public event EventHandler<EventArgs>? CurrentDocumentChanged;
 }

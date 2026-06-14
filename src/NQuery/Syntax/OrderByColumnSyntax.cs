@@ -2,7 +2,7 @@ namespace NQuery.Syntax;
 
 public sealed class OrderByColumnSyntax : SyntaxNode
 {
-    internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken modifier)
+    internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier)
         : base(syntaxTree)
     {
         ColumnSelector = columnSelector;
@@ -23,5 +23,5 @@ public sealed class OrderByColumnSyntax : SyntaxNode
 
     public ExpressionSyntax ColumnSelector { get; }
 
-    public SyntaxToken Modifier { get; }
+    public SyntaxToken? Modifier { get; }
 }

@@ -4,12 +4,12 @@ namespace NQuery.Tests.Refactor.Iterators;
 
 internal sealed class MockedIterator : Iterator
 {
-    private readonly IReadOnlyList<object[]> _rows;
+    private readonly IReadOnlyList<object?[]> _rows;
     private readonly MockedRowBuffer _rowBuffer;
 
     private int _rowIndex;
 
-    public MockedIterator(object[] rows)
+    public MockedIterator(object?[] rows)
     {
         if (rows.Any(v => v is object[]))
             throw new ArgumentException("Nested array detected. Use two-dimensional array for multiple columns.");
@@ -18,16 +18,16 @@ internal sealed class MockedIterator : Iterator
         _rowBuffer = new MockedRowBuffer(1);
     }
 
-    public MockedIterator(object[,] rows)
+    public MockedIterator(object?[,] rows)
     {
         var rowCount = rows.GetLength(0);
         var entryCount = rows.GetLength(1);
 
-        var rowArray = new object[rowCount][];
+        var rowArray = new object?[rowCount][];
 
         for (var i = 0; i < rowCount; i++)
         {
-            rowArray[i] = new object[entryCount];
+            rowArray[i] = new object?[entryCount];
 
             for (var j = 0; j < entryCount; j++)
             {

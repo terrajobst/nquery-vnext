@@ -22,7 +22,7 @@ internal sealed class BoundFunctionInvocationExpression : BoundExpression
         get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
     }
 
-    public FunctionSymbol Symbol
+    public FunctionSymbol? Symbol
     {
         get { return Result.Selected?.Signature.Symbol; }
     }

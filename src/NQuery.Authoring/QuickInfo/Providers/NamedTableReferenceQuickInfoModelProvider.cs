@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class NamedTableReferenceQuickInfoModelProvider : QuickInfoModelProvider<NamedTableReferenceSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, NamedTableReferenceSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, NamedTableReferenceSyntax node)
     {
         var symbol = semanticModel.GetDeclaredSymbol(node);
         if (symbol is null)

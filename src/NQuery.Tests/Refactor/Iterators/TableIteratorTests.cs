@@ -47,7 +47,7 @@ public class TableIteratorTests : IteratorTests
         {
         }
 
-        public object Current { get; }
+        public object? Current { get; }
 
         public int DisposalCount { get; private set; }
     }
@@ -68,7 +68,7 @@ public class TableIteratorTests : IteratorTests
         {
         }
 
-        public object Current { get; }
+        public object? Current { get; }
     }
 
     [Fact]

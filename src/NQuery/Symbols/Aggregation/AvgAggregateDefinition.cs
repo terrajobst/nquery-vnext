@@ -7,7 +7,7 @@ public sealed class AvgAggregateDefinition : AggregateDefinition
         get { return @"AVG"; }
     }
 
-    public override IAggregatable CreateAggregatable(Type argumentType)
+    public override IAggregatable? CreateAggregatable(Type argumentType)
     {
         var sumAggregate = new SumAggregateDefinition();
         var sumAggregatable = sumAggregate.CreateAggregatable(argumentType);
@@ -89,13 +89,13 @@ public sealed class AvgAggregateDefinition : AggregateDefinition
             _countAggregator.Initialize();
         }
 
-        public void Accumulate(object value)
+        public void Accumulate(object? value)
         {
             _sumAggregator.Accumulate(value);
             _countAggregator.Accumulate(value);
         }
 
-        public object GetResult()
+        public object? GetResult()
         {
             var sum = _sumAggregator.GetResult();
             if (sum is null)

@@ -4,7 +4,7 @@ namespace NQuery.Authoring.QuickInfo.Providers;
 
 internal sealed class NameExpressionQuickInfoModelProvider : QuickInfoModelProvider<NameExpressionSyntax>
 {
-    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, NameExpressionSyntax node)
+    protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, NameExpressionSyntax node)
     {
         var symbol = semanticModel.GetSymbol(node);
         return symbol is null

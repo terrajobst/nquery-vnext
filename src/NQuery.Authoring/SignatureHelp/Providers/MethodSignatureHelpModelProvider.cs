@@ -6,7 +6,7 @@ namespace NQuery.Authoring.SignatureHelp.Providers;
 
 internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvider<MethodInvocationExpressionSyntax>
 {
-    protected override SignatureHelpModel GetModel(SemanticModel semanticModel, MethodInvocationExpressionSyntax node, int position)
+    protected override SignatureHelpModel? GetModel(SemanticModel semanticModel, MethodInvocationExpressionSyntax node, int position)
     {
         // TODO: We need to use the resolved symbol as the selected one.
 

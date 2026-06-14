@@ -5,14 +5,14 @@ namespace NQuery.Text;
 
 public abstract class SourceText
 {
-    private SourceTextContainer _container;
+    private SourceTextContainer? _container;
 
     protected SourceText()
         : this(null)
     {
     }
 
-    protected SourceText(SourceTextContainer container)
+    protected SourceText(SourceTextContainer? container)
     {
         _container = container;
     }

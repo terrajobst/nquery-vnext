@@ -10,7 +10,7 @@ public sealed class ConcatAggregateDefinition : AggregateDefinition
         get { return @"CONCAT"; }
     }
 
-    public override IAggregatable CreateAggregatable(Type argumentType)
+    public override IAggregatable? CreateAggregatable(Type argumentType)
     {
         return new ConcatAggregatable();
     }
@@ -37,7 +37,7 @@ public sealed class ConcatAggregateDefinition : AggregateDefinition
             _valueList.Clear();
         }
 
-        public void Accumulate(object value)
+        public void Accumulate(object? value)
         {
             if (value is null)
                 return;
@@ -55,7 +55,7 @@ public sealed class ConcatAggregateDefinition : AggregateDefinition
             _valueList.Add(strValue);
         }
 
-        public object GetResult()
+        public object? GetResult()
         {
             var sb = new StringBuilder(_valueList.Count * 8);
 

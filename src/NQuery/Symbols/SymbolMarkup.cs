@@ -11,12 +11,12 @@ public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
 
     public ImmutableArray<SymbolMarkupToken> Tokens { get; }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is SymbolMarkup other && Equals(other);
     }
 
-    public bool Equals(SymbolMarkup other)
+    public bool Equals(SymbolMarkup? other)
     {
         if (other.Tokens.Length != Tokens.Length)
             return false;

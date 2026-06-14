@@ -4,7 +4,7 @@ namespace NQuery.Binding;
 
 internal sealed class BoundOrderByColumn : BoundNode
 {
-    public BoundOrderByColumn(QueryColumnInstanceSymbol queryColumn, BoundComparedValue comparedValue)
+    public BoundOrderByColumn(QueryColumnInstanceSymbol? queryColumn, BoundComparedValue comparedValue)
     {
         QueryColumn = queryColumn;
         ComparedValue = comparedValue;
@@ -15,7 +15,7 @@ internal sealed class BoundOrderByColumn : BoundNode
         get { return BoundNodeKind.OrderByColumn; }
     }
 
-    public QueryColumnInstanceSymbol QueryColumn { get; }
+    public QueryColumnInstanceSymbol? QueryColumn { get; }
 
     public BoundComparedValue ComparedValue { get; }
 }

@@ -14,14 +14,14 @@ public sealed class ParameterItem : IEquatable<ParameterItem>
 
     public TextSpan Span { get; }
 
-    public bool Equals(ParameterItem other)
+    public bool Equals(ParameterItem? other)
     {
         return other is not null &&
                Name == other.Name &&
                Span == other.Span;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is ParameterItem other && Equals(other);
     }

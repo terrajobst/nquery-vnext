@@ -146,7 +146,7 @@ public sealed class EagerAndLazyTests
 
     private sealed class InvocationResult
     {
-        public object Result { get; set; }
+        public object? Result { get; set; }
         public int NullInt32FunctionCount { get; set; }
         public int NonNullInt32FunctionCount { get; set; }
     }

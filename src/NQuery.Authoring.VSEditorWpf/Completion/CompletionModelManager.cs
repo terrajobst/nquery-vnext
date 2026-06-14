@@ -15,8 +15,8 @@ internal sealed class CompletionModelManager : ICompletionModelManager
     private readonly ICompletionBroker _completionBroker;
     private readonly ICompletionProviderService _completionProviderService;
 
-    private ICompletionSession _session;
-    private CompletionModel _model;
+    private ICompletionSession? _session;
+    private CompletionModel? _model;
 
     public CompletionModelManager(Workspace workspace, ITextView textView, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
     {
@@ -62,7 +62,7 @@ internal sealed class CompletionModelManager : ICompletionModelManager
             Commit();
     }
 
-    private async void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    private async void WorkspaceOnCurrentDocumentChanged(object? sender, EventArgs e)
     {
         if (_session is not null)
             await UpdateModelAsync();
@@ -108,7 +108,7 @@ internal sealed class CompletionModelManager : ICompletionModelManager
         return !sendThrough;
     }
 
-    private void SessionOnDismissed(object sender, EventArgs e)
+    private void SessionOnDismissed(object? sender, EventArgs e)
     {
         _session = null;
     }
@@ -119,7 +119,7 @@ internal sealed class CompletionModelManager : ICompletionModelManager
         handler?.Invoke(this, e);
     }
 
-    public CompletionModel Model
+    public CompletionModel? Model
     {
         get { return _model; }
         private set
@@ -150,5 +150,5 @@ internal sealed class CompletionModelManager : ICompletionModelManager
         }
     }
 
-    public event EventHandler<EventArgs> ModelChanged;
+    public event EventHandler<EventArgs>? ModelChanged;
 }

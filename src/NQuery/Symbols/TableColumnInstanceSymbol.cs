@@ -4,7 +4,7 @@ namespace NQuery.Symbols;
 
 public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundValue
 {
-    private readonly IBoundValue _aliased;
+    private readonly IBoundValue? _aliased;
 
     // Real table: the column is its own value identity (its slot is minted by the algebrizer
     // at the table scan).

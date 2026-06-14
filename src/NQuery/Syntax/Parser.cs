@@ -64,7 +64,7 @@ internal sealed class Parser
         return _tokens[i];
     }
 
-    private SyntaxToken GetPreviousToken()
+    private SyntaxToken? GetPreviousToken()
     {
         var previousIndex = _tokenIndex - 1;
         return previousIndex < 0
@@ -87,7 +87,7 @@ internal sealed class Parser
                    : result.WithKind(result.ContextualKind);
     }
 
-    private SyntaxToken NextTokenIf(SyntaxKind kind)
+    private SyntaxToken? NextTokenIf(SyntaxKind kind)
     {
         return Current.Kind == kind
                    ? NextToken()
@@ -297,7 +297,7 @@ internal sealed class Parser
         return ParseSubExpression(null, 0);
     }
 
-    private ExpressionSyntax ParseSubExpression(ExpressionSyntax left, int precedence)
+    private ExpressionSyntax ParseSubExpression(ExpressionSyntax? left, int precedence)
     {
         if (left is null)
         {
@@ -359,7 +359,7 @@ internal sealed class Parser
         return new UnaryExpressionSyntax(_syntaxTree, operatorToken, expression);
     }
 
-    private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
+    private ExpressionSyntax ParseBinaryExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxKind binaryExpression, int operatorPrecedence)
     {
         var operatorToken = NextToken();
 
@@ -390,7 +390,7 @@ internal sealed class Parser
         return new BinaryExpressionSyntax(_syntaxTree, left, operatorToken, expression);
     }
 
-    private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken notKeyword)
+    private ExpressionSyntax ParseBetweenExpression(ExpressionSyntax left, SyntaxToken? notKeyword)
     {
         var andPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(SyntaxKind.LogicalAndExpression);
         var betweenKeyword = NextToken();
@@ -400,27 +400,27 @@ internal sealed class Parser
         return new BetweenExpressionSyntax(_syntaxTree, left, notKeyword, betweenKeyword, lowerBound, andKeyword, upperBound);
     }
 
-    private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+    private ExpressionSyntax ParseSimilarToExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
     {
         var toKeyword = Match(SyntaxKind.ToKeyword);
         var expression = ParseSubExpression(null, operatorPrecedence);
         return new SimilarToExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, toKeyword, expression);
     }
 
-    private ExpressionSyntax ParseSoundsLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
+    private ExpressionSyntax ParseSoundsLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken soundsKeywordToken)
     {
         var likeKeyword = Match(SyntaxKind.LikeKeyword);
         var expression = ParseSubExpression(null, operatorPrecedence);
         return new SoundsLikeExpressionSyntax(_syntaxTree, left, notKeyword, soundsKeywordToken, likeKeyword, expression);
     }
 
-    private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
+    private ExpressionSyntax ParseLikeExpression(ExpressionSyntax left, SyntaxToken? notKeyword, int operatorPrecedence, SyntaxToken operatorToken)
     {
         var expression = ParseSubExpression(null, operatorPrecedence);
         return new LikeExpressionSyntax(_syntaxTree, left, notKeyword, operatorToken, expression);
     }
 
-    private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken notKeyword, SyntaxToken operatorToken)
+    private ExpressionSyntax ParseInExpression(ExpressionSyntax left, SyntaxToken? notKeyword, SyntaxToken operatorToken)
     {
         var isQuery = CurrentIsStartingQuery();
         if (!isQuery)
@@ -592,7 +592,7 @@ internal sealed class Parser
         return new CaseExpressionSyntax(_syntaxTree, caseKeyword, inputExpression, caseLabels, elseLabel, endKeyword);
     }
 
-    private ExpressionSyntax ParseOptionalCaseInputExpression()
+    private ExpressionSyntax? ParseOptionalCaseInputExpression()
     {
         var hasInput = Current.Kind != SyntaxKind.WhenKeyword &&
                        Current.Kind != SyntaxKind.ElseKeyword &&
@@ -622,7 +622,7 @@ internal sealed class Parser
         return new CaseLabelSyntax(_syntaxTree, whenKeyword, whenExpression, thenKeyword, thenExpression);
     }
 
-    private CaseElseLabelSyntax ParseOptionalCaseElseLabel()
+    private CaseElseLabelSyntax? ParseOptionalCaseElseLabel()
     {
         return Current.Kind != SyntaxKind.ElseKeyword
                    ? null
@@ -747,7 +747,7 @@ internal sealed class Parser
         return new SeparatedSyntaxList<ExpressionSyntax>(expressionsWithCommas);
     }
 
-    private QuerySyntax ParseOptionalQueryWithOptionalCte()
+    private QuerySyntax? ParseOptionalQueryWithOptionalCte()
     {
         if (Current.Kind == SyntaxKind.EndOfFileToken)
             return null;
@@ -792,7 +792,7 @@ internal sealed class Parser
         return new CommonTableExpressionSyntax(_syntaxTree, recursiveKeyword, identifier, commonTableExpressionColumnNameList, asKeyword, leftParenthesis, query, rightParenthesis);
     }
 
-    private CommonTableExpressionColumnNameListSyntax ParseCommonTableExpressionColumnNameList()
+    private CommonTableExpressionColumnNameListSyntax? ParseCommonTableExpressionColumnNameList()
     {
         if (Current.Kind != SyntaxKind.LeftParenthesisToken)
             return null;
@@ -860,7 +860,7 @@ internal sealed class Parser
     private OrderByColumnSyntax ParseOrderByColumn()
     {
         var expression = ParseExpression();
-        SyntaxToken modifier;
+        SyntaxToken? modifier;
 
         if (Current.Kind == SyntaxKind.AscKeyword)
         {
@@ -1052,7 +1052,7 @@ internal sealed class Parser
         return new ExpressionSelectColumnSyntax(_syntaxTree, expression, alias);
     }
 
-    private AliasSyntax ParseOptionalColumnAlias()
+    private AliasSyntax? ParseOptionalColumnAlias()
     {
         var isAlias = Peek(0).Kind == SyntaxKind.AsKeyword ||
                       Peek(0).Kind == SyntaxKind.IdentifierToken && SyntaxFacts.CanFollowSelectColumn(Peek(1).Kind);
@@ -1247,7 +1247,7 @@ internal sealed class Parser
         return new SeparatedSyntaxList<GroupByColumnSyntax>(columnsWithCommas);
     }
 
-    private AliasSyntax ParseOptionalAlias()
+    private AliasSyntax? ParseOptionalAlias()
     {
         return Current.Kind == SyntaxKind.AsKeyword || Current.Kind == SyntaxKind.IdentifierToken
                    ? ParseAlias()

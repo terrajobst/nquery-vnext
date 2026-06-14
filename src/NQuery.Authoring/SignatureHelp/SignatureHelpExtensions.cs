@@ -23,13 +23,13 @@ public static class SignatureHelpExtensions
                };
     }
 
-    public static SignatureHelpModel GetSignatureHelpModel(this SemanticModel semanticModel, int position)
+    public static SignatureHelpModel? GetSignatureHelpModel(this SemanticModel semanticModel, int position)
     {
         var providers = GetStandardSignatureHelpModelProviders();
         return semanticModel.GetSignatureHelpModel(position, providers);
     }
 
-    public static SignatureHelpModel GetSignatureHelpModel(this SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers)
+    public static SignatureHelpModel? GetSignatureHelpModel(this SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers)
     {
         return (from p in providers
                 let m = p.GetModel(semanticModel, position)

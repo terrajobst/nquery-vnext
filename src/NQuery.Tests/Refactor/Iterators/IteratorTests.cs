@@ -12,16 +12,16 @@ public class IteratorTests
         Assert.False(iterator.Read());
     }
 
-    internal static void AssertProduces(Iterator iterator, object[] data)
+    internal static void AssertProduces(Iterator iterator, object?[] data)
     {
-        var twoDimensional = new object[data.Length, 1];
+        var twoDimensional = new object?[data.Length, 1];
         for (var i = 0; i < data.Length; i++)
             twoDimensional[i, 0] = data[i];
 
         AssertProduces(iterator, twoDimensional);
     }
 
-    internal static void AssertProduces(Iterator iterator, object[,] data)
+    internal static void AssertProduces(Iterator iterator, object?[,] data)
     {
         var rowCount = data.GetLength(0);
         var entryCount = data.GetLength(1);

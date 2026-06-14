@@ -34,7 +34,7 @@ public abstract class SelectionAction : EditActionBase
             _editorView.SyntaxEditor.ViewSelectionChanged -= SyntaxEditorOnViewSelectionChanged;
         }
 
-        private void SyntaxEditorOnViewSelectionChanged(object sender, EditorViewSelectionEventArgs e)
+        private void SyntaxEditorOnViewSelectionChanged(object? sender, EditorViewSelectionEventArgs e)
         {
             if (e.View == _editorView)
                 _selectionStack.Clear();
@@ -75,7 +75,7 @@ public abstract class SelectionAction : EditActionBase
         }
     }
 
-    private static SelectionHandler GetSelectionHandler(ITextView textView)
+    private static SelectionHandler? GetSelectionHandler(ITextView textView)
     {
         if (textView is not IEditorView editorView)
             return null;

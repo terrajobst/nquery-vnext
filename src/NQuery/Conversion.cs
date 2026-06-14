@@ -32,7 +32,7 @@ public sealed class Conversion
 
     private readonly bool _isBoxingOrUnboxing;
 
-    private Conversion(bool exists, bool isIdentity, bool isImplicit, bool isBoxingOrUnboxing, bool isReference, IEnumerable<MethodInfo> conversionMethods)
+    private Conversion(bool exists, bool isIdentity, bool isImplicit, bool isBoxingOrUnboxing, bool isReference, IEnumerable<MethodInfo>? conversionMethods)
     {
         Exists = exists;
         IsIdentity = isIdentity;

@@ -46,7 +46,7 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
         }
     }
 
-    private static SelectQuerySyntax GetSelectQuery(ExpressionSyntax expression)
+    private static SelectQuerySyntax? GetSelectQuery(ExpressionSyntax expression)
     {
         var selectQuery = expression.Ancestors().OfType<SelectQuerySyntax>().FirstOrDefault();
         if (selectQuery is not null)

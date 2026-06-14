@@ -7,7 +7,7 @@ public sealed class CountAggregateDefinition : AggregateDefinition
         get { return @"COUNT"; }
     }
 
-    public override IAggregatable CreateAggregatable(Type argumentType)
+    public override IAggregatable? CreateAggregatable(Type argumentType)
     {
         return new CountAggregatable();
     }
@@ -34,13 +34,13 @@ public sealed class CountAggregateDefinition : AggregateDefinition
             _count = 0;
         }
 
-        public void Accumulate(object value)
+        public void Accumulate(object? value)
         {
             if (value is not null)
                 _count++;
         }
 
-        public object GetResult()
+        public object? GetResult()
         {
             return _count;
         }
