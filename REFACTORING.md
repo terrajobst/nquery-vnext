@@ -95,3 +95,17 @@ hash-vs-loops is structural (equi-key present), not cost-based.
   - Make DataContext only deal with definitions
   - Simplify symbols
   - Replace ErrorTableSymbol with a BoundErrorTable
+* Change aggregates such the extension points deals with expressions trees that
+  can be compiled, rather than with an interface
+* Add `NQuery.CodeAnalysis`
+  - Move all the language processing under it (syntax, symbols, binding, algebra etc)
+  - Just keep the non-compilation APIs around
+  - `Query`
+  - `Expression<T>`
+  - `DataContext`
+  - Diagnostics
+  - Definitions
+  - ShowPlan
+* Use new language features
+* Change the authoring to have a root-object that we can add language services
+  to via extension methods. Maybe a WorkspaceBuilder?
