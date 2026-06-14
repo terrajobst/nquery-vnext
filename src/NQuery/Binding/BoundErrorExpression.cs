@@ -1,20 +1,19 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundErrorExpression : BoundExpression
 {
-    internal sealed class BoundErrorExpression : BoundExpression
+    public override BoundNodeKind Kind
     {
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.ErrorExpression; }
-        }
+        get { return BoundNodeKind.ErrorExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return TypeFacts.Unknown; }
-        }
+    public override Type Type
+    {
+        get { return TypeFacts.Unknown; }
+    }
 
-        public override string ToString()
-        {
-            return @"?";
-        }
+    public override string ToString()
+    {
+        return @"?";
     }
 }

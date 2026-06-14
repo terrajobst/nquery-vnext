@@ -1,15 +1,14 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal struct BoundOrderBySelector
 {
-    internal struct BoundOrderBySelector
+    public BoundOrderBySelector(IBoundValue value, BoundComputedValueWithSyntax? computedValue)
     {
-        public BoundOrderBySelector(IBoundValue value, BoundComputedValueWithSyntax? computedValue)
-        {
-            Value = value;
-            ComputedValue = computedValue;
-        }
-
-        public IBoundValue Value { get; }
-
-        public BoundComputedValueWithSyntax? ComputedValue { get; }
+        Value = value;
+        ComputedValue = computedValue;
     }
+
+    public IBoundValue Value { get; }
+
+    public BoundComputedValueWithSyntax? ComputedValue { get; }
 }

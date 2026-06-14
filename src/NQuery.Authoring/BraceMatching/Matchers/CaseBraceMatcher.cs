@@ -1,10 +1,9 @@
-namespace NQuery.Authoring.BraceMatching.Matchers
+namespace NQuery.Authoring.BraceMatching.Matchers;
+
+internal sealed class CaseBraceMatcher : PairedTokenBraceMatcher
 {
-    internal sealed class CaseBraceMatcher : PairedTokenBraceMatcher
+    public CaseBraceMatcher()
+        : base(SyntaxKind.CaseKeyword, SyntaxKind.EndKeyword)
     {
-        public CaseBraceMatcher()
-            : base(SyntaxKind.CaseKeyword, SyntaxKind.EndKeyword)
-        {
-        }
     }
 }

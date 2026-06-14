@@ -1,29 +1,28 @@
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundColumnExpression : BoundExpression
 {
-    internal sealed class BoundColumnExpression : BoundExpression
+    public BoundColumnExpression(ColumnInstanceSymbol symbol)
     {
-        public BoundColumnExpression(ColumnInstanceSymbol symbol)
-        {
-            Symbol = symbol;
-        }
+        Symbol = symbol;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.ColumnExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.ColumnExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return Symbol.Type; }
-        }
+    public override Type Type
+    {
+        get { return Symbol.Type; }
+    }
 
-        public ColumnInstanceSymbol Symbol { get; }
+    public ColumnInstanceSymbol Symbol { get; }
 
-        public override string ToString()
-        {
-            return Symbol.ToString();
-        }
+    public override string ToString()
+    {
+        return Symbol.ToString();
     }
 }

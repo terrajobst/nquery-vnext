@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Authoring.VSEditorWpf.Selection
+namespace NQuery.Authoring.VSEditorWpf.Selection;
+
+public interface INQuerySelectionProviderService
 {
-    public interface INQuerySelectionProviderService
-    {
-        INQuerySelectionProvider GetSelectionProvider(ITextView textView);
-    }
+    INQuerySelectionProvider GetSelectionProvider(ITextView textView);
 }

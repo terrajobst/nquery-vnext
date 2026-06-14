@@ -1,39 +1,39 @@
 ﻿using NQuery.Authoring.Commenting;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests.Commenting
-{
-    public class ToggleSingleLineCommentCommenterTest : CommenterTests
-    {
-        protected override SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan span)
-        {
-            return syntaxTree.ToggleSingleLineComment(span);
-        }
+namespace NQuery.Authoring.Tests.Commenting;
 
-        [Fact]
-        public void ToggleSingleLineComment_CommentsSingleLine_WhenNoSelection()
-        {
-            var query = @"
+public class ToggleSingleLineCommentCommenterTest : CommenterTests
+{
+    protected override SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan span)
+    {
+        return syntaxTree.ToggleSingleLineComment(span);
+    }
+
+    [Fact]
+    public void ToggleSingleLineComment_CommentsSingleLine_WhenNoSelection()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                         e.City|,
                         e.LastName
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --        e.City,
                         e.LastName
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_UncommentsSingleLine_WhenNoSelection()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_UncommentsSingleLine_WhenNoSelection()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                 --      Unrelated
                 --        e.City|,
@@ -41,7 +41,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --      Unrelated
                         e.City,
@@ -49,13 +49,13 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_CommentsMultipleLines_WhenSelected()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_CommentsMultipleLines_WhenSelected()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                         e.{City,
                         e.Country,}
@@ -63,7 +63,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --        e.City,
                 --        e.Country,
@@ -71,13 +71,13 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_CommentsMultipleLines_WhenLeadingAndTrailingIsMixed()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_CommentsMultipleLines_WhenLeadingAndTrailingIsMixed()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                         e.City, -- {City
                         -- Country}
@@ -86,7 +86,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --        e.City, -- City
                 --        -- Country
@@ -95,13 +95,13 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_UncommentsMultipleLines_WhenSelected()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_UncommentsMultipleLines_WhenSelected()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                 --      Unrelated
                 --        e.{City,
@@ -109,7 +109,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --      Unrelated
                         e.City,
@@ -117,13 +117,13 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_CommentsOverMultiLineComment()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_CommentsOverMultiLineComment()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                         /*e.{LastName,
                         e.C}ity,
@@ -131,7 +131,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                 --        /*e.LastName,
                 --        e.City,
@@ -139,13 +139,13 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
+    }
 
-        [Fact]
-        public void ToggleSingleLineComment_UncommentsFromMultiLineComment()
-        {
-            var query = @"
+    [Fact]
+    public void ToggleSingleLineComment_UncommentsFromMultiLineComment()
+    {
+        var query = @"
                 SELECT  e.FirstName,
                 --        /*e.LastN{ame,
                 --}        e.City,
@@ -153,7 +153,7 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            var expectedQuery = @"
+        var expectedQuery = @"
                 SELECT  e.FirstName,
                         /*e.LastName,
                         e.City,
@@ -161,7 +161,6 @@ namespace NQuery.Authoring.Tests.Commenting
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query, expectedQuery);
-        }
+        AssertIsMatch(query, expectedQuery);
     }
 }

@@ -1,8 +1,7 @@
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public interface ICodeAction
 {
-    public interface ICodeAction
-    {
-        string Description { get; }
-        SyntaxTree GetEdit();
-    }
+    string Description { get; }
+    SyntaxTree GetEdit();
 }

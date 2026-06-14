@@ -1,8 +1,7 @@
-﻿namespace NQuery.Authoring.VSEditorWpf.Commenting
+﻿namespace NQuery.Authoring.VSEditorWpf.Commenting;
+
+public interface ICommentOperations
 {
-    public interface ICommentOperations
-    {
-        void ToggleSingleLineCommentAsync();
-        void ToggleMultiLineCommentAsync();
-    }
+    void ToggleSingleLineCommentAsync();
+    void ToggleMultiLineCommentAsync();
 }

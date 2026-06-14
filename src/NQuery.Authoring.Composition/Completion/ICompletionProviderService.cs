@@ -2,10 +2,9 @@
 
 using NQuery.Authoring.Completion;
 
-namespace NQuery.Authoring.Composition.Completion
+namespace NQuery.Authoring.Composition.Completion;
+
+public interface ICompletionProviderService
 {
-    public interface ICompletionProviderService
-    {
-        ImmutableArray<ICompletionProvider> Providers { get; }
-    }
+    ImmutableArray<ICompletionProvider> Providers { get; }
 }

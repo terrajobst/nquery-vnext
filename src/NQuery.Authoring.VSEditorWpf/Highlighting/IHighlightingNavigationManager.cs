@@ -1,8 +1,7 @@
-namespace NQuery.Authoring.VSEditorWpf.Highlighting
+namespace NQuery.Authoring.VSEditorWpf.Highlighting;
+
+public interface IHighlightingNavigationManager
 {
-    public interface IHighlightingNavigationManager
-    {
-        void NavigateToPrevious();
-        void NavigateToNext();
-    }
+    void NavigateToPrevious();
+    void NavigateToNext();
 }

@@ -1,18 +1,17 @@
-namespace NQuery.Authoring
+namespace NQuery.Authoring;
+
+public enum Glyph
 {
-    public enum Glyph
-    {
-        AmbiguousName,
-        Keyword,
-        Variable,
-        Relation,
-        Table,
-        TableInstance,
-        Aggregate,
-        Column,
-        Function,
-        Method,
-        Property,
-        Type
-    }
+    AmbiguousName,
+    Keyword,
+    Variable,
+    Relation,
+    Table,
+    TableInstance,
+    Aggregate,
+    Column,
+    Function,
+    Method,
+    Property,
+    Type
 }

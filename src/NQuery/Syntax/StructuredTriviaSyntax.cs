@@ -1,15 +1,14 @@
-namespace NQuery.Syntax
-{
-    public abstract class StructuredTriviaSyntax : SyntaxNode
-    {
-        private protected StructuredTriviaSyntax(SyntaxTree syntaxTree)
-            : base(syntaxTree)
-        {
-        }
+namespace NQuery.Syntax;
 
-        public SyntaxTrivia ParentTrivia
-        {
-            get { return SyntaxTree?.GetParentTrivia(this); }
-        }
+public abstract class StructuredTriviaSyntax : SyntaxNode
+{
+    private protected StructuredTriviaSyntax(SyntaxTree syntaxTree)
+        : base(syntaxTree)
+    {
+    }
+
+    public SyntaxTrivia ParentTrivia
+    {
+        get { return SyntaxTree?.GetParentTrivia(this); }
     }
 }

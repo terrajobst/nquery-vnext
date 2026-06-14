@@ -2,10 +2,9 @@
 
 using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Authoring.Composition.SignatureHelp
+namespace NQuery.Authoring.Composition.SignatureHelp;
+
+public interface ISignatureHelpModelProviderService
 {
-    public interface ISignatureHelpModelProviderService
-    {
-        ImmutableArray<ISignatureHelpModelProvider> Providers { get; }
-    }
+    ImmutableArray<ISignatureHelpModelProvider> Providers { get; }
 }

@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public interface ICodeIssueProvider
 {
-    public interface ICodeIssueProvider
-    {
-        IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel);
-    }
+    IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel);
 }

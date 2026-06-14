@@ -3,56 +3,55 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new WildcardSelectColumnQuickInfoModelProvider();
-        }
+        return new WildcardSelectColumnQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<WildcardSelectColumnSyntax>().Single();
-            var span = syntax.TableName.Span;
-            var symbol = semanticModel.GetTableInstance(syntax);
-            var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, Glyph.TableInstance, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<WildcardSelectColumnSyntax>().Single();
+        var span = syntax.TableName.Span;
+        var symbol = semanticModel.GetTableInstance(syntax);
+        var markup = SymbolMarkup.ForSymbol(symbol);
+        return new QuickInfoModel(semanticModel, span, Glyph.TableInstance, markup);
+    }
 
-        [Fact]
-        public void WildcardSelectColumnQuickInfoModelProvider_MatchesInAlias()
-        {
-            var query = @"
+    [Fact]
+    public void WildcardSelectColumnQuickInfoModelProvider_MatchesInAlias()
+    {
+        var query = @"
                 SELECT  {e}.*
                 FROM    Employees e
              ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchesUnresolved()
-        {
-            var query = @"
+    [Fact]
+    public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchesUnresolved()
+    {
+        var query = @"
                 SELECT  {x}.*
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
+    }
 
-        [Fact]
-        public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchAfterDot()
-        {
-            var query = @"
+    [Fact]
+    public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchAfterDot()
+    {
+        var query = @"
                 SELECT  e.{*}
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

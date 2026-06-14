@@ -5,54 +5,53 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.ActiproWpf.Squiggles
+namespace NQuery.Authoring.ActiproWpf.Squiggles;
+
+internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
 {
-    internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<ISquiggleTag>
+    private readonly Workspace _workspace;
+
+    public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
+        : base(nameof(NQuerySemanticIssueSquiggleClassifier), null, document, true)
     {
-        private readonly Workspace _workspace;
+        _workspace = document.GetWorkspace();
+        if (_workspace is null)
+            return;
 
-        public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
-            : base(nameof(NQuerySemanticIssueSquiggleClassifier), null, document, true)
+        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        UpdateTagsAsync();
+    }
+
+    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    {
+        UpdateTagsAsync();
+    }
+
+    private async void UpdateTagsAsync()
+    {
+        var document = _workspace.CurrentDocument;
+        var semanticModel = await document.GetSemanticModelAsync();
+        var codeIssues = semanticModel.GetIssues();
+
+        using (CreateBatch())
         {
-            _workspace = document.GetWorkspace();
-            if (_workspace is null)
-                return;
+            Clear();
 
-            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            UpdateTagsAsync();
-        }
-
-        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
-        {
-            UpdateTagsAsync();
-        }
-
-        private async void UpdateTagsAsync()
-        {
-            var document = _workspace.CurrentDocument;
-            var semanticModel = await document.GetSemanticModelAsync();
-            var codeIssues = semanticModel.GetIssues();
-
-            using (CreateBatch())
+            foreach (var codeIssue in codeIssues)
             {
-                Clear();
+                var classificationType = codeIssue.Kind == CodeIssueKind.Error
+                    ? ClassificationTypes.CompilerError
+                    : codeIssue.Kind == CodeIssueKind.Warning
+                        ? ClassificationTypes.Warning
+                        : null;
 
-                foreach (var codeIssue in codeIssues)
-                {
-                    var classificationType = codeIssue.Kind == CodeIssueKind.Error
-                        ? ClassificationTypes.CompilerError
-                        : codeIssue.Kind == CodeIssueKind.Warning
-                            ? ClassificationTypes.Warning
-                            : null;
+                if (classificationType is null)
+                    continue;
 
-                    if (classificationType is null)
-                        continue;
-
-                    var snapshotRange = document.Text.ToSnapshotRange(codeIssue.Span);
-                    var tag = new SquiggleTag(classificationType, new DirectContentProvider(codeIssue.Description));
-                    var tagRange = new TagVersionRange<ISquiggleTag>(snapshotRange, TextRangeTrackingModes.Default, tag);
-                    Add(tagRange);
-                }
+                var snapshotRange = document.Text.ToSnapshotRange(codeIssue.Span);
+                var tag = new SquiggleTag(classificationType, new DirectContentProvider(codeIssue.Description));
+                var tagRange = new TagVersionRange<ISquiggleTag>(snapshotRange, TextRangeTrackingModes.Default, tag);
+                Add(tagRange);
             }
         }
     }

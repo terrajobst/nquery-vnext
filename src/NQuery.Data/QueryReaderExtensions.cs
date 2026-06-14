@@ -1,87 +1,86 @@
 ﻿using System.Data;
 
-namespace NQuery.Data
+namespace NQuery.Data;
+
+public static class QueryReaderExtensions
 {
-    public static class QueryReaderExtensions
+    public static QueryDataReader ToDataReader(this QueryReader queryReader)
     {
-        public static QueryDataReader ToDataReader(this QueryReader queryReader)
+        ArgumentNullException.ThrowIfNull(queryReader);
+
+        return new QueryDataReader(queryReader);
+    }
+
+    public static DataTable ExecuteDataTable(this QueryReader queryReader)
+    {
+        ArgumentNullException.ThrowIfNull(queryReader);
+
+        var dataTable = queryReader.CreateSchemaTable();
+        var values = new object[queryReader.ColumnCount];
+
+        while (queryReader.Read())
         {
-            ArgumentNullException.ThrowIfNull(queryReader);
-
-            return new QueryDataReader(queryReader);
-        }
-
-        public static DataTable ExecuteDataTable(this QueryReader queryReader)
-        {
-            ArgumentNullException.ThrowIfNull(queryReader);
-
-            var dataTable = queryReader.CreateSchemaTable();
-            var values = new object[queryReader.ColumnCount];
-
-            while (queryReader.Read())
-            {
-                for (var i = 0; i < queryReader.ColumnCount; i++)
-                    values[i] = queryReader[i];
-
-                dataTable.Rows.Add(values);
-            }
-
-            return dataTable;
-        }
-
-        public static DataTable CreateSchemaTable(this QueryReader queryReader)
-        {
-            ArgumentNullException.ThrowIfNull(queryReader);
-
-            var dataTable = new DataTable(@"Results");
-            var existingColumnNames = new HashSet<string>();
-
             for (var i = 0; i < queryReader.ColumnCount; i++)
-            {
-                var columnName = queryReader.GetColumnName(i);
-                var uniqueColumnName = GenerateUniqueColumnName(existingColumnNames, columnName);
-                var columnType = queryReader.GetColumnType(i);
-                var dataColumn = new DataColumn(uniqueColumnName, columnType);
-                dataColumn.Caption = columnName;
-                dataTable.Columns.Add(dataColumn);
-                existingColumnNames.Add(uniqueColumnName);
-            }
+                values[i] = queryReader[i];
 
-            return dataTable;
+            dataTable.Rows.Add(values);
         }
 
-        private static string GenerateUniqueColumnName(HashSet<string> existingColumnNames, string columnName)
+        return dataTable;
+    }
+
+    public static DataTable CreateSchemaTable(this QueryReader queryReader)
+    {
+        ArgumentNullException.ThrowIfNull(queryReader);
+
+        var dataTable = new DataTable(@"Results");
+        var existingColumnNames = new HashSet<string>();
+
+        for (var i = 0; i < queryReader.ColumnCount; i++)
         {
-            if (string.IsNullOrWhiteSpace(columnName))
-                columnName = @"Column";
-
-            var result = columnName;
-            var count = 0;
-            while (existingColumnNames.Contains(result))
-                result = string.Concat(columnName, ++count);
-
-            return result;
+            var columnName = queryReader.GetColumnName(i);
+            var uniqueColumnName = GenerateUniqueColumnName(existingColumnNames, columnName);
+            var columnType = queryReader.GetColumnType(i);
+            var dataColumn = new DataColumn(uniqueColumnName, columnType);
+            dataColumn.Caption = columnName;
+            dataTable.Columns.Add(dataColumn);
+            existingColumnNames.Add(uniqueColumnName);
         }
 
-        public static QueryDataReader ExecuteDataReader(this Query query)
-        {
-            ArgumentNullException.ThrowIfNull(query);
+        return dataTable;
+    }
 
-            return query.ExecuteReader().ToDataReader();
-        }
+    private static string GenerateUniqueColumnName(HashSet<string> existingColumnNames, string columnName)
+    {
+        if (string.IsNullOrWhiteSpace(columnName))
+            columnName = @"Column";
 
-        public static DataTable ExecuteDataTable(this Query query)
-        {
-            ArgumentNullException.ThrowIfNull(query);
+        var result = columnName;
+        var count = 0;
+        while (existingColumnNames.Contains(result))
+            result = string.Concat(columnName, ++count);
 
-            return query.ExecuteReader().ExecuteDataTable();
-        }
+        return result;
+    }
 
-        public static DataTable ExecuteSchemaDataTable(this Query query)
-        {
-            ArgumentNullException.ThrowIfNull(query);
+    public static QueryDataReader ExecuteDataReader(this Query query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
 
-            return query.ExecuteReader().CreateSchemaTable();
-        }
+        return query.ExecuteReader().ToDataReader();
+    }
+
+    public static DataTable ExecuteDataTable(this Query query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        return query.ExecuteReader().ExecuteDataTable();
+    }
+
+    public static DataTable ExecuteSchemaDataTable(this Query query)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+
+        return query.ExecuteReader().CreateSchemaTable();
     }
 }

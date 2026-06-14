@@ -1,14 +1,13 @@
-namespace NQuery.Authoring.Outlining
-{
-    public abstract class SyntaxTokenOutliner : IOutliner
-    {
-        public IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken)
-        {
-            return !nodeOrToken.IsToken
-                ? Enumerable.Empty<OutliningRegionSpan>()
-                : FindRegions(nodeOrToken.AsToken());
-        }
+namespace NQuery.Authoring.Outlining;
 
-        protected abstract IEnumerable<OutliningRegionSpan> FindRegions(SyntaxToken token);
+public abstract class SyntaxTokenOutliner : IOutliner
+{
+    public IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken)
+    {
+        return !nodeOrToken.IsToken
+            ? Enumerable.Empty<OutliningRegionSpan>()
+            : FindRegions(nodeOrToken.AsToken());
     }
+
+    protected abstract IEnumerable<OutliningRegionSpan> FindRegions(SyntaxToken token);
 }

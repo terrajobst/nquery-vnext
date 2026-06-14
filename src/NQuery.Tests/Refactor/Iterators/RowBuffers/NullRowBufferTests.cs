@@ -1,32 +1,31 @@
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators.RowBuffers
+namespace NQuery.Tests.Refactor.Iterators.RowBuffers;
+
+public class NullRowBufferTests : RowBufferTests
 {
-    public class NullRowBufferTests : RowBufferTests
+    [Fact]
+    public void RowBuffers_Null_Empty()
     {
-        [Fact]
-        public void RowBuffers_Null_Empty()
-        {
-            var buffer = new NullRowBuffer(0);
-            AssertContract(buffer);
-        }
+        var buffer = new NullRowBuffer(0);
+        AssertContract(buffer);
+    }
 
-        [Fact]
-        public void RowBuffers_Null_IsAllNull()
-        {
-            var buffer = new NullRowBuffer(3);
-            AssertContract(buffer, null, null, null);
-        }
+    [Fact]
+    public void RowBuffers_Null_IsAllNull()
+    {
+        var buffer = new NullRowBuffer(3);
+        AssertContract(buffer, null, null, null);
+    }
 
-        [Fact]
-        public void RowBuffers_Null_CopyTo_OverwritesWithNull()
-        {
-            var buffer = new NullRowBuffer(2);
-            var array = new object[] { "a", "b", "c" };
+    [Fact]
+    public void RowBuffers_Null_CopyTo_OverwritesWithNull()
+    {
+        var buffer = new NullRowBuffer(2);
+        var array = new object[] { "a", "b", "c" };
 
-            buffer.CopyTo(array, 1);
+        buffer.CopyTo(array, 1);
 
-            Assert.Equal(new object[] { "a", null, null }, array);
-        }
+        Assert.Equal(new object[] { "a", null, null }, array);
     }
 }

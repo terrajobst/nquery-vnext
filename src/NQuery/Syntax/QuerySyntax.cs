@@ -1,10 +1,9 @@
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+public abstract class QuerySyntax : SyntaxNode
 {
-    public abstract class QuerySyntax : SyntaxNode
+    private protected QuerySyntax(SyntaxTree syntaxTree)
+        : base(syntaxTree)
     {
-        private protected QuerySyntax(SyntaxTree syntaxTree)
-            : base(syntaxTree)
-        {
-        }
     }
 }

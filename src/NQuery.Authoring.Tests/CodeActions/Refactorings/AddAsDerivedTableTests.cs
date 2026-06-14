@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-namespace NQuery.Authoring.Tests.CodeActions.Refactorings
-{
-    public class AddAsDerivedTableTests : CodeRefactoringTests
-    {
-        protected override ICodeRefactoringProvider CreateProvider()
-        {
-            return new AddAsDerivedTableCodeRefactoringProvider();
-        }
+namespace NQuery.Authoring.Tests.CodeActions.Refactorings;
 
-        [Fact]
-        public void AddAsDerivedTable_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
-        {
-            var query = @"
+public class AddAsDerivedTableTests : CodeRefactoringTests
+{
+    protected override ICodeRefactoringProvider CreateProvider()
+    {
+        return new AddAsDerivedTableCodeRefactoringProvider();
+    }
+
+    [Fact]
+    public void AddAsDerivedTable_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
+    {
+        var query = @"
                 SELECT  *
                 FROM    (
                             SELECT  *
@@ -21,13 +21,13 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
                         ) AS d|
             ";
 
-            AssertDoesNotTrigger(query);
-        }
+        AssertDoesNotTrigger(query);
+    }
 
-        [Fact]
-        public void AddAsDerivedTable_InsertsAs()
-        {
-            var query = @"
+    [Fact]
+    public void AddAsDerivedTable_InsertsAs()
+    {
+        var query = @"
                 SELECT  *
                 FROM    (
                             SELECT  *
@@ -35,7 +35,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
                         ) /* before */ d| /* after */
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    (
                             SELECT  *
@@ -43,7 +43,6 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
                         ) /* before */ AS d /* after */
             ";
 
-            AssertFixes(query, fixedQuery, "Add 'AS' keyword");
-        }
+        AssertFixes(query, fixedQuery, "Add 'AS' keyword");
     }
 }

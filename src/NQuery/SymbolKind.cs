@@ -1,20 +1,19 @@
-namespace NQuery
+namespace NQuery;
+
+public enum SymbolKind
 {
-    public enum SymbolKind
-    {
-        ErrorTable,
-        Column,
-        SchemaTable,
-        DerivedTable,
-        TableInstance,
-        TableColumnInstance,
-        QueryColumnInstance,
-        CommonTableExpression,
-        Variable,
-        Parameter,
-        Function,
-        Aggregate,
-        Method,
-        Property
-    }
+    ErrorTable,
+    Column,
+    SchemaTable,
+    DerivedTable,
+    TableInstance,
+    TableColumnInstance,
+    QueryColumnInstance,
+    CommonTableExpression,
+    Variable,
+    Parameter,
+    Function,
+    Aggregate,
+    Method,
+    Property
 }

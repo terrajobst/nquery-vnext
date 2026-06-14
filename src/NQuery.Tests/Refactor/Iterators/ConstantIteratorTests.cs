@@ -1,16 +1,15 @@
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators
-{
-    public class ConstantIteratorTests : IteratorTests
-    {
-        [Fact]
-        public void Iterators_Constant_ReturnsSingleRow()
-        {
-            var expected = new object[1, 0];
+namespace NQuery.Tests.Refactor.Iterators;
 
-            using var iterator = new ConstantIterator();
-            AssertProduces(iterator, expected);
-        }
+public class ConstantIteratorTests : IteratorTests
+{
+    [Fact]
+    public void Iterators_Constant_ReturnsSingleRow()
+    {
+        var expected = new object[1, 0];
+
+        using var iterator = new ConstantIterator();
+        AssertProduces(iterator, expected);
     }
 }

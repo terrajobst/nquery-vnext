@@ -1,13 +1,12 @@
-namespace NQuery.Authoring.Classifications
+namespace NQuery.Authoring.Classifications;
+
+public enum SyntaxClassification
 {
-    public enum SyntaxClassification
-    {
-        Whitespace,
-        Comment,
-        Keyword,
-        Punctuation,
-        Identifier,
-        StringLiteral,
-        NumberLiteral,
-    }
+    Whitespace,
+    Comment,
+    Keyword,
+    Punctuation,
+    Identifier,
+    StringLiteral,
+    NumberLiteral,
 }

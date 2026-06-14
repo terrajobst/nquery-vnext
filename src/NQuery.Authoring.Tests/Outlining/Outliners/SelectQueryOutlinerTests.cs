@@ -1,48 +1,47 @@
 ﻿using NQuery.Authoring.Outlining;
 using NQuery.Authoring.Outlining.Outliners;
 
-namespace NQuery.Authoring.Tests.Outlining.Outliners
-{
-    public class SelectQueryOutlinerTests : OutlinerTests
-    {
-        protected override IOutliner CreateOutliner()
-        {
-            return new SelectQueryOutliner();
-        }
+namespace NQuery.Authoring.Tests.Outlining.Outliners;
 
-        [Fact]
-        public void SelectQueryOutliner_FindsSelectQuery()
-        {
-            var query = @"
+public class SelectQueryOutlinerTests : OutlinerTests
+{
+    protected override IOutliner CreateOutliner()
+    {
+        return new SelectQueryOutliner();
+    }
+
+    [Fact]
+    public void SelectQueryOutliner_FindsSelectQuery()
+    {
+        var query = @"
                 {SELECT  *
                 FROM    Employees e
                 WHERE   e.City = 'London'}
             ";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void SelectQueryOutliner_DoesNotTriggerForSingleLineQueries()
-        {
-            var query = @"
+    [Fact]
+    public void SelectQueryOutliner_DoesNotTriggerForSingleLineQueries()
+    {
+        var query = @"
                 SELECT  1, 2, 3
             ";
 
-            AssertIsNoMatch(query);
-        }
+        AssertIsNoMatch(query);
+    }
 
-        [Fact]
-        public void SelectQueryOutliner_DoesNotTriggerForOrderedQueries()
-        {
-            var query = @"
+    [Fact]
+    public void SelectQueryOutliner_DoesNotTriggerForOrderedQueries()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.City = 'London'
                 ORDER   BY 1
             ";
 
-            AssertIsNoMatch(query);
-        }
+        AssertIsNoMatch(query);
     }
 }

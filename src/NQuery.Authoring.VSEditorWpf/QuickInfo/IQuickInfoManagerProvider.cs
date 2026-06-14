@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Authoring.VSEditorWpf.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
+
+public interface IQuickInfoManagerProvider
 {
-    public interface IQuickInfoManagerProvider
-    {
-        IQuickInfoManager GetQuickInfoManager(ITextView textView);
-    }
+    IQuickInfoManager GetQuickInfoManager(ITextView textView);
 }

@@ -1,19 +1,18 @@
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundCommonTableExpression : BoundNode
 {
-    internal sealed class BoundCommonTableExpression : BoundNode
+    public BoundCommonTableExpression(CommonTableExpressionSymbol tableSymbol)
     {
-        public BoundCommonTableExpression(CommonTableExpressionSymbol tableSymbol)
-        {
-            TableSymbol = tableSymbol;
-        }
-
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.CommonTableExpression; }
-        }
-
-        public CommonTableExpressionSymbol TableSymbol { get; }
+        TableSymbol = tableSymbol;
     }
+
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.CommonTableExpression; }
+    }
+
+    public CommonTableExpressionSymbol TableSymbol { get; }
 }

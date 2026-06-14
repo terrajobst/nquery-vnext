@@ -1,18 +1,17 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.QuickInfo.Providers
-{
-    internal sealed class CommonTableExpressionQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionSyntax>
-    {
-        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionSyntax node)
-        {
-            if (!node.Name.Span.ContainsOrTouches(position))
-                return null;
+namespace NQuery.Authoring.QuickInfo.Providers;
 
-            var symbol = semanticModel.GetDeclaredSymbol(node);
-            return symbol is null
-                ? null
-                : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
-        }
+internal sealed class CommonTableExpressionQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionSyntax>
+{
+    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionSyntax node)
+    {
+        if (!node.Name.Span.ContainsOrTouches(position))
+            return null;
+
+        var symbol = semanticModel.GetDeclaredSymbol(node);
+        return symbol is null
+            ? null
+            : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
     }
 }

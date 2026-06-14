@@ -1,19 +1,18 @@
 #nullable enable
 
-namespace NQuery.Algebra
+namespace NQuery.Algebra;
+
+// The logical counterpart of BoundComputedValue: a computed expression bound
+// to the value slot it defines.
+internal sealed class LogicalComputedValue
 {
-    // The logical counterpart of BoundComputedValue: a computed expression bound
-    // to the value slot it defines.
-    internal sealed class LogicalComputedValue
+    public LogicalComputedValue(LogicalExpression expression, ValueSlot valueSlot)
     {
-        public LogicalComputedValue(LogicalExpression expression, ValueSlot valueSlot)
-        {
-            Expression = expression;
-            ValueSlot = valueSlot;
-        }
-
-        public LogicalExpression Expression { get; }
-
-        public ValueSlot ValueSlot { get; }
+        Expression = expression;
+        ValueSlot = valueSlot;
     }
+
+    public LogicalExpression Expression { get; }
+
+    public ValueSlot ValueSlot { get; }
 }

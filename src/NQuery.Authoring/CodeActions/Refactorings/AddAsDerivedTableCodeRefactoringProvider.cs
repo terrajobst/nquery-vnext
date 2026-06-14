@@ -1,36 +1,35 @@
 using NQuery.Syntax;
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions.Refactorings
+namespace NQuery.Authoring.CodeActions.Refactorings;
+
+internal sealed class AddAsDerivedTableCodeRefactoringProvider : CodeRefactoringProvider<DerivedTableReferenceSyntax>
 {
-    internal sealed class AddAsDerivedTableCodeRefactoringProvider : CodeRefactoringProvider<DerivedTableReferenceSyntax>
+    protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, DerivedTableReferenceSyntax node)
     {
-        protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, DerivedTableReferenceSyntax node)
+        return node.AsKeyword is null
+            ? new[] { new AddAsToDerivedTableCodeAction(node) }
+            : Enumerable.Empty<ICodeAction>();
+    }
+
+    private sealed class AddAsToDerivedTableCodeAction : CodeAction
+    {
+        private readonly DerivedTableReferenceSyntax _node;
+
+        public AddAsToDerivedTableCodeAction(DerivedTableReferenceSyntax node)
+            : base(node.SyntaxTree)
         {
-            return node.AsKeyword is null
-                ? new[] { new AddAsToDerivedTableCodeAction(node) }
-                : Enumerable.Empty<ICodeAction>();
+            _node = node;
         }
 
-        private sealed class AddAsToDerivedTableCodeAction : CodeAction
+        public override string Description
         {
-            private readonly DerivedTableReferenceSyntax _node;
+            get { return Resources.CodeActionAddAsKeyword; }
+        }
 
-            public AddAsToDerivedTableCodeAction(DerivedTableReferenceSyntax node)
-                : base(node.SyntaxTree)
-            {
-                _node = node;
-            }
-
-            public override string Description
-            {
-                get { return Resources.CodeActionAddAsKeyword; }
-            }
-
-            protected override void GetChanges(TextChangeSet changeSet)
-            {
-                changeSet.InsertText(_node.Name.Span.Start, @"AS ");
-            }
+        protected override void GetChanges(TextChangeSet changeSet)
+        {
+            changeSet.InsertText(_node.Name.Span.Start, @"AS ");
         }
     }
 }

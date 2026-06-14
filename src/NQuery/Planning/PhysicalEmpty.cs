@@ -5,14 +5,13 @@ using System.Collections.Immutable;
 
 using NQuery.Algebra;
 
-namespace NQuery.Planning
+namespace NQuery.Planning;
+
+internal sealed class PhysicalEmpty : PhysicalOperator
 {
-    internal sealed class PhysicalEmpty : PhysicalOperator
-    {
-        public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Empty;
+    public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Empty;
 
-        protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
+    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
 
-        protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => ImmutableArray<ValueSlot>.Empty;
-    }
+    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => ImmutableArray<ValueSlot>.Empty;
 }

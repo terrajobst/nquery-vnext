@@ -1,12 +1,11 @@
 #nullable enable
 
-namespace NQuery.Algebra
+namespace NQuery.Algebra;
+
+internal enum LogicalApplyKind
 {
-    internal enum LogicalApplyKind
-    {
-        Inner,
-        LeftOuter,
-        LeftSemi,
-        LeftAntiSemi
-    }
+    Inner,
+    LeftOuter,
+    LeftSemi,
+    LeftAntiSemi
 }

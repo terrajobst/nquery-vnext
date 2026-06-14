@@ -9,60 +9,59 @@ using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Authoring.ActiproWpf.QuickInfo
+namespace NQuery.Authoring.ActiproWpf.QuickInfo;
+
+internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQuickInfoProvider
 {
-    internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQuickInfoProvider
+    private readonly IServiceLocator _serviceLocator;
+
+    public NQueryQuickInfoProvider(IServiceLocator serviceLocator)
     {
-        private readonly IServiceLocator _serviceLocator;
+        _serviceLocator = serviceLocator;
+    }
 
-        public NQueryQuickInfoProvider(IServiceLocator serviceLocator)
-        {
-            _serviceLocator = serviceLocator;
-        }
+    private INQuerySymbolContentProvider SymbolContentProvider
+    {
+        get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
+    }
 
-        private INQuerySymbolContentProvider SymbolContentProvider
-        {
-            get { return _serviceLocator.GetService<INQuerySymbolContentProvider>(); }
-        }
+    public Collection<IQuickInfoModelProvider> Providers { get; } = new();
 
-        public Collection<IQuickInfoModelProvider> Providers { get; } = new();
+    public override object GetContext(IEditorView view, int offset)
+    {
+        var documentView = view.SyntaxEditor.GetDocumentView();
+        var document = documentView.Document;
 
-        public override object GetContext(IEditorView view, int offset)
-        {
-            var documentView = view.SyntaxEditor.GetDocumentView();
-            var document = documentView.Document;
+        if (!document.TryGetSemanticModel(out var semanticModel))
+            return null;
 
-            if (!document.TryGetSemanticModel(out var semanticModel))
-                return null;
+        var snapshot = document.Text.ToTextSnapshot();
+        var snapshotOffset = new TextSnapshotOffset(snapshot, offset);
+        var position = snapshotOffset.ToOffset();
 
-            var snapshot = document.Text.ToTextSnapshot();
-            var snapshotOffset = new TextSnapshotOffset(snapshot, offset);
-            var position = snapshotOffset.ToOffset();
+        var model = semanticModel.GetQuickInfoModel(position, Providers);
+        return model;
+    }
 
-            var model = semanticModel.GetQuickInfoModel(position, Providers);
-            return model;
-        }
+    protected override bool RequestSession(IEditorView view, object context)
+    {
+        if (context is not QuickInfoModel model)
+            return false;
 
-        protected override bool RequestSession(IEditorView view, object context)
-        {
-            if (context is not QuickInfoModel model)
-                return false;
+        var text = model.SemanticModel.SyntaxTree.Text;
+        var textSnapshotRange = text.ToSnapshotRange(model.Span);
+        var textRange = textSnapshotRange.TextRange;
+        var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();
 
-            var text = model.SemanticModel.SyntaxTree.Text;
-            var textSnapshotRange = text.ToSnapshotRange(model.Span);
-            var textRange = textSnapshotRange.TextRange;
-            var content = SymbolContentProvider.GetContentProvider(model.Glyph, model.Markup).GetContent();
+        var quickInfoSession = new QuickInfoSession();
+        quickInfoSession.Context = context;
+        quickInfoSession.Content = content;
+        quickInfoSession.Open(view, textRange);
+        return true;
+    }
 
-            var quickInfoSession = new QuickInfoSession();
-            quickInfoSession.Context = context;
-            quickInfoSession.Content = content;
-            quickInfoSession.Open(view, textRange);
-            return true;
-        }
-
-        protected override IEnumerable<Type> ContextTypes
-        {
-            get { return new[] { typeof(QuickInfoModel) }; }
-        }
+    protected override IEnumerable<Type> ContextTypes
+    {
+        get { return new[] { typeof(QuickInfoModel) }; }
     }
 }

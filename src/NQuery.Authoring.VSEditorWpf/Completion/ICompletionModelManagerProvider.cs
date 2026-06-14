@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Authoring.VSEditorWpf.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion;
+
+public interface ICompletionModelManagerProvider
 {
-    public interface ICompletionModelManagerProvider
-    {
-        ICompletionModelManager GetCompletionModel(ITextView textView);
-    }
+    ICompletionModelManager GetCompletionModel(ITextView textView);
 }

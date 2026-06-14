@@ -2,41 +2,40 @@ using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundMethodInvocationExpression : BoundExpression
 {
-    internal sealed class BoundMethodInvocationExpression : BoundExpression
+    public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
     {
-        public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
-        {
-            Target = target;
-            Arguments = arguments.ToImmutableArray();
-            Result = result;
-        }
+        Target = target;
+        Arguments = arguments.ToImmutableArray();
+        Result = result;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.MethodInvocationExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.MethodInvocationExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
-        }
+    public override Type Type
+    {
+        get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
+    }
 
-        public MethodSymbol Symbol
-        {
-            get { return Result.Selected?.Signature.Symbol; }
-        }
+    public MethodSymbol Symbol
+    {
+        get { return Result.Selected?.Signature.Symbol; }
+    }
 
-        public BoundExpression Target { get; }
+    public BoundExpression Target { get; }
 
-        public ImmutableArray<BoundExpression> Arguments { get; }
+    public ImmutableArray<BoundExpression> Arguments { get; }
 
-        public OverloadResolutionResult<MethodSymbolSignature> Result { get; }
+    public OverloadResolutionResult<MethodSymbolSignature> Result { get; }
 
-        public override string ToString()
-        {
-            return $"{Target}.{Symbol.Name}({string.Join(@", ", Arguments)})";
-        }
+    public override string ToString()
+    {
+        return $"{Target}.{Symbol.Name}({string.Join(@", ", Arguments)})";
     }
 }

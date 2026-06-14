@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.Completion
+namespace NQuery.Authoring.Completion;
+
+public interface ICompletionProvider
 {
-    public interface ICompletionProvider
-    {
-        IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position);
-    }
+    IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position);
 }

@@ -1,89 +1,88 @@
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators
+namespace NQuery.Tests.Refactor.Iterators;
+
+public class ProjectionIteratorTests : IteratorTests
 {
-    public class ProjectionIteratorTests : IteratorTests
+    [Fact]
+    public void Iterators_Projection_ForwardsProperly()
     {
-        [Fact]
-        public void Iterators_Projection_ForwardsProperly()
+        var rows = new object[] { 1, 2 };
+        var expected = rows;
+
+        using var input = new MockedIterator(rows);
+        var entries = new[]
         {
-            var rows = new object[] { 1, 2 };
-            var expected = rows;
+            new RowBufferEntry(input.RowBuffer, 0)
+        };
 
-            using var input = new MockedIterator(rows);
-            var entries = new[]
+        using (var iterator = new ProjectionIterator(input, entries))
+        {
+            for (var i = 0; i < 2; i++)
             {
-                new RowBufferEntry(input.RowBuffer, 0)
-            };
-
-            using (var iterator = new ProjectionIterator(input, entries))
-            {
-                for (var i = 0; i < 2; i++)
-                {
-                    AssertProduces(iterator, expected);
-                }
+                AssertProduces(iterator, expected);
             }
-
-            Assert.Equal(2, input.TotalOpenCount);
-            Assert.Equal(4, input.TotalReadCount);
-            Assert.Equal(1, input.DisposalCount);
         }
 
-        [Fact]
-        public void Iterators_Projection_ReturnsEmpty_IfInputEmpty()
+        Assert.Equal(2, input.TotalOpenCount);
+        Assert.Equal(4, input.TotalReadCount);
+        Assert.Equal(1, input.DisposalCount);
+    }
+
+    [Fact]
+    public void Iterators_Projection_ReturnsEmpty_IfInputEmpty()
+    {
+        var rows = Array.Empty<object>();
+
+        using var input = new MockedIterator(rows);
+        using var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>());
+        AssertEmpty(iterator);
+    }
+
+    [Fact]
+    public void Iterators_Projection_SwapsEntries()
+    {
+        var rows = new object[,]
         {
-            var rows = Array.Empty<object>();
+            {1, "One"},
+            {2, "Two"}
+        };
 
-            using var input = new MockedIterator(rows);
-            using var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>());
-            AssertEmpty(iterator);
-        }
-
-        [Fact]
-        public void Iterators_Projection_SwapsEntries()
+        var expected = new object[,]
         {
-            var rows = new object[,]
-            {
-                {1, "One"},
-                {2, "Two"}
-            };
+            {"One", 1},
+            {"Two", 2}
+        };
 
-            var expected = new object[,]
-            {
-                {"One", 1},
-                {"Two", 2}
-            };
-
-            using var input = new MockedIterator(rows);
-            var entries = new[]
-            {
-                new RowBufferEntry(input.RowBuffer, 1),
-                new RowBufferEntry(input.RowBuffer, 0)
-            };
-
-            using var iterator = new ProjectionIterator(input, entries);
-            AssertProduces(iterator, expected);
-        }
-
-        [Fact]
-        public void Iterators_Projection_RemovesEntries()
+        using var input = new MockedIterator(rows);
+        var entries = new[]
         {
-            var rows = new object[,]
-            {
-                {1, "One"},
-                {2, "Two"}
-            };
+            new RowBufferEntry(input.RowBuffer, 1),
+            new RowBufferEntry(input.RowBuffer, 0)
+        };
 
-            var expected = new object[] { "One", "Two" };
+        using var iterator = new ProjectionIterator(input, entries);
+        AssertProduces(iterator, expected);
+    }
 
-            using var input = new MockedIterator(rows);
-            var entries = new[]
-            {
-                new RowBufferEntry(input.RowBuffer, 1)
-            };
+    [Fact]
+    public void Iterators_Projection_RemovesEntries()
+    {
+        var rows = new object[,]
+        {
+            {1, "One"},
+            {2, "Two"}
+        };
 
-            using var iterator = new ProjectionIterator(input, entries);
-            AssertProduces(iterator, expected);
-        }
+        var expected = new object[] { "One", "Two" };
+
+        using var input = new MockedIterator(rows);
+        var entries = new[]
+        {
+            new RowBufferEntry(input.RowBuffer, 1)
+        };
+
+        using var iterator = new ProjectionIterator(input, entries);
+        AssertProduces(iterator, expected);
     }
 }

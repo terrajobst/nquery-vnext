@@ -1,46 +1,45 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests.Selection
-{
-    public class SelectionExtensionsTests : ExtensionTests
-    {
-        [Fact]
-        public void SelectionExtensions_ReturnsAllProviders()
-        {
-            AssertAllProvidersAreExposed(SelectionExtensions.GetStandardSelectionSpanProviders);
-        }
+namespace NQuery.Authoring.Tests.Selection;
 
-        [Fact]
-        public void SelectionExtensions_Grows()
-        {
-            var query = @"
+public class SelectionExtensionsTests : ExtensionTests
+{
+    [Fact]
+    public void SelectionExtensions_ReturnsAllProviders()
+    {
+        AssertAllProvidersAreExposed(SelectionExtensions.GetStandardSelectionSpanProviders);
+    }
+
+    [Fact]
+    public void SelectionExtensions_Grows()
+    {
+        var query = @"
                 SELECT  e.First|Name
                 FROM    Employees e
             ";
 
-            var compilation = CompilationFactory.CreateQuery(query, out int position);
-            var syntaxTree = compilation.SyntaxTree;
-            var text = syntaxTree.Text;
-            var start = new TextSpan(position, 0);
+        var compilation = CompilationFactory.CreateQuery(query, out int position);
+        var syntaxTree = compilation.SyntaxTree;
+        var text = syntaxTree.Text;
+        var start = new TextSpan(position, 0);
 
-            var firstTime = syntaxTree.ExtendSelection(start);
-            Assert.Equal("FirstName", text.GetText(firstTime));
+        var firstTime = syntaxTree.ExtendSelection(start);
+        Assert.Equal("FirstName", text.GetText(firstTime));
 
-            var secondTime = syntaxTree.ExtendSelection(firstTime);
-            Assert.Equal("e.FirstName", text.GetText(secondTime));
+        var secondTime = syntaxTree.ExtendSelection(firstTime);
+        Assert.Equal("e.FirstName", text.GetText(secondTime));
 
-            var thirdTime = syntaxTree.ExtendSelection(secondTime);
-            Assert.Equal("SELECT  e.FirstName", text.GetText(thirdTime));
+        var thirdTime = syntaxTree.ExtendSelection(secondTime);
+        Assert.Equal("SELECT  e.FirstName", text.GetText(thirdTime));
 
-            var fourthTime = syntaxTree.ExtendSelection(thirdTime);
-            Assert.Equal(text.GetText().Trim(), text.GetText(fourthTime));
+        var fourthTime = syntaxTree.ExtendSelection(thirdTime);
+        Assert.Equal(text.GetText().Trim(), text.GetText(fourthTime));
 
-            var fifthTime = syntaxTree.ExtendSelection(fourthTime);
-            Assert.Equal(text.GetText().TrimStart(), text.GetText(fifthTime));
+        var fifthTime = syntaxTree.ExtendSelection(fourthTime);
+        Assert.Equal(text.GetText().TrimStart(), text.GetText(fifthTime));
 
-            var sixthTime = syntaxTree.ExtendSelection(fifthTime);
-            Assert.Equal(fifthTime, sixthTime);
-        }
+        var sixthTime = syntaxTree.ExtendSelection(fifthTime);
+        Assert.Equal(fifthTime, sixthTime);
     }
 }

@@ -1,17 +1,16 @@
 using System.Collections.Immutable;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundUnifiedValue
 {
-    internal sealed class BoundUnifiedValue
+    public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
     {
-        public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
-        {
-            Value = value;
-            InputValues = inputValues.ToImmutableArray();
-        }
-
-        public IBoundValue Value { get; }
-
-        public ImmutableArray<IBoundValue> InputValues { get; }
+        Value = value;
+        InputValues = inputValues.ToImmutableArray();
     }
+
+    public IBoundValue Value { get; }
+
+    public ImmutableArray<IBoundValue> InputValues { get; }
 }

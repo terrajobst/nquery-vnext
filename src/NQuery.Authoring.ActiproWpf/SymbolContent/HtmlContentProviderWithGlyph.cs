@@ -9,34 +9,33 @@ using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.Wpf;
 using NQuery.Symbols;
 
-namespace NQuery.Authoring.ActiproWpf.SymbolContent
+namespace NQuery.Authoring.ActiproWpf.SymbolContent;
+
+internal sealed class HtmlContentProviderWithGlyph : HtmlContentProvider
 {
-    internal sealed class HtmlContentProviderWithGlyph : HtmlContentProvider
+    private HtmlContentProviderWithGlyph(string htmlSnippet)
+        : base(htmlSnippet)
     {
-        private HtmlContentProviderWithGlyph(string htmlSnippet)
-            : base(htmlSnippet)
-        {
-        }
+    }
 
-        protected override Image GetImage(string source)
-        {
-            if (!Enum.TryParse(source, out Glyph glyph))
-                return null;
+    protected override Image GetImage(string source)
+    {
+        if (!Enum.TryParse(source, out Glyph glyph))
+            return null;
 
-            var imageSource = NQueryGlyphImageSource.Get(glyph);
-            return new Image
-            {
-                Margin = new Thickness(0, 0, 4, 0),
-                Source = imageSource,
-                Stretch = Stretch.None,
-                UseLayoutRounding = true
-            };
-        }
-
-        public static HtmlContentProvider Create(Glyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+        var imageSource = NQueryGlyphImageSource.Get(glyph);
+        return new Image
         {
-            var htmlSnippet = HtmlMarkupEmitter.GetHtml(glyph, symbolMarkup, classificationTypes, highlightingStyleRegistry);
-            return new HtmlContentProviderWithGlyph(htmlSnippet);
-        }
+            Margin = new Thickness(0, 0, 4, 0),
+            Source = imageSource,
+            Stretch = Stretch.None,
+            UseLayoutRounding = true
+        };
+    }
+
+    public static HtmlContentProvider Create(Glyph glyph, SymbolMarkup symbolMarkup, INQueryClassificationTypes classificationTypes, IHighlightingStyleRegistry highlightingStyleRegistry)
+    {
+        var htmlSnippet = HtmlMarkupEmitter.GetHtml(glyph, symbolMarkup, classificationTypes, highlightingStyleRegistry);
+        return new HtmlContentProviderWithGlyph(htmlSnippet);
     }
 }

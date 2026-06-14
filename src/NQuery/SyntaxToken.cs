@@ -2,124 +2,123 @@ using System.Collections.Immutable;
 
 using NQuery.Text;
 
-namespace NQuery
+namespace NQuery;
+
+public sealed class SyntaxToken
 {
-    public sealed class SyntaxToken
+    private readonly SyntaxTree _syntaxTree;
+    private readonly string _text;
+
+    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
     {
-        private readonly SyntaxTree _syntaxTree;
-        private readonly string _text;
+        _syntaxTree = syntaxTree;
+        Kind = kind;
+        ContextualKind = contextualKind;
+        IsMissing = isMissing;
+        Span = span;
+        _text = text;
+        Value = value;
+        LeadingTrivia = leadingTrivia.ToImmutableArray();
+        TrailingTrivia = trailingTrivia.ToImmutableArray();
+        Diagnostics = diagnostics.ToImmutableArray();
+    }
 
-        internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
+    public SyntaxNode Parent => _syntaxTree?.GetParentNode(this);
+
+    public SyntaxKind Kind { get; }
+
+    public SyntaxKind ContextualKind { get; }
+
+    public bool IsMissing { get; }
+
+    public string Text => _text ?? Kind.GetText();
+
+    public object Value { get; }
+
+    public string ValueText => Value as string ?? Text;
+
+    public TextSpan Span { get; }
+
+    public TextSpan FullSpan
+    {
+        get
         {
-            _syntaxTree = syntaxTree;
-            Kind = kind;
-            ContextualKind = contextualKind;
-            IsMissing = isMissing;
-            Span = span;
-            _text = text;
-            Value = value;
-            LeadingTrivia = leadingTrivia.ToImmutableArray();
-            TrailingTrivia = trailingTrivia.ToImmutableArray();
-            Diagnostics = diagnostics.ToImmutableArray();
+            var start = LeadingTrivia.Length == 0
+                            ? Span.Start
+                            : LeadingTrivia[0].Span.Start;
+            var end = TrailingTrivia.Length == 0
+                          ? Span.End
+                          : TrailingTrivia[TrailingTrivia.Length - 1].Span.End;
+            return TextSpan.FromBounds(start, end);
         }
+    }
 
-        public SyntaxNode Parent => _syntaxTree?.GetParentNode(this);
+    public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
 
-        public SyntaxKind Kind { get; }
+    public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
-        public SyntaxKind ContextualKind { get; }
+    public ImmutableArray<Diagnostic> Diagnostics { get; }
 
-        public bool IsMissing { get; }
+    public SyntaxToken GetPreviousToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+    {
+        return SyntaxTreeNavigation.GetPreviousToken(this, includeZeroLength, includeSkippedTokens);
+    }
 
-        public string Text => _text ?? Kind.GetText();
+    public SyntaxToken GetNextToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
+    {
+        return SyntaxTreeNavigation.GetNextToken(this, includeZeroLength, includeSkippedTokens);
+    }
 
-        public object Value { get; }
+    public void WriteTo(TextWriter writer)
+    {
+        ArgumentNullException.ThrowIfNull(writer);
 
-        public string ValueText => Value as string ?? Text;
+        foreach (var syntaxTrivia in LeadingTrivia)
+            syntaxTrivia.WriteTo(writer);
 
-        public TextSpan Span { get; }
+        writer.Write(_text);
 
-        public TextSpan FullSpan
-        {
-            get
-            {
-                var start = LeadingTrivia.Length == 0
-                                ? Span.Start
-                                : LeadingTrivia[0].Span.Start;
-                var end = TrailingTrivia.Length == 0
-                              ? Span.End
-                              : TrailingTrivia[TrailingTrivia.Length - 1].Span.End;
-                return TextSpan.FromBounds(start, end);
-            }
-        }
+        foreach (var syntaxTrivia in TrailingTrivia)
+            syntaxTrivia.WriteTo(writer);
+    }
 
-        public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
+    public bool IsEquivalentTo(SyntaxToken other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
 
-        public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
+        return SyntaxTreeEquivalence.AreEquivalent(this, other);
+    }
 
-        public ImmutableArray<Diagnostic> Diagnostics { get; }
+    public SyntaxToken WithDiagnostics(IEnumerable<Diagnostic> diagnostics)
+    {
+        ArgumentNullException.ThrowIfNull(diagnostics);
 
-        public SyntaxToken GetPreviousToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
-        {
-            return SyntaxTreeNavigation.GetPreviousToken(this, includeZeroLength, includeSkippedTokens);
-        }
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
+    }
 
-        public SyntaxToken GetNextToken(bool includeZeroLength = false, bool includeSkippedTokens = false)
-        {
-            return SyntaxTreeNavigation.GetNextToken(this, includeZeroLength, includeSkippedTokens);
-        }
+    public SyntaxToken WithKind(SyntaxKind kind)
+    {
+        return new SyntaxToken(_syntaxTree, kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, Diagnostics);
+    }
 
-        public void WriteTo(TextWriter writer)
-        {
-            ArgumentNullException.ThrowIfNull(writer);
+    public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
+    {
+        ArgumentNullException.ThrowIfNull(trivia);
 
-            foreach (var syntaxTrivia in LeadingTrivia)
-                syntaxTrivia.WriteTo(writer);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, trivia, TrailingTrivia, Diagnostics);
+    }
 
-            writer.Write(_text);
+    public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
+    {
+        ArgumentNullException.ThrowIfNull(trivia);
 
-            foreach (var syntaxTrivia in TrailingTrivia)
-                syntaxTrivia.WriteTo(writer);
-        }
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, trivia, Diagnostics);
+    }
 
-        public bool IsEquivalentTo(SyntaxToken other)
-        {
-            ArgumentNullException.ThrowIfNull(other);
-
-            return SyntaxTreeEquivalence.AreEquivalent(this, other);
-        }
-
-        public SyntaxToken WithDiagnostics(IEnumerable<Diagnostic> diagnostics)
-        {
-            ArgumentNullException.ThrowIfNull(diagnostics);
-
-            return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
-        }
-
-        public SyntaxToken WithKind(SyntaxKind kind)
-        {
-            return new SyntaxToken(_syntaxTree, kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, Diagnostics);
-        }
-
-        public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
-        {
-            ArgumentNullException.ThrowIfNull(trivia);
-
-            return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, trivia, TrailingTrivia, Diagnostics);
-        }
-
-        public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
-        {
-            ArgumentNullException.ThrowIfNull(trivia);
-
-            return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, trivia, Diagnostics);
-        }
-
-        public override string ToString()
-        {
-            using var writer = new StringWriter();
-            WriteTo(writer);
-            return writer.ToString();
-        }
+    public override string ToString()
+    {
+        using var writer = new StringWriter();
+        WriteTo(writer);
+        return writer.ToString();
     }
 }

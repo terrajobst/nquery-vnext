@@ -1,27 +1,26 @@
 ﻿using NQuery.Text;
 
-namespace NQuery.Authoring.Wpf
+namespace NQuery.Authoring.Wpf;
+
+public sealed partial class DiagnosticGrid
 {
-    public sealed partial class DiagnosticGrid
+    public DiagnosticGrid()
     {
-        public DiagnosticGrid()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
-        {
-            DataContext = diagnostics is null || sourceText is null
-                              ? null
-                              : new DiagnosticsViewModel(diagnostics, sourceText);
-        }
+    public void UpdateGrid(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
+    {
+        DataContext = diagnostics is null || sourceText is null
+                          ? null
+                          : new DiagnosticsViewModel(diagnostics, sourceText);
+    }
 
-        public Diagnostic SelectedDiagnostic
+    public Diagnostic SelectedDiagnostic
+    {
+        get
         {
-            get
-            {
-                return DiagnosticDataGrid.SelectedItem is not DiagnosticViewModel viewModel ? null : viewModel.Diagnostic;
-            }
+            return DiagnosticDataGrid.SelectedItem is not DiagnosticViewModel viewModel ? null : viewModel.Diagnostic;
         }
     }
 }

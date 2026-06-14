@@ -1,10 +1,9 @@
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+public abstract class SelectColumnSyntax : SyntaxNode
 {
-    public abstract class SelectColumnSyntax : SyntaxNode
+    private protected SelectColumnSyntax(SyntaxTree syntaxTree)
+        : base(syntaxTree)
     {
-        private protected SelectColumnSyntax(SyntaxTree syntaxTree)
-            : base(syntaxTree)
-        {
-        }
     }
 }

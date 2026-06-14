@@ -1,33 +1,32 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundConversionExpression : BoundExpression
 {
-    internal sealed class BoundConversionExpression : BoundExpression
+    private readonly Type _type;
+
+    public BoundConversionExpression(BoundExpression expression, Type type, Conversion conversion)
     {
-        private readonly Type _type;
+        Expression = expression;
+        _type = type;
+        Conversion = conversion;
+    }
 
-        public BoundConversionExpression(BoundExpression expression, Type type, Conversion conversion)
-        {
-            Expression = expression;
-            _type = type;
-            Conversion = conversion;
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.ConversionExpression; }
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.ConversionExpression; }
-        }
+    public override Type Type
+    {
+        get { return _type; }
+    }
 
-        public override Type Type
-        {
-            get { return _type; }
-        }
+    public BoundExpression Expression { get; }
 
-        public BoundExpression Expression { get; }
+    public Conversion Conversion { get; }
 
-        public Conversion Conversion { get; }
-
-        public override string ToString()
-        {
-            return $"CAST({Expression} AS {_type.ToDisplayName()})";
-        }
+    public override string ToString()
+    {
+        return $"CAST({Expression} AS {_type.ToDisplayName()})";
     }
 }

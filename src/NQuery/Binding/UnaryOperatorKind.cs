@@ -1,10 +1,9 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal enum UnaryOperatorKind
 {
-    internal enum UnaryOperatorKind
-    {
-        Identity,
-        Negation,
-        Complement,
-        LogicalNot,
-    }
+    Identity,
+    Negation,
+    Complement,
+    LogicalNot,
 }

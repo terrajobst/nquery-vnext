@@ -2,25 +2,24 @@
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 
-namespace NQuery.Authoring.ActiproWpf.Selection
+namespace NQuery.Authoring.ActiproWpf.Selection;
+
+public class ShrinkSelectionAction : SelectionAction
 {
-    public class ShrinkSelectionAction : SelectionAction
+    private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Shrink Selection", typeof(SyntaxEditor)));
+
+    public ShrinkSelectionAction()
+        : base("Shrink Selection")
     {
-        private static readonly Lazy<RoutedCommand> LazyCommand = new(() => new RoutedCommand("Shrink Selection", typeof(SyntaxEditor)));
+    }
 
-        public ShrinkSelectionAction()
-            : base("Shrink Selection")
-        {
-        }
+    public static RoutedCommand Command
+    {
+        get { return LazyCommand.Value; }
+    }
 
-        public static RoutedCommand Command
-        {
-            get { return LazyCommand.Value; }
-        }
-
-        public override void Execute(IEditorView view)
-        {
-            ShrinkSelection(view);
-        }
+    public override void Execute(IEditorView view)
+    {
+        ShrinkSelection(view);
     }
 }

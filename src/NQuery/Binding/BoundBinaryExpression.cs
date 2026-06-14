@@ -1,42 +1,41 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundBinaryExpression : BoundExpression
 {
-    internal sealed class BoundBinaryExpression : BoundExpression
+    public BoundBinaryExpression(BoundExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
     {
-        public BoundBinaryExpression(BoundExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
+        Left = left;
+        OperatorKind = operatorKind;
+        Result = result;
+        Right = right;
+    }
+
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.BinaryExpression; }
+    }
+
+    public override Type Type
+    {
+        get
         {
-            Left = left;
-            OperatorKind = operatorKind;
-            Result = result;
-            Right = right;
+            return Result.Selected is null
+                       ? TypeFacts.Unknown
+                       : Result.Selected.Signature.ReturnType;
         }
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.BinaryExpression; }
-        }
+    public BoundExpression Left { get; }
 
-        public override Type Type
-        {
-            get
-            {
-                return Result.Selected is null
-                           ? TypeFacts.Unknown
-                           : Result.Selected.Signature.ReturnType;
-            }
-        }
+    public BinaryOperatorKind OperatorKind { get; }
 
-        public BoundExpression Left { get; }
+    public OverloadResolutionResult<BinaryOperatorSignature> Result { get; }
 
-        public BinaryOperatorKind OperatorKind { get; }
+    public BoundExpression Right { get; }
 
-        public OverloadResolutionResult<BinaryOperatorSignature> Result { get; }
-
-        public BoundExpression Right { get; }
-
-        public override string ToString()
-        {
-            var kind = Result.Candidates.First().Signature.Kind;
-            return $"({Left} {kind.ToDisplayName()} {Right})";
-        }
+    public override string ToString()
+    {
+        var kind = Result.Candidates.First().Signature.Kind;
+        return $"({Left} {kind.ToDisplayName()} {Right})";
     }
 }

@@ -2,35 +2,34 @@ using System.Globalization;
 
 using NQuery.Text;
 
-namespace NQuery
+namespace NQuery;
+
+public sealed class Diagnostic
 {
-    public sealed class Diagnostic
+    public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
     {
-        public Diagnostic(TextSpan textSpan, DiagnosticId diagnosticId, string message)
-        {
-            ArgumentNullException.ThrowIfNull(message);
+        ArgumentNullException.ThrowIfNull(message);
 
-            Span = textSpan;
-            DiagnosticId = diagnosticId;
-            Message = message;
-        }
+        Span = textSpan;
+        DiagnosticId = diagnosticId;
+        Message = message;
+    }
 
-        public static Diagnostic Format(TextSpan textSpan, DiagnosticId diagnosticId, params object[] args)
-        {
-            var message = diagnosticId.GetMessage();
-            var formattedMessage = string.Format(CultureInfo.CurrentCulture, message, args);
-            return new Diagnostic(textSpan, diagnosticId, formattedMessage);
-        }
+    public static Diagnostic Format(TextSpan textSpan, DiagnosticId diagnosticId, params object[] args)
+    {
+        var message = diagnosticId.GetMessage();
+        var formattedMessage = string.Format(CultureInfo.CurrentCulture, message, args);
+        return new Diagnostic(textSpan, diagnosticId, formattedMessage);
+    }
 
-        public TextSpan Span { get; }
+    public TextSpan Span { get; }
 
-        public DiagnosticId DiagnosticId { get; }
+    public DiagnosticId DiagnosticId { get; }
 
-        public string Message { get; }
+    public string Message { get; }
 
-        public override string ToString()
-        {
-            return Message;
-        }
+    public override string ToString()
+    {
+        return Message;
     }
 }

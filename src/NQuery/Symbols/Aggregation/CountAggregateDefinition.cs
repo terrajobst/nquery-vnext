@@ -1,49 +1,48 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class CountAggregateDefinition : AggregateDefinition
 {
-    public sealed class CountAggregateDefinition : AggregateDefinition
+    public override string Name
     {
-        public override string Name
+        get { return @"COUNT"; }
+    }
+
+    public override IAggregatable CreateAggregatable(Type argumentType)
+    {
+        return new CountAggregatable();
+    }
+
+    private sealed class CountAggregatable : IAggregatable
+    {
+        public IAggregator CreateAggregator()
         {
-            get { return @"COUNT"; }
+            return new CountAggregator();
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public Type ReturnType
         {
-            return new CountAggregatable();
+            get { return typeof(int); }
+        }
+    }
+
+    private sealed class CountAggregator : IAggregator
+    {
+        private int _count;
+
+        public void Initialize()
+        {
+            _count = 0;
         }
 
-        private sealed class CountAggregatable : IAggregatable
+        public void Accumulate(object value)
         {
-            public IAggregator CreateAggregator()
-            {
-                return new CountAggregator();
-            }
-
-            public Type ReturnType
-            {
-                get { return typeof(int); }
-            }
+            if (value is not null)
+                _count++;
         }
 
-        private sealed class CountAggregator : IAggregator
+        public object GetResult()
         {
-            private int _count;
-
-            public void Initialize()
-            {
-                _count = 0;
-            }
-
-            public void Accumulate(object value)
-            {
-                if (value is not null)
-                    _count++;
-            }
-
-            public object GetResult()
-            {
-                return _count;
-            }
+            return _count;
         }
     }
 }

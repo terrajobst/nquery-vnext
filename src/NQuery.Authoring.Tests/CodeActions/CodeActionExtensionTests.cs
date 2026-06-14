@@ -1,25 +1,24 @@
 ﻿using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.Tests.CodeActions
+namespace NQuery.Authoring.Tests.CodeActions;
+
+public class CodeActionExtensionTests : ExtensionTests
 {
-    public class CodeActionExtensionTests : ExtensionTests
+    [Fact]
+    public void CodeActionExtension_ReturnsAllFixProviders()
     {
-        [Fact]
-        public void CodeActionExtension_ReturnsAllFixProviders()
-        {
-            AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardFixProviders);
-        }
+        AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardFixProviders);
+    }
 
-        [Fact]
-        public void CodeActionExtension_ReturnsAllIssueProviders()
-        {
-            AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardIssueProviders);
-        }
+    [Fact]
+    public void CodeActionExtension_ReturnsAllIssueProviders()
+    {
+        AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardIssueProviders);
+    }
 
-        [Fact]
-        public void CodeActionExtension_ReturnsAllRefactoringProviders()
-        {
-            AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardRefactoringProviders);
-        }
+    [Fact]
+    public void CodeActionExtension_ReturnsAllRefactoringProviders()
+    {
+        AssertAllProvidersAreExposed(CodeActionExtensions.GetStandardRefactoringProviders);
     }
 }

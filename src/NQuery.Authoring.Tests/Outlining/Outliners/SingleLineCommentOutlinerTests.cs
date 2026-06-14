@@ -1,32 +1,32 @@
 using NQuery.Authoring.Outlining;
 using NQuery.Authoring.Outlining.Outliners;
 
-namespace NQuery.Authoring.Tests.Outlining.Outliners
-{
-    public class SingleLineCommentOutlinerTests : OutlinerTests
-    {
-        protected override IOutliner CreateOutliner()
-        {
-            return new SingleLineCommentOutliner();
-        }
+namespace NQuery.Authoring.Tests.Outlining.Outliners;
 
-        [Fact]
-        public void SingleLineCommentOutliner_DoesNotTriggerForSingeLines()
-        {
-            var query = @"
+public class SingleLineCommentOutlinerTests : OutlinerTests
+{
+    protected override IOutliner CreateOutliner()
+    {
+        return new SingleLineCommentOutliner();
+    }
+
+    [Fact]
+    public void SingleLineCommentOutliner_DoesNotTriggerForSingeLines()
+    {
+        var query = @"
                 // The Query
                 SELECT  FirstName, -- First Column
                         LastName   // Second Column
                 FROM    Employees
             ";
 
-            AssertIsNoMatch(query);
-        }
+        AssertIsNoMatch(query);
+    }
 
-        [Fact]
-        public void SingleLineCommentOutliner_FindsConsecutive()
-        {
-            var query = @"
+    [Fact]
+    public void SingleLineCommentOutliner_FindsConsecutive()
+    {
+        var query = @"
                 {//---------------------
                 // This is a query.
                 //---------------------}
@@ -35,13 +35,13 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 FROM    Employees
             ";
 
-            AssertIsMatch(query, "//--------------------- ...");
-        }
+        AssertIsMatch(query, "//--------------------- ...");
+    }
 
-        [Fact]
-        public void SingleLineCommentOutliner_FindsConsecutive_WhenSlashSlashAndMinusMinusAreMixed()
-        {
-            var query = @"
+    [Fact]
+    public void SingleLineCommentOutliner_FindsConsecutive_WhenSlashSlashAndMinusMinusAreMixed()
+    {
+        var query = @"
                 {-----------------------
                 // This is a query.
                 -----------------------}
@@ -50,13 +50,13 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 FROM    Employees
             ";
 
-            AssertIsMatch(query, "----------------------- ...");
-        }
+        AssertIsMatch(query, "----------------------- ...");
+    }
 
-        [Fact]
-        public void SingleLineCommentOutliner_FindsConsecutive_ButDoesNotCombineAcrossTokens()
-        {
-            var query = @"
+    [Fact]
+    public void SingleLineCommentOutliner_FindsConsecutive_ButDoesNotCombineAcrossTokens()
+    {
+        var query = @"
                 SELECT  FirstName, // First column
                         {// Second
                         // Column}
@@ -64,26 +64,26 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 FROM    Employees
             ";
 
-            AssertIsMatch(query, "// Second ...");
-        }
+        AssertIsMatch(query, "// Second ...");
+    }
 
-        [Fact]
-        public void SingleLineCommentOutliner_DoesNotCombineLeadingAndTrailing()
-        {
-            var query = @"
+    [Fact]
+    public void SingleLineCommentOutliner_DoesNotCombineLeadingAndTrailing()
+    {
+        var query = @"
                 // First line
                 SELECT  // Second line
                         FirstName
                 FROM    Employees
             ";
 
-            AssertIsNoMatch(query);
-        }
+        AssertIsNoMatch(query);
+    }
 
-        [Fact]
-        public void SingleLineCommentOutliner_DoesNotCombineSingleAndMultiLineComments()
-        {
-            var query = @"
+    [Fact]
+    public void SingleLineCommentOutliner_DoesNotCombineSingleAndMultiLineComments()
+    {
+        var query = @"
                 // First line
                 /* Second line */
                 {// Third line
@@ -92,7 +92,6 @@ namespace NQuery.Authoring.Tests.Outlining.Outliners
                 FROM    Employees
             ";
 
-            AssertIsMatch(query, "// Third line ...");
-        }
+        AssertIsMatch(query, "// Third line ...");
     }
 }

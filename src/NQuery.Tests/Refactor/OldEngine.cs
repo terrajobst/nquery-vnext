@@ -9,32 +9,31 @@ using BaselineContext = baseline::NQuery.DataContext;
 using BaselineQuery = baseline::NQuery.Query;
 using BaselineData = baseline::NQuery.Data.DataContextExtensions;
 
-namespace NQuery.Tests.Refactor
+namespace NQuery.Tests.Refactor;
+
+// Test harness for running queries through the OLD engine (the nquery-baseline worktree,
+// aliased "baseline"). It builds its DataContext from the same engine-neutral Northwind
+// DataSet the new-engine tests use (NorthwindDataContext), so results are directly
+// comparable. The extern alias is confined to this file: callers pass a query string and
+// get back a List<object[]>, all standard types, so they never touch baseline:: at all.
+internal static class OldEngine
 {
-    // Test harness for running queries through the OLD engine (the nquery-baseline worktree,
-    // aliased "baseline"). It builds its DataContext from the same engine-neutral Northwind
-    // DataSet the new-engine tests use (NorthwindDataContext), so results are directly
-    // comparable. The extern alias is confined to this file: callers pass a query string and
-    // get back a List<object[]>, all standard types, so they never touch baseline:: at all.
-    internal static class OldEngine
+    private static readonly BaselineContext Northwind =
+        BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.NorthwindDataContext.CreateDataSet());
+
+    public static List<object[]> RunQuery(string text)
     {
-        private static readonly BaselineContext Northwind =
-            BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.NorthwindDataContext.CreateDataSet());
+        using var reader = BaselineQuery.Create(Northwind, text).ExecuteReader();
 
-        public static List<object[]> RunQuery(string text)
+        var rows = new List<object[]>();
+        while (reader.Read())
         {
-            using var reader = BaselineQuery.Create(Northwind, text).ExecuteReader();
-
-            var rows = new List<object[]>();
-            while (reader.Read())
-            {
-                var row = new object[reader.ColumnCount];
-                for (var i = 0; i < row.Length; i++)
-                    row[i] = reader[i];
-                rows.Add(row);
-            }
-
-            return rows;
+            var row = new object[reader.ColumnCount];
+            for (var i = 0; i < row.Length; i++)
+                row[i] = reader[i];
+            rows.Add(row);
         }
+
+        return rows;
     }
 }

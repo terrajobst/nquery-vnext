@@ -1,21 +1,20 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Completion.Providers
+namespace NQuery.Authoring.Completion.Providers;
+
+internal sealed class TypeCompletionProvider : CompletionProvider<CastExpressionSyntax>
 {
-    internal sealed class TypeCompletionProvider : CompletionProvider<CastExpressionSyntax>
+    protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, CastExpressionSyntax node)
     {
-        protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, CastExpressionSyntax node)
-        {
-            if (node.AsKeyword.IsMissing || position < node.AsKeyword.Span.End)
-                return Enumerable.Empty<CompletionItem>();
+        if (node.AsKeyword.IsMissing || position < node.AsKeyword.Span.End)
+            return Enumerable.Empty<CompletionItem>();
 
-            return from typeName in SyntaxFacts.GetTypeNames()
-                   select GetCompletionItem(typeName);
-        }
+        return from typeName in SyntaxFacts.GetTypeNames()
+               select GetCompletionItem(typeName);
+    }
 
-        private static CompletionItem GetCompletionItem(string typeName)
-        {
-            return new CompletionItem(typeName, typeName, typeName, Glyph.Type);
-        }
+    private static CompletionItem GetCompletionItem(string typeName)
+    {
+        return new CompletionItem(typeName, typeName, typeName, Glyph.Type);
     }
 }

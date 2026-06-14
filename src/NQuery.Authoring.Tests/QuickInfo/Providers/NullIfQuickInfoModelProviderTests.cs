@@ -3,44 +3,43 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class NullIfQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class NullIfQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new NullIfQuickInfoModelProvider();
-        }
+        return new NullIfQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<NullIfExpressionSyntax>().Single();
-            var span = syntax.NullIfKeyword.Span;
-            var markup = SymbolMarkup.ForNullIfSymbol();
-            return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<NullIfExpressionSyntax>().Single();
+        var span = syntax.NullIfKeyword.Span;
+        var markup = SymbolMarkup.ForNullIfSymbol();
+        return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
+    }
 
-        [Fact]
-        public void NullIfQuickInfoModelProvider_MatchesInNullIf()
-        {
-            var query = @"
+    [Fact]
+    public void NullIfQuickInfoModelProvider_MatchesInNullIf()
+    {
+        var query = @"
                 SELECT  {NULLIF}(e.FirstName, 'Andrew')
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void NullIfQuickInfoModelProvider_DoesNotMatchInParentheses()
-        {
-            var query = @"
+    [Fact]
+    public void NullIfQuickInfoModelProvider_DoesNotMatchInParentheses()
+    {
+        var query = @"
                 SELECT  NULLIF({e.FirstName, 'Andrew')}
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

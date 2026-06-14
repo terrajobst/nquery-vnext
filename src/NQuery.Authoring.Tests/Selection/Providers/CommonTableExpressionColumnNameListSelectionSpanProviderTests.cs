@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Authoring.Selection.Providers;
 
-namespace NQuery.Authoring.Tests.Selection.Providers
-{
-    public class CommonTableExpressionColumnNameListSelectionSpanProviderTests : SelectionSpanProviderTests
-    {
-        protected override ISelectionSpanProvider CreateProvider()
-        {
-            return new CommonTableExpressionColumnNameListSelectionSpanProvider();
-        }
+namespace NQuery.Authoring.Tests.Selection.Providers;
 
-        [Fact]
-        public void SelectionExtensions_CommonTableExpressionColumnNameList()
-        {
-            var query = @"
+public class CommonTableExpressionColumnNameListSelectionSpanProviderTests : SelectionSpanProviderTests
+{
+    protected override ISelectionSpanProvider CreateProvider()
+    {
+        return new CommonTableExpressionColumnNameListSelectionSpanProvider();
+    }
+
+    [Fact]
+    public void SelectionExtensions_CommonTableExpressionColumnNameList()
+    {
+        var query = @"
                 WITH LondonEmps ({{{FN},} LN, RC}) AS
                 (
                     SELECT  e.FirstName,
@@ -26,7 +26,6 @@ namespace NQuery.Authoring.Tests.Selection.Providers
                 FROM    LondonEmps
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

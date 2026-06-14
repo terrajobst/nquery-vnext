@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.Outlining
+namespace NQuery.Authoring.Outlining;
+
+public interface IOutliner
 {
-    public interface IOutliner
-    {
-        IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken);
-    }
+    IEnumerable<OutliningRegionSpan> FindRegions(SyntaxNodeOrToken nodeOrToken);
 }

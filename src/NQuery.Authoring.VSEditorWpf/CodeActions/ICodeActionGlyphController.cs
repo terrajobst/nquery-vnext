@@ -1,10 +1,9 @@
-namespace NQuery.Authoring.VSEditorWpf.CodeActions
+namespace NQuery.Authoring.VSEditorWpf.CodeActions;
+
+public interface ICodeActionGlyphController
 {
-    public interface ICodeActionGlyphController
-    {
-        bool IsActive { get; }
-        bool IsExpanded { get; }
-        void Expand();
-        void Collapse();
-    }
+    bool IsActive { get; }
+    bool IsExpanded { get; }
+    void Expand();
+    void Collapse();
 }

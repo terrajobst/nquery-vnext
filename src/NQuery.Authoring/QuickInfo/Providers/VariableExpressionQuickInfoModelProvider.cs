@@ -1,15 +1,14 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.QuickInfo.Providers
+namespace NQuery.Authoring.QuickInfo.Providers;
+
+internal sealed class VariableExpressionQuickInfoModelProvider : QuickInfoModelProvider<VariableExpressionSyntax>
 {
-    internal sealed class VariableExpressionQuickInfoModelProvider : QuickInfoModelProvider<VariableExpressionSyntax>
+    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, VariableExpressionSyntax node)
     {
-        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, VariableExpressionSyntax node)
-        {
-            var symbol = semanticModel.GetSymbol(node);
-            return symbol is null
-                       ? null
-                       : QuickInfoModel.ForSymbol(semanticModel, node.Span, symbol);
-        }
+        var symbol = semanticModel.GetSymbol(node);
+        return symbol is null
+                   ? null
+                   : QuickInfoModel.ForSymbol(semanticModel, node.Span, symbol);
     }
 }

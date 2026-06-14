@@ -2,10 +2,9 @@
 
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.Composition.CodeActions
+namespace NQuery.Authoring.Composition.CodeActions;
+
+public interface ICodeIssueProviderService
 {
-    public interface ICodeIssueProviderService
-    {
-        ImmutableArray<ICodeIssueProvider> Providers { get; }
-    }
+    ImmutableArray<ICodeIssueProvider> Providers { get; }
 }

@@ -1,50 +1,49 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class AnyAggregateDefinition : AggregateDefinition
 {
-    public sealed class AnyAggregateDefinition : AggregateDefinition
+    public override string Name
     {
-        public override string Name
+        get { return @"ANY"; }
+    }
+
+    public override IAggregatable CreateAggregatable(Type argumentType)
+    {
+        return new AnyAggregatable(argumentType);
+    }
+
+    private sealed class AnyAggregatable : IAggregatable
+    {
+        public AnyAggregatable(Type returnType)
         {
-            get { return @"ANY"; }
+            ReturnType = returnType;
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public IAggregator CreateAggregator()
         {
-            return new AnyAggregatable(argumentType);
+            return new AnyAggregator();
         }
 
-        private sealed class AnyAggregatable : IAggregatable
+        public Type ReturnType { get; }
+    }
+
+    private sealed class AnyAggregator : IAggregator
+    {
+        private object _value;
+
+        public void Initialize()
         {
-            public AnyAggregatable(Type returnType)
-            {
-                ReturnType = returnType;
-            }
-
-            public IAggregator CreateAggregator()
-            {
-                return new AnyAggregator();
-            }
-
-            public Type ReturnType { get; }
+            _value = null;
         }
 
-        private sealed class AnyAggregator : IAggregator
+        public void Accumulate(object value)
         {
-            private object _value;
+            _value = value;
+        }
 
-            public void Initialize()
-            {
-                _value = null;
-            }
-
-            public void Accumulate(object value)
-            {
-                _value = value;
-            }
-
-            public object GetResult()
-            {
-                return _value;
-            }
+        public object GetResult()
+        {
+            return _value;
         }
     }
 }

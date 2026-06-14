@@ -1,9 +1,8 @@
 using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Authoring.VSEditorWpf.SignatureHelp
+namespace NQuery.Authoring.VSEditorWpf.SignatureHelp;
+
+public interface ISignatureHelpManagerProvider
 {
-    public interface ISignatureHelpManagerProvider
-    {
-        ISignatureHelpManager GetSignatureHelpManager(ITextView textView);
-    }
+    ISignatureHelpManager GetSignatureHelpManager(ITextView textView);
 }

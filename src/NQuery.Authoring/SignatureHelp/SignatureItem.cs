@@ -1,40 +1,39 @@
 using System.Collections.Immutable;
 
-namespace NQuery.Authoring.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp;
+
+public sealed class SignatureItem : IEquatable<SignatureItem>
 {
-    public sealed class SignatureItem : IEquatable<SignatureItem>
+    public SignatureItem(string content, IEnumerable<ParameterItem> parameters)
     {
-        public SignatureItem(string content, IEnumerable<ParameterItem> parameters)
-        {
-            Content = content;
-            Parameters = parameters.ToImmutableArray();
-        }
+        Content = content;
+        Parameters = parameters.ToImmutableArray();
+    }
 
-        public string Content { get; }
+    public string Content { get; }
 
-        public ImmutableArray<ParameterItem> Parameters { get; }
+    public ImmutableArray<ParameterItem> Parameters { get; }
 
-        public bool Equals(SignatureItem other)
-        {
-            return other is not null &&
-                   Content == other.Content &&
-                   Parameters.SequenceEqual(other.Parameters);
-        }
+    public bool Equals(SignatureItem other)
+    {
+        return other is not null &&
+               Content == other.Content &&
+               Parameters.SequenceEqual(other.Parameters);
+    }
 
-        public override bool Equals(object obj)
-        {
-            return obj is SignatureItem other && Equals(other);
-        }
+    public override bool Equals(object obj)
+    {
+        return obj is SignatureItem other && Equals(other);
+    }
 
-        public override int GetHashCode()
-        {
-            var result = new HashCode();
-            result.Add(Content);
+    public override int GetHashCode()
+    {
+        var result = new HashCode();
+        result.Add(Content);
 
-            foreach (var p in Parameters)
-                result.Add(p);
+        foreach (var p in Parameters)
+            result.Add(p);
 
-            return result.ToHashCode();
-        }
+        return result.ToHashCode();
     }
 }

@@ -3,46 +3,45 @@ using System.Data;
 
 using NQuery.Symbols;
 
-namespace NQuery.Data
+namespace NQuery.Data;
+
+public sealed class DataTableDefinition : TableDefinition
 {
-    public sealed class DataTableDefinition : TableDefinition
+    public DataTableDefinition(DataTable dataTable)
     {
-        public DataTableDefinition(DataTable dataTable)
-        {
-            ArgumentNullException.ThrowIfNull(dataTable);
+        ArgumentNullException.ThrowIfNull(dataTable);
 
-            DataTable = dataTable;
-            Name = DataTable.TableName;
-        }
+        DataTable = dataTable;
+        Name = DataTable.TableName;
+    }
 
-        public DataTableDefinition(DataTable dataTable, string name)
-        {
-            ArgumentNullException.ThrowIfNull(dataTable);
+    public DataTableDefinition(DataTable dataTable, string name)
+    {
+        ArgumentNullException.ThrowIfNull(dataTable);
 
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException(@"The table name must not be null or empty.", nameof(name));
+        if (string.IsNullOrEmpty(name))
+            throw new ArgumentException(@"The table name must not be null or empty.", nameof(name));
 
-            DataTable = dataTable;
-            Name = name;
-        }
+        DataTable = dataTable;
+        Name = name;
+    }
 
-        public DataTable DataTable { get; }
+    public DataTable DataTable { get; }
 
-        public override string Name { get; }
+    public override string Name { get; }
 
-        public override Type RowType
-        {
-            get { return typeof(DataRow); }
-        }
+    public override Type RowType
+    {
+        get { return typeof(DataRow); }
+    }
 
-        protected override IEnumerable<ColumnDefinition> GetColumns()
-        {
-            return DataTable.Columns.Cast<DataColumn>().Select(c => new DataColumnDefinition(c));
-        }
+    protected override IEnumerable<ColumnDefinition> GetColumns()
+    {
+        return DataTable.Columns.Cast<DataColumn>().Select(c => new DataColumnDefinition(c));
+    }
 
-        public override IEnumerable GetRows()
-        {
-            return DataTable.Rows;
-        }
+    public override IEnumerable GetRows()
+    {
+        return DataTable.Rows;
     }
 }

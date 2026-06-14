@@ -5,71 +5,70 @@ using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.Classifications;
 
-namespace NQuery.Authoring.ActiproWpf.Classification
+namespace NQuery.Authoring.ActiproWpf.Classification;
+
+internal sealed class NQuerySyntacticClassifier : CollectionTagger<IClassificationTag>
 {
-    internal sealed class NQuerySyntacticClassifier : CollectionTagger<IClassificationTag>
+    private readonly INQueryClassificationTypes _classificationTypes;
+
+    public NQuerySyntacticClassifier(ICodeDocument document)
+        : base(nameof(NQuerySyntacticClassifier), null, document, true)
     {
-        private readonly INQueryClassificationTypes _classificationTypes;
+        _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
+        document.ParseDataChanged += DocumentOnParseDataChanged;
+        UpdateTagsAsync();
+    }
 
-        public NQuerySyntacticClassifier(ICodeDocument document)
-            : base(nameof(NQuerySyntacticClassifier), null, document, true)
+    private void DocumentOnParseDataChanged(object sender, ParseDataPropertyChangedEventArgs e)
+    {
+        UpdateTagsAsync();
+    }
+
+    private async void UpdateTagsAsync()
+    {
+        var document = Document.GetDocument();
+        var syntaxTree = await document.GetSyntaxTreeAsync();
+        var classificationSpans = await ClassifyTreeAsync(syntaxTree);
+
+        var tags = from cs in classificationSpans
+                   let textRange = document.Text.ToSnapshotRange(cs.Span)
+                   let classificationType = GetClassification(cs.Classification)
+                   let tag = new ClassificationTag(classificationType)
+                   select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);
+
+        using (CreateBatch())
         {
-            _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
-            document.ParseDataChanged += DocumentOnParseDataChanged;
-            UpdateTagsAsync();
+            Clear();
+            foreach (var tag in tags)
+                Add(tag);
         }
+    }
 
-        private void DocumentOnParseDataChanged(object sender, ParseDataPropertyChangedEventArgs e)
+    private IClassificationType GetClassification(SyntaxClassification kind)
+    {
+        switch (kind)
         {
-            UpdateTagsAsync();
+            case SyntaxClassification.Whitespace:
+                return _classificationTypes.WhiteSpace;
+            case SyntaxClassification.Comment:
+                return _classificationTypes.Comment;
+            case SyntaxClassification.Keyword:
+                return _classificationTypes.Keyword;
+            case SyntaxClassification.Punctuation:
+                return _classificationTypes.Punctuation;
+            case SyntaxClassification.Identifier:
+                return _classificationTypes.Identifier;
+            case SyntaxClassification.StringLiteral:
+                return _classificationTypes.StringLiteral;
+            case SyntaxClassification.NumberLiteral:
+                return _classificationTypes.NumberLiteral;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(kind));
         }
+    }
 
-        private async void UpdateTagsAsync()
-        {
-            var document = Document.GetDocument();
-            var syntaxTree = await document.GetSyntaxTreeAsync();
-            var classificationSpans = await ClassifyTreeAsync(syntaxTree);
-
-            var tags = from cs in classificationSpans
-                       let textRange = document.Text.ToSnapshotRange(cs.Span)
-                       let classificationType = GetClassification(cs.Classification)
-                       let tag = new ClassificationTag(classificationType)
-                       select new TagVersionRange<IClassificationTag>(textRange, TextRangeTrackingModes.Default, tag);
-
-            using (CreateBatch())
-            {
-                Clear();
-                foreach (var tag in tags)
-                    Add(tag);
-            }
-        }
-
-        private IClassificationType GetClassification(SyntaxClassification kind)
-        {
-            switch (kind)
-            {
-                case SyntaxClassification.Whitespace:
-                    return _classificationTypes.WhiteSpace;
-                case SyntaxClassification.Comment:
-                    return _classificationTypes.Comment;
-                case SyntaxClassification.Keyword:
-                    return _classificationTypes.Keyword;
-                case SyntaxClassification.Punctuation:
-                    return _classificationTypes.Punctuation;
-                case SyntaxClassification.Identifier:
-                    return _classificationTypes.Identifier;
-                case SyntaxClassification.StringLiteral:
-                    return _classificationTypes.StringLiteral;
-                case SyntaxClassification.NumberLiteral:
-                    return _classificationTypes.NumberLiteral;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(kind));
-            }
-        }
-
-        private static Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifyTreeAsync(SyntaxTree syntaxTree)
-        {
-            return Task.Run(() => syntaxTree.Root.ClassifySyntax());
-        }
+    private static Task<IReadOnlyList<SyntaxClassificationSpan>> ClassifyTreeAsync(SyntaxTree syntaxTree)
+    {
+        return Task.Run(() => syntaxTree.Root.ClassifySyntax());
     }
 }

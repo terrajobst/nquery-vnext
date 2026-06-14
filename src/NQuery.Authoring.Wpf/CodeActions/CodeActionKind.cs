@@ -1,8 +1,7 @@
-﻿namespace NQuery.Authoring.Wpf.CodeActions
+﻿namespace NQuery.Authoring.Wpf.CodeActions;
+
+public enum CodeActionKind
 {
-    public enum CodeActionKind
-    {
-        IssueFix,
-        Refactoring
-    }
+    IssueFix,
+    Refactoring
 }

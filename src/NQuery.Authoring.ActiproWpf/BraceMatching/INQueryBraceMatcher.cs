@@ -4,10 +4,9 @@ using ActiproSoftware.Text.Analysis;
 
 using NQuery.Authoring.BraceMatching;
 
-namespace NQuery.Authoring.ActiproWpf.BraceMatching
+namespace NQuery.Authoring.ActiproWpf.BraceMatching;
+
+public interface INQueryBraceMatcher : IStructureMatcher
 {
-    public interface INQueryBraceMatcher : IStructureMatcher
-    {
-        Collection<IBraceMatcher> Matchers { get; }
-    }
+    Collection<IBraceMatcher> Matchers { get; }
 }

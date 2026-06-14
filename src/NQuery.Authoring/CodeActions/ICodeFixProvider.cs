@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public interface ICodeFixProvider
 {
-    public interface ICodeFixProvider
-    {
-        IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position);
-    }
+    IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position);
 }

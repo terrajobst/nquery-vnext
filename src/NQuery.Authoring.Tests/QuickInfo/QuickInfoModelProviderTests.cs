@@ -1,72 +1,71 @@
 ﻿using NQuery.Authoring.QuickInfo;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests.QuickInfo
+namespace NQuery.Authoring.Tests.QuickInfo;
+
+public abstract class QuickInfoModelProviderTests
 {
-    public abstract class QuickInfoModelProviderTests
+    protected abstract IQuickInfoModelProvider CreateProvider();
+
+    protected abstract QuickInfoModel CreateExpectedModel(SemanticModel semanticModel);
+
+    protected void AssertIsMatch(string query)
     {
-        protected abstract IQuickInfoModelProvider CreateProvider();
+        AssertIsMatch(query, null);
+    }
 
-        protected abstract QuickInfoModel CreateExpectedModel(SemanticModel semanticModel);
+    protected void AssertIsMatch(string query, Func<DataContext, DataContext> dataContextModifer)
+    {
+        GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
 
-        protected void AssertIsMatch(string query)
-        {
-            AssertIsMatch(query, null);
-        }
+        var expectedModel = CreateExpectedModel(semanticModel);
 
-        protected void AssertIsMatch(string query, Func<DataContext, DataContext> dataContextModifer)
-        {
-            GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
+        AssertIsMatch(expectedModel, startModel);
+        AssertIsMatch(expectedModel, middleModel);
+        AssertIsMatch(expectedModel, endModel);
+    }
 
-            var expectedModel = CreateExpectedModel(semanticModel);
+    protected void AssertIsNotMatch(string query)
+    {
+        AssertIsNotMatch(query, null);
+    }
 
-            AssertIsMatch(expectedModel, startModel);
-            AssertIsMatch(expectedModel, middleModel);
-            AssertIsMatch(expectedModel, endModel);
-        }
+    protected void AssertIsNotMatch(string query, Func<DataContext, DataContext> dataContextModifer)
+    {
+        GetModels(query, dataContextModifer, out _, out var startModel, out var middleModel, out var endModel);
 
-        protected void AssertIsNotMatch(string query)
-        {
-            AssertIsNotMatch(query, null);
-        }
+        Assert.Null(startModel);
+        Assert.Null(middleModel);
+        Assert.Null(endModel);
+    }
 
-        protected void AssertIsNotMatch(string query, Func<DataContext, DataContext> dataContextModifer)
-        {
-            GetModels(query, dataContextModifer, out _, out var startModel, out var middleModel, out var endModel);
+    private static void AssertIsMatch(QuickInfoModel expectedModel, QuickInfoModel actualModel)
+    {
+        Assert.NotNull(actualModel);
 
-            Assert.Null(startModel);
-            Assert.Null(middleModel);
-            Assert.Null(endModel);
-        }
+        Assert.Equal(expectedModel.SemanticModel, actualModel.SemanticModel);
+        Assert.Equal(expectedModel.Span, actualModel.Span);
+        Assert.Equal(expectedModel.Glyph, actualModel.Glyph);
+        Assert.Equal(expectedModel.Markup, actualModel.Markup);
+    }
 
-        private static void AssertIsMatch(QuickInfoModel expectedModel, QuickInfoModel actualModel)
-        {
-            Assert.NotNull(actualModel);
+    private void GetModels(string query, Func<DataContext, DataContext> dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel startModel, out QuickInfoModel middleModel, out QuickInfoModel endModel)
+    {
+        var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
 
-            Assert.Equal(expectedModel.SemanticModel, actualModel.SemanticModel);
-            Assert.Equal(expectedModel.Span, actualModel.Span);
-            Assert.Equal(expectedModel.Glyph, actualModel.Glyph);
-            Assert.Equal(expectedModel.Markup, actualModel.Markup);
-        }
+        if (dataContextModifer is not null)
+            compilation = compilation.WithDataContext(dataContextModifer(compilation.DataContext));
 
-        private void GetModels(string query, Func<DataContext, DataContext> dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel startModel, out QuickInfoModel middleModel, out QuickInfoModel endModel)
-        {
-            var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
+        semanticModel = compilation.GetSemanticModel();
+        var start = span.Start;
+        var middle = span.Start + span.Length / 2;
+        var end = span.End;
 
-            if (dataContextModifer is not null)
-                compilation = compilation.WithDataContext(dataContextModifer(compilation.DataContext));
+        var provider = CreateProvider();
+        var providers = new[] { provider };
 
-            semanticModel = compilation.GetSemanticModel();
-            var start = span.Start;
-            var middle = span.Start + span.Length / 2;
-            var end = span.End;
-
-            var provider = CreateProvider();
-            var providers = new[] { provider };
-
-            startModel = semanticModel.GetQuickInfoModel(start, providers);
-            middleModel = semanticModel.GetQuickInfoModel(middle, providers);
-            endModel = semanticModel.GetQuickInfoModel(end, providers);
-        }
+        startModel = semanticModel.GetQuickInfoModel(start, providers);
+        middleModel = semanticModel.GetQuickInfoModel(middle, providers);
+        endModel = semanticModel.GetQuickInfoModel(end, providers);
     }
 }

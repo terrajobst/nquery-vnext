@@ -1,20 +1,19 @@
 using NQuery.Syntax;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal struct BoundComputedValueWithSyntax
 {
-    internal struct BoundComputedValueWithSyntax
+    public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, IBoundValue result)
     {
-        public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, IBoundValue result)
-        {
-            Syntax = syntax;
-            Expression = expression;
-            Result = result;
-        }
-
-        public ExpressionSyntax Syntax { get; }
-
-        public BoundExpression Expression { get; }
-
-        public IBoundValue Result { get; }
+        Syntax = syntax;
+        Expression = expression;
+        Result = result;
     }
+
+    public ExpressionSyntax Syntax { get; }
+
+    public BoundExpression Expression { get; }
+
+    public IBoundValue Result { get; }
 }

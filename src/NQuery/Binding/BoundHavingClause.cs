@@ -1,12 +1,11 @@
-namespace NQuery.Binding
-{
-    internal sealed class BoundHavingClause
-    {
-        public BoundHavingClause(BoundExpression condition)
-        {
-            Condition = condition;
-        }
+namespace NQuery.Binding;
 
-        public BoundExpression Condition { get; }
+internal sealed class BoundHavingClause
+{
+    public BoundHavingClause(BoundExpression condition)
+    {
+        Condition = condition;
     }
+
+    public BoundExpression Condition { get; }
 }

@@ -1,13 +1,12 @@
 ﻿using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Authoring.Tests.SignatureHelp
+namespace NQuery.Authoring.Tests.SignatureHelp;
+
+public class SignatureHelpExtensionsTests : ExtensionTests
 {
-    public class SignatureHelpExtensionsTests : ExtensionTests
+    [Fact]
+    public void SignatureHelpExtensions_ReturnsAllProviders()
     {
-        [Fact]
-        public void SignatureHelpExtensions_ReturnsAllProviders()
-        {
-            AssertAllProvidersAreExposed(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders);
-        }
+        AssertAllProvidersAreExposed(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders);
     }
 }

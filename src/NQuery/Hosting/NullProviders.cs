@@ -1,30 +1,29 @@
 using NQuery.Symbols;
 
-namespace NQuery.Hosting
+namespace NQuery.Hosting;
+
+public static class NullProviders
 {
-    public static class NullProviders
+    private sealed class NullPropertyProvider : IPropertyProvider
     {
-        private sealed class NullPropertyProvider : IPropertyProvider
+        public IEnumerable<PropertySymbol> GetProperties(Type type)
         {
-            public IEnumerable<PropertySymbol> GetProperties(Type type)
-            {
-                ArgumentNullException.ThrowIfNull(type);
+            ArgumentNullException.ThrowIfNull(type);
 
-                return Enumerable.Empty<PropertySymbol>();
-            }
+            return Enumerable.Empty<PropertySymbol>();
         }
-
-        private sealed class NullMethodProvider : IMethodProvider
-        {
-            public IEnumerable<MethodSymbol> GetMethods(Type type)
-            {
-                ArgumentNullException.ThrowIfNull(type);
-
-                return Enumerable.Empty<MethodSymbol>();
-            }
-        }
-
-        public static readonly IPropertyProvider PropertyProvider = new NullPropertyProvider();
-        public static readonly IMethodProvider MethodProvider = new NullMethodProvider();
     }
+
+    private sealed class NullMethodProvider : IMethodProvider
+    {
+        public IEnumerable<MethodSymbol> GetMethods(Type type)
+        {
+            ArgumentNullException.ThrowIfNull(type);
+
+            return Enumerable.Empty<MethodSymbol>();
+        }
+    }
+
+    public static readonly IPropertyProvider PropertyProvider = new NullPropertyProvider();
+    public static readonly IMethodProvider MethodProvider = new NullMethodProvider();
 }

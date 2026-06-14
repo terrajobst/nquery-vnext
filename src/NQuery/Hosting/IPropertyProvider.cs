@@ -1,9 +1,8 @@
 using NQuery.Symbols;
 
-namespace NQuery.Hosting
+namespace NQuery.Hosting;
+
+public interface IPropertyProvider
 {
-    public interface IPropertyProvider
-    {
-        IEnumerable<PropertySymbol> GetProperties(Type type);
-    }
+    IEnumerable<PropertySymbol> GetProperties(Type type);
 }

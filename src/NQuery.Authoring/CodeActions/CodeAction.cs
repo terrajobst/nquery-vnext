@@ -1,28 +1,27 @@
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public abstract class CodeAction : ICodeAction
 {
-    public abstract class CodeAction : ICodeAction
+    private readonly SyntaxTree _syntaxTree;
+
+    protected CodeAction(SyntaxTree syntaxTree)
     {
-        private readonly SyntaxTree _syntaxTree;
+        _syntaxTree = syntaxTree;
+    }
 
-        protected CodeAction(SyntaxTree syntaxTree)
-        {
-            _syntaxTree = syntaxTree;
-        }
+    public abstract string Description { get; }
 
-        public abstract string Description { get; }
+    public virtual SyntaxTree GetEdit()
+    {
+        var changeSet = new TextChangeSet();
+        GetChanges(changeSet);
 
-        public virtual SyntaxTree GetEdit()
-        {
-            var changeSet = new TextChangeSet();
-            GetChanges(changeSet);
+        return _syntaxTree.WithChanges(changeSet);
+    }
 
-            return _syntaxTree.WithChanges(changeSet);
-        }
-
-        protected virtual void GetChanges(TextChangeSet changeSet)
-        {
-        }
+    protected virtual void GetChanges(TextChangeSet changeSet)
+    {
     }
 }

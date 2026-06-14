@@ -1,45 +1,44 @@
 using NQuery.Symbols.Aggregation;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundAggregateExpression : BoundExpression
 {
-    internal sealed class BoundAggregateExpression : BoundExpression
+    public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
     {
-        public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable aggregatable, BoundExpression argument)
+        Symbol = aggregate;
+        Aggregatable = aggregatable;
+        Argument = argument;
+    }
+
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.AggregateExpression; }
+    }
+
+    public override Type Type
+    {
+        get
         {
-            Symbol = aggregate;
-            Aggregatable = aggregatable;
-            Argument = argument;
+            return Aggregatable is null
+                ? TypeFacts.Unknown
+                : Aggregatable.ReturnType;
         }
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.AggregateExpression; }
-        }
+    public AggregateSymbol Symbol { get; }
 
-        public override Type Type
-        {
-            get
-            {
-                return Aggregatable is null
-                    ? TypeFacts.Unknown
-                    : Aggregatable.ReturnType;
-            }
-        }
+    public AggregateSymbol Aggregate
+    {
+        get { return Symbol; }
+    }
 
-        public AggregateSymbol Symbol { get; }
+    public IAggregatable Aggregatable { get; }
 
-        public AggregateSymbol Aggregate
-        {
-            get { return Symbol; }
-        }
+    public BoundExpression Argument { get; }
 
-        public IAggregatable Aggregatable { get; }
-
-        public BoundExpression Argument { get; }
-
-        public override string ToString()
-        {
-            return $"{Symbol.Name}({Argument})";
-        }
+    public override string ToString()
+    {
+        return $"{Symbol.Name}({Argument})";
     }
 }

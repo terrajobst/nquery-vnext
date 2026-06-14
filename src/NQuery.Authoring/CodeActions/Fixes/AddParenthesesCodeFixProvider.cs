@@ -1,51 +1,50 @@
 ﻿using NQuery.Syntax;
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions.Fixes
+namespace NQuery.Authoring.CodeActions.Fixes;
+
+internal sealed class AddParenthesesCodeFixProvider : CodeFixProvider
 {
-    internal sealed class AddParenthesesCodeFixProvider : CodeFixProvider
+    public override IEnumerable<DiagnosticId> GetFixableDiagnosticIds()
     {
-        public override IEnumerable<DiagnosticId> GetFixableDiagnosticIds()
+        return new[]
         {
-            return new[]
-            {
-                DiagnosticId.InvocationRequiresParenthesis
-            };
+            DiagnosticId.InvocationRequiresParenthesis
+        };
+    }
+
+    protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic)
+    {
+        var root = semanticModel.SyntaxTree.Root;
+        var expression = root.DescendantNodes()
+                             .Where(n => n.Span.ContainsOrTouches(position))
+                             .FirstOrDefault(n => n is NameExpressionSyntax || n is PropertyAccessExpressionSyntax);
+
+        if (expression is null)
+            return Enumerable.Empty<ICodeAction>();
+
+        return new[] { new AddParenthesesCodeAction(expression) };
+    }
+
+    private sealed class AddParenthesesCodeAction : CodeAction
+    {
+        private readonly SyntaxNode _node;
+
+        public AddParenthesesCodeAction(SyntaxNode node)
+            : base(node.SyntaxTree)
+        {
+            _node = node;
         }
 
-        protected override IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position, Diagnostic diagnostic)
+        public override string Description
         {
-            var root = semanticModel.SyntaxTree.Root;
-            var expression = root.DescendantNodes()
-                                 .Where(n => n.Span.ContainsOrTouches(position))
-                                 .FirstOrDefault(n => n is NameExpressionSyntax || n is PropertyAccessExpressionSyntax);
-
-            if (expression is null)
-                return Enumerable.Empty<ICodeAction>();
-
-            return new[] { new AddParenthesesCodeAction(expression) };
+            get { return Resources.CodeActionAddParentheses; }
         }
 
-        private sealed class AddParenthesesCodeAction : CodeAction
+        protected override void GetChanges(TextChangeSet changeSet)
         {
-            private readonly SyntaxNode _node;
-
-            public AddParenthesesCodeAction(SyntaxNode node)
-                : base(node.SyntaxTree)
-            {
-                _node = node;
-            }
-
-            public override string Description
-            {
-                get { return Resources.CodeActionAddParentheses; }
-            }
-
-            protected override void GetChanges(TextChangeSet changeSet)
-            {
-                var position = _node.Span.End;
-                changeSet.InsertText(position, @"()");
-            }
+            var position = _node.Span.End;
+            changeSet.InsertText(position, @"()");
         }
     }
 }

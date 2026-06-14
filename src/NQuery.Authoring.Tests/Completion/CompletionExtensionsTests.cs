@@ -1,13 +1,12 @@
 ﻿using NQuery.Authoring.Completion;
 
-namespace NQuery.Authoring.Tests.Completion
+namespace NQuery.Authoring.Tests.Completion;
+
+public class CompletionExtensionsTests : ExtensionTests
 {
-    public class CompletionExtensionsTests : ExtensionTests
+    [Fact]
+    public void CompletionExtensionsTests_ReturnsAllProviders()
     {
-        [Fact]
-        public void CompletionExtensionsTests_ReturnsAllProviders()
-        {
-            AssertAllProvidersAreExposed(CompletionExtensions.GetStandardCompletionProviders);
-        }
+        AssertAllProvidersAreExposed(CompletionExtensions.GetStandardCompletionProviders);
     }
 }

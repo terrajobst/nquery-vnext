@@ -4,41 +4,40 @@ using Microsoft.VisualStudio.Text.Tagging;
 using NQuery.Authoring.CodeActions;
 using NQuery.Text;
 
-namespace NQuery.Authoring.VSEditorWpf.Classification
+namespace NQuery.Authoring.VSEditorWpf.Classification;
+
+internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag, TextSpan>
 {
-    internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificationTag, TextSpan>
+    private readonly INQueryClassificationService _classificationService;
+    private readonly Workspace _workspace;
+
+    public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, Workspace workspace)
     {
-        private readonly INQueryClassificationService _classificationService;
-        private readonly Workspace _workspace;
+        _classificationService = classificationService;
+        _workspace = workspace;
+        _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
+        InvalidateTagsAsync();
+    }
 
-        public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, Workspace workspace)
-        {
-            _classificationService = classificationService;
-            _workspace = workspace;
-            _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
-            InvalidateTagsAsync();
-        }
+    private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
+    {
+        InvalidateTagsAsync();
+    }
 
-        private void WorkspaceOnCurrentDocumentChanged(object sender, EventArgs e)
-        {
-            InvalidateTagsAsync();
-        }
+    protected override async Task<(ITextSnapshot Snapshot, IEnumerable<TextSpan> RawTags)> GetRawTagsAsync()
+    {
+        var document = _workspace.CurrentDocument;
+        var semanticModel = await document.GetSemanticModelAsync();
+        var snapshot = document.GetTextSnapshot();
+        var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
+        return (snapshot, unnecessarySpans);
+    }
 
-        protected override async Task<(ITextSnapshot Snapshot, IEnumerable<TextSpan> RawTags)> GetRawTagsAsync()
-        {
-            var document = _workspace.CurrentDocument;
-            var semanticModel = await document.GetSemanticModelAsync();
-            var snapshot = document.GetTextSnapshot();
-            var unnecessarySpans = await Task.Run(() => semanticModel.GetIssues().Where(i => i.Kind == CodeIssueKind.Unnecessary).Select(i => i.Span));
-            return (snapshot, unnecessarySpans);
-        }
-
-        protected override ITagSpan<IClassificationTag> CreateTagSpan(ITextSnapshot snapshot, TextSpan rawTag)
-        {
-            var snapshotSpan = new SnapshotSpan(snapshot, rawTag.Start, rawTag.Length);
-            var classification = _classificationService.Unnecessary;
-            var tag = new ClassificationTag(classification);
-            return new TagSpan<IClassificationTag>(snapshotSpan, tag);
-        }
+    protected override ITagSpan<IClassificationTag> CreateTagSpan(ITextSnapshot snapshot, TextSpan rawTag)
+    {
+        var snapshotSpan = new SnapshotSpan(snapshot, rawTag.Start, rawTag.Length);
+        var classification = _classificationService.Unnecessary;
+        var tag = new ClassificationTag(classification);
+        return new TagSpan<IClassificationTag>(snapshotSpan, tag);
     }
 }

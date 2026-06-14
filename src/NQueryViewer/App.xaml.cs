@@ -5,80 +5,79 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 
-namespace NQueryViewer
+namespace NQueryViewer;
+
+internal sealed partial class App
 {
-    internal sealed partial class App
+    protected override void OnStartup(StartupEventArgs e)
     {
-        protected override void OnStartup(StartupEventArgs e)
+        base.OnStartup(e);
+
+        var paths = new[]
         {
-            base.OnStartup(e);
+            GetApplicationPath(),
+            GetApplicationDirectoryPath(),
+        };
 
-            var paths = new[]
-            {
-                GetApplicationPath(),
-                GetApplicationDirectoryPath(),
-            };
+        var aggregateCatalog = GetCatalog(paths);
+        var compositionContainer = new CompositionContainer(aggregateCatalog);
+        var mainWindowProvider = compositionContainer.GetExportedValue<IMainWindowProvider>();
+        var mainWindow = mainWindowProvider.Window;
+        mainWindow.Show();
+    }
 
-            var aggregateCatalog = GetCatalog(paths);
-            var compositionContainer = new CompositionContainer(aggregateCatalog);
-            var mainWindowProvider = compositionContainer.GetExportedValue<IMainWindowProvider>();
-            var mainWindow = mainWindowProvider.Window;
-            mainWindow.Show();
-        }
+    public static ComposablePartCatalog GetCatalog(IEnumerable<string> paths)
+    {
+        var directoryPaths = from p in paths
+                             where Directory.Exists(p)
+                             select p;
 
-        public static ComposablePartCatalog GetCatalog(IEnumerable<string> paths)
+        var filePaths = from p in paths
+                        where File.Exists(p)
+                        select p;
+
+        var expandedDirectoryFilePaths = from dp in directoryPaths
+                                         from p in Directory.GetFiles(dp, "*.dll")
+                                         select p;
+
+        var pathSet = new SortedSet<string>(filePaths.Concat(expandedDirectoryFilePaths),
+                                            StringComparer.OrdinalIgnoreCase);
+
+        var uniqueAssemblyPaths = (from p in pathSet
+                                   let a = TryGetAssemblyName(p)
+                                   where a is not null && !a.Name.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
+                                   let t = (a.FullName, Path: p)
+                                   group t by t.FullName
+                                       into g
+                                       let p = g.First().Path
+                                       orderby p
+                                       select p).ToImmutableArray();
+
+        var assemblyCatalogs = from a in uniqueAssemblyPaths
+                               select new AssemblyCatalog(a);
+
+        return new AggregateCatalog(assemblyCatalogs);
+    }
+
+    private static AssemblyName TryGetAssemblyName(string path)
+    {
+        try
         {
-            var directoryPaths = from p in paths
-                                 where Directory.Exists(p)
-                                 select p;
-
-            var filePaths = from p in paths
-                            where File.Exists(p)
-                            select p;
-
-            var expandedDirectoryFilePaths = from dp in directoryPaths
-                                             from p in Directory.GetFiles(dp, "*.dll")
-                                             select p;
-
-            var pathSet = new SortedSet<string>(filePaths.Concat(expandedDirectoryFilePaths),
-                                                StringComparer.OrdinalIgnoreCase);
-
-            var uniqueAssemblyPaths = (from p in pathSet
-                                       let a = TryGetAssemblyName(p)
-                                       where a is not null && !a.Name.StartsWith("xunit", StringComparison.OrdinalIgnoreCase)
-                                       let t = (a.FullName, Path: p)
-                                       group t by t.FullName
-                                           into g
-                                           let p = g.First().Path
-                                           orderby p
-                                           select p).ToImmutableArray();
-
-            var assemblyCatalogs = from a in uniqueAssemblyPaths
-                                   select new AssemblyCatalog(a);
-
-            return new AggregateCatalog(assemblyCatalogs);
+            return AssemblyName.GetAssemblyName(path);
         }
-
-        private static AssemblyName TryGetAssemblyName(string path)
+        catch
         {
-            try
-            {
-                return AssemblyName.GetAssemblyName(path);
-            }
-            catch
-            {
-                return null;
-            }
+            return null;
         }
+    }
 
-        private static string GetApplicationPath()
-        {
-            return Assembly.GetExecutingAssembly().Location;
-        }
+    private static string GetApplicationPath()
+    {
+        return Assembly.GetExecutingAssembly().Location;
+    }
 
-        private static string GetApplicationDirectoryPath()
-        {
-            return Path.GetDirectoryName(GetApplicationPath());
-        }
+    private static string GetApplicationDirectoryPath()
+    {
+        return Path.GetDirectoryName(GetApplicationPath());
     }
 }

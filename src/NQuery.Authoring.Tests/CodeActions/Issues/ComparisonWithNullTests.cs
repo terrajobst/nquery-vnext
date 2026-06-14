@@ -1,269 +1,268 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
-namespace NQuery.Authoring.Tests.CodeActions.Issues
-{
-    public class ComparisonWithNullTests : CodeIssueTests
-    {
-        protected override ICodeIssueProvider CreateProvider()
-        {
-            return new ComparisonWithNullCodeIssueProvider();
-        }
+namespace NQuery.Authoring.Tests.CodeActions.Issues;
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfExpressionThatYieldsNull()
-        {
-            var query = @"
+public class ComparisonWithNullTests : CodeIssueTests
+{
+    protected override ICodeIssueProvider CreateProvider()
+    {
+        return new ComparisonWithNullCodeIssueProvider();
+    }
+
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfExpressionThatYieldsNull()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo + NULL > 1
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("Expression is always NULL", issues[0].Description);
-            Assert.Equal("e.ReportsTo + NULL", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("Expression is always NULL", issues[0].Description);
+        Assert.Equal("e.ReportsTo + NULL", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfEqualsNull()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfEqualsNull()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo = NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("e.ReportsTo = NULL", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("e.ReportsTo = NULL", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfEqualsNull()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfEqualsNull()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo = NULL
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfNotEqualsNull1()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfNotEqualsNull1()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo != NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("e.ReportsTo != NULL", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("e.ReportsTo != NULL", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfNotEqualsNull1()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfNotEqualsNull1()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo != NULL
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NOT NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NOT NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NOT NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfNotEqualsNull2()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfNotEqualsNull2()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo <> NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("e.ReportsTo <> NULL", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("e.ReportsTo <> NULL", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfNotEqualsNull2()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfNotEqualsNull2()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo <> NULL
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NOT NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NOT NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NOT NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfEqualsNull_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfEqualsNull_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL = e.ReportsTo
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("NULL = e.ReportsTo", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("NULL = e.ReportsTo", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfEqualsNull_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfEqualsNull_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL = e.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfNotEqualsNull1_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfNotEqualsNull1_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL != e.ReportsTo
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("NULL != e.ReportsTo", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("NULL != e.ReportsTo", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfNotEqualsNull1_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfNotEqualsNull1_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL != e.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NOT NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NOT NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NOT NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FindsUsageOfNotEqualsNull2_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FindsUsageOfNotEqualsNull2_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL <> e.ReportsTo
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
-            Assert.Equal("NULL <> e.ReportsTo", query.Substring(issues[0].Span));
-        }
+        var issues = GetIssues(query);
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Warning, issues[0].Kind);
+        Assert.Equal("NULL <> e.ReportsTo", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void ComparisonWithNull_FixesUsageOfNotEqualsNull2_Reversed()
-        {
-            var query = @"
+    [Fact]
+    public void ComparisonWithNull_FixesUsageOfNotEqualsNull2_Reversed()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   NULL <> e.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IS NOT NULL
             ";
 
-            var issues = GetIssues(query);
-            Assert.Single(issues);
+        var issues = GetIssues(query);
+        Assert.Single(issues);
 
-            var action = issues.First().Actions.First();
-            Assert.Equal("Convert to IS NOT NULL", action.Description);
+        var action = issues.First().Actions.First();
+        Assert.Equal("Convert to IS NOT NULL", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
     }
 }

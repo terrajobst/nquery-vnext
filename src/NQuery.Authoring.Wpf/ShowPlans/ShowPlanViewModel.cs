@@ -1,15 +1,14 @@
-namespace NQuery.Authoring.Wpf
+namespace NQuery.Authoring.Wpf;
+
+internal sealed class ShowPlanViewModel
 {
-    internal sealed class ShowPlanViewModel
+    public ShowPlanViewModel(ShowPlanNode model)
     {
-        public ShowPlanViewModel(ShowPlanNode model)
-        {
-            Model = model;
-            Root = new[] { new ShowPlanNodeViewModel(model) };
-        }
-
-        public ShowPlanNode Model { get; }
-
-        public ShowPlanNodeViewModel[] Root { get; }
+        Model = model;
+        Root = new[] { new ShowPlanNodeViewModel(model) };
     }
+
+    public ShowPlanNode Model { get; }
+
+    public ShowPlanNodeViewModel[] Root { get; }
 }

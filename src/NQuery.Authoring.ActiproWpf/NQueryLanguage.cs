@@ -22,125 +22,124 @@ using NQuery.Authoring.SignatureHelp;
 using ICompletionProvider = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.ICompletionProvider;
 using IOutliner = ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining.IOutliner;
 
-namespace NQuery.Authoring.ActiproWpf
+namespace NQuery.Authoring.ActiproWpf;
+
+public sealed class NQueryLanguage : SyntaxLanguage
 {
-    public sealed class NQueryLanguage : SyntaxLanguage
+    public NQueryLanguage()
+        : base(@"NQuery")
     {
-        public NQueryLanguage()
-            : base(@"NQuery")
-        {
-            RegisterStructureMatcher();
-            RegisterClassificationTypes();
-            RegisterUnnecessaryCodeClassifier();
-            RegisterSemanticClassifier();
-            RegisterSyntacticClassifier();
-            RegisterOutliner();
-            RegisterCompletionProvider();
-            RegisterQuickInfoProvider();
-            RegisterSignatureHelpProvider();
-            RegisterSquiggleProviders();
-            RegisterSymbolContentProvider();
-        }
+        RegisterStructureMatcher();
+        RegisterClassificationTypes();
+        RegisterUnnecessaryCodeClassifier();
+        RegisterSemanticClassifier();
+        RegisterSyntacticClassifier();
+        RegisterOutliner();
+        RegisterCompletionProvider();
+        RegisterQuickInfoProvider();
+        RegisterSignatureHelpProvider();
+        RegisterSquiggleProviders();
+        RegisterSymbolContentProvider();
+    }
 
-        private void RegisterStructureMatcher()
-        {
-            var matcher = new NQueryBraceMatcher();
-            matcher.Matchers.AddRange(BraceMatchingExtensions.GetStandardBraceMatchers());
+    private void RegisterStructureMatcher()
+    {
+        var matcher = new NQueryBraceMatcher();
+        matcher.Matchers.AddRange(BraceMatchingExtensions.GetStandardBraceMatchers());
 
-            RegisterService<INQueryBraceMatcher>(matcher);
-            RegisterService<IStructureMatcher>(matcher);
+        RegisterService<INQueryBraceMatcher>(matcher);
+        RegisterService<IStructureMatcher>(matcher);
 
-            var delimiterHighlightingTagger = new TextViewTaggerProvider<DelimiterHighlightTagger>(typeof(DelimiterHighlightTagger));
-            RegisterService(delimiterHighlightingTagger);
-        }
+        var delimiterHighlightingTagger = new TextViewTaggerProvider<DelimiterHighlightTagger>(typeof(DelimiterHighlightTagger));
+        RegisterService(delimiterHighlightingTagger);
+    }
 
-        private void RegisterClassificationTypes()
-        {
-            var classificationTypes = new NQueryClassificationTypes();
-            RegisterService<INQueryClassificationTypes>(classificationTypes);
-        }
+    private void RegisterClassificationTypes()
+    {
+        var classificationTypes = new NQueryClassificationTypes();
+        RegisterService<INQueryClassificationTypes>(classificationTypes);
+    }
 
-        private void RegisterUnnecessaryCodeClassifier()
-        {
-            var provider = new NQueryUnnecessaryCodeClassifierProvider();
-            RegisterService(provider);
-        }
+    private void RegisterUnnecessaryCodeClassifier()
+    {
+        var provider = new NQueryUnnecessaryCodeClassifierProvider();
+        RegisterService(provider);
+    }
 
-        private void RegisterSemanticClassifier()
-        {
-            var provider = new NQuerySemanticClassifierProvider();
-            RegisterService(provider);
-        }
+    private void RegisterSemanticClassifier()
+    {
+        var provider = new NQuerySemanticClassifierProvider();
+        RegisterService(provider);
+    }
 
-        private void RegisterSyntacticClassifier()
-        {
-            var provider = new NQuerySyntacticClassifierProvider();
-            RegisterService(provider);
-        }
+    private void RegisterSyntacticClassifier()
+    {
+        var provider = new NQuerySyntacticClassifierProvider();
+        RegisterService(provider);
+    }
 
-        private void RegisterOutliner()
-        {
-            var provider = new CollapsedRegionQuickInfoProvider();
-            RegisterService(provider);
+    private void RegisterOutliner()
+    {
+        var provider = new CollapsedRegionQuickInfoProvider();
+        RegisterService(provider);
 
-            var outliner = new NQueryOutliner();
-            outliner.Outliners.AddRange(OutliningExtensions.GetStandardOutliners());
+        var outliner = new NQueryOutliner();
+        outliner.Outliners.AddRange(OutliningExtensions.GetStandardOutliners());
 
-            RegisterService<INQueryOutliner>(outliner);
-            RegisterService<IOutliner>(outliner);
-        }
+        RegisterService<INQueryOutliner>(outliner);
+        RegisterService<IOutliner>(outliner);
+    }
 
-        private void RegisterCompletionProvider()
-        {
-            var controller = new NQueryCompletionController();
-            RegisterService(controller);
+    private void RegisterCompletionProvider()
+    {
+        var controller = new NQueryCompletionController();
+        RegisterService(controller);
 
-            var provider = new NQueryCompletionProvider(this);
-            provider.Providers.AddRange(CompletionExtensions.GetStandardCompletionProviders());
+        var provider = new NQueryCompletionProvider(this);
+        provider.Providers.AddRange(CompletionExtensions.GetStandardCompletionProviders());
 
-            RegisterService<INQueryCompletionProvider>(provider);
-            RegisterService<ICompletionProvider>(provider);
-        }
+        RegisterService<INQueryCompletionProvider>(provider);
+        RegisterService<ICompletionProvider>(provider);
+    }
 
-        private void RegisterQuickInfoProvider()
-        {
-            var provider = new NQueryQuickInfoProvider(this);
-            provider.Providers.AddRange(QuickInfoExtensions.GetStandardQuickInfoModelProviders());
+    private void RegisterQuickInfoProvider()
+    {
+        var provider = new NQueryQuickInfoProvider(this);
+        provider.Providers.AddRange(QuickInfoExtensions.GetStandardQuickInfoModelProviders());
 
-            RegisterService<INQueryQuickInfoProvider>(provider);
-            RegisterService<IQuickInfoProvider>(provider);
-        }
+        RegisterService<INQueryQuickInfoProvider>(provider);
+        RegisterService<IQuickInfoProvider>(provider);
+    }
 
-        private void RegisterSignatureHelpProvider()
-        {
-            var controller = new NQuerySignatureHelpController();
-            RegisterService(controller);
+    private void RegisterSignatureHelpProvider()
+    {
+        var controller = new NQuerySignatureHelpController();
+        RegisterService(controller);
 
-            var provider = new NQuerySignatureHelpProvider();
-            provider.Providers.AddRange(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders());
+        var provider = new NQuerySignatureHelpProvider();
+        provider.Providers.AddRange(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders());
 
-            RegisterService<INQuerySignatureHelpProvider>(provider);
-            RegisterService<IParameterInfoProvider>(provider);
-        }
+        RegisterService<INQuerySignatureHelpProvider>(provider);
+        RegisterService<IParameterInfoProvider>(provider);
+    }
 
-        private void RegisterSquiggleProviders()
-        {
-            var syntaxProvider = new NQuerySyntaxErrorSquiggleClassifierProvider();
-            RegisterService<CodeDocumentTaggerProvider<NQuerySyntaxErrorSquiggleClassifier>>(syntaxProvider);
+    private void RegisterSquiggleProviders()
+    {
+        var syntaxProvider = new NQuerySyntaxErrorSquiggleClassifierProvider();
+        RegisterService<CodeDocumentTaggerProvider<NQuerySyntaxErrorSquiggleClassifier>>(syntaxProvider);
 
-            var semanticProvider = new NQuerySemanticErrorSquiggleClassifierProvider();
-            RegisterService<CodeDocumentTaggerProvider<NQuerySemanticErrorSquiggleClassifier>>(semanticProvider);
+        var semanticProvider = new NQuerySemanticErrorSquiggleClassifierProvider();
+        RegisterService<CodeDocumentTaggerProvider<NQuerySemanticErrorSquiggleClassifier>>(semanticProvider);
 
-            var issueProvider = new NQuerySemanticIssueSquiggleClassifierProvider();
-            RegisterService<CodeDocumentTaggerProvider<NQuerySemanticIssueSquiggleClassifier>>(issueProvider);
+        var issueProvider = new NQuerySemanticIssueSquiggleClassifierProvider();
+        RegisterService<CodeDocumentTaggerProvider<NQuerySemanticIssueSquiggleClassifier>>(issueProvider);
 
-            RegisterService(new SquiggleTagQuickInfoProvider());
-        }
+        RegisterService(new SquiggleTagQuickInfoProvider());
+    }
 
-        private void RegisterSymbolContentProvider()
-        {
-            var provider = new NQuerySymbolContentProvider(this);
-            RegisterService<INQuerySymbolContentProvider>(provider);
-        }
+    private void RegisterSymbolContentProvider()
+    {
+        var provider = new NQuerySymbolContentProvider(this);
+        RegisterService<INQuerySymbolContentProvider>(provider);
     }
 }

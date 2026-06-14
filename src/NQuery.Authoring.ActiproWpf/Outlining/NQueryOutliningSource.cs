@@ -8,28 +8,27 @@ using NQuery.Authoring.Outlining;
 
 using IOutliner = NQuery.Authoring.Outlining.IOutliner;
 
-namespace NQuery.Authoring.ActiproWpf.Outlining
+namespace NQuery.Authoring.ActiproWpf.Outlining;
+
+internal sealed class NQueryOutliningSource : RangeOutliningSourceBase
 {
-    internal sealed class NQueryOutliningSource : RangeOutliningSourceBase
+    public NQueryOutliningSource(ITextSnapshot snapshot, SyntaxTree syntaxTree, ImmutableArray<IOutliner> outliners)
+        : base(snapshot)
     {
-        public NQueryOutliningSource(ITextSnapshot snapshot, SyntaxTree syntaxTree, ImmutableArray<IOutliner> outliners)
-            : base(snapshot)
+        var text = syntaxTree.Text;
+        var result = syntaxTree.Root.FindRegions(outliners);
+
+        foreach (var regionSpan in result)
         {
-            var text = syntaxTree.Text;
-            var result = syntaxTree.Root.FindRegions(outliners);
+            var range = text.ToSnapshotRange(regionSpan.Span);
 
-            foreach (var regionSpan in result)
+            IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition(@"NQueryNode")
             {
-                var range = text.ToSnapshotRange(regionSpan.Span);
+                DefaultCollapsedContent = regionSpan.Text,
+                IsImplementation = false
+            };
 
-                IOutliningNodeDefinition nodeDefinition = new OutliningNodeDefinition(@"NQueryNode")
-                {
-                    DefaultCollapsedContent = regionSpan.Text,
-                    IsImplementation = false
-                };
-
-                AddNode(range, nodeDefinition);
-            }
+            AddNode(range, nodeDefinition);
         }
     }
 }

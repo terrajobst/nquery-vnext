@@ -1,15 +1,14 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.QuickInfo.Providers
+namespace NQuery.Authoring.QuickInfo.Providers;
+
+internal sealed class CommonTableExpressionColumnNameQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionColumnNameSyntax>
 {
-    internal sealed class CommonTableExpressionColumnNameQuickInfoModelProvider : QuickInfoModelProvider<CommonTableExpressionColumnNameSyntax>
+    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionColumnNameSyntax node)
     {
-        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CommonTableExpressionColumnNameSyntax node)
-        {
-            var symbol = semanticModel.GetDeclaredSymbol(node);
-            return symbol is null
-                ? null
-                : QuickInfoModel.ForSymbol(semanticModel, node.Span, symbol);
-        }
+        var symbol = semanticModel.GetDeclaredSymbol(node);
+        return symbol is null
+            ? null
+            : QuickInfoModel.ForSymbol(semanticModel, node.Span, symbol);
     }
 }

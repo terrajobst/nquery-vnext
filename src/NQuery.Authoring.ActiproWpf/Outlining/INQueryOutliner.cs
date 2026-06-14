@@ -2,10 +2,9 @@ using System.Collections.ObjectModel;
 
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 
-namespace NQuery.Authoring.ActiproWpf.Outlining
+namespace NQuery.Authoring.ActiproWpf.Outlining;
+
+public interface INQueryOutliner : IOutliner
 {
-    public interface INQueryOutliner : IOutliner
-    {
-        Collection<Authoring.Outlining.IOutliner> Outliners { get; }
-    }
+    Collection<Authoring.Outlining.IOutliner> Outliners { get; }
 }

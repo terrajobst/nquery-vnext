@@ -1,13 +1,12 @@
 ﻿using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Authoring.Tests.QuickInfo
+namespace NQuery.Authoring.Tests.QuickInfo;
+
+public class QuickInfoExtensionsTests : ExtensionTests
 {
-    public class QuickInfoExtensionsTests : ExtensionTests
+    [Fact]
+    public void QuickInfoExtensions_ReturnsAllProviders()
     {
-        [Fact]
-        public void QuickInfoExtensions_ReturnsAllProviders()
-        {
-            AssertAllProvidersAreExposed(QuickInfoExtensions.GetStandardQuickInfoModelProviders);
-        }
+        AssertAllProvidersAreExposed(QuickInfoExtensions.GetStandardQuickInfoModelProviders);
     }
 }

@@ -1,28 +1,27 @@
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal class LocalBinder : Binder
 {
-    internal class LocalBinder : Binder
+    public LocalBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
+        : base(sharedBinderState, parent)
     {
-        public LocalBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
-            : base(sharedBinderState, parent)
-        {
-            LocalSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
-        }
+        LocalSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
+    }
 
-        public override SymbolTable LocalSymbols { get; }
+    public override SymbolTable LocalSymbols { get; }
 
-        private static IEnumerable<Symbol> ExpandTableInstances(IEnumerable<Symbol> symbols)
+    private static IEnumerable<Symbol> ExpandTableInstances(IEnumerable<Symbol> symbols)
+    {
+        foreach (var symbol in symbols)
         {
-            foreach (var symbol in symbols)
+            yield return symbol;
+
+            if (symbol is TableInstanceSymbol table)
             {
-                yield return symbol;
-
-                if (symbol is TableInstanceSymbol table)
-                {
-                    foreach (var columnInstance in table.ColumnInstances)
-                        yield return columnInstance;
-                }
+                foreach (var columnInstance in table.ColumnInstances)
+                    yield return columnInstance;
             }
         }
     }

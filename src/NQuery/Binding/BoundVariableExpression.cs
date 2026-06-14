@@ -1,29 +1,28 @@
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundVariableExpression : BoundExpression
 {
-    internal sealed class BoundVariableExpression : BoundExpression
+    public BoundVariableExpression(VariableSymbol variableSymbol)
     {
-        public BoundVariableExpression(VariableSymbol variableSymbol)
-        {
-            Symbol = variableSymbol;
-        }
+        Symbol = variableSymbol;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.VariableExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.VariableExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return Symbol.Type; }
-        }
+    public override Type Type
+    {
+        get { return Symbol.Type; }
+    }
 
-        public VariableSymbol Symbol { get; }
+    public VariableSymbol Symbol { get; }
 
-        public override string ToString()
-        {
-            return $"@{Symbol.Name}";
-        }
+    public override string ToString()
+    {
+        return $"@{Symbol.Name}";
     }
 }

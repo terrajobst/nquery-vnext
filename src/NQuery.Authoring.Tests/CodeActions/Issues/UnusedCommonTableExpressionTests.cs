@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
-namespace NQuery.Authoring.Tests.CodeActions.Issues
-{
-    public class UnusedCommonTableExpressionTests : CodeIssueTests
-    {
-        protected override ICodeIssueProvider CreateProvider()
-        {
-            return new UnusedCommonTableExpressionCodeIssueProvider();
-        }
+namespace NQuery.Authoring.Tests.CodeActions.Issues;
 
-        [Fact]
-        public void UnusedCommonTableExpression_FindsUnusedNonRecursive()
-        {
-            var query = @"
+public class UnusedCommonTableExpressionTests : CodeIssueTests
+{
+    protected override ICodeIssueProvider CreateProvider()
+    {
+        return new UnusedCommonTableExpressionCodeIssueProvider();
+    }
+
+    [Fact]
+    public void UnusedCommonTableExpression_FindsUnusedNonRecursive()
+    {
+        var query = @"
                 WITH Emps AS (
                     SELECT  *
                     FROM    Employees e
@@ -25,17 +25,17 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Emps e
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
-            Assert.Equal("Emps2", query.Substring(issues[0].Span));
-        }
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
+        Assert.Equal("Emps2", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void UnusedCommonTableExpression_FindsUnusedRecursive()
-        {
-            var query = @"
+    [Fact]
+    public void UnusedCommonTableExpression_FindsUnusedRecursive()
+    {
+        var query = @"
                 WITH Emps AS (
                     SELECT  *
                     FROM    Employees e
@@ -57,17 +57,17 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Emps e
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            Assert.Single(issues);
-            Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
-            Assert.Equal("EmpsUnused", query.Substring(issues[0].Span));
-        }
+        Assert.Single(issues);
+        Assert.Equal(CodeIssueKind.Unnecessary, issues[0].Kind);
+        Assert.Equal("EmpsUnused", query.Substring(issues[0].Span));
+    }
 
-        [Fact]
-        public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfSingle()
-        {
-            var query = @"
+    [Fact]
+    public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfSingle()
+    {
+        var query = @"
                 WITH EmpsUnused AS (
                     SELECT  *
                     FROM    Employees e
@@ -76,24 +76,24 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                 FROM    Employees
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  *
                 FROM    Employees
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            var action = issues.Single().Actions.Single();
-            Assert.Equal("Remove unused common table expression", action.Description);
+        var action = issues.Single().Actions.Single();
+        Assert.Equal("Remove unused common table expression", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfFirst()
-        {
-            var query = @"
+    [Fact]
+    public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfFirst()
+    {
+        var query = @"
                 WITH EmpsUnused AS (
                     SELECT  *
                     FROM    Employees e
@@ -109,7 +109,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 WITH Emps1 AS (
                     SELECT  *
                     FROM    Employees e
@@ -122,19 +122,19 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            var action = issues.Single().Actions.Single();
-            Assert.Equal("Remove unused common table expression", action.Description);
+        var action = issues.Single().Actions.Single();
+        Assert.Equal("Remove unused common table expression", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfMiddle()
-        {
-            var query = @"
+    [Fact]
+    public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfMiddle()
+    {
+        var query = @"
                 WITH Emps1 AS (
                     SELECT  *
                     FROM    Employees e
@@ -150,7 +150,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 WITH Emps1 AS (
                     SELECT  *
                     FROM    Employees e
@@ -163,19 +163,19 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            var action = issues.Single().Actions.Single();
-            Assert.Equal("Remove unused common table expression", action.Description);
+        var action = issues.Single().Actions.Single();
+        Assert.Equal("Remove unused common table expression", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
+    }
 
-        [Fact]
-        public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfLast()
-        {
-            var query = @"
+    [Fact]
+    public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfLast()
+    {
+        var query = @"
                 WITH Emps1 AS (
                     SELECT  *
                     FROM    Employees e
@@ -191,7 +191,7 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 WITH Emps1 AS (
                     SELECT  *
                     FROM    Employees e
@@ -204,13 +204,12 @@ namespace NQuery.Authoring.Tests.CodeActions.Issues
                             INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
             ";
 
-            var issues = GetIssues(query);
+        var issues = GetIssues(query);
 
-            var action = issues.Single().Actions.Single();
-            Assert.Equal("Remove unused common table expression", action.Description);
+        var action = issues.Single().Actions.Single();
+        Assert.Equal("Remove unused common table expression", action.Description);
 
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
-        }
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(fixedQuery, syntaxTree.Text.GetText());
     }
 }

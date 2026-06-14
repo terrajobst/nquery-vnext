@@ -1,20 +1,19 @@
-namespace NQuery.Symbols
+namespace NQuery.Symbols;
+
+public class ColumnSymbol : Symbol
 {
-    public class ColumnSymbol : Symbol
+    internal ColumnSymbol(string name, Type type)
+        : base(name)
     {
-        internal ColumnSymbol(string name, Type type)
-            : base(name)
-        {
-            ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(type);
 
-            Type = type;
-        }
-
-        public override SymbolKind Kind
-        {
-            get { return SymbolKind.Column; }
-        }
-
-        public override Type Type { get; }
+        Type = type;
     }
+
+    public override SymbolKind Kind
+    {
+        get { return SymbolKind.Column; }
+    }
+
+    public override Type Type { get; }
 }

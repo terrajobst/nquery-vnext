@@ -4,14 +4,13 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.VSEditorWpf.Margins;
 
-namespace NQuery.Authoring.VSEditorWpf.CodeActions
+namespace NQuery.Authoring.VSEditorWpf.CodeActions;
+
+[Export(typeof(ICodeActionGlyphBroker))]
+internal sealed class CodeActionGlyphBroker : ICodeActionGlyphBroker
 {
-    [Export(typeof(ICodeActionGlyphBroker))]
-    internal sealed class CodeActionGlyphBroker : ICodeActionGlyphBroker
+    public ICodeActionGlyphController GetController(ITextView textView)
     {
-        public ICodeActionGlyphController GetController(ITextView textView)
-        {
-            return textView.Properties.GetProperty<NQueryCodeActionsMargin>(typeof(NQueryCodeActionsMargin));
-        }
+        return textView.Properties.GetProperty<NQueryCodeActionsMargin>(typeof(NQueryCodeActionsMargin));
     }
 }

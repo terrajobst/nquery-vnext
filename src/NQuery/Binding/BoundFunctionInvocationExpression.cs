@@ -2,38 +2,37 @@ using System.Collections.Immutable;
 
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundFunctionInvocationExpression : BoundExpression
 {
-    internal sealed class BoundFunctionInvocationExpression : BoundExpression
+    public BoundFunctionInvocationExpression(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
     {
-        public BoundFunctionInvocationExpression(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
-        {
-            Arguments = arguments.ToImmutableArray();
-            Result = result;
-        }
+        Arguments = arguments.ToImmutableArray();
+        Result = result;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.FunctionInvocationExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.FunctionInvocationExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
-        }
+    public override Type Type
+    {
+        get { return Symbol is null ? TypeFacts.Unknown : Symbol.Type; }
+    }
 
-        public FunctionSymbol Symbol
-        {
-            get { return Result.Selected?.Signature.Symbol; }
-        }
+    public FunctionSymbol Symbol
+    {
+        get { return Result.Selected?.Signature.Symbol; }
+    }
 
-        public ImmutableArray<BoundExpression> Arguments { get; }
+    public ImmutableArray<BoundExpression> Arguments { get; }
 
-        public OverloadResolutionResult<FunctionSymbolSignature> Result { get; }
+    public OverloadResolutionResult<FunctionSymbolSignature> Result { get; }
 
-        public override string ToString()
-        {
-            return $"{Symbol.Name}({string.Join(@",", Arguments)})";
-        }
+    public override string ToString()
+    {
+        return $"{Symbol.Name}({string.Join(@",", Arguments)})";
     }
 }

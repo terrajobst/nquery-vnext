@@ -1,18 +1,17 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.QuickInfo.Providers
-{
-    internal sealed class CountAllExpressionQuickInfoModelProvider : QuickInfoModelProvider<CountAllExpressionSyntax>
-    {
-        protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CountAllExpressionSyntax node)
-        {
-            if (!node.Name.Span.ContainsOrTouches(position))
-                return null;
+namespace NQuery.Authoring.QuickInfo.Providers;
 
-            var symbol = semanticModel.GetSymbol(node);
-            return symbol is null
-                       ? null
-                       : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
-        }
+internal sealed class CountAllExpressionQuickInfoModelProvider : QuickInfoModelProvider<CountAllExpressionSyntax>
+{
+    protected override QuickInfoModel CreateModel(SemanticModel semanticModel, int position, CountAllExpressionSyntax node)
+    {
+        if (!node.Name.Span.ContainsOrTouches(position))
+            return null;
+
+        var symbol = semanticModel.GetSymbol(node);
+        return symbol is null
+                   ? null
+                   : QuickInfoModel.ForSymbol(semanticModel, node.Name.Span, symbol);
     }
 }

@@ -3,56 +3,55 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new PropertyAccessExpressionQuickInfoModelProvider();
-        }
+        return new PropertyAccessExpressionQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<PropertyAccessExpressionSyntax>().Single();
-            var span = syntax.Name.Span;
-            var symbol = semanticModel.GetSymbol(syntax);
-            var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, Glyph.Property, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<PropertyAccessExpressionSyntax>().Single();
+        var span = syntax.Name.Span;
+        var symbol = semanticModel.GetSymbol(syntax);
+        var markup = SymbolMarkup.ForSymbol(symbol);
+        return new QuickInfoModel(semanticModel, span, Glyph.Property, markup);
+    }
 
-        [Fact]
-        public void PropertyAccessExpressionQuickInfoModelProvider_MatchesInName()
-        {
-            var query = @"
+    [Fact]
+    public void PropertyAccessExpressionQuickInfoModelProvider_MatchesInName()
+    {
+        var query = @"
                 SELECT  FirstName.{Length}
                 FROM    Employees
              ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
-        {
-            var query = @"
+    [Fact]
+    public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
+    {
+        var query = @"
                 SELECT  FirstName.{Xxx}
                 FROM    Employees
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
+    }
 
-        [Fact]
-        public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchBeforeDot()
-        {
-            var query = @"
+    [Fact]
+    public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchBeforeDot()
+    {
+        var query = @"
                 SELECT  {FirstName}.Length
                 FROM    Employees
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

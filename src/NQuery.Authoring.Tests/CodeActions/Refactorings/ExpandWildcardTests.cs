@@ -1,36 +1,36 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-namespace NQuery.Authoring.Tests.CodeActions.Refactorings
-{
-    public class ExpandWildcardTests : CodeRefactoringTests
-    {
-        protected override ICodeRefactoringProvider CreateProvider()
-        {
-            return new ExpandWildcardCodeRefactoringProvider();
-        }
+namespace NQuery.Authoring.Tests.CodeActions.Refactorings;
 
-        [Fact]
-        public void ExpandWildcard_DoesNotTriggerForUnresolvedTable()
-        {
-            var query = @"
+public class ExpandWildcardTests : CodeRefactoringTests
+{
+    protected override ICodeRefactoringProvider CreateProvider()
+    {
+        return new ExpandWildcardCodeRefactoringProvider();
+    }
+
+    [Fact]
+    public void ExpandWildcard_DoesNotTriggerForUnresolvedTable()
+    {
+        var query = @"
                 SELECT  *|
                 FROM    Xxx
             ";
 
-            AssertDoesNotTrigger(query);
-        }
+        AssertDoesNotTrigger(query);
+    }
 
-        [Fact]
-        public void ExpandWildcard_SimpleStarExpandsAllTables()
-        {
-            var query = @"
+    [Fact]
+    public void ExpandWildcard_SimpleStarExpandsAllTables()
+    {
+        var query = @"
                 SELECT  /* before */ *| /* after */
                 FROM    Employees e,
                         EmployeeTerritories et
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  /* before */ e.EmployeeID,
                                      e.LastName,
                                      e.FirstName,
@@ -55,30 +55,29 @@ namespace NQuery.Authoring.Tests.CodeActions.Refactorings
                         EmployeeTerritories et
             ";
 
-            var description = "Expand wildcard";
+        var description = "Expand wildcard";
 
-            AssertFixes(query, fixedQuery, description);
-        }
+        AssertFixes(query, fixedQuery, description);
+    }
 
-        [Fact]
-        public void ExpandWildcard_QualifiedStarExpandsSingleTable()
-        {
-            var query = @"
+    [Fact]
+    public void ExpandWildcard_QualifiedStarExpandsSingleTable()
+    {
+        var query = @"
                 SELECT  /* before */ et.*| /* after */
                 FROM    Employees e,
                         EmployeeTerritories et
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  /* before */ et.EmployeeID,
                                      et.TerritoryID /* after */
                 FROM    Employees e,
                         EmployeeTerritories et
             ";
 
-            var description = "Expand wildcard";
+        var description = "Expand wildcard";
 
-            AssertFixes(query, fixedQuery, description);
-        }
+        AssertFixes(query, fixedQuery, description);
     }
 }

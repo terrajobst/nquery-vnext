@@ -1,8 +1,7 @@
 using ActiproSoftware.Text.Tagging.Implementation;
 
-namespace NQuery.Authoring.ActiproWpf.Squiggles
+namespace NQuery.Authoring.ActiproWpf.Squiggles;
+
+internal sealed class NQuerySyntaxErrorSquiggleClassifierProvider : CodeDocumentTaggerProvider<NQuerySyntaxErrorSquiggleClassifier>
 {
-    internal sealed class NQuerySyntaxErrorSquiggleClassifierProvider : CodeDocumentTaggerProvider<NQuerySyntaxErrorSquiggleClassifier>
-    {
-    }
 }

@@ -14,139 +14,138 @@ using NQuery.Symbols;
 
 using Span = Microsoft.VisualStudio.Text.Span;
 
-namespace NQuery.Authoring.VSEditorWpf.QuickInfo
+namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
+
+internal sealed class NQueryQuickInfoSource : IQuickInfoSource
 {
-    internal sealed class NQueryQuickInfoSource : IQuickInfoSource
+    private readonly IClassificationFormatMap _classificationFormatMap;
+    private readonly IEditorFormatMap _editorFormatMap;
+    private readonly INQueryClassificationService _classificationService;
+
+    public NQueryQuickInfoSource(IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
     {
-        private readonly IClassificationFormatMap _classificationFormatMap;
-        private readonly IEditorFormatMap _editorFormatMap;
-        private readonly INQueryClassificationService _classificationService;
+        _classificationFormatMap = classificationFormatMap;
+        _editorFormatMap = editorFormatMap;
+        _classificationService = classificationService;
+    }
 
-        public NQueryQuickInfoSource(IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
+    public void Dispose()
+    {
+    }
+
+    public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan)
+    {
+        applicableToSpan = null;
+
+        if (!session.Properties.TryGetProperty(typeof(IQuickInfoManager), out IQuickInfoManager quickInfoManager))
+            return;
+
+        var model = quickInfoManager.Model;
+        var textSpan = model.Span;
+        var span = new Span(textSpan.Start, textSpan.Length);
+        var currentSnapshot = session.TextView.TextBuffer.CurrentSnapshot;
+        var content = GetContent(model);
+        if (content is null)
+            return;
+
+        applicableToSpan = currentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeNegative);
+        quickInfoContent.Add(content);
+    }
+
+    private FrameworkElement GetContent(QuickInfoModel model)
+    {
+        if (model.Markup.Tokens.Length == 0)
+            return null;
+
+        var glyph = GetGlyph(model.Glyph);
+        var textBlock = GetTextBlock(model.Markup);
+        var stackPanel = new StackPanel();
+        stackPanel.Orientation = Orientation.Horizontal;
+        stackPanel.Children.Add(glyph);
+        stackPanel.Children.Add(textBlock);
+        return stackPanel;
+    }
+
+    private static Image GetGlyph(Glyph glyph)
+    {
+        return new Image
         {
-            _classificationFormatMap = classificationFormatMap;
-            _editorFormatMap = editorFormatMap;
-            _classificationService = classificationService;
-        }
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(0, 0, 5, 0),
+            Source = NQueryGlyphImageSource.Get(glyph)
+        };
+    }
 
-        public void Dispose()
+    private TextBlock GetTextBlock(SymbolMarkup markup)
+    {
+        var textBlock = new TextBlock
         {
-        }
+            VerticalAlignment = VerticalAlignment.Center,
+            FontFamily = new FontFamily(@"Consolas")
+        };
+        textBlock.Inlines.AddRange(markup.Tokens.Select(GetInline));
+        return textBlock;
+    }
 
-        public void AugmentQuickInfoSession(IQuickInfoSession session, IList<object> quickInfoContent, out ITrackingSpan applicableToSpan)
+    private Inline GetInline(SymbolMarkupToken markupToken)
+    {
+        switch (markupToken.Kind)
         {
-            applicableToSpan = null;
-
-            if (!session.Properties.TryGetProperty(typeof(IQuickInfoManager), out IQuickInfoManager quickInfoManager))
-                return;
-
-            var model = quickInfoManager.Model;
-            var textSpan = model.Span;
-            var span = new Span(textSpan.Start, textSpan.Length);
-            var currentSnapshot = session.TextView.TextBuffer.CurrentSnapshot;
-            var content = GetContent(model);
-            if (content is null)
-                return;
-
-            applicableToSpan = currentSnapshot.CreateTrackingSpan(span, SpanTrackingMode.EdgeNegative);
-            quickInfoContent.Add(content);
+            case SymbolMarkupKind.Keyword:
+                return GetClassifiedText(markupToken.Text, _classificationService.Keyword);
+            case SymbolMarkupKind.Punctuation:
+                return GetClassifiedText(markupToken.Text, _classificationService.Punctuation);
+            case SymbolMarkupKind.Whitespace:
+                return GetClassifiedText(markupToken.Text, _classificationService.WhiteSpace);
+            case SymbolMarkupKind.TableName:
+                return GetClassifiedText(markupToken.Text, _classificationService.SchemaTable);
+            case SymbolMarkupKind.CommonTableExpressionName:
+                return GetClassifiedText(markupToken.Text, _classificationService.CommonTableExpression);
+            case SymbolMarkupKind.ColumnName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Column);
+            case SymbolMarkupKind.VariableName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Variable);
+            case SymbolMarkupKind.ParameterName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
+            case SymbolMarkupKind.FunctionName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Function);
+            case SymbolMarkupKind.AggregateName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Aggregate);
+            case SymbolMarkupKind.MethodName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Method);
+            case SymbolMarkupKind.PropertyName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Property);
+            case SymbolMarkupKind.TypeName:
+                return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
+            default:
+                throw ExceptionBuilder.UnexpectedValue(markupToken.Kind);
         }
+    }
 
-        private FrameworkElement GetContent(QuickInfoModel model)
+    private Inline GetClassifiedText(string text, IClassificationType classificationType)
+    {
+        var properties = _classificationFormatMap.GetTextProperties(classificationType);
+        var editorFormatMapKey = _classificationFormatMap.GetEditorFormatMapKey(classificationType);
+        var resourceDictionary = _editorFormatMap.GetProperties(editorFormatMapKey);
+
+        var isItalicValue = resourceDictionary[ClassificationFormatDefinition.IsItalicId];
+        var fontStyle = isItalicValue is not null && Convert.ToBoolean(isItalicValue)
+                            ? FontStyles.Italic
+                            : FontStyles.Normal;
+
+        var isBoldValue = resourceDictionary[ClassificationFormatDefinition.IsBoldId];
+        var fontWeights = isBoldValue is not null && Convert.ToBoolean(isBoldValue)
+                              ? FontWeights.Bold
+                              : FontWeights.Normal;
+
+        return new Run(text)
         {
-            if (model.Markup.Tokens.Length == 0)
-                return null;
-
-            var glyph = GetGlyph(model.Glyph);
-            var textBlock = GetTextBlock(model.Markup);
-            var stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Horizontal;
-            stackPanel.Children.Add(glyph);
-            stackPanel.Children.Add(textBlock);
-            return stackPanel;
-        }
-
-        private static Image GetGlyph(Glyph glyph)
-        {
-            return new Image
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 0, 5, 0),
-                Source = NQueryGlyphImageSource.Get(glyph)
-            };
-        }
-
-        private TextBlock GetTextBlock(SymbolMarkup markup)
-        {
-            var textBlock = new TextBlock
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                FontFamily = new FontFamily(@"Consolas")
-            };
-            textBlock.Inlines.AddRange(markup.Tokens.Select(GetInline));
-            return textBlock;
-        }
-
-        private Inline GetInline(SymbolMarkupToken markupToken)
-        {
-            switch (markupToken.Kind)
-            {
-                case SymbolMarkupKind.Keyword:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Keyword);
-                case SymbolMarkupKind.Punctuation:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Punctuation);
-                case SymbolMarkupKind.Whitespace:
-                    return GetClassifiedText(markupToken.Text, _classificationService.WhiteSpace);
-                case SymbolMarkupKind.TableName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.SchemaTable);
-                case SymbolMarkupKind.CommonTableExpressionName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.CommonTableExpression);
-                case SymbolMarkupKind.ColumnName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Column);
-                case SymbolMarkupKind.VariableName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Variable);
-                case SymbolMarkupKind.ParameterName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
-                case SymbolMarkupKind.FunctionName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Function);
-                case SymbolMarkupKind.AggregateName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Aggregate);
-                case SymbolMarkupKind.MethodName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Method);
-                case SymbolMarkupKind.PropertyName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Property);
-                case SymbolMarkupKind.TypeName:
-                    return GetClassifiedText(markupToken.Text, _classificationService.Identifier); // TODO: Fix this
-                default:
-                    throw ExceptionBuilder.UnexpectedValue(markupToken.Kind);
-            }
-        }
-
-        private Inline GetClassifiedText(string text, IClassificationType classificationType)
-        {
-            var properties = _classificationFormatMap.GetTextProperties(classificationType);
-            var editorFormatMapKey = _classificationFormatMap.GetEditorFormatMapKey(classificationType);
-            var resourceDictionary = _editorFormatMap.GetProperties(editorFormatMapKey);
-
-            var isItalicValue = resourceDictionary[ClassificationFormatDefinition.IsItalicId];
-            var fontStyle = isItalicValue is not null && Convert.ToBoolean(isItalicValue)
-                                ? FontStyles.Italic
-                                : FontStyles.Normal;
-
-            var isBoldValue = resourceDictionary[ClassificationFormatDefinition.IsBoldId];
-            var fontWeights = isBoldValue is not null && Convert.ToBoolean(isBoldValue)
-                                  ? FontWeights.Bold
-                                  : FontWeights.Normal;
-
-            return new Run(text)
-            {
-                Foreground = properties.ForegroundBrush,
-                Background = properties.BackgroundBrush,
-                FontStyle = fontStyle,
-                FontWeight = fontWeights,
-                TextEffects = properties.TextEffects,
-                TextDecorations = properties.TextDecorations
-            };
-        }
+            Foreground = properties.ForegroundBrush,
+            Background = properties.BackgroundBrush,
+            FontStyle = fontStyle,
+            FontWeight = fontWeights,
+            TextEffects = properties.TextEffects,
+            TextDecorations = properties.TextDecorations
+        };
     }
 }

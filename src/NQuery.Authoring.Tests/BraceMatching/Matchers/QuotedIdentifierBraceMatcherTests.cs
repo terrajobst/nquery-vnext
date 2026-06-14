@@ -1,24 +1,23 @@
 ﻿using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.BraceMatching.Matchers;
 
-namespace NQuery.Authoring.Tests.BraceMatching.Matchers
-{
-    public class QuotedIdentifierBraceMatcherTests : BraceMatcherTests
-    {
-        protected override IBraceMatcher CreateMatcher()
-        {
-            return new IdentifierBraceMatcher();
-        }
+namespace NQuery.Authoring.Tests.BraceMatching.Matchers;
 
-        [Fact]
-        public void IdentifierBraceMatcher_MatchesQuotes()
-        {
-            var query = @"
+public class QuotedIdentifierBraceMatcherTests : BraceMatcherTests
+{
+    protected override IBraceMatcher CreateMatcher()
+    {
+        return new IdentifierBraceMatcher();
+    }
+
+    [Fact]
+    public void IdentifierBraceMatcher_MatchesQuotes()
+    {
+        var query = @"
                 SELECT  {""}FirstName{""}
                 FROM    Employees
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

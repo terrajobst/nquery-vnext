@@ -1,39 +1,38 @@
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators
+namespace NQuery.Tests.Refactor.Iterators;
+
+internal sealed class MockedRowBuffer : RowBuffer
 {
-    internal sealed class MockedRowBuffer : RowBuffer
+    public MockedRowBuffer(int count)
     {
-        public MockedRowBuffer(int count)
+        Count = count;
+        Value = new object[count];
+    }
+
+    public MockedRowBuffer(object[] value)
+    {
+        Count = value.Length;
+        Value = value;
+    }
+
+    public override int Count { get; }
+
+    public object[] Value { get; set; }
+
+    public override object this[int index]
+    {
+        get
         {
-            Count = count;
-            Value = new object[count];
+            if (index < 0 || Count <= index)
+                throw new IndexOutOfRangeException();
+
+            return Value[index];
         }
+    }
 
-        public MockedRowBuffer(object[] value)
-        {
-            Count = value.Length;
-            Value = value;
-        }
-
-        public override int Count { get; }
-
-        public object[] Value { get; set; }
-
-        public override object this[int index]
-        {
-            get
-            {
-                if (index < 0 || Count <= index)
-                    throw new IndexOutOfRangeException();
-
-                return Value[index];
-            }
-        }
-
-        public override void CopyTo(object[] array, int destinationIndex)
-        {
-            Value.CopyTo(array, destinationIndex);
-        }
+    public override void CopyTo(object[] array, int destinationIndex)
+    {
+        Value.CopyTo(array, destinationIndex);
     }
 }

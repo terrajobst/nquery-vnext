@@ -2,73 +2,72 @@
 using NQuery.Syntax;
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions.Issues
+namespace NQuery.Authoring.CodeActions.Issues;
+
+internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssueProvider<CommonTableExpressionQuerySyntax>
 {
-    internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssueProvider<CommonTableExpressionQuerySyntax>
+    protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, CommonTableExpressionQuerySyntax node)
     {
-        protected override IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel, CommonTableExpressionQuerySyntax node)
-        {
-            var nodes = node.DescendantNodes().OfType<NamedTableReferenceSyntax>();
-            var referencedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
-                                        .Select(semanticModel.GetDeclaredSymbol)
-                                        .Where(s => s is not null)
-                                        .Select(s => s.Table);
-            var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
+        var nodes = node.DescendantNodes().OfType<NamedTableReferenceSyntax>();
+        var referencedTables = nodes.Where(n => !IsRecursiveUsage(semanticModel, n))
+                                    .Select(semanticModel.GetDeclaredSymbol)
+                                    .Where(s => s is not null)
+                                    .Select(s => s.Table);
+        var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
 
-            return from tableExpression in node.CommonTableExpressions
-                   let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)
-                   where declaredTable is not null && !referencedTableSet.Contains(declaredTable)
-                   let actions = new[] { new RemoveCommonTableExpressionCodeAction(tableExpression) }
-                   select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Name.Span, actions);
+        return from tableExpression in node.CommonTableExpressions
+               let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)
+               where declaredTable is not null && !referencedTableSet.Contains(declaredTable)
+               let actions = new[] { new RemoveCommonTableExpressionCodeAction(tableExpression) }
+               select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Name.Span, actions);
+    }
+
+    private static bool IsRecursiveUsage(SemanticModel semanticModel, NamedTableReferenceSyntax tableReference)
+    {
+        var symbol = semanticModel.GetDeclaredSymbol(tableReference);
+        if (symbol is null)
+            return false;
+
+        var table = symbol.Table;
+        return tableReference.Ancestors().OfType<CommonTableExpressionSyntax>().Any(c => semanticModel.GetDeclaredSymbol(c) == table);
+    }
+
+    private sealed class RemoveCommonTableExpressionCodeAction : CodeAction
+    {
+        private readonly CommonTableExpressionSyntax _node;
+
+        public RemoveCommonTableExpressionCodeAction(CommonTableExpressionSyntax node)
+            : base(node.SyntaxTree)
+        {
+            _node = node;
         }
 
-        private static bool IsRecursiveUsage(SemanticModel semanticModel, NamedTableReferenceSyntax tableReference)
+        public override string Description
         {
-            var symbol = semanticModel.GetDeclaredSymbol(tableReference);
-            if (symbol is null)
-                return false;
-
-            var table = symbol.Table;
-            return tableReference.Ancestors().OfType<CommonTableExpressionSyntax>().Any(c => semanticModel.GetDeclaredSymbol(c) == table);
+            get { return Resources.CodeActionRemoveUnusedCommonTableExpression; }
         }
 
-        private sealed class RemoveCommonTableExpressionCodeAction : CodeAction
+        protected override void GetChanges(TextChangeSet changeSet)
         {
-            private readonly CommonTableExpressionSyntax _node;
+            var previousToken = _node.FirstToken().GetPreviousToken();
+            var nextToken = _node.LastToken().GetNextToken();
 
-            public RemoveCommonTableExpressionCodeAction(CommonTableExpressionSyntax node)
-                : base(node.SyntaxTree)
-            {
-                _node = node;
-            }
+            var isFirst = previousToken.Kind == SyntaxKind.WithKeyword;
+            var isLast = nextToken.Kind != SyntaxKind.CommaToken;
+            var isSingle = isFirst && isLast;
 
-            public override string Description
-            {
-                get { return Resources.CodeActionRemoveUnusedCommonTableExpression; }
-            }
+            var removePreviousToken = isLast;
+            var removeNextToken = !isLast;
 
-            protected override void GetChanges(TextChangeSet changeSet)
-            {
-                var previousToken = _node.FirstToken().GetPreviousToken();
-                var nextToken = _node.LastToken().GetNextToken();
+            var start = removePreviousToken ? previousToken.Span.Start : _node.FullSpan.Start;
+            var end = removeNextToken
+                ? nextToken.FullSpan.End
+                : isSingle
+                    ? nextToken.Span.Start
+                    : _node.Span.End;
+            var span = TextSpan.FromBounds(start, end);
 
-                var isFirst = previousToken.Kind == SyntaxKind.WithKeyword;
-                var isLast = nextToken.Kind != SyntaxKind.CommaToken;
-                var isSingle = isFirst && isLast;
-
-                var removePreviousToken = isLast;
-                var removeNextToken = !isLast;
-
-                var start = removePreviousToken ? previousToken.Span.Start : _node.FullSpan.Start;
-                var end = removeNextToken
-                    ? nextToken.FullSpan.End
-                    : isSingle
-                        ? nextToken.Span.Start
-                        : _node.Span.End;
-                var span = TextSpan.FromBounds(start, end);
-
-                changeSet.DeleteText(span);
-            }
+            changeSet.DeleteText(span);
         }
     }
 }

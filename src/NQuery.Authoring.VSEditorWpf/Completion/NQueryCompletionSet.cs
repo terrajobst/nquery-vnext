@@ -7,137 +7,136 @@ using NQuery.Authoring.Completion;
 using NQuery.Authoring.Wpf;
 using NQuery.Text;
 
-namespace NQuery.Authoring.VSEditorWpf.Completion
+namespace NQuery.Authoring.VSEditorWpf.Completion;
+
+internal sealed class NQueryCompletionSet : CompletionSet
 {
-    internal sealed class NQueryCompletionSet : CompletionSet
+    private readonly ICompletionSession _session;
+    private readonly ICompletionModelManager _completionModelManager;
+
+    public NQueryCompletionSet(ICompletionSession session, ICompletionModelManager completionModelManager)
     {
-        private readonly ICompletionSession _session;
-        private readonly ICompletionModelManager _completionModelManager;
+        _session = session;
+        _completionModelManager = completionModelManager;
+        _completionModelManager.ModelChanged += CompletionModelManagerOnModelChanged;
+        _session.Dismissed += SessionOnDismissed;
+        Refresh();
+    }
 
-        public NQueryCompletionSet(ICompletionSession session, ICompletionModelManager completionModelManager)
+    private void SessionOnDismissed(object sender, EventArgs e)
+    {
+        _session.Dismissed -= SessionOnDismissed;
+        _completionModelManager.ModelChanged -= CompletionModelManagerOnModelChanged;
+    }
+
+    private void CompletionModelManagerOnModelChanged(object sender, EventArgs e)
+    {
+        Refresh();
+    }
+
+    private void Refresh()
+    {
+        Recalculate();
+        Filter();
+        SelectBestMatch();
+
+        if (Completions.Count == 0)
+            _session.Dismiss();
+    }
+
+    public override void SelectBestMatch()
+    {
+        var builderResult = MatchCompletionList(CompletionBuilders, CompletionMatchType.MatchDisplayText, false);
+        var itemResult = MatchCompletionList(Completions, CompletionMatchType.MatchDisplayText, false);
+
+        if (builderResult is null || itemResult is null)
         {
-            _session = session;
-            _completionModelManager = completionModelManager;
-            _completionModelManager.ModelChanged += CompletionModelManagerOnModelChanged;
-            _session.Dismissed += SessionOnDismissed;
-            Refresh();
+            base.SelectBestMatch();
         }
-
-        private void SessionOnDismissed(object sender, EventArgs e)
+        else
         {
-            _session.Dismissed -= SessionOnDismissed;
-            _completionModelManager.ModelChanged -= CompletionModelManagerOnModelChanged;
+            var builderWeight = GetMatchWeight(builderResult);
+            var itemWeight = GetMatchWeight(itemResult);
+            SelectionStatus = builderWeight >= itemWeight
+                ? builderResult.SelectionStatus
+                : itemResult.SelectionStatus;
         }
+    }
 
-        private void CompletionModelManagerOnModelChanged(object sender, EventArgs e)
+    private static int GetMatchWeight(CompletionMatchResult builderResult)
+    {
+        return (builderResult.CharsMatchedCount) +
+               (builderResult.SelectionStatus.IsSelected ? 1 : 0) +
+               (builderResult.SelectionStatus.IsUnique ? 1 : 0);
+    }
+
+    public override void Recalculate()
+    {
+        UpdateModel(_completionModelManager.Model);
+    }
+
+    private void UpdateModel(CompletionModel model)
+    {
+        ApplicableTo = ToTrackingSpan(model.ApplicableSpan);
+
+        var builders = model.Items.Where(item => item.IsBuilder);
+        UpdateBuilders(builders);
+
+        var completions = model.Items.Where(item1 => !item1.IsBuilder);
+        UpdateCompletions(completions);
+    }
+
+    private void UpdateBuilders(IEnumerable<CompletionItem> items)
+    {
+        WritableCompletionBuilders.BeginBulkOperation();
+        try
         {
-            Refresh();
+            WritableCompletionBuilders.Clear();
+            WritableCompletionBuilders.AddRange(ToCompletions(items));
         }
-
-        private void Refresh()
+        finally
         {
-            Recalculate();
-            Filter();
-            SelectBestMatch();
-
-            if (Completions.Count == 0)
-                _session.Dismiss();
+            WritableCompletionBuilders.EndBulkOperation();
         }
+    }
 
-        public override void SelectBestMatch()
+    private void UpdateCompletions(IEnumerable<CompletionItem> items)
+    {
+        WritableCompletions.BeginBulkOperation();
+        try
         {
-            var builderResult = MatchCompletionList(CompletionBuilders, CompletionMatchType.MatchDisplayText, false);
-            var itemResult = MatchCompletionList(Completions, CompletionMatchType.MatchDisplayText, false);
-
-            if (builderResult is null || itemResult is null)
-            {
-                base.SelectBestMatch();
-            }
-            else
-            {
-                var builderWeight = GetMatchWeight(builderResult);
-                var itemWeight = GetMatchWeight(itemResult);
-                SelectionStatus = builderWeight >= itemWeight
-                    ? builderResult.SelectionStatus
-                    : itemResult.SelectionStatus;
-            }
+            WritableCompletions.Clear();
+            WritableCompletions.AddRange(ToCompletions(items));
         }
-
-        private static int GetMatchWeight(CompletionMatchResult builderResult)
+        finally
         {
-            return (builderResult.CharsMatchedCount) +
-                   (builderResult.SelectionStatus.IsSelected ? 1 : 0) +
-                   (builderResult.SelectionStatus.IsUnique ? 1 : 0);
+            WritableCompletions.EndBulkOperation();
         }
+    }
 
-        public override void Recalculate()
-        {
-            UpdateModel(_completionModelManager.Model);
-        }
+    private ITrackingSpan ToTrackingSpan(TextSpan span)
+    {
+        var snapshot = _session.TextView.TextBuffer.CurrentSnapshot;
+        return snapshot.CreateTrackingSpan(span.Start, span.Length, SpanTrackingMode.EdgeInclusive);
+    }
 
-        private void UpdateModel(CompletionModel model)
-        {
-            ApplicableTo = ToTrackingSpan(model.ApplicableSpan);
+    private static IEnumerable<Microsoft.VisualStudio.Language.Intellisense.Completion> ToCompletions(IEnumerable<CompletionItem> completionItems)
+    {
+        return completionItems.Select(ToCompletion);
+    }
 
-            var builders = model.Items.Where(item => item.IsBuilder);
-            UpdateBuilders(builders);
+    private static Microsoft.VisualStudio.Language.Intellisense.Completion ToCompletion(CompletionItem completionItem)
+    {
+        var displayText = completionItem.DisplayText;
+        var insertionText = completionItem.InsertionText;
+        var description = completionItem.Description;
+        var image = ToImage(completionItem.Glyph);
 
-            var completions = model.Items.Where(item1 => !item1.IsBuilder);
-            UpdateCompletions(completions);
-        }
+        return new Microsoft.VisualStudio.Language.Intellisense.Completion(displayText, insertionText, description, image, null);
+    }
 
-        private void UpdateBuilders(IEnumerable<CompletionItem> items)
-        {
-            WritableCompletionBuilders.BeginBulkOperation();
-            try
-            {
-                WritableCompletionBuilders.Clear();
-                WritableCompletionBuilders.AddRange(ToCompletions(items));
-            }
-            finally
-            {
-                WritableCompletionBuilders.EndBulkOperation();
-            }
-        }
-
-        private void UpdateCompletions(IEnumerable<CompletionItem> items)
-        {
-            WritableCompletions.BeginBulkOperation();
-            try
-            {
-                WritableCompletions.Clear();
-                WritableCompletions.AddRange(ToCompletions(items));
-            }
-            finally
-            {
-                WritableCompletions.EndBulkOperation();
-            }
-        }
-
-        private ITrackingSpan ToTrackingSpan(TextSpan span)
-        {
-            var snapshot = _session.TextView.TextBuffer.CurrentSnapshot;
-            return snapshot.CreateTrackingSpan(span.Start, span.Length, SpanTrackingMode.EdgeInclusive);
-        }
-
-        private static IEnumerable<Microsoft.VisualStudio.Language.Intellisense.Completion> ToCompletions(IEnumerable<CompletionItem> completionItems)
-        {
-            return completionItems.Select(ToCompletion);
-        }
-
-        private static Microsoft.VisualStudio.Language.Intellisense.Completion ToCompletion(CompletionItem completionItem)
-        {
-            var displayText = completionItem.DisplayText;
-            var insertionText = completionItem.InsertionText;
-            var description = completionItem.Description;
-            var image = ToImage(completionItem.Glyph);
-
-            return new Microsoft.VisualStudio.Language.Intellisense.Completion(displayText, insertionText, description, image, null);
-        }
-
-        private static ImageSource ToImage(Glyph? glyph)
-        {
-            return glyph is null ? null : NQueryGlyphImageSource.Get(glyph.Value);
-        }
+    private static ImageSource ToImage(Glyph? glyph)
+    {
+        return glyph is null ? null : NQueryGlyphImageSource.Get(glyph.Value);
     }
 }

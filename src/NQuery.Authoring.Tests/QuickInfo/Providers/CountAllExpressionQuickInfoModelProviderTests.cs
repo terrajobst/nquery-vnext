@@ -4,62 +4,61 @@ using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new CountAllExpressionQuickInfoModelProvider();
-        }
+        return new CountAllExpressionQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
-            var span = syntax.Name.Span;
-            var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);
-            var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
+        var span = syntax.Name.Span;
+        var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);
+        var markup = SymbolMarkup.ForSymbol(symbol);
+        return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
+    }
 
-        private static AggregateSymbol GetCountAggregate(DataContext dataContext)
-        {
-            var aggregates = dataContext.Aggregates;
-            return aggregates.Single(a => a.Name == "COUNT");
-        }
+    private static AggregateSymbol GetCountAggregate(DataContext dataContext)
+    {
+        var aggregates = dataContext.Aggregates;
+        return aggregates.Single(a => a.Name == "COUNT");
+    }
 
-        [Fact]
-        public void CountAllExpressionQuickInfoModelProvider_MatchesInCount()
-        {
-            var query = @"
+    [Fact]
+    public void CountAllExpressionQuickInfoModelProvider_MatchesInCount()
+    {
+        var query = @"
                 SELECT  {COUNT}(*)
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
-        {
-            var query = @"
+    [Fact]
+    public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
+    {
+        var query = @"
                 SELECT  {COUNT}(*)
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query, dc => dc.RemoveAggregates(GetCountAggregate(dc)));
-        }
+        AssertIsNotMatch(query, dc => dc.RemoveAggregates(GetCountAggregate(dc)));
+    }
 
-        [Fact]
-        public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
-        {
-            var query = @"
+    [Fact]
+    public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
+    {
+        var query = @"
                 SELECT  COUNT({*)}
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

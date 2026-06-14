@@ -2,112 +2,111 @@ using System.Collections;
 
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators
+namespace NQuery.Tests.Refactor.Iterators;
+
+public class DistinctSortIteratorTests : IteratorTests
 {
-    public class DistinctSortIteratorTests : IteratorTests
+    [Fact]
+    public void Iterators_DistinctSort_ForwardsProperly()
     {
-        [Fact]
-        public void Iterators_DistinctSort_ForwardsProperly()
+        var rows = new object[] { 1, 2 };
+        var expected = rows;
+
+        using var input = new MockedIterator(rows);
+        var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+        var comparers = new[] { Comparer.Default };
+
+        using (var iterator = new DistinctSortIterator(input, sortEntries, comparers))
         {
-            var rows = new object[] { 1, 2 };
-            var expected = rows;
-
-            using var input = new MockedIterator(rows);
-            var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
-            var comparers = new[] { Comparer.Default };
-
-            using (var iterator = new DistinctSortIterator(input, sortEntries, comparers))
+            for (var i = 0; i < 2; i++)
             {
-                for (var i = 0; i < 2; i++)
-                {
-                    AssertProduces(iterator, expected);
-                }
+                AssertProduces(iterator, expected);
             }
-
-            Assert.Equal(2, input.TotalOpenCount);
-            Assert.Equal(4, input.TotalReadCount);
-            Assert.Equal(1, input.DisposalCount);
         }
 
-        [Fact]
-        public void Iterators_DistinctSort_ReturnsEmpty_IfInputIsEmpty()
+        Assert.Equal(2, input.TotalOpenCount);
+        Assert.Equal(4, input.TotalReadCount);
+        Assert.Equal(1, input.DisposalCount);
+    }
+
+    [Fact]
+    public void Iterators_DistinctSort_ReturnsEmpty_IfInputIsEmpty()
+    {
+        var rows = Array.Empty<object>();
+
+        using var input = new MockedIterator(rows);
+        var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
+        var comparers = new[] { Comparer.Default };
+
+        using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
+        AssertEmpty(iterator);
+    }
+
+    [Fact]
+    public void Iterators_DistinctSort_Sorts_SingleEntry()
+    {
+        var rows = new object[] { null, 1, 2, 1 };
+        var expected = new object[] { null, 2, 1 };
+
+        using var input = new MockedIterator(rows);
+        var sortEntries = new[]
         {
-            var rows = Array.Empty<object>();
+            new RowBufferEntry(input.RowBuffer, 0)
+        };
 
-            using var input = new MockedIterator(rows);
-            var sortEntries = new[] { new RowBufferEntry(input.RowBuffer, 0) };
-            var comparers = new[] { Comparer.Default };
-
-            using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
-            AssertEmpty(iterator);
-        }
-
-        [Fact]
-        public void Iterators_DistinctSort_Sorts_SingleEntry()
+        var comparers = new[]
         {
-            var rows = new object[] { null, 1, 2, 1 };
-            var expected = new object[] { null, 2, 1 };
+            Comparer<int>.Create((x, y) => y.CompareTo(x))
+        };
 
-            using var input = new MockedIterator(rows);
-            var sortEntries = new[]
-            {
-                new RowBufferEntry(input.RowBuffer, 0)
-            };
+        using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
+        AssertProduces(iterator, expected);
+    }
 
-            var comparers = new[]
-            {
-                Comparer<int>.Create((x, y) => y.CompareTo(x))
-            };
-
-            using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
-            AssertProduces(iterator, expected);
-        }
-
-        [Fact]
-        public void Iterators_DistinctSort_Sorts_TwoEntries()
+    [Fact]
+    public void Iterators_DistinctSort_Sorts_TwoEntries()
+    {
+        var rows = new object[,]
         {
-            var rows = new object[,]
-            {
-                {"Kirkland", "USA"},
-                {"London", "UK"},
-                {"London", null},
-                {"Redmond", "USA"},
-                {"Seattle", "USA"},
-                {"London", "UK"},
-                {"Seattle", "USA"},
-                {"Tacoma", "USA"},
-                {"London", "UK"},
-                {null, "USA"},
-                {null, null}
-            };
+            {"Kirkland", "USA"},
+            {"London", "UK"},
+            {"London", null},
+            {"Redmond", "USA"},
+            {"Seattle", "USA"},
+            {"London", "UK"},
+            {"Seattle", "USA"},
+            {"Tacoma", "USA"},
+            {"London", "UK"},
+            {null, "USA"},
+            {null, null}
+        };
 
-            var expected = new object[,]
-            {
-                {null, null},
-                {"London", null},
-                {null, "USA"},
-                {"Kirkland", "USA"},
-                {"Redmond", "USA"},
-                {"Seattle", "USA"},
-                {"Tacoma", "USA"},
-                {"London", "UK"}
-            };
+        var expected = new object[,]
+        {
+            {null, null},
+            {"London", null},
+            {null, "USA"},
+            {"Kirkland", "USA"},
+            {"Redmond", "USA"},
+            {"Seattle", "USA"},
+            {"Tacoma", "USA"},
+            {"London", "UK"}
+        };
 
-            using var input = new MockedIterator(rows);
-            var sortEntries = new[]
-            {
-                new RowBufferEntry(input.RowBuffer, 1),
-                new RowBufferEntry(input.RowBuffer, 0)
-            };
+        using var input = new MockedIterator(rows);
+        var sortEntries = new[]
+        {
+            new RowBufferEntry(input.RowBuffer, 1),
+            new RowBufferEntry(input.RowBuffer, 0)
+        };
 
-            var comparers = new[]
-            {
-                Comparer<string>.Create((x, y) => string.Compare(y, x, StringComparison.Ordinal)),
-                Comparer<string>.Create((x, y) => string.Compare(x, y, StringComparison.Ordinal))
-            };
+        var comparers = new[]
+        {
+            Comparer<string>.Create((x, y) => string.Compare(y, x, StringComparison.Ordinal)),
+            Comparer<string>.Create((x, y) => string.Compare(x, y, StringComparison.Ordinal))
+        };
 
-            using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
-            AssertProduces(iterator, expected);
-        }
+        using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
+        AssertProduces(iterator, expected);
     }
 }

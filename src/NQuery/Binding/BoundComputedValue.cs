@@ -1,15 +1,14 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundComputedValue
 {
-    internal sealed class BoundComputedValue
+    public BoundComputedValue(BoundExpression expression, IBoundValue value)
     {
-        public BoundComputedValue(BoundExpression expression, IBoundValue value)
-        {
-            Expression = expression;
-            Value = value;
-        }
-
-        public BoundExpression Expression { get; }
-
-        public IBoundValue Value { get; }
+        Expression = expression;
+        Value = value;
     }
+
+    public BoundExpression Expression { get; }
+
+    public IBoundValue Value { get; }
 }

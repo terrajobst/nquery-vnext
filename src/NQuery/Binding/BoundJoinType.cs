@@ -1,12 +1,11 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal enum BoundJoinType
 {
-    internal enum BoundJoinType
-    {
-        Inner,
-        FullOuter,
-        LeftOuter,
-        RightOuter,
-        LeftSemi,
-        LeftAntiSemi
-    }
+    Inner,
+    FullOuter,
+    LeftOuter,
+    RightOuter,
+    LeftSemi,
+    LeftAntiSemi
 }

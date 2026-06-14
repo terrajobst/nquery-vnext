@@ -1,13 +1,12 @@
 ﻿using NQuery.Authoring.Outlining;
 
-namespace NQuery.Authoring.Tests.Outlining
+namespace NQuery.Authoring.Tests.Outlining;
+
+public class OutliningExtensionsTests : ExtensionTests
 {
-    public class OutliningExtensionsTests : ExtensionTests
+    [Fact]
+    public void OutliningExtensions_ReturnsAllOutliners()
     {
-        [Fact]
-        public void OutliningExtensions_ReturnsAllOutliners()
-        {
-            AssertAllProvidersAreExposed(OutliningExtensions.GetStandardOutliners);
-        }
+        AssertAllProvidersAreExposed(OutliningExtensions.GetStandardOutliners);
     }
 }

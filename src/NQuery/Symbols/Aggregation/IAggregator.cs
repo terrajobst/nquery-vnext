@@ -1,9 +1,8 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public interface IAggregator
 {
-    public interface IAggregator
-    {
-        void Initialize();
-        void Accumulate(object value);
-        object GetResult();
-    }
+    void Initialize();
+    void Accumulate(object value);
+    object GetResult();
 }

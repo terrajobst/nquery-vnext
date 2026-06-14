@@ -1,7 +1,6 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal abstract class BoundNode
 {
-    internal abstract class BoundNode
-    {
-        public abstract BoundNodeKind Kind { get; }
-    }
+    public abstract BoundNodeKind Kind { get; }
 }

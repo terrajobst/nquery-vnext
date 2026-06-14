@@ -1,52 +1,51 @@
 using System.Collections.Immutable;
 using System.Text;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundCaseExpression : BoundExpression
 {
-    internal sealed class BoundCaseExpression : BoundExpression
+    public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
     {
-        public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression elseExpression)
+        CaseLabels = caseLabels.ToImmutableArray();
+        ElseExpression = elseExpression;
+    }
+
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.CaseExpression; }
+    }
+
+    public override Type Type
+    {
+        get { return CaseLabels.First().ThenExpression.Type; }
+    }
+
+    public ImmutableArray<BoundCaseLabel> CaseLabels { get; }
+
+    public BoundExpression ElseExpression { get; }
+
+    public override string ToString()
+    {
+        var sb = new StringBuilder();
+        sb.Append(@"CASE ");
+
+        foreach (var boundCaseLabel in CaseLabels)
         {
-            CaseLabels = caseLabels.ToImmutableArray();
-            ElseExpression = elseExpression;
+            sb.Append(@"WHEN ");
+            sb.Append(boundCaseLabel.Condition);
+            sb.Append(@" THEN ");
+            sb.Append(boundCaseLabel.ThenExpression);
         }
 
-        public override BoundNodeKind Kind
+        if (ElseExpression is not null)
         {
-            get { return BoundNodeKind.CaseExpression; }
+            sb.Append(@" ELSE ");
+            sb.Append(ElseExpression);
         }
 
-        public override Type Type
-        {
-            get { return CaseLabels.First().ThenExpression.Type; }
-        }
+        sb.Append(@" END");
 
-        public ImmutableArray<BoundCaseLabel> CaseLabels { get; }
-
-        public BoundExpression ElseExpression { get; }
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-            sb.Append(@"CASE ");
-
-            foreach (var boundCaseLabel in CaseLabels)
-            {
-                sb.Append(@"WHEN ");
-                sb.Append(boundCaseLabel.Condition);
-                sb.Append(@" THEN ");
-                sb.Append(boundCaseLabel.ThenExpression);
-            }
-
-            if (ElseExpression is not null)
-            {
-                sb.Append(@" ELSE ");
-                sb.Append(ElseExpression);
-            }
-
-            sb.Append(@" END");
-
-            return sb.ToString();
-        }
+        return sb.ToString();
     }
 }

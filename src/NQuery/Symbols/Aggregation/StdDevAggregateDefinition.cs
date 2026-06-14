@@ -1,10 +1,9 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class StdDevAggregateDefinition : VarAndStdDevAggregateDefinition
 {
-    public sealed class StdDevAggregateDefinition : VarAndStdDevAggregateDefinition
+    public StdDevAggregateDefinition()
+        : base(false)
     {
-        public StdDevAggregateDefinition()
-            : base(false)
-        {
-        }
     }
 }

@@ -4,10 +4,9 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
 using NQuery.Authoring.SignatureHelp;
 
-namespace NQuery.Authoring.ActiproWpf.SignatureHelp
+namespace NQuery.Authoring.ActiproWpf.SignatureHelp;
+
+public interface INQuerySignatureHelpProvider : IParameterInfoProvider
 {
-    public interface INQuerySignatureHelpProvider : IParameterInfoProvider
-    {
-        Collection<ISignatureHelpModelProvider> Providers { get; }
-    }
+    Collection<ISignatureHelpModelProvider> Providers { get; }
 }

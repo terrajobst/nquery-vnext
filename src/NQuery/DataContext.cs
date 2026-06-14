@@ -5,486 +5,485 @@ using NQuery.Hosting;
 using NQuery.Symbols;
 using NQuery.Symbols.Aggregation;
 
-namespace NQuery
+namespace NQuery;
+
+public sealed class DataContext
 {
-    public sealed class DataContext
+    private DataContext(IImmutableList<TableSymbol> tables,
+                        IImmutableList<TableRelation> relations,
+                        IImmutableList<FunctionSymbol> functions,
+                        IImmutableList<AggregateSymbol> aggregates,
+                        IImmutableList<VariableSymbol> variables,
+                        IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
+                        IImmutableDictionary<Type, IMethodProvider> methodProviders,
+                        IImmutableDictionary<Type, IComparer> comparers)
     {
-        private DataContext(IImmutableList<TableSymbol> tables,
-                            IImmutableList<TableRelation> relations,
-                            IImmutableList<FunctionSymbol> functions,
-                            IImmutableList<AggregateSymbol> aggregates,
-                            IImmutableList<VariableSymbol> variables,
-                            IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
-                            IImmutableDictionary<Type, IMethodProvider> methodProviders,
-                            IImmutableDictionary<Type, IComparer> comparers)
-        {
-            Tables = tables;
-            Relations = relations;
-            Functions = functions;
-            Aggregates = aggregates;
-            Variables = variables;
-            PropertyProviders = propertyProviders;
-            MethodProviders = methodProviders;
-            Comparers = comparers;
-        }
-
-        public static readonly DataContext Empty = CreateEmpty();
-        public static readonly DataContext Default = CreateDefault();
-
-        public IImmutableList<TableSymbol> Tables { get; }
-
-        public IImmutableList<TableRelation> Relations { get; }
-
-        public IImmutableList<FunctionSymbol> Functions { get; }
-
-        public IImmutableList<AggregateSymbol> Aggregates { get; }
-
-        public IImmutableList<VariableSymbol> Variables { get; }
-
-        public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders { get; }
-
-        public IImmutableDictionary<Type, IMethodProvider> MethodProviders { get; }
-
-        public IImmutableDictionary<Type, IComparer> Comparers { get; }
-
-        private static DataContext CreateEmpty()
-        {
-            return new DataContext(ImmutableList.Create<TableSymbol>(),
-                                   ImmutableList.Create<TableRelation>(),
-                                   ImmutableList.Create<FunctionSymbol>(),
-                                   ImmutableList.Create<AggregateSymbol>(),
-                                   ImmutableList.Create<VariableSymbol>(),
-                                   ImmutableDictionary.Create<Type, IPropertyProvider>(),
-                                   ImmutableDictionary.Create<Type, IMethodProvider>(),
-                                   ImmutableDictionary.Create<Type, IComparer>());
-        }
-
-        private static DataContext CreateDefault()
-        {
-            var functions = BuiltInFunctions.GetFunctions().ToImmutableList();
-            var aggregates = BuiltInAggregates.GetAggregates().ToImmutableList();
-            var reflectionProvider = new ReflectionProvider();
-            var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
-                                                       .Add(typeof(object), reflectionProvider);
-            var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
-                                                     .Add(typeof(object), reflectionProvider);
-            var comparers = ImmutableDictionary.Create<Type, IComparer>();
-            return new DataContext(ImmutableList.Create<TableSymbol>(),
-                                   ImmutableList.Create<TableRelation>(),
-                                   functions,
-                                   aggregates,
-                                   ImmutableList.Create<VariableSymbol>(),
-                                   propertyProviders,
-                                   methodProviders,
-                                   comparers);
-        }
-
-        // Tables
-
-        public DataContext AddTables(params TableSymbol[] tables)
-        {
-            if (tables is null || tables.Length == 0)
-                return this;
-
-            return AddTables(tables.AsEnumerable());
-        }
-
-        public DataContext AddTables(IEnumerable<TableSymbol> tables)
-        {
-            ArgumentNullException.ThrowIfNull(tables);
-
-            var newTables = Tables.AddRange(tables);
-            return WithTables(newTables);
-        }
-
-        public DataContext RemoveTables(params TableSymbol[] tables)
-        {
-            if (tables is null || tables.Length == 0)
-                return this;
-
-            return RemoveTables(tables.AsEnumerable());
-        }
-
-        public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
-        {
-            ArgumentNullException.ThrowIfNull(tables);
-
-            var newTables = Tables.RemoveRange(tables);
-            return WithTables(newTables);
-        }
+        Tables = tables;
+        Relations = relations;
+        Functions = functions;
+        Aggregates = aggregates;
+        Variables = variables;
+        PropertyProviders = propertyProviders;
+        MethodProviders = methodProviders;
+        Comparers = comparers;
+    }
+
+    public static readonly DataContext Empty = CreateEmpty();
+    public static readonly DataContext Default = CreateDefault();
+
+    public IImmutableList<TableSymbol> Tables { get; }
+
+    public IImmutableList<TableRelation> Relations { get; }
+
+    public IImmutableList<FunctionSymbol> Functions { get; }
+
+    public IImmutableList<AggregateSymbol> Aggregates { get; }
+
+    public IImmutableList<VariableSymbol> Variables { get; }
+
+    public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders { get; }
+
+    public IImmutableDictionary<Type, IMethodProvider> MethodProviders { get; }
+
+    public IImmutableDictionary<Type, IComparer> Comparers { get; }
+
+    private static DataContext CreateEmpty()
+    {
+        return new DataContext(ImmutableList.Create<TableSymbol>(),
+                               ImmutableList.Create<TableRelation>(),
+                               ImmutableList.Create<FunctionSymbol>(),
+                               ImmutableList.Create<AggregateSymbol>(),
+                               ImmutableList.Create<VariableSymbol>(),
+                               ImmutableDictionary.Create<Type, IPropertyProvider>(),
+                               ImmutableDictionary.Create<Type, IMethodProvider>(),
+                               ImmutableDictionary.Create<Type, IComparer>());
+    }
+
+    private static DataContext CreateDefault()
+    {
+        var functions = BuiltInFunctions.GetFunctions().ToImmutableList();
+        var aggregates = BuiltInAggregates.GetAggregates().ToImmutableList();
+        var reflectionProvider = new ReflectionProvider();
+        var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
+                                                   .Add(typeof(object), reflectionProvider);
+        var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
+                                                 .Add(typeof(object), reflectionProvider);
+        var comparers = ImmutableDictionary.Create<Type, IComparer>();
+        return new DataContext(ImmutableList.Create<TableSymbol>(),
+                               ImmutableList.Create<TableRelation>(),
+                               functions,
+                               aggregates,
+                               ImmutableList.Create<VariableSymbol>(),
+                               propertyProviders,
+                               methodProviders,
+                               comparers);
+    }
+
+    // Tables
+
+    public DataContext AddTables(params TableSymbol[] tables)
+    {
+        if (tables is null || tables.Length == 0)
+            return this;
+
+        return AddTables(tables.AsEnumerable());
+    }
+
+    public DataContext AddTables(IEnumerable<TableSymbol> tables)
+    {
+        ArgumentNullException.ThrowIfNull(tables);
+
+        var newTables = Tables.AddRange(tables);
+        return WithTables(newTables);
+    }
+
+    public DataContext RemoveTables(params TableSymbol[] tables)
+    {
+        if (tables is null || tables.Length == 0)
+            return this;
+
+        return RemoveTables(tables.AsEnumerable());
+    }
+
+    public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
+    {
+        ArgumentNullException.ThrowIfNull(tables);
+
+        var newTables = Tables.RemoveRange(tables);
+        return WithTables(newTables);
+    }
+
+    public DataContext RemoveAllTables()
+    {
+        var newTables = Tables.Clear();
+        return WithTables(newTables);
+    }
+
+    public DataContext WithTables(IEnumerable<TableSymbol> tables)
+    {
+        ArgumentNullException.ThrowIfNull(tables);
 
-        public DataContext RemoveAllTables()
-        {
-            var newTables = Tables.Clear();
-            return WithTables(newTables);
-        }
-
-        public DataContext WithTables(IEnumerable<TableSymbol> tables)
-        {
-            ArgumentNullException.ThrowIfNull(tables);
-
-            if (ReferenceEquals(tables, Tables))
-                return this;
+        if (ReferenceEquals(tables, Tables))
+            return this;
 
-            var newTables = tables.ToImmutableList();
-            return new DataContext(newTables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
-        }
+        var newTables = tables.ToImmutableList();
+        return new DataContext(newTables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+    }
 
-        // Relations
-
-        public DataContext AddRelations(params TableRelation[] relations)
-        {
-            if (relations is null || relations.Length == 0)
-                return this;
+    // Relations
 
-            return AddRelations(relations.AsEnumerable());
-        }
+    public DataContext AddRelations(params TableRelation[] relations)
+    {
+        if (relations is null || relations.Length == 0)
+            return this;
 
-        public DataContext AddRelations(IEnumerable<TableRelation> relations)
-        {
-            ArgumentNullException.ThrowIfNull(relations);
+        return AddRelations(relations.AsEnumerable());
+    }
 
-            var newRelations = Relations.AddRange(relations);
-            return WithRelations(newRelations);
-        }
+    public DataContext AddRelations(IEnumerable<TableRelation> relations)
+    {
+        ArgumentNullException.ThrowIfNull(relations);
 
-        public DataContext RemoveRelations(params TableRelation[] relations)
-        {
-            if (relations is null || relations.Length == 0)
-                return this;
+        var newRelations = Relations.AddRange(relations);
+        return WithRelations(newRelations);
+    }
 
-            return RemoveRelations(relations.AsEnumerable());
-        }
+    public DataContext RemoveRelations(params TableRelation[] relations)
+    {
+        if (relations is null || relations.Length == 0)
+            return this;
 
-        public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
-        {
-            ArgumentNullException.ThrowIfNull(relations);
+        return RemoveRelations(relations.AsEnumerable());
+    }
 
-            var newRelations = Relations.RemoveRange(relations);
-            return WithRelations(newRelations);
-        }
+    public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
+    {
+        ArgumentNullException.ThrowIfNull(relations);
 
-        public DataContext RemoveAllRelations()
-        {
-            var newRelations = Relations.Clear();
-            return WithRelations(newRelations);
-        }
+        var newRelations = Relations.RemoveRange(relations);
+        return WithRelations(newRelations);
+    }
 
-        public DataContext WithRelations(IEnumerable<TableRelation> relations)
-        {
-            ArgumentNullException.ThrowIfNull(relations);
+    public DataContext RemoveAllRelations()
+    {
+        var newRelations = Relations.Clear();
+        return WithRelations(newRelations);
+    }
 
-            if (ReferenceEquals(relations, Relations))
-                return this;
+    public DataContext WithRelations(IEnumerable<TableRelation> relations)
+    {
+        ArgumentNullException.ThrowIfNull(relations);
 
-            var newRelations = relations.ToImmutableList();
-            return new DataContext(Tables, newRelations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
-        }
+        if (ReferenceEquals(relations, Relations))
+            return this;
 
-        // Functions
-
-        public DataContext AddFunctions(params FunctionSymbol[] functions)
-        {
-            if (functions is null || functions.Length == 0)
-                return this;
+        var newRelations = relations.ToImmutableList();
+        return new DataContext(Tables, newRelations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+    }
 
-            return AddFunctions(functions.AsEnumerable());
-        }
+    // Functions
 
-        public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
-        {
-            ArgumentNullException.ThrowIfNull(functions);
+    public DataContext AddFunctions(params FunctionSymbol[] functions)
+    {
+        if (functions is null || functions.Length == 0)
+            return this;
 
-            var newFunctions = Functions.AddRange(functions);
-            return WithFunctions(newFunctions);
-        }
+        return AddFunctions(functions.AsEnumerable());
+    }
 
-        public DataContext RemoveFunctions(params FunctionSymbol[] functions)
-        {
-            if (functions is null || functions.Length == 0)
-                return this;
+    public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
 
-            return RemoveFunctions(functions.AsEnumerable());
-        }
+        var newFunctions = Functions.AddRange(functions);
+        return WithFunctions(newFunctions);
+    }
 
-        public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
-        {
-            ArgumentNullException.ThrowIfNull(functions);
+    public DataContext RemoveFunctions(params FunctionSymbol[] functions)
+    {
+        if (functions is null || functions.Length == 0)
+            return this;
 
-            var newFunctions = Functions.RemoveRange(functions);
-            return WithFunctions(newFunctions);
-        }
+        return RemoveFunctions(functions.AsEnumerable());
+    }
 
-        public DataContext RemoveAllFunctions()
-        {
-            var newFunctions = Functions.Clear();
-            return WithFunctions(newFunctions);
-        }
+    public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
 
-        public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
-        {
-            ArgumentNullException.ThrowIfNull(functions);
+        var newFunctions = Functions.RemoveRange(functions);
+        return WithFunctions(newFunctions);
+    }
 
-            if (ReferenceEquals(functions, Functions))
-                return this;
+    public DataContext RemoveAllFunctions()
+    {
+        var newFunctions = Functions.Clear();
+        return WithFunctions(newFunctions);
+    }
 
-            var newFunctions = functions.ToImmutableList();
-            return new DataContext(Tables, Relations, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
-        }
+    public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
+    {
+        ArgumentNullException.ThrowIfNull(functions);
 
-        // Aggregates
+        if (ReferenceEquals(functions, Functions))
+            return this;
 
-        public DataContext AddAggregates(params AggregateSymbol[] aggregates)
-        {
-            if (aggregates is null || aggregates.Length == 0)
-                return this;
+        var newFunctions = functions.ToImmutableList();
+        return new DataContext(Tables, Relations, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+    }
 
-            return AddAggregates(aggregates.AsEnumerable());
-        }
+    // Aggregates
 
-        public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
-        {
-            ArgumentNullException.ThrowIfNull(aggregates);
+    public DataContext AddAggregates(params AggregateSymbol[] aggregates)
+    {
+        if (aggregates is null || aggregates.Length == 0)
+            return this;
 
-            var newAggregates = Aggregates.AddRange(aggregates);
-            return WithAggregates(newAggregates);
-        }
+        return AddAggregates(aggregates.AsEnumerable());
+    }
 
-        public DataContext RemoveAggregates(params AggregateSymbol[] aggregates)
-        {
-            if (aggregates is null || aggregates.Length == 0)
-                return this;
+    public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
+    {
+        ArgumentNullException.ThrowIfNull(aggregates);
 
-            return RemoveAggregates(aggregates.AsEnumerable());
-        }
+        var newAggregates = Aggregates.AddRange(aggregates);
+        return WithAggregates(newAggregates);
+    }
 
-        public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
-        {
-            ArgumentNullException.ThrowIfNull(aggregates);
+    public DataContext RemoveAggregates(params AggregateSymbol[] aggregates)
+    {
+        if (aggregates is null || aggregates.Length == 0)
+            return this;
 
-            var newAggregates = Aggregates.RemoveRange(aggregates);
-            return WithAggregates(newAggregates);
-        }
+        return RemoveAggregates(aggregates.AsEnumerable());
+    }
 
-        public DataContext RemoveAllAggregates()
-        {
-            var newAggregates = Aggregates.Clear();
-            return WithAggregates(newAggregates);
-        }
+    public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
+    {
+        ArgumentNullException.ThrowIfNull(aggregates);
 
-        public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
-        {
-            ArgumentNullException.ThrowIfNull(aggregates);
+        var newAggregates = Aggregates.RemoveRange(aggregates);
+        return WithAggregates(newAggregates);
+    }
 
-            if (ReferenceEquals(aggregates, Aggregates))
-                return this;
-
-            var newAggregates = aggregates.ToImmutableList();
-            return new DataContext(Tables, Relations, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
-        }
+    public DataContext RemoveAllAggregates()
+    {
+        var newAggregates = Aggregates.Clear();
+        return WithAggregates(newAggregates);
+    }
 
-        // Variables
+    public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
+    {
+        ArgumentNullException.ThrowIfNull(aggregates);
 
-        public DataContext AddVariables(params VariableSymbol[] variables)
-        {
-            if (variables is null || variables.Length == 0)
-                return this;
+        if (ReferenceEquals(aggregates, Aggregates))
+            return this;
 
-            return AddVariables(variables.AsEnumerable());
-        }
+        var newAggregates = aggregates.ToImmutableList();
+        return new DataContext(Tables, Relations, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+    }
 
-        public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
-        {
-            ArgumentNullException.ThrowIfNull(variables);
+    // Variables
 
-            var newVariables = Variables.AddRange(variables);
-            return WithVariables(newVariables);
-        }
+    public DataContext AddVariables(params VariableSymbol[] variables)
+    {
+        if (variables is null || variables.Length == 0)
+            return this;
 
-        public DataContext RemoveVariables(params VariableSymbol[] variables)
-        {
-            if (variables is null || variables.Length == 0)
-                return this;
+        return AddVariables(variables.AsEnumerable());
+    }
 
-            return RemoveVariables(variables.AsEnumerable());
-        }
+    public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
 
-        public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
-        {
-            ArgumentNullException.ThrowIfNull(variables);
+        var newVariables = Variables.AddRange(variables);
+        return WithVariables(newVariables);
+    }
 
-            var newVariables = Variables.RemoveRange(variables);
-            return WithVariables(newVariables);
-        }
+    public DataContext RemoveVariables(params VariableSymbol[] variables)
+    {
+        if (variables is null || variables.Length == 0)
+            return this;
 
-        public DataContext RemoveAllVariables()
-        {
-            var newVariables = Variables.Clear();
-            return WithVariables(newVariables);
-        }
+        return RemoveVariables(variables.AsEnumerable());
+    }
 
-        public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
-        {
-            ArgumentNullException.ThrowIfNull(variables);
+    public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
 
-            if (ReferenceEquals(variables, Variables))
-                return this;
+        var newVariables = Variables.RemoveRange(variables);
+        return WithVariables(newVariables);
+    }
 
-            var newVariables = variables.ToImmutableList();
-            return new DataContext(Tables, Relations, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
-        }
+    public DataContext RemoveAllVariables()
+    {
+        var newVariables = Variables.Clear();
+        return WithVariables(newVariables);
+    }
 
-        // Property Providers
+    public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
+    {
+        ArgumentNullException.ThrowIfNull(variables);
 
-        public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
-        {
-            ArgumentNullException.ThrowIfNull(type);
-            ArgumentNullException.ThrowIfNull(provider);
+        if (ReferenceEquals(variables, Variables))
+            return this;
 
-            var newProviders = PropertyProviders.Add(type, provider);
-            return WithPropertyProviders(newProviders);
-        }
+        var newVariables = variables.ToImmutableList();
+        return new DataContext(Tables, Relations, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
+    }
 
-        public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
-        {
-            ArgumentNullException.ThrowIfNull(providers);
+    // Property Providers
 
-            var newProviders = PropertyProviders.AddRange(providers);
-            return WithPropertyProviders(newProviders);
-        }
+    public DataContext AddPropertyProvider(Type type, IPropertyProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(provider);
 
-        public DataContext RemovePropertyProviders(params Type[] types)
-        {
-            if (types is null || types.Length == 0)
-                return this;
+        var newProviders = PropertyProviders.Add(type, provider);
+        return WithPropertyProviders(newProviders);
+    }
 
-            return RemovePropertyProviders(types.AsEnumerable());
-        }
+    public DataContext AddPropertyProviders(IEnumerable<KeyValuePair<Type, IPropertyProvider>> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
 
-        public DataContext RemovePropertyProviders(IEnumerable<Type> types)
-        {
-            ArgumentNullException.ThrowIfNull(types);
+        var newProviders = PropertyProviders.AddRange(providers);
+        return WithPropertyProviders(newProviders);
+    }
 
-            var newProviders = PropertyProviders.RemoveRange(types);
-            return WithPropertyProviders(newProviders);
-        }
+    public DataContext RemovePropertyProviders(params Type[] types)
+    {
+        if (types is null || types.Length == 0)
+            return this;
 
-        public DataContext RemoveAllPropertyProviders()
-        {
-            var newProviders = PropertyProviders.Clear();
-            return WithPropertyProviders(newProviders);
-        }
+        return RemovePropertyProviders(types.AsEnumerable());
+    }
 
-        public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
-        {
-            ArgumentNullException.ThrowIfNull(providers);
+    public DataContext RemovePropertyProviders(IEnumerable<Type> types)
+    {
+        ArgumentNullException.ThrowIfNull(types);
 
-            if (ReferenceEquals(PropertyProviders, providers))
-                return this;
+        var newProviders = PropertyProviders.RemoveRange(types);
+        return WithPropertyProviders(newProviders);
+    }
 
-            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, providers, MethodProviders, Comparers);
-        }
+    public DataContext RemoveAllPropertyProviders()
+    {
+        var newProviders = PropertyProviders.Clear();
+        return WithPropertyProviders(newProviders);
+    }
 
-        // Method Providers
+    public DataContext WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
 
-        public DataContext AddMethodProvider(Type type, IMethodProvider provider)
-        {
-            ArgumentNullException.ThrowIfNull(type);
-            ArgumentNullException.ThrowIfNull(provider);
+        if (ReferenceEquals(PropertyProviders, providers))
+            return this;
 
-            var newProviders = MethodProviders.Add(type, provider);
-            return WithMethodProviders(newProviders);
-        }
+        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, providers, MethodProviders, Comparers);
+    }
 
-        public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
-        {
-            ArgumentNullException.ThrowIfNull(providers);
+    // Method Providers
 
-            var newProviders = MethodProviders.AddRange(providers);
-            return WithMethodProviders(newProviders);
-        }
+    public DataContext AddMethodProvider(Type type, IMethodProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(provider);
 
-        public DataContext RemoveMethodProviders(params Type[] types)
-        {
-            if (types is null || types.Length == 0)
-                return this;
+        var newProviders = MethodProviders.Add(type, provider);
+        return WithMethodProviders(newProviders);
+    }
 
-            return RemoveMethodProviders(types.AsEnumerable());
-        }
+    public DataContext AddMethodProviders(IEnumerable<KeyValuePair<Type, IMethodProvider>> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
 
-        public DataContext RemoveMethodProviders(IEnumerable<Type> types)
-        {
-            ArgumentNullException.ThrowIfNull(types);
+        var newProviders = MethodProviders.AddRange(providers);
+        return WithMethodProviders(newProviders);
+    }
 
-            var newProviders = MethodProviders.RemoveRange(types);
-            return WithMethodProviders(newProviders);
-        }
+    public DataContext RemoveMethodProviders(params Type[] types)
+    {
+        if (types is null || types.Length == 0)
+            return this;
 
-        public DataContext RemoveAllMethodProviders()
-        {
-            var newProviders = MethodProviders.Clear();
-            return WithMethodProviders(newProviders);
-        }
+        return RemoveMethodProviders(types.AsEnumerable());
+    }
 
-        public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
-        {
-            ArgumentNullException.ThrowIfNull(providers);
+    public DataContext RemoveMethodProviders(IEnumerable<Type> types)
+    {
+        ArgumentNullException.ThrowIfNull(types);
 
-            if (ReferenceEquals(MethodProviders, providers))
-                return this;
+        var newProviders = MethodProviders.RemoveRange(types);
+        return WithMethodProviders(newProviders);
+    }
 
-            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, providers, Comparers);
-        }
+    public DataContext RemoveAllMethodProviders()
+    {
+        var newProviders = MethodProviders.Clear();
+        return WithMethodProviders(newProviders);
+    }
 
-        // Comparers
+    public DataContext WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
+    {
+        ArgumentNullException.ThrowIfNull(providers);
 
-        public DataContext AddComparer(Type type, IComparer comparer)
-        {
-            ArgumentNullException.ThrowIfNull(type);
-            ArgumentNullException.ThrowIfNull(comparer);
+        if (ReferenceEquals(MethodProviders, providers))
+            return this;
 
-            var newProviders = Comparers.Add(type, comparer);
-            return WithComparers(newProviders);
-        }
+        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, providers, Comparers);
+    }
 
-        public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
-        {
-            ArgumentNullException.ThrowIfNull(comparer);
+    // Comparers
 
-            var newProviders = Comparers.AddRange(comparer);
-            return WithComparers(newProviders);
-        }
+    public DataContext AddComparer(Type type, IComparer comparer)
+    {
+        ArgumentNullException.ThrowIfNull(type);
+        ArgumentNullException.ThrowIfNull(comparer);
 
-        public DataContext RemoveComparers(params Type[] types)
-        {
-            if (types is null || types.Length == 0)
-                return this;
+        var newProviders = Comparers.Add(type, comparer);
+        return WithComparers(newProviders);
+    }
 
-            return RemoveComparers(types.AsEnumerable());
-        }
+    public DataContext AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
+    {
+        ArgumentNullException.ThrowIfNull(comparer);
 
-        public DataContext RemoveComparers(IEnumerable<Type> types)
-        {
-            ArgumentNullException.ThrowIfNull(types);
+        var newProviders = Comparers.AddRange(comparer);
+        return WithComparers(newProviders);
+    }
 
-            var newProviders = Comparers.RemoveRange(types);
-            return WithComparers(newProviders);
-        }
+    public DataContext RemoveComparers(params Type[] types)
+    {
+        if (types is null || types.Length == 0)
+            return this;
 
-        public DataContext RemoveAllComparers()
-        {
-            var newProviders = Comparers.Clear();
-            return WithComparers(newProviders);
-        }
+        return RemoveComparers(types.AsEnumerable());
+    }
 
-        public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
-        {
-            ArgumentNullException.ThrowIfNull(comparers);
+    public DataContext RemoveComparers(IEnumerable<Type> types)
+    {
+        ArgumentNullException.ThrowIfNull(types);
 
-            if (ReferenceEquals(Comparers, comparers))
-                return this;
+        var newProviders = Comparers.RemoveRange(types);
+        return WithComparers(newProviders);
+    }
 
-            return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
-        }
+    public DataContext RemoveAllComparers()
+    {
+        var newProviders = Comparers.Clear();
+        return WithComparers(newProviders);
+    }
+
+    public DataContext WithComparers(IImmutableDictionary<Type, IComparer> comparers)
+    {
+        ArgumentNullException.ThrowIfNull(comparers);
+
+        if (ReferenceEquals(Comparers, comparers))
+            return this;
+
+        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
     }
 }

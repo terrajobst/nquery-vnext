@@ -1,10 +1,9 @@
-namespace NQuery.Authoring.BraceMatching.Matchers
+namespace NQuery.Authoring.BraceMatching.Matchers;
+
+internal sealed class DateBraceMatcher : SingleTokenBraceMatcher
 {
-    internal sealed class DateBraceMatcher : SingleTokenBraceMatcher
+    public DateBraceMatcher()
+        : base(SyntaxKind.DateLiteralToken)
     {
-        public DateBraceMatcher()
-            : base(SyntaxKind.DateLiteralToken)
-        {
-        }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System.Collections.Immutable;
 
-namespace NQuery.Dynamic.Tests
+namespace NQuery.Dynamic.Tests;
+
+public class DynamicTests
 {
-    public class DynamicTests
+    [Fact]
+    public void Dynamic_ExecuteDynamicSequenceAllowsLateBoundAccess()
     {
-        [Fact]
-        public void Dynamic_ExecuteDynamicSequenceAllowsLateBoundAccess()
-        {
-            var text = @"
+        var text = @"
                 SELECT  c.CategoryID,
                         c.CategoryName
                 FROM    Categories c
@@ -15,16 +15,15 @@ namespace NQuery.Dynamic.Tests
                 ORDER   BY 1
             ";
 
-            var dataContext = NorthwindDataContext.Instance;
-            var query = Query.Create(dataContext, text);
+        var dataContext = NorthwindDataContext.Instance;
+        var query = Query.Create(dataContext, text);
 
-            var rows = query.ExecuteDynamicSequence().ToImmutableArray();
+        var rows = query.ExecuteDynamicSequence().ToImmutableArray();
 
-            Assert.Equal(1, rows[0].CategoryID);
-            Assert.Equal("Beverages", rows[0].CategoryName);
+        Assert.Equal(1, rows[0].CategoryID);
+        Assert.Equal("Beverages", rows[0].CategoryName);
 
-            Assert.Equal(2, rows[1].CategoryID);
-            Assert.Equal("Condiments", rows[1].CategoryName);
-        }
+        Assert.Equal(2, rows[1].CategoryID);
+        Assert.Equal("Condiments", rows[1].CategoryName);
     }
 }

@@ -2,43 +2,42 @@
 using NQuery.Syntax;
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions.Refactorings
+namespace NQuery.Authoring.CodeActions.Refactorings;
+
+internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProvider<NameExpressionSyntax>
 {
-    internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProvider<NameExpressionSyntax>
+    protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, NameExpressionSyntax node)
     {
-        protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, NameExpressionSyntax node)
+        if (node.Parent is PropertyAccessExpressionSyntax)
+            return Enumerable.Empty<ICodeAction>();
+
+        if (semanticModel.GetSymbol(node) is not TableColumnInstanceSymbol column)
+            return Enumerable.Empty<ICodeAction>();
+
+        return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };
+    }
+
+    private sealed class QualifyColumnCodeAction : CodeAction
+    {
+        private readonly NameExpressionSyntax _node;
+        private readonly TableColumnInstanceSymbol _symbol;
+
+        public QualifyColumnCodeAction(NameExpressionSyntax node, TableColumnInstanceSymbol symbol)
+            : base(node.SyntaxTree)
         {
-            if (node.Parent is PropertyAccessExpressionSyntax)
-                return Enumerable.Empty<ICodeAction>();
-
-            if (semanticModel.GetSymbol(node) is not TableColumnInstanceSymbol column)
-                return Enumerable.Empty<ICodeAction>();
-
-            return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };
+            _node = node;
+            _symbol = symbol;
         }
 
-        private sealed class QualifyColumnCodeAction : CodeAction
+        public override string Description
         {
-            private readonly NameExpressionSyntax _node;
-            private readonly TableColumnInstanceSymbol _symbol;
+            get { return Resources.CodeActionQualifyColumn; }
+        }
 
-            public QualifyColumnCodeAction(NameExpressionSyntax node, TableColumnInstanceSymbol symbol)
-                : base(node.SyntaxTree)
-            {
-                _node = node;
-                _symbol = symbol;
-            }
-
-            public override string Description
-            {
-                get { return Resources.CodeActionQualifyColumn; }
-            }
-
-            protected override void GetChanges(TextChangeSet changeSet)
-            {
-                var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance.Name);
-                changeSet.InsertText(_node.Span.Start, name + @".");
-            }
+        protected override void GetChanges(TextChangeSet changeSet)
+        {
+            var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance.Name);
+            changeSet.InsertText(_node.Span.Start, name + @".");
         }
     }
 }

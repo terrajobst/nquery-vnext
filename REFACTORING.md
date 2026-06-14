@@ -1,6 +1,5 @@
 # NQuery Major Refactoring
 
-* Use namespaces with braces
 * Sqlite tests so we have a test oracle for correct results
 
 ## Completing the port

@@ -2,37 +2,36 @@
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.VSEditorWpf.Text
+namespace NQuery.Authoring.VSEditorWpf.Text;
+
+internal sealed class VisualStudioTextLineCollection : TextLineCollection
 {
-    internal sealed class VisualStudioTextLineCollection : TextLineCollection
+    private readonly ITextSnapshot _snapshot;
+    private readonly SourceText _sourceText;
+
+    public VisualStudioTextLineCollection(SourceText sourceText, ITextSnapshot snapshot)
     {
-        private readonly ITextSnapshot _snapshot;
-        private readonly SourceText _sourceText;
+        _sourceText = sourceText;
+        _snapshot = snapshot;
+    }
 
-        public VisualStudioTextLineCollection(SourceText sourceText, ITextSnapshot snapshot)
-        {
-            _sourceText = sourceText;
-            _snapshot = snapshot;
-        }
+    public override IEnumerator<TextLine> GetEnumerator()
+    {
+        for (var i = 0; i < Count; i++)
+            yield return this[i];
+    }
 
-        public override IEnumerator<TextLine> GetEnumerator()
-        {
-            for (var i = 0; i < Count; i++)
-                yield return this[i];
-        }
+    public override int Count
+    {
+        get { return _snapshot.LineCount; }
+    }
 
-        public override int Count
+    public override TextLine this[int index]
+    {
+        get
         {
-            get { return _snapshot.LineCount; }
-        }
-
-        public override TextLine this[int index]
-        {
-            get
-            {
-                var line = _snapshot.GetLineFromLineNumber(index);
-                return new TextLine(_sourceText, line.Start, line.Length);
-            }
+            var line = _snapshot.GetLineFromLineNumber(index);
+            return new TextLine(_sourceText, line.Start, line.Length);
         }
     }
 }

@@ -2,14 +2,14 @@
 
 using NQuery.Syntax;
 
-namespace NQuery.Tests.Binding
+namespace NQuery.Tests.Binding;
+
+public class CommonTableExpressions
 {
-    public class CommonTableExpressions
+    [Fact]
+    public void CTE_PreferColumnListOverQueryColumns()
     {
-        [Fact]
-        public void CTE_PreferColumnListOverQueryColumns()
-        {
-            const string query = @"
+        const string query = @"
                 WITH MyCte(A, B) AS
                 (
                     SELECT 'x' AS C1, 'y' AS C2
@@ -17,22 +17,22 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            Assert.Equal(2, cteSymbol.Columns.Length);
-            Assert.Equal("A", cteSymbol.Columns[0].Name);
-            Assert.Equal("B", cteSymbol.Columns[1].Name);
-        }
+        Assert.Equal(2, cteSymbol.Columns.Length);
+        Assert.Equal("A", cteSymbol.Columns[0].Name);
+        Assert.Equal("B", cteSymbol.Columns[1].Name);
+    }
 
-        [Fact]
-        public void CTE_UseQueryColumnNames_IfNoColumnListIsSpecified()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_UseQueryColumnNames_IfNoColumnListIsSpecified()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT 'x' AS C1, 'y' AS C2
@@ -40,22 +40,22 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            Assert.Equal(2, cteSymbol.Columns.Length);
-            Assert.Equal("C1", cteSymbol.Columns[0].Name);
-            Assert.Equal("C2", cteSymbol.Columns[1].Name);
-        }
+        Assert.Equal(2, cteSymbol.Columns.Length);
+        Assert.Equal("C1", cteSymbol.Columns[0].Name);
+        Assert.Equal("C2", cteSymbol.Columns[1].Name);
+    }
 
-        [Fact]
-        public void CTE_CanBindToPreviouslyDefinedExpressions()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_CanBindToPreviouslyDefinedExpressions()
+    {
+        const string query = @"
                 WITH MyCte1 AS
                 (
                     SELECT 'x' AS C
@@ -72,35 +72,35 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte3";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteNodes = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().ToImmutableArray();
-            var cteSymbols = cteNodes.Select(semanticModel.GetDeclaredSymbol).ToImmutableArray();
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var cteNodes = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().ToImmutableArray();
+        var cteSymbols = cteNodes.Select(semanticModel.GetDeclaredSymbol).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            var tableInstances = (from n in cteNodes
-                                  from tr in n.DescendantNodes().OfType<NamedTableReferenceSyntax>()
-                                  select semanticModel.GetDeclaredSymbol(tr)).ToImmutableArray();
+        var tableInstances = (from n in cteNodes
+                              from tr in n.DescendantNodes().OfType<NamedTableReferenceSyntax>()
+                              select semanticModel.GetDeclaredSymbol(tr)).ToImmutableArray();
 
-            Assert.Equal(3, cteSymbols.Length);
-            Assert.Equal("MyCte1", cteSymbols[0].Name);
-            Assert.Equal("MyCte2", cteSymbols[1].Name);
-            Assert.Equal("MyCte3", cteSymbols[2].Name);
+        Assert.Equal(3, cteSymbols.Length);
+        Assert.Equal("MyCte1", cteSymbols[0].Name);
+        Assert.Equal("MyCte2", cteSymbols[1].Name);
+        Assert.Equal("MyCte3", cteSymbols[2].Name);
 
-            Assert.Equal(3, tableInstances.Length);
-            Assert.Equal(cteSymbols[0], tableInstances[0].Table);
-            Assert.Equal(cteSymbols[0], tableInstances[1].Table);
-            Assert.Equal(cteSymbols[1], tableInstances[2].Table);
+        Assert.Equal(3, tableInstances.Length);
+        Assert.Equal(cteSymbols[0], tableInstances[0].Table);
+        Assert.Equal(cteSymbols[0], tableInstances[1].Table);
+        Assert.Equal(cteSymbols[1], tableInstances[2].Table);
 
-            Assert.Empty(diagnostics);
-        }
+        Assert.Empty(diagnostics);
+    }
 
-        [Fact]
-        public void CTE_CanBindToSelf_WithSingleAnchor()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_CanBindToSelf_WithSingleAnchor()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT  1 AS Id,
@@ -118,25 +118,25 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
 
-            Assert.Equal(cteSymbol, tableInstance.Table);
+        Assert.Equal(cteSymbol, tableInstance.Table);
 
-            Assert.Empty(diagnostics);
-        }
+        Assert.Empty(diagnostics);
+    }
 
-        [Fact]
-        public void CTE_CanBindToSelf_WithMultipleAnchors()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_CanBindToSelf_WithMultipleAnchors()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT  1 AS Id,
@@ -159,25 +159,25 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
-            var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
 
-            Assert.Equal(cteSymbol, tableInstance.Table);
+        Assert.Equal(cteSymbol, tableInstance.Table);
 
-            Assert.Empty(diagnostics);
-        }
+        Assert.Empty(diagnostics);
+    }
 
-        [Fact]
-        public void CTE_DetectColumnsWithoutNames_IfNoColumnListIsSpecified()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectColumnsWithoutNames_IfNoColumnListIsSpecified()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT 'x' AS, 'y' AS C2
@@ -185,27 +185,27 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.NoColumnAliasSpecified);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.NoColumnAliasSpecified);
 
-            Assert.Single(cteSymbol.Columns);
-            Assert.Equal("C2", cteSymbol.Columns[0].Name);
+        Assert.Single(cteSymbol.Columns);
+        Assert.Equal("C2", cteSymbol.Columns[0].Name);
 
-            Assert.Single(diagnostics);
-            Assert.Equal("No column name was specified for column 1 of 'MyCte'.", error.Message);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal("No column name was specified for column 1 of 'MyCte'.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectDuplicateColumnNames()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectDuplicateColumnNames()
+    {
+        const string query = @"
                 WITH MyCte (A, A) AS
                 (
                     SELECT 1 AS, '2' AS C2
@@ -213,30 +213,30 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
 
-            Assert.Equal(2, cteSymbol.Columns.Length);
-            Assert.Equal("A", cteSymbol.Columns[0].Name);
-            Assert.Equal(typeof(int), cteSymbol.Columns[0].Type);
-            Assert.Equal("A", cteSymbol.Columns[1].Name);
-            Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
+        Assert.Equal(2, cteSymbol.Columns.Length);
+        Assert.Equal("A", cteSymbol.Columns[0].Name);
+        Assert.Equal(typeof(int), cteSymbol.Columns[0].Type);
+        Assert.Equal("A", cteSymbol.Columns[1].Name);
+        Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
 
-            Assert.Single(diagnostics);
-            Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectDuplicateColumnNames_IfNoColumnListIsSpecified()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectDuplicateColumnNames_IfNoColumnListIsSpecified()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT 1 AS A, '2' AS A
@@ -244,30 +244,30 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateColumnName);
 
-            Assert.Equal(2, cteSymbol.Columns.Length);
-            Assert.Equal("A", cteSymbol.Columns[0].Name);
-            Assert.Equal(typeof(int), cteSymbol.Columns[0].Type);
-            Assert.Equal("A", cteSymbol.Columns[1].Name);
-            Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
+        Assert.Equal(2, cteSymbol.Columns.Length);
+        Assert.Equal("A", cteSymbol.Columns[0].Name);
+        Assert.Equal(typeof(int), cteSymbol.Columns[0].Type);
+        Assert.Equal("A", cteSymbol.Columns[1].Name);
+        Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
 
-            Assert.Single(diagnostics);
-            Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectDuplicateTableNames()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectDuplicateTableNames()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT 1 AS One
@@ -278,29 +278,29 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSymbols = (from n in syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>()
-                              select semanticModel.GetDeclaredSymbol(n)).ToImmutableArray();
+        var cteSymbols = (from n in syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>()
+                          select semanticModel.GetDeclaredSymbol(n)).ToImmutableArray();
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateTableName);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasDuplicateTableName);
 
-            Assert.Equal(2, cteSymbols.Length);
-            Assert.Equal("MyCte", cteSymbols[0].Name);
-            Assert.Equal("One", cteSymbols[0].Columns[0].Name);
-            Assert.Equal("MyCte", cteSymbols[1].Name);
-            Assert.Equal("Two", cteSymbols[1].Columns[0].Name);
+        Assert.Equal(2, cteSymbols.Length);
+        Assert.Equal("MyCte", cteSymbols[0].Name);
+        Assert.Equal("One", cteSymbols[0].Columns[0].Name);
+        Assert.Equal("MyCte", cteSymbols[1].Name);
+        Assert.Equal("Two", cteSymbols[1].Columns[0].Name);
 
-            Assert.Equal("Duplicate common table expression name 'MyCte' was specified.", error.Message);
-        }
+        Assert.Equal("Duplicate common table expression name 'MyCte' was specified.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectIfFewerColumnsInQueryThanSpecifiedInColumnList()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectIfFewerColumnsInQueryThanSpecifiedInColumnList()
+    {
+        const string query = @"
                 WITH MyCte(A, B) AS
                 (
                     SELECT 'x' AS C1
@@ -308,27 +308,27 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasFewerColumnsThanSpecified);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasFewerColumnsThanSpecified);
 
-            Assert.Single(cteSymbol.Columns);
-            Assert.Equal("A", cteSymbol.Columns[0].Name);
+        Assert.Single(cteSymbol.Columns);
+        Assert.Equal("A", cteSymbol.Columns[0].Name);
 
-            Assert.Single(diagnostics);
-            Assert.Equal("'MyCte' has fewer columns than were specified in the column list.", error.Message);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal("'MyCte' has fewer columns than were specified in the column list.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectIfMoreColumnsInQueryThanSpecifiedInColumnList()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectIfMoreColumnsInQueryThanSpecifiedInColumnList()
+    {
+        const string query = @"
                 WITH MyCte(A) AS
                 (
                     SELECT 'x' AS C1, 2 AS C2
@@ -336,27 +336,27 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
+        var cteSyntax = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteSyntax);
 
-            var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
-            var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasMoreColumnsThanSpecified);
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
+        var error = diagnostics.Single(d => d.DiagnosticId == DiagnosticId.CteHasMoreColumnsThanSpecified);
 
-            Assert.Single(cteSymbol.Columns);
-            Assert.Equal("A", cteSymbol.Columns[0].Name);
+        Assert.Single(cteSymbol.Columns);
+        Assert.Equal("A", cteSymbol.Columns[0].Name);
 
-            Assert.Single(diagnostics);
-            Assert.Equal("'MyCte' has more columns than were specified in the column list.", error.Message);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal("'MyCte' has more columns than were specified in the column list.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectMissingUnionAll()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectMissingUnionAll()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT * FROM MyCte
@@ -364,19 +364,19 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveUnionAll);
+        var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveUnionAll);
 
-            Assert.Equal("Recursive common table expression 'MyCte' does not contain a top-level UNION ALL operator.", error.Message);
-        }
+        Assert.Equal("Recursive common table expression 'MyCte' does not contain a top-level UNION ALL operator.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectMissingAnchorInUnionAll()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectMissingAnchorInUnionAll()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT  d.Id,
@@ -398,18 +398,18 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveAnchorMember);
-            Assert.Equal("No anchor member was specified for recursive query 'MyCte'.", error.Message);
-        }
+        var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveAnchorMember);
+        Assert.Equal("No anchor member was specified for recursive query 'MyCte'.", error.Message);
+    }
 
-        [Fact]
-        public void CTE_DetectMissingUnionAll_ButContinuesForUnion()
-        {
-            const string query = @"
+    [Fact]
+    public void CTE_DetectMissingUnionAll_ButContinuesForUnion()
+    {
+        const string query = @"
                 WITH MyCte AS
                 (
                     SELECT  1 AS Id,
@@ -427,20 +427,19 @@ namespace NQuery.Tests.Binding
                 SELECT  *
                 FROM    MyCte";
 
-            var syntaxTree = SyntaxTree.ParseQuery(query);
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseQuery(query);
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
-            var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
+        var cteNode = syntaxTree.Root.DescendantNodes().OfType<CommonTableExpressionSyntax>().Single();
+        var cteSymbol = semanticModel.GetDeclaredSymbol(cteNode);
 
-            var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
+        var tableInstance = semanticModel.GetDeclaredSymbol(cteNode.DescendantNodes().OfType<NamedTableReferenceSyntax>().Single(r => r.TableName.ValueText == "MyCte"));
 
-            var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveUnionAll);
+        var error = semanticModel.GetDiagnostics().Single(d => d.DiagnosticId == DiagnosticId.CteDoesNotHaveUnionAll);
 
-            Assert.Equal(cteSymbol, tableInstance.Table);
+        Assert.Equal(cteSymbol, tableInstance.Table);
 
-            Assert.Equal("Recursive common table expression 'MyCte' does not contain a top-level UNION ALL operator.", error.Message);
-        }
+        Assert.Equal("Recursive common table expression 'MyCte' does not contain a top-level UNION ALL operator.", error.Message);
     }
 }

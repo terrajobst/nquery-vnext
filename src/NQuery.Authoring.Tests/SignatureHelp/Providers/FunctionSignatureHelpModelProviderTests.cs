@@ -1,30 +1,29 @@
 ﻿using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
 
-namespace NQuery.Authoring.Tests.SignatureHelp.Providers
+namespace NQuery.Authoring.Tests.SignatureHelp.Providers;
+
+public class FunctionSignatureHelpModelProviderTests : SignatureHelpModelProviderTests
 {
-    public class FunctionSignatureHelpModelProviderTests : SignatureHelpModelProviderTests
+    protected override ISignatureHelpModelProvider CreateProvider()
     {
-        protected override ISignatureHelpModelProvider CreateProvider()
-        {
-            return new FunctionSignatureHelpModelProvider();
-        }
+        return new FunctionSignatureHelpModelProvider();
+    }
 
-        protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
-        {
-            var dataContext = semanticModel.Compilation.DataContext;
-            var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING").OrderBy(f => f.Parameters.Length);
-            return symbols.ToSignatureItems();
-        }
+    protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
+    {
+        var dataContext = semanticModel.Compilation.DataContext;
+        var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING").OrderBy(f => f.Parameters.Length);
+        return symbols.ToSignatureItems();
+    }
 
-        [Fact]
-        public void FunctionSignatureHelpModelProvider_Matches()
-        {
-            var query = @"
+    [Fact]
+    public void FunctionSignatureHelpModelProvider_Matches()
+    {
+        var query = @"
                 SELECT {SUBSTRING({'a'},{ 1},{ 2})}
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

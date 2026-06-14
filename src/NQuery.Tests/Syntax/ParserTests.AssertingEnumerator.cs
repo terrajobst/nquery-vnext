@@ -1,174 +1,173 @@
-﻿namespace NQuery.Tests.Syntax
+﻿namespace NQuery.Tests.Syntax;
+
+partial class ParserTests
 {
-    partial class ParserTests
+    private sealed class AssertingEnumerator : IDisposable
     {
-        private sealed class AssertingEnumerator : IDisposable
+        private readonly IEnumerator<SyntaxNodeOrToken> _enumerator;
+        private readonly HashSet<Diagnostic> _assertedDiagnostics = new();
+
+        private bool _isStart = true;
+        private bool _hasErrors;
+
+        private AssertingEnumerator(IEnumerator<SyntaxNodeOrToken> enumerator)
         {
-            private readonly IEnumerator<SyntaxNodeOrToken> _enumerator;
-            private readonly HashSet<Diagnostic> _assertedDiagnostics = new();
+            _enumerator = enumerator;
+        }
 
-            private bool _isStart = true;
-            private bool _hasErrors;
+        public static AssertingEnumerator ForNode(SyntaxNode node)
+        {
+            var enumerator = node.DescendantNodesAndTokensAndSelf(true)
+                                 .GetEnumerator();
+            return new AssertingEnumerator(enumerator);
+        }
 
-            private AssertingEnumerator(IEnumerator<SyntaxNodeOrToken> enumerator)
+        public static AssertingEnumerator ForQuery(string textWithOptionalMarker)
+        {
+            return ForText(textWithOptionalMarker, SyntaxTree.ParseQuery);
+        }
+
+        public static AssertingEnumerator ForExpression(string textWithOptionalMarker)
+        {
+            return ForText(textWithOptionalMarker, SyntaxTree.ParseExpression);
+        }
+
+        private static AssertingEnumerator ForText(string textWithOptionalMarker, Func<string, SyntaxTree> factory)
+        {
+            var annotatedText = AnnotatedText.Parse(textWithOptionalMarker);
+            if (annotatedText.Spans.Length > 1 || annotatedText.Changes.Length > 0)
+                throw new InvalidOperationException("This method only supports text with zero or one span.");
+
+            var syntaxTree = factory(annotatedText.Text);
+            var span = annotatedText.Spans.Any()
+                ? annotatedText.Spans.Single()
+                : syntaxTree.Root.Root.Span;
+            var enumerator = syntaxTree.Root.Root
+                                       .DescendantNodesAndTokensAndSelf(true)
+                                       .Where(n => span.Contains(n.Span))
+                                       .GetEnumerator();
+            return new AssertingEnumerator(enumerator);
+        }
+
+        private void CheckForMissingDiagnostics()
+        {
+            if (_isStart)
             {
-                _enumerator = enumerator;
+                _isStart = false;
+                return;
             }
 
-            public static AssertingEnumerator ForNode(SyntaxNode node)
+            if (_enumerator.Current.IsNode)
+                return;
+
+            var diagnostics = _enumerator.Current.AsToken().Diagnostics;
+            var unexpectedDiagnostics = diagnostics.Where(d => !_assertedDiagnostics.Contains(d));
+
+            Assert.Empty(unexpectedDiagnostics);
+
+            _assertedDiagnostics.Clear();
+        }
+
+        public void Dispose()
+        {
+            if (!_hasErrors)
             {
-                var enumerator = node.DescendantNodesAndTokensAndSelf(true)
-                                     .GetEnumerator();
-                return new AssertingEnumerator(enumerator);
+                CheckForMissingDiagnostics();
+                Assert.False(_enumerator.MoveNext());
             }
 
-            public static AssertingEnumerator ForQuery(string textWithOptionalMarker)
+            _enumerator.Dispose();
+        }
+
+        private bool MarkHasErrors()
+        {
+            _hasErrors = true;
+            return false;
+        }
+
+        public void AssertNode(SyntaxKind kind)
+        {
+            AssertNode(kind, false);
+        }
+
+        public void AssertNodeMissing(SyntaxKind kind)
+        {
+            AssertNode(kind, true);
+        }
+
+        private void AssertNode(SyntaxKind kind, bool isMissing)
+        {
+            try
             {
-                return ForText(textWithOptionalMarker, SyntaxTree.ParseQuery);
+                CheckForMissingDiagnostics();
+
+                Assert.True(_enumerator.MoveNext());
+                Assert.Equal(kind, _enumerator.Current.Kind);
+                Assert.True(_enumerator.Current.IsNode);
+                Assert.Equal(isMissing, _enumerator.Current.IsMissing);
             }
-
-            public static AssertingEnumerator ForExpression(string textWithOptionalMarker)
+            catch when (MarkHasErrors())
             {
-                return ForText(textWithOptionalMarker, SyntaxTree.ParseExpression);
             }
+        }
 
-            private static AssertingEnumerator ForText(string textWithOptionalMarker, Func<string, SyntaxTree> factory)
+        public void AssertToken(SyntaxKind kind, string text)
+        {
+            try
             {
-                var annotatedText = AnnotatedText.Parse(textWithOptionalMarker);
-                if (annotatedText.Spans.Length > 1 || annotatedText.Changes.Length > 0)
-                    throw new InvalidOperationException("This method only supports text with zero or one span.");
+                CheckForMissingDiagnostics();
 
-                var syntaxTree = factory(annotatedText.Text);
-                var span = annotatedText.Spans.Any()
-                    ? annotatedText.Spans.Single()
-                    : syntaxTree.Root.Root.Span;
-                var enumerator = syntaxTree.Root.Root
-                                           .DescendantNodesAndTokensAndSelf(true)
-                                           .Where(n => span.Contains(n.Span))
-                                           .GetEnumerator();
-                return new AssertingEnumerator(enumerator);
+                Assert.True(_enumerator.MoveNext());
+                Assert.Equal(kind, _enumerator.Current.Kind);
+                Assert.True(_enumerator.Current.IsToken);
+
+                var token = _enumerator.Current.AsToken();
+                var sourceText = token.Parent.SyntaxTree.Text;
+
+                Assert.False(token.IsMissing);
+                Assert.Equal(text, token.Text);
+                Assert.Equal(text, sourceText.GetText(token.Span));
             }
-
-            private void CheckForMissingDiagnostics()
+            catch when (MarkHasErrors())
             {
-                if (_isStart)
-                {
-                    _isStart = false;
-                    return;
-                }
-
-                if (_enumerator.Current.IsNode)
-                    return;
-
-                var diagnostics = _enumerator.Current.AsToken().Diagnostics;
-                var unexpectedDiagnostics = diagnostics.Where(d => !_assertedDiagnostics.Contains(d));
-
-                Assert.Empty(unexpectedDiagnostics);
-
-                _assertedDiagnostics.Clear();
             }
+        }
 
-            public void Dispose()
+        public void AssertTokenMissing(SyntaxKind kind)
+        {
+            try
             {
-                if (!_hasErrors)
-                {
-                    CheckForMissingDiagnostics();
-                    Assert.False(_enumerator.MoveNext());
-                }
+                CheckForMissingDiagnostics();
 
-                _enumerator.Dispose();
+                Assert.True(_enumerator.MoveNext());
+                Assert.Equal(kind, _enumerator.Current.Kind);
+                Assert.True(_enumerator.Current.IsToken);
+
+                var token = _enumerator.Current.AsToken();
+
+                Assert.True(token.IsMissing);
+                Assert.Equal(0, token.Span.Length);
             }
-
-            private bool MarkHasErrors()
+            catch when (MarkHasErrors())
             {
-                _hasErrors = true;
-                return false;
             }
+        }
 
-            public void AssertNode(SyntaxKind kind)
+        public void AssertDiagnostic(DiagnosticId diagnosticId, string text)
+        {
+            try
             {
-                AssertNode(kind, false);
+                Assert.True(_enumerator.Current.IsToken);
+
+                var token = _enumerator.Current.AsToken();
+                var diagnostic = Assert.Single(token.Diagnostics, d => d.DiagnosticId == diagnosticId);
+
+                Assert.Equal(text, diagnostic.Message);
+
+                _assertedDiagnostics.Add(diagnostic);
             }
-
-            public void AssertNodeMissing(SyntaxKind kind)
+            catch when (MarkHasErrors())
             {
-                AssertNode(kind, true);
-            }
-
-            private void AssertNode(SyntaxKind kind, bool isMissing)
-            {
-                try
-                {
-                    CheckForMissingDiagnostics();
-
-                    Assert.True(_enumerator.MoveNext());
-                    Assert.Equal(kind, _enumerator.Current.Kind);
-                    Assert.True(_enumerator.Current.IsNode);
-                    Assert.Equal(isMissing, _enumerator.Current.IsMissing);
-                }
-                catch when (MarkHasErrors())
-                {
-                }
-            }
-
-            public void AssertToken(SyntaxKind kind, string text)
-            {
-                try
-                {
-                    CheckForMissingDiagnostics();
-
-                    Assert.True(_enumerator.MoveNext());
-                    Assert.Equal(kind, _enumerator.Current.Kind);
-                    Assert.True(_enumerator.Current.IsToken);
-
-                    var token = _enumerator.Current.AsToken();
-                    var sourceText = token.Parent.SyntaxTree.Text;
-
-                    Assert.False(token.IsMissing);
-                    Assert.Equal(text, token.Text);
-                    Assert.Equal(text, sourceText.GetText(token.Span));
-                }
-                catch when (MarkHasErrors())
-                {
-                }
-            }
-
-            public void AssertTokenMissing(SyntaxKind kind)
-            {
-                try
-                {
-                    CheckForMissingDiagnostics();
-
-                    Assert.True(_enumerator.MoveNext());
-                    Assert.Equal(kind, _enumerator.Current.Kind);
-                    Assert.True(_enumerator.Current.IsToken);
-
-                    var token = _enumerator.Current.AsToken();
-
-                    Assert.True(token.IsMissing);
-                    Assert.Equal(0, token.Span.Length);
-                }
-                catch when (MarkHasErrors())
-                {
-                }
-            }
-
-            public void AssertDiagnostic(DiagnosticId diagnosticId, string text)
-            {
-                try
-                {
-                    Assert.True(_enumerator.Current.IsToken);
-
-                    var token = _enumerator.Current.AsToken();
-                    var diagnostic = Assert.Single(token.Diagnostics, d => d.DiagnosticId == diagnosticId);
-
-                    Assert.Equal(text, diagnostic.Message);
-
-                    _assertedDiagnostics.Add(diagnostic);
-                }
-                catch when (MarkHasErrors())
-                {
-                }
             }
         }
     }

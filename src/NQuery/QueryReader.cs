@@ -2,77 +2,76 @@ using System.Collections.Immutable;
 
 using Iterator = NQuery.Iterators.Iterator;
 
-namespace NQuery
+namespace NQuery;
+
+public sealed class QueryReader : IDisposable
 {
-    public sealed class QueryReader : IDisposable
+    private readonly ImmutableArray<string> _columnNames;
+    private readonly ImmutableArray<Type> _columnTypes;
+    private readonly bool _schemaOnly;
+
+    private Iterator _iterator;
+    private bool _isBof;
+
+    internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, bool schemaOnly)
     {
-        private readonly ImmutableArray<string> _columnNames;
-        private readonly ImmutableArray<Type> _columnTypes;
-        private readonly bool _schemaOnly;
+        _iterator = iterator;
+        _schemaOnly = schemaOnly;
+        _columnNames = columnNamesAndTypes.Select(t => t.ColumnName).ToImmutableArray();
+        _columnTypes = columnNamesAndTypes.Select(t => t.ColumnType).ToImmutableArray();
 
-        private Iterator _iterator;
-        private bool _isBof;
+        if (!_schemaOnly)
+            _iterator.Open();
 
-        internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, bool schemaOnly)
-        {
-            _iterator = iterator;
-            _schemaOnly = schemaOnly;
-            _columnNames = columnNamesAndTypes.Select(t => t.ColumnName).ToImmutableArray();
-            _columnTypes = columnNamesAndTypes.Select(t => t.ColumnType).ToImmutableArray();
+        _isBof = true;
+    }
 
-            if (!_schemaOnly)
-                _iterator.Open();
+    public void Dispose()
+    {
+        if (_iterator is null)
+            return;
 
-            _isBof = true;
-        }
+        _iterator.Dispose();
+        _iterator = null;
+    }
 
-        public void Dispose()
-        {
-            if (_iterator is null)
-                return;
-
-            _iterator.Dispose();
-            _iterator = null;
-        }
-
-        public bool Read()
-        {
-            if (_schemaOnly)
-                return false;
-
-            if (_iterator.Read())
-            {
-                _isBof = false;
-                return true;
-            }
-
+    public bool Read()
+    {
+        if (_schemaOnly)
             return false;
-        }
 
-        public string GetColumnName(int columnIndex)
+        if (_iterator.Read())
         {
-            return _columnNames[columnIndex];
+            _isBof = false;
+            return true;
         }
 
-        public Type GetColumnType(int columnIndex)
+        return false;
+    }
+
+    public string GetColumnName(int columnIndex)
+    {
+        return _columnNames[columnIndex];
+    }
+
+    public Type GetColumnType(int columnIndex)
+    {
+        return _columnTypes[columnIndex];
+    }
+
+    public object this[int columnIndex]
+    {
+        get
         {
-            return _columnTypes[columnIndex];
-        }
+            if (_isBof || _iterator is null)
+                throw new InvalidOperationException(Resources.InvalidAttemptToRead);
 
-        public object this[int columnIndex]
-        {
-            get
-            {
-                if (_isBof || _iterator is null)
-                    throw new InvalidOperationException(Resources.InvalidAttemptToRead);
-
-                return _iterator.RowBuffer[columnIndex];
-            }
+            return _iterator.RowBuffer[columnIndex];
         }
+    }
 
-        public int ColumnCount
-        {
-            get { return _iterator.RowBuffer.Count; }
-        }
+    public int ColumnCount
+    {
+        get { return _iterator.RowBuffer.Count; }
     }
 }

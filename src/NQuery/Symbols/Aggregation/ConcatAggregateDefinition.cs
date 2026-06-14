@@ -1,74 +1,73 @@
 using System.Globalization;
 using System.Text;
 
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class ConcatAggregateDefinition : AggregateDefinition
 {
-    public sealed class ConcatAggregateDefinition : AggregateDefinition
+    public override string Name
     {
-        public override string Name
+        get { return @"CONCAT"; }
+    }
+
+    public override IAggregatable CreateAggregatable(Type argumentType)
+    {
+        return new ConcatAggregatable();
+    }
+
+    private sealed class ConcatAggregatable : IAggregatable
+    {
+        public IAggregator CreateAggregator()
         {
-            get { return @"CONCAT"; }
+            return new ConcatAggregator();
         }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        public Type ReturnType
         {
-            return new ConcatAggregatable();
+            get { return typeof(string); }
+        }
+    }
+
+    private sealed class ConcatAggregator : IAggregator
+    {
+        private readonly SortedSet<string> _valueList = new();
+
+        public void Initialize()
+        {
+            _valueList.Clear();
         }
 
-        private sealed class ConcatAggregatable : IAggregatable
+        public void Accumulate(object value)
         {
-            public IAggregator CreateAggregator()
-            {
-                return new ConcatAggregator();
-            }
+            if (value is null)
+                return;
 
-            public Type ReturnType
-            {
-                get { return typeof(string); }
-            }
+            var strValue = Convert.ToString(value, CultureInfo.InvariantCulture);
+
+            if (strValue is null)
+                return;
+
+            strValue = strValue.Trim();
+
+            if (_valueList.Contains(strValue))
+                return;
+
+            _valueList.Add(strValue);
         }
 
-        private sealed class ConcatAggregator : IAggregator
+        public object GetResult()
         {
-            private readonly SortedSet<string> _valueList = new();
+            var sb = new StringBuilder(_valueList.Count * 8);
 
-            public void Initialize()
+            foreach (var value in _valueList)
             {
-                _valueList.Clear();
+                if (sb.Length > 0)
+                    sb.Append(@", ");
+
+                sb.Append(value);
             }
 
-            public void Accumulate(object value)
-            {
-                if (value is null)
-                    return;
-
-                var strValue = Convert.ToString(value, CultureInfo.InvariantCulture);
-
-                if (strValue is null)
-                    return;
-
-                strValue = strValue.Trim();
-
-                if (_valueList.Contains(strValue))
-                    return;
-
-                _valueList.Add(strValue);
-            }
-
-            public object GetResult()
-            {
-                var sb = new StringBuilder(_valueList.Count * 8);
-
-                foreach (var value in _valueList)
-                {
-                    if (sb.Length > 0)
-                        sb.Append(@", ");
-
-                    sb.Append(value);
-                }
-
-                return sb.ToString();
-            }
+            return sb.ToString();
         }
     }
 }

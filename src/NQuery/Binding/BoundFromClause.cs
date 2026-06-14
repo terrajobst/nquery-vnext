@@ -1,12 +1,11 @@
-namespace NQuery.Binding
-{
-    internal sealed class BoundFromClause
-    {
-        public BoundFromClause(BoundTableReference root)
-        {
-            Root = root;
-        }
+namespace NQuery.Binding;
 
-        public BoundTableReference Root { get; }
+internal sealed class BoundFromClause
+{
+    public BoundFromClause(BoundTableReference root)
+    {
+        Root = root;
     }
+
+    public BoundTableReference Root { get; }
 }

@@ -1,17 +1,16 @@
 using NQuery.Text;
 
-namespace NQuery.Authoring.Classifications
+namespace NQuery.Authoring.Classifications;
+
+public struct SemanticClassificationSpan
 {
-    public struct SemanticClassificationSpan
+    public SemanticClassificationSpan(TextSpan span, SemanticClassification classification)
     {
-        public SemanticClassificationSpan(TextSpan span, SemanticClassification classification)
-        {
-            Span = span;
-            Classification = classification;
-        }
-
-        public TextSpan Span { get; }
-
-        public SemanticClassification Classification { get; }
+        Span = span;
+        Classification = classification;
     }
+
+    public TextSpan Span { get; }
+
+    public SemanticClassification Classification { get; }
 }

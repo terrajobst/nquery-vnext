@@ -1,43 +1,42 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal enum BoundNodeKind
 {
-    internal enum BoundNodeKind
-    {
-        // Expressions
-        ErrorExpression,
-        TableExpression,
-        ColumnExpression,
-        UnaryExpression,
-        BinaryExpression,
-        LiteralExpression,
-        VariableExpression,
-        FunctionInvocationExpression,
-        AggregateExpression,
-        PropertyAccessExpression,
-        MethodInvocationExpression,
-        ConversionExpression,
-        IsNullExpression,
-        CaseExpression,
-        SingleRowSubselect,
-        ExistsSubselect,
-        ValueExpression,
+    // Expressions
+    ErrorExpression,
+    TableExpression,
+    ColumnExpression,
+    UnaryExpression,
+    BinaryExpression,
+    LiteralExpression,
+    VariableExpression,
+    FunctionInvocationExpression,
+    AggregateExpression,
+    PropertyAccessExpression,
+    MethodInvocationExpression,
+    ConversionExpression,
+    IsNullExpression,
+    CaseExpression,
+    SingleRowSubselect,
+    ExistsSubselect,
+    ValueExpression,
 
-        // Table references
-        NamedTableReference,
-        DerivedTableReference,
-        JoinTableReference,
+    // Table references
+    NamedTableReference,
+    DerivedTableReference,
+    JoinTableReference,
 
-        // Queries
-        SelectQuery,
-        UnionQuery,
-        IntersectOrExceptQuery,
-        OrderedQuery,
-        EmptyQuery,
+    // Queries
+    SelectQuery,
+    UnionQuery,
+    IntersectOrExceptQuery,
+    OrderedQuery,
+    EmptyQuery,
 
-        // Other
-        Query,
-        SelectColumn,
-        WildcardSelectColumn,
-        OrderByColumn,
-        CommonTableExpression,
-    }
+    // Other
+    Query,
+    SelectColumn,
+    WildcardSelectColumn,
+    OrderByColumn,
+    CommonTableExpression,
 }

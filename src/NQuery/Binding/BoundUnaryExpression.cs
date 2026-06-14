@@ -1,39 +1,38 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundUnaryExpression : BoundExpression
 {
-    internal sealed class BoundUnaryExpression : BoundExpression
+    public BoundUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
     {
-        public BoundUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
+        OperatorKind = operatorKind;
+        Expression = expression;
+        Result = result;
+    }
+
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.UnaryExpression; }
+    }
+
+    public override Type Type
+    {
+        get
         {
-            OperatorKind = operatorKind;
-            Expression = expression;
-            Result = result;
+            return Result.Selected is null
+                       ? TypeFacts.Unknown
+                       : Result.Selected.Signature.ReturnType;
         }
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.UnaryExpression; }
-        }
+    public UnaryOperatorKind OperatorKind { get; }
 
-        public override Type Type
-        {
-            get
-            {
-                return Result.Selected is null
-                           ? TypeFacts.Unknown
-                           : Result.Selected.Signature.ReturnType;
-            }
-        }
+    public OverloadResolutionResult<UnaryOperatorSignature> Result { get; }
 
-        public UnaryOperatorKind OperatorKind { get; }
+    public BoundExpression Expression { get; }
 
-        public OverloadResolutionResult<UnaryOperatorSignature> Result { get; }
-
-        public BoundExpression Expression { get; }
-
-        public override string ToString()
-        {
-            var unaryOperatorKind = Result.Candidates.First().Signature.Kind;
-            return $"{unaryOperatorKind.ToDisplayName()}({Expression})";
-        }
+    public override string ToString()
+    {
+        var unaryOperatorKind = Result.Candidates.First().Signature.Kind;
+        return $"{unaryOperatorKind.ToDisplayName()}({Expression})";
     }
 }

@@ -9,124 +9,123 @@ using NQuery.Authoring.VSEditorWpf;
 using NQuery.Authoring.VSEditorWpf.Selection;
 using NQuery.Text;
 
-namespace NQueryViewer.VSEditor
+namespace NQueryViewer.VSEditor;
+
+internal sealed partial class VSEditorView : IVSEditorView
 {
-    internal sealed partial class VSEditorView : IVSEditorView
+    private readonly IWpfTextViewHost _textViewHost;
+    private readonly INQuerySelectionProvider _selectionProvider;
+
+    public VSEditorView(Workspace workspace, IWpfTextViewHost textViewHost, INQuerySelectionProvider selectionProvider)
     {
-        private readonly IWpfTextViewHost _textViewHost;
-        private readonly INQuerySelectionProvider _selectionProvider;
+        Workspace = workspace;
+        _textViewHost = textViewHost;
+        _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
+        _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
 
-        public VSEditorView(Workspace workspace, IWpfTextViewHost textViewHost, INQuerySelectionProvider selectionProvider)
+        _selectionProvider = selectionProvider;
+
+        InitializeComponent();
+
+        EditorHost.Content = _textViewHost.HostControl;
+    }
+
+    private void SelectionOnSelectionChanged(object sender, EventArgs e)
+    {
+        OnCaretPositionChanged();
+        OnSelectionChanged();
+    }
+
+    private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
+    {
+        OnZoomLevelChanged();
+    }
+
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        var modifiers = e.KeyboardDevice.Modifiers;
+        var key = e.Key;
+
+        if (modifiers == ModifierKeys.Control && key == Key.W)
         {
-            Workspace = workspace;
-            _textViewHost = textViewHost;
-            _textViewHost.TextView.Selection.SelectionChanged += SelectionOnSelectionChanged;
-            _textViewHost.TextView.ZoomLevelChanged += TextViewOnZoomLevelChanged;
-
-            _selectionProvider = selectionProvider;
-
-            InitializeComponent();
-
-            EditorHost.Content = _textViewHost.HostControl;
+            _selectionProvider.ExtendSelectionAsync();
+            e.Handled = true;
+        }
+        else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.W)
+        {
+            _selectionProvider.ShrinkSelection();
+            e.Handled = true;
         }
 
-        private void SelectionOnSelectionChanged(object sender, EventArgs e)
-        {
-            OnCaretPositionChanged();
-            OnSelectionChanged();
-        }
+        base.OnPreviewKeyDown(e);
+    }
 
-        private void TextViewOnZoomLevelChanged(object sender, ZoomLevelChangedEventArgs e)
-        {
-            OnZoomLevelChanged();
-        }
+    public override void Focus()
+    {
+        var element = _textViewHost.TextView.VisualElement;
+        element.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => element.Focus()));
+    }
 
-        protected override void OnPreviewKeyDown(KeyEventArgs e)
-        {
-            var modifiers = e.KeyboardDevice.Modifiers;
-            var key = e.Key;
+    public override DocumentView GetDocumentView()
+    {
+        return _textViewHost.TextView.GetDocumentView();
+    }
 
-            if (modifiers == ModifierKeys.Control && key == Key.W)
-            {
-                _selectionProvider.ExtendSelectionAsync();
-                e.Handled = true;
-            }
-            else if (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.W)
-            {
-                _selectionProvider.ShrinkSelection();
-                e.Handled = true;
-            }
+    private int GetCaretPosition()
+    {
+        return _textViewHost.TextView.Caret.Position.BufferPosition.Position;
+    }
 
-            base.OnPreviewKeyDown(e);
-        }
+    private void SetCaretPosition(int caretPosition)
+    {
+        var snapshot = _textViewHost.TextView.TextSnapshot;
+        var position = new SnapshotPoint(snapshot, caretPosition);
+        _textViewHost.TextView.Caret.MoveTo(position);
+        _textViewHost.TextView.ViewScroller.EnsureSpanVisible(new SnapshotSpan(position, position));
+    }
 
-        public override void Focus()
-        {
-            var element = _textViewHost.TextView.VisualElement;
-            element.Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => element.Focus()));
-        }
+    private void SetSelection(TextSpan selection)
+    {
+        var snapshot = _textViewHost.TextView.TextSnapshot;
+        var snapshotSpan = new SnapshotSpan(snapshot, selection.Start, selection.Length);
+        _textViewHost.TextView.Selection.Select(snapshotSpan, false);
+        _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
+    }
 
-        public override DocumentView GetDocumentView()
-        {
-            return _textViewHost.TextView.GetDocumentView();
-        }
+    private TextSpan GetSelection()
+    {
+        var start = _textViewHost.TextView.Selection.Start.Position.Position;
+        var end = _textViewHost.TextView.Selection.End.Position.Position;
+        return TextSpan.FromBounds(start, end);
+    }
 
-        private int GetCaretPosition()
-        {
-            return _textViewHost.TextView.Caret.Position.BufferPosition.Position;
-        }
+    private void SetZoomLevel(double value)
+    {
+        _textViewHost.TextView.ZoomLevel = value;
+    }
 
-        private void SetCaretPosition(int caretPosition)
-        {
-            var snapshot = _textViewHost.TextView.TextSnapshot;
-            var position = new SnapshotPoint(snapshot, caretPosition);
-            _textViewHost.TextView.Caret.MoveTo(position);
-            _textViewHost.TextView.ViewScroller.EnsureSpanVisible(new SnapshotSpan(position, position));
-        }
+    private double GetZoomLevel()
+    {
+        return _textViewHost.TextView.ZoomLevel;
+    }
 
-        private void SetSelection(TextSpan selection)
-        {
-            var snapshot = _textViewHost.TextView.TextSnapshot;
-            var snapshotSpan = new SnapshotSpan(snapshot, selection.Start, selection.Length);
-            _textViewHost.TextView.Selection.Select(snapshotSpan, false);
-            _textViewHost.TextView.ViewScroller.EnsureSpanVisible(snapshotSpan);
-        }
+    public override Workspace Workspace { get; }
 
-        private TextSpan GetSelection()
-        {
-            var start = _textViewHost.TextView.Selection.Start.Position.Position;
-            var end = _textViewHost.TextView.Selection.End.Position.Position;
-            return TextSpan.FromBounds(start, end);
-        }
+    public override int CaretPosition
+    {
+        get { return GetCaretPosition(); }
+        set { SetCaretPosition(value); }
+    }
 
-        private void SetZoomLevel(double value)
-        {
-            _textViewHost.TextView.ZoomLevel = value;
-        }
+    public override TextSpan Selection
+    {
+        get { return GetSelection(); }
+        set { SetSelection(value); }
+    }
 
-        private double GetZoomLevel()
-        {
-            return _textViewHost.TextView.ZoomLevel;
-        }
-
-        public override Workspace Workspace { get; }
-
-        public override int CaretPosition
-        {
-            get { return GetCaretPosition(); }
-            set { SetCaretPosition(value); }
-        }
-
-        public override TextSpan Selection
-        {
-            get { return GetSelection(); }
-            set { SetSelection(value); }
-        }
-
-        public override double ZoomLevel
-        {
-            get { return GetZoomLevel(); }
-            set { SetZoomLevel(value); }
-        }
+    public override double ZoomLevel
+    {
+        get { return GetZoomLevel(); }
+        set { SetZoomLevel(value); }
     }
 }

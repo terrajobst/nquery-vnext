@@ -1,19 +1,18 @@
 #nullable enable
 
-namespace NQuery.Algebra
+namespace NQuery.Algebra;
+
+internal enum LogicalExpressionKind
 {
-    internal enum LogicalExpressionKind
-    {
-        Literal,
-        ValueSlot,
-        Variable,
-        Unary,
-        Binary,
-        Conversion,
-        IsNull,
-        Case,
-        FunctionInvocation,
-        PropertyAccess,
-        MethodInvocation
-    }
+    Literal,
+    ValueSlot,
+    Variable,
+    Unary,
+    Binary,
+    Conversion,
+    IsNull,
+    Case,
+    FunctionInvocation,
+    PropertyAccess,
+    MethodInvocation
 }

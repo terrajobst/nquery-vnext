@@ -1,12 +1,11 @@
 using Microsoft.VisualStudio.Text.Tagging;
 
-namespace NQuery.Authoring.VSEditorWpf.Highlighting
+namespace NQuery.Authoring.VSEditorWpf.Highlighting;
+
+public sealed class HighlightTag : TextMarkerTag
 {
-    public sealed class HighlightTag : TextMarkerTag
+    public HighlightTag()
+        : base(@"bracehighlight")
     {
-        public HighlightTag()
-            : base(@"bracehighlight")
-        {
-        }
     }
 }

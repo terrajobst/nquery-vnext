@@ -1,39 +1,38 @@
 using NQuery.Text;
 
-namespace NQuery.Authoring.CodeActions.Refactorings
+namespace NQuery.Authoring.CodeActions.Refactorings;
+
+internal sealed class AddMissingKeywordCodeRefactoringProvider : CodeRefactoringProvider<SyntaxNode>
 {
-    internal sealed class AddMissingKeywordCodeRefactoringProvider : CodeRefactoringProvider<SyntaxNode>
+    protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, SyntaxNode node)
     {
-        protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, SyntaxNode node)
+        var missingKeywords = node.ChildTokens().Where(t => t.IsMissing && t.Kind.IsKeyword());
+        return missingKeywords.Select(k => new AddMissingKeywordCodeAction(k));
+    }
+
+    private sealed class AddMissingKeywordCodeAction : CodeAction
+    {
+        private readonly SyntaxToken _keyword;
+
+        public AddMissingKeywordCodeAction(SyntaxToken keyword)
+            : base(keyword.Parent.SyntaxTree)
         {
-            var missingKeywords = node.ChildTokens().Where(t => t.IsMissing && t.Kind.IsKeyword());
-            return missingKeywords.Select(k => new AddMissingKeywordCodeAction(k));
+            _keyword = keyword;
         }
 
-        private sealed class AddMissingKeywordCodeAction : CodeAction
+        public override string Description
         {
-            private readonly SyntaxToken _keyword;
+            get { return string.Format(Resources.CodeActionAddMissingKeyword, GetKeywordText()); }
+        }
 
-            public AddMissingKeywordCodeAction(SyntaxToken keyword)
-                : base(keyword.Parent.SyntaxTree)
-            {
-                _keyword = keyword;
-            }
+        private string GetKeywordText()
+        {
+            return _keyword.Kind.GetText();
+        }
 
-            public override string Description
-            {
-                get { return string.Format(Resources.CodeActionAddMissingKeyword, GetKeywordText()); }
-            }
-
-            private string GetKeywordText()
-            {
-                return _keyword.Kind.GetText();
-            }
-
-            protected override void GetChanges(TextChangeSet changeSet)
-            {
-                changeSet.InsertText(_keyword.Span.Start, GetKeywordText() + @" ");
-            }
+        protected override void GetChanges(TextChangeSet changeSet)
+        {
+            changeSet.InsertText(_keyword.Span.Start, GetKeywordText() + @" ");
         }
     }
 }

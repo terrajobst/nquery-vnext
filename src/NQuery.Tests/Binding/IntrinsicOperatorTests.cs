@@ -1,219 +1,218 @@
 ﻿using NQuery.Syntax;
 
-namespace NQuery.Tests.Binding
+namespace NQuery.Tests.Binding;
+
+public sealed partial class IntrinsicOperatorTests
 {
-    public sealed partial class IntrinsicOperatorTests
+    [Fact]
+    public void IntrinsicOperator_UnarySignaturesAreCorrect()
     {
-        [Fact]
-        public void IntrinsicOperator_UnarySignaturesAreCorrect()
+        var issues = new List<string>();
+
+        foreach (var testCase in UnaryTestCases)
         {
-            var issues = new List<string>();
+            var opText = testCase.Op;
+            var argument = GetValue(testCase.Argument);
+            var source = $"{opText} {argument}";
+            var syntaxTree = SyntaxTree.ParseExpression(source);
+            var syntaxTreeSource = syntaxTree.Root.ToString();
+            if (syntaxTreeSource != source)
+                Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
 
-            foreach (var testCase in UnaryTestCases)
+            var expression = (UnaryExpressionSyntax)syntaxTree.Root.Root;
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+            var semanticModel = compilation.GetSemanticModel();
+
+            var argumentType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Expression));
+            if (testCase.Argument != argumentType)
+                Assert.Fail($"Left should be of type '{testCase.Argument}' but has type '{argumentType}");
+
+            var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
+            var expressionType = semanticModel.GetExpressionType(expression);
+            var result = diagnostic is null
+                             ? GetExpressionTypeString(expressionType)
+                             : GetErrorString(diagnostic.DiagnosticId);
+
+            if (result != testCase.ExpectedResult)
             {
-                var opText = testCase.Op;
-                var argument = GetValue(testCase.Argument);
-                var source = $"{opText} {argument}";
-                var syntaxTree = SyntaxTree.ParseExpression(source);
-                var syntaxTreeSource = syntaxTree.Root.ToString();
-                if (syntaxTreeSource != source)
-                    Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
-
-                var expression = (UnaryExpressionSyntax)syntaxTree.Root.Root;
-                var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-                var semanticModel = compilation.GetSemanticModel();
-
-                var argumentType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Expression));
-                if (testCase.Argument != argumentType)
-                    Assert.Fail($"Left should be of type '{testCase.Argument}' but has type '{argumentType}");
-
-                var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
-                var expressionType = semanticModel.GetExpressionType(expression);
-                var result = diagnostic is null
-                                 ? GetExpressionTypeString(expressionType)
-                                 : GetErrorString(diagnostic.DiagnosticId);
-
-                if (result != testCase.ExpectedResult)
-                {
-                    var issue = $"Expression {source} should have evaluated to '{testCase.ExpectedResult}' but was '{result}'";
-                    issues.Add(issue);
-                }
-            }
-
-            if (issues.Count > 0)
-            {
-                issues.Insert(0, $"{issues.Count} errors:");
-                var issueText = string.Join(Environment.NewLine, issues);
-                Assert.Fail(issueText);
+                var issue = $"Expression {source} should have evaluated to '{testCase.ExpectedResult}' but was '{result}'";
+                issues.Add(issue);
             }
         }
 
-        [Fact]
-        public void IntrinsicOperator_BinarySignaturesAreCorrect()
+        if (issues.Count > 0)
         {
-            var issues = new List<string>();
+            issues.Insert(0, $"{issues.Count} errors:");
+            var issueText = string.Join(Environment.NewLine, issues);
+            Assert.Fail(issueText);
+        }
+    }
 
-            foreach (var testCase in BinaryTestCases)
+    [Fact]
+    public void IntrinsicOperator_BinarySignaturesAreCorrect()
+    {
+        var issues = new List<string>();
+
+        foreach (var testCase in BinaryTestCases)
+        {
+            var opText = testCase.Op;
+            var left = GetValue(testCase.Left);
+            var right = GetValue(testCase.Right);
+            var source = $"{left} {opText} {right}";
+            var syntaxTree = SyntaxTree.ParseExpression(source);
+            var syntaxTreeSource = syntaxTree.Root.ToString();
+            if (syntaxTreeSource != source)
+                Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
+
+            var expression = (BinaryExpressionSyntax)syntaxTree.Root.Root;
+            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+            var semanticModel = compilation.GetSemanticModel();
+
+            var leftType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Left));
+            if (testCase.Left != leftType)
+                Assert.Fail($"Left should be of type '{testCase.Left}' but has type '{leftType}");
+
+            var rightType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Right));
+            if (testCase.Right != rightType)
+                Assert.Fail($"Right should be of type '{testCase.Right}' but has type '{rightType}");
+
+            var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
+            var expressionType = semanticModel.GetExpressionType(expression);
+            var result = diagnostic is null
+                             ? GetExpressionTypeString(expressionType)
+                             : GetErrorString(diagnostic.DiagnosticId);
+
+            if (result != testCase.ExpectedResult)
             {
-                var opText = testCase.Op;
-                var left = GetValue(testCase.Left);
-                var right = GetValue(testCase.Right);
-                var source = $"{left} {opText} {right}";
-                var syntaxTree = SyntaxTree.ParseExpression(source);
-                var syntaxTreeSource = syntaxTree.Root.ToString();
-                if (syntaxTreeSource != source)
-                    Assert.Fail($"Source should have been {syntaxTreeSource} but is {source}");
-
-                var expression = (BinaryExpressionSyntax)syntaxTree.Root.Root;
-                var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-                var semanticModel = compilation.GetSemanticModel();
-
-                var leftType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Left));
-                if (testCase.Left != leftType)
-                    Assert.Fail($"Left should be of type '{testCase.Left}' but has type '{leftType}");
-
-                var rightType = GetExpressionTypeString(semanticModel.GetExpressionType(expression.Right));
-                if (testCase.Right != rightType)
-                    Assert.Fail($"Right should be of type '{testCase.Right}' but has type '{rightType}");
-
-                var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
-                var expressionType = semanticModel.GetExpressionType(expression);
-                var result = diagnostic is null
-                                 ? GetExpressionTypeString(expressionType)
-                                 : GetErrorString(diagnostic.DiagnosticId);
-
-                if (result != testCase.ExpectedResult)
-                {
-                    var issue = $"Expression {source} should have evaluated to '{testCase.ExpectedResult}' but was '{result}'";
-                    issues.Add(issue);
-                }
-            }
-
-            if (issues.Count > 0)
-            {
-                issues.Insert(0, $"{issues.Count} errors:");
-                var issueText = string.Join(Environment.NewLine, issues);
-                Assert.Fail(issueText);
+                var issue = $"Expression {source} should have evaluated to '{testCase.ExpectedResult}' but was '{result}'";
+                issues.Add(issue);
             }
         }
 
-        private static string GetExpressionTypeString(Type type)
+        if (issues.Count > 0)
         {
-            if (type == typeof(byte))
-                return "byte";
-
-            if (type == typeof(sbyte))
-                return "sbyte";
-
-            if (type == typeof(char))
-                return "char";
-
-            if (type == typeof(short))
-                return "short";
-
-            if (type == typeof(ushort))
-                return "ushort";
-
-            if (type == typeof(int))
-                return "int";
-
-            if (type == typeof(uint))
-                return "uint";
-
-            if (type == typeof(long))
-                return "long";
-
-            if (type == typeof(ulong))
-                return "ulong";
-
-            if (type == typeof(float))
-                return "float";
-
-            if (type == typeof(double))
-                return "double";
-
-            if (type == typeof(decimal))
-                return "decimal";
-
-            if (type == typeof(bool))
-                return "bool";
-
-            if (type == typeof(string))
-                return "string";
-
-            if (type == typeof(object))
-                return "object";
-
-            throw new ArgumentOutOfRangeException(nameof(type));
+            issues.Insert(0, $"{issues.Count} errors:");
+            var issueText = string.Join(Environment.NewLine, issues);
+            Assert.Fail(issueText);
         }
+    }
 
-        private static string GetErrorString(DiagnosticId diagnosticId)
+    private static string GetExpressionTypeString(Type type)
+    {
+        if (type == typeof(byte))
+            return "byte";
+
+        if (type == typeof(sbyte))
+            return "sbyte";
+
+        if (type == typeof(char))
+            return "char";
+
+        if (type == typeof(short))
+            return "short";
+
+        if (type == typeof(ushort))
+            return "ushort";
+
+        if (type == typeof(int))
+            return "int";
+
+        if (type == typeof(uint))
+            return "uint";
+
+        if (type == typeof(long))
+            return "long";
+
+        if (type == typeof(ulong))
+            return "ulong";
+
+        if (type == typeof(float))
+            return "float";
+
+        if (type == typeof(double))
+            return "double";
+
+        if (type == typeof(decimal))
+            return "decimal";
+
+        if (type == typeof(bool))
+            return "bool";
+
+        if (type == typeof(string))
+            return "string";
+
+        if (type == typeof(object))
+            return "object";
+
+        throw new ArgumentOutOfRangeException(nameof(type));
+    }
+
+    private static string GetErrorString(DiagnosticId diagnosticId)
+    {
+        switch (diagnosticId)
         {
-            switch (diagnosticId)
-            {
-                case DiagnosticId.CannotApplyUnaryOperator:
-                case DiagnosticId.CannotApplyBinaryOperator:
-                    return "#inapplicable";
-                case DiagnosticId.AmbiguousUnaryOperator:
-                case DiagnosticId.AmbiguousBinaryOperator:
-                    return "#ambiguous";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(diagnosticId));
-            }
+            case DiagnosticId.CannotApplyUnaryOperator:
+            case DiagnosticId.CannotApplyBinaryOperator:
+                return "#inapplicable";
+            case DiagnosticId.AmbiguousUnaryOperator:
+            case DiagnosticId.AmbiguousBinaryOperator:
+                return "#ambiguous";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(diagnosticId));
         }
+    }
 
-        private static string GetValue(string type)
+    private static string GetValue(string type)
+    {
+        switch (type)
         {
-            switch (type)
-            {
-                case "byte":
-                    return "CAST(1 AS byte)";
+            case "byte":
+                return "CAST(1 AS byte)";
 
-                case "sbyte":
-                    return "CAST(1 AS sbyte)";
+            case "sbyte":
+                return "CAST(1 AS sbyte)";
 
-                case "char":
-                    return "CAST(65 AS char)";
+            case "char":
+                return "CAST(65 AS char)";
 
-                case "short":
-                    return "CAST(1 AS short)";
+            case "short":
+                return "CAST(1 AS short)";
 
-                case "ushort":
-                    return "CAST(1 AS ushort)";
+            case "ushort":
+                return "CAST(1 AS ushort)";
 
-                case "int":
-                    return "1";
+            case "int":
+                return "1";
 
-                case "uint":
-                    return "CAST(1 AS uint)";
+            case "uint":
+                return "CAST(1 AS uint)";
 
-                case "long":
-                    return "CAST(1 AS long)";
+            case "long":
+                return "CAST(1 AS long)";
 
-                case "ulong":
-                    return "CAST(1 AS ulong)";
+            case "ulong":
+                return "CAST(1 AS ulong)";
 
-                case "float":
-                    return "CAST(1.0 AS single)";
+            case "float":
+                return "CAST(1.0 AS single)";
 
-                case "double":
-                    return "1.0";
+            case "double":
+                return "1.0";
 
-                case "decimal":
-                    return "CAST(1.0 AS decimal)";
+            case "decimal":
+                return "CAST(1.0 AS decimal)";
 
-                case "bool":
-                    return "false";
+            case "bool":
+                return "false";
 
-                case "string":
-                    return "'s'";
+            case "string":
+                return "'s'";
 
-                case "object":
-                    return "CAST(null AS object)";
+            case "object":
+                return "CAST(null AS object)";
 
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type));
-            }
+            default:
+                throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
 }

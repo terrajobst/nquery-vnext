@@ -1,8 +1,7 @@
-﻿namespace NQuery.Authoring.SymbolSearch
+﻿namespace NQuery.Authoring.SymbolSearch;
+
+public enum SymbolSpanKind
 {
-    public enum SymbolSpanKind
-    {
-        Definition,
-        Reference
-    }
+    Definition,
+    Reference
 }

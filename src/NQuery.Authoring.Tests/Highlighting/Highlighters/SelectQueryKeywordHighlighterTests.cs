@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
 
-namespace NQuery.Authoring.Tests.Highlighting.Highlighters
-{
-    public class SelectQueryKeywordHighlighterTests : HighlighterTests
-    {
-        protected override IHighlighter CreateHighlighter()
-        {
-            return new SelectQueryKeywordHighlighter();
-        }
+namespace NQuery.Authoring.Tests.Highlighting.Highlighters;
 
-        [Fact]
-        public void SelectQueryKeywordHighlighter_Matches()
-        {
-            var query = @"
+public class SelectQueryKeywordHighlighterTests : HighlighterTests
+{
+    protected override IHighlighter CreateHighlighter()
+    {
+        return new SelectQueryKeywordHighlighter();
+    }
+
+    [Fact]
+    public void SelectQueryKeywordHighlighter_Matches()
+    {
+        var query = @"
                 {SELECT} e.City,
                          COUNT(*) [#Employees]
                 {FROM}   Employees e
@@ -22,7 +22,6 @@ namespace NQuery.Authoring.Tests.Highlighting.Highlighters
                 {HAVING} COUNT(*) > 1
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

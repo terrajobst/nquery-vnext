@@ -1,10 +1,9 @@
-namespace NQuery.Authoring.BraceMatching.Matchers
+namespace NQuery.Authoring.BraceMatching.Matchers;
+
+internal sealed class StringQuoteBraceMatcher : SingleTokenBraceMatcher
 {
-    internal sealed class StringQuoteBraceMatcher : SingleTokenBraceMatcher
+    public StringQuoteBraceMatcher()
+        : base(SyntaxKind.StringLiteralToken)
     {
-        public StringQuoteBraceMatcher()
-            : base(SyntaxKind.StringLiteralToken)
-        {
-        }
     }
 }

@@ -1,38 +1,37 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundLiteralExpression : BoundExpression
 {
-    internal sealed class BoundLiteralExpression : BoundExpression
+    public BoundLiteralExpression(object value)
     {
-        public BoundLiteralExpression(object value)
-        {
-            Value = value;
-        }
+        Value = value;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.LiteralExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.LiteralExpression; }
+    }
 
-        public override Type Type
+    public override Type Type
+    {
+        get
         {
-            get
-            {
-                return Value is null
-                           ? TypeFacts.Null
-                           : Value.GetType();
-            }
+            return Value is null
+                       ? TypeFacts.Null
+                       : Value.GetType();
         }
+    }
 
-        public object Value { get; }
+    public object Value { get; }
 
-        public override string ToString()
+    public override string ToString()
+    {
+        return Value switch
         {
-            return Value switch
-            {
-                null => @"NULL",
-                string => $"'{Value}'",
-                DateTime => $"#{Value}#",
-                _ => Value.ToString()
-            };
-        }
+            null => @"NULL",
+            string => $"'{Value}'",
+            DateTime => $"#{Value}#",
+            _ => Value.ToString()
+        };
     }
 }

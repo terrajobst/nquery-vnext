@@ -1,9 +1,8 @@
 ﻿using NQueryViewer.Editor;
 
-namespace NQueryViewer.ActiproEditor
+namespace NQueryViewer.ActiproEditor;
+
+public interface IActiproEditorViewFactory : IEditorViewFactory
 {
-    public interface IActiproEditorViewFactory : IEditorViewFactory
-    {
-        new IActiproEditorView CreateEditorView();
-    }
+    new IActiproEditorView CreateEditorView();
 }

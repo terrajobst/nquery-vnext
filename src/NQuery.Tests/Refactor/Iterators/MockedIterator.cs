@@ -1,73 +1,72 @@
 using NQuery.Iterators;
 
-namespace NQuery.Tests.Refactor.Iterators
+namespace NQuery.Tests.Refactor.Iterators;
+
+internal sealed class MockedIterator : Iterator
 {
-    internal sealed class MockedIterator : Iterator
+    private readonly IReadOnlyList<object[]> _rows;
+    private readonly MockedRowBuffer _rowBuffer;
+
+    private int _rowIndex;
+
+    public MockedIterator(object[] rows)
     {
-        private readonly IReadOnlyList<object[]> _rows;
-        private readonly MockedRowBuffer _rowBuffer;
+        if (rows.Any(v => v is object[]))
+            throw new ArgumentException("Nested array detected. Use two-dimensional array for multiple columns.");
 
-        private int _rowIndex;
+        _rows = rows.Select(v => new[] { v }).ToArray();
+        _rowBuffer = new MockedRowBuffer(1);
+    }
 
-        public MockedIterator(object[] rows)
+    public MockedIterator(object[,] rows)
+    {
+        var rowCount = rows.GetLength(0);
+        var entryCount = rows.GetLength(1);
+
+        var rowArray = new object[rowCount][];
+
+        for (var i = 0; i < rowCount; i++)
         {
-            if (rows.Any(v => v is object[]))
-                throw new ArgumentException("Nested array detected. Use two-dimensional array for multiple columns.");
+            rowArray[i] = new object[entryCount];
 
-            _rows = rows.Select(v => new[] { v }).ToArray();
-            _rowBuffer = new MockedRowBuffer(1);
-        }
-
-        public MockedIterator(object[,] rows)
-        {
-            var rowCount = rows.GetLength(0);
-            var entryCount = rows.GetLength(1);
-
-            var rowArray = new object[rowCount][];
-
-            for (var i = 0; i < rowCount; i++)
+            for (var j = 0; j < entryCount; j++)
             {
-                rowArray[i] = new object[entryCount];
-
-                for (var j = 0; j < entryCount; j++)
-                {
-                    rowArray[i][j] = rows[i, j];
-                }
+                rowArray[i][j] = rows[i, j];
             }
-
-            _rows = rowArray;
-            _rowBuffer = new MockedRowBuffer(entryCount);
         }
 
-        public override RowBuffer RowBuffer => _rowBuffer;
+        _rows = rowArray;
+        _rowBuffer = new MockedRowBuffer(entryCount);
+    }
 
-        public int DisposalCount { get; private set; }
+    public override RowBuffer RowBuffer => _rowBuffer;
 
-        public int TotalOpenCount { get; private set; }
+    public int DisposalCount { get; private set; }
 
-        public int TotalReadCount { get; private set; }
+    public int TotalOpenCount { get; private set; }
 
-        public override void Open()
-        {
-            TotalOpenCount++;
-            _rowIndex = 0;
-        }
+    public int TotalReadCount { get; private set; }
 
-        public override void Dispose()
-        {
-            DisposalCount++;
-        }
+    public override void Open()
+    {
+        TotalOpenCount++;
+        _rowIndex = 0;
+    }
 
-        public override bool Read()
-        {
-            if (_rowIndex == _rows.Count)
-                return false;
+    public override void Dispose()
+    {
+        DisposalCount++;
+    }
 
-            _rowBuffer.Value = _rows[_rowIndex];
+    public override bool Read()
+    {
+        if (_rowIndex == _rows.Count)
+            return false;
 
-            TotalReadCount++;
-            _rowIndex++;
-            return true;
-        }
+        _rowBuffer.Value = _rows[_rowIndex];
+
+        TotalReadCount++;
+        _rowIndex++;
+        return true;
     }
 }

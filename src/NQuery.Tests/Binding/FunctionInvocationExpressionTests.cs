@@ -1,20 +1,19 @@
 using System.Collections.Immutable;
 
-namespace NQuery.Tests.Binding
+namespace NQuery.Tests.Binding;
+
+public sealed class FunctionInvocationExpressionTests
 {
-    public sealed class FunctionInvocationExpressionTests
+    [Fact]
+    public void FunctionInvocation_DoesNotCauseCascadingErrors_WhenAnArgumentIsUnresolved()
     {
-        [Fact]
-        public void FunctionInvocation_DoesNotCauseCascadingErrors_WhenAnArgumentIsUnresolved()
-        {
-            var syntaxTree = SyntaxTree.ParseExpression("foo(1.0, bar)");
-            var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
-            var semanticModel = compilation.GetSemanticModel();
+        var syntaxTree = SyntaxTree.ParseExpression("foo(1.0, bar)");
+        var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
+        var semanticModel = compilation.GetSemanticModel();
 
-            var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
-            Assert.Single(diagnostics);
-            Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
-        }
+        Assert.Single(diagnostics);
+        Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
     }
 }

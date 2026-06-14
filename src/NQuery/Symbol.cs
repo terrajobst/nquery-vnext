@@ -1,25 +1,24 @@
 ﻿using NQuery.Symbols;
 
-namespace NQuery
+namespace NQuery;
+
+public abstract class Symbol
 {
-    public abstract class Symbol
+    private protected Symbol(string name)
     {
-        private protected Symbol(string name)
-        {
-            ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(name);
 
-            Name = name;
-        }
+        Name = name;
+    }
 
-        public abstract SymbolKind Kind { get; }
+    public abstract SymbolKind Kind { get; }
 
-        public string Name { get; }
+    public string Name { get; }
 
-        public abstract Type Type { get; }
+    public abstract Type Type { get; }
 
-        public sealed override string ToString()
-        {
-            return SymbolMarkup.ForSymbol(this).ToString();
-        }
+    public sealed override string ToString()
+    {
+        return SymbolMarkup.ForSymbol(this).ToString();
     }
 }

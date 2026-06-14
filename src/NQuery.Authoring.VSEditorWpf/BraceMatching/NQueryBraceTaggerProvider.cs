@@ -7,20 +7,19 @@ using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.BraceMatching;
 
-namespace NQuery.Authoring.VSEditorWpf.BraceMatching
-{
-    [Export(typeof(IViewTaggerProvider))]
-    [TagType(typeof(ITextMarkerTag))]
-    [ContentType(@"NQuery")]
-    internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
-    {
-        [Import]
-        public IBraceMatcherService BraceMatcherService { get; set; }
+namespace NQuery.Authoring.VSEditorWpf.BraceMatching;
 
-        public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
-        {
-            var workspace = buffer.GetWorkspace();
-            return new NQueryBraceTagger(workspace, textView, BraceMatcherService) as ITagger<T>;
-        }
+[Export(typeof(IViewTaggerProvider))]
+[TagType(typeof(ITextMarkerTag))]
+[ContentType(@"NQuery")]
+internal sealed class NQueryBraceTaggerProvider : IViewTaggerProvider
+{
+    [Import]
+    public IBraceMatcherService BraceMatcherService { get; set; }
+
+    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    {
+        var workspace = buffer.GetWorkspace();
+        return new NQueryBraceTagger(workspace, textView, BraceMatcherService) as ITagger<T>;
     }
 }

@@ -1,31 +1,30 @@
 #nullable enable
 
-namespace NQuery.Iterators
+namespace NQuery.Iterators;
+
+// A fixed-width buffer of all-NULL values, used as the right side of an
+// unmatched outer-join row.
+internal sealed class NullRowBuffer : RowBuffer
 {
-    // A fixed-width buffer of all-NULL values, used as the right side of an
-    // unmatched outer-join row.
-    internal sealed class NullRowBuffer : RowBuffer
+    private readonly int _count;
+
+    public NullRowBuffer(int count)
     {
-        private readonly int _count;
+        _count = count;
+    }
 
-        public NullRowBuffer(int count)
-        {
-            _count = count;
-        }
+    public override int Count
+    {
+        get { return _count; }
+    }
 
-        public override int Count
-        {
-            get { return _count; }
-        }
+    public override object this[int index]
+    {
+        get { return null!; }
+    }
 
-        public override object this[int index]
-        {
-            get { return null!; }
-        }
-
-        public override void CopyTo(object[] array, int destinationIndex)
-        {
-            Array.Clear(array, destinationIndex, _count);
-        }
+    public override void CopyTo(object[] array, int destinationIndex)
+    {
+        Array.Clear(array, destinationIndex, _count);
     }
 }

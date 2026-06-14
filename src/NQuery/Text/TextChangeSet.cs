@@ -1,53 +1,52 @@
 using System.Collections;
 
-namespace NQuery.Text
+namespace NQuery.Text;
+
+public sealed class TextChangeSet : IEnumerable<TextChange>
 {
-    public sealed class TextChangeSet : IEnumerable<TextChange>
+    private readonly List<TextChange> _changes = new();
+
+    public void ReplaceText(TextSpan span, string newText)
     {
-        private readonly List<TextChange> _changes = new();
+        ArgumentNullException.ThrowIfNull(newText);
 
-        public void ReplaceText(TextSpan span, string newText)
+        var change = TextChange.ForReplacement(span, newText);
+        RegisterChange(change);
+    }
+
+    public void InsertText(int position, string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+
+        var change = TextChange.ForInsertion(position, text);
+        RegisterChange(change);
+    }
+
+    public void DeleteText(TextSpan span)
+    {
+        var change = TextChange.ForDeletion(span);
+        RegisterChange(change);
+    }
+
+    private void RegisterChange(TextChange newChange)
+    {
+        var conflicts = _changes.Any(existingChange => existingChange.Span.IntersectsWith(newChange.Span));
+        if (conflicts)
         {
-            ArgumentNullException.ThrowIfNull(newText);
-
-            var change = TextChange.ForReplacement(span, newText);
-            RegisterChange(change);
+            var message = string.Format(Resources.CannotRegisterOverlappingChange, newChange);
+            throw new InvalidOperationException(message);
         }
 
-        public void InsertText(int position, string text)
-        {
-            ArgumentNullException.ThrowIfNull(text);
+        _changes.Add(newChange);
+    }
 
-            var change = TextChange.ForInsertion(position, text);
-            RegisterChange(change);
-        }
+    public IEnumerator<TextChange> GetEnumerator()
+    {
+        return _changes.GetEnumerator();
+    }
 
-        public void DeleteText(TextSpan span)
-        {
-            var change = TextChange.ForDeletion(span);
-            RegisterChange(change);
-        }
-
-        private void RegisterChange(TextChange newChange)
-        {
-            var conflicts = _changes.Any(existingChange => existingChange.Span.IntersectsWith(newChange.Span));
-            if (conflicts)
-            {
-                var message = string.Format(Resources.CannotRegisterOverlappingChange, newChange);
-                throw new InvalidOperationException(message);
-            }
-
-            _changes.Add(newChange);
-        }
-
-        public IEnumerator<TextChange> GetEnumerator()
-        {
-            return _changes.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

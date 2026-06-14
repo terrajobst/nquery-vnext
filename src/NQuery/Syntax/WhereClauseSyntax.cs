@@ -1,27 +1,26 @@
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+public sealed class WhereClauseSyntax : SyntaxNode
 {
-    public sealed class WhereClauseSyntax : SyntaxNode
+    internal WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
+        : base(syntaxTree)
     {
-        internal WhereClauseSyntax(SyntaxTree syntaxTree, SyntaxToken whereKeyword, ExpressionSyntax predicate)
-            : base(syntaxTree)
-        {
-            WhereKeyword = whereKeyword;
-            Predicate = predicate;
-        }
-
-        public override SyntaxKind Kind
-        {
-            get { return SyntaxKind.WhereClause; }
-        }
-
-        public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
-        {
-            yield return WhereKeyword;
-            yield return Predicate;
-        }
-
-        public SyntaxToken WhereKeyword { get; }
-
-        public ExpressionSyntax Predicate { get; }
+        WhereKeyword = whereKeyword;
+        Predicate = predicate;
     }
+
+    public override SyntaxKind Kind
+    {
+        get { return SyntaxKind.WhereClause; }
+    }
+
+    public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
+    {
+        yield return WhereKeyword;
+        yield return Predicate;
+    }
+
+    public SyntaxToken WhereKeyword { get; }
+
+    public ExpressionSyntax Predicate { get; }
 }

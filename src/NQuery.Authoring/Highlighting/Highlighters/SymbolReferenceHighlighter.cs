@@ -1,20 +1,19 @@
 ﻿using NQuery.Authoring.SymbolSearch;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Highlighting.Highlighters
+namespace NQuery.Authoring.Highlighting.Highlighters;
+
+internal sealed class SymbolReferenceHighlighter : IHighlighter
 {
-    internal sealed class SymbolReferenceHighlighter : IHighlighter
+    public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
     {
-        public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
-        {
-            ArgumentNullException.ThrowIfNull(semanticModel);
+        ArgumentNullException.ThrowIfNull(semanticModel);
 
-            var symbolAtPosition = semanticModel.FindSymbol(position);
-            if (symbolAtPosition is null)
-                return Enumerable.Empty<TextSpan>();
+        var symbolAtPosition = semanticModel.FindSymbol(position);
+        if (symbolAtPosition is null)
+            return Enumerable.Empty<TextSpan>();
 
-            return semanticModel.FindUsages(symbolAtPosition.Value.Symbol)
-                                .Select(s => s.Span);
-        }
+        return semanticModel.FindUsages(symbolAtPosition.Value.Symbol)
+                            .Select(s => s.Span);
     }
 }

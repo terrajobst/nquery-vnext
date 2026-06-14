@@ -3,44 +3,43 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class CoalesceExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class CoalesceExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new CoalesceExpressionQuickInfoModelProvider();
-        }
+        return new CoalesceExpressionQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<CoalesceExpressionSyntax>().Single();
-            var span = syntax.CoalesceKeyword.Span;
-            var markup = SymbolMarkup.ForCoalesceSymbol();
-            return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<CoalesceExpressionSyntax>().Single();
+        var span = syntax.CoalesceKeyword.Span;
+        var markup = SymbolMarkup.ForCoalesceSymbol();
+        return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
+    }
 
-        [Fact]
-        public void CoalesceExpressionQuickInfoModelProvider_MatchesInCoalesce()
-        {
-            var query = @"
+    [Fact]
+    public void CoalesceExpressionQuickInfoModelProvider_MatchesInCoalesce()
+    {
+        var query = @"
                 SELECT  {COALESCE}(e.ReportsTo, e.EmployeeId)
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void CoalesceExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
-        {
-            var query = @"
+    [Fact]
+    public void CoalesceExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
+    {
+        var query = @"
                 SELECT  COALESCE({e.ReportsTo, e.EmployeeId)}
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

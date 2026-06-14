@@ -1,69 +1,69 @@
 ﻿using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
 
-namespace NQuery.Authoring.Tests.Completion.Providers
+namespace NQuery.Authoring.Tests.Completion.Providers;
+
+public class KeywordCompletionProviderTests
 {
-    public class KeywordCompletionProviderTests
+    private static CompletionModel CreateCompletionModel(SemanticModel semanticModel, int position)
     {
-        private static CompletionModel CreateCompletionModel(SemanticModel semanticModel, int position)
-        {
-            var provider = new KeywordCompletionProvider();
-            var providers = new[] { provider };
-            return semanticModel.GetCompletionModel(position, providers);
-        }
+        var provider = new KeywordCompletionProvider();
+        var providers = new[] { provider };
+        return semanticModel.GetCompletionModel(position, providers);
+    }
 
-        private static CompletionModel GetCompletionModel(string query)
-        {
-            var actualQuery = query.ParseSinglePosition(out var position);
+    private static CompletionModel GetCompletionModel(string query)
+    {
+        var actualQuery = query.ParseSinglePosition(out var position);
 
-            var compilation = CompilationFactory.CreateQuery(actualQuery);
-            var semanticModel = compilation.GetSemanticModel();
+        var compilation = CompilationFactory.CreateQuery(actualQuery);
+        var semanticModel = compilation.GetSemanticModel();
 
-            return CreateCompletionModel(semanticModel, position);
-        }
+        return CreateCompletionModel(semanticModel, position);
+    }
 
-        private static CompletionModel GetCompletionModelWithFirstChar(string query, string keyword)
-        {
-            var actualQuery = query.ParseSinglePosition(out var position);
+    private static CompletionModel GetCompletionModelWithFirstChar(string query, string keyword)
+    {
+        var actualQuery = query.ParseSinglePosition(out var position);
 
-            var modifiedQuery = actualQuery.Insert(position, keyword.Substring(0, 1));
-            position++;
+        var modifiedQuery = actualQuery.Insert(position, keyword.Substring(0, 1));
+        position++;
 
-            var compilation = CompilationFactory.CreateQuery(modifiedQuery);
-            var semanticModel = compilation.GetSemanticModel();
+        var compilation = CompilationFactory.CreateQuery(modifiedQuery);
+        var semanticModel = compilation.GetSemanticModel();
 
-            return CreateCompletionModel(semanticModel, position);
-        }
+        return CreateCompletionModel(semanticModel, position);
+    }
 
-        private static void AssertIsMatch(string query, string keyword)
-        {
-            var completionModel = GetCompletionModel(query);
-            AssertIsMatch(completionModel, keyword);
+    private static void AssertIsMatch(string query, string keyword)
+    {
+        var completionModel = GetCompletionModel(query);
+        AssertIsMatch(completionModel, keyword);
 
-            var completionModelWithFirstChar = GetCompletionModelWithFirstChar(query, keyword);
-            AssertIsMatch(completionModelWithFirstChar, keyword);
-        }
+        var completionModelWithFirstChar = GetCompletionModelWithFirstChar(query, keyword);
+        AssertIsMatch(completionModelWithFirstChar, keyword);
+    }
 
-        private static void AssertIsMatch(CompletionModel completionModel, string keyword)
-        {
-            var item = completionModel.Items.Single(i => i.InsertionText == keyword);
+    private static void AssertIsMatch(CompletionModel completionModel, string keyword)
+    {
+        var item = completionModel.Items.Single(i => i.InsertionText == keyword);
 
-            Assert.Equal(Glyph.Keyword, item.Glyph);
-            Assert.Equal(keyword, item.DisplayText);
-            Assert.Null(item.Description);
-            Assert.Null(item.Symbol);
-        }
+        Assert.Equal(Glyph.Keyword, item.Glyph);
+        Assert.Equal(keyword, item.DisplayText);
+        Assert.Null(item.Description);
+        Assert.Null(item.Symbol);
+    }
 
-        private static void AssertIsEmpty(string query)
-        {
-            var completionModel = GetCompletionModel(query);
-            Assert.Empty(completionModel.Items);
-        }
+    private static void AssertIsEmpty(string query)
+    {
+        var completionModel = GetCompletionModel(query);
+        Assert.Empty(completionModel.Items);
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNothing_InMultiLineComment()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNothing_InMultiLineComment()
+    {
+        var query = @"
                 /*
                  * SELECT |
                  */
@@ -71,559 +71,559 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 FROM    Employees e
             ";
 
-            AssertIsEmpty(query);
-        }
+        AssertIsEmpty(query);
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNothing_InSingleLineComment()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNothing_InSingleLineComment()
+    {
+        var query = @"
                 // SELECT |
                 SELECT  *
                 FROM    Employees e
             ";
 
-            AssertIsEmpty(query);
-        }
+        AssertIsEmpty(query);
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNothing_InString()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNothing_InString()
+    {
+        var query = @"
                 SELECT  'T|'
                 FROM    Employees e
             ";
 
-            AssertIsEmpty(query);
-        }
+        AssertIsEmpty(query);
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNothing_InPropertyAccess()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNothing_InPropertyAccess()
+    {
+        var query = @"
                 SELECT  e.|
                 FROM    Employees e
             ";
 
-            AssertIsEmpty(query);
-        }
+        AssertIsEmpty(query);
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNot_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNot_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "NOT");
-        }
+        AssertIsMatch(query, "NOT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsCast_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsCast_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "CAST");
-        }
+        AssertIsMatch(query, "CAST");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsCoalesce_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsCoalesce_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "COALESCE");
-        }
+        AssertIsMatch(query, "COALESCE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNullIf_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNullIf_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "NULLIF");
-        }
+        AssertIsMatch(query, "NULLIF");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNull_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNull_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "NULL");
-        }
+        AssertIsMatch(query, "NULL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsNull_IfAfterIs()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsNull_IfAfterIs()
+    {
+        var query = @"
                 SELECT 1 IS |
             ";
 
-            AssertIsMatch(query, "NULL");
-        }
+        AssertIsMatch(query, "NULL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTrue_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTrue_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "TRUE");
-        }
+        AssertIsMatch(query, "TRUE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsFalse_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsFalse_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "FALSE");
-        }
+        AssertIsMatch(query, "FALSE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsExists_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsExists_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "EXISTS");
-        }
+        AssertIsMatch(query, "EXISTS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsCase_IfExpressionStart()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsCase_IfExpressionStart()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "CASE");
-        }
+        AssertIsMatch(query, "CASE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAnd_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAnd_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "AND");
-        }
+        AssertIsMatch(query, "AND");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOr_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOr_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "OR");
-        }
+        AssertIsMatch(query, "OR");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsIs_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsIs_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "IS");
-        }
+        AssertIsMatch(query, "IS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsLike_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsLike_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "LIKE");
-        }
+        AssertIsMatch(query, "LIKE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsLike_IfAfterSounds()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsLike_IfAfterSounds()
+    {
+        var query = @"
                 SELECT 'test' SOUNDS |
             ";
 
-            AssertIsMatch(query, "LIKE");
-        }
+        AssertIsMatch(query, "LIKE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSounds_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSounds_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "SOUNDS");
-        }
+        AssertIsMatch(query, "SOUNDS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSimilar_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSimilar_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "SIMILAR");
-        }
+        AssertIsMatch(query, "SIMILAR");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsBetween_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsBetween_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "BETWEEN");
-        }
+        AssertIsMatch(query, "BETWEEN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsIn_IfAfterExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsIn_IfAfterExpression()
+    {
+        var query = @"
                 SELECT 1 |
             ";
 
-            AssertIsMatch(query, "IN");
-        }
+        AssertIsMatch(query, "IN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTo_IfAfterSimilar()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTo_IfAfterSimilar()
+    {
+        var query = @"
                 SELECT 'test' SIMILAR |
             ";
 
-            AssertIsMatch(query, "TO");
-        }
+        AssertIsMatch(query, "TO");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsDistinct_IfAfterSelect()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsDistinct_IfAfterSelect()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "DISTINCT");
-        }
+        AssertIsMatch(query, "DISTINCT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTop_IfAfterSelect()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTop_IfAfterSelect()
+    {
+        var query = @"
                 SELECT |
             ";
 
-            AssertIsMatch(query, "TOP");
-        }
+        AssertIsMatch(query, "TOP");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTop_IfAfterAll()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTop_IfAfterAll()
+    {
+        var query = @"
                 SELECT ALL |
             ";
 
-            AssertIsMatch(query, "TOP");
-        }
+        AssertIsMatch(query, "TOP");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTop_IfAfterDistinct()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTop_IfAfterDistinct()
+    {
+        var query = @"
                 SELECT DISTINCT |
             ";
 
-            AssertIsMatch(query, "TOP");
-        }
+        AssertIsMatch(query, "TOP");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsWith_IfBeforeQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsWith_IfBeforeQuery()
+    {
+        var query = @"
                 |
             ";
 
-            AssertIsMatch(query, "WITH");
-        }
+        AssertIsMatch(query, "WITH");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsWith_IfAfterTop()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsWith_IfAfterTop()
+    {
+        var query = @"
                 SELECT TOP 10 |
             ";
 
-            AssertIsMatch(query, "WITH");
-        }
+        AssertIsMatch(query, "WITH");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsRecursive_IfAfterWith()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsRecursive_IfAfterWith()
+    {
+        var query = @"
                 WITH |
             ";
 
-            AssertIsMatch(query, "RECURSIVE");
-        }
+        AssertIsMatch(query, "RECURSIVE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsTies_IfAfterWith()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsTies_IfAfterWith()
+    {
+        var query = @"
                 SELECT TOP 10 WITH |
             ";
 
-            AssertIsMatch(query, "TIES");
-        }
+        AssertIsMatch(query, "TIES");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAs_IfInColumnAlias()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAs_IfInColumnAlias()
+    {
+        var query = @"
                 SELECT  1 |
             ";
 
-            AssertIsMatch(query, "AS");
-        }
+        AssertIsMatch(query, "AS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAs_IfInTableAlias()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAs_IfInTableAlias()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees |
             ";
 
-            AssertIsMatch(query, "AS");
-        }
+        AssertIsMatch(query, "AS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAs_IfInCast()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAs_IfInCast()
+    {
+        var query = @"
                 SELECT CAST(1 |
             ";
 
-            AssertIsMatch(query, "AS");
-        }
+        AssertIsMatch(query, "AS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAs_IfCommonTableExpressionName()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAs_IfCommonTableExpressionName()
+    {
+        var query = @"
                 WITH MyCte |
             ";
 
-            AssertIsMatch(query, "AS");
-        }
+        AssertIsMatch(query, "AS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsWhen_IfInCase()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsWhen_IfInCase()
+    {
+        var query = @"
                 SELECT CASE e.ReportsTo
                           |
             ";
 
-            AssertIsMatch(query, "WHEN");
-        }
+        AssertIsMatch(query, "WHEN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsThen_IfAfterThen()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsThen_IfAfterThen()
+    {
+        var query = @"
                 SELECT CASE e.ReportsTo
                           WHEN 2 |
             ";
 
-            AssertIsMatch(query, "THEN");
-        }
+        AssertIsMatch(query, "THEN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsElse_IfAfterThen()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsElse_IfAfterThen()
+    {
+        var query = @"
                 SELECT CASE e.ReportsTo
                           WHEN 2 THEN 2
                           |
             ";
 
-            AssertIsMatch(query, "ELSE");
-        }
+        AssertIsMatch(query, "ELSE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsEnd_IfAfterThen()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsEnd_IfAfterThen()
+    {
+        var query = @"
                 SELECT CASE e.ReportsTo
                           WHEN 2 THEN 2
                        |
             ";
 
-            AssertIsMatch(query, "END");
-        }
+        AssertIsMatch(query, "END");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsBy_IfAfterOrder()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsBy_IfAfterOrder()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 ORDER   |
             ";
 
-            AssertIsMatch(query, "BY");
-        }
+        AssertIsMatch(query, "BY");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsBy_IfAfterGroup()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsBy_IfAfterGroup()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 GROUP   |
             ";
 
-            AssertIsMatch(query, "BY");
-        }
+        AssertIsMatch(query, "BY");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAsc_IfAfterExpressionInOrderBy()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAsc_IfAfterExpressionInOrderBy()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 ORDER   BY 1 |
             ";
 
-            AssertIsMatch(query, "ASC");
-        }
+        AssertIsMatch(query, "ASC");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsDesc_IfAfterExpressionInOrderBy()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsDesc_IfAfterExpressionInOrderBy()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 ORDER   BY 1, 2 |
             ";
 
-            AssertIsMatch(query, "DESC");
-        }
+        AssertIsMatch(query, "DESC");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSelect_IfEmpty()
-        {
-            var query = @"|";
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSelect_IfEmpty()
+    {
+        var query = @"|";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSelect_IfBeforeQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSelect_IfBeforeQuery()
+    {
+        var query = @"
                 |
             ";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedQuery()
+    {
+        var query = @"
                 (|
             ";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedExpression()
+    {
+        var query = @"
                 SELECT (|
             ";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSelect_IfInInExpression()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSelect_IfInInExpression()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.ReportsTo IN (|
             ";
 
-            AssertIsMatch(query, "SELECT");
-        }
+        AssertIsMatch(query, "SELECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsFrom_IfInQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsFrom_IfInQuery()
+    {
+        var query = @"
                 SELECT  *
                 |
             ";
 
-            AssertIsMatch(query, "FROM");
-        }
+        AssertIsMatch(query, "FROM");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsWhere_IfInQuery()
-        {
-            var query = @"
-                SELECT  *
-                FROM    Employees
-                |
-            ";
-
-            AssertIsMatch(query, "WHERE");
-        }
-
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsGroup_IfInQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsWhere_IfInQuery()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 |
             ";
 
-            AssertIsMatch(query, "GROUP");
-        }
+        AssertIsMatch(query, "WHERE");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsHaving_IfInQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsGroup_IfInQuery()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 |
             ";
 
-            AssertIsMatch(query, "HAVING");
-        }
+        AssertIsMatch(query, "GROUP");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOrder_IfAfterQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsHaving_IfInQuery()
+    {
+        var query = @"
+                SELECT  *
+                FROM    Employees
+                |
+            ";
+
+        AssertIsMatch(query, "HAVING");
+    }
+
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOrder_IfAfterQuery()
+    {
+        var query = @"
                 (
                     SELECT  *
                     FROM    Employees
@@ -631,25 +631,25 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 |
             ";
 
-            AssertIsMatch(query, "ORDER");
-        }
+        AssertIsMatch(query, "ORDER");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsUnion_IfAfterQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsUnion_IfAfterQuery()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
                 |
             ";
 
-            AssertIsMatch(query, "UNION");
-        }
+        AssertIsMatch(query, "UNION");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsIntersect_IfAfterQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsIntersect_IfAfterQuery()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
 
@@ -661,13 +661,13 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 |
             ";
 
-            AssertIsMatch(query, "INTERSECT");
-        }
+        AssertIsMatch(query, "INTERSECT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsExcept_IfAfterQuery()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsExcept_IfAfterQuery()
+    {
+        var query = @"
                 (
                     SELECT  *
                     FROM    Employees
@@ -675,258 +675,257 @@ namespace NQuery.Authoring.Tests.Completion.Providers
                 |
             ";
 
-            AssertIsMatch(query, "EXCEPT");
-        }
+        AssertIsMatch(query, "EXCEPT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAll_IfAfterSelect()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAll_IfAfterSelect()
+    {
+        var query = @"
                 SELECT  |
             ";
 
-            AssertIsMatch(query, "ALL");
-        }
+        AssertIsMatch(query, "ALL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAll_IfAfterUnion()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAll_IfAfterUnion()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees
 
                 UNION   |
             ";
 
-            AssertIsMatch(query, "ALL");
-        }
+        AssertIsMatch(query, "ALL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAll_IfInAllAny()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAll_IfInAllAny()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.EmployeeId >= |
             ";
 
-            AssertIsMatch(query, "ALL");
-        }
+        AssertIsMatch(query, "ALL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsAny_IfInAllAny()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsAny_IfInAllAny()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.EmployeeId >= |
             ";
 
-            AssertIsMatch(query, "ANY");
-        }
+        AssertIsMatch(query, "ANY");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsSome_IfInAllAny()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsSome_IfInAllAny()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                 WHERE   e.EmployeeId >= |
             ";
 
-            AssertIsMatch(query, "SOME");
-        }
+        AssertIsMatch(query, "SOME");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterInner()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterInner()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             INNER |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterOuter()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterOuter()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             LEFT OUTER |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterLeft()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterLeft()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             LEFT |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterRight()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterRight()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             RIGHT |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterFull()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterFull()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             FULL |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsJoin_IfAfterCross()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsJoin_IfAfterCross()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             CROSS |
             ";
 
-            AssertIsMatch(query, "JOIN");
-        }
+        AssertIsMatch(query, "JOIN");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "INNER");
-        }
+        AssertIsMatch(query, "INNER");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsCross_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsCross_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "CROSS");
-        }
+        AssertIsMatch(query, "CROSS");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsLeft_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsLeft_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "LEFT");
-        }
+        AssertIsMatch(query, "LEFT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsRight_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsRight_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "RIGHT");
-        }
+        AssertIsMatch(query, "RIGHT");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsFull_IfAfterTableReference()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsFull_IfAfterTableReference()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             |
             ";
 
-            AssertIsMatch(query, "FULL");
-        }
+        AssertIsMatch(query, "FULL");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOuter_IfAfterLeft()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOuter_IfAfterLeft()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             LEFT |
             ";
 
-            AssertIsMatch(query, "OUTER");
-        }
+        AssertIsMatch(query, "OUTER");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOuter_IfAfterRight()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOuter_IfAfterRight()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             RIGHT |
             ";
 
-            AssertIsMatch(query, "OUTER");
-        }
+        AssertIsMatch(query, "OUTER");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOuter_IfAfterFull()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOuter_IfAfterFull()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             FULL |
             ";
 
-            AssertIsMatch(query, "OUTER");
-        }
+        AssertIsMatch(query, "OUTER");
+    }
 
-        [Fact]
-        public void KeywordCompletionProvider_ReturnsOn_IfBeforeJoinCondition()
-        {
-            var query = @"
+    [Fact]
+    public void KeywordCompletionProvider_ReturnsOn_IfBeforeJoinCondition()
+    {
+        var query = @"
                 SELECT  *
                 FROM    Employees e
                             INNER JOIN EmployeeTerritories et |
             ";
 
-            AssertIsMatch(query, "ON");
-        }
+        AssertIsMatch(query, "ON");
     }
 }

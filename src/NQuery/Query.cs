@@ -1,60 +1,59 @@
-namespace NQuery
+namespace NQuery;
+
+public sealed class Query
 {
-    public sealed class Query
+    private CompiledQuery _query;
+
+    private Query(DataContext dataContext, string text)
     {
-        private CompiledQuery _query;
-
-        private Query(DataContext dataContext, string text)
-        {
-            DataContext = dataContext;
-            Text = text;
-        }
-
-        public static Query Create(DataContext dataContext, string text)
-        {
-            ArgumentNullException.ThrowIfNull(dataContext);
-            ArgumentNullException.ThrowIfNull(text);
-
-            return new Query(dataContext, text);
-        }
-
-        private void EnsureCompiled()
-        {
-            if (_query is not null)
-                return;
-
-            var syntaxTree = SyntaxTree.ParseQuery(Text);
-            var compilation = Compilation.Create(DataContext, syntaxTree);
-            Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
-        }
-
-        public object ExecuteScalar()
-        {
-            using var reader = ExecuteReader();
-            return !reader.Read() || reader.ColumnCount == 0
-                ? null
-                : reader[0];
-        }
-
-        public T ExecuteScalar<T>()
-        {
-            return (T)ExecuteScalar();
-        }
-
-        public QueryReader ExecuteReader()
-        {
-            EnsureCompiled();
-            return _query.CreateReader();
-        }
-
-        public QueryReader ExecuteSchemaReader()
-        {
-            EnsureCompiled();
-            return _query.CreateSchemaReader();
-        }
-
-        public DataContext DataContext { get; }
-
-        public string Text { get; }
+        DataContext = dataContext;
+        Text = text;
     }
+
+    public static Query Create(DataContext dataContext, string text)
+    {
+        ArgumentNullException.ThrowIfNull(dataContext);
+        ArgumentNullException.ThrowIfNull(text);
+
+        return new Query(dataContext, text);
+    }
+
+    private void EnsureCompiled()
+    {
+        if (_query is not null)
+            return;
+
+        var syntaxTree = SyntaxTree.ParseQuery(Text);
+        var compilation = Compilation.Create(DataContext, syntaxTree);
+        Interlocked.CompareExchange(ref _query, compilation.Compile(), null);
+    }
+
+    public object ExecuteScalar()
+    {
+        using var reader = ExecuteReader();
+        return !reader.Read() || reader.ColumnCount == 0
+            ? null
+            : reader[0];
+    }
+
+    public T ExecuteScalar<T>()
+    {
+        return (T)ExecuteScalar();
+    }
+
+    public QueryReader ExecuteReader()
+    {
+        EnsureCompiled();
+        return _query.CreateReader();
+    }
+
+    public QueryReader ExecuteSchemaReader()
+    {
+        EnsureCompiled();
+        return _query.CreateSchemaReader();
+    }
+
+    public DataContext DataContext { get; }
+
+    public string Text { get; }
 }

@@ -1,20 +1,19 @@
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Completion.Providers
-{
-    internal sealed class AliasCompletionProvider : CompletionProvider<AliasSyntax>
-    {
-        protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, AliasSyntax node)
-        {
-            if (node.AsKeyword is not null ||
-                node.Identifier.IsMissing ||
-                !node.Span.ContainsOrTouches(position))
-            {
-                yield break;
-            }
+namespace NQuery.Authoring.Completion.Providers;
 
-            var identifier = node.Identifier.Text;
-            yield return new CompletionItem(identifier, identifier, null, true);
+internal sealed class AliasCompletionProvider : CompletionProvider<AliasSyntax>
+{
+    protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, AliasSyntax node)
+    {
+        if (node.AsKeyword is not null ||
+            node.Identifier.IsMissing ||
+            !node.Span.ContainsOrTouches(position))
+        {
+            yield break;
         }
+
+        var identifier = node.Identifier.Text;
+        yield return new CompletionItem(identifier, identifier, null, true);
     }
 }

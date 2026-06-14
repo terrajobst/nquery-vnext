@@ -1,8 +1,7 @@
-namespace NQuery.Authoring
+namespace NQuery.Authoring;
+
+public enum DocumentKind
 {
-    public enum DocumentKind
-    {
-        Query,
-        Expression
-    }
+    Query,
+    Expression
 }

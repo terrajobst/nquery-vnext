@@ -3,17 +3,16 @@ using System.ComponentModel.Composition;
 
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.Composition.CodeActions
-{
-    [Export(typeof(ICodeRefactoringProviderService))]
-    internal sealed class CodeRefactoringProviderService : ICodeRefactoringProviderService
-    {
-        [ImportingConstructor]
-        public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
-        {
-            Providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
-        }
+namespace NQuery.Authoring.Composition.CodeActions;
 
-        public ImmutableArray<ICodeRefactoringProvider> Providers { get; }
+[Export(typeof(ICodeRefactoringProviderService))]
+internal sealed class CodeRefactoringProviderService : ICodeRefactoringProviderService
+{
+    [ImportingConstructor]
+    public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
+    {
+        Providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
     }
+
+    public ImmutableArray<ICodeRefactoringProvider> Providers { get; }
 }

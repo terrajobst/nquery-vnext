@@ -1,22 +1,21 @@
 using NQuery.Text;
 
-namespace NQuery.Authoring.BraceMatching
+namespace NQuery.Authoring.BraceMatching;
+
+public struct BraceMatchingResult
 {
-    public struct BraceMatchingResult
+    public static readonly BraceMatchingResult None = new();
+
+    public BraceMatchingResult(TextSpan left, TextSpan right)
     {
-        public static readonly BraceMatchingResult None = new();
-
-        public BraceMatchingResult(TextSpan left, TextSpan right)
-        {
-            IsValid = true;
-            Left = left;
-            Right = right;
-        }
-
-        public bool IsValid { get; }
-
-        public TextSpan Left { get; }
-
-        public TextSpan Right { get; }
+        IsValid = true;
+        Left = left;
+        Right = right;
     }
+
+    public bool IsValid { get; }
+
+    public TextSpan Left { get; }
+
+    public TextSpan Right { get; }
 }

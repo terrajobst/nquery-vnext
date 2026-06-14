@@ -7,20 +7,19 @@ using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.Highlighting;
 
-namespace NQuery.Authoring.VSEditorWpf.Highlighting
-{
-    [Export(typeof(IViewTaggerProvider))]
-    [TagType(typeof(HighlightTag))]
-    [ContentType(@"NQuery")]
-    internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
-    {
-        [Import]
-        public IHighlighterService HighlighterService { get; set; }
+namespace NQuery.Authoring.VSEditorWpf.Highlighting;
 
-        public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
-        {
-            var workspace = buffer.GetWorkspace();
-            return new NQueryHighlightingTagger(workspace, textView, HighlighterService.Highlighters) as ITagger<T>;
-        }
+[Export(typeof(IViewTaggerProvider))]
+[TagType(typeof(HighlightTag))]
+[ContentType(@"NQuery")]
+internal sealed class NQueryHighlightingTaggerProvider : IViewTaggerProvider
+{
+    [Import]
+    public IHighlighterService HighlighterService { get; set; }
+
+    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    {
+        var workspace = buffer.GetWorkspace();
+        return new NQueryHighlightingTagger(workspace, textView, HighlighterService.Highlighters) as ITagger<T>;
     }
 }

@@ -1,9 +1,8 @@
 using System.Windows;
 
-namespace NQueryViewer
+namespace NQueryViewer;
+
+internal interface IMainWindowProvider
 {
-    internal interface IMainWindowProvider
-    {
-        Window Window { get; }
-    }
+    Window Window { get; }
 }

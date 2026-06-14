@@ -1,9 +1,8 @@
 ﻿using NQuery.Text;
 
-namespace NQuery.Authoring.Selection
+namespace NQuery.Authoring.Selection;
+
+public interface ISelectionSpanProvider
 {
-    public interface ISelectionSpanProvider
-    {
-        IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken);
-    }
+    IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken);
 }

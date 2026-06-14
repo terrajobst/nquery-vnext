@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.BraceMatching.Matchers;
 
-namespace NQuery.Authoring.Tests.BraceMatching.Matchers
-{
-    public class CaseBraceMatcherTests : BraceMatcherTests
-    {
-        protected override IBraceMatcher CreateMatcher()
-        {
-            return new CaseBraceMatcher();
-        }
+namespace NQuery.Authoring.Tests.BraceMatching.Matchers;
 
-        [Fact]
-        public void CaseBraceMatcher_Matches()
-        {
-            var query = @"
+public class CaseBraceMatcherTests : BraceMatcherTests
+{
+    protected override IBraceMatcher CreateMatcher()
+    {
+        return new CaseBraceMatcher();
+    }
+
+    [Fact]
+    public void CaseBraceMatcher_Matches()
+    {
+        var query = @"
                 SELECT  {CASE}
                             WHEN ReportsTo IS NULL THEN
                                 'The Boss'
@@ -23,7 +23,6 @@ namespace NQuery.Authoring.Tests.BraceMatching.Matchers
                 FROM    Employees
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

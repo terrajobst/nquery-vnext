@@ -2,34 +2,33 @@
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.VSEditorWpf.Text
+namespace NQuery.Authoring.VSEditorWpf.Text;
+
+internal sealed class VisualStudioSourceTextContainer : SourceTextContainer
 {
-    internal sealed class VisualStudioSourceTextContainer : SourceTextContainer
+    public VisualStudioSourceTextContainer(ITextBuffer textBuffer)
     {
-        public VisualStudioSourceTextContainer(ITextBuffer textBuffer)
-        {
-            TextBuffer = textBuffer;
-            TextBuffer.ChangedHighPriority += TextBufferOnPostChanged;
-        }
-
-        private void TextBufferOnPostChanged(object sender, EventArgs e)
-        {
-            OnCurrentChanged();
-        }
-
-        private void OnCurrentChanged()
-        {
-            var handler = CurrentChanged;
-            handler?.Invoke(this, EventArgs.Empty);
-        }
-
-        public override SourceText Current
-        {
-            get { return TextBuffer.CurrentSnapshot.ToSourceText(); }
-        }
-
-        public ITextBuffer TextBuffer { get; }
-
-        public override event EventHandler<EventArgs> CurrentChanged;
+        TextBuffer = textBuffer;
+        TextBuffer.ChangedHighPriority += TextBufferOnPostChanged;
     }
+
+    private void TextBufferOnPostChanged(object sender, EventArgs e)
+    {
+        OnCurrentChanged();
+    }
+
+    private void OnCurrentChanged()
+    {
+        var handler = CurrentChanged;
+        handler?.Invoke(this, EventArgs.Empty);
+    }
+
+    public override SourceText Current
+    {
+        get { return TextBuffer.CurrentSnapshot.ToSourceText(); }
+    }
+
+    public ITextBuffer TextBuffer { get; }
+
+    public override event EventHandler<EventArgs> CurrentChanged;
 }

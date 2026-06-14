@@ -1,15 +1,14 @@
-﻿namespace NQuery.Authoring.Classifications
+﻿namespace NQuery.Authoring.Classifications;
+
+public enum SemanticClassification
 {
-    public enum SemanticClassification
-    {
-        SchemaTable,
-        Column,
-        DerivedTable,
-        CommonTableExpression,
-        Function,
-        Aggregate,
-        Variable,
-        Property,
-        Method
-    }
+    SchemaTable,
+    Column,
+    DerivedTable,
+    CommonTableExpression,
+    Function,
+    Aggregate,
+    Variable,
+    Property,
+    Method
 }

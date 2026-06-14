@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.SignatureHelp
+namespace NQuery.Authoring.SignatureHelp;
+
+public interface ISignatureHelpModelProvider
 {
-    public interface ISignatureHelpModelProvider
-    {
-        SignatureHelpModel GetModel(SemanticModel semanticModel, int position);
-    }
+    SignatureHelpModel GetModel(SemanticModel semanticModel, int position);
 }

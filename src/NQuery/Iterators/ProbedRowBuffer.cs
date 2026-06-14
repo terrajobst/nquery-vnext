@@ -1,46 +1,45 @@
 #nullable enable
 
-namespace NQuery.Iterators
+namespace NQuery.Iterators;
+
+// Wraps a buffer and appends a single boolean "probe" column at the end. A
+// probing semi join uses it to report, per outer row, whether a match existed.
+internal sealed class ProbedRowBuffer : RowBuffer
 {
-    // Wraps a buffer and appends a single boolean "probe" column at the end. A
-    // probing semi join uses it to report, per outer row, whether a match existed.
-    internal sealed class ProbedRowBuffer : RowBuffer
+    private static readonly object BoxedTrue = true;
+    private static readonly object BoxedFalse = false;
+
+    private readonly RowBuffer _rowBuffer;
+    private object _value = BoxedFalse;
+
+    public ProbedRowBuffer(RowBuffer rowBuffer)
     {
-        private static readonly object BoxedTrue = true;
-        private static readonly object BoxedFalse = false;
+        _rowBuffer = rowBuffer;
+    }
 
-        private readonly RowBuffer _rowBuffer;
-        private object _value = BoxedFalse;
+    public void SetProbe(bool value)
+    {
+        _value = value ? BoxedTrue : BoxedFalse;
+    }
 
-        public ProbedRowBuffer(RowBuffer rowBuffer)
+    public override int Count
+    {
+        get { return _rowBuffer.Count + 1; }
+    }
+
+    public override object this[int index]
+    {
+        get
         {
-            _rowBuffer = rowBuffer;
+            return index < _rowBuffer.Count
+                ? _rowBuffer[index]
+                : _value;
         }
+    }
 
-        public void SetProbe(bool value)
-        {
-            _value = value ? BoxedTrue : BoxedFalse;
-        }
-
-        public override int Count
-        {
-            get { return _rowBuffer.Count + 1; }
-        }
-
-        public override object this[int index]
-        {
-            get
-            {
-                return index < _rowBuffer.Count
-                    ? _rowBuffer[index]
-                    : _value;
-            }
-        }
-
-        public override void CopyTo(object[] array, int destinationIndex)
-        {
-            _rowBuffer.CopyTo(array, destinationIndex);
-            array[_rowBuffer.Count + destinationIndex] = _value;
-        }
+    public override void CopyTo(object[] array, int destinationIndex)
+    {
+        _rowBuffer.CopyTo(array, destinationIndex);
+        array[_rowBuffer.Count + destinationIndex] = _value;
     }
 }

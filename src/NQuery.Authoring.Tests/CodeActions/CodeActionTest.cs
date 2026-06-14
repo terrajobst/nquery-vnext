@@ -2,35 +2,34 @@ using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
 
-namespace NQuery.Authoring.Tests.CodeActions
+namespace NQuery.Authoring.Tests.CodeActions;
+
+public abstract class CodeActionTest
 {
-    public abstract class CodeActionTest
+    protected abstract ImmutableArray<ICodeAction> GetActions(string query);
+
+    protected void AssertDoesNotTrigger(string query)
     {
-        protected abstract ImmutableArray<ICodeAction> GetActions(string query);
+        var actions = GetActions(query);
 
-        protected void AssertDoesNotTrigger(string query)
-        {
-            var actions = GetActions(query);
+        Assert.Empty(actions);
+    }
 
-            Assert.Empty(actions);
-        }
+    protected void AssertDoesNotTrigger(string query, string expectedActionDescription)
+    {
+        var actions = GetActions(query).Where(a => a.Description == expectedActionDescription).ToImmutableArray();
 
-        protected void AssertDoesNotTrigger(string query, string expectedActionDescription)
-        {
-            var actions = GetActions(query).Where(a => a.Description == expectedActionDescription).ToImmutableArray();
+        Assert.Empty(actions);
+    }
 
-            Assert.Empty(actions);
-        }
+    protected void AssertFixes(string query, string expectedFixedQuery, string expectedActionDescription)
+    {
+        var trimmedQuery = query.NormalizeCode();
+        var trimmedExpectedQuery = expectedFixedQuery.NormalizeCode();
 
-        protected void AssertFixes(string query, string expectedFixedQuery, string expectedActionDescription)
-        {
-            var trimmedQuery = query.NormalizeCode();
-            var trimmedExpectedQuery = expectedFixedQuery.NormalizeCode();
-
-            var actions = GetActions(trimmedQuery);
-            var action = actions.Single(a => a.Description == expectedActionDescription);
-            var syntaxTree = action.GetEdit();
-            Assert.Equal(trimmedExpectedQuery, syntaxTree.Text.GetText());
-        }
+        var actions = GetActions(trimmedQuery);
+        var action = actions.Single(a => a.Description == expectedActionDescription);
+        var syntaxTree = action.GetEdit();
+        Assert.Equal(trimmedExpectedQuery, syntaxTree.Text.GetText());
     }
 }

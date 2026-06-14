@@ -1,28 +1,27 @@
 ﻿using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
 
-namespace NQuery.Authoring.Tests.SignatureHelp.Providers
+namespace NQuery.Authoring.Tests.SignatureHelp.Providers;
+
+public class CastSignatureHelpModelProviderTests : SignatureHelpModelProviderTests
 {
-    public class CastSignatureHelpModelProviderTests : SignatureHelpModelProviderTests
+    protected override ISignatureHelpModelProvider CreateProvider()
     {
-        protected override ISignatureHelpModelProvider CreateProvider()
-        {
-            return new CastSignatureHelpModelProvider();
-        }
+        return new CastSignatureHelpModelProvider();
+    }
 
-        protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
-        {
-            yield return SignatureHelpExtensions.GetCastSignatureItem();
-        }
+    protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
+    {
+        yield return SignatureHelpExtensions.GetCastSignatureItem();
+    }
 
-        [Fact]
-        public void CastSignatureHelpModelProvider_Matches()
-        {
-            var query = @"
+    [Fact]
+    public void CastSignatureHelpModelProvider_Matches()
+    {
+        var query = @"
                 SELECT {CAST({100 }AS{ DOUBLE})}
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

@@ -1,79 +1,78 @@
 ﻿using NQuery.Authoring.BraceMatching;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Tests.BraceMatching
+namespace NQuery.Authoring.Tests.BraceMatching;
+
+public abstract class BraceMatcherTests
 {
-    public abstract class BraceMatcherTests
+    protected abstract IBraceMatcher CreateMatcher();
+
+    protected void AssertIsMatch(string queryWithMarkers)
     {
-        protected abstract IBraceMatcher CreateMatcher();
+        var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
 
-        protected void AssertIsMatch(string queryWithMarkers)
-        {
-            var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
+        var startOfLeft = Match(query, expectedLeft.Start);
+        AssertIsMatch(startOfLeft, expectedLeft, expectedRight);
 
-            var startOfLeft = Match(query, expectedLeft.Start);
-            AssertIsMatch(startOfLeft, expectedLeft, expectedRight);
+        var endOfLeft = Match(query, expectedLeft.End);
+        AssertIsNoMatch(endOfLeft);
 
-            var endOfLeft = Match(query, expectedLeft.End);
-            AssertIsNoMatch(endOfLeft);
+        var startOfRight = Match(query, expectedRight.Start);
+        AssertIsNoMatch(startOfRight);
 
-            var startOfRight = Match(query, expectedRight.Start);
-            AssertIsNoMatch(startOfRight);
+        var endOfRight = Match(query, expectedRight.End);
+        AssertIsMatch(endOfRight, expectedLeft, expectedRight);
+    }
 
-            var endOfRight = Match(query, expectedRight.End);
-            AssertIsMatch(endOfRight, expectedLeft, expectedRight);
-        }
+    protected void AssertIsNoMatch(string queryWithMarkers)
+    {
+        var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
 
-        protected void AssertIsNoMatch(string queryWithMarkers)
-        {
-            var query = ParseExpectedLeftAndRight(queryWithMarkers, out var expectedLeft, out var expectedRight);
+        var startOfLeft = Match(query, expectedLeft.Start);
+        AssertIsNoMatch(startOfLeft);
 
-            var startOfLeft = Match(query, expectedLeft.Start);
-            AssertIsNoMatch(startOfLeft);
+        var endOfLeft = Match(query, expectedLeft.End);
+        AssertIsNoMatch(endOfLeft);
 
-            var endOfLeft = Match(query, expectedLeft.End);
-            AssertIsNoMatch(endOfLeft);
+        var startOfRight = Match(query, expectedRight.Start);
+        AssertIsNoMatch(startOfRight);
 
-            var startOfRight = Match(query, expectedRight.Start);
-            AssertIsNoMatch(startOfRight);
+        var endOfRight = Match(query, expectedRight.End);
+        AssertIsNoMatch(endOfRight);
+    }
 
-            var endOfRight = Match(query, expectedRight.End);
-            AssertIsNoMatch(endOfRight);
-        }
+    private static void AssertIsMatch(BraceMatchingResult result, TextSpan expectedLeft, TextSpan expectedRight)
+    {
+        Assert.True(result.IsValid);
+        Assert.True(result.Left.End < result.Right.Start);
+        Assert.Equal(expectedLeft, result.Left);
+        Assert.Equal(expectedRight, result.Right);
+    }
 
-        private static void AssertIsMatch(BraceMatchingResult result, TextSpan expectedLeft, TextSpan expectedRight)
-        {
-            Assert.True(result.IsValid);
-            Assert.True(result.Left.End < result.Right.Start);
-            Assert.Equal(expectedLeft, result.Left);
-            Assert.Equal(expectedRight, result.Right);
-        }
+    private static void AssertIsNoMatch(BraceMatchingResult result)
+    {
+        Assert.False(result.IsValid);
+        Assert.Equal(default(TextSpan), result.Left);
+        Assert.Equal(default(TextSpan), result.Right);
+    }
 
-        private static void AssertIsNoMatch(BraceMatchingResult result)
-        {
-            Assert.False(result.IsValid);
-            Assert.Equal(default(TextSpan), result.Left);
-            Assert.Equal(default(TextSpan), result.Right);
-        }
+    private static string ParseExpectedLeftAndRight(string queryWithMarkers, out TextSpan expectedLeft, out TextSpan expectedRight)
+    {
+        var query = queryWithMarkers.ParseSpans(out var spans);
 
-        private static string ParseExpectedLeftAndRight(string queryWithMarkers, out TextSpan expectedLeft, out TextSpan expectedRight)
-        {
-            var query = queryWithMarkers.ParseSpans(out var spans);
+        Assert.True(spans.Length == 2, "The query is malformed -- you need to mark two spans.");
 
-            Assert.True(spans.Length == 2, "The query is malformed -- you need to mark two spans.");
+        expectedLeft = spans[0];
+        expectedRight = spans[1];
+        return query;
+    }
 
-            expectedLeft = spans[0];
-            expectedRight = spans[1];
-            return query;
-        }
+    private BraceMatchingResult Match(string query, int position)
+    {
+        var compilation = CompilationFactory.CreateQuery(query);
+        var syntaxTree = compilation.SyntaxTree;
 
-        private BraceMatchingResult Match(string query, int position)
-        {
-            var compilation = CompilationFactory.CreateQuery(query);
-            var syntaxTree = compilation.SyntaxTree;
-
-            var matcher = CreateMatcher();
-            return syntaxTree.MatchBraces(position, new[] { matcher });
-        }
+        var matcher = CreateMatcher();
+        return syntaxTree.MatchBraces(position, new[] { matcher });
     }
 }

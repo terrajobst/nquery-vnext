@@ -1,30 +1,29 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundSingleRowSubselect : BoundExpression
 {
-    internal sealed class BoundSingleRowSubselect : BoundExpression
+    public BoundSingleRowSubselect(IBoundValue value, BoundQuery query)
     {
-        public BoundSingleRowSubselect(IBoundValue value, BoundQuery query)
-        {
-            Value = value;
-            Query = query;
-        }
+        Value = value;
+        Query = query;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.SingleRowSubselect; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.SingleRowSubselect; }
+    }
 
-        public override Type Type
-        {
-            get { return Value.Type; }
-        }
+    public override Type Type
+    {
+        get { return Value.Type; }
+    }
 
-        public IBoundValue Value { get; }
+    public IBoundValue Value { get; }
 
-        public BoundQuery Query { get; }
+    public BoundQuery Query { get; }
 
-        public override string ToString()
-        {
-            return $"({Query})";
-        }
+    public override string ToString()
+    {
+        return $"({Query})";
     }
 }

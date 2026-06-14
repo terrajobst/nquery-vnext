@@ -1,9 +1,8 @@
 using NQuery.Symbols;
 
-namespace NQuery.Hosting
+namespace NQuery.Hosting;
+
+public interface IMethodProvider
 {
-    public interface IMethodProvider
-    {
-        IEnumerable<MethodSymbol> GetMethods(Type type);
-    }
+    IEnumerable<MethodSymbol> GetMethods(Type type);
 }

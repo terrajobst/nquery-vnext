@@ -1,19 +1,18 @@
 using System.Collections;
 
-namespace NQuery.Iterators
+namespace NQuery.Iterators;
+
+internal sealed class NegatedComparer : IComparer
 {
-    internal sealed class NegatedComparer : IComparer
+    private readonly IComparer _comparer;
+
+    public NegatedComparer(IComparer comparer)
     {
-        private readonly IComparer _comparer;
+        _comparer = comparer;
+    }
 
-        public NegatedComparer(IComparer comparer)
-        {
-            _comparer = comparer;
-        }
-
-        public int Compare(object x, object y)
-        {
-            return -_comparer.Compare(x, y);
-        }
+    public int Compare(object x, object y)
+    {
+        return -_comparer.Compare(x, y);
     }
 }

@@ -2,68 +2,67 @@
 
 using System.Collections;
 
-namespace NQuery.Iterators
+namespace NQuery.Iterators;
+
+internal sealed class DistinctSortIterator : SortIterator
 {
-    internal sealed class DistinctSortIterator : SortIterator
+    private object[]? _lastSpooledRow;
+
+    public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
+        : base(input, sortEntries, comparers)
     {
-        private object[]? _lastSpooledRow;
+    }
 
-        public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
-            : base(input, sortEntries, comparers)
+    public override void Open()
+    {
+        base.Open();
+        _lastSpooledRow = null;
+    }
+
+    public override bool Read()
+    {
+        if (_lastSpooledRow is null)
         {
+            if (!base.Read())
+                return false;
+
+            _lastSpooledRow = GetCurrentRow();
+            return true;
         }
 
-        public override void Open()
-        {
-            base.Open();
-            _lastSpooledRow = null;
-        }
+        var atLeastOneRecordFound = false;
 
-        public override bool Read()
+        while (true)
         {
-            if (_lastSpooledRow is null)
+            if (!base.Read())
+                break;
+
+            var currentRow = GetCurrentRow();
+
+            for (var i = 0; i < SortIndices.Length; i++)
             {
-                if (!base.Read())
-                    return false;
+                var entryIndex = SortIndices[i];
+                var comparer = Comparers[i];
+                var valueOfLastRow = _lastSpooledRow[entryIndex];
+                var valueOfThisRow = currentRow[entryIndex];
 
-                _lastSpooledRow = GetCurrentRow();
-                return true;
+                if (valueOfLastRow == valueOfThisRow)
+                    continue;
+
+                if (comparer.Compare(valueOfLastRow, valueOfThisRow) == 0)
+                    continue;
+
+                atLeastOneRecordFound = true;
+                break;
             }
 
-            var atLeastOneRecordFound = false;
-
-            while (true)
+            if (atLeastOneRecordFound)
             {
-                if (!base.Read())
-                    break;
-
-                var currentRow = GetCurrentRow();
-
-                for (var i = 0; i < SortIndices.Length; i++)
-                {
-                    var entryIndex = SortIndices[i];
-                    var comparer = Comparers[i];
-                    var valueOfLastRow = _lastSpooledRow[entryIndex];
-                    var valueOfThisRow = currentRow[entryIndex];
-
-                    if (valueOfLastRow == valueOfThisRow)
-                        continue;
-
-                    if (comparer.Compare(valueOfLastRow, valueOfThisRow) == 0)
-                        continue;
-
-                    atLeastOneRecordFound = true;
-                    break;
-                }
-
-                if (atLeastOneRecordFound)
-                {
-                    _lastSpooledRow = currentRow;
-                    break;
-                }
+                _lastSpooledRow = currentRow;
+                break;
             }
-
-            return atLeastOneRecordFound;
         }
+
+        return atLeastOneRecordFound;
     }
 }

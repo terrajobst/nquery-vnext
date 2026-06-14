@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.Text.Editor;
 
-namespace NQuery.Authoring.VSEditorWpf.Commenting
+namespace NQuery.Authoring.VSEditorWpf.Commenting;
+
+public interface ICommentOperationsProvider
 {
-    public interface ICommentOperationsProvider
-    {
-        ICommentOperations GetCommentOperations(ITextView textView);
-    }
+    ICommentOperations GetCommentOperations(ITextView textView);
 }

@@ -1,8 +1,7 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public interface IAggregatable
 {
-    public interface IAggregatable
-    {
-        IAggregator CreateAggregator();
-        Type ReturnType { get; }
-    }
+    IAggregator CreateAggregator();
+    Type ReturnType { get; }
 }

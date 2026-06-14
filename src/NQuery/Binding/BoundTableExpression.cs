@@ -1,29 +1,28 @@
 using NQuery.Symbols;
 
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundTableExpression : BoundExpression
 {
-    internal sealed class BoundTableExpression : BoundExpression
+    public BoundTableExpression(TableInstanceSymbol symbol)
     {
-        public BoundTableExpression(TableInstanceSymbol symbol)
-        {
-            Symbol = symbol;
-        }
+        Symbol = symbol;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.TableExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.TableExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return Symbol.Type; }
-        }
+    public override Type Type
+    {
+        get { return Symbol.Type; }
+    }
 
-        public TableInstanceSymbol Symbol { get; }
+    public TableInstanceSymbol Symbol { get; }
 
-        public override string ToString()
-        {
-            return Symbol.ToString();
-        }
+    public override string ToString()
+    {
+        return Symbol.ToString();
     }
 }

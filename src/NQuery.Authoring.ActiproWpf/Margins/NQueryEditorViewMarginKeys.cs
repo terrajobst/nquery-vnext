@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.ActiproWpf.Margins
+namespace NQuery.Authoring.ActiproWpf.Margins;
+
+public static class NQueryEditorViewMarginKeys
 {
-    public static class NQueryEditorViewMarginKeys
-    {
-        public const string CodeActions = "NQuery Code Actions";
-    }
+    public const string CodeActions = "NQuery Code Actions";
 }

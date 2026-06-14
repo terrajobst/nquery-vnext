@@ -1,10 +1,9 @@
-namespace NQueryViewer.Editor
-{
-    public interface IEditorViewFactory
-    {
-        IEditorView CreateEditorView();
+namespace NQueryViewer.Editor;
 
-        int Priority { get; }
-        string DisplayName { get; }
-    }
+public interface IEditorViewFactory
+{
+    IEditorView CreateEditorView();
+
+    int Priority { get; }
+    string DisplayName { get; }
 }

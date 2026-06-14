@@ -1,19 +1,19 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Authoring.Selection.Providers;
 
-namespace NQuery.Authoring.Tests.Selection.Providers
-{
-    public class CommonTableExpressionQuerySelectionSpanProviderTests : SelectionSpanProviderTests
-    {
-        protected override ISelectionSpanProvider CreateProvider()
-        {
-            return new CommonTableExpressionQuerySelectionSpanProvider();
-        }
+namespace NQuery.Authoring.Tests.Selection.Providers;
 
-        [Fact]
-        public void SelectionExtensions_CommonTableExpressionQuery()
-        {
-            var query = @"
+public class CommonTableExpressionQuerySelectionSpanProviderTests : SelectionSpanProviderTests
+{
+    protected override ISelectionSpanProvider CreateProvider()
+    {
+        return new CommonTableExpressionQuerySelectionSpanProvider();
+    }
+
+    [Fact]
+    public void SelectionExtensions_CommonTableExpressionQuery()
+    {
+        var query = @"
                 WITH {{{LondonEmps AS
                 (
                     SELECT  *
@@ -30,7 +30,6 @@ namespace NQuery.Authoring.Tests.Selection.Providers
                 FROM    Employees
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

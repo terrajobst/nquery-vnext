@@ -1,9 +1,8 @@
 ﻿using NQuery.Text;
 
-namespace NQuery.Authoring.Highlighting
+namespace NQuery.Authoring.Highlighting;
+
+public interface IHighlighter
 {
-    public interface IHighlighter
-    {
-        IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position);
-    }
+    IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position);
 }

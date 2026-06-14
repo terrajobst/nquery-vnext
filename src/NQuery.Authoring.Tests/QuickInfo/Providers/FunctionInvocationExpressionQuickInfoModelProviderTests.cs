@@ -3,56 +3,55 @@ using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
 
-namespace NQuery.Authoring.Tests.QuickInfo.Providers
+namespace NQuery.Authoring.Tests.QuickInfo.Providers;
+
+public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
 {
-    public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfoModelProviderTests
+    protected override IQuickInfoModelProvider CreateProvider()
     {
-        protected override IQuickInfoModelProvider CreateProvider()
-        {
-            return new FunctionInvocationExpressionQuickInfoModelProvider();
-        }
+        return new FunctionInvocationExpressionQuickInfoModelProvider();
+    }
 
-        protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
-        {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var syntax = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Last();
-            var span = syntax.Name.Span;
-            var symbol = semanticModel.GetSymbol(syntax);
-            var markup = SymbolMarkup.ForSymbol(symbol);
-            return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
-        }
+    protected override QuickInfoModel CreateExpectedModel(SemanticModel semanticModel)
+    {
+        var syntaxTree = semanticModel.SyntaxTree;
+        var syntax = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Last();
+        var span = syntax.Name.Span;
+        var symbol = semanticModel.GetSymbol(syntax);
+        var markup = SymbolMarkup.ForSymbol(symbol);
+        return new QuickInfoModel(semanticModel, span, Glyph.Function, markup);
+    }
 
-        [Fact]
-        public void FunctionInvocationExpressionQuickInfoModelProvider_MatchesInName()
-        {
-            var query = @"
+    [Fact]
+    public void FunctionInvocationExpressionQuickInfoModelProvider_MatchesInName()
+    {
+        var query = @"
                 SELECT  LEFT(e.FirstName, {LEN}(e.FirstName))
                 FROM    Employees e
              ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
+    }
 
-        [Fact]
-        public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
-        {
-            var query = @"
+    [Fact]
+    public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
+    {
+        var query = @"
                 SELECT  LEFT(e.FirstName, {XXX}(e.FirstName))
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
+    }
 
-        [Fact]
-        public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
-        {
-            var query = @"
+    [Fact]
+    public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
+    {
+        var query = @"
                 SELECT  LEFT(e.FirstName, LEN({e.FirstName)})
                 FROM    Employees e
             ";
 
-            AssertIsNotMatch(query);
-        }
+        AssertIsNotMatch(query);
     }
 }

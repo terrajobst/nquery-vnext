@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public interface ICodeRefactoringProvider
 {
-    public interface ICodeRefactoringProvider
-    {
-        IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position);
-    }
+    IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position);
 }

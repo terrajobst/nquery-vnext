@@ -1,25 +1,24 @@
 ﻿using NQuery.Authoring.Selection;
 using NQuery.Authoring.Selection.Providers;
 
-namespace NQuery.Authoring.Tests.Selection.Providers
-{
-    public class SelectClauseSelectionSpanProviderTests : SelectionSpanProviderTests
-    {
-        protected override ISelectionSpanProvider CreateProvider()
-        {
-            return new SelectClauseSelectionSpanProvider();
-        }
+namespace NQuery.Authoring.Tests.Selection.Providers;
 
-        [Fact]
-        public void SelectionExtensions_SelectClause()
-        {
-            var query = @"
+public class SelectClauseSelectionSpanProviderTests : SelectionSpanProviderTests
+{
+    protected override ISelectionSpanProvider CreateProvider()
+    {
+        return new SelectClauseSelectionSpanProvider();
+    }
+
+    [Fact]
+    public void SelectionExtensions_SelectClause()
+    {
+        var query = @"
                 SELECT  {{{e.Country},}
                         e.City}
                 FROM    Employees e
             ";
 
-            AssertIsMatch(query);
-        }
+        AssertIsMatch(query);
     }
 }

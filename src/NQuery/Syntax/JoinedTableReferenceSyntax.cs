@@ -1,16 +1,15 @@
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+public abstract class JoinedTableReferenceSyntax : TableReferenceSyntax
 {
-    public abstract class JoinedTableReferenceSyntax : TableReferenceSyntax
+    private protected JoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right)
+        : base(syntaxTree)
     {
-        private protected JoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, TableReferenceSyntax right)
-            : base(syntaxTree)
-        {
-            Left = left;
-            Right = right;
-        }
-
-        public TableReferenceSyntax Left { get; }
-
-        public TableReferenceSyntax Right { get; }
+        Left = left;
+        Right = right;
     }
+
+    public TableReferenceSyntax Left { get; }
+
+    public TableReferenceSyntax Right { get; }
 }

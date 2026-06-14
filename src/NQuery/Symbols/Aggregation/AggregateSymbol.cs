@@ -1,23 +1,22 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class AggregateSymbol : Symbol
 {
-    public sealed class AggregateSymbol : Symbol
+    public AggregateSymbol(AggregateDefinition definition)
+        : base(definition.Name)
     {
-        public AggregateSymbol(AggregateDefinition definition)
-            : base(definition.Name)
-        {
-            Definition = definition;
-        }
+        Definition = definition;
+    }
 
-        public AggregateDefinition Definition { get; }
+    public AggregateDefinition Definition { get; }
 
-        public override SymbolKind Kind
-        {
-            get { return SymbolKind.Aggregate; }
-        }
+    public override SymbolKind Kind
+    {
+        get { return SymbolKind.Aggregate; }
+    }
 
-        public override Type Type
-        {
-            get { return TypeFacts.Missing; }
-        }
+    public override Type Type
+    {
+        get { return TypeFacts.Missing; }
     }
 }

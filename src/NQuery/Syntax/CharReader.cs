@@ -1,42 +1,41 @@
 using NQuery.Text;
 
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+internal sealed class CharReader
 {
-    internal sealed class CharReader
+    private readonly SourceText _text;
+
+    public CharReader(SourceText text)
     {
-        private readonly SourceText _text;
+        _text = text;
+    }
 
-        public CharReader(SourceText text)
+    public void NextChar()
+    {
+        Position++;
+    }
+
+    public int Position { get; private set; }
+
+    public char Current
+    {
+        get
         {
-            _text = text;
+            return Peek(0);
         }
+    }
 
-        public void NextChar()
-        {
-            Position++;
-        }
+    public char Peek()
+    {
+        return Peek(1);
+    }
 
-        public int Position { get; private set; }
-
-        public char Current
-        {
-            get
-            {
-                return Peek(0);
-            }
-        }
-
-        public char Peek()
-        {
-            return Peek(1);
-        }
-
-        public char Peek(int offset)
-        {
-            var index = Position + offset;
-            return index < _text.Length
-                       ? _text[index]
-                       : '\0';
-        }
+    public char Peek(int offset)
+    {
+        var index = Position + offset;
+        return index < _text.Length
+                   ? _text[index]
+                   : '\0';
     }
 }

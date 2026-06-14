@@ -1,14 +1,13 @@
-namespace NQuery
-{
-    internal static class ExceptionBuilder
-    {
-        public static Exception UnexpectedValue(object value)
-        {
-            var message = value is null
-                ? @"A null value was unexpected"
-                : $"The value '{value}' of type {value.GetType().Name} was unexpected";
+namespace NQuery;
 
-            return new InvalidOperationException(message);
-        }
+internal static class ExceptionBuilder
+{
+    public static Exception UnexpectedValue(object value)
+    {
+        var message = value is null
+            ? @"A null value was unexpected"
+            : $"The value '{value}' of type {value.GetType().Name} was unexpected";
+
+        return new InvalidOperationException(message);
     }
 }

@@ -1,133 +1,132 @@
 using NQuery.Text;
 
-namespace NQuery.Authoring
+namespace NQuery.Authoring;
+
+public sealed class Document
 {
-    public sealed class Document
+    private Task<SyntaxTree> _syntaxTreeTask;
+    private Task<Compilation> _compilationTask;
+    private Task<SemanticModel> _semanticModelTask;
+
+    public Document(DocumentKind kind, DataContext dataContext, SourceText text)
     {
-        private Task<SyntaxTree> _syntaxTreeTask;
-        private Task<Compilation> _compilationTask;
-        private Task<SemanticModel> _semanticModelTask;
+        Kind = kind;
+        DataContext = dataContext;
+        Text = text;
+    }
 
-        public Document(DocumentKind kind, DataContext dataContext, SourceText text)
+    public DocumentKind Kind { get; }
+
+    public DataContext DataContext { get; }
+
+    public SourceText Text { get; }
+
+    public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
+    {
+        if (_syntaxTreeTask is not null && _syntaxTreeTask.IsCompleted)
         {
-            Kind = kind;
-            DataContext = dataContext;
-            Text = text;
+            syntaxTree = _syntaxTreeTask.Result;
+            return true;
         }
 
-        public DocumentKind Kind { get; }
+        syntaxTree = null;
+        return false;
+    }
 
-        public DataContext DataContext { get; }
-
-        public SourceText Text { get; }
-
-        public bool TryGetSyntaxTree(out SyntaxTree syntaxTree)
+    public bool TryGetCompilation(out Compilation compilation)
+    {
+        if (_compilationTask is not null && _compilationTask.IsCompleted)
         {
-            if (_syntaxTreeTask is not null && _syntaxTreeTask.IsCompleted)
-            {
-                syntaxTree = _syntaxTreeTask.Result;
-                return true;
-            }
-
-            syntaxTree = null;
-            return false;
+            compilation = _compilationTask.Result;
+            return true;
         }
 
-        public bool TryGetCompilation(out Compilation compilation)
-        {
-            if (_compilationTask is not null && _compilationTask.IsCompleted)
-            {
-                compilation = _compilationTask.Result;
-                return true;
-            }
+        compilation = null;
+        return false;
+    }
 
-            compilation = null;
-            return false;
+    public bool TryGetSemanticModel(out SemanticModel semanticModel)
+    {
+        if (_semanticModelTask is not null && _semanticModelTask.IsCompleted)
+        {
+            semanticModel = _semanticModelTask.Result;
+            return true;
         }
 
-        public bool TryGetSemanticModel(out SemanticModel semanticModel)
-        {
-            if (_semanticModelTask is not null && _semanticModelTask.IsCompleted)
-            {
-                semanticModel = _semanticModelTask.Result;
-                return true;
-            }
+        semanticModel = null;
+        return false;
+    }
 
-            semanticModel = null;
-            return false;
-        }
-
-        public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            if (_syntaxTreeTask is not null)
-                return _syntaxTreeTask;
-
-            var task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
-            Interlocked.CompareExchange(ref _syntaxTreeTask, task, null);
-
+    public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+        if (_syntaxTreeTask is not null)
             return _syntaxTreeTask;
-        }
 
-        public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            if (_compilationTask is not null)
-                return _compilationTask;
+        var task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
+        Interlocked.CompareExchange(ref _syntaxTreeTask, task, null);
 
-            var task = ComputeCompilationAsync(cancellationToken);
-            Interlocked.CompareExchange(ref _compilationTask, task, null);
+        return _syntaxTreeTask;
+    }
 
+    public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+        if (_compilationTask is not null)
             return _compilationTask;
-        }
 
-        public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            if (_semanticModelTask is not null)
-                return _semanticModelTask;
+        var task = ComputeCompilationAsync(cancellationToken);
+        Interlocked.CompareExchange(ref _compilationTask, task, null);
 
-            var task = ComputeSemanticModelAsync(cancellationToken);
-            Interlocked.CompareExchange(ref _semanticModelTask, task, null);
+        return _compilationTask;
+    }
 
+    public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default(CancellationToken))
+    {
+        if (_semanticModelTask is not null)
             return _semanticModelTask;
-        }
 
-        private SyntaxTree ComputeSyntaxTree()
-        {
-            switch (Kind)
-            {
-                case DocumentKind.Query:
-                    return SyntaxTree.ParseQuery(Text);
-                case DocumentKind.Expression:
-                    return SyntaxTree.ParseExpression(Text);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+        var task = ComputeSemanticModelAsync(cancellationToken);
+        Interlocked.CompareExchange(ref _semanticModelTask, task, null);
 
-        private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
-        {
-            var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
-            return Compilation.Create(DataContext, syntaxTree);
-        }
+        return _semanticModelTask;
+    }
 
-        private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)
+    private SyntaxTree ComputeSyntaxTree()
+    {
+        switch (Kind)
         {
-            var compilation = await GetCompilationAsync(cancellationToken);
-            return await Task.Run(() => compilation.GetSemanticModel(), cancellationToken);
+            case DocumentKind.Query:
+                return SyntaxTree.ParseQuery(Text);
+            case DocumentKind.Expression:
+                return SyntaxTree.ParseExpression(Text);
+            default:
+                throw new ArgumentOutOfRangeException();
         }
+    }
 
-        public Document WithKind(DocumentKind kind)
-        {
-            return kind == Kind ? this : new Document(kind, DataContext, Text);
-        }
+    private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
+    {
+        var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
+        return Compilation.Create(DataContext, syntaxTree);
+    }
 
-        public Document WithDataContext(DataContext dataContext)
-        {
-            return dataContext == DataContext ? this : new Document(Kind, dataContext, Text);
-        }
+    private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)
+    {
+        var compilation = await GetCompilationAsync(cancellationToken);
+        return await Task.Run(() => compilation.GetSemanticModel(), cancellationToken);
+    }
 
-        public Document WithText(SourceText text)
-        {
-            return text == Text ? this : new Document(Kind, DataContext, text);
-        }
+    public Document WithKind(DocumentKind kind)
+    {
+        return kind == Kind ? this : new Document(kind, DataContext, Text);
+    }
+
+    public Document WithDataContext(DataContext dataContext)
+    {
+        return dataContext == DataContext ? this : new Document(Kind, dataContext, Text);
+    }
+
+    public Document WithText(SourceText text)
+    {
+        return text == Text ? this : new Document(Kind, DataContext, text);
     }
 }

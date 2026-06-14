@@ -1,10 +1,9 @@
-namespace NQuery.Symbols.Aggregation
+namespace NQuery.Symbols.Aggregation;
+
+public sealed class MinAggregateDefinition : MinMaxAggregateDefinition
 {
-    public sealed class MinAggregateDefinition : MinMaxAggregateDefinition
+    public MinAggregateDefinition()
+        : base(true)
     {
-        public MinAggregateDefinition()
-            : base(true)
-        {
-        }
     }
 }

@@ -2,10 +2,9 @@
 
 using NQuery.Authoring.Highlighting;
 
-namespace NQuery.Authoring.Composition.Highlighting
+namespace NQuery.Authoring.Composition.Highlighting;
+
+public interface IHighlighterService
 {
-    public interface IHighlighterService
-    {
-        ImmutableArray<IHighlighter> Highlighters { get; }
-    }
+    ImmutableArray<IHighlighter> Highlighters { get; }
 }

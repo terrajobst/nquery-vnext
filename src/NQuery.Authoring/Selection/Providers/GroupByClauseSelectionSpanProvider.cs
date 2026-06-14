@@ -1,12 +1,11 @@
 ﻿using NQuery.Syntax;
 
-namespace NQuery.Authoring.Selection.Providers
+namespace NQuery.Authoring.Selection.Providers;
+
+internal sealed class GroupByClauseSelectionSpanProvider : SeparatedSyntaxListSelectionSpanProvider<GroupByClauseSyntax, GroupByColumnSyntax>
 {
-    internal sealed class GroupByClauseSelectionSpanProvider : SeparatedSyntaxListSelectionSpanProvider<GroupByClauseSyntax, GroupByColumnSyntax>
+    protected override SeparatedSyntaxList<GroupByColumnSyntax> GetList(GroupByClauseSyntax node)
     {
-        protected override SeparatedSyntaxList<GroupByColumnSyntax> GetList(GroupByClauseSyntax node)
-        {
-            return node.Columns;
-        }
+        return node.Columns;
     }
 }

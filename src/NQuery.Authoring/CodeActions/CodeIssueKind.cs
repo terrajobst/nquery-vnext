@@ -1,9 +1,8 @@
-namespace NQuery.Authoring.CodeActions
+namespace NQuery.Authoring.CodeActions;
+
+public enum CodeIssueKind
 {
-    public enum CodeIssueKind
-    {
-        Unnecessary,
-        Warning,
-        Error
-    }
+    Unnecessary,
+    Warning,
+    Error
 }

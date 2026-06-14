@@ -1,27 +1,26 @@
-namespace NQuery.Binding
+namespace NQuery.Binding;
+
+internal sealed class BoundIsNullExpression : BoundExpression
 {
-    internal sealed class BoundIsNullExpression : BoundExpression
+    public BoundIsNullExpression(BoundExpression expression)
     {
-        public BoundIsNullExpression(BoundExpression expression)
-        {
-            Expression = expression;
-        }
+        Expression = expression;
+    }
 
-        public override BoundNodeKind Kind
-        {
-            get { return BoundNodeKind.IsNullExpression; }
-        }
+    public override BoundNodeKind Kind
+    {
+        get { return BoundNodeKind.IsNullExpression; }
+    }
 
-        public override Type Type
-        {
-            get { return typeof(bool); }
-        }
+    public override Type Type
+    {
+        get { return typeof(bool); }
+    }
 
-        public BoundExpression Expression { get; }
+    public BoundExpression Expression { get; }
 
-        public override string ToString()
-        {
-            return $"{Expression} IS NULL";
-        }
+    public override string ToString()
+    {
+        return $"{Expression} IS NULL";
     }
 }

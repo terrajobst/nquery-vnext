@@ -1,10 +1,9 @@
-namespace NQuery.Syntax
+namespace NQuery.Syntax;
+
+public abstract class SubselectExpressionSyntax : ExpressionSyntax
 {
-    public abstract class SubselectExpressionSyntax : ExpressionSyntax
+    private protected SubselectExpressionSyntax(SyntaxTree syntaxTree)
+        : base(syntaxTree)
     {
-        private protected SubselectExpressionSyntax(SyntaxTree syntaxTree)
-            : base(syntaxTree)
-        {
-        }
     }
 }

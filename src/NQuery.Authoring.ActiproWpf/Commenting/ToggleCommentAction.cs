@@ -4,43 +4,42 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Implementation;
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.ActiproWpf.Commenting
+namespace NQuery.Authoring.ActiproWpf.Commenting;
+
+public abstract class ToggleCommentAction : EditActionBase
 {
-    public abstract class ToggleCommentAction : EditActionBase
+    protected ToggleCommentAction(string text)
+        : base(text)
     {
-        protected ToggleCommentAction(string text)
-            : base(text)
-        {
-        }
+    }
 
-        protected abstract SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan textSpan);
+    protected abstract SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan textSpan);
 
-        public override async void Execute(IEditorView view)
-        {
-            var oldSelection = view.Selection.SnapshotRange;
-            var documentView = view.SyntaxEditor.GetDocumentView();
+    public override async void Execute(IEditorView view)
+    {
+        var oldSelection = view.Selection.SnapshotRange;
+        var documentView = view.SyntaxEditor.GetDocumentView();
 
-            var editorDocument = view.SyntaxEditor.Document;
-            var snapshot = editorDocument.CurrentSnapshot;
-            var syntaxTree = await documentView.Document.GetSyntaxTreeAsync();
+        var editorDocument = view.SyntaxEditor.Document;
+        var snapshot = editorDocument.CurrentSnapshot;
+        var syntaxTree = await documentView.Document.GetSyntaxTreeAsync();
 
-            if (editorDocument.CurrentSnapshot != snapshot)
-                return;
+        if (editorDocument.CurrentSnapshot != snapshot)
+            return;
 
-            var newSyntaxTree = ToggleComment(syntaxTree, documentView.Selection);
-            var oldText = documentView.Document.Text;
-            var newText = newSyntaxTree.Text;
-            var changes = newText.GetChanges(oldText);
+        var newSyntaxTree = ToggleComment(syntaxTree, documentView.Selection);
+        var oldText = documentView.Document.Text;
+        var newText = newSyntaxTree.Text;
+        var changes = newText.GetChanges(oldText);
 
-            var textChange = editorDocument.CreateTextChange(TextChangeTypes.CommentLines);
+        var textChange = editorDocument.CreateTextChange(TextChangeTypes.CommentLines);
 
-            foreach (var change in changes)
-                textChange.ReplaceText(oldText.ToRange(change.Span), change.NewText);
+        foreach (var change in changes)
+            textChange.ReplaceText(oldText.ToRange(change.Span), change.NewText);
 
-            textChange.Apply();
+        textChange.Apply();
 
-            var newSelection = oldSelection.TranslateTo(editorDocument.CurrentSnapshot, TextRangeTrackingModes.Default);
-            view.Selection.SelectRange(newSelection);
-        }
+        var newSelection = oldSelection.TranslateTo(editorDocument.CurrentSnapshot, TextRangeTrackingModes.Default);
+        view.Selection.SelectRange(newSelection);
     }
 }

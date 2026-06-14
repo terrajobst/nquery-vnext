@@ -1,15 +1,14 @@
-namespace NQuery.Binding
-{
-    internal sealed class JoinConditionBinder : LocalBinder
-    {
-        public JoinConditionBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
-            : base(sharedBinderState, parent, localSymbols)
-        {
-        }
+namespace NQuery.Binding;
 
-        protected override bool InOnClause
-        {
-            get { return true; }
-        }
+internal sealed class JoinConditionBinder : LocalBinder
+{
+    public JoinConditionBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
+        : base(sharedBinderState, parent, localSymbols)
+    {
+    }
+
+    protected override bool InOnClause
+    {
+        get { return true; }
     }
 }

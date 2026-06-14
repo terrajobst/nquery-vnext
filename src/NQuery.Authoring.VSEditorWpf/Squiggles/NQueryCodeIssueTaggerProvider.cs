@@ -7,20 +7,19 @@ using Microsoft.VisualStudio.Utilities;
 
 using NQuery.Authoring.Composition.CodeActions;
 
-namespace NQuery.Authoring.VSEditorWpf.Squiggles
-{
-    [Export(typeof(IViewTaggerProvider))]
-    [TagType(typeof(IErrorTag))]
-    [ContentType(@"NQuery")]
-    internal sealed class NQueryCodeIssueTaggerProvider : IViewTaggerProvider
-    {
-        [Import]
-        public ICodeIssueProviderService CodeIssueProviderService { get; set; }
+namespace NQuery.Authoring.VSEditorWpf.Squiggles;
 
-        public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
-        {
-            var workspace = buffer.GetWorkspace();
-            return new NQueryCodeIssueTagger(workspace, CodeIssueProviderService) as ITagger<T>;
-        }
+[Export(typeof(IViewTaggerProvider))]
+[TagType(typeof(IErrorTag))]
+[ContentType(@"NQuery")]
+internal sealed class NQueryCodeIssueTaggerProvider : IViewTaggerProvider
+{
+    [Import]
+    public ICodeIssueProviderService CodeIssueProviderService { get; set; }
+
+    public ITagger<T> CreateTagger<T>(ITextView textView, ITextBuffer buffer) where T : ITag
+    {
+        var workspace = buffer.GetWorkspace();
+        return new NQueryCodeIssueTagger(workspace, CodeIssueProviderService) as ITagger<T>;
     }
 }

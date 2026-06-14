@@ -1,7 +1,6 @@
-namespace NQuery.Authoring.BraceMatching
+namespace NQuery.Authoring.BraceMatching;
+
+public interface IBraceMatcher
 {
-    public interface IBraceMatcher
-    {
-        BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position);
-    }
+    BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position);
 }

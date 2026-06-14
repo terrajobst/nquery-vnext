@@ -1,16 +1,15 @@
 ﻿using NQuery.Syntax;
 using NQuery.Text;
 
-namespace NQuery.Authoring.Highlighting.Highlighters
+namespace NQuery.Authoring.Highlighting.Highlighters;
+
+internal sealed class InnerJoinKeywordHighlighter : KeywordHighlighter<InnerJoinedTableReferenceSyntax>
 {
-    internal sealed class InnerJoinKeywordHighlighter : KeywordHighlighter<InnerJoinedTableReferenceSyntax>
+    protected override IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, InnerJoinedTableReferenceSyntax node, int position)
     {
-        protected override IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, InnerJoinedTableReferenceSyntax node, int position)
-        {
-            if (node.InnerKeyword is not null)
-                yield return node.InnerKeyword.Span;
-            yield return node.JoinKeyword.Span;
-            yield return node.OnKeyword.Span;
-        }
+        if (node.InnerKeyword is not null)
+            yield return node.InnerKeyword.Span;
+        yield return node.JoinKeyword.Span;
+        yield return node.OnKeyword.Span;
     }
 }

@@ -2,29 +2,28 @@
 
 using NQuery.Text;
 
-namespace NQuery.Authoring.Highlighting
+namespace NQuery.Authoring.Highlighting;
+
+public abstract class KeywordHighlighter<T> : IHighlighter
+    where T : SyntaxNode
 {
-    public abstract class KeywordHighlighter<T> : IHighlighter
-        where T : SyntaxNode
+    public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
     {
-        public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
+        var syntaxTree = semanticModel.SyntaxTree;
+        var token = syntaxTree.Root.FindToken(position);
+
+        for (var current = token.Parent; current is not null; current = current.Parent)
         {
-            var syntaxTree = semanticModel.SyntaxTree;
-            var token = syntaxTree.Root.FindToken(position);
-
-            for (var current = token.Parent; current is not null; current = current.Parent)
+            if (current is T node)
             {
-                if (current is T node)
-                {
-                    var textSpans = GetHighlights(semanticModel, node, position).ToImmutableArray();
-                    if (textSpans.Any(s => s.ContainsOrTouches(position)))
-                        return textSpans;
-                }
+                var textSpans = GetHighlights(semanticModel, node, position).ToImmutableArray();
+                if (textSpans.Any(s => s.ContainsOrTouches(position)))
+                    return textSpans;
             }
-
-            return Enumerable.Empty<TextSpan>();
         }
 
-        protected abstract IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, T node, int position);
+        return Enumerable.Empty<TextSpan>();
     }
+
+    protected abstract IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, T node, int position);
 }

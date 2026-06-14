@@ -2,10 +2,9 @@
 
 using NQuery.Authoring.QuickInfo;
 
-namespace NQuery.Authoring.Composition.QuickInfo
+namespace NQuery.Authoring.Composition.QuickInfo;
+
+public interface IQuickInfoModelProviderService
 {
-    public interface IQuickInfoModelProviderService
-    {
-        ImmutableArray<IQuickInfoModelProvider> Providers { get; }
-    }
+    ImmutableArray<IQuickInfoModelProvider> Providers { get; }
 }

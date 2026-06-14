@@ -1,51 +1,50 @@
 ﻿using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
 
-namespace NQuery.Authoring.Tests.CodeActions.Refactorings
-{
-    public class RemoveRedundantBracketsTests : CodeRefactoringTests
-    {
-        protected override ICodeRefactoringProvider CreateProvider()
-        {
-            return new RemoveRedundantBracketsCodeRefactoringProvider();
-        }
+namespace NQuery.Authoring.Tests.CodeActions.Refactorings;
 
-        [Fact]
-        public void RemoveRedundantBrackets_DoesNotTrigger_WhenBracketsAreRequired()
-        {
-            var query = @"
+public class RemoveRedundantBracketsTests : CodeRefactoringTests
+{
+    protected override ICodeRefactoringProvider CreateProvider()
+    {
+        return new RemoveRedundantBracketsCodeRefactoringProvider();
+    }
+
+    [Fact]
+    public void RemoveRedundantBrackets_DoesNotTrigger_WhenBracketsAreRequired()
+    {
+        var query = @"
                 SELECT  COUNT(*) [#Rows|]
                 FROM    Employees
             ";
 
-            AssertDoesNotTrigger(query);
-        }
+        AssertDoesNotTrigger(query);
+    }
 
-        [Fact]
-        public void RemoveRedundantBrackets_DoesNotTrigger_ForKeywords()
-        {
-            var query = @"
+    [Fact]
+    public void RemoveRedundantBrackets_DoesNotTrigger_ForKeywords()
+    {
+        var query = @"
                 SELECT  COUNT(*) [#Rows]
                 FROM|    Employees
             ";
 
-            AssertDoesNotTrigger(query);
-        }
+        AssertDoesNotTrigger(query);
+    }
 
-        [Fact]
-        public void RemoveRedundantBrackets_RemovesBrackets()
-        {
-            var query = @"
+    [Fact]
+    public void RemoveRedundantBrackets_RemovesBrackets()
+    {
+        var query = @"
                 SELECT  COUNT(*) [Rows|]
                 FROM    Employees
             ";
 
-            var fixedQuery = @"
+        var fixedQuery = @"
                 SELECT  COUNT(*) Rows
                 FROM    Employees
             ";
 
-            AssertFixes(query, fixedQuery, "Remove redundant brackets");
-        }
+        AssertFixes(query, fixedQuery, "Remove redundant brackets");
     }
 }
