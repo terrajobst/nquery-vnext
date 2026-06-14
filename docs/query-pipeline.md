@@ -24,7 +24,7 @@ Internally, `Compile()` chains five stages:
 
 1. [**Binding**](query-pipeline/binding.md) — resolves identifiers against the `DataContext`
 2. [**Algebrization**](query-pipeline/algebrization.md) — lowers bound queries to logical algebra
-3. [**Optimization**](query-pipeline/optimization.md) — applies rule-based transforms
+3. [**Optimization**](query-pipeline/optimization/) — applies rule-based transforms
 4. [**Planner**](query-pipeline/planner.md) — converts logical to physical operators
 5. [**Emit**](query-pipeline/executable.md) — compiles physical plan to executable form
 
@@ -35,7 +35,7 @@ The result is a `CompiledQuery` wrapping an `ExecutablePlan`. Calling `CompiledQ
 - [**Lexing and Parsing**](query-pipeline/lexing-parsing.md) — tokenization and syntax tree construction
 - [**Binding**](query-pipeline/binding.md) — name resolution and type checking
 - [**Algebrization**](query-pipeline/algebrization.md) — logical relational algebra
-- [**Optimization**](query-pipeline/optimization.md) — passes and batching strategy
+- [**Optimization**](query-pipeline/optimization/) — passes and batching strategy
 - [**Planner**](query-pipeline/planner.md) — physical operator selection
 - [**Executable (Emit)**](query-pipeline/executable.md) — code generation
 - [**Iterators**](query-pipeline/iterators.md) — runtime execution engines
