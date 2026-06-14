@@ -1,6 +1,5 @@
 # NQuery Major Refactoring
 
-* Remove namespace-qualified type references across the NQuery project
 * Use namespaces with braces
 * Sqlite tests so we have a test oracle for correct results
 

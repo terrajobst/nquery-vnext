@@ -1,8 +1,10 @@
+using NQuery.Binding;
+
 namespace NQuery.Symbols
 {
-    public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, NQuery.Binding.IBoundValue
+    public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundValue
     {
-        private readonly NQuery.Binding.IBoundValue _aliased;
+        private readonly IBoundValue _aliased;
 
         // Real table: the column is its own value identity (its slot is minted by the algebrizer
         // at the table scan).
@@ -15,7 +17,7 @@ namespace NQuery.Symbols
 
         // Derived table: the column aliases the inner query's value, so it resolves to that value
         // rather than introducing one of its own.
-        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, NQuery.Binding.IBoundValue aliased)
+        internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, IBoundValue aliased)
             : base(column.Name)
         {
             TableInstance = tableInstance;
@@ -28,7 +30,7 @@ namespace NQuery.Symbols
             get { return SymbolKind.TableColumnInstance; }
         }
 
-        internal override NQuery.Binding.IBoundValue BoundValue => _aliased ?? this;
+        internal override IBoundValue BoundValue => _aliased ?? this;
 
         private protected override Type SlotType => Column.Type;
 

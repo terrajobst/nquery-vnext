@@ -1,24 +1,26 @@
 using System.Collections.Immutable;
 
+using NQuery.Binding;
+
 namespace NQuery.Symbols
 {
     public sealed class CommonTableExpressionSymbol : TableSymbol
     {
-        private readonly NQuery.Binding.BoundQuery _anchor;
-        private readonly ImmutableArray<NQuery.Binding.BoundQuery> _recursiveMembers;
+        private readonly BoundQuery _anchor;
+        private readonly ImmutableArray<BoundQuery> _recursiveMembers;
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (NQuery.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
+            Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
         )
-            : this(name, anchorBinder, _ => ImmutableArray<NQuery.Binding.BoundQuery>.Empty)
+            : this(name, anchorBinder, _ => ImmutableArray<BoundQuery>.Empty)
         {
         }
 
         internal CommonTableExpressionSymbol(
             string name,
-            Func<CommonTableExpressionSymbol, (NQuery.Binding.BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
-            Func<CommonTableExpressionSymbol, ImmutableArray<NQuery.Binding.BoundQuery>> recursiveBinder
+            Func<CommonTableExpressionSymbol, (BoundQuery Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder,
+            Func<CommonTableExpressionSymbol, ImmutableArray<BoundQuery>> recursiveBinder
         )
             : base(name)
         {
@@ -38,8 +40,8 @@ namespace NQuery.Symbols
 
         public override ImmutableArray<ColumnSymbol> Columns { get; }
 
-        internal NQuery.Binding.BoundQuery Anchor => _anchor;
+        internal BoundQuery Anchor => _anchor;
 
-        internal ImmutableArray<NQuery.Binding.BoundQuery> RecursiveMembers => _recursiveMembers;
+        internal ImmutableArray<BoundQuery> RecursiveMembers => _recursiveMembers;
     }
 }

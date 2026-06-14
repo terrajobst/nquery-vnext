@@ -1,12 +1,14 @@
+using NQuery.Binding;
+
 namespace NQuery.Symbols
 {
     public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
     {
-        private readonly NQuery.Binding.IBoundValue _boundValue;
+        private readonly IBoundValue _boundValue;
 
         // A query column always exposes an existing value (a table column or a computed value),
         // so it aliases that value's identity rather than introducing one.
-        internal QueryColumnInstanceSymbol(string name, NQuery.Binding.IBoundValue boundValue)
+        internal QueryColumnInstanceSymbol(string name, IBoundValue boundValue)
             : base(name)
         {
             _boundValue = boundValue;
@@ -17,7 +19,7 @@ namespace NQuery.Symbols
             get { return SymbolKind.QueryColumnInstance; }
         }
 
-        internal override NQuery.Binding.IBoundValue BoundValue => _boundValue;
+        internal override IBoundValue BoundValue => _boundValue;
 
         private protected override Type SlotType => _boundValue.Type;
     }

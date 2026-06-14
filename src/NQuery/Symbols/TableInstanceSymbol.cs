@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 
+using NQuery.Binding;
+
 namespace NQuery.Symbols
 {
     public sealed class TableInstanceSymbol : Symbol
@@ -14,7 +16,7 @@ namespace NQuery.Symbols
         }
 
         // Derived table: each column aliases the inner query's value.
-        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, NQuery.Binding.IBoundValue> aliasFactory)
+        internal TableInstanceSymbol(string name, TableSymbol table, Func<TableInstanceSymbol, ColumnSymbol, IBoundValue> aliasFactory)
             : base(name)
         {
             Table = table;
