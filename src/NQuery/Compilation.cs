@@ -44,6 +44,14 @@ public sealed class Compilation
 
         logicalQuery = LogicalOptimizer.Optimize(logicalQuery, DataContext);
         var physicalQuery = Planner.Plan(logicalQuery);
+
+#if DEBUG
+        // Assert the physical plan's slot references all resolve against the scope the
+        // emitter will compile them in -- turning an otherwise cryptic slot-lookup failure
+        // deep in emit into a clear, located error. Debug-only: omitted from release builds.
+        PhysicalPlanVerifier.Verify(physicalQuery);
+#endif
+
         var plan = Emitter.Emit(physicalQuery);
 
         return new CompiledQuery(plan);

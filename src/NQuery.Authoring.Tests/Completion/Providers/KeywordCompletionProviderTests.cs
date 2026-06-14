@@ -822,6 +822,18 @@ public class KeywordCompletionProviderTests
     }
 
     [Fact]
+    public void KeywordCompletionProvider_ReturnsApply_IfAfterCross()
+    {
+        var query = @"
+                SELECT  *
+                FROM    Employees e
+                            CROSS |
+            ";
+
+        AssertIsMatch(query, "APPLY");
+    }
+
+    [Fact]
     public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
     {
         var query = @"

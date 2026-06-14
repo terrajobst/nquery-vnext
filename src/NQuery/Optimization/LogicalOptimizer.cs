@@ -75,6 +75,12 @@ internal static class LogicalOptimizer
         ThrowIfNull(root);
         ThrowIfNull(dataContext);
 
+#if DEBUG
+        // Verify the algebrizer's output before any pass runs, so a malformed starting
+        // point is attributed to algebrization rather than the first pass.
+        LogicalPlanVerifier.Verify(root, "Logical plan verification failed (algebrized plan, before optimization)");
+#endif
+
         foreach (var batch in BuildBatches(dataContext))
             root = RunBatch(batch, root);
 
@@ -132,7 +138,7 @@ internal static class LogicalOptimizer
         if (batch.Strategy == BatchStrategy.Once)
         {
             foreach (var pass in batch.Passes)
-                root = pass.RewriteRelation(root);
+                root = RunPass(pass, root);
 
             return root;
         }
@@ -142,13 +148,28 @@ internal static class LogicalOptimizer
             var before = root;
 
             foreach (var pass in batch.Passes)
-                root = pass.RewriteRelation(root);
+                root = RunPass(pass, root);
 
             if (ReferenceEquals(root, before))
                 return root;
         }
 
         throw new InvalidOperationException($"Logical optimization batch '{batch.Name}' did not converge within {MaxIterations} iterations; a pass is likely not idempotent.");
+    }
+
+    private static LogicalOperator RunPass(LogicalOperatorRewriter pass, LogicalOperator root)
+    {
+        var rewritten = pass.RewriteRelation(root);
+
+#if DEBUG
+        // Verify only when the pass actually changed the tree (an unchanged tree was
+        // already verified by whatever produced it), and name the pass so a malformed
+        // result points straight at the culprit.
+        if (!ReferenceEquals(rewritten, root))
+            LogicalPlanVerifier.Verify(rewritten, $"Logical plan verification failed (after the '{pass.GetType().Name}' pass)");
+#endif
+
+        return rewritten;
     }
 
     private enum BatchStrategy

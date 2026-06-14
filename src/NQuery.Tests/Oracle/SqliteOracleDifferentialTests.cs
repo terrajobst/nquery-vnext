@@ -39,6 +39,28 @@ public class SqliteOracleDifferentialTests
     [InlineData("SELECT e.City, COUNT(*) FROM Employees e GROUP BY e.City")]
     [InlineData("SELECT e.ReportsTo, COUNT(*) FROM Employees e GROUP BY e.ReportsTo")]
     [InlineData("SELECT e.Country, e.City, COUNT(*) FROM Employees e GROUP BY e.Country, e.City")]
+    // CROSS APPLY, uncorrelated: the right is independent of the left, so it is the same as a
+    // CROSS JOIN to the derived table (which SQLite supports).
+    [InlineData("SELECT e.EmployeeID, x.OrderCount FROM Employees e CROSS APPLY (SELECT COUNT(*) AS OrderCount FROM Orders o) x",
+                "SELECT e.EmployeeID, x.OrderCount FROM Employees e CROSS JOIN (SELECT COUNT(*) AS OrderCount FROM Orders o) x")]
+    // CROSS APPLY, correlated to the left: equivalent to an INNER JOIN on the correlation
+    // predicate (SQLite has no APPLY/LATERAL, so the join form is the oracle).
+    [InlineData("SELECT e.EmployeeID, oa.OrderID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa WHERE oa.OrderID < 10260",
+                "SELECT e.EmployeeID, o.OrderID FROM Employees e INNER JOIN Orders o ON o.EmployeeID = e.EmployeeID WHERE o.OrderID < 10260")]
+    // CROSS APPLY, correlated: a left row with no matching right rows is dropped (inner
+    // semantics) -- customers with no qualifying order do not appear.
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID) oa WHERE oa.OrderID < 10250",
+                "SELECT c.CustomerID, o.OrderID FROM Customers c INNER JOIN Orders o ON o.CustomerID = c.CustomerID WHERE o.OrderID < 10250")]
+    // CROSS APPLY over a correlated scalar aggregate: COUNT(*) always yields one row (0 for an
+    // employee with no orders), so every left row survives -- same as the scalar subquery form.
+    [InlineData("SELECT e.EmployeeID, s.OrderCount FROM Employees e CROSS APPLY (SELECT COUNT(*) AS OrderCount FROM Orders o WHERE o.EmployeeID = e.EmployeeID) s",
+                "SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) AS OrderCount FROM Employees e")]
+    // CROSS APPLY whose body holds an EXISTS correlated to BOTH the apply's own table (t) and the
+    // apply's left (e). Decorrelating the inner EXISTS yields a hash-match join whose residual
+    // tests the outer column e.EmployeeID -- the doubly-correlated case. Equivalent to walking the
+    // assignment table directly.
+    [InlineData("SELECT e.EmployeeID, x.Territory FROM Employees e CROSS APPLY (SELECT t.TerritoryDescription AS Territory FROM Territories t WHERE EXISTS (SELECT * FROM EmployeeTerritories et WHERE t.TerritoryID = et.TerritoryID AND et.EmployeeID = e.EmployeeID)) x",
+                "SELECT e.EmployeeID, t.TerritoryDescription AS Territory FROM Employees e INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID INNER JOIN Territories t ON t.TerritoryID = et.TerritoryID")]
     // Set operators.
     [InlineData("SELECT e.City FROM Employees e UNION ALL SELECT c.City FROM Customers c")]
     [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c")]

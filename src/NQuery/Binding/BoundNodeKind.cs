@@ -25,6 +25,7 @@ internal enum BoundNodeKind
     NamedTableReference,
     DerivedTableReference,
     JoinTableReference,
+    ApplyTableReference,
 
     // Queries
     SelectQuery,

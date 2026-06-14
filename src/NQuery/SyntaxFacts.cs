@@ -107,6 +107,7 @@ public static class SyntaxFacts
 
     public static IEnumerable<SyntaxKind> GetContextualKeywordKinds()
     {
+        yield return SyntaxKind.ApplyKeyword;
         yield return SyntaxKind.LeftKeyword;
         yield return SyntaxKind.RightKeyword;
     }
@@ -253,6 +254,8 @@ public static class SyntaxFacts
                 return @"INNER";
             case SyntaxKind.CrossKeyword:
                 return @"CROSS";
+            case SyntaxKind.ApplyKeyword:
+                return @"APPLY";
             case SyntaxKind.LeftKeyword:
                 return @"LEFT";
             case SyntaxKind.RightKeyword:
@@ -363,6 +366,7 @@ public static class SyntaxFacts
             case SyntaxKind.JoinKeyword:
             case SyntaxKind.InnerKeyword:
             case SyntaxKind.CrossKeyword:
+            case SyntaxKind.ApplyKeyword:
             case SyntaxKind.LeftKeyword:
             case SyntaxKind.RightKeyword:
             case SyntaxKind.OuterKeyword:
@@ -643,6 +647,9 @@ public static class SyntaxFacts
 
         switch (text.ToUpper())
         {
+            case "APPLY":
+                return SyntaxKind.ApplyKeyword;
+
             case "LEFT":
                 return SyntaxKind.LeftKeyword;
 

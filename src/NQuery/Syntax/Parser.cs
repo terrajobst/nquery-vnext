@@ -1108,7 +1108,9 @@ internal sealed class Parser
             switch (Current.Kind)
             {
                 case SyntaxKind.CrossKeyword:
-                    left = ParseCrossJoinTableReference(left);
+                    left = Lookahead.ContextualKind == SyntaxKind.ApplyKeyword
+                               ? ParseCrossApplyTableReference(left)
+                               : ParseCrossJoinTableReference(left);
                     break;
                 case SyntaxKind.InnerKeyword:
                 case SyntaxKind.JoinKeyword:
@@ -1151,6 +1153,14 @@ internal sealed class Parser
         var joinKeyword = Match(SyntaxKind.JoinKeyword);
         var right = ParseTableReference();
         return new CrossJoinedTableReferenceSyntax(_syntaxTree, left, crossKeyword, joinKeyword, right);
+    }
+
+    private TableReferenceSyntax ParseCrossApplyTableReference(TableReferenceSyntax left)
+    {
+        var crossKeyword = Match(SyntaxKind.CrossKeyword);
+        var applyKeyword = NextTokenAsKeyword();
+        var right = ParseTableReference();
+        return new CrossAppliedTableReferenceSyntax(_syntaxTree, left, crossKeyword, applyKeyword, right);
     }
 
     private TableReferenceSyntax ParseInnerJoinTableReference(TableReferenceSyntax left)

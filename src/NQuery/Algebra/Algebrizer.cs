@@ -178,8 +178,24 @@ internal sealed class Algebrizer
             // output slots, so it carries no algebraic meaning -- inline the inner query.
             BoundDerivedTableReference derived => AlgebrizeQuery(derived.Query),
             BoundJoinTableReference join => AlgebrizeJoinTableReference(join),
+            BoundApplyTableReference apply => AlgebrizeApplyTableReference(apply),
             _ => throw ExceptionBuilder.UnexpectedValue(node.Kind)
         };
+    }
+
+    // A CROSS/OUTER APPLY is a dependent join: the right subtree is algebrized as-is, with its
+    // correlated column references still pointing at the left's value slots, and wrapped in a
+    // LogicalApply. ApplyPushdown later decorrelates it -- turning it into an ordinary join
+    // when the right does not actually depend on the left -- or leaves it as correlated nested
+    // loops. (CROSS APPLY -> inner apply, OUTER APPLY -> left-outer apply.)
+    private LogicalOperator AlgebrizeApplyTableReference(BoundApplyTableReference node)
+    {
+        var left = AlgebrizeTableReference(node.Left);
+        var right = AlgebrizeTableReference(node.Right);
+        var applyKind = node.JoinType == BoundJoinType.LeftOuter
+            ? LogicalApplyKind.LeftOuter
+            : LogicalApplyKind.Inner;
+        return new LogicalApply(applyKind, left, right, probe: null);
     }
 
     private LogicalOperator AlgebrizeJoinTableReference(BoundJoinTableReference node)

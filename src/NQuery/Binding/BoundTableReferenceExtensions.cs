@@ -28,6 +28,11 @@ internal static class BoundTableReferenceExtensions
                 GetDeclaredTableInstances(receiver, join.Left);
                 GetDeclaredTableInstances(receiver, join.Right);
                 break;
+            case BoundNodeKind.ApplyTableReference:
+                var apply = (BoundApplyTableReference)node;
+                GetDeclaredTableInstances(receiver, apply.Left);
+                GetDeclaredTableInstances(receiver, apply.Right);
+                break;
             default:
                 throw ExceptionBuilder.UnexpectedValue(node.Kind);
         }

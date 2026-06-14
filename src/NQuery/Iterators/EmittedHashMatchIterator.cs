@@ -35,6 +35,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
     private readonly bool _semi;
     private readonly bool _anti;
     private readonly HashMatchRowBuffer _rowBuffer;
+    private readonly RowBuffer _remainderRowBuffer;
     private readonly RowBuffer _outputRowBuffer;
     private readonly ProbedRowBuffer? _probedRowBuffer;
 
@@ -45,7 +46,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
     private Phase _currentPhase;
     private bool _probeMatched;
 
-    public EmittedHashMatchIterator(Iterator build, Iterator probe, int buildIndex, int probeIndex, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false)
+    public EmittedHashMatchIterator(Iterator build, Iterator probe, int buildIndex, int probeIndex, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
     {
         _build = build;
         _probe = probe;
@@ -57,6 +58,12 @@ internal sealed class EmittedHashMatchIterator : Iterator
         _semi = semi;
         _anti = anti;
         _rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+
+        // When this hash match is correlated (inside an Apply's right side), its remainder
+        // references the outer row. The outer buffer is prepended to the (build ++ probe)
+        // buffer, matching the (outer ++ build ++ probe) layout the remainder was compiled
+        // against; the rows this iterator exposes are unchanged.
+        _remainderRowBuffer = outer is null ? _rowBuffer : new CombinedRowBuffer(outer, _rowBuffer);
 
         // Inner/outer output the combined row; semi/anti output the build side only,
         // with a probing semi appending its boolean match-marker column.
@@ -181,7 +188,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
                     {
                         _rowBuffer.SetBuild(_entry);
 
-                        if (_remainder(_rowBuffer))
+                        if (_remainder(_remainderRowBuffer))
                         {
                             _entry.Matched = true;
                             _probeMatched = true;

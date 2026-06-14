@@ -25,6 +25,9 @@ partial class Binder
             case SyntaxKind.CrossJoinedTableReference:
                 return BindCrossJoinedTableReference((CrossJoinedTableReferenceSyntax)node);
 
+            case SyntaxKind.CrossAppliedTableReference:
+                return BindCrossAppliedTableReference((CrossAppliedTableReferenceSyntax)node);
+
             case SyntaxKind.InnerJoinedTableReference:
                 return BindInnerJoinedTableReference((InnerJoinedTableReferenceSyntax)node);
 
@@ -82,6 +85,20 @@ partial class Binder
         var left = BindTableReference(node.Left);
         var right = BindTableReference(node.Right);
         return new BoundJoinTableReference(BoundJoinType.Inner, left, right, null);
+    }
+
+    private BoundTableReference BindCrossAppliedTableReference(CrossAppliedTableReferenceSyntax node)
+    {
+        var left = BindTableReference(node.Left);
+
+        // Unlike a join, the right side of an APPLY may reference the left's columns, so we
+        // bind it with the left's tables in scope. A correlated reference then resolves to the
+        // left's column instances -- the same mechanism a correlated subquery uses -- which is
+        // what makes the algebrizer's dependent join correlate to the left.
+        var leftBinder = CreateLocalBinder(left.GetDeclaredTableInstances());
+        var right = leftBinder.BindTableReference(node.Right);
+
+        return new BoundApplyTableReference(BoundJoinType.Inner, left, right);
     }
 
     private BoundTableReference BindInnerJoinedTableReference(InnerJoinedTableReferenceSyntax node)

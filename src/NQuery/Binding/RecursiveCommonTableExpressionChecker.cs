@@ -110,6 +110,12 @@ internal sealed class RecursiveCommonTableExpressionChecker
                 if (join.Condition is not null)
                     WalkExpression(join.Condition);
                 break;
+            case BoundApplyTableReference apply:
+                if (apply.JoinType is BoundJoinType.FullOuter or BoundJoinType.LeftOuter or BoundJoinType.RightOuter)
+                    _diagnostics.ReportCteContainsOuterJoin(_syntax.Name);
+                WalkTableReference(apply.Left);
+                WalkTableReference(apply.Right);
+                break;
         }
     }
 

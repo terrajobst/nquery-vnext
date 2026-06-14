@@ -253,6 +253,13 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
             yield return SyntaxKind.JoinKeyword;
         }
 
+        // APPLY
+
+        if (IsAfterCrossKeyword(syntaxTree, position))
+        {
+            yield return SyntaxKind.ApplyKeyword;
+        }
+
         // INNER
         // CROSS
         // LEFT
