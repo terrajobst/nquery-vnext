@@ -9,14 +9,15 @@ public class FunctionSymbolCompletionProviderTests : SymbolCompletionProviderTes
         var completionModel = GetCompletionModel(query);
         var dataContext = completionModel.SemanticModel.Compilation.DataContext;
 
-        var function = dataContext.Functions.Single(t => t.Name == functionName);
-        var functionItem = completionModel.Items.Single(i => i.InsertionText == function.Name);
+        var definition = dataContext.Functions.Single(t => t.Name == functionName);
+        var functionItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
+        var function = Assert.IsType<FunctionSymbol>(functionItem.Symbol);
         var functionMarkup = SymbolMarkup.ForSymbol(function);
 
         Assert.Equal(Glyph.Function, functionItem.Glyph);
-        Assert.Equal(function.Name, functionItem.DisplayText);
+        Assert.Equal(definition.Name, functionItem.DisplayText);
         Assert.Equal(functionMarkup.ToString(), functionItem.Description);
-        Assert.Equal(function, functionItem.Symbol);
+        Assert.Same(definition, function.Definition);
     }
 
     [Fact]

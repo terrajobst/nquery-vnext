@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Data;
 
-using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Data;
 
@@ -39,8 +39,8 @@ public static class DataContextExtensions
         ThrowIfNull(dataContext);
         ThrowIfNull(dataTables);
 
-        var tableSymbols = dataTables.Select(CreateTable);
-        return dataContext.AddTables(tableSymbols);
+        var tableDefinitions = dataTables.Select(CreateTable);
+        return dataContext.AddTables(tableDefinitions);
     }
 
     public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
@@ -71,13 +71,12 @@ public static class DataContextExtensions
         return dataContext.AddRelations(tableRelations);
     }
 
-    private static SchemaTableSymbol CreateTable(DataTable dataTable)
+    private static DataTableDefinition CreateTable(DataTable dataTable)
     {
-        var tableDefinition = new DataTableDefinition(dataTable);
-        return new SchemaTableSymbol(tableDefinition);
+        return new DataTableDefinition(dataTable);
     }
 
-    private static TableRelation? CreateRelation(IReadOnlyList<TableSymbol> tables, DataRelation dataRelation)
+    private static TableRelation? CreateRelation(IReadOnlyList<TableDefinition> tables, DataRelation dataRelation)
     {
         var parentTable = ResolveTable(tables, dataRelation.ParentTable.TableName);
         var childTable = ResolveTable(tables, dataRelation.ChildTable.TableName);
@@ -92,15 +91,15 @@ public static class DataContextExtensions
             childColumns.Length != dataRelation.ChildColumns.Length)
             return null;
 
-        return new TableRelation(parentTable, parentColumns, childTable, childColumns);
+        return TableRelation.Create(parentTable, parentColumns, childTable, childColumns);
     }
 
-    private static TableSymbol? ResolveTable(IEnumerable<TableSymbol> tables, string tableName)
+    private static TableDefinition? ResolveTable(IEnumerable<TableDefinition> tables, string tableName)
     {
         return tables.FirstOrDefault(t => string.Equals(t.Name, tableName, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static ImmutableArray<ColumnSymbol> ResolveColumns(IEnumerable<ColumnSymbol> columns, IEnumerable<DataColumn> dataColumns)
+    private static ImmutableArray<ColumnDefinition> ResolveColumns(IEnumerable<ColumnDefinition> columns, IEnumerable<DataColumn> dataColumns)
     {
         var columnByName = columns.ToLookup(c => c.Name, StringComparer.OrdinalIgnoreCase);
         return (from dc in dataColumns

@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
+using NQuery.Metadata;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.Binding;
 
@@ -17,7 +18,7 @@ public class AggregateTests
 
         public override string Name { get; }
 
-        public override IAggregatable CreateAggregatable(Type argumentType)
+        internal override IAggregatable CreateAggregatable(Type argumentType)
         {
             return new FakeAggregatable();
         }
@@ -33,10 +34,9 @@ public class AggregateTests
         }
     }
 
-    private static AggregateSymbol CreateAggregate(string name)
+    private static AggregateDefinition CreateAggregate(string name)
     {
-        var definition = new FakeAggregateDefinition(name);
-        return new AggregateSymbol(definition);
+        return new FakeAggregateDefinition(name);
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class AggregateTests
     {
         var dataContext = DataContext.Default
                                      .AddAggregates(CreateAggregate("AGG"))
-                                     .AddFunctions(new FunctionSymbol<string, string>("AGG", x => x));
+                                     .AddFunctions(FunctionDefinition.Create<string, string>("AGG", x => x));
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
         var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
@@ -74,7 +74,7 @@ public class AggregateTests
     {
         var dataContext = DataContext.Default
                                      .AddAggregates(CreateAggregate("AGG"))
-                                     .AddFunctions(new FunctionSymbol<string, string, string>("AGG", (x, _) => x));
+                                     .AddFunctions(FunctionDefinition.Create<string, string, string>("AGG", (x, _) => x));
 
         var aggregate = dataContext.Aggregates.Last();
 
@@ -87,7 +87,7 @@ public class AggregateTests
         var symbol = semanticModel.GetSymbol(invocation);
 
         Assert.Empty(diagnostics);
-        Assert.Equal(aggregate, symbol);
+        Assert.Same(aggregate, ((AggregateSymbol)symbol!).Definition);
     }
 
     [Fact]
@@ -105,7 +105,7 @@ public class AggregateTests
         var symbol = semanticModel.GetSymbol(invocation);
 
         Assert.Empty(diagnostics);
-        Assert.Equal(countAggregated, symbol);
+        Assert.Same(countAggregated, ((AggregateSymbol)symbol!).Definition);
     }
 
     [Fact]

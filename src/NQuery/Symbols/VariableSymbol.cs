@@ -1,22 +1,23 @@
+using NQuery.Metadata;
+
 namespace NQuery.Symbols;
 
 public sealed class VariableSymbol : Symbol
 {
-    private readonly Type _type;
-
-    private object? _value;
-
-    public VariableSymbol(string name, Type type)
-        : this(name, type, null)
+    public VariableSymbol(VariableDefinition definition)
+        : base(GetName(definition))
     {
+        Definition = definition;
     }
 
-    public VariableSymbol(string name, Type type, object? value)
-        : base(name)
+    private static string GetName(VariableDefinition definition)
     {
-        _type = type;
-        Value = value;
+        ThrowIfNull(definition);
+
+        return definition.Name;
     }
+
+    public VariableDefinition Definition { get; }
 
     public override SymbolKind Kind
     {
@@ -25,18 +26,12 @@ public sealed class VariableSymbol : Symbol
 
     public override Type Type
     {
-        get { return _type; }
+        get { return Definition.Type; }
     }
 
     public object? Value
     {
-        get { return _value; }
-        set
-        {
-            if (value is not null && !_type.IsInstanceOfType(value))
-                throw new ArgumentException(string.Format(Resources.VariableValueTypeMismatch, value, _type), nameof(value));
-
-            _value = value;
-        }
+        get { return Definition.Value; }
+        set { Definition.Value = value; }
     }
 }

@@ -1,19 +1,18 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Hosting;
-using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
+using NQuery.Metadata;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery;
 
 public sealed class DataContext
 {
-    private DataContext(IImmutableList<TableSymbol> tables,
+    private DataContext(IImmutableList<TableDefinition> tables,
                         IImmutableList<TableRelation> relations,
-                        IImmutableList<FunctionSymbol> functions,
-                        IImmutableList<AggregateSymbol> aggregates,
-                        IImmutableList<VariableSymbol> variables,
+                        IImmutableList<FunctionDefinition> functions,
+                        IImmutableList<AggregateDefinition> aggregates,
+                        IImmutableList<VariableDefinition> variables,
                         IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
                         IImmutableDictionary<Type, IMethodProvider> methodProviders,
                         IImmutableDictionary<Type, IComparer> comparers)
@@ -31,15 +30,15 @@ public sealed class DataContext
     public static readonly DataContext Empty = CreateEmpty();
     public static readonly DataContext Default = CreateDefault();
 
-    public IImmutableList<TableSymbol> Tables { get; }
+    public IImmutableList<TableDefinition> Tables { get; }
 
     public IImmutableList<TableRelation> Relations { get; }
 
-    public IImmutableList<FunctionSymbol> Functions { get; }
+    public IImmutableList<FunctionDefinition> Functions { get; }
 
-    public IImmutableList<AggregateSymbol> Aggregates { get; }
+    public IImmutableList<AggregateDefinition> Aggregates { get; }
 
-    public IImmutableList<VariableSymbol> Variables { get; }
+    public IImmutableList<VariableDefinition> Variables { get; }
 
     public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders { get; }
 
@@ -49,11 +48,11 @@ public sealed class DataContext
 
     private static DataContext CreateEmpty()
     {
-        return new DataContext(ImmutableList.Create<TableSymbol>(),
+        return new DataContext(ImmutableList.Create<TableDefinition>(),
                                ImmutableList.Create<TableRelation>(),
-                               ImmutableList.Create<FunctionSymbol>(),
-                               ImmutableList.Create<AggregateSymbol>(),
-                               ImmutableList.Create<VariableSymbol>(),
+                               ImmutableList.Create<FunctionDefinition>(),
+                               ImmutableList.Create<AggregateDefinition>(),
+                               ImmutableList.Create<VariableDefinition>(),
                                ImmutableDictionary.Create<Type, IPropertyProvider>(),
                                ImmutableDictionary.Create<Type, IMethodProvider>(),
                                ImmutableDictionary.Create<Type, IComparer>());
@@ -69,11 +68,11 @@ public sealed class DataContext
         var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
                                                  .Add(typeof(object), reflectionProvider);
         var comparers = ImmutableDictionary.Create<Type, IComparer>();
-        return new DataContext(ImmutableList.Create<TableSymbol>(),
+        return new DataContext(ImmutableList.Create<TableDefinition>(),
                                ImmutableList.Create<TableRelation>(),
                                functions,
                                aggregates,
-                               ImmutableList.Create<VariableSymbol>(),
+                               ImmutableList.Create<VariableDefinition>(),
                                propertyProviders,
                                methodProviders,
                                comparers);
@@ -81,7 +80,7 @@ public sealed class DataContext
 
     // Tables
 
-    public DataContext AddTables(params TableSymbol[] tables)
+    public DataContext AddTables(params TableDefinition[] tables)
     {
         if (tables is null || tables.Length == 0)
             return this;
@@ -89,7 +88,7 @@ public sealed class DataContext
         return AddTables(tables.AsEnumerable());
     }
 
-    public DataContext AddTables(IEnumerable<TableSymbol> tables)
+    public DataContext AddTables(IEnumerable<TableDefinition> tables)
     {
         ThrowIfNull(tables);
 
@@ -97,7 +96,7 @@ public sealed class DataContext
         return WithTables(newTables);
     }
 
-    public DataContext RemoveTables(params TableSymbol[] tables)
+    public DataContext RemoveTables(params TableDefinition[] tables)
     {
         if (tables is null || tables.Length == 0)
             return this;
@@ -105,7 +104,7 @@ public sealed class DataContext
         return RemoveTables(tables.AsEnumerable());
     }
 
-    public DataContext RemoveTables(IEnumerable<TableSymbol> tables)
+    public DataContext RemoveTables(IEnumerable<TableDefinition> tables)
     {
         ThrowIfNull(tables);
 
@@ -119,7 +118,7 @@ public sealed class DataContext
         return WithTables(newTables);
     }
 
-    public DataContext WithTables(IEnumerable<TableSymbol> tables)
+    public DataContext WithTables(IEnumerable<TableDefinition> tables)
     {
         ThrowIfNull(tables);
 
@@ -183,7 +182,7 @@ public sealed class DataContext
 
     // Functions
 
-    public DataContext AddFunctions(params FunctionSymbol[] functions)
+    public DataContext AddFunctions(params FunctionDefinition[] functions)
     {
         if (functions is null || functions.Length == 0)
             return this;
@@ -191,7 +190,7 @@ public sealed class DataContext
         return AddFunctions(functions.AsEnumerable());
     }
 
-    public DataContext AddFunctions(IEnumerable<FunctionSymbol> functions)
+    public DataContext AddFunctions(IEnumerable<FunctionDefinition> functions)
     {
         ThrowIfNull(functions);
 
@@ -199,7 +198,7 @@ public sealed class DataContext
         return WithFunctions(newFunctions);
     }
 
-    public DataContext RemoveFunctions(params FunctionSymbol[] functions)
+    public DataContext RemoveFunctions(params FunctionDefinition[] functions)
     {
         if (functions is null || functions.Length == 0)
             return this;
@@ -207,7 +206,7 @@ public sealed class DataContext
         return RemoveFunctions(functions.AsEnumerable());
     }
 
-    public DataContext RemoveFunctions(IEnumerable<FunctionSymbol> functions)
+    public DataContext RemoveFunctions(IEnumerable<FunctionDefinition> functions)
     {
         ThrowIfNull(functions);
 
@@ -221,7 +220,7 @@ public sealed class DataContext
         return WithFunctions(newFunctions);
     }
 
-    public DataContext WithFunctions(IEnumerable<FunctionSymbol> functions)
+    public DataContext WithFunctions(IEnumerable<FunctionDefinition> functions)
     {
         ThrowIfNull(functions);
 
@@ -234,7 +233,7 @@ public sealed class DataContext
 
     // Aggregates
 
-    public DataContext AddAggregates(params AggregateSymbol[] aggregates)
+    public DataContext AddAggregates(params AggregateDefinition[] aggregates)
     {
         if (aggregates is null || aggregates.Length == 0)
             return this;
@@ -242,7 +241,7 @@ public sealed class DataContext
         return AddAggregates(aggregates.AsEnumerable());
     }
 
-    public DataContext AddAggregates(IEnumerable<AggregateSymbol> aggregates)
+    public DataContext AddAggregates(IEnumerable<AggregateDefinition> aggregates)
     {
         ThrowIfNull(aggregates);
 
@@ -250,7 +249,7 @@ public sealed class DataContext
         return WithAggregates(newAggregates);
     }
 
-    public DataContext RemoveAggregates(params AggregateSymbol[] aggregates)
+    public DataContext RemoveAggregates(params AggregateDefinition[] aggregates)
     {
         if (aggregates is null || aggregates.Length == 0)
             return this;
@@ -258,7 +257,7 @@ public sealed class DataContext
         return RemoveAggregates(aggregates.AsEnumerable());
     }
 
-    public DataContext RemoveAggregates(IEnumerable<AggregateSymbol> aggregates)
+    public DataContext RemoveAggregates(IEnumerable<AggregateDefinition> aggregates)
     {
         ThrowIfNull(aggregates);
 
@@ -272,7 +271,7 @@ public sealed class DataContext
         return WithAggregates(newAggregates);
     }
 
-    public DataContext WithAggregates(IEnumerable<AggregateSymbol> aggregates)
+    public DataContext WithAggregates(IEnumerable<AggregateDefinition> aggregates)
     {
         ThrowIfNull(aggregates);
 
@@ -285,7 +284,7 @@ public sealed class DataContext
 
     // Variables
 
-    public DataContext AddVariables(params VariableSymbol[] variables)
+    public DataContext AddVariables(params VariableDefinition[] variables)
     {
         if (variables is null || variables.Length == 0)
             return this;
@@ -293,7 +292,7 @@ public sealed class DataContext
         return AddVariables(variables.AsEnumerable());
     }
 
-    public DataContext AddVariables(IEnumerable<VariableSymbol> variables)
+    public DataContext AddVariables(IEnumerable<VariableDefinition> variables)
     {
         ThrowIfNull(variables);
 
@@ -301,7 +300,7 @@ public sealed class DataContext
         return WithVariables(newVariables);
     }
 
-    public DataContext RemoveVariables(params VariableSymbol[] variables)
+    public DataContext RemoveVariables(params VariableDefinition[] variables)
     {
         if (variables is null || variables.Length == 0)
             return this;
@@ -309,7 +308,7 @@ public sealed class DataContext
         return RemoveVariables(variables.AsEnumerable());
     }
 
-    public DataContext RemoveVariables(IEnumerable<VariableSymbol> variables)
+    public DataContext RemoveVariables(IEnumerable<VariableDefinition> variables)
     {
         ThrowIfNull(variables);
 
@@ -323,7 +322,7 @@ public sealed class DataContext
         return WithVariables(newVariables);
     }
 
-    public DataContext WithVariables(IEnumerable<VariableSymbol> variables)
+    public DataContext WithVariables(IEnumerable<VariableDefinition> variables)
     {
         ThrowIfNull(variables);
 

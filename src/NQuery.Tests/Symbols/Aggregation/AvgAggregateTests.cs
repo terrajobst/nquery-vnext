@@ -1,4 +1,5 @@
-using NQuery.Symbols.Aggregation;
+using NQuery.Metadata;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.Symbols.Aggregation;
 

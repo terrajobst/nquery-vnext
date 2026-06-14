@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Binding;
+using NQuery.Metadata;
+using NQuery.Metadata.Aggregation;
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Algebra;
 

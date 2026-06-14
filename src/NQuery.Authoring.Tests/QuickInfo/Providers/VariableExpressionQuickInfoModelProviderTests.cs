@@ -2,6 +2,7 @@ using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
 using NQuery.Syntax;
+using NQuery.Metadata;
 
 namespace NQuery.Authoring.Tests.QuickInfo.Providers;
 
@@ -31,7 +32,7 @@ public class VariableExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
                 WHERE   e.EmployeeId = @{EmployeeId}
              ";
 
-        AssertIsMatch(query, dc => dc.AddVariables(new VariableSymbol("EmployeeId", typeof(int))));
+        AssertIsMatch(query, dc => dc.AddVariables(VariableDefinition.Create("EmployeeId", typeof(int))));
     }
 
     [Fact]
@@ -43,7 +44,7 @@ public class VariableExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
                 WHERE   e.EmployeeId = {@}EmployeeId
             ";
 
-        AssertIsMatch(query, dc => dc.AddVariables(new VariableSymbol("EmployeeId", typeof(int))));
+        AssertIsMatch(query, dc => dc.AddVariables(VariableDefinition.Create("EmployeeId", typeof(int))));
     }
 
     [Fact]

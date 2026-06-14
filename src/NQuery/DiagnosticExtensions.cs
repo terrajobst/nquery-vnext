@@ -2,7 +2,6 @@ using System.Globalization;
 
 using NQuery.Binding;
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 using NQuery.Text;
 

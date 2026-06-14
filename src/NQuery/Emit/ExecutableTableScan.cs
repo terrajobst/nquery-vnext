@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using NQuery.Algebra;
 using NQuery.Iterators;
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Emit;
 

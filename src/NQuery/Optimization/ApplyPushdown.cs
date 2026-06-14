@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 using NQuery.Algebra;
 using NQuery.Binding;
-using NQuery.Symbols.Aggregation;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Optimization;
 

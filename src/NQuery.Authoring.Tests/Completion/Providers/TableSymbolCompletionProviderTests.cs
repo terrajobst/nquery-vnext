@@ -9,14 +9,15 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
         var completionModel = GetCompletionModel(query);
         var dataContext = completionModel.SemanticModel.Compilation.DataContext;
 
-        var table = dataContext.Tables.Single(t => t.Name == tableName);
-        var tableItem = completionModel.Items.Single(i => i.InsertionText == table.Name);
+        var definition = dataContext.Tables.Single(t => t.Name == tableName);
+        var tableItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
+        var table = Assert.IsType<SchemaTableSymbol>(tableItem.Symbol);
         var tableMarkup = SymbolMarkup.ForSymbol(table);
 
         Assert.Equal(Glyph.Table, tableItem.Glyph);
-        Assert.Equal(table.Name, tableItem.DisplayText);
+        Assert.Equal(definition.Name, tableItem.DisplayText);
         Assert.Equal(tableMarkup.ToString(), tableItem.Description);
-        Assert.Equal(table, tableItem.Symbol);
+        Assert.Same(definition, table.Definition);
     }
 
     private static void AssertIsNoMatch(string query)

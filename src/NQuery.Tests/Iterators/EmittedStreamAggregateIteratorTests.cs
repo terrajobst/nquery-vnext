@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Iterators;
-using NQuery.Symbols.Aggregation;
+using NQuery.Metadata;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.Iterators;
 

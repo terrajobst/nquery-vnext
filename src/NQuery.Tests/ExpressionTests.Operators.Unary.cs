@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests;
 
@@ -6,7 +7,7 @@ public partial class ExpressionTests
 {
     private static object? EvaluateUnary(string op, Type argumentType, object? argument)
     {
-        var variable = new VariableSymbol("arg", argumentType, argument);
+        var variable = VariableDefinition.Create("arg", argumentType, argument);
         var dataContext = DataContext.Default.AddVariables(variable);
         var expression = Expression<object>.Create(dataContext, op + " " + variable.Name);
         return expression.Evaluate();

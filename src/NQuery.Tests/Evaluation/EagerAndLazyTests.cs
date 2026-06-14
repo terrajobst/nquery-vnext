@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests.Evaluation;
 
@@ -9,9 +10,9 @@ public sealed class EagerAndLazyTests
     private static InvocationResult EvaluateAndCountInvocations(string text)
     {
         var invocationResult = new InvocationResult();
-        var invocationResultVariable = new VariableSymbol("ir", typeof(InvocationResult), invocationResult);
-        var nullInt32Function = new InvocationResultFunctionSymbol<int?>("NULL_INT32", NullInt32Function);
-        var nonNullInt32Function = new InvocationResultFunctionSymbol<int?>("NON_NULL_INT32", NonNullInt32Function);
+        var invocationResultVariable = VariableDefinition.Create("ir", typeof(InvocationResult), invocationResult);
+        var nullInt32Function = new InvocationResultFunctionDefinition<int?>("NULL_INT32", NullInt32Function);
+        var nonNullInt32Function = new InvocationResultFunctionDefinition<int?>("NON_NULL_INT32", NonNullInt32Function);
         var dataContext = DataContext.Default
                                      .AddVariables(invocationResultVariable)
                                      .AddFunctions(nullInt32Function, nonNullInt32Function);
@@ -151,10 +152,10 @@ public sealed class EagerAndLazyTests
         public int NonNullInt32FunctionCount { get; set; }
     }
 
-    private sealed class InvocationResultFunctionSymbol<TResult> : FunctionSymbol
+    private sealed class InvocationResultFunctionDefinition<TResult> : FunctionDefinition
     {
-        public InvocationResultFunctionSymbol(string name, Func<InvocationResult, TResult> function)
-            : base(name, typeof(TResult).GetNonNullableType(), new ParameterSymbol("ir", typeof(InvocationResult)))
+        public InvocationResultFunctionDefinition(string name, Func<InvocationResult, TResult> function)
+            : base(name, typeof(TResult).GetNonNullableType(), new[] { ParameterDefinition.Create("ir", typeof(InvocationResult)) })
         {
             Function = function;
         }

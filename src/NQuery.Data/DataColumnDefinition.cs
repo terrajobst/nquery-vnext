@@ -3,11 +3,9 @@ using System.Data.SqlTypes;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using NQuery.Symbols;
+namespace NQuery.Metadata;
 
-namespace NQuery.Data;
-
-public sealed class DataColumnDefinition : ColumnDefinition
+internal sealed class DataColumnDefinition : ColumnDefinition
 {
     private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) })!;
     private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull")!;
@@ -31,7 +29,7 @@ public sealed class DataColumnDefinition : ColumnDefinition
         get { return DataColumn.DataType; }
     }
 
-    public override Expression CreateInvocation(Expression instance)
+    internal override Expression CreateInvocation(Expression instance)
     {
         // var v = ((DataRow)row)[_dataColumn];
         // INullable n;

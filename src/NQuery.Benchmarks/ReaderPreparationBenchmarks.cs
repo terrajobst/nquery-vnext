@@ -5,7 +5,7 @@ using BenchmarkDotNet.Attributes;
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
 using CurrentNQuery = NQuery;
-using CurrentSymbols = NQuery.Symbols;
+using CurrentMetadata = NQuery.Metadata;
 
 namespace NQuery.Benchmarks;
 
@@ -35,7 +35,7 @@ public class ReaderPreparationBenchmarks
         var baselineTable = new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Numbers", rows));
         _oldContext = BaselineNQuery.DataContext.Default.AddTables(baselineTable);
 
-        var currentTable = new CurrentSymbols.SchemaTableSymbol(CurrentSymbols.TableDefinition.Create("Numbers", rows));
+        var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
         _newContext = CurrentNQuery.DataContext.Default.AddTables(currentTable);
     }
 

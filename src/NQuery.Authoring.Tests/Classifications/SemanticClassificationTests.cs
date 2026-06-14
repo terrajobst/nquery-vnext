@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using NQuery.Authoring.Classifications;
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Authoring.Tests.Classifications;
 
@@ -55,7 +56,7 @@ public class SemanticClassificationTests
                      };
 
         var compilation = CompilationFactory.CreateQuery(query);
-        var dataContext = compilation.DataContext.AddVariables(new VariableSymbol("Manager", typeof(int)));
+        var dataContext = compilation.DataContext.AddVariables(VariableDefinition.Create("Manager", typeof(int)));
         compilation = compilation.WithDataContext(dataContext);
 
         var syntaxTree = compilation.SyntaxTree;

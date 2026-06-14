@@ -5,7 +5,7 @@ using BenchmarkDotNet.Attributes;
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
 using CurrentNQuery = NQuery;
-using CurrentSymbols = NQuery.Symbols;
+using CurrentMetadata = NQuery.Metadata;
 
 namespace NQuery.Benchmarks;
 
@@ -33,7 +33,7 @@ public class ExecutionBenchmarks
         var baselineTable = new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Numbers", rows));
         _old = BaselineNQuery.Query.Create(BaselineNQuery.DataContext.Default.AddTables(baselineTable), sql);
 
-        var currentTable = new CurrentSymbols.SchemaTableSymbol(CurrentSymbols.TableDefinition.Create("Numbers", rows));
+        var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
         _new = CurrentNQuery.Query.Create(CurrentNQuery.DataContext.Default.AddTables(currentTable), sql);
 
         // First read compiles and caches the plan on the Query; the benchmarks below reuse it.

@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests;
 
@@ -51,7 +52,7 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_Queries_Any()
     {
-        var name = new VariableSymbol("name", typeof(string), "Margaret");
+        var name = VariableDefinition.Create("name", typeof(string), "Margaret");
         var dataContext = NorthwindDataContext.Instance.AddVariables(name);
         var text = "'London' = ANY (SELECT City FROM Employees)";
         var expression = Expression<bool>.Create(dataContext, text);

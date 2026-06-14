@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests.Symbols;
 
@@ -76,8 +77,7 @@ public class EnumerableTableDefinitionTests
         };
 
         var table = TableDefinition.Create("Table", rows);
-        var symbol = new SchemaTableSymbol(table);
-        var dataContext = DataContext.Empty.AddTables(symbol);
+        var dataContext = DataContext.Empty.AddTables(table);
         var query = Query.Create(dataContext, $"SELECT * FROM {table.Name}");
 
         using var reader = query.ExecuteReader();

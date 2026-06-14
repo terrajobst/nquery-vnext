@@ -9,14 +9,15 @@ public class AggregateSymbolCompletionProviderTests : SymbolCompletionProviderTe
         var completionModel = GetCompletionModel(query);
         var dataContext = completionModel.SemanticModel.Compilation.DataContext;
 
-        var function = dataContext.Aggregates.Single(t => t.Name == aggregateName);
-        var functionItem = completionModel.Items.Single(i => i.InsertionText == function.Name);
+        var definition = dataContext.Aggregates.Single(t => t.Name == aggregateName);
+        var functionItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
+        var function = Assert.IsType<AggregateSymbol>(functionItem.Symbol);
         var functionMarkup = SymbolMarkup.ForSymbol(function);
 
         Assert.Equal(Glyph.Aggregate, functionItem.Glyph);
-        Assert.Equal(function.Name, functionItem.DisplayText);
+        Assert.Equal(definition.Name, functionItem.DisplayText);
         Assert.Equal(functionMarkup.ToString(), functionItem.Description);
-        Assert.Equal(function, functionItem.Symbol);
+        Assert.Same(definition, function.Definition);
     }
 
     [Fact]

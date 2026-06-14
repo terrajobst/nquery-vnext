@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Symbols.Aggregation;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Iterators;
 

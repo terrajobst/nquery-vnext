@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests.Evaluation;
 
@@ -9,14 +10,14 @@ public sealed class FunctionInvocationTests : EvaluationTest
     public FunctionInvocationTests()
     {
         _dataContext = DataContext.Default.AddFunctions(
-            new FunctionSymbol<int>(nameof(StaticFunction0), StaticFunction0),
-            new FunctionSymbol<int, int>(nameof(StaticFunction1), StaticFunction1),
-            new FunctionSymbol<int, int, int>(nameof(StaticFunction2), StaticFunction2),
-            new FunctionSymbol<int, int, int, int>(nameof(StaticFunction3), StaticFunction3),
-            new FunctionSymbol<int>(nameof(InstanceFunction0), InstanceFunction0),
-            new FunctionSymbol<int, int>(nameof(InstanceFunction1), InstanceFunction1),
-            new FunctionSymbol<int, int, int>(nameof(InstanceFunction2), InstanceFunction2),
-            new FunctionSymbol<int, int, int, int>(nameof(InstanceFunction3), InstanceFunction3)
+            FunctionDefinition.Create<int>(nameof(StaticFunction0), StaticFunction0),
+            FunctionDefinition.Create<int, int>(nameof(StaticFunction1), StaticFunction1),
+            FunctionDefinition.Create<int, int, int>(nameof(StaticFunction2), StaticFunction2),
+            FunctionDefinition.Create<int, int, int, int>(nameof(StaticFunction3), StaticFunction3),
+            FunctionDefinition.Create<int>(nameof(InstanceFunction0), InstanceFunction0),
+            FunctionDefinition.Create<int, int>(nameof(InstanceFunction1), InstanceFunction1),
+            FunctionDefinition.Create<int, int, int>(nameof(InstanceFunction2), InstanceFunction2),
+            FunctionDefinition.Create<int, int, int, int>(nameof(InstanceFunction3), InstanceFunction3)
         );
     }
 

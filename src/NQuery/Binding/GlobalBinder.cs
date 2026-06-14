@@ -15,10 +15,10 @@ internal sealed class GlobalBinder : Binder
     public GlobalBinder(SharedBinderState sharedBinderState, DataContext dataContext)
         : base(sharedBinderState, null)
     {
-        var symbols = dataContext.Tables.Cast<Symbol>()
-                                 .Concat(dataContext.Functions)
-                                 .Concat(dataContext.Aggregates)
-                                 .Concat(dataContext.Variables);
+        var symbols = dataContext.Tables.Select(t => (Symbol)new SchemaTableSymbol(t))
+                                 .Concat(dataContext.Functions.Select(f => new FunctionSymbol(f)))
+                                 .Concat(dataContext.Aggregates.Select(a => new AggregateSymbol(a)))
+                                 .Concat(dataContext.Variables.Select(v => new VariableSymbol(v)));
 
         _dataContext = dataContext;
         LocalSymbols = SymbolTable.Create(symbols);
@@ -34,7 +34,7 @@ internal sealed class GlobalBinder : Binder
 
         if (!_propertySymbols.TryGetValue(type, out var result))
         {
-            result = propertyProvider.GetProperties(type).ToImmutableArray();
+            result = propertyProvider.GetProperties(type).Select(p => new PropertySymbol(p)).ToImmutableArray();
             _propertySymbols.Add(type, result);
         }
 
@@ -49,7 +49,7 @@ internal sealed class GlobalBinder : Binder
 
         if (!_methodSymbols.TryGetValue(type, out var result))
         {
-            result = methodProvider.GetMethods(type).ToImmutableArray();
+            result = methodProvider.GetMethods(type).Select(m => new MethodSymbol(m)).ToImmutableArray();
             _methodSymbols.Add(type, result);
         }
 

@@ -1,6 +1,6 @@
 using System.Collections;
 
-using NQuery.Hosting;
+using NQuery.Metadata;
 using NQuery.Iterators;
 using NQuery.Symbols;
 

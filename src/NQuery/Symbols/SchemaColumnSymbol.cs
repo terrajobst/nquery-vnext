@@ -1,3 +1,5 @@
+using NQuery.Metadata;
+
 namespace NQuery.Symbols;
 
 public sealed class SchemaColumnSymbol : ColumnSymbol

@@ -1,5 +1,6 @@
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
+using NQuery.Symbols;
 
 namespace NQuery.Authoring.Tests.SignatureHelp.Providers;
 
@@ -13,8 +14,8 @@ public class CountAllSignatureHelpModelProviderTests : SignatureHelpModelProvide
     protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
     {
         var dataContext = semanticModel.Compilation.DataContext;
-        var symbol = dataContext.Aggregates.Single(a => a.Name == "COUNT");
-        yield return symbol.ToSignatureItem();
+        var definition = dataContext.Aggregates.Single(a => a.Name == "COUNT");
+        yield return new AggregateSymbol(definition).ToSignatureItem();
     }
 
     [Fact]

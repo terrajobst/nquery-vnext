@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Iterators;
 

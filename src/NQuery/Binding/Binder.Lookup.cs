@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 
 namespace NQuery.Binding;
 

@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests;
 
@@ -6,8 +7,8 @@ public partial class ExpressionTests
 {
     private static object? EvaluateBinary(string op, Type leftType, Type rightType, object? left, object? right)
     {
-        var leftVariable = new VariableSymbol("left", leftType, left);
-        var rightVariable = new VariableSymbol("right", rightType, right);
+        var leftVariable = VariableDefinition.Create("left", leftType, left);
+        var rightVariable = VariableDefinition.Create("right", rightType, right);
         var dataContext = DataContext.Default.AddVariables(leftVariable, rightVariable);
         var text = leftVariable.Name + " " + op + " " + rightVariable.Name;
         var expression = Expression<object>.Create(dataContext, text);

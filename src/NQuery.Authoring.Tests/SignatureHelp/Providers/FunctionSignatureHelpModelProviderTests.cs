@@ -1,5 +1,6 @@
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
+using NQuery.Symbols;
 
 namespace NQuery.Authoring.Tests.SignatureHelp.Providers;
 
@@ -13,7 +14,9 @@ public class FunctionSignatureHelpModelProviderTests : SignatureHelpModelProvide
     protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
     {
         var dataContext = semanticModel.Compilation.DataContext;
-        var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING").OrderBy(f => f.Parameters.Length);
+        var symbols = dataContext.Functions.Where(f => f.Name == "SUBSTRING")
+                                 .OrderBy(f => f.Parameters.Length)
+                                 .Select(f => new FunctionSymbol(f));
         return symbols.ToSignatureItems();
     }
 

@@ -1,11 +1,9 @@
 using System.Collections;
 using System.Data;
 
-using NQuery.Symbols;
+namespace NQuery.Metadata;
 
-namespace NQuery.Data;
-
-public sealed class DataTableDefinition : TableDefinition
+internal sealed class DataTableDefinition : TableDefinition
 {
     public DataTableDefinition(DataTable dataTable)
     {

@@ -3,7 +3,7 @@ extern alias baseline;
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
 using CurrentNQuery = NQuery;
-using CurrentSymbols = NQuery.Symbols;
+using CurrentMetadata = NQuery.Metadata;
 
 namespace NQuery.Benchmarks;
 
@@ -26,7 +26,7 @@ internal static class Validator
         var baselineTable = new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Numbers", rows));
         var baselineContext = BaselineNQuery.DataContext.Default.AddTables(baselineTable);
 
-        var currentTable = new CurrentSymbols.SchemaTableSymbol(CurrentSymbols.TableDefinition.Create("Numbers", rows));
+        var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
         var currentContext = CurrentNQuery.DataContext.Default.AddTables(currentTable);
 
         var failures = 0;

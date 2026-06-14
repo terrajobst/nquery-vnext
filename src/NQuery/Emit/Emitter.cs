@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using NQuery.Algebra;
 using NQuery.Planning;
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Emit;
 

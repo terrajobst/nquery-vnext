@@ -1,8 +1,8 @@
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
+using NQuery.Metadata;
 
 namespace NQuery.Authoring.Tests.QuickInfo.Providers;
 
@@ -18,12 +18,13 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
         var syntaxTree = semanticModel.SyntaxTree;
         var syntax = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
         var span = syntax.Name.Span;
-        var symbol = GetCountAggregate(semanticModel.Compilation.DataContext);
-        var markup = SymbolMarkup.ForSymbol(symbol!);
+        var definition = GetCountAggregate(semanticModel.Compilation.DataContext);
+        var symbol = new AggregateSymbol(definition);
+        var markup = SymbolMarkup.ForSymbol(symbol);
         return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
     }
 
-    private static AggregateSymbol GetCountAggregate(DataContext dataContext)
+    private static AggregateDefinition GetCountAggregate(DataContext dataContext)
     {
         var aggregates = dataContext.Aggregates;
         return aggregates.Single(a => a.Name == "COUNT");

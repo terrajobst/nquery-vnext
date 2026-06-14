@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using NQuery.Metadata;
 
 namespace NQuery.Symbols;
 

@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 
 namespace NQuery.Authoring.SignatureHelp.Providers;

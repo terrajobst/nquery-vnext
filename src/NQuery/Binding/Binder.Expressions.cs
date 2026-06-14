@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 
 using NQuery.Symbols;
-using NQuery.Symbols.Aggregation;
 using NQuery.Syntax;
 using NQuery.Text;
+using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Binding;
 

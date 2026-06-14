@@ -1,4 +1,5 @@
 using NQuery.Symbols;
+using NQuery.Metadata;
 
 namespace NQuery.Tests;
 
@@ -103,8 +104,8 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_Resolve_ResolvesVariableType()
     {
-        var sum = new VariableSymbol("Sum", typeof(int));
-        var count = new VariableSymbol("Count", typeof(int));
+        var sum = VariableDefinition.Create("Sum", typeof(int));
+        var count = VariableDefinition.Create("Count", typeof(int));
         var dataContext = DataContext.Empty.AddVariables(sum, count);
         var expression = Expression<object>.Create(dataContext, "@Sum / @Count");
 
@@ -117,8 +118,8 @@ public partial class ExpressionTests
         // The aggregate definitions (e.g. AVG) reuse one compiled expression across rows,
         // mutating the variables between Evaluate calls -- so each evaluation must read the
         // variable's current value rather than the value captured at compile time.
-        var sum = new VariableSymbol("Sum", typeof(int));
-        var count = new VariableSymbol("Count", typeof(int));
+        var sum = VariableDefinition.Create("Sum", typeof(int));
+        var count = VariableDefinition.Create("Count", typeof(int));
         var dataContext = DataContext.Empty.AddVariables(sum, count);
         var expression = Expression<int>.Create(dataContext, "@Sum / @Count");
 
