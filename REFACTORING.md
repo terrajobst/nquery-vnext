@@ -1,7 +1,5 @@
 # NQuery Major Refactoring
 
-* Sqlite tests so we have a test oracle for correct results
-
 ## Completing the port
 
 1. Common Table Expressions — bound but not executable (biggest gap).

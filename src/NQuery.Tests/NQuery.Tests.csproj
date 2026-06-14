@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj" />
     <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
