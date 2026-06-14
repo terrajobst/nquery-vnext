@@ -1,4 +1,4 @@
-﻿namespace NQuery.Authoring.CodeActions;
+namespace NQuery.Authoring.CodeActions;
 
 public abstract class CodeRefactoringProvider<T> : ICodeRefactoringProvider
     where T : SyntaxNode

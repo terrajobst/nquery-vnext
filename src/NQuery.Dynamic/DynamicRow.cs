@@ -1,4 +1,4 @@
-﻿using System.Dynamic;
+using System.Dynamic;
 
 namespace NQuery.Dynamic;
 

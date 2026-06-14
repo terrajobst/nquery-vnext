@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.Selection;
+using NQuery.Authoring.Selection;
 using NQuery.Authoring.Selection.Providers;
 
 namespace NQuery.Authoring.Tests.Selection.Providers;

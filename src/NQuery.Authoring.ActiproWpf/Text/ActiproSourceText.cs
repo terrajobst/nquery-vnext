@@ -1,4 +1,4 @@
-﻿using ActiproSoftware.Text;
+using ActiproSoftware.Text;
 
 using NQuery.Text;
 

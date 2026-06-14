@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.SymbolSearch;
+using NQuery.Authoring.SymbolSearch;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Highlighting.Highlighters;

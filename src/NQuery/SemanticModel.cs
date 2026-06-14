@@ -1,4 +1,4 @@
-﻿using NQuery.Symbols;
+using NQuery.Symbols;
 using NQuery.Syntax;
 
 // The binder lives in NQuery.Binding. Its bound tree has the same shape and member

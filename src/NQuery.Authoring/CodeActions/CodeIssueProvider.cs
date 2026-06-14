@@ -1,4 +1,4 @@
-﻿namespace NQuery.Authoring.CodeActions;
+namespace NQuery.Authoring.CodeActions;
 
 public abstract class CodeIssueProvider<T> : ICodeIssueProvider
     where T : SyntaxNode

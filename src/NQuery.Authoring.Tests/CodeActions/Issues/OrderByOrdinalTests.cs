@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Issues;
 
 namespace NQuery.Authoring.Tests.CodeActions.Issues;

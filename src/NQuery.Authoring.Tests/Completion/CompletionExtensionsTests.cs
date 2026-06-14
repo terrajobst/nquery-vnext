@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.Completion;
+using NQuery.Authoring.Completion;
 
 namespace NQuery.Authoring.Tests.Completion;
 

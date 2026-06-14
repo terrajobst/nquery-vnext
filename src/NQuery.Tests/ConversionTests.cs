@@ -1,4 +1,4 @@
-﻿namespace NQuery.Tests;
+namespace NQuery.Tests;
 
 public class ConversionTests
 {

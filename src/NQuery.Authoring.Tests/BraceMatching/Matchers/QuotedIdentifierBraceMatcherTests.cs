@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.BraceMatching;
 using NQuery.Authoring.BraceMatching.Matchers;
 
 namespace NQuery.Authoring.Tests.BraceMatching.Matchers;

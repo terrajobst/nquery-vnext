@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Editor;
 
 namespace NQuery.Authoring.VSEditorWpf.Commenting;
 

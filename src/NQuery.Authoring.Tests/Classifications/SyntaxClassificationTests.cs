@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.Classifications;
+using NQuery.Authoring.Classifications;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Tests.Classifications;

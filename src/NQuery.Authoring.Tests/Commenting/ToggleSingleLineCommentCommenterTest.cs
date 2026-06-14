@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.Commenting;
+using NQuery.Authoring.Commenting;
 using NQuery.Text;
 
 namespace NQuery.Authoring.Tests.Commenting;

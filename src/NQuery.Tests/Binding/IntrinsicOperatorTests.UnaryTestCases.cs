@@ -1,4 +1,4 @@
-﻿namespace NQuery.Tests.Binding;
+namespace NQuery.Tests.Binding;
 
 partial class IntrinsicOperatorTests
 {

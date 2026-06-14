@@ -1,4 +1,4 @@
-﻿using NQuery.Syntax;
+using NQuery.Syntax;
 
 namespace NQuery.Tests.Binding;
 

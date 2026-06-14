@@ -1,4 +1,4 @@
-﻿using NQueryViewer.Editor;
+using NQueryViewer.Editor;
 
 namespace NQueryViewer.ActiproEditor;
 

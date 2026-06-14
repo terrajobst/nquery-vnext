@@ -1,4 +1,4 @@
-﻿namespace NQuery.Authoring.VSEditorWpf.Commenting;
+namespace NQuery.Authoring.VSEditorWpf.Commenting;
 
 public interface ICommentOperations
 {

@@ -1,4 +1,4 @@
-﻿using NQuery.Symbols;
+using NQuery.Symbols;
 using NQuery.Syntax;
 using NQuery.Text;
 

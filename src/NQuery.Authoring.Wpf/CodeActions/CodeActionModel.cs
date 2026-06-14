@@ -1,4 +1,4 @@
-﻿using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.CodeActions;
 
 namespace NQuery.Authoring.Wpf.CodeActions;
 

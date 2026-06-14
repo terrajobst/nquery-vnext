@@ -1,4 +1,4 @@
-﻿
+
 using NQuery.Text;
 
 namespace NQuery.Authoring.Wpf;

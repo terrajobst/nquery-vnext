@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.ComponentModel.Composition;
 
 using NQuery.Authoring.CodeActions;

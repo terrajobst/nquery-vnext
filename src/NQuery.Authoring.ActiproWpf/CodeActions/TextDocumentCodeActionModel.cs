@@ -1,4 +1,4 @@
-﻿using ActiproSoftware.Text;
+using ActiproSoftware.Text;
 using ActiproSoftware.Text.Implementation;
 
 using NQuery.Authoring.ActiproWpf.Text;
