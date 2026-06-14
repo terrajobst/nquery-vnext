@@ -26,6 +26,15 @@ hash-vs-loops is structural (equi-key present), not cost-based.
 
 ## Other features
 
+* Add support for `VALUES()`
+  - We probably want derived table column syntax (like we do for CTEs) first
+  - We probably want to share the syntax / machinery with CTE
+  - `SELECT * FROM (VALUES (1, 'Immo'), (2, 'Thomas')) AS D` should be rejected
+    ("column name required")
+  - `SELECT * FROM (SELECT 1, 2, 3) AS D` should be rejected ("column name
+    required")
+  - It's worth noting that no mainstream SQL engine has the notion of unnamed
+    columns for CTE/derived tables, only for the root query
 * Make LogicalConstant hold a static table and use it cases like this:
   ```SQL
   SELECT 1, 2, 3
@@ -34,7 +43,6 @@ hash-vs-loops is structural (equi-key present), not cost-based.
   UNION ALL
   SELECT 7, 8, 9
   ```
-* Add SQL's `VALUE()` constructor and use LogicalConstant
 * Merge ComputeScalar() nodes
 * Detect Filters/Join condition that are always false
 * Add more correlation tests exploiting the new `CROSS APPLY` and `OUTER APPLY`
@@ -95,6 +103,8 @@ hash-vs-loops is structural (equi-key present), not cost-based.
   - Make DataContext only deal with definitions
   - Simplify symbols
   - Replace ErrorTableSymbol with a BoundErrorTable
+  - Rename DataContext to Catalog. It's the better term. In Linq/EF it means a
+    live data base connection which this isn't.Wha
 * Change aggregates such the extension points deals with expressions trees that
   can be compiled, rather than with an interface
 * Add `NQuery.CodeAnalysis`
