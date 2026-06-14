@@ -1,7 +1,6 @@
+using NQuery.Binding;
 using NQuery.Symbols;
 using NQuery.Syntax;
-
-using NQuery.Binding;
 
 namespace NQuery;
 

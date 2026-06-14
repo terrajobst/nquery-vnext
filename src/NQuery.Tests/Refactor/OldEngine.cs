@@ -1,13 +1,12 @@
 extern alias baseline;
 
 using System.Collections.Generic;
-
 // Type aliases (not `using baseline::NQuery;`) on purpose: this file's namespace is nested
 // under NQuery, so the enclosing -- live -- NQuery.* types would shadow a namespace import and
 // we'd silently run the new engine. Qualifying through these aliases keeps everything baseline.
 using BaselineContext = baseline::NQuery.DataContext;
-using BaselineQuery = baseline::NQuery.Query;
 using BaselineData = baseline::NQuery.Data.DataContextExtensions;
+using BaselineQuery = baseline::NQuery.Query;
 
 namespace NQuery.Tests.Refactor;
 

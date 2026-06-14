@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Immutable;
+
 using NQuery.Algebra;
 
 namespace NQuery.Optimization;
@@ -182,7 +183,7 @@ internal static class LogicalOptimizer
         {
             Name = name;
             Strategy = strategy;
-            Passes = [..passes];
+            Passes = [.. passes];
         }
 
         public string Name { get; }

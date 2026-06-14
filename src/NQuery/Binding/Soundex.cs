@@ -84,17 +84,36 @@ internal static class Soundex
     {
         switch (c)
         {
-            case 'A': case 'E': case 'I': case 'O': case 'U': case 'Y': case 'H': case 'W':
+            case 'A':
+            case 'E':
+            case 'I':
+            case 'O':
+            case 'U':
+            case 'Y':
+            case 'H':
+            case 'W':
                 return c;
-            case 'B': case 'F': case 'P': case 'V':
+            case 'B':
+            case 'F':
+            case 'P':
+            case 'V':
                 return '1';
-            case 'C': case 'G': case 'J': case 'K': case 'Q': case 'S': case 'X': case 'Z':
+            case 'C':
+            case 'G':
+            case 'J':
+            case 'K':
+            case 'Q':
+            case 'S':
+            case 'X':
+            case 'Z':
                 return '2';
-            case 'D': case 'T':
+            case 'D':
+            case 'T':
                 return '3';
             case 'L':
                 return '4';
-            case 'M': case 'N':
+            case 'M':
+            case 'N':
                 return '5';
             case 'R':
                 return '6';

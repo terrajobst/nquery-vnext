@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 using NQuery.Authoring.Selection;
 
 namespace NQuery.Authoring.Composition.Selection;

@@ -49,9 +49,9 @@ internal sealed partial class App
                                    let t = (a.FullName, Path: p)
                                    group t by t.FullName
                                        into g
-                                       let p = g.First().Path
-                                       orderby p
-                                       select p).ToImmutableArray();
+                                   let p = g.First().Path
+                                   orderby p
+                                   select p).ToImmutableArray();
 
         var assemblyCatalogs = from a in uniqueAssemblyPaths
                                select new AssemblyCatalog(a);
