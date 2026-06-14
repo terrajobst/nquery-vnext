@@ -17,18 +17,25 @@
   <ItemGroup>
     <!--
       The live engine (assembly "NQuery") is the new version from this worktree and is
-      referenced normally, so its types are just NQuery.*. The baseline is the NQuery
-      project from the sibling "nquery-baseline" worktree (checked out at the comparison
-      point, e.g. main). Both projects build an assembly named "NQuery" and expose the
-      same NQuery.* types, so we rename the baseline's output to "NQuery.Baseline" (via
-      AdditionalProperties) to load them side-by-side, and the Aliases metadata gives it
-      its own root: address it as baseline::NQuery.* (see the extern alias lines in the
-      benchmark sources).
+      referenced normally, so its types are just NQuery.*. The baseline is the NQuery project
+      from the sibling "nquery-baseline" worktree (checked out at the comparison point, e.g.
+      main), which must be built separately beforehand (benchmarks run in Release, so build it
+      Release):
+
+        dotnet build ..\..\..\..\nquery-baseline\src\NQuery -c Release
+
+      That project sets AssemblyName=NQuery.Baseline so it loads side-by-side with the live
+      NQuery (same NQuery.* types otherwise); we consume it as a plain aliased Reference,
+      addressed as baseline::NQuery.* via the extern
+      alias lines in the benchmark sources. A ProjectReference is deliberately not used: the
+      worktree project's file name is also "NQuery.csproj", so it would collide with the live
+      NQuery in deps.json (both keyed by project name) and one engine would fail to load at run
+      time.
     -->
     <ProjectReference Include="..\..\NQuery\NQuery.csproj" />
-    <ProjectReference Include="..\..\..\..\nquery-baseline\src\NQuery\NQuery.csproj"
-                      Aliases="baseline"
-                      AdditionalProperties="AssemblyName=NQuery.Baseline" />
+    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
+      <HintPath>..\..\..\..\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

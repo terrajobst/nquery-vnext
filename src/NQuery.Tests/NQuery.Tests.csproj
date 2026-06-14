@@ -9,6 +9,27 @@
     <ProjectReference Include="..\NQuery.Data\NQuery.Data.csproj" />
     <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
+    <!--
+      The old engine, for differential tests (see Refactor\OldEngine.cs). These are the NQuery
+      and NQuery.Data projects from the sibling "nquery-baseline" worktree (checked out at the
+      comparison point, e.g. main), which must be built separately beforehand:
+
+        dotnet build ..\..\..\nquery-baseline\src\NQuery.Data -c Debug
+
+      (that also builds NQuery). Those projects set AssemblyName=NQuery.Baseline /
+      NQuery.Data.Baseline so they load side-by-side with the live build (same NQuery.* types
+      otherwise); we consume them as plain References under the "baseline" alias, addressed as
+      baseline::NQuery.* in OldEngine.cs. A ProjectReference is deliberately not used: the
+      worktree project file names are also "NQuery.csproj" / "NQuery.Data.csproj", so they would
+      collide with the live ones in deps.json (both keyed by project name) and an engine would
+      fail to load at run time.
+    -->
+    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
+      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\debug_net8.0\NQuery.Baseline.dll</HintPath>
+    </Reference>
+    <Reference Include="NQuery.Data.Baseline" Aliases="baseline" Private="true">
+      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery.Data\debug_net8.0\NQuery.Data.Baseline.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
