@@ -1389,7 +1389,7 @@ public partial class ExpressionTests
     [InlineData(null, true, null)]
     [InlineData(false, null, false)]
     [InlineData(null, false, false)]
-    public void Expression_Binary_BuiltIn_LogicalAnd(object left, object right, object expectedResult)
+    public void Expression_Binary_BuiltIn_LogicalAnd(object? left, object? right, object? expectedResult)
     {
         var type = typeof(bool);
         var result = EvaluateBinary("AND", type, type, left, right);
@@ -1408,7 +1408,7 @@ public partial class ExpressionTests
     [InlineData(null, true, true)]
     [InlineData(false, null, null)]
     [InlineData(null, false, null)]
-    public void Expression_Binary_BuiltIn_LogicalOr(object left, object right, object expectedResult)
+    public void Expression_Binary_BuiltIn_LogicalOr(object? left, object? right, object? expectedResult)
     {
         var type = typeof(bool);
         var result = EvaluateBinary("OR", type, type, left, right);
