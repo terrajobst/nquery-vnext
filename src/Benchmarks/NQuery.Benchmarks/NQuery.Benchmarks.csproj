@@ -16,14 +16,19 @@
 
   <ItemGroup>
     <!--
-      The live engine (assembly "NQuery") is the new version; the baseline variant
-      re-links the same sources as assembly "NQuery.Baseline" with BASELINE defined.
-      Both expose the same NQuery.* types, so the Aliases metadata gives each its own
-      root: address them as current::NQuery.* and baseline::NQuery.* (see the extern
-      alias lines in QueryBenchmarks.cs).
+      The live engine (assembly "NQuery") is the new version from this worktree and is
+      referenced normally, so its types are just NQuery.*. The baseline is the NQuery
+      project from the sibling "nquery-baseline" worktree (checked out at the comparison
+      point, e.g. main). Both projects build an assembly named "NQuery" and expose the
+      same NQuery.* types, so we rename the baseline's output to "NQuery.Baseline" (via
+      AdditionalProperties) to load them side-by-side, and the Aliases metadata gives it
+      its own root: address it as baseline::NQuery.* (see the extern alias lines in the
+      benchmark sources).
     -->
-    <ProjectReference Include="..\..\NQuery\NQuery.csproj" Aliases="current" />
-    <ProjectReference Include="..\NQuery.Baseline\NQuery.Baseline.csproj" Aliases="baseline" />
+    <ProjectReference Include="..\..\NQuery\NQuery.csproj" />
+    <ProjectReference Include="..\..\..\..\nquery-baseline\src\NQuery\NQuery.csproj"
+                      Aliases="baseline"
+                      AdditionalProperties="AssemblyName=NQuery.Baseline" />
   </ItemGroup>
 
 </Project>

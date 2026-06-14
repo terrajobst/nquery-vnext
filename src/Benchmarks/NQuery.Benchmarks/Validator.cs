@@ -1,10 +1,9 @@
 extern alias baseline;
-extern alias current;
 
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
-using CurrentNQuery = current::NQuery;
-using CurrentSymbols = current::NQuery.Symbols;
+using CurrentNQuery = NQuery;
+using CurrentSymbols = NQuery.Symbols;
 
 namespace NQuery.Benchmarks;
 
