@@ -26,5 +26,5 @@ internal sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
 
     internal override IBoundValue BoundValue => _boundValue;
 
-    private protected override Type SlotType => _boundValue.Type;
+    public override Type Type => BoundValue.Type;
 }

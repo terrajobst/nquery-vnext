@@ -37,7 +37,9 @@ internal sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundVa
 
     internal override IBoundValue BoundValue => _aliased ?? this;
 
-    private protected override Type SlotType => Column.Type;
+    // A real table column is its own value identity, so its type cannot come from BoundValue
+    // (that would be self-referential); it is the underlying column's type.
+    public override Type Type => Column.Type;
 
     public override TableInstanceSymbol TableInstance { get; }
 

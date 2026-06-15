@@ -24,11 +24,4 @@ public abstract class ColumnInstanceSymbol : Symbol
     // The value identity this column resolves to. The algebrizer maps it to a slot; the
     // symbol carries no slot of its own.
     internal abstract IBoundValue BoundValue { get; }
-
-    public sealed override Type Type
-    {
-        get { return SlotType; }
-    }
-
-    private protected abstract Type SlotType { get; }
 }
