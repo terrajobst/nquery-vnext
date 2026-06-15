@@ -16,7 +16,7 @@ public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.QueryColumnInstance; }
+        get { return SymbolKind.ColumnInstance; }
     }
 
     public override ColumnInstanceKind ColumnInstanceKind

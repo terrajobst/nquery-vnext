@@ -8,28 +8,17 @@ internal static class SymbolMarkupBuilder
     {
         switch (symbol.Kind)
         {
-            case SymbolKind.ErrorTable:
-                break;
             case SymbolKind.Column:
                 markup.AppendColumnSymbolInfo((ColumnSymbol)symbol);
                 break;
-            case SymbolKind.SchemaTable:
-                markup.AppendSchemaTableSymbolInfo((SchemaTableSymbol)symbol);
-                break;
-            case SymbolKind.DerivedTable:
-                markup.AppendDerivedTableSymbolInfo((DerivedTableSymbol)symbol);
+            case SymbolKind.Table:
+                markup.AppendTableSymbolInfo((TableSymbol)symbol);
                 break;
             case SymbolKind.TableInstance:
                 markup.AppendTableInstanceSymbolInfo((TableInstanceSymbol)symbol);
                 break;
-            case SymbolKind.TableColumnInstance:
-                markup.AppendTableColumnInstanceSymbolInfo((TableColumnInstanceSymbol)symbol);
-                break;
-            case SymbolKind.QueryColumnInstance:
-                markup.AppendQueryColumnInstanceSymbolInfo((QueryColumnInstanceSymbol)symbol);
-                break;
-            case SymbolKind.CommonTableExpression:
-                markup.AppendCommonTableExpressionSymbolInfo((CommonTableExpressionSymbol)symbol);
+            case SymbolKind.ColumnInstance:
+                markup.AppendColumnInstanceSymbolInfo((ColumnInstanceSymbol)symbol);
                 break;
             case SymbolKind.Variable:
                 markup.AppendVariableSymbolInfo((VariableSymbol)symbol);
@@ -174,6 +163,41 @@ internal static class SymbolMarkupBuilder
         markup.AppendKeyword(@"AS");
         markup.AppendSpace();
         markup.AppendType(type);
+    }
+
+    private static void AppendTableSymbolInfo(this ICollection<SymbolMarkupToken> markup, TableSymbol symbol)
+    {
+        switch (symbol.TableKind)
+        {
+            case TableKind.ErrorTable:
+                break;
+            case TableKind.SchemaTable:
+                markup.AppendSchemaTableSymbolInfo((SchemaTableSymbol)symbol);
+                break;
+            case TableKind.DerivedTable:
+                markup.AppendDerivedTableSymbolInfo((DerivedTableSymbol)symbol);
+                break;
+            case TableKind.CommonTableExpression:
+                markup.AppendCommonTableExpressionSymbolInfo((CommonTableExpressionSymbol)symbol);
+                break;
+            default:
+                throw ExceptionBuilder.UnexpectedValue(symbol.TableKind);
+        }
+    }
+
+    private static void AppendColumnInstanceSymbolInfo(this ICollection<SymbolMarkupToken> markup, ColumnInstanceSymbol symbol)
+    {
+        switch (symbol.ColumnInstanceKind)
+        {
+            case ColumnInstanceKind.TableColumn:
+                markup.AppendTableColumnInstanceSymbolInfo((TableColumnInstanceSymbol)symbol);
+                break;
+            case ColumnInstanceKind.QueryColumn:
+                markup.AppendQueryColumnInstanceSymbolInfo((QueryColumnInstanceSymbol)symbol);
+                break;
+            default:
+                throw ExceptionBuilder.UnexpectedValue(symbol.ColumnInstanceKind);
+        }
     }
 
     private static void AppendColumnSymbolInfo(this ICollection<SymbolMarkupToken> markup, ColumnSymbol symbol)

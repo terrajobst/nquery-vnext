@@ -11,7 +11,7 @@ public sealed class ErrorTableSymbol : TableSymbol
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.ErrorTable; }
+        get { return SymbolKind.Table; }
     }
 
     public override TableKind TableKind

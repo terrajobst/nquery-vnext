@@ -681,8 +681,8 @@ partial class Binder
 
         switch (symbol.Kind)
         {
-            case SymbolKind.TableColumnInstance:
-                return new BoundColumnExpression((ColumnInstanceSymbol)symbol);
+            case SymbolKind.ColumnInstance when symbol is ColumnInstanceSymbol { ColumnInstanceKind: ColumnInstanceKind.TableColumn } columnInstance:
+                return new BoundColumnExpression(columnInstance);
             case SymbolKind.Variable:
                 return new BoundVariableExpression((VariableSymbol)symbol);
             case SymbolKind.TableInstance:

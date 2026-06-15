@@ -30,7 +30,7 @@ public sealed class CommonTableExpressionSymbol : TableSymbol
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.CommonTableExpression; }
+        get { return SymbolKind.Table; }
     }
 
     public override TableKind TableKind

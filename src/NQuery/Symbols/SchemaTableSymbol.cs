@@ -23,7 +23,7 @@ public sealed class SchemaTableSymbol : TableSymbol
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.SchemaTable; }
+        get { return SymbolKind.Table; }
     }
 
     public override TableKind TableKind

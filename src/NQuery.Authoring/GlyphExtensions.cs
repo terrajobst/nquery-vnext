@@ -8,14 +8,11 @@ public static class GlyphExtensions
         {
             case SymbolKind.Column:
                 return Glyph.Column;
-            case SymbolKind.SchemaTable:
-            case SymbolKind.DerivedTable:
-            case SymbolKind.CommonTableExpression:
+            case SymbolKind.Table:
                 return Glyph.Table;
             case SymbolKind.TableInstance:
                 return Glyph.TableInstance;
-            case SymbolKind.TableColumnInstance:
-            case SymbolKind.QueryColumnInstance:
+            case SymbolKind.ColumnInstance:
                 return Glyph.Column;
             case SymbolKind.Variable:
                 return Glyph.Variable;

@@ -12,7 +12,7 @@ public sealed class DerivedTableSymbol : TableSymbol
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.DerivedTable; }
+        get { return SymbolKind.Table; }
     }
 
     public override TableKind TableKind

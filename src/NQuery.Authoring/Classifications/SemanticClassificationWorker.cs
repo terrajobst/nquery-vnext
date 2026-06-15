@@ -38,20 +38,13 @@ internal sealed class SemanticClassificationWorker
     {
         switch (symbol.Kind)
         {
-            case SymbolKind.ErrorTable:
-                return null;
-            case SymbolKind.SchemaTable:
-                return SemanticClassification.SchemaTable;
             case SymbolKind.Column:
                 return SemanticClassification.Column;
-            case SymbolKind.DerivedTable:
-                return SemanticClassification.DerivedTable;
-            case SymbolKind.CommonTableExpression:
-                return SemanticClassification.CommonTableExpression;
+            case SymbolKind.Table:
+                return GetTableClassification((TableSymbol)symbol);
             case SymbolKind.TableInstance:
                 return GetClassification(((TableInstanceSymbol)symbol).Table);
-            case SymbolKind.TableColumnInstance:
-            case SymbolKind.QueryColumnInstance:
+            case SymbolKind.ColumnInstance:
                 return SemanticClassification.Column;
             case SymbolKind.Function:
                 return SemanticClassification.Function;
@@ -63,6 +56,23 @@ internal sealed class SemanticClassificationWorker
                 return SemanticClassification.Property;
             case SymbolKind.Method:
                 return SemanticClassification.Method;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(symbol));
+        }
+    }
+
+    private static SemanticClassification? GetTableClassification(TableSymbol symbol)
+    {
+        switch (symbol.TableKind)
+        {
+            case TableKind.ErrorTable:
+                return null;
+            case TableKind.SchemaTable:
+                return SemanticClassification.SchemaTable;
+            case TableKind.DerivedTable:
+                return SemanticClassification.DerivedTable;
+            case TableKind.CommonTableExpression:
+                return SemanticClassification.CommonTableExpression;
             default:
                 throw new ArgumentOutOfRangeException(nameof(symbol));
         }

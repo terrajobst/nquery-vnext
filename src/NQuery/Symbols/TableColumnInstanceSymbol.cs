@@ -27,7 +27,7 @@ public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundValu
 
     public override SymbolKind Kind
     {
-        get { return SymbolKind.TableColumnInstance; }
+        get { return SymbolKind.ColumnInstance; }
     }
 
     public override ColumnInstanceKind ColumnInstanceKind
