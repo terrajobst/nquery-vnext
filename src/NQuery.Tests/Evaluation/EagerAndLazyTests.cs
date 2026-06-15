@@ -1,6 +1,3 @@
-using System.Linq.Expressions;
-
-using NQuery.Symbols;
 using NQuery.Metadata;
 
 namespace NQuery.Tests.Evaluation;
@@ -11,8 +8,9 @@ public sealed class EagerAndLazyTests
     {
         var invocationResult = new InvocationResult();
         var invocationResultVariable = VariableDefinition.Create("ir", typeof(InvocationResult), invocationResult);
-        var nullInt32Function = new InvocationResultFunctionDefinition<int?>("NULL_INT32", NullInt32Function);
-        var nonNullInt32Function = new InvocationResultFunctionDefinition<int?>("NON_NULL_INT32", NonNullInt32Function);
+        var parameters = new[] { ParameterDefinition.Create("ir", typeof(InvocationResult)) };
+        var nullInt32Function = FunctionDefinition.Create("NULL_INT32", typeof(int), parameters, (Func<InvocationResult, int?>)NullInt32Function);
+        var nonNullInt32Function = FunctionDefinition.Create("NON_NULL_INT32", typeof(int), parameters, (Func<InvocationResult, int?>)NonNullInt32Function);
         var dataContext = DataContext.Default
                                      .AddVariables(invocationResultVariable)
                                      .AddFunctions(nullInt32Function, nonNullInt32Function);
@@ -150,21 +148,5 @@ public sealed class EagerAndLazyTests
         public object? Result { get; set; }
         public int NullInt32FunctionCount { get; set; }
         public int NonNullInt32FunctionCount { get; set; }
-    }
-
-    private sealed class InvocationResultFunctionDefinition<TResult> : FunctionDefinition
-    {
-        public InvocationResultFunctionDefinition(string name, Func<InvocationResult, TResult> function)
-            : base(name, typeof(TResult).GetNonNullableType(), new[] { ParameterDefinition.Create("ir", typeof(InvocationResult)) })
-        {
-            Function = function;
-        }
-
-        protected override Delegate FunctionDelegate
-        {
-            get { return Function; }
-        }
-
-        private Func<InvocationResult, TResult> Function { get; }
     }
 }

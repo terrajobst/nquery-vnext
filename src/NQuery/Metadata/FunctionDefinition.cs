@@ -28,14 +28,7 @@ public abstract class FunctionDefinition
                select p.Type;
     }
 
-    internal Expression CreateInvocation(IEnumerable<Expression> arguments)
-    {
-        var function = FunctionDelegate;
-        var instance = function.Target == null ? null : Expression.Constant(function.Target);
-        return Expression.Call(instance, function.Method, arguments);
-    }
-
-    protected abstract Delegate FunctionDelegate { get; }
+    internal abstract Expression CreateInvocation(IEnumerable<Expression> arguments);
 
     public static FunctionDefinition Create(string name, Type returnType, IEnumerable<ParameterDefinition> parameters, Delegate function)
     {
@@ -44,51 +37,32 @@ public abstract class FunctionDefinition
         return new DelegateFunctionDefinition(name, returnType, parameters, function);
     }
 
-    public static FunctionDefinition Create<TResult>(string name, Func<TResult> function)
+    public static FunctionDefinition Create<TResult>(string name, System.Linq.Expressions.Expression<Func<TResult>> expression)
     {
-        return Create(name, typeof(TResult), [], function);
+        ThrowIfNull(expression);
+
+        return new ExpressionFunctionDefinition(name, expression);
     }
 
-    public static FunctionDefinition Create<T, TResult>(string name, Func<T, TResult> function)
+    public static FunctionDefinition Create<T, TResult>(string name, System.Linq.Expressions.Expression<Func<T, TResult>> expression)
     {
-        return Create(name, @"arg", function);
+        ThrowIfNull(expression);
+
+        return new ExpressionFunctionDefinition(name, expression);
     }
 
-    public static FunctionDefinition Create<T, TResult>(string name, string parameterName, Func<T, TResult> function)
+    public static FunctionDefinition Create<T1, T2, TResult>(string name, System.Linq.Expressions.Expression<Func<T1, T2, TResult>> expression)
     {
-        var parameters = new[] { 
-            ParameterDefinition.Create(parameterName, typeof(T))
-        };
-        return Create(name, typeof(TResult), parameters, function);
+        ThrowIfNull(expression);
+
+        return new ExpressionFunctionDefinition(name, expression);
     }
 
-    public static FunctionDefinition Create<T1, T2, TResult>(string name, Func<T1, T2, TResult> function)
+    public static FunctionDefinition Create<T1, T2, T3, TResult>(string name, System.Linq.Expressions.Expression<Func<T1, T2, T3, TResult>> expression)
     {
-        return Create(name, @"arg1", @"arg2", function);
-    }
+        ThrowIfNull(expression);
 
-    public static FunctionDefinition Create<T1, T2, TResult>(string name, string parameterName1, string parameterName2, Func<T1, T2, TResult> function)
-    {
-        var parameters = new[] {
-            ParameterDefinition.Create(parameterName1, typeof(T1)),
-            ParameterDefinition.Create(parameterName2, typeof(T2))
-        };
-        return Create(name, typeof(TResult), parameters, function);
-    }
-
-    public static FunctionDefinition Create<T1, T2, T3, TResult>(string name, Func<T1, T2, T3, TResult> function)
-    {
-        return Create(name, @"arg1", @"arg2", @"arg3", function);
-    }
-
-    public static FunctionDefinition Create<T1, T2, T3, TResult>(string name, string parameterName1, string parameterName2, string parameterName3, Func<T1, T2, T3, TResult> function)
-    {
-        var parameters = new[] { 
-            ParameterDefinition.Create(parameterName1, typeof(T1)),
-            ParameterDefinition.Create(parameterName2, typeof(T2)),
-            ParameterDefinition.Create(parameterName3, typeof(T3))
-        };
-        return Create(name, typeof(TResult), parameters, function);
+        return new ExpressionFunctionDefinition(name, expression);
     }
 
     private sealed class DelegateFunctionDefinition : FunctionDefinition
@@ -101,9 +75,31 @@ public abstract class FunctionDefinition
             _function = function;
         }
 
-        protected override Delegate FunctionDelegate
+        internal override Expression CreateInvocation(IEnumerable<Expression> arguments)
         {
-            get { return _function; }
+            var instance = _function.Target is null ? null : Expression.Constant(_function.Target);
+            return Expression.Call(instance, _function.Method, arguments);
+        }
+    }
+
+    private sealed class ExpressionFunctionDefinition : FunctionDefinition
+    {
+        private readonly LambdaExpression _expression;
+
+        public ExpressionFunctionDefinition(string name, LambdaExpression expression)
+            : base(name, expression.ReturnType, GetParameters(expression))
+        {
+            _expression = expression;
+        }
+
+        private static IEnumerable<ParameterDefinition> GetParameters(LambdaExpression expression)
+        {
+            return expression.Parameters.Select(p => ParameterDefinition.Create(p.Name!, p.Type));
+        }
+
+        internal override Expression CreateInvocation(IEnumerable<Expression> arguments)
+        {
+            return ExpressionInliner.Inline(_expression, arguments);
         }
     }
 }

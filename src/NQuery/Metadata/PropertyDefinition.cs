@@ -49,4 +49,25 @@ public abstract class PropertyDefinition
 
         return new ReflectionFieldDefinition(fieldInfo, name);
     }
+
+    // The single lambda parameter is the instance the property is accessed on.
+
+    public static PropertyDefinition Create<TInstance, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, TResult>> expression)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(expression);
+
+        return new ExpressionPropertyDefinition(name, expression.ReturnType, expression);
+    }
+
+    // Same, but with the property's type supplied explicitly (e.g. when it is only known at
+    // run time); the accessor produces the boxed value.
+    public static PropertyDefinition Create<TInstance>(string name, Type type, System.Linq.Expressions.Expression<Func<TInstance, object>> expression)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(type);
+        ThrowIfNull(expression);
+
+        return new ExpressionPropertyDefinition(name, type, expression);
+    }
 }

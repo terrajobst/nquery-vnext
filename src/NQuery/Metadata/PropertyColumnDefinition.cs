@@ -8,6 +8,7 @@ internal sealed class PropertyColumnDefinition : ColumnDefinition
     private readonly PropertyDefinition _property;
 
     public PropertyColumnDefinition(Type rowType, PropertyDefinition property)
+        : base(property.Name, property.Type)
     {
         _rowType = rowType;
         _property = property;
@@ -25,15 +26,5 @@ internal sealed class PropertyColumnDefinition : ColumnDefinition
                 ),
                 typeof(object)
             );
-    }
-
-    public override string Name
-    {
-        get { return _property.Name; }
-    }
-
-    public override Type DataType
-    {
-        get { return _property.Type; }
     }
 }

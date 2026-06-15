@@ -53,6 +53,28 @@ public abstract class TableDefinition
         ThrowIfNull(rowType);
         ThrowIfNull(propertyProvider);
 
-        return new EnumerableTableDefinition(name, source, rowType, propertyProvider);
+        var columns = propertyProvider.GetProperties(rowType)
+                                      .Select(p => (ColumnDefinition)new PropertyColumnDefinition(rowType, p))
+                                      .ToImmutableArray();
+        return new EnumerableTableDefinition(name, source, rowType, columns);
+    }
+
+    public static TableDefinition Create<T>(string name, IEnumerable<T> source, params IEnumerable<ColumnDefinition> columns)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(source);
+        ThrowIfNull(columns);
+
+        return Create(name, source, typeof(T), columns);
+    }
+
+    public static TableDefinition Create(string name, IEnumerable source, Type rowType, params IEnumerable<ColumnDefinition> columns)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(source);
+        ThrowIfNull(rowType);
+        ThrowIfNull(columns);
+
+        return new EnumerableTableDefinition(name, source, rowType, columns.ToImmutableArray());
     }
 }

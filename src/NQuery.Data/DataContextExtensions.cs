@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
 using System.Data;
+using System.Data.SqlTypes;
+using System.Linq.Expressions;
+using System.Reflection;
 
 using NQuery.Metadata;
 
@@ -71,9 +74,53 @@ public static class DataContextExtensions
         return dataContext.AddRelations(tableRelations);
     }
 
-    private static DataTableDefinition CreateTable(DataTable dataTable)
+    private static TableDefinition CreateTable(DataTable dataTable)
     {
-        return new DataTableDefinition(dataTable);
+        var columns = dataTable.Columns
+                               .Cast<DataColumn>()
+                               .Select(CreateColumn);
+
+        return TableDefinition.Create(dataTable.TableName, dataTable.Rows, typeof(DataRow), columns);
+    }
+
+    private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) })!;
+    private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull")!;
+
+    private static ColumnDefinition CreateColumn(DataColumn column)
+    {
+        // DataRow exposes nulls as DBNull and typed nulls as INullable; the query engine works
+        // in terms of CLR null, so unwrap both -- reading the cell once via a local:
+        //
+        //   var v = row[column];
+        //   INullable n;
+        //   return v is DBNull                              ? null
+        //        : (n = v as INullable) is not null && n.IsNull ? null
+        //        : v;
+        var row = Expression.Parameter(typeof(DataRow), "row");
+        var v = Expression.Variable(typeof(object), "v");
+        var n = Expression.Variable(typeof(INullable), "n");
+        var objectNull = Expression.Constant(null, typeof(object));
+
+        var body = Expression.Block(
+            typeof(object),
+            new[] { v, n },
+            Expression.Assign(
+                v,
+                Expression.MakeIndex(row, DataRowIndexer, new[] { Expression.Constant(column) })),
+            Expression.Condition(
+                Expression.TypeIs(v, typeof(DBNull)),
+                objectNull,
+                Expression.Condition(
+                    Expression.AndAlso(
+                        Expression.NotEqual(
+                            Expression.Assign(n, Expression.TypeAs(v, typeof(INullable))),
+                            objectNull),
+                        Expression.Property(n, NullableIsNull)),
+                    objectNull,
+                    v)));
+
+        var accessor = Expression.Lambda<Func<DataRow, object>>(body, row);
+        return ColumnDefinition.Create<DataRow>(column.ColumnName, column.DataType, accessor);
     }
 
     private static TableRelation? CreateRelation(IReadOnlyList<TableDefinition> tables, DataRelation dataRelation)

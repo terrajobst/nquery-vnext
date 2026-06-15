@@ -10,14 +10,14 @@ public sealed class FunctionInvocationTests : EvaluationTest
     public FunctionInvocationTests()
     {
         _dataContext = DataContext.Default.AddFunctions(
-            FunctionDefinition.Create<int>(nameof(StaticFunction0), StaticFunction0),
-            FunctionDefinition.Create<int, int>(nameof(StaticFunction1), StaticFunction1),
-            FunctionDefinition.Create<int, int, int>(nameof(StaticFunction2), StaticFunction2),
-            FunctionDefinition.Create<int, int, int, int>(nameof(StaticFunction3), StaticFunction3),
-            FunctionDefinition.Create<int>(nameof(InstanceFunction0), InstanceFunction0),
-            FunctionDefinition.Create<int, int>(nameof(InstanceFunction1), InstanceFunction1),
-            FunctionDefinition.Create<int, int, int>(nameof(InstanceFunction2), InstanceFunction2),
-            FunctionDefinition.Create<int, int, int, int>(nameof(InstanceFunction3), InstanceFunction3)
+            FunctionDefinition.Create<int>(nameof(StaticFunction0), () => StaticFunction0()),
+            FunctionDefinition.Create<int, int>(nameof(StaticFunction1), arg => StaticFunction1(arg)),
+            FunctionDefinition.Create<int, int, int>(nameof(StaticFunction2), (arg1, arg2) => StaticFunction2(arg1, arg2)),
+            FunctionDefinition.Create<int, int, int, int>(nameof(StaticFunction3), (arg1, arg2, arg3) => StaticFunction3(arg1, arg2, arg3)),
+            FunctionDefinition.Create<int>(nameof(InstanceFunction0), () => InstanceFunction0()),
+            FunctionDefinition.Create<int, int>(nameof(InstanceFunction1), arg => InstanceFunction1(arg)),
+            FunctionDefinition.Create<int, int, int>(nameof(InstanceFunction2), (arg1, arg2) => InstanceFunction2(arg1, arg2)),
+            FunctionDefinition.Create<int, int, int, int>(nameof(InstanceFunction3), (arg1, arg2, arg3) => InstanceFunction3(arg1, arg2, arg3))
         );
     }
 

@@ -45,4 +45,35 @@ public abstract class MethodDefinition
 
         return new ReflectionMethodDefinition(methodInfo, name);
     }
+
+    // The first lambda parameter is the instance the method is invoked on; the remaining
+    // parameters are the method's arguments.
+
+    public static MethodDefinition Create<TInstance, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, TResult>> expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionMethodDefinition(name, expression);
+    }
+
+    public static MethodDefinition Create<TInstance, T1, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, T1, TResult>> expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionMethodDefinition(name, expression);
+    }
+
+    public static MethodDefinition Create<TInstance, T1, T2, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, T1, T2, TResult>> expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionMethodDefinition(name, expression);
+    }
+
+    public static MethodDefinition Create<TInstance, T1, T2, T3, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, T1, T2, T3, TResult>> expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionMethodDefinition(name, expression);
+    }
 }

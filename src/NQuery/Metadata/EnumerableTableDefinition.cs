@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Immutable;
 
 namespace NQuery.Metadata;
 
@@ -6,20 +7,19 @@ internal sealed class EnumerableTableDefinition : TableDefinition
 {
     private readonly IEnumerable _source;
     private readonly Type _rowType;
-    private readonly IPropertyProvider _propertyProvider;
+    private readonly ImmutableArray<ColumnDefinition> _columns;
 
-    public EnumerableTableDefinition(string name, IEnumerable source, Type rowType, IPropertyProvider propertyProvider)
+    public EnumerableTableDefinition(string name, IEnumerable source, Type rowType, ImmutableArray<ColumnDefinition> columns)
     {
         Name = name;
         _source = source;
         _rowType = rowType;
-        _propertyProvider = propertyProvider;
+        _columns = columns;
     }
 
     protected override IEnumerable<ColumnDefinition> GetColumns()
     {
-        return _propertyProvider.GetProperties(_rowType)
-                                .Select(p => new PropertyColumnDefinition(_rowType, p));
+        return _columns;
     }
 
     public override IEnumerable GetRows()
