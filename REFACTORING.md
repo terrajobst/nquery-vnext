@@ -1,16 +1,22 @@
 # NQuery Major Refactoring
 
-* Review definition hierarchy
-    - Make ctors internal
-    - Do we need InvocableDefinition at all?
-    - Keep abstract types public
-    - Internalize the derivatives and expose properties
-* Any reason to have anything in Metadata.Aggregation be public?
-* Can we replace `params T[]` with `params IEnumerable<T>` everywhere?
-* Symbol Hierarchy
-    - Keep abstract types public
-    - Do we need InvocableSymbol at all?
-    - Internalize the derivatives and expose properties
+* Rename DataContext to Catalog. It's the better term. In Linq/EF it means
+  a live data base connection which this isn't.
+* Add `NQuery.CodeAnalysis`
+    - Move all the language processing under it (syntax, symbols, binding, algebra etc)
+    - Just keep the non-compilation APIs around
+    - `Query`
+    - `Expression<T>`
+    - `DataContext`
+    - Diagnostics
+    - Definitions
+    - ShowPlan
+* Change aggregates such the extension points deals with expressions trees that
+  can be compiled, rather than with an interface
+    - Similar to columns, properties, and methods
+* Replace usages of HashSet<> and Dictionary<,> with FrozenSet and
+  FrozenDictionary where it makes sense
+* Are properties on the show plan used at all?
 
 ## Port Common Table Expressions
 
@@ -76,8 +82,8 @@ execution; no evaluation test drives a CTE through the new engine.
 ## Miscellaneous
 
 * Make sure we have argument validation for all public APIs
-* For internal/private APIs I want argument validation for public statics and
-  constructors
+    - For internal/private APIs I want argument validation for public statics and
+      constructors
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
@@ -101,33 +107,6 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* Fully split definitions and symbols
-    - [x] Make DataContext only deal with definitions. `DataContext` now holds
-      `TableDefinition`, `FunctionDefinition`, `AggregateDefinition`,
-      `VariableDefinition` and (definition-based) `TableRelation`. The binder
-      (`GlobalBinder`) materializes the corresponding symbols.
-    - [x] Symbols are now compilation artifacts: `FunctionSymbol` and
-      `VariableSymbol` wrap their definitions and are constructed during binding.
-    - [ ] Simplify symbols further
-    - [ ] Replace ErrorTableSymbol with a BoundErrorTable (already binder-only,
-      so not required for the divorce, but still worth doing)
-    - [ ] Rename DataContext to Catalog. It's the better term. In Linq/EF it means
-      a live data base connection which this isn't.
-    - Should definitions have internal constructors and only be instantiated via
-      factories?
-    - IPropertyProvider and IMethodProvider create symbols. Should they create
-      definitions instead?
-* Change aggregates such the extension points deals with expressions trees that
-  can be compiled, rather than with an interface
-* Add `NQuery.CodeAnalysis`
-    - Move all the language processing under it (syntax, symbols, binding, algebra etc)
-    - Just keep the non-compilation APIs around
-    - `Query`
-    - `Expression<T>`
-    - `DataContext`
-    - Diagnostics
-    - Definitions
-    - ShowPlan
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
