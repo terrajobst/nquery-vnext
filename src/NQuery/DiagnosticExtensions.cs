@@ -385,7 +385,7 @@ internal static class DiagnosticExtensions
         diagnostics.Report(name.Span, DiagnosticId.AmbiguousProperty, name.ValueText);
     }
 
-    public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, Symbol symbol1, Symbol symbol2, IReadOnlyList<Type> argumentTypes)
+    public static void ReportAmbiguousInvocation(this ICollection<Diagnostic> diagnostics, TextSpan span, IInvocableSymbol symbol1, IInvocableSymbol symbol2, IReadOnlyList<Type> argumentTypes)
     {
         if (argumentTypes.Count > 0)
         {
