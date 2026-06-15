@@ -1,14 +1,17 @@
+using System.Collections.Immutable;
 using System.Linq.Expressions;
 using NQuery.Metadata;
 
 namespace NQuery.Symbols;
 
-public sealed class FunctionSymbol : InvocableSymbol
+public sealed class FunctionSymbol : Symbol, IInvocableSymbol
 {
     public FunctionSymbol(FunctionDefinition definition)
-        : base(GetName(definition), definition.ReturnType, definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type)))
+        : base(GetName(definition))
     {
         Definition = definition;
+        ReturnType = definition.ReturnType;
+        Parameters = definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type)).ToImmutableArray();
     }
 
     private static string GetName(FunctionDefinition definition)
@@ -23,6 +26,15 @@ public sealed class FunctionSymbol : InvocableSymbol
     public override SymbolKind Kind
     {
         get { return SymbolKind.Function; }
+    }
+
+    public ImmutableArray<ParameterSymbol> Parameters { get; }
+
+    public Type ReturnType { get; }
+
+    public override Type Type
+    {
+        get { return ReturnType; }
     }
 
     internal Expression CreateInvocation(IEnumerable<Expression> arguments)

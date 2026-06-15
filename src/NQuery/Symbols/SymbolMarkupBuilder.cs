@@ -304,7 +304,7 @@ internal static class SymbolMarkupBuilder
         markup.AppendPunctuation(@")");
     }
 
-    private static void AppendInvocable(this ICollection<SymbolMarkupToken> markup, InvocableSymbol symbol)
+    private static void AppendInvocable(this ICollection<SymbolMarkupToken> markup, IInvocableSymbol symbol)
     {
         markup.AppendPunctuation(@"(");
 
@@ -326,6 +326,6 @@ internal static class SymbolMarkupBuilder
 
         markup.AppendPunctuation(@")");
         markup.AppendSpace();
-        markup.AppendAsType(symbol.Type);
+        markup.AppendAsType(symbol.ReturnType);
     }
 }

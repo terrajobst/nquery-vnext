@@ -109,7 +109,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
         if (!multiple)
             return CreateSymbolCompletion(symbols.First());
 
-        var hasNonInvocables = symbols.Any(s => s is not InvocableSymbol);
+        var hasNonInvocables = symbols.Any(s => s.Kind is not (SymbolKind.Function or SymbolKind.Method));
         if (!hasNonInvocables)
             return CreateInvocableCompletionGroup(symbols);
 
