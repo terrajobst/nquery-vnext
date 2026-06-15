@@ -65,8 +65,6 @@ internal sealed class SemanticClassificationWorker
     {
         switch (symbol.TableKind)
         {
-            case TableKind.ErrorTable:
-                return null;
             case TableKind.SchemaTable:
                 return SemanticClassification.SchemaTable;
             case TableKind.DerivedTable:

@@ -34,14 +34,14 @@ public class NamedTableReferenceQuickInfoModelProviderAliasTests : QuickInfoMode
     }
 
     [Fact]
-    public void NamedTableReferenceQuickInfoModelProvider_MatchesInAliasUnresolved()
+    public void NamedTableReferenceQuickInfoModelProvider_DoesNotMatchInAliasUnresolved()
     {
         var query = @"
                 SELECT  *
                 FROM    Xxxxxxxxx {e}
             ";
 
-        AssertIsMatch(query);
+        AssertIsNotMatch(query);
     }
 
     [Fact]

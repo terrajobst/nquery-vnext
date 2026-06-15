@@ -15,9 +15,6 @@ public sealed class QuickInfoModel
 
     public static QuickInfoModel? ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
     {
-        if (symbol is TableSymbol { TableKind: TableKind.ErrorTable })
-            return null;
-
         var glyph = symbol.GetGlyph();
         var symbolMarkup = SymbolMarkup.ForSymbol(symbol);
         return new QuickInfoModel(semanticModel, span, glyph, symbolMarkup);

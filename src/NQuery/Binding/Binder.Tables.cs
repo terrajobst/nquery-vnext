@@ -57,13 +57,7 @@ partial class Binder
         if (symbols.Length == 0)
         {
             Diagnostics.ReportUndeclaredTable(node);
-
-            var errorTable = new ErrorTableSymbol(node.TableName.ValueText);
-            var errorAlias = node.Alias is null
-                               ? errorTable.Name
-                               : node.Alias.Identifier.ValueText;
-            var errorInstance = new TableInstanceSymbol(errorAlias, errorTable);
-            return new BoundNamedTableReference(errorInstance);
+            return new BoundErrorTable();
         }
 
         if (symbols.Length > 1)

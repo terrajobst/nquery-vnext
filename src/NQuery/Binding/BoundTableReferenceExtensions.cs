@@ -33,6 +33,8 @@ internal static class BoundTableReferenceExtensions
                 GetDeclaredTableInstances(receiver, apply.Left);
                 GetDeclaredTableInstances(receiver, apply.Right);
                 break;
+            case BoundNodeKind.ErrorTable:
+                break;
             default:
                 throw ExceptionBuilder.UnexpectedValue(node.Kind);
         }

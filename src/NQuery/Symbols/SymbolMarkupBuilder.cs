@@ -169,8 +169,6 @@ internal static class SymbolMarkupBuilder
     {
         switch (symbol.TableKind)
         {
-            case TableKind.ErrorTable:
-                break;
             case TableKind.SchemaTable:
                 markup.AppendSchemaTableSymbolInfo((SchemaTableSymbol)symbol);
                 break;
