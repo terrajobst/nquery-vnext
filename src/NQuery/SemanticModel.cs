@@ -233,6 +233,31 @@ public sealed class SemanticModel
                    : LookupSymbols(binder);
     }
 
+    public IEnumerable<Symbol> CatalogSymbols
+    {
+        get { return GetGlobalBinder().LocalSymbols; }
+    }
+
+    public IEnumerable<TableSymbol> Tables
+    {
+        get { return CatalogSymbols.OfType<TableSymbol>(); }
+    }
+
+    public IEnumerable<FunctionSymbol> Functions
+    {
+        get { return CatalogSymbols.OfType<FunctionSymbol>(); }
+    }
+
+    public IEnumerable<AggregateSymbol> Aggregates
+    {
+        get { return CatalogSymbols.OfType<AggregateSymbol>(); }
+    }
+
+    public IEnumerable<VariableSymbol> Variables
+    {
+        get { return CatalogSymbols.OfType<VariableSymbol>(); }
+    }
+
     private static IEnumerable<Symbol> LookupSymbols(Binder? binder)
     {
         // NOTE: We want to only show the *available* symbols. That means, we need to
@@ -263,6 +288,15 @@ public sealed class SemanticModel
             allNames.UnionWith(localNames);
             binder = binder.Parent;
         }
+    }
+
+    private Binder GetGlobalBinder()
+    {
+        var binder = _bindingResult.RootBinder;
+        while (binder.Parent is not null)
+            binder = binder.Parent;
+
+        return binder;
     }
 
     private SyntaxNode? FindClosestNodeWithBinder(SyntaxNode root, int position)

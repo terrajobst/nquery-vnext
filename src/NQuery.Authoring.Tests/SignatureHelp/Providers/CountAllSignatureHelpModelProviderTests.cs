@@ -13,9 +13,8 @@ public class CountAllSignatureHelpModelProviderTests : SignatureHelpModelProvide
 
     protected override IEnumerable<SignatureItem> GetExpectedSignatures(SemanticModel semanticModel)
     {
-        var dataContext = semanticModel.Compilation.DataContext;
-        var definition = dataContext.Aggregates.Single(a => a.Name == "COUNT");
-        yield return new AggregateSymbol(definition).ToSignatureItem();
+        var symbol = semanticModel.Aggregates.Single(a => a.Name == "COUNT");
+        yield return symbol.ToSignatureItem();
     }
 
     [Fact]

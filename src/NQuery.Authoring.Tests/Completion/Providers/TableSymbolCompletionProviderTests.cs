@@ -11,7 +11,8 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
 
         var definition = dataContext.Tables.Single(t => t.Name == tableName);
         var tableItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
-        var table = Assert.IsType<SchemaTableSymbol>(tableItem.Symbol);
+        var table = Assert.IsAssignableFrom<TableSymbol>(tableItem.Symbol);
+        Assert.Equal(TableKind.SchemaTable, table.TableKind);
         var tableMarkup = SymbolMarkup.ForSymbol(table);
 
         Assert.Equal(Glyph.Table, tableItem.Glyph);
