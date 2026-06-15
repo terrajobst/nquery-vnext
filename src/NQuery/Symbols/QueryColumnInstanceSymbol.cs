@@ -19,6 +19,11 @@ public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
         get { return SymbolKind.QueryColumnInstance; }
     }
 
+    public override ColumnInstanceKind ColumnInstanceKind
+    {
+        get { return ColumnInstanceKind.QueryColumn; }
+    }
+
     internal override IBoundValue BoundValue => _boundValue;
 
     private protected override Type SlotType => _boundValue.Type;

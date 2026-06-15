@@ -222,7 +222,7 @@ partial class Binder
                                    select (Syntax: (SyntaxNode)n, Symbol: c);
 
         var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
-                                      where QueryState.IntroducedTables.ContainsKey(t.Symbol.TableInstance)
+                                      where QueryState.IntroducedTables.ContainsKey(t.Symbol.TableInstance!)
                                       select t;
 
         foreach (var (syntax, symbol) in invalidColumnReferences)

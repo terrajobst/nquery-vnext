@@ -30,11 +30,16 @@ public sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundValu
         get { return SymbolKind.TableColumnInstance; }
     }
 
+    public override ColumnInstanceKind ColumnInstanceKind
+    {
+        get { return ColumnInstanceKind.TableColumn; }
+    }
+
     internal override IBoundValue BoundValue => _aliased ?? this;
 
-    private protected override Type SlotType => Column.Type;
+    private protected override Type SlotType => Column!.Type;
 
-    public TableInstanceSymbol TableInstance { get; }
+    public override TableInstanceSymbol? TableInstance { get; }
 
-    public ColumnSymbol Column { get; }
+    public override ColumnSymbol? Column { get; }
 }

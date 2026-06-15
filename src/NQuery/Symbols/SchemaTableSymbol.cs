@@ -9,7 +9,7 @@ public sealed class SchemaTableSymbol : TableSymbol
         : base(GetName(tableDefinition))
     {
         Definition = tableDefinition;
-        Columns = tableDefinition.Columns.Select(c => (ColumnSymbol)new SchemaColumnSymbol(c)).ToImmutableArray();
+        Columns = tableDefinition.Columns.Select(c => new ColumnSymbol(c)).ToImmutableArray();
     }
 
     private static string GetName(TableDefinition tableDefinition)
@@ -19,16 +19,21 @@ public sealed class SchemaTableSymbol : TableSymbol
         return tableDefinition.Name;
     }
 
-    public TableDefinition Definition { get; }
+    public override TableDefinition? Definition { get; }
 
     public override SymbolKind Kind
     {
         get { return SymbolKind.SchemaTable; }
     }
 
+    public override TableKind TableKind
+    {
+        get { return TableKind.SchemaTable; }
+    }
+
     public override Type Type
     {
-        get { return Definition.RowType; }
+        get { return Definition!.RowType; }
     }
 
     public override ImmutableArray<ColumnSymbol> Columns { get; }

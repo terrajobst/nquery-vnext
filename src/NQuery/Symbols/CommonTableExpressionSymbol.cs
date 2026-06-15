@@ -33,6 +33,11 @@ public sealed class CommonTableExpressionSymbol : TableSymbol
         get { return SymbolKind.CommonTableExpression; }
     }
 
+    public override TableKind TableKind
+    {
+        get { return TableKind.CommonTableExpression; }
+    }
+
     public override Type Type
     {
         get { return TypeFacts.Missing; }

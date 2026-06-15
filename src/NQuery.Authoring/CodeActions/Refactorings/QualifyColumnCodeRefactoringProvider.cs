@@ -36,7 +36,7 @@ internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProv
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance.Name);
+            var name = SyntaxFacts.GetValidIdentifier(_symbol.TableInstance!.Name);
             changeSet.InsertText(_node.Span.Start, name + @".");
         }
     }

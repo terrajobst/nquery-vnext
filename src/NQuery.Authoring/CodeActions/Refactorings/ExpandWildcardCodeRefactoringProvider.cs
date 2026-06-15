@@ -63,8 +63,8 @@ internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringPro
                     sb.Append(indentString);
                 }
 
-                var table = SyntaxFacts.GetValidIdentifier(symbol.TableInstance.Name);
-                var column = SyntaxFacts.GetValidIdentifier(symbol.Column.Name);
+                var table = SyntaxFacts.GetValidIdentifier(symbol.TableInstance!.Name);
+                var column = SyntaxFacts.GetValidIdentifier(symbol.Column!.Name);
                 sb.Append(table);
                 sb.Append(@".");
                 sb.Append(column);

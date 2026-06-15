@@ -15,6 +15,11 @@ public sealed class DerivedTableSymbol : TableSymbol
         get { return SymbolKind.DerivedTable; }
     }
 
+    public override TableKind TableKind
+    {
+        get { return TableKind.DerivedTable; }
+    }
+
     public override Type Type
     {
         get { return TypeFacts.Missing; }

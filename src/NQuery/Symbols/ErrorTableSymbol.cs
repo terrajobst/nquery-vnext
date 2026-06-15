@@ -14,6 +14,11 @@ public sealed class ErrorTableSymbol : TableSymbol
         get { return SymbolKind.ErrorTable; }
     }
 
+    public override TableKind TableKind
+    {
+        get { return TableKind.ErrorTable; }
+    }
+
     public override Type Type
     {
         get { return TypeFacts.Unknown; }
