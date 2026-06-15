@@ -34,23 +34,23 @@ public sealed class SemanticModel
         return boundExpression?.Table;
     }
 
-    public IEnumerable<TableColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
+    public IEnumerable<ColumnInstanceSymbol> GetColumnInstances(WildcardSelectColumnSyntax selectColumn)
     {
         ThrowIfNull(selectColumn);
 
         var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
-        return boundExpression?.TableColumns ?? Enumerable.Empty<TableColumnInstanceSymbol>();
+        return boundExpression?.TableColumns ?? Enumerable.Empty<ColumnInstanceSymbol>();
     }
 
-    public IEnumerable<QueryColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
+    public IEnumerable<ColumnInstanceSymbol> GetOutputColumns(QuerySyntax query)
     {
         ThrowIfNull(query);
 
         var boundQuery = _bindingResult.GetBoundNode(query) as BoundQuery;
-        return boundQuery?.OutputColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
+        return boundQuery?.OutputColumns ?? Enumerable.Empty<ColumnInstanceSymbol>();
     }
 
-    public QueryColumnInstanceSymbol? GetSymbol(OrderByColumnSyntax orderByColumn)
+    public ColumnInstanceSymbol? GetSymbol(OrderByColumnSyntax orderByColumn)
     {
         ThrowIfNull(orderByColumn);
 
@@ -153,7 +153,7 @@ public sealed class SemanticModel
         return result?.GetDeclaredTableInstances().AsEnumerable();
     }
 
-    public CommonTableExpressionSymbol? GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
+    public TableSymbol? GetDeclaredSymbol(CommonTableExpressionSyntax commonTableExpression)
     {
         ThrowIfNull(commonTableExpression);
 
@@ -203,7 +203,7 @@ public sealed class SemanticModel
         return result?.TableInstance;
     }
 
-    public QueryColumnInstanceSymbol? GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
+    public ColumnInstanceSymbol? GetDeclaredSymbol(ExpressionSelectColumnSyntax selectColumn)
     {
         ThrowIfNull(selectColumn);
 
@@ -211,12 +211,12 @@ public sealed class SemanticModel
         return result?.Column;
     }
 
-    public IEnumerable<QueryColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
+    public IEnumerable<ColumnInstanceSymbol> GetDeclaredSymbols(WildcardSelectColumnSyntax selectColumn)
     {
         ThrowIfNull(selectColumn);
 
         var boundExpression = _bindingResult.GetBoundNode(selectColumn) as BoundWildcardSelectColumn;
-        return boundExpression?.QueryColumns ?? Enumerable.Empty<QueryColumnInstanceSymbol>();
+        return boundExpression?.QueryColumns ?? Enumerable.Empty<ColumnInstanceSymbol>();
     }
 
     public IEnumerable<Diagnostic> GetDiagnostics()

@@ -26,7 +26,7 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
         Assert.Null(columnItem.Symbol);
     }
 
-    private static void GetCompletionData(string query, string tableInstanceName, string columnName, out TableColumnInstanceSymbol column, out CompletionItem columnItem, out SymbolMarkup columnMarkup)
+    private static void GetCompletionData(string query, string tableInstanceName, string columnName, out ColumnInstanceSymbol column, out CompletionItem columnItem, out SymbolMarkup columnMarkup)
     {
         var completionModel = GetCompletionModel(query);
         var semanticModel = completionModel.SemanticModel;

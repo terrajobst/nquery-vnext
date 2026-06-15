@@ -6,7 +6,7 @@ namespace NQuery.Symbols;
 
 public sealed class PropertySymbol : Symbol
 {
-    public PropertySymbol(PropertyDefinition definition)
+    internal PropertySymbol(PropertyDefinition definition)
         : base(GetName(definition))
     {
         Definition = definition;

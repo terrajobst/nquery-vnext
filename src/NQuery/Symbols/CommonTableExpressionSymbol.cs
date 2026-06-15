@@ -4,7 +4,7 @@ using NQuery.Binding;
 
 namespace NQuery.Symbols;
 
-public sealed class CommonTableExpressionSymbol : TableSymbol
+internal sealed class CommonTableExpressionSymbol : TableSymbol
 {
     private readonly BoundQuery? _anchor;
     private readonly ImmutableArray<BoundQuery> _recursiveMembers;

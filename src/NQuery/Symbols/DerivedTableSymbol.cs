@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace NQuery.Symbols;
 
-public sealed class DerivedTableSymbol : TableSymbol
+internal sealed class DerivedTableSymbol : TableSymbol
 {
     internal DerivedTableSymbol(IEnumerable<ColumnSymbol> columns)
         : base(string.Empty)

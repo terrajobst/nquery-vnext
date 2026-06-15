@@ -1,8 +1,8 @@
 namespace NQuery.Symbols;
 
-public class ParameterSymbol : Symbol
+public sealed class ParameterSymbol : Symbol
 {
-    public ParameterSymbol(string name, Type type)
+    internal ParameterSymbol(string name, Type type)
         : base(name)
     {
         Type = type;

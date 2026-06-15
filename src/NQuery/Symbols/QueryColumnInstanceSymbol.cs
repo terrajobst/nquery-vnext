@@ -2,7 +2,7 @@ using NQuery.Binding;
 
 namespace NQuery.Symbols;
 
-public sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
+internal sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
 {
     private readonly IBoundValue _boundValue;
 

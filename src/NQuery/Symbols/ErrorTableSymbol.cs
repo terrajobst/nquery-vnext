@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace NQuery.Symbols;
 
-public sealed class ErrorTableSymbol : TableSymbol
+internal sealed class ErrorTableSymbol : TableSymbol
 {
     internal ErrorTableSymbol(string name)
         : base(name)

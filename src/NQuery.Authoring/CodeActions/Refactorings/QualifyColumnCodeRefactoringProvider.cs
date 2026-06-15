@@ -11,7 +11,7 @@ internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProv
         if (node.Parent is PropertyAccessExpressionSyntax)
             return Enumerable.Empty<ICodeAction>();
 
-        if (semanticModel.GetSymbol(node) is not TableColumnInstanceSymbol column)
+        if (semanticModel.GetSymbol(node) is not ColumnInstanceSymbol { ColumnInstanceKind: ColumnInstanceKind.TableColumn } column)
             return Enumerable.Empty<ICodeAction>();
 
         return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };
@@ -20,9 +20,9 @@ internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProv
     private sealed class QualifyColumnCodeAction : CodeAction
     {
         private readonly NameExpressionSyntax _node;
-        private readonly TableColumnInstanceSymbol _symbol;
+        private readonly ColumnInstanceSymbol _symbol;
 
-        public QualifyColumnCodeAction(NameExpressionSyntax node, TableColumnInstanceSymbol symbol)
+        public QualifyColumnCodeAction(NameExpressionSyntax node, ColumnInstanceSymbol symbol)
             : base(node.SyntaxTree)
         {
             _node = node;

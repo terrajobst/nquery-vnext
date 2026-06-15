@@ -4,7 +4,7 @@ namespace NQuery.Symbols;
 
 public sealed class AggregateSymbol : Symbol
 {
-    public AggregateSymbol(AggregateDefinition definition)
+    internal AggregateSymbol(AggregateDefinition definition)
         : base(definition.Name)
     {
         Definition = definition;

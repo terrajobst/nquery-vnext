@@ -4,7 +4,7 @@ namespace NQuery.Symbols;
 
 public sealed class VariableSymbol : Symbol
 {
-    public VariableSymbol(VariableDefinition definition)
+    internal VariableSymbol(VariableDefinition definition)
         : base(GetName(definition))
     {
         Definition = definition;

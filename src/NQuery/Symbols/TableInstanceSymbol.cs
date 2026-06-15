@@ -12,7 +12,7 @@ public sealed class TableInstanceSymbol : Symbol
         : base(name)
     {
         Table = table;
-        ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c)).ToImmutableArray();
+        TableColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c)).ToImmutableArray();
     }
 
     // Derived table: each column aliases the inner query's value.
@@ -20,7 +20,7 @@ public sealed class TableInstanceSymbol : Symbol
         : base(name)
     {
         Table = table;
-        ColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, aliasFactory(this, c))).ToImmutableArray();
+        TableColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, aliasFactory(this, c))).ToImmutableArray();
     }
 
     public override SymbolKind Kind
@@ -30,7 +30,12 @@ public sealed class TableInstanceSymbol : Symbol
 
     public TableSymbol Table { get; }
 
-    public ImmutableArray<TableColumnInstanceSymbol> ColumnInstances { get; }
+    public ImmutableArray<ColumnInstanceSymbol> ColumnInstances
+    {
+        get { return TableColumnInstances.CastArray<ColumnInstanceSymbol>(); }
+    }
+
+    internal ImmutableArray<TableColumnInstanceSymbol> TableColumnInstances { get; }
 
     public override Type Type
     {

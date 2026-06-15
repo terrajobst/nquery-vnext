@@ -6,7 +6,7 @@ namespace NQuery.Symbols;
 
 public sealed class FunctionSymbol : Symbol, IInvocableSymbol
 {
-    public FunctionSymbol(FunctionDefinition definition)
+    internal FunctionSymbol(FunctionDefinition definition)
         : base(GetName(definition))
     {
         Definition = definition;

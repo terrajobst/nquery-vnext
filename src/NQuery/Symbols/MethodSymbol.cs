@@ -7,7 +7,7 @@ namespace NQuery.Symbols;
 
 public sealed class MethodSymbol : Symbol, IInvocableSymbol
 {
-    public MethodSymbol(MethodDefinition definition)
+    internal MethodSymbol(MethodDefinition definition)
         : base(GetName(definition))
     {
         Definition = definition;

@@ -21,9 +21,9 @@ internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringPro
     private sealed class ExpandWildcardCodeAction : CodeAction
     {
         private readonly WildcardSelectColumnSyntax _node;
-        private readonly ImmutableArray<TableColumnInstanceSymbol> _columnInstances;
+        private readonly ImmutableArray<ColumnInstanceSymbol> _columnInstances;
 
-        public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, ImmutableArray<TableColumnInstanceSymbol> columnInstances)
+        public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, ImmutableArray<ColumnInstanceSymbol> columnInstances)
             : base(node.SyntaxTree)
         {
             _node = node;
@@ -43,7 +43,7 @@ internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringPro
             changeSet.ReplaceText(_node.Span, columnString);
         }
 
-        private static string BuildColumns(int indent, IEnumerable<TableColumnInstanceSymbol> symbols)
+        private static string BuildColumns(int indent, IEnumerable<ColumnInstanceSymbol> symbols)
         {
             var indentString = new string(' ', indent);
 

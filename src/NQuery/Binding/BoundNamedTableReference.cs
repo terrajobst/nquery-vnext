@@ -7,7 +7,7 @@ namespace NQuery.Binding;
 internal sealed class BoundNamedTableReference : BoundTableReference
 {
     public BoundNamedTableReference(TableInstanceSymbol tableInstance)
-        : this(tableInstance, tableInstance.ColumnInstances)
+        : this(tableInstance, tableInstance.TableColumnInstances)
     {
     }
 

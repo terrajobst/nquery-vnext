@@ -3,9 +3,9 @@ using NQuery.Metadata;
 
 namespace NQuery.Symbols;
 
-public sealed class SchemaTableSymbol : TableSymbol
+internal sealed class SchemaTableSymbol : TableSymbol
 {
-    public SchemaTableSymbol(TableDefinition tableDefinition)
+    internal SchemaTableSymbol(TableDefinition tableDefinition)
         : base(GetName(tableDefinition))
     {
         Definition = tableDefinition;

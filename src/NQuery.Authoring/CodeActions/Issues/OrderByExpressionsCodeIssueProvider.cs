@@ -68,7 +68,7 @@ internal sealed class OrderByExpressionsCodeIssueProvider : CodeIssueProvider<Or
         return literal?.Value is int;
     }
 
-    private static string GetColumnReference(int index, QueryColumnInstanceSymbol column)
+    private static string GetColumnReference(int index, ColumnInstanceSymbol column)
     {
         if (!string.IsNullOrEmpty(column.Name))
             return SyntaxFacts.GetValidIdentifier(column.Name);

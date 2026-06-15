@@ -27,7 +27,7 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
 
     private static TableDefinition? GetDefinition(TableSymbol table)
     {
-        return (table as SchemaTableSymbol)?.Definition;
+        return table.Definition;
     }
 
     private static bool IsApplicable(RelationshipDefinition relation, TableDefinition? leftTable, TableDefinition? rightTable)

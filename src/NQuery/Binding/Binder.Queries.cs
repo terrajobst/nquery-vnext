@@ -1038,7 +1038,7 @@ partial class Binder
             Diagnostics.ReportAmbiguousName(tableName, symbols);
 
         var tableInstance = symbols[0];
-        var columnInstances = tableInstance.ColumnInstances;
+        var columnInstances = tableInstance.TableColumnInstances;
         return new BoundWildcardSelectColumn(tableInstance, columnInstances);
     }
 
@@ -1070,7 +1070,7 @@ partial class Binder
                 Diagnostics.ReportMustSpecifyTableToSelectFrom(asteriskToken.Span);
         }
 
-        var columnInstances = tableInstances.SelectMany(t => t.ColumnInstances).ToImmutableArray();
+        var columnInstances = tableInstances.SelectMany(t => t.TableColumnInstances).ToImmutableArray();
         return new BoundWildcardSelectColumn(null, columnInstances);
     }
 
