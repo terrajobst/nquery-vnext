@@ -9,7 +9,7 @@ namespace NQuery;
 public sealed class DataContext
 {
     private DataContext(IImmutableList<TableDefinition> tables,
-                        IImmutableList<TableRelation> relations,
+                        IImmutableList<RelationshipDefinition> relationships,
                         IImmutableList<FunctionDefinition> functions,
                         IImmutableList<AggregateDefinition> aggregates,
                         IImmutableList<VariableDefinition> variables,
@@ -18,7 +18,7 @@ public sealed class DataContext
                         IImmutableDictionary<Type, IComparer> comparers)
     {
         Tables = tables;
-        Relations = relations;
+        Relationships = relationships;
         Functions = functions;
         Aggregates = aggregates;
         Variables = variables;
@@ -32,7 +32,7 @@ public sealed class DataContext
 
     public IImmutableList<TableDefinition> Tables { get; }
 
-    public IImmutableList<TableRelation> Relations { get; }
+    public IImmutableList<RelationshipDefinition> Relationships { get; }
 
     public IImmutableList<FunctionDefinition> Functions { get; }
 
@@ -49,7 +49,7 @@ public sealed class DataContext
     private static DataContext CreateEmpty()
     {
         return new DataContext(ImmutableList.Create<TableDefinition>(),
-                               ImmutableList.Create<TableRelation>(),
+                               ImmutableList.Create<RelationshipDefinition>(),
                                ImmutableList.Create<FunctionDefinition>(),
                                ImmutableList.Create<AggregateDefinition>(),
                                ImmutableList.Create<VariableDefinition>(),
@@ -69,7 +69,7 @@ public sealed class DataContext
                                                  .Add(typeof(object), reflectionProvider);
         var comparers = ImmutableDictionary.Create<Type, IComparer>();
         return new DataContext(ImmutableList.Create<TableDefinition>(),
-                               ImmutableList.Create<TableRelation>(),
+                               ImmutableList.Create<RelationshipDefinition>(),
                                functions,
                                aggregates,
                                ImmutableList.Create<VariableDefinition>(),
@@ -126,58 +126,58 @@ public sealed class DataContext
             return this;
 
         var newTables = tables.ToImmutableList();
-        return new DataContext(newTables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+        return new DataContext(newTables, Relationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
-    // Relations
+    // Relationships
 
-    public DataContext AddRelations(params TableRelation[] relations)
+    public DataContext AddRelationships(params RelationshipDefinition[] relationships)
     {
-        if (relations is null || relations.Length == 0)
+        if (relationships is null || relationships.Length == 0)
             return this;
 
-        return AddRelations(relations.AsEnumerable());
+        return AddRelationships(relationships.AsEnumerable());
     }
 
-    public DataContext AddRelations(IEnumerable<TableRelation> relations)
+    public DataContext AddRelationships(IEnumerable<RelationshipDefinition> relationships)
     {
-        ThrowIfNull(relations);
+        ThrowIfNull(relationships);
 
-        var newRelations = Relations.AddRange(relations);
-        return WithRelations(newRelations);
+        var newRelationships = Relationships.AddRange(relationships);
+        return WithRelationships(newRelationships);
     }
 
-    public DataContext RemoveRelations(params TableRelation[] relations)
+    public DataContext RemoveRelationships(params RelationshipDefinition[] relationships)
     {
-        if (relations is null || relations.Length == 0)
+        if (relationships is null || relationships.Length == 0)
             return this;
 
-        return RemoveRelations(relations.AsEnumerable());
+        return RemoveRelationships(relationships.AsEnumerable());
     }
 
-    public DataContext RemoveRelations(IEnumerable<TableRelation> relations)
+    public DataContext RemoveRelationships(IEnumerable<RelationshipDefinition> relationships)
     {
-        ThrowIfNull(relations);
+        ThrowIfNull(relationships);
 
-        var newRelations = Relations.RemoveRange(relations);
-        return WithRelations(newRelations);
+        var newRelationships = Relationships.RemoveRange(relationships);
+        return WithRelationships(newRelationships);
     }
 
-    public DataContext RemoveAllRelations()
+    public DataContext RemoveAllRelationships()
     {
-        var newRelations = Relations.Clear();
-        return WithRelations(newRelations);
+        var newRelationships = Relationships.Clear();
+        return WithRelationships(newRelationships);
     }
 
-    public DataContext WithRelations(IEnumerable<TableRelation> relations)
+    public DataContext WithRelationships(IEnumerable<RelationshipDefinition> relationships)
     {
-        ThrowIfNull(relations);
+        ThrowIfNull(relationships);
 
-        if (ReferenceEquals(relations, Relations))
+        if (ReferenceEquals(relationships, Relationships))
             return this;
 
-        var newRelations = relations.ToImmutableList();
-        return new DataContext(Tables, newRelations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+        var newRelationships = relationships.ToImmutableList();
+        return new DataContext(Tables, newRelationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
     // Functions
@@ -228,7 +228,7 @@ public sealed class DataContext
             return this;
 
         var newFunctions = functions.ToImmutableList();
-        return new DataContext(Tables, Relations, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+        return new DataContext(Tables, Relationships, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
     // Aggregates
@@ -279,7 +279,7 @@ public sealed class DataContext
             return this;
 
         var newAggregates = aggregates.ToImmutableList();
-        return new DataContext(Tables, Relations, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+        return new DataContext(Tables, Relationships, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
     // Variables
@@ -330,7 +330,7 @@ public sealed class DataContext
             return this;
 
         var newVariables = variables.ToImmutableList();
-        return new DataContext(Tables, Relations, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
+        return new DataContext(Tables, Relationships, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
     }
 
     // Property Providers
@@ -381,7 +381,7 @@ public sealed class DataContext
         if (ReferenceEquals(PropertyProviders, providers))
             return this;
 
-        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, providers, MethodProviders, Comparers);
+        return new DataContext(Tables, Relationships, Functions, Aggregates, Variables, providers, MethodProviders, Comparers);
     }
 
     // Method Providers
@@ -432,7 +432,7 @@ public sealed class DataContext
         if (ReferenceEquals(MethodProviders, providers))
             return this;
 
-        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, providers, Comparers);
+        return new DataContext(Tables, Relationships, Functions, Aggregates, Variables, PropertyProviders, providers, Comparers);
     }
 
     // Comparers
@@ -483,6 +483,6 @@ public sealed class DataContext
         if (ReferenceEquals(Comparers, comparers))
             return this;
 
-        return new DataContext(Tables, Relations, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
+        return new DataContext(Tables, Relationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
     }
 }

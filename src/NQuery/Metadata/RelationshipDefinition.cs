@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 
 namespace NQuery.Metadata;
 
-public sealed class TableRelation
+public sealed class RelationshipDefinition
 {
-    private TableRelation(TableDefinition parentTable, ImmutableArray<ColumnDefinition> parentColumns, TableDefinition childTable, ImmutableArray<ColumnDefinition> childColumns)
+    private RelationshipDefinition(TableDefinition parentTable, ImmutableArray<ColumnDefinition> parentColumns, TableDefinition childTable, ImmutableArray<ColumnDefinition> childColumns)
     {
         ParentTable = parentTable;
         ParentColumns = parentColumns;
@@ -12,7 +12,7 @@ public sealed class TableRelation
         ChildColumns = childColumns;
     }
 
-    public static TableRelation Create(TableDefinition parentTable, IReadOnlyCollection<ColumnDefinition> parentColumns, TableDefinition childTable, IReadOnlyCollection<ColumnDefinition> childColumns)
+    public static RelationshipDefinition Create(TableDefinition parentTable, IReadOnlyCollection<ColumnDefinition> parentColumns, TableDefinition childTable, IReadOnlyCollection<ColumnDefinition> childColumns)
     {
         ThrowIfNull(parentTable);
         ThrowIfNull(parentColumns);
@@ -31,7 +31,7 @@ public sealed class TableRelation
         if (childColumns.Any(c => !childTable.Columns.Contains(c)))
             throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, nameof(childColumns));
 
-        return new TableRelation(parentTable, parentColumns.ToImmutableArray(), childTable, childColumns.ToImmutableArray());
+        return new RelationshipDefinition(parentTable, parentColumns.ToImmutableArray(), childTable, childColumns.ToImmutableArray());
     }
 
     public int ColumnCount

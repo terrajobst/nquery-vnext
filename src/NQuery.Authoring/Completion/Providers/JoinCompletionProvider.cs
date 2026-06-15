@@ -16,11 +16,11 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
 
         var leftInstances = semanticModel.GetDeclaredSymbols(node.Left)!.ToImmutableArray();
         var rightInstances = semanticModel.GetDeclaredSymbols(node.Right)!.ToImmutableArray();
-        var relations = semanticModel.Compilation.DataContext.Relations;
+        var relationships = semanticModel.Compilation.DataContext.Relationships;
 
         return from left in leftInstances
                from right in rightInstances
-               from relation in relations
+               from relation in relationships
                where IsApplicable(relation, GetDefinition(left.Table), GetDefinition(right.Table))
                select GetCompletionItem(relation, left, right);
     }
@@ -30,7 +30,7 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
         return (table as SchemaTableSymbol)?.Definition;
     }
 
-    private static bool IsApplicable(TableRelation relation, TableDefinition? leftTable, TableDefinition? rightTable)
+    private static bool IsApplicable(RelationshipDefinition relation, TableDefinition? leftTable, TableDefinition? rightTable)
     {
         if (leftTable is null || rightTable is null)
             return false;
@@ -40,17 +40,17 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
         return isParentAndChild || isChildAndParent;
     }
 
-    private static CompletionItem GetCompletionItem(TableRelation tableRelation, TableInstanceSymbol leftInstance, TableInstanceSymbol rightInstance)
+    private static CompletionItem GetCompletionItem(RelationshipDefinition relationship, TableInstanceSymbol leftInstance, TableInstanceSymbol rightInstance)
     {
-        var leftIsParent = GetDefinition(leftInstance.Table) == tableRelation.ParentTable;
+        var leftIsParent = GetDefinition(leftInstance.Table) == relationship.ParentTable;
 
         var leftColumns = leftIsParent
-                              ? tableRelation.ParentColumns
-                              : tableRelation.ChildColumns;
+                              ? relationship.ParentColumns
+                              : relationship.ChildColumns;
 
         var rightColumns = leftIsParent
-                               ? tableRelation.ChildColumns
-                               : tableRelation.ParentColumns;
+                               ? relationship.ChildColumns
+                               : relationship.ParentColumns;
 
         var condition = CreateCondition(leftInstance, leftColumns, rightInstance, rightColumns);
         var displayText = condition;

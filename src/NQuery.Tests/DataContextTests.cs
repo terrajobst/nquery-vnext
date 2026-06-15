@@ -24,8 +24,8 @@ public class DataContextTests
     public void DataContext_AddingNoRelationsYieldsSameInstance()
     {
         var before = DataContext.Empty;
-        var after1 = before.AddRelations();
-        var after2 = before.AddRelations(null!);
+        var after1 = before.AddRelationships();
+        var after2 = before.AddRelationships(null!);
         Assert.Same(before, after1);
         Assert.Same(before, after2);
     }
@@ -34,7 +34,7 @@ public class DataContextTests
     public void DataContext_ReplacingWithSameRelationsYieldsSameInstance()
     {
         var before = DataContext.Empty;
-        var after = before.WithRelations(before.Relations);
+        var after = before.WithRelationships(before.Relationships);
         Assert.Same(before, after);
     }
 

@@ -10,12 +10,12 @@ namespace NQuery.Data;
 
 public static class DataContextExtensions
 {
-    public static DataContext AddTablesAndRelations(this DataContext dataContext, DataSet dataSet)
+    public static DataContext AddTablesAndRelationships(this DataContext dataContext, DataSet dataSet)
     {
         ThrowIfNull(dataContext);
         ThrowIfNull(dataSet);
 
-        return dataContext.AddTables(dataSet).AddRelations(dataSet);
+        return dataContext.AddTables(dataSet).AddRelationships(dataSet);
     }
 
     public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
@@ -46,32 +46,32 @@ public static class DataContextExtensions
         return dataContext.AddTables(tableDefinitions);
     }
 
-    public static DataContext AddRelations(this DataContext dataContext, DataSet dataSet)
+    public static DataContext AddRelationships(this DataContext dataContext, DataSet dataSet)
     {
         ThrowIfNull(dataContext);
         ThrowIfNull(dataSet);
 
         var dataRelations = dataSet.Relations.OfType<DataRelation>();
-        return dataContext.AddRelations(dataRelations);
+        return dataContext.AddRelationships(dataRelations);
     }
 
-    public static DataContext AddRelations(this DataContext dataContext, params DataRelation[] dataRelations)
+    public static DataContext AddRelationships(this DataContext dataContext, params DataRelation[] dataRelations)
     {
         ThrowIfNull(dataContext);
 
         if (dataRelations is null || dataRelations.Length == 0)
             return dataContext;
 
-        return dataContext.AddRelations(dataRelations.AsEnumerable());
+        return dataContext.AddRelationships(dataRelations.AsEnumerable());
     }
 
-    public static DataContext AddRelations(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
+    public static DataContext AddRelationships(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
     {
         ThrowIfNull(dataContext);
         ThrowIfNull(dataRelations);
 
-        var tableRelations = dataRelations.Select(r => CreateRelation(dataContext.Tables, r)).OfType<TableRelation>();
-        return dataContext.AddRelations(tableRelations);
+        var relationships = dataRelations.Select(r => CreateRelationship(dataContext.Tables, r)).OfType<RelationshipDefinition>();
+        return dataContext.AddRelationships(relationships);
     }
 
     private static TableDefinition CreateTable(DataTable dataTable)
@@ -123,7 +123,7 @@ public static class DataContextExtensions
         return ColumnDefinition.Create<DataRow>(column.ColumnName, column.DataType, accessor);
     }
 
-    private static TableRelation? CreateRelation(IReadOnlyList<TableDefinition> tables, DataRelation dataRelation)
+    private static RelationshipDefinition? CreateRelationship(IReadOnlyList<TableDefinition> tables, DataRelation dataRelation)
     {
         var parentTable = ResolveTable(tables, dataRelation.ParentTable.TableName);
         var childTable = ResolveTable(tables, dataRelation.ChildTable.TableName);
@@ -138,7 +138,7 @@ public static class DataContextExtensions
             childColumns.Length != dataRelation.ChildColumns.Length)
             return null;
 
-        return TableRelation.Create(parentTable, parentColumns, childTable, childColumns);
+        return RelationshipDefinition.Create(parentTable, parentColumns, childTable, childColumns);
     }
 
     private static TableDefinition? ResolveTable(IEnumerable<TableDefinition> tables, string tableName)
