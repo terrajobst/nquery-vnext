@@ -27,20 +27,12 @@ public static class DataContextExtensions
         return dataContext.AddTables(dataTables);
     }
 
-    public static DataContext AddTables(this DataContext dataContext, params DataTable[] dataTables)
+    public static DataContext AddTables(this DataContext dataContext, params IEnumerable<DataTable> dataTables)
     {
         ThrowIfNull(dataContext);
 
-        if (dataTables is null || dataTables.Length == 0)
+        if (dataTables is null)
             return dataContext;
-
-        return dataContext.AddTables(dataTables.AsEnumerable());
-    }
-
-    public static DataContext AddTables(this DataContext dataContext, IEnumerable<DataTable> dataTables)
-    {
-        ThrowIfNull(dataContext);
-        ThrowIfNull(dataTables);
 
         var tableDefinitions = dataTables.Select(CreateTable);
         return dataContext.AddTables(tableDefinitions);
@@ -55,20 +47,12 @@ public static class DataContextExtensions
         return dataContext.AddRelationships(dataRelations);
     }
 
-    public static DataContext AddRelationships(this DataContext dataContext, params DataRelation[] dataRelations)
+    public static DataContext AddRelationships(this DataContext dataContext, params IEnumerable<DataRelation> dataRelations)
     {
         ThrowIfNull(dataContext);
 
-        if (dataRelations is null || dataRelations.Length == 0)
+        if (dataRelations is null)
             return dataContext;
-
-        return dataContext.AddRelationships(dataRelations.AsEnumerable());
-    }
-
-    public static DataContext AddRelationships(this DataContext dataContext, IEnumerable<DataRelation> dataRelations)
-    {
-        ThrowIfNull(dataContext);
-        ThrowIfNull(dataRelations);
 
         var relationships = dataRelations.Select(r => CreateRelationship(dataContext.Tables, r)).OfType<RelationshipDefinition>();
         return dataContext.AddRelationships(relationships);

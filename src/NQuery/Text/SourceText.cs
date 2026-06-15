@@ -79,17 +79,10 @@ public abstract class SourceText
         return GetText(0, Length);
     }
 
-    public SourceText WithChanges(params TextChange[] changes)
+    public SourceText WithChanges(params IEnumerable<TextChange> changes)
     {
-        if (changes is null || changes.Length == 0)
+        if (changes is null)
             return this;
-
-        return WithChanges((IEnumerable<TextChange>)changes);
-    }
-
-    public SourceText WithChanges(IEnumerable<TextChange> changes)
-    {
-        ThrowIfNull(changes);
 
         var persistedChanges = changes.OrderByDescending(c => c.Span.Start)
                                       .ToImmutableArray();

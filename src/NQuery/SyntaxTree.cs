@@ -139,17 +139,10 @@ public sealed class SyntaxTree
         }
     }
 
-    public SyntaxTree WithChanges(params TextChange[] textChanges)
+    public SyntaxTree WithChanges(params IEnumerable<TextChange> textChanges)
     {
         if (textChanges is null)
             return this;
-
-        return WithChanges(textChanges.AsEnumerable());
-    }
-
-    public SyntaxTree WithChanges(IEnumerable<TextChange> textChanges)
-    {
-        ThrowIfNull(textChanges);
 
         var newText = Text.WithChanges(textChanges);
         if (newText == Text)

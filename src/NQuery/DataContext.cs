@@ -80,33 +80,19 @@ public sealed class DataContext
 
     // Tables
 
-    public DataContext AddTables(params TableDefinition[] tables)
+    public DataContext AddTables(params IEnumerable<TableDefinition> tables)
     {
-        if (tables is null || tables.Length == 0)
+        if (tables is null)
             return this;
-
-        return AddTables(tables.AsEnumerable());
-    }
-
-    public DataContext AddTables(IEnumerable<TableDefinition> tables)
-    {
-        ThrowIfNull(tables);
 
         var newTables = Tables.AddRange(tables);
         return WithTables(newTables);
     }
 
-    public DataContext RemoveTables(params TableDefinition[] tables)
+    public DataContext RemoveTables(params IEnumerable<TableDefinition> tables)
     {
-        if (tables is null || tables.Length == 0)
+        if (tables is null)
             return this;
-
-        return RemoveTables(tables.AsEnumerable());
-    }
-
-    public DataContext RemoveTables(IEnumerable<TableDefinition> tables)
-    {
-        ThrowIfNull(tables);
 
         var newTables = Tables.RemoveRange(tables);
         return WithTables(newTables);
@@ -131,33 +117,19 @@ public sealed class DataContext
 
     // Relationships
 
-    public DataContext AddRelationships(params RelationshipDefinition[] relationships)
+    public DataContext AddRelationships(params IEnumerable<RelationshipDefinition> relationships)
     {
-        if (relationships is null || relationships.Length == 0)
+        if (relationships is null)
             return this;
-
-        return AddRelationships(relationships.AsEnumerable());
-    }
-
-    public DataContext AddRelationships(IEnumerable<RelationshipDefinition> relationships)
-    {
-        ThrowIfNull(relationships);
 
         var newRelationships = Relationships.AddRange(relationships);
         return WithRelationships(newRelationships);
     }
 
-    public DataContext RemoveRelationships(params RelationshipDefinition[] relationships)
+    public DataContext RemoveRelationships(params IEnumerable<RelationshipDefinition> relationships)
     {
-        if (relationships is null || relationships.Length == 0)
+        if (relationships is null)
             return this;
-
-        return RemoveRelationships(relationships.AsEnumerable());
-    }
-
-    public DataContext RemoveRelationships(IEnumerable<RelationshipDefinition> relationships)
-    {
-        ThrowIfNull(relationships);
 
         var newRelationships = Relationships.RemoveRange(relationships);
         return WithRelationships(newRelationships);
@@ -182,33 +154,19 @@ public sealed class DataContext
 
     // Functions
 
-    public DataContext AddFunctions(params FunctionDefinition[] functions)
+    public DataContext AddFunctions(params IEnumerable<FunctionDefinition> functions)
     {
-        if (functions is null || functions.Length == 0)
+        if (functions is null)
             return this;
-
-        return AddFunctions(functions.AsEnumerable());
-    }
-
-    public DataContext AddFunctions(IEnumerable<FunctionDefinition> functions)
-    {
-        ThrowIfNull(functions);
 
         var newFunctions = Functions.AddRange(functions);
         return WithFunctions(newFunctions);
     }
 
-    public DataContext RemoveFunctions(params FunctionDefinition[] functions)
+    public DataContext RemoveFunctions(params IEnumerable<FunctionDefinition> functions)
     {
-        if (functions is null || functions.Length == 0)
+        if (functions is null)
             return this;
-
-        return RemoveFunctions(functions.AsEnumerable());
-    }
-
-    public DataContext RemoveFunctions(IEnumerable<FunctionDefinition> functions)
-    {
-        ThrowIfNull(functions);
 
         var newFunctions = Functions.RemoveRange(functions);
         return WithFunctions(newFunctions);
@@ -233,33 +191,19 @@ public sealed class DataContext
 
     // Aggregates
 
-    public DataContext AddAggregates(params AggregateDefinition[] aggregates)
+    public DataContext AddAggregates(params IEnumerable<AggregateDefinition> aggregates)
     {
-        if (aggregates is null || aggregates.Length == 0)
+        if (aggregates is null)
             return this;
-
-        return AddAggregates(aggregates.AsEnumerable());
-    }
-
-    public DataContext AddAggregates(IEnumerable<AggregateDefinition> aggregates)
-    {
-        ThrowIfNull(aggregates);
 
         var newAggregates = Aggregates.AddRange(aggregates);
         return WithAggregates(newAggregates);
     }
 
-    public DataContext RemoveAggregates(params AggregateDefinition[] aggregates)
+    public DataContext RemoveAggregates(params IEnumerable<AggregateDefinition> aggregates)
     {
-        if (aggregates is null || aggregates.Length == 0)
+        if (aggregates is null)
             return this;
-
-        return RemoveAggregates(aggregates.AsEnumerable());
-    }
-
-    public DataContext RemoveAggregates(IEnumerable<AggregateDefinition> aggregates)
-    {
-        ThrowIfNull(aggregates);
 
         var newAggregates = Aggregates.RemoveRange(aggregates);
         return WithAggregates(newAggregates);
@@ -284,33 +228,19 @@ public sealed class DataContext
 
     // Variables
 
-    public DataContext AddVariables(params VariableDefinition[] variables)
+    public DataContext AddVariables(params IEnumerable<VariableDefinition> variables)
     {
-        if (variables is null || variables.Length == 0)
+        if (variables is null)
             return this;
-
-        return AddVariables(variables.AsEnumerable());
-    }
-
-    public DataContext AddVariables(IEnumerable<VariableDefinition> variables)
-    {
-        ThrowIfNull(variables);
 
         var newVariables = Variables.AddRange(variables);
         return WithVariables(newVariables);
     }
 
-    public DataContext RemoveVariables(params VariableDefinition[] variables)
+    public DataContext RemoveVariables(params IEnumerable<VariableDefinition> variables)
     {
-        if (variables is null || variables.Length == 0)
+        if (variables is null)
             return this;
-
-        return RemoveVariables(variables.AsEnumerable());
-    }
-
-    public DataContext RemoveVariables(IEnumerable<VariableDefinition> variables)
-    {
-        ThrowIfNull(variables);
 
         var newVariables = Variables.RemoveRange(variables);
         return WithVariables(newVariables);
@@ -352,17 +282,10 @@ public sealed class DataContext
         return WithPropertyProviders(newProviders);
     }
 
-    public DataContext RemovePropertyProviders(params Type[] types)
+    public DataContext RemovePropertyProviders(params IEnumerable<Type> types)
     {
-        if (types is null || types.Length == 0)
+        if (types is null)
             return this;
-
-        return RemovePropertyProviders(types.AsEnumerable());
-    }
-
-    public DataContext RemovePropertyProviders(IEnumerable<Type> types)
-    {
-        ThrowIfNull(types);
 
         var newProviders = PropertyProviders.RemoveRange(types);
         return WithPropertyProviders(newProviders);
@@ -403,17 +326,10 @@ public sealed class DataContext
         return WithMethodProviders(newProviders);
     }
 
-    public DataContext RemoveMethodProviders(params Type[] types)
+    public DataContext RemoveMethodProviders(params IEnumerable<Type> types)
     {
-        if (types is null || types.Length == 0)
+        if (types is null)
             return this;
-
-        return RemoveMethodProviders(types.AsEnumerable());
-    }
-
-    public DataContext RemoveMethodProviders(IEnumerable<Type> types)
-    {
-        ThrowIfNull(types);
 
         var newProviders = MethodProviders.RemoveRange(types);
         return WithMethodProviders(newProviders);
@@ -454,17 +370,10 @@ public sealed class DataContext
         return WithComparers(newProviders);
     }
 
-    public DataContext RemoveComparers(params Type[] types)
+    public DataContext RemoveComparers(params IEnumerable<Type> types)
     {
-        if (types is null || types.Length == 0)
+        if (types is null)
             return this;
-
-        return RemoveComparers(types.AsEnumerable());
-    }
-
-    public DataContext RemoveComparers(IEnumerable<Type> types)
-    {
-        ThrowIfNull(types);
 
         var newProviders = Comparers.RemoveRange(types);
         return WithComparers(newProviders);

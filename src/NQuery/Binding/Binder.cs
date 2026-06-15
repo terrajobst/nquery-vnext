@@ -44,14 +44,9 @@ internal abstract partial class Binder
         get { return Parent is not null && Parent.InAggregateArgument; }
     }
 
-    private Binder CreateLocalBinder(IEnumerable<Symbol> symbols)
+    private Binder CreateLocalBinder(params IEnumerable<Symbol> symbols)
     {
         return new LocalBinder(_sharedBinderState, this, symbols);
-    }
-
-    private Binder CreateLocalBinder(params Symbol[] symbols)
-    {
-        return CreateLocalBinder(symbols.AsEnumerable());
     }
 
     private Binder CreateJoinConditionBinder(BoundTableReference left, BoundTableReference right)
