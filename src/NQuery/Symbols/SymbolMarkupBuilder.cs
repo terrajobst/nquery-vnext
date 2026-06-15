@@ -243,7 +243,7 @@ internal static class SymbolMarkupBuilder
     {
         markup.AppendKeyword(@"COLUMN");
         markup.AppendSpace();
-        markup.AppendTableName(symbol.TableInstance!.Name);
+        markup.AppendTableName(symbol.TableInstance.Name);
         markup.AppendPunctuation(@".");
         markup.AppendColumnName(symbol.Name);
         markup.AppendSpace();

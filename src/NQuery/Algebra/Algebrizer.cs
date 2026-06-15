@@ -744,7 +744,7 @@ internal sealed class Algebrizer
     private ValueSlot MintSlot(IBoundValue value)
     {
         return value is TableColumnInstanceSymbol column
-            ? _valueSlotFactory.CreateNamed($"{column.TableInstance!.Name}.{column.Name}", value.Type)
+            ? _valueSlotFactory.CreateNamed($"{column.TableInstance.Name}.{column.Name}", value.Type)
             : _valueSlotFactory.CreateTemporary(value.Type);
     }
 

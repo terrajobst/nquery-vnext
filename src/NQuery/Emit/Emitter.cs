@@ -72,9 +72,9 @@ internal static class Emitter
         var schemaTable = (SchemaTableSymbol)node.TableInstance.Table;
         var accessors = node.DefinedValues
                             .Select(ci => ci.Column)
-                            .Select(c => BuildColumnAccess(c!.Definition!))
+                            .Select(c => BuildColumnAccess(c.Definition!))
                             .ToImmutableArray();
-        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition!, accessors);
+        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition, accessors);
     }
 
     private static Func<object, object> BuildColumnAccess(ColumnDefinition definition)

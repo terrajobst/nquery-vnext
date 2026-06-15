@@ -37,9 +37,9 @@ internal sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundVa
 
     internal override IBoundValue BoundValue => _aliased ?? this;
 
-    private protected override Type SlotType => Column!.Type;
+    private protected override Type SlotType => Column.Type;
 
-    public override TableInstanceSymbol? TableInstance { get; }
+    public override TableInstanceSymbol TableInstance { get; }
 
-    public override ColumnSymbol? Column { get; }
+    public override ColumnSymbol Column { get; }
 }

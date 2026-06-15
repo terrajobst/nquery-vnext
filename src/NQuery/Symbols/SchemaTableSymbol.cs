@@ -19,7 +19,7 @@ internal sealed class SchemaTableSymbol : TableSymbol
         return tableDefinition.Name;
     }
 
-    public override TableDefinition? Definition { get; }
+    public override TableDefinition Definition { get; }
 
     public override SymbolKind Kind
     {
@@ -33,7 +33,7 @@ internal sealed class SchemaTableSymbol : TableSymbol
 
     public override Type Type
     {
-        get { return Definition!.RowType; }
+        get { return Definition.RowType; }
     }
 
     public override ImmutableArray<ColumnSymbol> Columns { get; }

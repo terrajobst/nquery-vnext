@@ -893,7 +893,7 @@ partial class Binder
                                            .Where(n => n is not null)
                                            .Select(b => b!.Symbol)
                                            .OfType<TableColumnInstanceSymbol>()
-                                           .Select(c => FindQueryState(c.TableInstance!))
+                                           .Select(c => FindQueryState(c.TableInstance))
                                            .Distinct()
                                            .Take(2)
                                            .ToImmutableArray();
