@@ -20,14 +20,15 @@ public sealed class Query
 
     private CompiledQuery EnsureCompiled()
     {
-        var query = _query;
-        if (query is not null)
-            return query;
+        if (_query is null)
+        {
+            var syntaxTree = SyntaxTree.ParseQuery(Text);
+            var compilation = Compilation.Create(DataContext, syntaxTree);
+            var query = compilation.Compile();
+            Interlocked.CompareExchange(ref _query, query, null);
+        }
 
-        var syntaxTree = SyntaxTree.ParseQuery(Text);
-        var compilation = Compilation.Create(DataContext, syntaxTree);
-        query = compilation.Compile();
-        return Interlocked.CompareExchange(ref _query, query, null) ?? query;
+        return _query;
     }
 
     public object? ExecuteScalar()

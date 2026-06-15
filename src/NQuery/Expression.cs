@@ -39,15 +39,16 @@ public sealed class Expression<T>
 
     private ExpressionEvaluator EnsureCompiled()
     {
-        var expressionEvaluator = _expressionEvaluator;
-        if (expressionEvaluator is not null)
-            return expressionEvaluator;
+        if (_expressionEvaluator is null)
+        {
+            var syntaxTree = SyntaxTree.ParseExpression(Text);
+            var compilation = Compilation.Create(DataContext, syntaxTree);
+            var compiledQuery = compilation.Compile();
+            var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
+            Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);
+        }
 
-        var syntaxTree = SyntaxTree.ParseExpression(Text);
-        var compilation = Compilation.Create(DataContext, syntaxTree);
-        var compiledQuery = compilation.Compile();
-        expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
-        return Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null) ?? expressionEvaluator;
+        return _expressionEvaluator;
     }
 
     public Type Resolve()

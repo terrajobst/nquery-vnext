@@ -28,11 +28,13 @@ public abstract class SourceText
     {
         get
         {
-            if (_container is not null)
-                return _container;
+            if (_container is null)
+            {
+                var container = new StaticSourceTextContainer(this);
+                Interlocked.CompareExchange(ref _container, container, null);
+            }
 
-            var container = new StaticSourceTextContainer(this);
-            return Interlocked.CompareExchange(ref _container, container, null) ?? container;
+            return _container;
         }
     }
 

@@ -72,14 +72,13 @@ public sealed class SyntaxTree
     private T? GetParent<T>(object child)
          where T : class
     {
-        var parentFromChild = _parentFromChild;
-        if (parentFromChild is null)
+        if (_parentFromChild is null)
         {
-            parentFromChild = GetParents(Root);
-            parentFromChild = Interlocked.CompareExchange(ref _parentFromChild, parentFromChild, null) ?? parentFromChild;
+            var parentFromChild = GetParents(Root);
+            Interlocked.CompareExchange(ref _parentFromChild, parentFromChild, null);
         }
 
-        parentFromChild.TryGetValue(child, out var parent);
+        _parentFromChild.TryGetValue(child, out var parent);
         return parent as T;
     }
 
