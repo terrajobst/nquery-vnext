@@ -1,5 +1,5 @@
 using NQuery.CodeAnalysis.Symbols;
-using NQuery.Metadata.Aggregation;
+using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Algebra;
 
@@ -7,11 +7,11 @@ namespace NQuery.CodeAnalysis.Algebra;
 // logical argument expression, producing an output slot.
 internal sealed class LogicalAggregatedValue
 {
-    public LogicalAggregatedValue(ValueSlot output, AggregateSymbol aggregate, IAggregatable aggregatable, LogicalExpression argument)
+    public LogicalAggregatedValue(ValueSlot output, AggregateSymbol aggregate, AggregateFold fold, LogicalExpression argument)
     {
         Output = output;
         Aggregate = aggregate;
-        Aggregatable = aggregatable;
+        Fold = fold;
         Argument = argument;
     }
 
@@ -19,7 +19,7 @@ internal sealed class LogicalAggregatedValue
 
     public AggregateSymbol Aggregate { get; }
 
-    public IAggregatable Aggregatable { get; }
+    public AggregateFold Fold { get; }
 
     public LogicalExpression Argument { get; }
 }

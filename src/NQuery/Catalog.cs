@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.Metadata;
-using NQuery.Metadata.Aggregation;
 
 namespace NQuery;
 

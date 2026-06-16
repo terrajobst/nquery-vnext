@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Metadata.Aggregation;
-
 namespace NQuery.CodeAnalysis.Iterators;
 
 // Stream aggregate: collapses runs of consecutive equal-group rows into one output
@@ -22,23 +20,21 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
     private readonly Iterator _input;
     private readonly ImmutableArray<int> _groupIndices;
     private readonly ImmutableArray<IComparer> _comparers;
-    private readonly ImmutableArray<IAggregator> _aggregators;
-    private readonly ImmutableArray<EmittedFunction> _argumentFunctions;
+    private readonly EmittedAggregates _aggregates;
     private readonly RowBuffer _readRowBuffer;
     private readonly ArrayRowBuffer _rowBuffer;
 
     private bool _eof;
     private bool _isFirstRecord;
 
-    public EmittedStreamAggregateIterator(Iterator input, ImmutableArray<int> groupIndices, ImmutableArray<IComparer> comparers, ImmutableArray<IAggregator> aggregators, ImmutableArray<EmittedFunction> argumentFunctions, RowBuffer? outer)
+    public EmittedStreamAggregateIterator(Iterator input, ImmutableArray<int> groupIndices, ImmutableArray<IComparer> comparers, EmittedAggregates aggregates, int aggregateCount, RowBuffer? outer)
     {
         _input = input;
         _groupIndices = groupIndices;
         _comparers = comparers;
-        _aggregators = aggregators;
-        _argumentFunctions = argumentFunctions;
+        _aggregates = aggregates;
         _readRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);
-        _rowBuffer = new ArrayRowBuffer(groupIndices.Length + aggregators.Length);
+        _rowBuffer = new ArrayRowBuffer(groupIndices.Length + aggregateCount);
     }
 
     public override RowBuffer RowBuffer => _rowBuffer;
@@ -91,23 +87,17 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
 
     private void InitializeAggregates()
     {
-        foreach (var aggregator in _aggregators)
-            aggregator.Initialize();
+        _aggregates.Initialize();
     }
 
     private void AccumulateAggregates()
     {
-        for (var i = 0; i < _aggregators.Length; i++)
-        {
-            var argument = _argumentFunctions[i](_readRowBuffer);
-            _aggregators[i].Accumulate(argument);
-        }
+        _aggregates.Accumulate(_readRowBuffer);
     }
 
     private void StoreAggregates()
     {
-        for (var i = 0; i < _aggregators.Length; i++)
-            _rowBuffer.Array[_groupIndices.Length + i] = _aggregators[i].GetResult()!;
+        _aggregates.StoreResults(_rowBuffer.Array);
     }
 
     private void StoreGroupValues()

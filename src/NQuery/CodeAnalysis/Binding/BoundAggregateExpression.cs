@@ -1,14 +1,14 @@
 using NQuery.CodeAnalysis.Symbols;
-using NQuery.Metadata.Aggregation;
+using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class BoundAggregateExpression : BoundExpression
 {
-    public BoundAggregateExpression(AggregateSymbol aggregate, IAggregatable? aggregatable, BoundExpression argument)
+    public BoundAggregateExpression(AggregateSymbol aggregate, AggregateFold? fold, BoundExpression argument)
     {
         Symbol = aggregate;
-        Aggregatable = aggregatable;
+        Fold = fold;
         Argument = argument;
     }
 
@@ -21,9 +21,9 @@ internal sealed class BoundAggregateExpression : BoundExpression
     {
         get
         {
-            return Aggregatable is null
+            return Fold is null
                 ? TypeFacts.Unknown
-                : Aggregatable.ReturnType;
+                : Fold.ReturnType;
         }
     }
 
@@ -34,7 +34,7 @@ internal sealed class BoundAggregateExpression : BoundExpression
         get { return Symbol; }
     }
 
-    public IAggregatable? Aggregatable { get; }
+    public AggregateFold? Fold { get; }
 
     public BoundExpression Argument { get; }
 

@@ -330,15 +330,6 @@
   <data name="HavingExpressionNotAggregatedOrGrouped" xml:space="preserve">
     <value>Column '{0}' is invalid in the HAVING clause because it is not contained in either an aggregate function or the GROUP BY clause.</value>
   </data>
-  <data name="IAggregatorAccumulateFailed" xml:space="preserve">
-    <value>IAggregator.Accumulate() threw an exception.</value>
-  </data>
-  <data name="IAggregatorInitFailed" xml:space="preserve">
-    <value>IAggregator.Initialize() threw an exception.</value>
-  </data>
-  <data name="IAggregatorTerminateFailed" xml:space="preserve">
-    <value>IAggregator.GetResult() threw an exception.</value>
-  </data>
   <data name="IllegalInputCharacter" xml:space="preserve">
     <value>Invalid character in input '{0}'.</value>
   </data>

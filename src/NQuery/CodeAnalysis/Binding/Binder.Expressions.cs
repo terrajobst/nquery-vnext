@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
 using NQuery.CodeAnalysis.Text;
-using NQuery.Metadata.Aggregation;
+using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Binding;
 
@@ -799,8 +799,8 @@ partial class Binder
 
         var aggregate = aggregates[0];
         var boundArgument = new BoundLiteralExpression(0);
-        var boundAggregatable = BindAggregatable(node.Span, aggregate, boundArgument);
-        var boundAggregate = new BoundAggregateExpression(aggregate, boundAggregatable, boundArgument);
+        var boundFold = BindAggregateFold(node.Span, aggregate, boundArgument);
+        var boundAggregate = new BoundAggregateExpression(aggregate, boundFold, boundArgument);
         return BindAggregate(node, boundAggregate);
     }
 
@@ -869,21 +869,21 @@ partial class Binder
         var argument = node.ArgumentList.Arguments[0];
         var argumentBinder = CreateAggregateArgumentBinder();
         var boundArgument = argumentBinder.BindExpression(argument);
-        var boundAggregatable = BindAggregatable(node.Span, aggregate, boundArgument);
-        var boundAggregate = new BoundAggregateExpression(aggregate, boundAggregatable, boundArgument);
+        var boundFold = BindAggregateFold(node.Span, aggregate, boundArgument);
+        var boundAggregate = new BoundAggregateExpression(aggregate, boundFold, boundArgument);
         return BindAggregate(node, boundAggregate);
     }
 
-    private IAggregatable? BindAggregatable(TextSpan errorSpan, AggregateSymbol aggregate, BoundExpression boundArgument)
+    private AggregateFold? BindAggregateFold(TextSpan errorSpan, AggregateSymbol aggregate, BoundExpression boundArgument)
     {
-        var aggregatable = boundArgument.Type.IsError()
+        var fold = boundArgument.Type.IsError()
             ? null
-            : aggregate.Definition.CreateAggregatable(boundArgument.Type);
+            : aggregate.Definition.CreateFold(boundArgument.Type);
 
-        if (!boundArgument.Type.IsError() && aggregatable is null)
+        if (!boundArgument.Type.IsError() && fold is null)
             Diagnostics.ReportAggregateDoesNotSupportType(errorSpan, aggregate, boundArgument.Type);
 
-        return aggregatable;
+        return fold;
     }
 
     private BoundExpression BindAggregate(ExpressionSyntax aggregate, BoundAggregateExpression boundAggregate)

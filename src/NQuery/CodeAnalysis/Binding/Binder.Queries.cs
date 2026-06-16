@@ -877,7 +877,7 @@ partial class Binder
 
         var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
                           let expression = (BoundAggregateExpression)t.Expression
-                          select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Aggregatable, expression.Argument)).ToImmutableArray();
+                          select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Fold, expression.Argument)).ToImmutableArray();
 
         var groups = groupByClause?.Groups ?? ImmutableArray<BoundComparedValue>.Empty;
 

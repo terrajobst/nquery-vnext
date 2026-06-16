@@ -2,16 +2,39 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Iterators;
-using NQuery.Metadata;
-using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
 
-// The emitted iterator takes group *indices* into the read buffer and EmittedFunctions that receive it.
-// With outer == null the read buffer is just the input, so a group index is a column
-// index and an argument function reads rb[column].
+// The emitted iterator drives the grouping/run logic and calls three delegates (initialize,
+// accumulate, store) that the emitter compiles. The tests here stand in hand-written delegates
+// for those, so they exercise the iterator rather than the real aggregate compilation.
 public class EmittedStreamAggregateIteratorTests : IteratorTests
 {
+    private static EmittedAggregates None()
+    {
+        return new EmittedAggregates(() => { }, _ => { }, _ => { });
+    }
+
+    // MAX and MIN over the int in the given column, written at outputOffset / outputOffset + 1.
+    private static EmittedAggregates MaxMin(int column, int outputOffset)
+    {
+        int? max = null;
+        int? min = null;
+        return new EmittedAggregates(
+            () => { max = null; min = null; },
+            rb =>
+            {
+                var v = (int)rb[column]!;
+                max = max is null ? v : Math.Max(max.Value, v);
+                min = min is null ? v : Math.Min(min.Value, v);
+            },
+            target =>
+            {
+                target[outputOffset] = max;
+                target[outputOffset + 1] = min;
+            });
+    }
+
     [Fact]
     public void Iterators_EmittedStreamAggregate_ForwardsProperly()
     {
@@ -21,8 +44,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
 
         using (var iterator = new EmittedStreamAggregateIterator(input, ImmutableArray<int>.Empty,
-                   ImmutableArray<IComparer>.Empty, ImmutableArray<IAggregator>.Empty,
-                   ImmutableArray<EmittedFunction>.Empty, outer: null))
+                   ImmutableArray<IComparer>.Empty, None(), aggregateCount: 0, outer: null))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -45,7 +67,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
 
         using var iterator = new EmittedStreamAggregateIterator(input, groupIndices, comparers,
-            ImmutableArray<IAggregator>.Empty, ImmutableArray<EmittedFunction>.Empty, outer: null);
+            None(), aggregateCount: 0, outer: null);
         AssertEmpty(iterator);
     }
 
@@ -58,8 +80,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
 
         using var iterator = new EmittedStreamAggregateIterator(input, ImmutableArray<int>.Empty,
-            ImmutableArray<IComparer>.Empty, ImmutableArray<IAggregator>.Empty,
-            ImmutableArray<EmittedFunction>.Empty, outer: null);
+            ImmutableArray<IComparer>.Empty, None(), aggregateCount: 0, outer: null);
         AssertProduces(iterator, expected);
     }
 
@@ -73,15 +94,9 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         };
 
         using var input = new MockedIterator(rows);
-        var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator(),
-            new MinAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
-
-        var function = new EmittedFunction(rb => rb[0]);
-        var argumentFunctions = ImmutableArray.Create(function, function);
 
         using var iterator = new EmittedStreamAggregateIterator(input, ImmutableArray<int>.Empty,
-            ImmutableArray<IComparer>.Empty, aggregators, argumentFunctions, outer: null);
+            ImmutableArray<IComparer>.Empty, MaxMin(column: 0, outputOffset: 0), aggregateCount: 2, outer: null);
         AssertProduces(iterator, expected);
     }
 
@@ -104,20 +119,14 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var groupIndices = ImmutableArray.Create(0);
         var comparers = ImmutableArray.Create<IComparer>(Comparer.Default);
-        var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator(),
-            new MinAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
-
-        var function = new EmittedFunction(rb => rb[1]);
-        var argumentFunctions = ImmutableArray.Create(function, function);
 
         using var iterator = new EmittedStreamAggregateIterator(input, groupIndices, comparers,
-            aggregators, argumentFunctions, outer: null);
+            MaxMin(column: 1, outputOffset: 1), aggregateCount: 2, outer: null);
         AssertProduces(iterator, expected);
     }
 
     // Hole: the outer-correlation path. The read buffer is (outer ++ input), so an
-    // argument function can combine the outer row with each input row.
+    // argument can combine the outer row with each input row.
     [Fact]
     public void Iterators_EmittedStreamAggregate_ComputeAggregates_UsingOuter()
     {
@@ -129,14 +138,20 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         var outer = new MockedRowBuffer(new object[] { 100 });
 
         using var input = new MockedIterator(rows);
-        var aggregators = ImmutableArray.Create(
-            new MaxAggregateDefinition().CreateAggregatable(typeof(int))!.CreateAggregator());
 
-        // rb[0] is the outer value (100), rb[1] is the input value.
-        var argumentFunctions = ImmutableArray.Create<EmittedFunction>(rb => (int)rb[0] + (int)rb[1]);
+        // rb[0] is the outer value (100), rb[1] is the input value; MAX over their sum.
+        int? max = null;
+        var aggregates = new EmittedAggregates(
+            () => max = null,
+            rb =>
+            {
+                var v = (int)rb[0]! + (int)rb[1]!;
+                max = max is null ? v : Math.Max(max.Value, v);
+            },
+            target => target[0] = max);
 
         using var iterator = new EmittedStreamAggregateIterator(input, ImmutableArray<int>.Empty,
-            ImmutableArray<IComparer>.Empty, aggregators, argumentFunctions, outer);
+            ImmutableArray<IComparer>.Empty, aggregates, aggregateCount: 1, outer);
         AssertProduces(iterator, expected);
     }
 }

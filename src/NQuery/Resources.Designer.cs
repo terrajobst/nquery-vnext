@@ -738,33 +738,6 @@ internal class Resources {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to IAggregator.Accumulate() threw an exception..
-    /// </summary>
-    internal static string IAggregatorAccumulateFailed {
-        get {
-            return ResourceManager.GetString("IAggregatorAccumulateFailed", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to IAggregator.Initialize() threw an exception..
-    /// </summary>
-    internal static string IAggregatorInitFailed {
-        get {
-            return ResourceManager.GetString("IAggregatorInitFailed", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to IAggregator.GetResult() threw an exception..
-    /// </summary>
-    internal static string IAggregatorTerminateFailed {
-        get {
-            return ResourceManager.GetString("IAggregatorTerminateFailed", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to Invalid character in input &apos;{0}&apos;..
     /// </summary>
     internal static string IllegalInputCharacter {

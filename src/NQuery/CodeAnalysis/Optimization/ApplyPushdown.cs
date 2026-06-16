@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Binding;
-using NQuery.Metadata.Aggregation;
+using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Optimization;
 
@@ -145,7 +145,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
         var emptyValues = new object?[aggregate.Aggregates.Length];
         for (var i = 0; i < aggregate.Aggregates.Length; i++)
         {
-            if (!TryGetEmptyValue(aggregate.Aggregates[i].Aggregatable, out emptyValues[i]))
+            if (!TryGetEmptyValue(aggregate.Aggregates[i].Fold, out emptyValues[i]))
                 return apply;
         }
 
@@ -172,7 +172,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
 
         // Per-key aggregates into fresh output slots; arguments follow the cloned body.
         var perKeyAggregates = aggregate.Aggregates
-                                        .Select(a => new LogicalAggregatedValue(a.Output.Duplicate(), a.Aggregate, a.Aggregatable, cloner.CloneExpression(a.Argument)))
+                                        .Select(a => new LogicalAggregatedValue(a.Output.Duplicate(), a.Aggregate, a.Fold, cloner.CloneExpression(a.Argument)))
                                         .ToImmutableArray();
         var perKey = new LogicalAggregate(matched, BuildGroups(domainKeys, comparers), perKeyAggregates);
 
@@ -199,13 +199,13 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
     // The aggregate's result over zero rows, by running the aggregator with no
     // accumulations (COUNT -> 0, the rest -> NULL). A throwing aggregator signals "can't
     // decorrelate safely".
-    private static bool TryGetEmptyValue(IAggregatable aggregatable, out object? emptyValue)
+    private static bool TryGetEmptyValue(AggregateFold fold, out object? emptyValue)
     {
         try
         {
-            var aggregator = aggregatable.CreateAggregator();
-            aggregator.Initialize();
-            emptyValue = aggregator.GetResult();
+            var seed = fold.Seed.Compile();
+            var result = fold.Result.Compile();
+            emptyValue = result.DynamicInvoke(seed.DynamicInvoke());
             return true;
         }
         catch

@@ -4,7 +4,6 @@ using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
 using NQuery.Metadata;
-using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.CodeAnalysis.Binding;
 
@@ -19,19 +18,12 @@ public class AggregateTests
 
         public override string Name { get; }
 
-        internal override IAggregatable CreateAggregatable(Type argumentType)
+        internal override AggregateFold? CreateFold(Type argumentType)
         {
-            return new FakeAggregatable();
-        }
-
-        private sealed class FakeAggregatable : IAggregatable
-        {
-            public IAggregator CreateAggregator()
-            {
-                throw new NotImplementedException();
-            }
-
-            public Type ReturnType { get { return typeof(object); } }
+            System.Linq.Expressions.Expression<Func<object?>> seed = () => null;
+            System.Linq.Expressions.Expression<Func<object?, object?, object?>> accumulate = (state, value) => value;
+            System.Linq.Expressions.Expression<Func<object?, object?>> result = state => state;
+            return new AggregateFold(seed, accumulate, result);
         }
     }
 

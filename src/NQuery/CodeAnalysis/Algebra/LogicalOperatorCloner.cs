@@ -133,7 +133,7 @@ internal sealed class LogicalOperatorCloner
         var input = Clone(node.Input);
         var groups = node.Groups.Select(g => new LogicalComparedValue(Map(g.ValueSlot), g.Comparer)).ToImmutableArray();
         var aggregates = node.Aggregates
-                             .Select(a => new LogicalAggregatedValue(Introduce(a.Output), a.Aggregate, a.Aggregatable, CloneExpression(a.Argument)))
+                             .Select(a => new LogicalAggregatedValue(Introduce(a.Output), a.Aggregate, a.Fold, CloneExpression(a.Argument)))
                              .ToImmutableArray();
         return new LogicalAggregate(input, groups, aggregates);
     }

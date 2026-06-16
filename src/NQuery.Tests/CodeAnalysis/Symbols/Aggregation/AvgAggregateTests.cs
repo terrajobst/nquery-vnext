@@ -1,5 +1,4 @@
 using NQuery.Metadata;
-using NQuery.Metadata.Aggregation;
 
 namespace NQuery.Tests.CodeAnalysis.Symbols.Aggregation;
 
@@ -14,6 +13,6 @@ public sealed class AvgAggregateTests : AggregateTests
 
     protected override AggregateDefinition CreateAggregateDefinition()
     {
-        return new AvgAggregateDefinition();
+        return BuiltInAggregates.Avg;
     }
 }

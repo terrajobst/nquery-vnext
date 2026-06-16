@@ -6,13 +6,19 @@ public abstract class AggregateTests
 {
     internal void AssertProduces(object? expected, Type argumentType, object?[] values)
     {
-        var aggregator = CreateAggregateDefinition().CreateAggregatable(argumentType)!.CreateAggregator();
-        aggregator.Initialize();
+        var fold = CreateAggregateDefinition().CreateFold(argumentType)!;
+        var seed = fold.Seed.Compile();
+        var accumulate = fold.Accumulate.Compile();
+        var result = fold.Result.Compile();
 
+        var state = seed.DynamicInvoke();
         foreach (var value in values)
-            aggregator.Accumulate(value);
+        {
+            if (value is not null)
+                state = accumulate.DynamicInvoke(state, value);
+        }
 
-        var actual = aggregator.GetResult();
+        var actual = result.DynamicInvoke(state);
         Assert.Equal(expected, actual);
     }
 

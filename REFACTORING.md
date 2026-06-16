@@ -1,9 +1,14 @@
 # NQuery Major Refactoring
 
-* Change aggregates such the extension points deals with expressions trees that
-  can be compiled, rather than with an interface
-    - Similar to columns, properties, and methods
 * Are properties on the show plan used at all?
+* Do we need the step functions in BuiltInAggregates? Seems like should emit
+  them as expressions.
+* What does the emitter have an abstraction (Aggregator and FoldAggregator)?
+* Can we change the for loops for all aggregates to more or less be emitted as well?
+  - It seems we need this if we want the aggregates to be stored in strongly
+    typed slots eventually. Doing so probably means that Aggregator can
+    disappear entirely and instead we have three void returning functions that
+    we compile during emit (initialize, accumulate, get result)
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize
@@ -11,6 +16,7 @@
   one. Or do we need that? I'd assume we'd prefer the non-nullable one because
   of the way we handle conversions (our types are always non-null T and T is
   always better than an implicit conversion from T to T?)
+* Fix the indentation of new Catalog()
 
 ## Port Common Table Expressions
 
@@ -104,3 +110,11 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
+* CompiledQuery and ExpressionEvaluator should go to CodeAnalysis
+* ExpressionEvaluator should probably be renamed to CompiledExpression.
+* Ideally we'd have `CompiledExpression<T>`
+* We still need to support cases where the type isn't known until runtime. That
+  should probably be `compilation.CompileExpression(typeof(SomeType))` that
+  returns `Expression<object>`.
+* Probably means `CompiledExpression<T>` should have a target type.
+* Are properties on the show plan used at all?

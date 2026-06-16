@@ -1,15 +1,15 @@
 using NQuery.CodeAnalysis.Symbols;
-using NQuery.Metadata.Aggregation;
+using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class BoundAggregatedValue
 {
-    public BoundAggregatedValue(IBoundValue output, AggregateSymbol aggregate, IAggregatable? aggregatable, BoundExpression argument)
+    public BoundAggregatedValue(IBoundValue output, AggregateSymbol aggregate, AggregateFold? fold, BoundExpression argument)
     {
         Output = output;
         Aggregate = aggregate;
-        Aggregatable = aggregatable;
+        Fold = fold;
         Argument = argument;
     }
 
@@ -17,7 +17,7 @@ internal sealed class BoundAggregatedValue
 
     public AggregateSymbol Aggregate { get; }
 
-    public IAggregatable? Aggregatable { get; }
+    public AggregateFold? Fold { get; }
 
     public BoundExpression Argument { get; }
 }
