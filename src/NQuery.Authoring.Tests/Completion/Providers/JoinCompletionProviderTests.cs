@@ -1,5 +1,6 @@
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Completion.Providers;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Tests.Completion.Providers;
 

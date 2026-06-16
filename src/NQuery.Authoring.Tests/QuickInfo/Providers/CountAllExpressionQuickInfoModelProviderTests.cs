@@ -1,7 +1,8 @@
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.QuickInfo.Providers;
-using NQuery.Symbols;
-using NQuery.Syntax;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
 using NQuery.Metadata;
 
 namespace NQuery.Authoring.Tests.QuickInfo.Providers;

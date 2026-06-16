@@ -1,9 +1,9 @@
-using NQuery.Iterators;
+using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.Iterators;
 
 // Mirrors NQuery.Tests.Iterators.IteratorTests, but against the emitted iterator
-// contract (NQuery.Iterators).
+// contract (NQuery.CodeAnalysis.Iterators).
 public class IteratorTests
 {
     internal static void AssertEmpty(Iterator iterator)

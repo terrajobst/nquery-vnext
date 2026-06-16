@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using NQuery.Authoring.Completion;
 using NQuery.Authoring.Composition.Completion;
 using NQuery.Authoring.VSEditorWpf.Text;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.Completion;
 

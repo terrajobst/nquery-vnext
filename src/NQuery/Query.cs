@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery;
 
 public sealed class Query

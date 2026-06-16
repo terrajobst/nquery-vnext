@@ -1,8 +1,8 @@
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
-using NQuery.Planning;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Planning;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Tests.Planning;
 

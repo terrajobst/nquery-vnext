@@ -1,5 +1,6 @@
 using NQuery.Authoring.Selection.Providers;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Selection;
 

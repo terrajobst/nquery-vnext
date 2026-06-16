@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring;
 
 public static class GlyphExtensions

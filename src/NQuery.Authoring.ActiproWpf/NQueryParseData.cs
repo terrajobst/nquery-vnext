@@ -1,4 +1,5 @@
 using ActiproSoftware.Text.Parsing;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.ActiproWpf;
 

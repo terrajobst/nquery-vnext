@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery;
 

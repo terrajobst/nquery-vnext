@@ -4,7 +4,8 @@ using ActiproSoftware.Text.Tagging.Implementation;
 using ActiproSoftware.Text.Utility;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation;
 
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Squiggles;
 

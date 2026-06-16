@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
-using NQuery.Binding;
-using NQuery.Optimization;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Binding;
+using NQuery.CodeAnalysis.Optimization;
 
 namespace NQuery.Tests.Optimization;
 

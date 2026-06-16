@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.SignatureHelp;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Tests.SignatureHelp;
 

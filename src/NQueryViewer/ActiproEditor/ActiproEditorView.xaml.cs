@@ -14,7 +14,7 @@ using NQuery.Authoring.ActiproWpf.Commenting;
 using NQuery.Authoring.ActiproWpf.Margins;
 using NQuery.Authoring.ActiproWpf.Selection;
 using NQuery.Authoring.ActiproWpf.Text;
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQueryViewer.ActiproEditor;
 

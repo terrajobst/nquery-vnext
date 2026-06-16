@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring.BraceMatching;
 
 public interface IBraceMatcher

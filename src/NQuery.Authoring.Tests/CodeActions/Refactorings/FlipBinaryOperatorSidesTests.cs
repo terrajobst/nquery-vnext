@@ -1,5 +1,6 @@
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.CodeActions.Refactorings;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Tests.CodeActions.Refactorings;
 

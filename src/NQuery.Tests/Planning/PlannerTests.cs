@@ -1,7 +1,8 @@
-using NQuery.Algebra;
-using NQuery.Binding;
-using NQuery.Optimization;
-using NQuery.Planning;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Binding;
+using NQuery.CodeAnalysis.Optimization;
+using NQuery.CodeAnalysis.Planning;
 
 namespace NQuery.Tests.Planning;
 

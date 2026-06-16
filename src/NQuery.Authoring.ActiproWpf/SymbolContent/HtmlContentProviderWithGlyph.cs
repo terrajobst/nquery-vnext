@@ -7,7 +7,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 
 using NQuery.Authoring.ActiproWpf.Classification;
 using NQuery.Authoring.Wpf;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Authoring.ActiproWpf.SymbolContent;
 

@@ -1,4 +1,4 @@
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.SignatureHelp;
 

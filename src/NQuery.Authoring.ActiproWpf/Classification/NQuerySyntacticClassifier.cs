@@ -4,6 +4,7 @@ using ActiproSoftware.Text.Tagging;
 using ActiproSoftware.Text.Tagging.Implementation;
 
 using NQuery.Authoring.Classifications;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.ActiproWpf.Classification;
 

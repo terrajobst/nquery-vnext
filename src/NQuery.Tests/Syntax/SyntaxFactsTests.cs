@@ -1,4 +1,5 @@
 using System.Text;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Tests.Syntax;
 

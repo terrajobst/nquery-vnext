@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Classifications;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
 using NQuery.Metadata;
 
 namespace NQuery.Authoring.Tests.Classifications;

@@ -2,7 +2,7 @@ using System.Runtime.CompilerServices;
 
 using ActiproSoftware.Text;
 
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Text;
 

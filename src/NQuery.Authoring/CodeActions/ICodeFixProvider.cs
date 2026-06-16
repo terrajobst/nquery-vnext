@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring.CodeActions;
 
 public interface ICodeFixProvider

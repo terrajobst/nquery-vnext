@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring.Completion;
 
 public abstract class CompletionProvider<T> : ICompletionProvider

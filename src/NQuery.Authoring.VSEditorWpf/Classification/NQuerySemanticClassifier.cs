@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.Classifications;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.Classification;
 

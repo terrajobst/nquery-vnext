@@ -13,6 +13,7 @@ using System.Windows.Threading;
 
 using NQuery;
 using NQuery.Authoring;
+using NQuery.CodeAnalysis;
 using NQuery.Data;
 
 using NQueryViewer.Editor;

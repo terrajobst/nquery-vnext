@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Tests.Binding;
 

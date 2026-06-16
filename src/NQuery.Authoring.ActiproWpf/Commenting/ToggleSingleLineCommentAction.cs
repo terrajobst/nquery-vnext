@@ -3,7 +3,8 @@ using System.Windows.Input;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 
 using NQuery.Authoring.Commenting;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.ActiproWpf.Commenting;
 

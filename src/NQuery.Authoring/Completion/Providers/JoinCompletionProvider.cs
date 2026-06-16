@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
 using System.Text;
 
+using NQuery.CodeAnalysis;
 using NQuery.Metadata;
-using NQuery.Symbols;
-using NQuery.Syntax;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.Authoring.Completion.Providers;
 

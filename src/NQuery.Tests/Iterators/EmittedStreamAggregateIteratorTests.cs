@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.Iterators;
+using NQuery.CodeAnalysis.Iterators;
 using NQuery.Metadata;
 using NQuery.Metadata.Aggregation;
 

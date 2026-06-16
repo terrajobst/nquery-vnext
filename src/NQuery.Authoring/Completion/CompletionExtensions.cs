@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Completion.Providers;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Completion;
 

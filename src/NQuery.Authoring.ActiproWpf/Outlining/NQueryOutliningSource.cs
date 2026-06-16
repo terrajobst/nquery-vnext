@@ -5,6 +5,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.Outlining.Implementation;
 
 using NQuery.Authoring.Outlining;
+using NQuery.CodeAnalysis;
 
 using IOutliner = NQuery.Authoring.Outlining.IOutliner;
 

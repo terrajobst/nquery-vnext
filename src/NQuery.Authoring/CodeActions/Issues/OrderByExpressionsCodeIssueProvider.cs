@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
 using System.Globalization;
 
-using NQuery.Symbols;
-using NQuery.Syntax;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.CodeActions.Issues;
 

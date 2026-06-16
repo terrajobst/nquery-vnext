@@ -1,3 +1,4 @@
+using NQuery.CodeAnalysis;
 using NQuery.Data;
 
 namespace NQuery.Tests;

@@ -2,15 +2,6 @@
 
 * Rename DataContext to Catalog. It's the better term. In Linq/EF it means
   a live data base connection which this isn't.
-* Add `NQuery.CodeAnalysis`
-    - Move all the language processing under it (syntax, symbols, binding, algebra etc)
-    - Just keep the non-compilation APIs around
-    - `Query`
-    - `Expression<T>`
-    - `DataContext`
-    - Diagnostics
-    - Definitions
-    - ShowPlan
 * Change aggregates such the extension points deals with expressions trees that
   can be compiled, rather than with an interface
     - Similar to columns, properties, and methods

@@ -10,7 +10,7 @@ using Microsoft.VisualStudio.Text.Classification;
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.VSEditorWpf.Classification;
 using NQuery.Authoring.Wpf;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis.Symbols;
 
 using Span = Microsoft.VisualStudio.Text.Span;
 

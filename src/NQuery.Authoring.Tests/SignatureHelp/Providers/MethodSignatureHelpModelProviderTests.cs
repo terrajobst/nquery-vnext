@@ -1,5 +1,6 @@
 using NQuery.Authoring.SignatureHelp;
 using NQuery.Authoring.SignatureHelp.Providers;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Tests.SignatureHelp.Providers;
 

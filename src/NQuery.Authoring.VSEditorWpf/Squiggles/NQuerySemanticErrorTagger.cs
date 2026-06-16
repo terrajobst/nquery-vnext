@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.Text;
 using Microsoft.VisualStudio.Text.Adornments;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.Squiggles;
 

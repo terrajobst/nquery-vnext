@@ -1,6 +1,7 @@
 using NQuery.Authoring.Completion;
-using NQuery.Symbols;
-using NQuery.Syntax;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.Authoring.Tests.Completion.Providers;
 

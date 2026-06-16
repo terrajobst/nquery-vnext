@@ -1,6 +1,7 @@
 using NQuery.Authoring.CodeActions.Fixes;
 using NQuery.Authoring.CodeActions.Issues;
 using NQuery.Authoring.CodeActions.Refactorings;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.CodeActions;
 

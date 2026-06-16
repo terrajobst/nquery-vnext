@@ -1,8 +1,8 @@
 using System.Collections;
 
 using NQuery.Metadata;
-using NQuery.Iterators;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis.Iterators;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Tests.Iterators;
 

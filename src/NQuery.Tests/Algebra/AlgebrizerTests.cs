@@ -1,5 +1,6 @@
-using NQuery.Algebra;
-using NQuery.Binding;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Binding;
 
 namespace NQuery.Tests.Algebra;
 

@@ -1,7 +1,8 @@
 using System.Collections.Immutable;
 
-using NQuery.Symbols;
-using NQuery.Syntax;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
+using NQuery.CodeAnalysis.Syntax;
 using NQuery.Metadata;
 using NQuery.Metadata.Aggregation;
 

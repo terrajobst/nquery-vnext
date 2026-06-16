@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring.QuickInfo;
 
 public abstract class QuickInfoModelProvider<T> : IQuickInfoModelProvider

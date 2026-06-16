@@ -1,9 +1,10 @@
-using NQuery.Algebra;
-using NQuery.Binding;
-using NQuery.Emit;
-using NQuery.Iterators;
-using NQuery.Optimization;
-using NQuery.Planning;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Binding;
+using NQuery.CodeAnalysis.Emit;
+using NQuery.CodeAnalysis.Iterators;
+using NQuery.CodeAnalysis.Optimization;
+using NQuery.CodeAnalysis.Planning;
 
 namespace NQuery.Tests.Emit;
 

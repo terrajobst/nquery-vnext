@@ -7,6 +7,7 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 
 using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.Completion;
+using NQuery.CodeAnalysis;
 
 using CompletionItem = ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation.CompletionItem;
 using NQueryICompletionProvider = NQuery.Authoring.Completion.ICompletionProvider;

@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 
-using NQuery.Algebra;
-using NQuery.Optimization;
+using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Optimization;
 
 namespace NQuery.Tests.Optimization;
 

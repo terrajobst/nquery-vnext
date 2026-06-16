@@ -3,7 +3,8 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.Highlighting;
 using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt;
 
 using NQuery.Authoring.ActiproWpf.Classification;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Authoring.ActiproWpf.SymbolContent;
 

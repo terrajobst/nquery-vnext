@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-using NQuery.Iterators;
+using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.Iterators;
 

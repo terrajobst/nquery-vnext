@@ -1,8 +1,9 @@
 using System.Collections.Immutable;
 
-using NQuery.Emit;
-using NQuery.Iterators;
-using NQuery.Symbols;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Emit;
+using NQuery.CodeAnalysis.Iterators;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery;
 

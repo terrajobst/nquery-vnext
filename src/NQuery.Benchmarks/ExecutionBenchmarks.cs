@@ -1,6 +1,7 @@
 extern alias baseline;
 
 using BenchmarkDotNet.Attributes;
+using NQuery.CodeAnalysis;
 
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;

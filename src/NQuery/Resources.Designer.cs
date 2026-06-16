@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using NQuery.CodeAnalysis;
+
 namespace NQuery; 
 using System;
 

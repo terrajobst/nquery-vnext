@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Text.Editor;
 
 using NQuery.Authoring.Composition.Selection;
 using NQuery.Authoring.Selection;
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.VSEditorWpf.Selection;
 

@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.Text.Operations;
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.VSEditorWpf.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.Margins;
 

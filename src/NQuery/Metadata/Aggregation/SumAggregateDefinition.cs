@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata.Aggregation;
 
 internal sealed class SumAggregateDefinition : AggregateDefinition

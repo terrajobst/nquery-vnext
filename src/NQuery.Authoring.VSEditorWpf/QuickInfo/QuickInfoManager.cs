@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using NQuery.Authoring.Composition.QuickInfo;
 using NQuery.Authoring.QuickInfo;
 using NQuery.Authoring.VSEditorWpf.Text;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.QuickInfo;
 

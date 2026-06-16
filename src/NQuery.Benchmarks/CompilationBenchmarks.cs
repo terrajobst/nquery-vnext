@@ -20,7 +20,7 @@ public class CompilationBenchmarks
     private BaselineNQuery.DataContext _oldContext = null!;
     private BaselineNQuery.SyntaxTree _oldSyntax = null!;
     private CurrentNQuery.DataContext _newContext = null!;
-    private CurrentNQuery.SyntaxTree _newSyntax = null!;
+    private CurrentNQuery.CodeAnalysis.SyntaxTree _newSyntax = null!;
 
     [GlobalSetup]
     public void Setup()
@@ -35,16 +35,16 @@ public class CompilationBenchmarks
 
         var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
         _newContext = CurrentNQuery.DataContext.Default.AddTables(currentTable);
-        _newSyntax = CurrentNQuery.SyntaxTree.ParseQuery(sql);
+        _newSyntax = CurrentNQuery.CodeAnalysis.SyntaxTree.ParseQuery(sql);
 
         // Warm aggregate-definition / type-resolution caches so steady-state compile is measured.
         BaselineNQuery.Compilation.Create(_oldContext, _oldSyntax).Compile();
-        CurrentNQuery.Compilation.Create(_newContext, _newSyntax).Compile();
+        CurrentNQuery.CodeAnalysis.Compilation.Create(_newContext, _newSyntax).Compile();
     }
 
     [Benchmark(Baseline = true)]
     public object Old() => BaselineNQuery.Compilation.Create(_oldContext, _oldSyntax).Compile();
 
     [Benchmark]
-    public object New() => CurrentNQuery.Compilation.Create(_newContext, _newSyntax).Compile();
+    public object New() => CurrentNQuery.CodeAnalysis.Compilation.Create(_newContext, _newSyntax).Compile();
 }

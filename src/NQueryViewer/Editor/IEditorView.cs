@@ -1,7 +1,7 @@
 using System.Windows;
 
 using NQuery.Authoring;
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQueryViewer.Editor;
 

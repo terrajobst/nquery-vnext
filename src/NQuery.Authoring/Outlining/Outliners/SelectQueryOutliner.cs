@@ -1,4 +1,4 @@
-using NQuery.Syntax;
+using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.Authoring.Outlining.Outliners;
 

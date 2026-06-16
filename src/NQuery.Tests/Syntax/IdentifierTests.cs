@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Tests.Syntax;
 
 public class IdentifierTests

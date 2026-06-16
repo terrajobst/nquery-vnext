@@ -1,5 +1,6 @@
 using NQuery.Authoring.Commenting;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Tests.Commenting;
 

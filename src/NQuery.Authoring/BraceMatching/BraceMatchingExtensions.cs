@@ -1,4 +1,5 @@
 using NQuery.Authoring.BraceMatching.Matchers;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.BraceMatching;
 

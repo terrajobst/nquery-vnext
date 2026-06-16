@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Text.Editor;
 using NQuery.Authoring;
 using NQuery.Authoring.VSEditorWpf;
 using NQuery.Authoring.VSEditorWpf.Selection;
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQueryViewer.VSEditor;
 

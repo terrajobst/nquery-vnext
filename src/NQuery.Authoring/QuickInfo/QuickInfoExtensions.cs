@@ -1,4 +1,5 @@
 using NQuery.Authoring.QuickInfo.Providers;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.QuickInfo;
 

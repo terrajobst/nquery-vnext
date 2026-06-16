@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Authoring.Outlining;
 
 public abstract class SyntaxNodeOutliner<T> : IOutliner

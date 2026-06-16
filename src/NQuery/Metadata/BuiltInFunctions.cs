@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using NQuery.Binding;
+using NQuery.CodeAnalysis.Binding;
 
 namespace NQuery.Metadata;
 

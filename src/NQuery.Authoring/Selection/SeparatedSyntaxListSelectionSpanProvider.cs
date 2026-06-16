@@ -1,5 +1,6 @@
-using NQuery.Syntax;
-using NQuery.Text;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Syntax;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Selection;
 

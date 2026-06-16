@@ -2,7 +2,7 @@ using ActiproSoftware.Text;
 using ActiproSoftware.Windows.Controls.SyntaxEditor;
 
 using NQuery.Authoring.ActiproWpf.Text;
-using NQuery.Text;
+using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.ActiproWpf;
 

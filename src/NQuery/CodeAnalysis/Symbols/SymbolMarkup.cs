@@ -1,0 +1,77 @@
+using System.Collections.Immutable;
+
+namespace NQuery.CodeAnalysis.Symbols;
+
+public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
+{
+    public SymbolMarkup(IEnumerable<SymbolMarkupToken> tokens)
+    {
+        Tokens = tokens.ToImmutableArray();
+    }
+
+    public ImmutableArray<SymbolMarkupToken> Tokens { get; }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is SymbolMarkup other && Equals(other);
+    }
+
+    public bool Equals(SymbolMarkup? other)
+    {
+        if (other is null)
+            return false;
+
+        if (other.Tokens.Length != Tokens.Length)
+            return false;
+
+        for (var i = 0; i < Tokens.Length; i++)
+        {
+            if (!Tokens[i].Equals(other.Tokens[i]))
+                return false;
+        }
+
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        var result = new HashCode();
+        foreach (var token in Tokens)
+            result.Add(token);
+
+        return result.ToHashCode();
+    }
+
+    public override string ToString()
+    {
+        return string.Concat(Tokens.Select(n => n.Text));
+    }
+
+    public static SymbolMarkup ForSymbol(Symbol symbol)
+    {
+        var nodes = new List<SymbolMarkupToken>();
+        nodes.AppendSymbol(symbol);
+        return new SymbolMarkup(nodes);
+    }
+
+    public static SymbolMarkup ForCastSymbol()
+    {
+        var nodes = new List<SymbolMarkupToken>();
+        nodes.AppendCastSymbol();
+        return new SymbolMarkup(nodes);
+    }
+
+    public static SymbolMarkup ForCoalesceSymbol()
+    {
+        var nodes = new List<SymbolMarkupToken>();
+        nodes.AppendCoalesceSymbol();
+        return new SymbolMarkup(nodes);
+    }
+
+    public static SymbolMarkup ForNullIfSymbol()
+    {
+        var nodes = new List<SymbolMarkupToken>();
+        nodes.AppendNullIfSymbol();
+        return new SymbolMarkup(nodes);
+    }
+}

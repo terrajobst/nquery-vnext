@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 
-using NQuery.Syntax;
+using NQuery.CodeAnalysis;
+using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.Tests.Binding;
 

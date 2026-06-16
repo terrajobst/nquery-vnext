@@ -12,6 +12,7 @@ using NQuery.Authoring.ActiproWpf.CodeActions;
 using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.CodeActions;
 using NQuery.Authoring.Wpf.CodeActions;
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.ActiproWpf.Margins;
 

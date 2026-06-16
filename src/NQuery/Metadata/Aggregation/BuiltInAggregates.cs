@@ -1,4 +1,4 @@
-using NQuery.Symbols;
+using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Metadata.Aggregation;
 
