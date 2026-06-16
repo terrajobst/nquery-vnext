@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
@@ -181,11 +182,11 @@ internal static class LogicalPlanVerifier
         PlanVerification.Require(source, "Assert", "condition", node.Condition, scope);
     }
 
-    private static HashSet<ValueSlot> Scope(ImmutableArray<ValueSlot> outerSlots, params ImmutableArray<ValueSlot>[] inputs)
+    private static FrozenSet<ValueSlot> Scope(ImmutableArray<ValueSlot> outerSlots, params ImmutableArray<ValueSlot>[] inputs)
     {
         var set = new HashSet<ValueSlot>(outerSlots);
         foreach (var input in inputs)
             set.UnionWith(input);
-        return set;
+        return set.ToFrozenSet();
     }
 }

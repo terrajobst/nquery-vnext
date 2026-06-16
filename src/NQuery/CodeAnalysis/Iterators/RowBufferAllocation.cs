@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
@@ -6,7 +7,7 @@ namespace NQuery.CodeAnalysis.Iterators;
 
 internal sealed class RowBufferAllocation
 {
-    private readonly Dictionary<ValueSlot, int> _mapping;
+    private readonly FrozenDictionary<ValueSlot, int> _mapping;
 
     public RowBufferAllocation(RowBufferAllocation? parent, RowBuffer rowBuffer, IEnumerable<ValueSlot> valueSlots)
     {
@@ -15,7 +16,7 @@ internal sealed class RowBufferAllocation
         _mapping = GetValueMapping(valueSlots.ToImmutableArray());
     }
 
-    private static Dictionary<ValueSlot, int> GetValueMapping(ImmutableArray<ValueSlot> valueSlots)
+    private static FrozenDictionary<ValueSlot, int> GetValueMapping(ImmutableArray<ValueSlot> valueSlots)
     {
         var dictionary = new Dictionary<ValueSlot, int>(valueSlots.Length);
         for (var i = 0; i < valueSlots.Length; i++)
@@ -25,7 +26,7 @@ internal sealed class RowBufferAllocation
                 dictionary[outputValue] = i;
         }
 
-        return dictionary;
+        return dictionary.ToFrozenDictionary();
     }
 
     public RowBufferAllocation? Parent { get; }

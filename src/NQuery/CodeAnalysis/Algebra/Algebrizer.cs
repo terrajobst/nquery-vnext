@@ -279,7 +279,7 @@ internal sealed class Algebrizer
     {
         foreach (var apply in applies)
         {
-            var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(apply.Relation);
+            var referenced = new HashSet<ValueSlot>(LogicalSlotReferenceFinder.FindReferencedSlots(apply.Relation));
             if (apply.Passthru is not null)
                 referenced.UnionWith(LogicalSlotReferenceFinder.FindReferencedSlots(apply.Passthru));
 

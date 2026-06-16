@@ -1,12 +1,13 @@
+using System.Collections.Frozen;
 using System.Dynamic;
 
 namespace NQuery.Dynamic;
 
 internal sealed class DynamicRow : DynamicObject
 {
-    private readonly IDictionary<string, object> _values;
+    private readonly FrozenDictionary<string, object> _values;
 
-    public DynamicRow(IDictionary<string, object> values)
+    public DynamicRow(FrozenDictionary<string, object> values)
     {
         _values = values;
     }

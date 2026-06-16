@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
@@ -14,7 +15,7 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
                                     .Select(semanticModel.GetDeclaredSymbol)
                                     .Where(s => s is not null)
                                     .Select(s => s!.Table);
-        var referencedTableSet = new HashSet<TableSymbol>(referencedTables);
+        var referencedTableSet = referencedTables.ToFrozenSet();
 
         return from tableExpression in node.CommonTableExpressions
                let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)

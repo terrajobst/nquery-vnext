@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Symbols;
@@ -164,8 +165,9 @@ partial class Binder
             valueFromColumn.Add(columnSymbol, queryColumn.BoundValue);
         }
 
+        var frozenValueFromColumn = valueFromColumn.ToFrozenDictionary();
         var derivedTable = new DerivedTableSymbol(columns);
-        var aliasFactory = new Func<TableInstanceSymbol, ColumnSymbol, IBoundValue>((_, c) => valueFromColumn[c]);
+        var aliasFactory = new Func<TableInstanceSymbol, ColumnSymbol, IBoundValue>((_, c) => frozenValueFromColumn[c]);
         var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, aliasFactory);
         var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 

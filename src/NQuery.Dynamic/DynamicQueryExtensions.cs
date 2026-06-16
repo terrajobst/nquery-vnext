@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace NQuery.Dynamic;
 
 public static class DynamicQueryExtensions
@@ -12,7 +14,7 @@ public static class DynamicQueryExtensions
         }
     }
 
-    private static IDictionary<string, object> GetValues(this QueryReader reader)
+    private static FrozenDictionary<string, object> GetValues(this QueryReader reader)
     {
         var result = new Dictionary<string, object>(reader.ColumnCount, StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < reader.ColumnCount; i++)
@@ -22,6 +24,6 @@ public static class DynamicQueryExtensions
             result[key] = value;
         }
 
-        return result;
+        return result.ToFrozenDictionary();
     }
 }

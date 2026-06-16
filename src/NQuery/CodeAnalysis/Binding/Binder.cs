@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.CodeAnalysis.Binding;
@@ -77,12 +78,12 @@ internal abstract partial class Binder
         return new AggregateArgumentBinder(_sharedBinderState, this);
     }
 
-    public static BindingResult Bind(CompilationUnitSyntax compilationUnit, DataContext dataContext)
+    public static BindingResult Bind(CompilationUnitSyntax compilationUnit, Catalog catalog)
     {
         var sharedBinderState = new SharedBinderState();
-        var binder = new GlobalBinder(sharedBinderState, dataContext);
+        var binder = new GlobalBinder(sharedBinderState, catalog);
         var boundRoot = binder.BindRoot(compilationUnit.Root);
-        return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSyntaxNode, sharedBinderState.BinderFromBoundNode, sharedBinderState.Diagnostics);
+        return new BindingResult(compilationUnit, boundRoot, sharedBinderState.BoundNodeFromSyntaxNode.ToFrozenDictionary(), sharedBinderState.BinderFromBoundNode.ToFrozenDictionary(), sharedBinderState.Diagnostics);
     }
 
     private BoundNode BindRoot(SyntaxNode? root)

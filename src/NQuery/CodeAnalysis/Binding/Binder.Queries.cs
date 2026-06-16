@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Iterators;
@@ -899,7 +900,7 @@ partial class Binder
         }
         else
         {
-            var outputValueSet = new HashSet<IBoundValue>(outputColumns.Select(c => c.BoundValue));
+            var outputValueSet = outputColumns.Select(c => c.BoundValue).ToFrozenSet();
 
             for (var i = 0; i < orderByClause.Columns.Length; i++)
             {
@@ -911,7 +912,7 @@ partial class Binder
                     Diagnostics.ReportOrderByItemsMustBeInSelectListIfDistinctSpecified(column.Span);
             }
 
-            var orderByValueSet = new HashSet<IBoundValue>(orderByClause.Columns.Select(c => c.ComparedValue.Value));
+            var orderByValueSet = orderByClause.Columns.Select(c => c.ComparedValue.Value).ToFrozenSet();
             distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.BoundValue, distinctComparer[i]))
                                              .Where(s => !orderByValueSet.Contains(s.Value))
                                              .ToImmutableArray();

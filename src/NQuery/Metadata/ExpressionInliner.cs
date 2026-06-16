@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
@@ -23,14 +24,14 @@ internal static class ExpressionInliner
                 : Expression.Convert(argument, parameter.Type);
         }
 
-        return new ParameterReplacer(map).Visit(lambda.Body);
+        return new ParameterReplacer(map.ToFrozenDictionary()).Visit(lambda.Body);
     }
 
     private sealed class ParameterReplacer : ExpressionVisitor
     {
-        private readonly IReadOnlyDictionary<ParameterExpression, Expression> _map;
+        private readonly FrozenDictionary<ParameterExpression, Expression> _map;
 
-        public ParameterReplacer(IReadOnlyDictionary<ParameterExpression, Expression> map)
+        public ParameterReplacer(FrozenDictionary<ParameterExpression, Expression> map)
         {
             _map = map;
         }

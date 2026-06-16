@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace NQuery.CodeAnalysis.Algebra;
 
 // Collects the value slots *referenced* by a logical expression or operator
@@ -7,18 +9,18 @@ namespace NQuery.CodeAnalysis.Algebra;
 // belongs to.
 internal static class LogicalSlotReferenceFinder
 {
-    public static ISet<ValueSlot> FindReferencedSlots(LogicalExpression expression)
+    public static FrozenSet<ValueSlot> FindReferencedSlots(LogicalExpression expression)
     {
         var slots = new HashSet<ValueSlot>();
         AddExpression(expression, slots);
-        return slots;
+        return slots.ToFrozenSet();
     }
 
-    public static ISet<ValueSlot> FindReferencedSlots(LogicalOperator node)
+    public static FrozenSet<ValueSlot> FindReferencedSlots(LogicalOperator node)
     {
         var slots = new HashSet<ValueSlot>();
         AddOperator(node, slots);
-        return slots;
+        return slots.ToFrozenSet();
     }
 
     private static void AddOperator(LogicalOperator node, HashSet<ValueSlot> slots)

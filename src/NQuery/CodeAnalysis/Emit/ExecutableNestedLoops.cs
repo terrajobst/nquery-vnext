@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
@@ -91,7 +92,7 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
 
     // An empty condition list means an unconditional (cross) join, so the
     // predicate is constant true. Each conjunct already yields false on NULL.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, IReadOnlyDictionary<ValueSlot, int> slotIndices)
+    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, int> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;

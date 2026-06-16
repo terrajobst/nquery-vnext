@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
@@ -195,20 +196,20 @@ internal static class PhysicalPlanVerifier
             RequireReferences(node, "remainder", condition, scope);
     }
 
-    private static HashSet<ValueSlot> Scope(ImmutableArray<ValueSlot> outerSlots, params ImmutableArray<ValueSlot>[] inputs)
+    private static FrozenSet<ValueSlot> Scope(ImmutableArray<ValueSlot> outerSlots, params ImmutableArray<ValueSlot>[] inputs)
     {
         var set = new HashSet<ValueSlot>(outerSlots);
         foreach (var input in inputs)
             set.UnionWith(input);
-        return set;
+        return set.ToFrozenSet();
     }
 
-    private static void RequireReferences(PhysicalOperator node, string role, LogicalExpression expression, HashSet<ValueSlot> available)
+    private static void RequireReferences(PhysicalOperator node, string role, LogicalExpression expression, FrozenSet<ValueSlot> available)
     {
         PlanVerification.Require(Source, node.Kind.ToString(), role, expression, available);
     }
 
-    private static void RequireAvailable(PhysicalOperator node, string role, IEnumerable<ValueSlot> referenced, HashSet<ValueSlot> available)
+    private static void RequireAvailable(PhysicalOperator node, string role, IEnumerable<ValueSlot> referenced, FrozenSet<ValueSlot> available)
     {
         PlanVerification.Require(Source, node.Kind.ToString(), role, referenced, available);
     }

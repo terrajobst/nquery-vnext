@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using NQuery.CodeAnalysis.Syntax;
 using NQuery.CodeAnalysis.Text;
 
@@ -5,7 +6,7 @@ namespace NQuery.CodeAnalysis;
 
 public sealed class SyntaxTree
 {
-    private Dictionary<object, object>? _parentFromChild;
+    private FrozenDictionary<object, object>? _parentFromChild;
 
     private SyntaxTree(SourceText text, Func<Parser, CompilationUnitSyntax> parseMethod)
     {
@@ -102,11 +103,11 @@ public sealed class SyntaxTree
         return GetParent<SyntaxTrivia>(structuredTrivia);
     }
 
-    private static Dictionary<object, object> GetParents(SyntaxNode compilationUnit)
+    private static FrozenDictionary<object, object> GetParents(SyntaxNode compilationUnit)
     {
         var result = new Dictionary<object, object>();
         GetParents(result, compilationUnit);
-        return result;
+        return result.ToFrozenDictionary();
     }
 
     private static void GetParents(IDictionary<object, object> parents, SyntaxNode parent)

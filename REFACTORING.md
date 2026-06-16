@@ -5,8 +5,6 @@
 * Change aggregates such the extension points deals with expressions trees that
   can be compiled, rather than with an interface
     - Similar to columns, properties, and methods
-* Replace usages of HashSet<> and Dictionary<,> with FrozenSet and
-  FrozenDictionary where it makes sense
 * Are properties on the show plan used at all?
 
 ## Port Common Table Expressions

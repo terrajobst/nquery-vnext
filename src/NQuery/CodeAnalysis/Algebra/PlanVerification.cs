@@ -1,3 +1,5 @@
+using System.Collections.Frozen;
+
 namespace NQuery.CodeAnalysis.Algebra;
 
 // Shared slot-availability check for the logical and physical plan verifiers (both
@@ -9,7 +11,7 @@ namespace NQuery.CodeAnalysis.Algebra;
 // keeps the diagnostic uniformly actionable.
 internal static class PlanVerification
 {
-    public static void Require(string source, string operatorLabel, string role, IEnumerable<ValueSlot> referenced, ISet<ValueSlot> available)
+    public static void Require(string source, string operatorLabel, string role, IEnumerable<ValueSlot> referenced, FrozenSet<ValueSlot> available)
     {
         foreach (var slot in referenced)
         {
@@ -18,7 +20,7 @@ internal static class PlanVerification
         }
     }
 
-    public static void Require(string source, string operatorLabel, string role, LogicalExpression? expression, ISet<ValueSlot> available)
+    public static void Require(string source, string operatorLabel, string role, LogicalExpression? expression, FrozenSet<ValueSlot> available)
     {
         if (expression is null)
             return;
@@ -26,7 +28,7 @@ internal static class PlanVerification
         Require(source, operatorLabel, role, LogicalSlotReferenceFinder.FindReferencedSlots(expression), available);
     }
 
-    private static InvalidOperationException Failure(string source, string operatorLabel, string role, ValueSlot slot, ISet<ValueSlot> available)
+    private static InvalidOperationException Failure(string source, string operatorLabel, string role, ValueSlot slot, FrozenSet<ValueSlot> available)
     {
         var inScope = available.Count == 0
             ? "(nothing)"

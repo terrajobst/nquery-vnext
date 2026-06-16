@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
@@ -75,7 +76,7 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
 
     // Each conjunct already yields false on NULL; an empty remainder means the hash
     // key alone decides the match.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, IReadOnlyDictionary<ValueSlot, int> slotIndices)
+    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, int> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;

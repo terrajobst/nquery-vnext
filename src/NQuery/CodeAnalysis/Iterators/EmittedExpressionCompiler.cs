@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -20,19 +21,19 @@ internal sealed class EmittedExpressionCompiler
     private static readonly PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) })!;
     private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object))!;
 
-    private readonly IReadOnlyDictionary<ValueSlot, int> _slotIndices;
+    private readonly FrozenDictionary<ValueSlot, int> _slotIndices;
     private readonly ParameterExpression _rowBuffer = Expression.Parameter(typeof(RowBuffer));
     private readonly List<ParameterExpression> _locals = new();
     private readonly List<Expression> _assignments = new();
 
-    private EmittedExpressionCompiler(IReadOnlyDictionary<ValueSlot, int> slotIndices)
+    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, int> slotIndices)
     {
         _slotIndices = slotIndices;
     }
 
     // The row buffer's column layout follows the producing operator's output slot
     // order, so a slot's runtime index is just its ordinal there.
-    public static IReadOnlyDictionary<ValueSlot, int> CreateSlotIndices(ImmutableArray<ValueSlot> outputValueSlots)
+    public static FrozenDictionary<ValueSlot, int> CreateSlotIndices(ImmutableArray<ValueSlot> outputValueSlots)
     {
         var map = new Dictionary<ValueSlot, int>(outputValueSlots.Length);
         for (var i = 0; i < outputValueSlots.Length; i++)
@@ -41,20 +42,20 @@ internal sealed class EmittedExpressionCompiler
                 map.Add(outputValueSlots[i], i);
         }
 
-        return map;
+        return map.ToFrozenDictionary();
     }
 
-    public static EmittedFunction CompileFunction(LogicalExpression expression, IReadOnlyDictionary<ValueSlot, int> slotIndices)
+    public static EmittedFunction CompileFunction(LogicalExpression expression, FrozenDictionary<ValueSlot, int> slotIndices)
     {
         return Compile<EmittedFunction>(expression, typeof(object), slotIndices);
     }
 
-    public static EmittedPredicate CompilePredicate(LogicalExpression expression, IReadOnlyDictionary<ValueSlot, int> slotIndices)
+    public static EmittedPredicate CompilePredicate(LogicalExpression expression, FrozenDictionary<ValueSlot, int> slotIndices)
     {
         return Compile<EmittedPredicate>(expression, typeof(bool), slotIndices);
     }
 
-    private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, IReadOnlyDictionary<ValueSlot, int> slotIndices) where TDelegate : Delegate
+    private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, FrozenDictionary<ValueSlot, int> slotIndices) where TDelegate : Delegate
     {
         var compiler = new EmittedExpressionCompiler(slotIndices);
         var lambda = compiler.BuildLambda(expression, typeof(TDelegate), targetType);

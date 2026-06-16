@@ -1,13 +1,14 @@
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class BindingResult
 {
-    private readonly IDictionary<SyntaxNode, BoundNode> _boundNodeFromSyntaxNode;
-    private readonly IDictionary<BoundNode, Binder> _binderFromBoundNode;
+    private readonly FrozenDictionary<SyntaxNode, BoundNode> _boundNodeFromSyntaxNode;
+    private readonly FrozenDictionary<BoundNode, Binder> _binderFromBoundNode;
 
-    public BindingResult(SyntaxNode root, BoundNode boundRoot, IDictionary<SyntaxNode, BoundNode> boundNodeFromSyntaxNode, IDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
+    public BindingResult(SyntaxNode root, BoundNode boundRoot, FrozenDictionary<SyntaxNode, BoundNode> boundNodeFromSyntaxNode, FrozenDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
     {
         Root = root;
         BoundRoot = boundRoot;
