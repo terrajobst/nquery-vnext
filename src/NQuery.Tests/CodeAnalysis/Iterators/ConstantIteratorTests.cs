@@ -1,0 +1,15 @@
+using NQuery.CodeAnalysis.Iterators;
+
+namespace NQuery.Tests.CodeAnalysis.Iterators;
+
+public class ConstantIteratorTests : IteratorTests
+{
+    [Fact]
+    public void Iterators_Constant_ReturnsSingleRow()
+    {
+        var expected = new object[1, 0];
+
+        using var iterator = new ConstantIterator();
+        AssertProduces(iterator, expected);
+    }
+}
