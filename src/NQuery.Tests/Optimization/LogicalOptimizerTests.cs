@@ -22,7 +22,7 @@ public class LogicalOptimizerTests
     public void Optimizer_PreservesOutput(string text)
     {
         var logicalQuery = Algebrizer.Algebrize(Bind(text));
-        var optimized = LogicalOptimizer.Optimize(logicalQuery, NorthwindDataContext.Instance);
+        var optimized = LogicalOptimizer.Optimize(logicalQuery, NorthwindCatalog.Instance);
 
         Assert.Equal(logicalQuery.Root.OutputValueSlots, optimized.Root.OutputValueSlots);
         Assert.Equal(logicalQuery.OutputColumns, optimized.OutputColumns);
@@ -290,13 +290,13 @@ public class LogicalOptimizerTests
 
     private static LogicalOperator Optimize(string text)
     {
-        return LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance).Root;
+        return LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance).Root;
     }
 
     private static BoundQuery Bind(string text)
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
-        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindDataContext.Instance);
+        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindCatalog.Instance);
         Assert.Empty(syntaxTree.GetDiagnostics().Concat(bindingResult.Diagnostics));
         return (BoundQuery)bindingResult.BoundRoot;
     }

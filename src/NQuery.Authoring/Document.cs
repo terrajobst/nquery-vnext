@@ -11,16 +11,16 @@ public sealed class Document
     private Task<Compilation>? _compilationTask;
     private Task<SemanticModel>? _semanticModelTask;
 
-    public Document(DocumentKind kind, DataContext dataContext, SourceText text)
+    public Document(DocumentKind kind, Catalog catalog, SourceText text)
     {
         Kind = kind;
-        DataContext = dataContext;
+        Catalog = catalog;
         Text = text;
     }
 
     public DocumentKind Kind { get; }
 
-    public DataContext DataContext { get; }
+    public Catalog Catalog { get; }
 
     public SourceText Text { get; }
 
@@ -109,7 +109,7 @@ public sealed class Document
     private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
     {
         var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
-        return Compilation.Create(DataContext, syntaxTree);
+        return Compilation.Create(Catalog, syntaxTree);
     }
 
     private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)
@@ -120,16 +120,16 @@ public sealed class Document
 
     public Document WithKind(DocumentKind kind)
     {
-        return kind == Kind ? this : new Document(kind, DataContext, Text);
+        return kind == Kind ? this : new Document(kind, Catalog, Text);
     }
 
-    public Document WithDataContext(DataContext dataContext)
+    public Document WithCatalog(Catalog catalog)
     {
-        return dataContext == DataContext ? this : new Document(Kind, dataContext, Text);
+        return catalog == Catalog ? this : new Document(Kind, catalog, Text);
     }
 
     public Document WithText(SourceText text)
     {
-        return text == Text ? this : new Document(Kind, DataContext, text);
+        return text == Text ? this : new Document(Kind, Catalog, text);
     }
 }

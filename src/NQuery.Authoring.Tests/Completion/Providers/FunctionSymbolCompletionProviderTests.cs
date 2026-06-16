@@ -8,9 +8,9 @@ public class FunctionSymbolCompletionProviderTests : SymbolCompletionProviderTes
     private static void AssertIsMatch(string query, string functionName)
     {
         var completionModel = GetCompletionModel(query);
-        var dataContext = completionModel.SemanticModel.Compilation.DataContext;
+        var catalog = completionModel.SemanticModel.Compilation.Catalog;
 
-        var definition = dataContext.Functions.Single(t => t.Name == functionName);
+        var definition = catalog.Functions.Single(t => t.Name == functionName);
         var functionItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
         var function = Assert.IsType<FunctionSymbol>(functionItem.Symbol);
         var functionMarkup = SymbolMarkup.ForSymbol(function);

@@ -7,9 +7,9 @@ public class CompiledQueryTests
     [Fact]
     public void CompiledQuery_Expression_ReturnsNull_ForEmptyQuery()
     {
-        var dataContext = DataContext.Empty;
+        var catalog = Catalog.Empty;
         var syntaxTree = SyntaxTree.ParseQuery(string.Empty);
-        var compilation = Compilation.Create(dataContext, syntaxTree);
+        var compilation = Compilation.Create(catalog, syntaxTree);
         var compiledQuery = compilation.Compile();
 
         var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
@@ -21,9 +21,9 @@ public class CompiledQueryTests
     [Fact]
     public void CompiledQuery_Query_ReturnsNoResults_ForEmptyQuery()
     {
-        var dataContext = DataContext.Empty;
+        var catalog = Catalog.Empty;
         var syntaxTree = SyntaxTree.ParseQuery(string.Empty);
-        var compilation = Compilation.Create(dataContext, syntaxTree);
+        var compilation = Compilation.Create(catalog, syntaxTree);
         var compiledQuery = compilation.Compile();
 
         var reader = compiledQuery.CreateReader();

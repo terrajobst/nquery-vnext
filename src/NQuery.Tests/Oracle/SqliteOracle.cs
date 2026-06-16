@@ -59,12 +59,12 @@ internal static class SqliteOracle
     // Seeds the Northwind schema and data into the oracle.
     //
     // The data is derived from the very same engine-neutral DataSet the live engine queries
-    // (NorthwindDataContext.CreateDataSet), so the two engines provably see identical rows -- the
+    // (NorthwindCatalog.CreateDataSet), so the two engines provably see identical rows -- the
     // property an oracle needs. If you'd rather drive seeding from a hand-authored .sql script,
     // this is the single seam to replace: execute your DDL/DML against `connection` here instead.
     private static void Seed(SqliteConnection connection)
     {
-        var dataSet = NorthwindDataContext.CreateDataSet();
+        var dataSet = NorthwindCatalog.CreateDataSet();
 
         foreach (DataTable table in dataSet.Tables)
             CreateTable(connection, table);

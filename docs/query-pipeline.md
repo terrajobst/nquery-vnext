@@ -13,16 +13,16 @@ flowchart LR
 
 Each phase produces an intermediate representation consumed by the next. The pipeline is invoked from `Compilation.Compile()`.
 
-The entry point is the `Compilation` class, which holds a `DataContext` and a `SyntaxTree`:
+The entry point is the `Compilation` class, which holds a `Catalog` and a `SyntaxTree`:
 
 ```csharp
-public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree);
+public static Compilation Create(Catalog catalog, SyntaxTree syntaxTree);
 public CompiledQuery Compile();
 ```
 
 Internally, `Compile()` chains five stages:
 
-1. [**Binding**](query-pipeline/binding.md) — resolves identifiers against the `DataContext`
+1. [**Binding**](query-pipeline/binding.md) — resolves identifiers against the `Catalog`
 2. [**Algebrization**](query-pipeline/algebrization.md) — lowers bound queries to logical algebra
 3. [**Optimization**](query-pipeline/optimization/) — applies rule-based transforms
 4. [**Planner**](query-pipeline/planner.md) — converts logical to physical operators

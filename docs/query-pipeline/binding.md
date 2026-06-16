@@ -1,11 +1,11 @@
 # Binding
 
-The **Binder** (`NQuery.Refactor.Binding.Binder`) resolves every identifier in the syntax tree against the `DataContext` and produces a **bound query** (`BoundQuery`), a syntax-shaped tree where all names have been resolved to symbols and expressions have been typed.
+The **Binder** (`NQuery.Refactor.Binding.Binder`) resolves every identifier in the syntax tree against the `Catalog` and produces a **bound query** (`BoundQuery`), a syntax-shaped tree where all names have been resolved to symbols and expressions have been typed.
 
 ## Entry point
 
 ```csharp
-public static BindingResult Bind(SyntaxTree tree, DataContext dataContext);
+public static BindingResult Bind(SyntaxTree tree, Catalog catalog);
 ```
 
 ## Binder hierarchy
@@ -14,7 +14,7 @@ The binder uses a chain-of-responsibility pattern with a recursive `Binder` base
 
 | Binder                | Responsibility                                                                                                              |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `GlobalBinder`        | Root binder; introduces schema tables, functions, aggregates, variables, properties, and parameters from the `DataContext`. |
+| `GlobalBinder`        | Root binder; introduces schema tables, functions, aggregates, variables, properties, and parameters from the `Catalog`. |
 | `LocalBinder`         | Introduces locally scoped symbols (correlation columns, range variables).                                                   |
 | `QueryBinder`         | Handles query-level name resolution (table references, column references in SELECT/GROUP BY/HAVING/ORDER BY).               |
 | `WhereClauseBinder`   | Tracks that we are inside a WHERE clause (affects aggregate vs. non-aggregate resolution).                                  |

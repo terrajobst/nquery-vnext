@@ -8,9 +8,9 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     private static void AssertIsMatch(string query, string tableName)
     {
         var completionModel = GetCompletionModel(query);
-        var dataContext = completionModel.SemanticModel.Compilation.DataContext;
+        var catalog = completionModel.SemanticModel.Compilation.Catalog;
 
-        var definition = dataContext.Tables.Single(t => t.Name == tableName);
+        var definition = catalog.Tables.Single(t => t.Name == tableName);
         var tableItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
         var table = Assert.IsAssignableFrom<TableSymbol>(tableItem.Symbol);
         Assert.Equal(TableKind.SchemaTable, table.TableKind);

@@ -52,7 +52,7 @@ public class OldEngineDifferentialTests
 
     private static List<object[]> RunNew(string text)
     {
-        using var reader = Query.Create(NorthwindDataContext.Instance, text).ExecuteReader();
+        using var reader = Query.Create(NorthwindCatalog.Instance, text).ExecuteReader();
 
         var rows = new List<object[]>();
         while (reader.Read())

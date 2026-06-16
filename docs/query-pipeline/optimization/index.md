@@ -3,7 +3,7 @@
 The **LogicalOptimizer** (`NQuery.Refactor.Optimization.LogicalOptimizer`) transforms the logical algebra tree into an equivalent but more efficient form. It applies a sequence of **optimization passes** grouped into **batches**.
 
 ```csharp
-public static LogicalQuery Optimize(LogicalQuery query, DataContext dataContext);
+public static LogicalQuery Optimize(LogicalQuery query, Catalog catalog);
 ```
 
 ## Pipeline position

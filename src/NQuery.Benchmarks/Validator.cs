@@ -27,7 +27,7 @@ internal static class Validator
         var baselineContext = BaselineNQuery.DataContext.Default.AddTables(baselineTable);
 
         var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
-        var currentContext = CurrentNQuery.DataContext.Default.AddTables(currentTable);
+        var currentContext = CurrentNQuery.Catalog.Default.AddTables(currentTable);
 
         var failures = 0;
 
@@ -69,7 +69,7 @@ internal static class Validator
         return rows;
     }
 
-    private static List<object?[]> RunCurrent(CurrentNQuery.DataContext context, string sql)
+    private static List<object?[]> RunCurrent(CurrentNQuery.Catalog context, string sql)
     {
         using var reader = CurrentNQuery.Query.Create(context, sql).ExecuteReader();
         var rows = new List<object?[]>();

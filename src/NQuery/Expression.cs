@@ -6,9 +6,9 @@ public sealed class Expression<T>
 {
     private ExpressionEvaluator? _expressionEvaluator;
 
-    private Expression(DataContext dataContext, string text, T nullValue, Type targetType)
+    private Expression(Catalog catalog, string text, T nullValue, Type targetType)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(text);
         ThrowIfNull(targetType);
 
@@ -18,25 +18,25 @@ public sealed class Expression<T>
             throw new ArgumentException(message, nameof(targetType));
         }
 
-        DataContext = dataContext;
+        Catalog = catalog;
         Text = text;
         NullValue = nullValue;
         TargetType = targetType;
     }
 
-    public static Expression<T> Create(DataContext dataContext, string text)
+    public static Expression<T> Create(Catalog catalog, string text)
     {
-        return Create(dataContext, text, default(T)!);
+        return Create(catalog, text, default(T)!);
     }
 
-    public static Expression<T> Create(DataContext dataContext, string text, T nullValue)
+    public static Expression<T> Create(Catalog catalog, string text, T nullValue)
     {
-        return Create(dataContext, text, nullValue, typeof(T));
+        return Create(catalog, text, nullValue, typeof(T));
     }
 
-    public static Expression<T> Create(DataContext dataContext, string text, T nullValue, Type targetType)
+    public static Expression<T> Create(Catalog catalog, string text, T nullValue, Type targetType)
     {
-        return new Expression<T>(dataContext, text, nullValue, targetType);
+        return new Expression<T>(catalog, text, nullValue, targetType);
     }
 
     private ExpressionEvaluator EnsureCompiled()
@@ -44,7 +44,7 @@ public sealed class Expression<T>
         if (_expressionEvaluator is null)
         {
             var syntaxTree = SyntaxTree.ParseExpression(Text);
-            var compilation = Compilation.Create(DataContext, syntaxTree);
+            var compilation = Compilation.Create(Catalog, syntaxTree);
             var compiledQuery = compilation.Compile();
             var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
             Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);
@@ -66,7 +66,7 @@ public sealed class Expression<T>
             : (T)result;
     }
 
-    public DataContext DataContext { get; }
+    public Catalog Catalog { get; }
 
     public string Text { get; }
 

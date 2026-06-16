@@ -2,7 +2,7 @@ namespace NQuery.Tests.Evaluation;
 
 public abstract class EvaluationTest
 {
-    protected static void AssertProduces<T>(string text, T[] expected, DataContext? dataContext = null)
+    protected static void AssertProduces<T>(string text, T[] expected, Catalog? catalog = null)
     {
         var expectedColumns = new[] { typeof(T) };
         var expectedRows = new object?[expected.Length][];
@@ -10,10 +10,10 @@ public abstract class EvaluationTest
         for (var i = 0; i < expected.Length; i++)
             expectedRows[i] = new object?[] { expected[i] };
 
-        AssertProduces(text, expectedColumns, expectedRows, dataContext);
+        AssertProduces(text, expectedColumns, expectedRows, catalog);
     }
 
-    protected static void AssertProduces<T1, T2>(string text, (T1, T2)[] expected, DataContext? dataContext = null)
+    protected static void AssertProduces<T1, T2>(string text, (T1, T2)[] expected, Catalog? catalog = null)
     {
         var expectedColumns = new[] { typeof(T1), typeof(T2) };
         var expectedRows = new object?[expected.Length][];
@@ -21,13 +21,13 @@ public abstract class EvaluationTest
         for (var i = 0; i < expected.Length; i++)
             expectedRows[i] = new object?[] { expected[i].Item1, expected[i].Item2 };
 
-        AssertProduces(text, expectedColumns, expectedRows, dataContext);
+        AssertProduces(text, expectedColumns, expectedRows, catalog);
     }
 
-    private static void AssertProduces(string text, Type[] expectedColumns, object?[][] expectedRows, DataContext? dataContext)
+    private static void AssertProduces(string text, Type[] expectedColumns, object?[][] expectedRows, Catalog? catalog)
     {
-        dataContext ??= NorthwindDataContext.Instance;
-        var query = Query.Create(dataContext, text);
+        catalog ??= NorthwindCatalog.Instance;
+        var query = Query.Create(catalog, text);
         using var data = query.ExecuteReader();
 
         Assert.Equal(expectedColumns.Length, data.ColumnCount);

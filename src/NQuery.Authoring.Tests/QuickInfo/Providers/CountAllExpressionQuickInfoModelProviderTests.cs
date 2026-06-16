@@ -24,9 +24,9 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
         return new QuickInfoModel(semanticModel, span, Glyph.Aggregate, markup);
     }
 
-    private static AggregateDefinition GetCountAggregate(DataContext dataContext)
+    private static AggregateDefinition GetCountAggregate(Catalog catalog)
     {
-        var aggregates = dataContext.Aggregates;
+        var aggregates = catalog.Aggregates;
         return aggregates.Single(a => a.Name == "COUNT");
     }
 

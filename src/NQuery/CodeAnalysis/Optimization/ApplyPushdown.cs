@@ -34,7 +34,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
 {
     private readonly Func<Type, IComparer?> _comparerResolver;
 
-    // The comparer resolver is the engine's per-type comparer (DataContext-registered,
+    // The comparer resolver is the engine's per-type comparer (Catalog-registered,
     // else Comparer.Default) -- needed because the aggregate-decorrelation domain groups
     // on the correlation keys, and that grouping must partition keys exactly as the
     // join-back equality does.

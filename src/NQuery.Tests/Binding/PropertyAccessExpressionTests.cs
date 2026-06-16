@@ -10,7 +10,7 @@ public sealed class PropertyAccessExpressionTests
     {
         var syntaxTree = SyntaxTree.ParseExpression("'test'.SUBSTRING");
         var compilation = Compilation.Empty
-            .WithDataContext(DataContext.Default)
+            .WithCatalog(Catalog.Default)
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();

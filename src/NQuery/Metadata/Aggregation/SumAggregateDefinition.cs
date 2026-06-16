@@ -13,10 +13,10 @@ internal sealed class SumAggregateDefinition : AggregateDefinition
     {
         // Create an expression to determine the type of inputType + inputType
 
-        var addDataContext = DataContext.Empty.AddVariables(VariableDefinition.Create(@"Left", argumentType),
+        var addCatalog = Catalog.Empty.AddVariables(VariableDefinition.Create(@"Left", argumentType),
                                                             VariableDefinition.Create(@"Right", argumentType));
 
-        var addExpression = Expression<object>.Create(addDataContext, @"Left + Right");
+        var addExpression = Expression<object>.Create(addCatalog, @"Left + Right");
 
         Type sumType;
         try
@@ -35,8 +35,8 @@ internal sealed class SumAggregateDefinition : AggregateDefinition
 
         var leftVariable = VariableDefinition.Create(@"Left", argumentType);
         var rightVariable = VariableDefinition.Create(@"Right", argumentType);
-        var sumDataContext = DataContext.Empty.AddVariables(leftVariable, rightVariable);
-        var sumExpression = Expression<object>.Create(sumDataContext, @"Left + Right");
+        var sumCatalog = Catalog.Empty.AddVariables(leftVariable, rightVariable);
+        var sumExpression = Expression<object>.Create(sumCatalog, @"Left + Right");
 
         try
         {
@@ -52,8 +52,8 @@ internal sealed class SumAggregateDefinition : AggregateDefinition
         // Conversion from inputType to sumType
 
         var conversionInputVariable = VariableDefinition.Create(@"Input", argumentType);
-        var conversionDataContext = DataContext.Empty.AddVariables(conversionInputVariable);
-        var conversionExpression = Expression<object>.Create(conversionDataContext, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
+        var conversionCatalog = Catalog.Empty.AddVariables(conversionInputVariable);
+        var conversionExpression = Expression<object>.Create(conversionCatalog, $"CAST(@Input AS {SyntaxFacts.GetValidIdentifier(sumType.Name)})");
 
         try
         {

@@ -10,7 +10,7 @@ public sealed class Workspace
     {
         TextContainer = textContainer;
         TextContainer.CurrentChanged += TextContainerOnCurrentChanged;
-        _currentDocument = new Document(DocumentKind.Query, DataContext.Empty, textContainer.Current);
+        _currentDocument = new Document(DocumentKind.Query, Catalog.Empty, textContainer.Current);
     }
 
     public DocumentKind DocumentKind
@@ -19,10 +19,10 @@ public sealed class Workspace
         set { CurrentDocument = CurrentDocument.WithKind(value); }
     }
 
-    public DataContext DataContext
+    public Catalog Catalog
     {
-        get { return CurrentDocument.DataContext; }
-        set { CurrentDocument = CurrentDocument.WithDataContext(value); }
+        get { return CurrentDocument.Catalog; }
+        set { CurrentDocument = CurrentDocument.WithCatalog(value); }
     }
 
     public SourceTextContainer TextContainer { get; }

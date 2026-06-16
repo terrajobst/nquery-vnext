@@ -3,7 +3,7 @@
 The **ApplyPushdown** pass (`NQuery.Refactor.Optimization.ApplyPushdown`) decorrelates `LogicalApply` operators by pushing them downward until the inner side no longer references outer slots. This converts correlated subqueries (produced by the Algebrizer) into efficient join-based plans.
 
 **File**: `NQuery.Refactor.Optimization.ApplyPushdown`
-**Instantiation**: Per-call (`new ApplyPushdown(type => ResolveComparer(dataContext, type))`)
+**Instantiation**: Per-call (`new ApplyPushdown(type => ResolveComparer(catalog, type))`)
 **State**: Carries a `_comparerResolver` delegate for aggregate decorrelation
 
 ## Rewrite rules
@@ -70,5 +70,5 @@ Apply operators that cannot be decorrelated remain as applies in the tree. These
 
 ## Dependencies
 
-- Requires `DataContext` comparer resolvers for aggregate domain grouping
+- Requires `Catalog` comparer resolvers for aggregate domain grouping
 - Produces redundant projections that are cleaned up by [ProjectMerger](pass-project-merger.md) in the same batch

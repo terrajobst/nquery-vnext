@@ -21,8 +21,8 @@ internal sealed class AvgAggregateDefinition : AggregateDefinition
 
         var sumVariable = VariableDefinition.Create(@"Sum", sumAggregatable.ReturnType);
         var countVariable = VariableDefinition.Create(@"Count", countAggregatable.ReturnType);
-        var divisionDataContext = DataContext.Empty.AddVariables(sumVariable, countVariable);
-        var divisionExpression = Expression<object>.Create(divisionDataContext, @"@Sum / @Count");
+        var divisionCatalog = Catalog.Empty.AddVariables(sumVariable, countVariable);
+        var divisionExpression = Expression<object>.Create(divisionCatalog, @"@Sum / @Count");
 
         try
         {

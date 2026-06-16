@@ -9,17 +9,17 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_AllowsConstructingInvalidExpressions()
     {
-        var dataContext = DataContext.Empty;
+        var catalog = Catalog.Empty;
         var fooBar = "FOO BAR";
 
-        var query = Expression<object>.Create(dataContext, fooBar);
+        var query = Expression<object>.Create(catalog, fooBar);
 
-        Assert.Equal(dataContext, query.DataContext);
+        Assert.Equal(catalog, query.Catalog);
         Assert.Equal(fooBar, query.Text);
     }
 
     [Fact]
-    public void Expression_CtorThrows_IfDataContextIsNull()
+    public void Expression_CtorThrows_IfCatalogIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
@@ -32,7 +32,7 @@ public partial class ExpressionTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Expression<object>.Create(DataContext.Empty, null!);
+            Expression<object>.Create(Catalog.Empty, null!);
         });
     }
 
@@ -41,14 +41,14 @@ public partial class ExpressionTests
     {
         Assert.Throws<ArgumentException>(() =>
         {
-            Expression<bool>.Create(DataContext.Empty, "", false, typeof(int));
+            Expression<bool>.Create(Catalog.Empty, "", false, typeof(int));
         });
     }
 
     [Fact]
     public void Expression_ResolveThrows_IfExpressionCannotBeParsed()
     {
-        var expression = Expression<bool>.Create(DataContext.Empty, "foo;");
+        var expression = Expression<bool>.Create(Catalog.Empty, "foo;");
 
         try
         {
@@ -64,7 +64,7 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_EvaluateThrows_IfExpressionCannotBeParsed()
     {
-        var expression = Expression<bool>.Create(DataContext.Empty, "bar;");
+        var expression = Expression<bool>.Create(Catalog.Empty, "bar;");
 
         try
         {
@@ -80,7 +80,7 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_ResolveReturnsValue()
     {
-        var expression = Expression<double>.Create(DataContext.Empty, "1 + 1.0");
+        var expression = Expression<double>.Create(Catalog.Empty, "1 + 1.0");
         var result = expression.Resolve();
         Assert.Equal(typeof(double), result);
     }
@@ -88,7 +88,7 @@ public partial class ExpressionTests
     [Fact]
     public void Expression_EvaluateReturnsValue()
     {
-        var expression = Expression<double>.Create(DataContext.Empty, "1 + 1.0");
+        var expression = Expression<double>.Create(Catalog.Empty, "1 + 1.0");
         var result = expression.Evaluate();
         Assert.Equal(2.0, result);
     }
@@ -97,7 +97,7 @@ public partial class ExpressionTests
     public void Expression_Evaluate_HonorsNullValue()
     {
         const int nullValue = 42;
-        var expression = Expression<int>.Create(DataContext.Empty, "NULL", nullValue);
+        var expression = Expression<int>.Create(Catalog.Empty, "NULL", nullValue);
         var result = expression.Evaluate();
         Assert.Equal(nullValue, result);
     }
@@ -107,8 +107,8 @@ public partial class ExpressionTests
     {
         var sum = VariableDefinition.Create("Sum", typeof(int));
         var count = VariableDefinition.Create("Count", typeof(int));
-        var dataContext = DataContext.Empty.AddVariables(sum, count);
-        var expression = Expression<object>.Create(dataContext, "@Sum / @Count");
+        var catalog = Catalog.Empty.AddVariables(sum, count);
+        var expression = Expression<object>.Create(catalog, "@Sum / @Count");
 
         Assert.Equal(typeof(int), expression.Resolve());
     }
@@ -121,8 +121,8 @@ public partial class ExpressionTests
         // variable's current value rather than the value captured at compile time.
         var sum = VariableDefinition.Create("Sum", typeof(int));
         var count = VariableDefinition.Create("Count", typeof(int));
-        var dataContext = DataContext.Empty.AddVariables(sum, count);
-        var expression = Expression<int>.Create(dataContext, "@Sum / @Count");
+        var catalog = Catalog.Empty.AddVariables(sum, count);
+        var expression = Expression<int>.Create(catalog, "@Sum / @Count");
 
         sum.Value = 10;
         count.Value = 2;

@@ -205,7 +205,7 @@ public class EmitterExecutionTests
         // emitted plan can produce independent iterators -- each run yields the
         // same rows.
         var text = "SELECT e.FirstName, e.EmployeeID + 1 FROM Employees e WHERE e.City = 'London'";
-        var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance)));
+        var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)));
 
         var first = Drain(plan.CreateIterator());
         var second = Drain(plan.CreateIterator());
@@ -229,7 +229,7 @@ public class EmitterExecutionTests
 
     private static List<object[]> RunNewPipeline(string text)
     {
-        var physicalQuery = Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance));
+        var physicalQuery = Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance));
         var plan = Emitter.Emit(physicalQuery);
         return Drain(plan.CreateIterator());
     }
@@ -267,7 +267,7 @@ public class EmitterExecutionTests
     private static BoundQuery Bind(string text)
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
-        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindDataContext.Instance);
+        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindCatalog.Instance);
         Assert.Empty(syntaxTree.GetDiagnostics().Concat(bindingResult.Diagnostics));
         return (BoundQuery)bindingResult.BoundRoot;
     }

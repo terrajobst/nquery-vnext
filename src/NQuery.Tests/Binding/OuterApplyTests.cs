@@ -30,7 +30,7 @@ public class OuterApplyTests
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
         var compilation = Compilation.Empty
-                                     .WithDataContext(NorthwindDataContext.Instance)
+                                     .WithCatalog(NorthwindCatalog.Instance)
                                      .WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         return syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();

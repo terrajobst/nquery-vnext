@@ -8,8 +8,8 @@ public partial class ExpressionTests
     private static object? EvaluateUnary(string op, Type argumentType, object? argument)
     {
         var variable = VariableDefinition.Create("arg", argumentType, argument);
-        var dataContext = DataContext.Default.AddVariables(variable);
-        var expression = Expression<object>.Create(dataContext, op + " " + variable.Name);
+        var catalog = Catalog.Default.AddVariables(variable);
+        var expression = Expression<object>.Create(catalog, op + " " + variable.Name);
         return expression.Evaluate();
     }
 

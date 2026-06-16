@@ -22,12 +22,12 @@ internal static class LogicalOptimizer
 {
     private const int MaxIterations = 100;
 
-    // The batch list is built per call: ApplyPushdown needs the DataContext's comparers
+    // The batch list is built per call: ApplyPushdown needs the Catalog's comparers
     // (for the aggregate-decorrelation domain), so unlike the stateless singletons it is
     // constructed fresh each time.
-    private static ImmutableArray<Batch> BuildBatches(DataContext dataContext)
+    private static ImmutableArray<Batch> BuildBatches(Catalog catalog)
     {
-        var applyPushdown = new ApplyPushdown(type => ResolveComparer(dataContext, type));
+        var applyPushdown = new ApplyPushdown(type => ResolveComparer(catalog, type));
 
         // OuterJoinRemover accumulates per-tree state, so (like ApplyPushdown) it is a
         // fresh instance rather than a shared singleton.
@@ -60,19 +60,19 @@ internal static class LogicalOptimizer
         ];
     }
 
-    public static LogicalQuery Optimize(LogicalQuery query, DataContext dataContext)
+    public static LogicalQuery Optimize(LogicalQuery query, Catalog catalog)
     {
         ThrowIfNull(query);
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
-        var root = Optimize(query.Root, dataContext);
+        var root = Optimize(query.Root, catalog);
         return new LogicalQuery(root, query.OutputColumns);
     }
 
-    public static LogicalOperator Optimize(LogicalOperator root, DataContext dataContext)
+    public static LogicalOperator Optimize(LogicalOperator root, Catalog catalog)
     {
         ThrowIfNull(root);
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
 #if DEBUG
         // Verify the algebrizer's output before any pass runs, so a malformed starting
@@ -80,20 +80,20 @@ internal static class LogicalOptimizer
         LogicalPlanVerifier.Verify(root, "Logical plan verification failed (algebrized plan, before optimization)");
 #endif
 
-        foreach (var batch in BuildBatches(dataContext))
+        foreach (var batch in BuildBatches(catalog))
             root = RunBatch(batch, root);
 
         return root;
     }
 
-    // The engine's comparer for a type: a DataContext-registered comparer (walking up the
+    // The engine's comparer for a type: a Catalog-registered comparer (walking up the
     // base-type chain), else Comparer.Default for a comparable type. Mirrors
     // GlobalBinder.LookupComparer so the domain grouping matches the binder's semantics.
-    private static IComparer? ResolveComparer(DataContext dataContext, Type type)
+    private static IComparer? ResolveComparer(Catalog catalog, Type type)
     {
         for (var key = type; key is not null; key = key.BaseType)
         {
-            if (dataContext.Comparers.TryGetValue(key, out var comparer))
+            if (catalog.Comparers.TryGetValue(key, out var comparer))
                 return comparer;
         }
 
@@ -104,12 +104,12 @@ internal static class LogicalOptimizer
     // the pass that produced it) after each pass that actually changed it. It mirrors
     // RunBatch's batching but, unlike compilation, does not assert convergence -- a
     // non-idempotent pass would simply produce the per-iteration steps up to the cap.
-    public static IEnumerable<(string Name, LogicalOperator Root)> GetOptimizationSteps(LogicalOperator root, DataContext dataContext)
+    public static IEnumerable<(string Name, LogicalOperator Root)> GetOptimizationSteps(LogicalOperator root, Catalog catalog)
     {
         ThrowIfNull(root);
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
-        foreach (var batch in BuildBatches(dataContext))
+        foreach (var batch in BuildBatches(catalog))
         {
             var iterations = batch.Strategy == BatchStrategy.Once ? 1 : MaxIterations;
 

@@ -8,9 +8,9 @@ public class AggregateSymbolCompletionProviderTests : SymbolCompletionProviderTe
     private static void AssertIsMatch(string query, string aggregateName)
     {
         var completionModel = GetCompletionModel(query);
-        var dataContext = completionModel.SemanticModel.Compilation.DataContext;
+        var catalog = completionModel.SemanticModel.Compilation.Catalog;
 
-        var definition = dataContext.Aggregates.Single(t => t.Name == aggregateName);
+        var definition = catalog.Aggregates.Single(t => t.Name == aggregateName);
         var functionItem = completionModel.Items.Single(i => i.InsertionText == definition.Name);
         var function = Assert.IsType<AggregateSymbol>(functionItem.Symbol);
         var functionMarkup = SymbolMarkup.ForSymbol(function);

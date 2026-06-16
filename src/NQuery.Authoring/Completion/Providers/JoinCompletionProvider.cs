@@ -17,7 +17,7 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
 
         var leftInstances = semanticModel.GetDeclaredSymbols(node.Left)!.ToImmutableArray();
         var rightInstances = semanticModel.GetDeclaredSymbols(node.Right)!.ToImmutableArray();
-        var relationships = semanticModel.Compilation.DataContext.Relationships;
+        var relationships = semanticModel.Compilation.Catalog.Relationships;
 
         return from left in leftInstances
                from right in rightInstances

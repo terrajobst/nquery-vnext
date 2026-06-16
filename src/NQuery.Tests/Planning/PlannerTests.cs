@@ -17,7 +17,7 @@ public class PlannerTests
     [InlineData("SELECT e.FirstName FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)")]
     public void Planner_PreservesOutput(string text)
     {
-        var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance);
+        var logicalQuery = LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance);
         var physicalQuery = Planner.Plan(logicalQuery);
 
         // Planning chooses algorithms; it does not change the data flow.
@@ -103,13 +103,13 @@ public class PlannerTests
 
     private static PhysicalOperator Plan(string text)
     {
-        return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindDataContext.Instance)).Root;
+        return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)).Root;
     }
 
     private static BoundQuery Bind(string text)
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
-        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindDataContext.Instance);
+        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindCatalog.Instance);
         Assert.Empty(syntaxTree.GetDiagnostics().Concat(bindingResult.Diagnostics));
         return (BoundQuery)bindingResult.BoundRoot;
     }

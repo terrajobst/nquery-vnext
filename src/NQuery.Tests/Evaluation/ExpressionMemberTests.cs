@@ -10,9 +10,9 @@ public sealed class ExpressionMemberTests : EvaluationTest
     public void ExpressionFunction_IsEvaluated()
     {
         var function = FunctionDefinition.Create<int, int>("SQUARE", x => x * x);
-        var dataContext = DataContext.Default.AddFunctions(function);
+        var catalog = Catalog.Default.AddFunctions(function);
 
-        AssertProduces("SELECT SQUARE(5)", new[] { 25 }, dataContext);
+        AssertProduces("SELECT SQUARE(5)", new[] { 25 }, catalog);
     }
 
     [Fact]
@@ -20,22 +20,22 @@ public sealed class ExpressionMemberTests : EvaluationTest
     {
         // The single lambda parameter is the instance.
         var property = PropertyDefinition.Create<string, int>("DoubleLength", s => s.Length * 2);
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abc"))
                                      .AddPropertyProvider(typeof(string), new FixedPropertyProvider(property));
 
-        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, dataContext);
+        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, catalog);
     }
 
     [Fact]
     public void ExpressionProperty_WithExplicitType_IsEvaluated()
     {
         var property = PropertyDefinition.Create<string>("DoubleLength", typeof(int), s => (object)(s.Length * 2));
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abc"))
                                      .AddPropertyProvider(typeof(string), new FixedPropertyProvider(property));
 
-        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, dataContext);
+        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, catalog);
     }
 
     [Fact]
@@ -43,11 +43,11 @@ public sealed class ExpressionMemberTests : EvaluationTest
     {
         // The first lambda parameter is the instance; the rest are the method's arguments.
         var method = MethodDefinition.Create<string, int, string>("Head", (s, n) => s.Substring(0, n));
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abcdef"))
                                      .AddMethodProvider(typeof(string), new FixedMethodProvider(method));
 
-        AssertProduces("SELECT @s.Head(3)", new[] { "abc" }, dataContext);
+        AssertProduces("SELECT @s.Head(3)", new[] { "abc" }, catalog);
     }
 
     private sealed class FixedPropertyProvider : IPropertyProvider

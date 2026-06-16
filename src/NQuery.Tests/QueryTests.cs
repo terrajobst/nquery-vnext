@@ -10,17 +10,17 @@ public class QueryTests
     [Fact]
     public void Query_AllowsConstructingInvalidQueries()
     {
-        var dataContext = DataContext.Empty;
+        var catalog = Catalog.Empty;
         var fooBar = "FOO BAR";
 
-        var query = Query.Create(dataContext, fooBar);
+        var query = Query.Create(catalog, fooBar);
 
-        Assert.Equal(dataContext, query.DataContext);
+        Assert.Equal(catalog, query.Catalog);
         Assert.Equal(fooBar, query.Text);
     }
 
     [Fact]
-    public void Query_CtorThrows_IfDataContextIsNull()
+    public void Query_CtorThrows_IfCatalogIsNull()
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
@@ -33,14 +33,14 @@ public class QueryTests
     {
         Assert.Throws<ArgumentNullException>(() =>
         {
-            Query.Create(DataContext.Empty, null!);
+            Query.Create(Catalog.Empty, null!);
         });
     }
 
     [Fact]
     public void Query_ExecuteSchemaReaderThrows_IfQueryCannotBeParsed()
     {
-        var query = Query.Create(DataContext.Empty, "SELECT SchemaReader;");
+        var query = Query.Create(Catalog.Empty, "SELECT SchemaReader;");
         try
         {
             query.ExecuteSchemaReader();
@@ -56,7 +56,7 @@ public class QueryTests
     [Fact]
     public void Query_ExecuteReaderThrows_IfQueryCannotBeParsed()
     {
-        var query = Query.Create(DataContext.Empty, "SELECT Reader;");
+        var query = Query.Create(Catalog.Empty, "SELECT Reader;");
         try
         {
             query.ExecuteReader();
@@ -73,9 +73,9 @@ public class QueryTests
     public void Query_ExecuteScalarOfTThrows_IfTypeDoesNotMatch()
     {
         var dataTable = TestData.IdNameTable();
-        var dataContext = DataContext.Default.AddTables(dataTable);
+        var catalog = Catalog.Default.AddTables(dataTable);
 
-        var query = Query.Create(dataContext, "SELECT * FROM Table");
+        var query = Query.Create(catalog, "SELECT * FROM Table");
         Assert.Throws<InvalidCastException>(() =>
         {
             query.ExecuteScalar<string>();
@@ -86,9 +86,9 @@ public class QueryTests
     public void Query_ExecuteScalarReturnsFirstValue()
     {
         var dataTable = TestData.IdNameTable();
-        var dataContext = DataContext.Default.AddTables(dataTable);
+        var catalog = Catalog.Default.AddTables(dataTable);
 
-        var query = Query.Create(dataContext, "SELECT * FROM Table");
+        var query = Query.Create(catalog, "SELECT * FROM Table");
         var result = query.ExecuteScalar();
         var expected = dataTable.Rows[0][0];
 
@@ -99,9 +99,9 @@ public class QueryTests
     public void Query_ExecuteScalarReturnsNullIfEmpty()
     {
         var dataTable = TestData.IdNameTable();
-        var dataContext = DataContext.Default.AddTables(dataTable);
+        var catalog = Catalog.Default.AddTables(dataTable);
 
-        var query = Query.Create(dataContext, "SELECT * FROM Table WHERE FALSE");
+        var query = Query.Create(catalog, "SELECT * FROM Table WHERE FALSE");
         var result = query.ExecuteScalar();
 
         Assert.Null(result);
@@ -115,9 +115,9 @@ public class QueryTests
         dataTable.Rows.Add(1);
         dataTable.Rows.Add(42);
 
-        var dataContext = DataContext.Default.AddTables(dataTable);
+        var catalog = Catalog.Default.AddTables(dataTable);
 
-        var query = Query.Create(dataContext, "SELECT * FROM Table");
+        var query = Query.Create(catalog, "SELECT * FROM Table");
         using var reader = query.ExecuteReader();
         Assert.Equal(1, reader.ColumnCount);
         Assert.Equal("Value", reader.GetColumnName(0));
@@ -142,9 +142,9 @@ public class QueryTests
         dataTable.Rows.Add(1);
         dataTable.Rows.Add(42);
 
-        var dataContext = DataContext.Default.AddTables(dataTable);
+        var catalog = Catalog.Default.AddTables(dataTable);
 
-        var query = Query.Create(dataContext, "SELECT * FROM Table");
+        var query = Query.Create(catalog, "SELECT * FROM Table");
         using var reader = query.ExecuteSchemaReader();
         Assert.Equal(1, reader.ColumnCount);
         Assert.Equal("Value", reader.GetColumnName(0));
@@ -156,7 +156,7 @@ public class QueryTests
     public void Query_SelectNullLiteralReturnsObjectNull()
     {
         var text = "SELECT NULL";
-        var query = Query.Create(DataContext.Default, text);
+        var query = Query.Create(Catalog.Default, text);
 
         using var queryReader = query.ExecuteReader();
         Assert.Equal(1, queryReader.ColumnCount);
@@ -171,7 +171,7 @@ public class QueryTests
     public void Query_SelectNullExpressionReturnsTypedNull()
     {
         var text = "SELECT 1.0 + NULL";
-        var query = Query.Create(DataContext.Default, text);
+        var query = Query.Create(Catalog.Default, text);
 
         using var queryReader = query.ExecuteReader();
         Assert.Equal(1, queryReader.ColumnCount);
@@ -186,7 +186,7 @@ public class QueryTests
     public void Query_SelectIsNullReturnsBooleanTrue()
     {
         var text = "SELECT NULL IS NULL";
-        var query = Query.Create(DataContext.Default, text);
+        var query = Query.Create(Catalog.Default, text);
 
         using var queryReader = query.ExecuteReader();
         Assert.Equal(1, queryReader.ColumnCount);

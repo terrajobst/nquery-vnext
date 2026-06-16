@@ -10,23 +10,23 @@ namespace NQuery.CodeAnalysis;
 
 public sealed class Compilation
 {
-    private Compilation(DataContext dataContext, SyntaxTree syntaxTree)
+    private Compilation(Catalog catalog, SyntaxTree syntaxTree)
     {
-        DataContext = dataContext;
+        Catalog = catalog;
         SyntaxTree = syntaxTree;
     }
 
-    public static Compilation Create(DataContext dataContext, SyntaxTree syntaxTree)
+    public static Compilation Create(Catalog catalog, SyntaxTree syntaxTree)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(syntaxTree);
 
-        return new Compilation(dataContext, syntaxTree);
+        return new Compilation(catalog, syntaxTree);
     }
 
     public SemanticModel GetSemanticModel()
     {
-        var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
+        var bindingResult = Binder.Bind(SyntaxTree.Root, Catalog);
         return new SemanticModel(this, bindingResult);
     }
 
@@ -34,7 +34,7 @@ public sealed class Compilation
     // sequence the differential tests drive.
     public CompiledQuery Compile()
     {
-        var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
+        var bindingResult = Binder.Bind(SyntaxTree.Root, Catalog);
 
         var diagnostics = GetDiagnostics(bindingResult);
         if (diagnostics.Any())
@@ -42,7 +42,7 @@ public sealed class Compilation
 
         var logicalQuery = Algebrize(bindingResult);
 
-        logicalQuery = LogicalOptimizer.Optimize(logicalQuery, DataContext);
+        logicalQuery = LogicalOptimizer.Optimize(logicalQuery, Catalog);
         var physicalQuery = Planner.Plan(logicalQuery);
 
 #if DEBUG
@@ -87,7 +87,7 @@ public sealed class Compilation
     // the physical plan the planner produced.
     public IEnumerable<ShowPlan> GetShowPlanSteps()
     {
-        var bindingResult = Binder.Bind(SyntaxTree.Root, DataContext);
+        var bindingResult = Binder.Bind(SyntaxTree.Root, Catalog);
 
         if (GetDiagnostics(bindingResult).Any())
             yield break;
@@ -99,7 +99,7 @@ public sealed class Compilation
         var outputColumns = logicalQuery.OutputColumns;
         var root = logicalQuery.Root;
 
-        foreach (var (name, stepRoot) in LogicalOptimizer.GetOptimizationSteps(root, DataContext))
+        foreach (var (name, stepRoot) in LogicalOptimizer.GetOptimizationSteps(root, Catalog))
         {
             var stepName = string.Format(Resources.ShowPlanStepFmt, name);
             yield return LogicalShowPlanBuilder.Build(stepName, new LogicalQuery(stepRoot, outputColumns));
@@ -117,19 +117,19 @@ public sealed class Compilation
     {
         ThrowIfNull(syntaxTree);
 
-        return SyntaxTree == syntaxTree ? this : Create(DataContext, syntaxTree);
+        return SyntaxTree == syntaxTree ? this : Create(Catalog, syntaxTree);
     }
 
-    public Compilation WithDataContext(DataContext dataContext)
+    public Compilation WithCatalog(Catalog catalog)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
-        return DataContext == dataContext ? this : Create(dataContext, SyntaxTree);
+        return Catalog == catalog ? this : Create(catalog, SyntaxTree);
     }
 
-    public static readonly Compilation Empty = Create(DataContext.Empty, SyntaxTree.Empty);
+    public static readonly Compilation Empty = Create(Catalog.Empty, SyntaxTree.Empty);
 
     public SyntaxTree SyntaxTree { get; }
 
-    public DataContext DataContext { get; }
+    public Catalog Catalog { get; }
 }

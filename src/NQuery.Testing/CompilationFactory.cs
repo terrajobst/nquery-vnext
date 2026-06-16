@@ -7,12 +7,12 @@ namespace NQuery;
 
 public static class CompilationFactory
 {
-    private static readonly DataContext DataContext = NorthwindDataContext.Instance;
+    private static readonly Catalog Catalog = NorthwindCatalog.Instance;
 
     public static Compilation CreateQuery(string query)
     {
         var syntaxTree = SyntaxTree.ParseQuery(query);
-        return Compilation.Create(DataContext, syntaxTree);
+        return Compilation.Create(Catalog, syntaxTree);
     }
 
     public static Compilation CreateQuery(string textWithPipe, out int position)
@@ -36,7 +36,7 @@ public static class CompilationFactory
     public static Compilation CreateExpression(string text)
     {
         var syntaxTree = SyntaxTree.ParseExpression(text);
-        return Compilation.Create(DataContext, syntaxTree);
+        return Compilation.Create(Catalog, syntaxTree);
     }
 
     public static Compilation CreateExpression(string textWithPipe, out int position)

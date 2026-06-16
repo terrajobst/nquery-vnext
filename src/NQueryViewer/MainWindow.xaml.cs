@@ -79,7 +79,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
 
         editorView.CaretPositionChanged += EditorViewOnCaretPositionChanged;
         editorView.ZoomLevelChanged += EditorViewOnZoomLevelChanged;
-        editorView.Workspace.DataContext = NorthwindDataContext.Instance;
+        editorView.Workspace.Catalog = NorthwindCatalog.Instance;
         editorView.Workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
 
         if (CurrentEditorView is not null)

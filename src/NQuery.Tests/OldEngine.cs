@@ -11,14 +11,14 @@ using BaselineQuery = baseline::NQuery.Query;
 namespace NQuery.Tests;
 
 // Test harness for running queries through the OLD engine (the nquery-baseline worktree,
-// aliased "baseline"). It builds its DataContext from the same engine-neutral Northwind
-// DataSet the new-engine tests use (NorthwindDataContext), so results are directly
+// aliased "baseline"). It builds its Catalog from the same engine-neutral Northwind
+// DataSet the new-engine tests use (NorthwindCatalog), so results are directly
 // comparable. The extern alias is confined to this file: callers pass a query string and
 // get back a List<object[]>, all standard types, so they never touch baseline:: at all.
 internal static class OldEngine
 {
     private static readonly BaselineContext Northwind =
-        BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.NorthwindDataContext.CreateDataSet());
+        BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.NorthwindCatalog.CreateDataSet());
 
     public static List<object[]> RunQuery(string text)
     {

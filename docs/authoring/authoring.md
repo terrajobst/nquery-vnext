@@ -40,7 +40,7 @@ public sealed class Workspace
 
     public Document CurrentDocument { get; }
     public DocumentKind DocumentKind { get; set; }
-    public DataContext DataContext { get; set; }
+    public Catalog Catalog { get; set; }
     public SourceTextContainer TextContainer { get; }
 
     public event EventHandler<EventArgs> CurrentDocumentChanged;
@@ -57,7 +57,7 @@ via async methods with caching.
 public sealed class Document
 {
     public DocumentKind Kind { get; }
-    public DataContext DataContext { get; }
+    public Catalog Catalog { get; }
     public SourceText Text { get; }
 
     // Synchronous access (returns true if already computed)
@@ -72,7 +72,7 @@ public sealed class Document
 }
 ```
 
-`DocumentKind` and `DataContext` can be changed by the workspace to support
+`DocumentKind` and `Catalog` can be changed by the workspace to support
 different document types (e.g., query files vs. expression files) and schema
 contexts.
 

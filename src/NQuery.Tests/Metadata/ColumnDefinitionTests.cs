@@ -41,9 +41,9 @@ public sealed class ColumnDefinitionTests
         var table = TableDefinition.Create("Numbers", rows,
             ColumnDefinition.Create<Row, int>("Value", r => r.Value),
             ColumnDefinition.Create<Row, int>("Doubled", r => r.Value * 2));
-        var dataContext = DataContext.Empty.AddTables(table);
+        var catalog = Catalog.Empty.AddTables(table);
 
-        var query = Query.Create(dataContext, "SELECT Value, Doubled FROM Numbers");
+        var query = Query.Create(catalog, "SELECT Value, Doubled FROM Numbers");
         using var reader = query.ExecuteReader();
 
         Assert.Equal(2, reader.ColumnCount);
@@ -69,9 +69,9 @@ public sealed class ColumnDefinitionTests
         var rows = new[] { new Row(21) };
         var table = TableDefinition.Create("T", rows,
             ColumnDefinition.Create<Row>("Doubled", typeof(int), r => (object)(r.Value * 2)));
-        var dataContext = DataContext.Empty.AddTables(table);
+        var catalog = Catalog.Empty.AddTables(table);
 
-        var query = Query.Create(dataContext, "SELECT Doubled FROM T");
+        var query = Query.Create(catalog, "SELECT Doubled FROM T");
         using var reader = query.ExecuteReader();
 
         Assert.Equal(typeof(int), reader.GetColumnType(0));

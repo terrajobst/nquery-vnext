@@ -15,8 +15,8 @@ public class DynamicTests
                 ORDER   BY 1
             ";
 
-        var dataContext = NorthwindDataContext.Instance;
-        var query = Query.Create(dataContext, text);
+        var catalog = NorthwindCatalog.Instance;
+        var query = Query.Create(catalog, text);
 
         var rows = query.ExecuteDynamicSequence().ToImmutableArray();
 

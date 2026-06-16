@@ -9,9 +9,9 @@ public partial class ExpressionTests
     {
         var leftVariable = VariableDefinition.Create("left", leftType, left);
         var rightVariable = VariableDefinition.Create("right", rightType, right);
-        var dataContext = DataContext.Default.AddVariables(leftVariable, rightVariable);
+        var catalog = Catalog.Default.AddVariables(leftVariable, rightVariable);
         var text = leftVariable.Name + " " + op + " " + rightVariable.Name;
-        var expression = Expression<object>.Create(dataContext, text);
+        var expression = Expression<object>.Create(catalog, text);
         return expression.Evaluate();
     }
 

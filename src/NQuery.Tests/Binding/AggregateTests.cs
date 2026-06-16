@@ -43,10 +43,10 @@ public class AggregateTests
     [Fact]
     public void Aggregate_DetectsAmbiguityBetweenAggregates()
     {
-        var dataContext = DataContext.Default.AddAggregates(CreateAggregate("Agg"), CreateAggregate("AGG"));
+        var catalog = Catalog.Default.AddAggregates(CreateAggregate("Agg"), CreateAggregate("AGG"));
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -57,12 +57,12 @@ public class AggregateTests
     [Fact]
     public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction()
     {
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddAggregates(CreateAggregate("AGG"))
                                      .AddFunctions(FunctionDefinition.Create<string, string>("AGG", x => x));
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -73,14 +73,14 @@ public class AggregateTests
     [Fact]
     public void Aggregate_DetectsAmbiguityBetweenAggregateAndFunction_UnlessWrongArgumentCount()
     {
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddAggregates(CreateAggregate("AGG"))
                                      .AddFunctions(FunctionDefinition.Create<string, string, string>("AGG", (x, _) => x));
 
-        var aggregate = dataContext.Aggregates.Last();
+        var aggregate = catalog.Aggregates.Last();
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -94,11 +94,11 @@ public class AggregateTests
     [Fact]
     public void Aggregate_CountAllBindsToCount()
     {
-        var dataContext = DataContext.Default;
-        var countAggregated = dataContext.Aggregates.Single(a => a.Name == "COUNT");
+        var catalog = Catalog.Default;
+        var countAggregated = catalog.Aggregates.Single(a => a.Name == "COUNT");
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -112,11 +112,11 @@ public class AggregateTests
     [Fact]
     public void Aggregate_DetectsNonExistingCountAggregate()
     {
-        var countAggregated = DataContext.Default.Aggregates.Single(a => a.Name == "COUNT");
-        var dataContext = DataContext.Default.RemoveAggregates(countAggregated);
+        var countAggregated = Catalog.Default.Aggregates.Single(a => a.Name == "COUNT");
+        var catalog = Catalog.Default.RemoveAggregates(countAggregated);
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -127,10 +127,10 @@ public class AggregateTests
     [Fact]
     public void Aggregate_DetectsAmbiguityBetweenCountAggregates()
     {
-        var dataContext = DataContext.Default.AddAggregates(CreateAggregate("Count"));
+        var catalog = Catalog.Default.AddAggregates(CreateAggregate("Count"));
 
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
-        var compilation = Compilation.Empty.WithDataContext(dataContext).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 
@@ -142,7 +142,7 @@ public class AggregateTests
     public void Aggregate_DetectsInvalidContextForAggregate()
     {
         var syntaxTree = SyntaxTree.ParseExpression("COUNT(4)");
-        var compilation = Compilation.Empty.WithDataContext(DataContext.Default).WithSyntaxTree(syntaxTree);
+        var compilation = Compilation.Empty.WithCatalog(Catalog.Default).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
 

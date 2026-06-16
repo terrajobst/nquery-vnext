@@ -10,7 +10,7 @@ public class NameExpressionTests
     {
         var syntaxTree = SyntaxTree.ParseExpression("SUBSTRING");
         var compilation = Compilation.Empty
-            .WithDataContext(DataContext.Default)
+            .WithCatalog(Catalog.Default)
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();
@@ -25,7 +25,7 @@ public class NameExpressionTests
     {
         var syntaxTree = SyntaxTree.ParseExpression("MAX");
         var compilation = Compilation.Empty
-            .WithDataContext(DataContext.Default)
+            .WithCatalog(Catalog.Default)
             .WithSyntaxTree(syntaxTree);
 
         var semanticModel = compilation.GetSemanticModel();

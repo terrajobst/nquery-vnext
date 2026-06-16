@@ -11,10 +11,10 @@ public sealed class EagerAndLazyTests
         var parameters = new[] { ParameterDefinition.Create("ir", typeof(InvocationResult)) };
         var nullInt32Function = FunctionDefinition.Create("NULL_INT32", typeof(int), parameters, (Func<InvocationResult, int?>)NullInt32Function);
         var nonNullInt32Function = FunctionDefinition.Create("NON_NULL_INT32", typeof(int), parameters, (Func<InvocationResult, int?>)NonNullInt32Function);
-        var dataContext = DataContext.Default
+        var catalog = Catalog.Default
                                      .AddVariables(invocationResultVariable)
                                      .AddFunctions(nullInt32Function, nonNullInt32Function);
-        var expression = Expression<object>.Create(dataContext, text);
+        var expression = Expression<object>.Create(catalog, text);
         invocationResult.Result = expression.Evaluate();
         return invocationResult;
     }

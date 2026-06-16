@@ -1,11 +1,11 @@
 namespace NQuery.Tests;
 
-public class DataContextTests
+public class CatalogTests
 {
     [Fact]
-    public void DataContext_AddingNoTablesYieldsSameInstance()
+    public void Catalog_AddingNoTablesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.AddTables();
         var after2 = before.AddTables(null!);
         Assert.Same(before, after1);
@@ -13,17 +13,17 @@ public class DataContextTests
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameTablesYieldsSameInstance()
+    public void Catalog_ReplacingWithSameTablesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.WithTables(before.Tables);
         Assert.Same(before, after1);
     }
 
     [Fact]
-    public void DataContext_AddingNoRelationsYieldsSameInstance()
+    public void Catalog_AddingNoRelationsYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.AddRelationships();
         var after2 = before.AddRelationships(null!);
         Assert.Same(before, after1);
@@ -31,17 +31,17 @@ public class DataContextTests
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameRelationsYieldsSameInstance()
+    public void Catalog_ReplacingWithSameRelationsYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithRelationships(before.Relationships);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_AddingNoFunctionsYieldsSameInstance()
+    public void Catalog_AddingNoFunctionsYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.AddFunctions();
         var after2 = before.AddFunctions(null!);
         Assert.Same(before, after1);
@@ -49,17 +49,17 @@ public class DataContextTests
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameFunctionsYieldsSameInstance()
+    public void Catalog_ReplacingWithSameFunctionsYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithFunctions(before.Functions);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_AddingNoAggregatesYieldsSameInstance()
+    public void Catalog_AddingNoAggregatesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.AddAggregates();
         var after2 = before.AddAggregates(null!);
         Assert.Same(before, after1);
@@ -67,17 +67,17 @@ public class DataContextTests
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameAggregatesYieldsSameInstance()
+    public void Catalog_ReplacingWithSameAggregatesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithAggregates(before.Aggregates);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_AddingNoVariablesYieldsSameInstance()
+    public void Catalog_AddingNoVariablesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after1 = before.AddVariables();
         var after2 = before.AddVariables(null!);
         Assert.Same(before, after1);
@@ -85,33 +85,33 @@ public class DataContextTests
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameVariablesYieldsSameInstance()
+    public void Catalog_ReplacingWithSameVariablesYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithVariables(before.Variables);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSamePropertyProvidersYieldsSameInstance()
+    public void Catalog_ReplacingWithSamePropertyProvidersYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithPropertyProviders(before.PropertyProviders);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameMethodProvidersYieldsSameInstance()
+    public void Catalog_ReplacingWithSameMethodProvidersYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithMethodProviders(before.MethodProviders);
         Assert.Same(before, after);
     }
 
     [Fact]
-    public void DataContext_ReplacingWithSameComparersYieldsSameInstance()
+    public void Catalog_ReplacingWithSameComparersYieldsSameInstance()
     {
-        var before = DataContext.Empty;
+        var before = Catalog.Empty;
         var after = before.WithComparers(before.Comparers);
         Assert.Same(before, after);
     }

@@ -77,8 +77,8 @@ public class EnumerableTableDefinitionTests
         };
 
         var table = TableDefinition.Create("Table", rows);
-        var dataContext = DataContext.Empty.AddTables(table);
-        var query = Query.Create(dataContext, $"SELECT * FROM {table.Name}");
+        var catalog = Catalog.Empty.AddTables(table);
+        var query = Query.Create(catalog, $"SELECT * FROM {table.Name}");
 
         using var reader = query.ExecuteReader();
 

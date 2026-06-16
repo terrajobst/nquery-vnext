@@ -387,11 +387,11 @@ internal class Resources {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Child table must exist in data context..
+    ///   Looks up a localized string similar to Child table must exist in catalog..
     /// </summary>
-    internal static string ChildTableMustExistInDataContext {
+    internal static string ChildTableMustExistInCatalog {
         get {
-            return ResourceManager.GetString("ChildTableMustExistInDataContext", resourceCulture);
+            return ResourceManager.GetString("ChildTableMustExistInCatalog", resourceCulture);
         }
     }
     
@@ -1143,11 +1143,11 @@ internal class Resources {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to Parent table must exist in data context..
+    ///   Looks up a localized string similar to Parent table must exist in catalog..
     /// </summary>
-    internal static string ParentTableMustExistInDataContext {
+    internal static string ParentTableMustExistInCatalog {
         get {
-            return ResourceManager.GetString("ParentTableMustExistInDataContext", resourceCulture);
+            return ResourceManager.GetString("ParentTableMustExistInCatalog", resourceCulture);
         }
     }
     

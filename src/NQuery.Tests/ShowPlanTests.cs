@@ -120,6 +120,6 @@ public class ShowPlanTests
     private static Compilation Compile(string text)
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
-        return Compilation.Create(NorthwindDataContext.Instance, syntaxTree);
+        return Compilation.Create(NorthwindCatalog.Instance, syntaxTree);
     }
 }

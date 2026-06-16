@@ -15,9 +15,9 @@ public abstract class QuickInfoModelProviderTests
         AssertIsMatch(query, null);
     }
 
-    protected void AssertIsMatch(string query, Func<DataContext, DataContext>? dataContextModifer)
+    protected void AssertIsMatch(string query, Func<Catalog, Catalog>? catalogModifer)
     {
-        GetModels(query, dataContextModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
+        GetModels(query, catalogModifer, out var semanticModel, out var startModel, out var middleModel, out var endModel);
 
         var expectedModel = CreateExpectedModel(semanticModel);
 
@@ -31,9 +31,9 @@ public abstract class QuickInfoModelProviderTests
         AssertIsNotMatch(query, null);
     }
 
-    protected void AssertIsNotMatch(string query, Func<DataContext, DataContext>? dataContextModifer)
+    protected void AssertIsNotMatch(string query, Func<Catalog, Catalog>? catalogModifer)
     {
-        GetModels(query, dataContextModifer, out _, out var startModel, out var middleModel, out var endModel);
+        GetModels(query, catalogModifer, out _, out var startModel, out var middleModel, out var endModel);
 
         Assert.Null(startModel);
         Assert.Null(middleModel);
@@ -50,12 +50,12 @@ public abstract class QuickInfoModelProviderTests
         Assert.Equal(expectedModel.Markup, actualModel.Markup);
     }
 
-    private void GetModels(string query, Func<DataContext, DataContext>? dataContextModifer, out SemanticModel semanticModel, out QuickInfoModel? startModel, out QuickInfoModel? middleModel, out QuickInfoModel? endModel)
+    private void GetModels(string query, Func<Catalog, Catalog>? catalogModifer, out SemanticModel semanticModel, out QuickInfoModel? startModel, out QuickInfoModel? middleModel, out QuickInfoModel? endModel)
     {
         var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
 
-        if (dataContextModifer is not null)
-            compilation = compilation.WithDataContext(dataContextModifer(compilation.DataContext));
+        if (catalogModifer is not null)
+            compilation = compilation.WithCatalog(catalogModifer(compilation.Catalog));
 
         semanticModel = compilation.GetSemanticModel();
         var start = span.Start;

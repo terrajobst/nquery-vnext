@@ -1,7 +1,5 @@
 # NQuery Major Refactoring
 
-* Rename DataContext to Catalog. It's the better term. In Linq/EF it means
-  a live data base connection which this isn't.
 * Change aggregates such the extension points deals with expressions trees that
   can be compiled, rather than with an interface
     - Similar to columns, properties, and methods

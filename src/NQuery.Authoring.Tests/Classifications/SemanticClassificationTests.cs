@@ -57,8 +57,8 @@ public class SemanticClassificationTests
                      };
 
         var compilation = CompilationFactory.CreateQuery(query);
-        var dataContext = compilation.DataContext.AddVariables(VariableDefinition.Create("Manager", typeof(int)));
-        compilation = compilation.WithDataContext(dataContext);
+        var catalog = compilation.Catalog.AddVariables(VariableDefinition.Create("Manager", typeof(int)));
+        compilation = compilation.WithCatalog(catalog);
 
         var syntaxTree = compilation.SyntaxTree;
         var semanticModel = compilation.GetSemanticModel();

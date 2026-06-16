@@ -5,11 +5,11 @@ namespace NQuery.Tests.Evaluation;
 
 public sealed class FunctionInvocationTests : EvaluationTest
 {
-    private readonly DataContext _dataContext;
+    private readonly Catalog _catalog;
 
     public FunctionInvocationTests()
     {
-        _dataContext = DataContext.Default.AddFunctions(
+        _catalog = Catalog.Default.AddFunctions(
             FunctionDefinition.Create<int>(nameof(StaticFunction0), () => StaticFunction0()),
             FunctionDefinition.Create<int, int>(nameof(StaticFunction1), arg => StaticFunction1(arg)),
             FunctionDefinition.Create<int, int, int>(nameof(StaticFunction2), (arg1, arg2) => StaticFunction2(arg1, arg2)),
@@ -32,7 +32,7 @@ public sealed class FunctionInvocationTests : EvaluationTest
 
         var expected = new[] { 42 };
 
-        AssertProduces(text, expected, _dataContext);
+        AssertProduces(text, expected, _catalog);
     }
 
     [Theory]
@@ -46,7 +46,7 @@ public sealed class FunctionInvocationTests : EvaluationTest
 
         var expected = new[] { GetHashCode() + 42 };
 
-        AssertProduces(text, expected, _dataContext);
+        AssertProduces(text, expected, _catalog);
     }
 
     private static int StaticFunction0()

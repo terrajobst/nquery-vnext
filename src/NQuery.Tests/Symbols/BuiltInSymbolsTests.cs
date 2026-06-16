@@ -11,8 +11,8 @@ public class BuiltInSymbolsTests
 
     protected static object Compute(string text)
     {
-        var dataContext = DataContext.Default;
-        var expression = Expression<object>.Create(dataContext, text);
+        var catalog = Catalog.Default;
+        var expression = Expression<object>.Create(catalog, text);
         return expression.Evaluate();
     }
 }

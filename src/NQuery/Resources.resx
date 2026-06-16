@@ -219,8 +219,8 @@
   <data name="ChildColumnsMustNotContainColumnsOfOtherTables" xml:space="preserve">
     <value>childColumns must not contain columns of different tables.</value>
   </data>
-  <data name="ChildTableMustExistInDataContext" xml:space="preserve">
-    <value>Child table must exist in data context.</value>
+  <data name="ChildTableMustExistInCatalog" xml:space="preserve">
+    <value>Child table must exist in catalog.</value>
   </data>
   <data name="CodeAssistanceFailed" xml:space="preserve">
     <value>Cannot provide code assistance: {0}</value>
@@ -468,8 +468,8 @@
   <data name="ParentColumnsMustNotContainColumnsOfOtherTables" xml:space="preserve">
     <value>parentColumns must not contain columns of different tables.</value>
   </data>
-  <data name="ParentTableMustExistInDataContext" xml:space="preserve">
-    <value>Parent table must exist in data context.</value>
+  <data name="ParentTableMustExistInCatalog" xml:space="preserve">
+    <value>Parent table must exist in catalog.</value>
   </data>
   <data name="PropertyBindingGetValueFailed" xml:space="preserve">
     <value>PropertyBinding.GetUnknown() threw an exception.</value>

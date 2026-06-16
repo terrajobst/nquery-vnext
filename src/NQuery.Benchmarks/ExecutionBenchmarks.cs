@@ -35,7 +35,7 @@ public class ExecutionBenchmarks
         _old = BaselineNQuery.Query.Create(BaselineNQuery.DataContext.Default.AddTables(baselineTable), sql);
 
         var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
-        _new = CurrentNQuery.Query.Create(CurrentNQuery.DataContext.Default.AddTables(currentTable), sql);
+        _new = CurrentNQuery.Query.Create(CurrentNQuery.Catalog.Default.AddTables(currentTable), sql);
 
         // First read compiles and caches the plan on the Query; the benchmarks below reuse it.
         Drain(_old.ExecuteReader());

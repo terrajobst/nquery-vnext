@@ -4,12 +4,12 @@ using NQuery.Data;
 
 namespace NQuery;
 
-public static class NorthwindDataContext
+public static class NorthwindCatalog
 {
-    public static readonly DataContext Instance = DataContext.Default.AddTablesAndRelationships(CreateDataSet());
+    public static readonly Catalog Instance = Catalog.Default.AddTablesAndRelationships(CreateDataSet());
 
     // The raw Northwind data as an engine-neutral DataSet. Exposed so other engines (e.g.
-    // the baseline build in the differential tests) can build their own DataContext from
+    // the baseline build in the differential tests) can build their own Catalog from
     // exactly the same data this one uses.
     public static DataSet CreateDataSet()
     {

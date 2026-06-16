@@ -6,18 +6,18 @@ public sealed class Query
 {
     private CompiledQuery? _query;
 
-    private Query(DataContext dataContext, string text)
+    private Query(Catalog catalog, string text)
     {
-        DataContext = dataContext;
+        Catalog = catalog;
         Text = text;
     }
 
-    public static Query Create(DataContext dataContext, string text)
+    public static Query Create(Catalog catalog, string text)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(text);
 
-        return new Query(dataContext, text);
+        return new Query(catalog, text);
     }
 
     private CompiledQuery EnsureCompiled()
@@ -25,7 +25,7 @@ public sealed class Query
         if (_query is null)
         {
             var syntaxTree = SyntaxTree.ParseQuery(Text);
-            var compilation = Compilation.Create(DataContext, syntaxTree);
+            var compilation = Compilation.Create(Catalog, syntaxTree);
             var query = compilation.Compile();
             Interlocked.CompareExchange(ref _query, query, null);
         }
@@ -56,7 +56,7 @@ public sealed class Query
         return EnsureCompiled().CreateSchemaReader();
     }
 
-    public DataContext DataContext { get; }
+    public Catalog Catalog { get; }
 
     public string Text { get; }
 }

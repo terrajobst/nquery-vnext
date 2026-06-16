@@ -88,7 +88,7 @@ The driver relies on `ReferenceEquals(root, before)` after running all passes in
 
 ## Thread safety
 
-Each call to `Optimize` constructs fresh batch instances. Per-call passes (`ApplyPushdown`, `OuterJoinRemover`) are created per optimization call. Singleton passes (`SelectionPushdown`, `JoinOrderer`, `ProjectMerger`, `ColumnPruner`) are stateless and safe. The optimizer is safe for concurrent use as long as different `DataContext` instances are used.
+Each call to `Optimize` constructs fresh batch instances. Per-call passes (`ApplyPushdown`, `OuterJoinRemover`) are created per optimization call. Singleton passes (`SelectionPushdown`, `JoinOrderer`, `ProjectMerger`, `ColumnPruner`) are stateless and safe. The optimizer is safe for concurrent use as long as different `Catalog` instances are used.
 
 ## Debugging and showplan
 

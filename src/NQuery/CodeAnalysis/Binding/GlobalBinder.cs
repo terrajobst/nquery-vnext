@@ -7,20 +7,20 @@ namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class GlobalBinder : Binder
 {
-    private readonly DataContext _dataContext;
+    private readonly Catalog _catalog;
 
     private readonly Dictionary<Type, ImmutableArray<PropertySymbol>> _propertySymbols = new();
     private readonly Dictionary<Type, ImmutableArray<MethodSymbol>> _methodSymbols = new();
 
-    public GlobalBinder(SharedBinderState sharedBinderState, DataContext dataContext)
+    public GlobalBinder(SharedBinderState sharedBinderState, Catalog catalog)
         : base(sharedBinderState, null)
     {
-        var symbols = dataContext.Tables.Select(t => (Symbol)new SchemaTableSymbol(t))
-                                 .Concat(dataContext.Functions.Select(f => new FunctionSymbol(f)))
-                                 .Concat(dataContext.Aggregates.Select(a => new AggregateSymbol(a)))
-                                 .Concat(dataContext.Variables.Select(v => new VariableSymbol(v)));
+        var symbols = catalog.Tables.Select(t => (Symbol)new SchemaTableSymbol(t))
+                                 .Concat(catalog.Functions.Select(f => new FunctionSymbol(f)))
+                                 .Concat(catalog.Aggregates.Select(a => new AggregateSymbol(a)))
+                                 .Concat(catalog.Variables.Select(v => new VariableSymbol(v)));
 
-        _dataContext = dataContext;
+        _catalog = catalog;
         LocalSymbols = SymbolTable.Create(symbols);
     }
 
@@ -28,7 +28,7 @@ internal sealed class GlobalBinder : Binder
 
     public override IEnumerable<PropertySymbol> LookupProperties(Type type)
     {
-        var propertyProvider = Lookup(_dataContext.PropertyProviders, type);
+        var propertyProvider = Lookup(_catalog.PropertyProviders, type);
         if (propertyProvider is null)
             return Enumerable.Empty<PropertySymbol>();
 
@@ -43,7 +43,7 @@ internal sealed class GlobalBinder : Binder
 
     public override IEnumerable<MethodSymbol> LookupMethods(Type type)
     {
-        var methodProvider = Lookup(_dataContext.MethodProviders, type);
+        var methodProvider = Lookup(_catalog.MethodProviders, type);
         if (methodProvider is null)
             return Enumerable.Empty<MethodSymbol>();
 
@@ -58,7 +58,7 @@ internal sealed class GlobalBinder : Binder
 
     public override IComparer? LookupComparer(Type type)
     {
-        var registeredComparer = Lookup(_dataContext.Comparers, type);
+        var registeredComparer = Lookup(_catalog.Comparers, type);
         if (registeredComparer is not null)
             return registeredComparer;
 

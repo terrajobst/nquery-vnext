@@ -165,7 +165,7 @@ public class AlgebrizerTests
     private static BoundQuery Bind(string text)
     {
         var syntaxTree = SyntaxTree.ParseQuery(text);
-        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindDataContext.Instance);
+        var bindingResult = Binder.Bind(syntaxTree.Root, NorthwindCatalog.Instance);
         Assert.Empty(syntaxTree.GetDiagnostics().Concat(bindingResult.Diagnostics));
         return (BoundQuery)bindingResult.BoundRoot;
     }

@@ -8,54 +8,54 @@ using NQuery.Metadata;
 
 namespace NQuery.Data;
 
-public static class DataContextExtensions
+public static class CatalogExtensions
 {
-    public static DataContext AddTablesAndRelationships(this DataContext dataContext, DataSet dataSet)
+    public static Catalog AddTablesAndRelationships(this Catalog catalog, DataSet dataSet)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(dataSet);
 
-        return dataContext.AddTables(dataSet).AddRelationships(dataSet);
+        return catalog.AddTables(dataSet).AddRelationships(dataSet);
     }
 
-    public static DataContext AddTables(this DataContext dataContext, DataSet dataSet)
+    public static Catalog AddTables(this Catalog catalog, DataSet dataSet)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(dataSet);
 
         var dataTables = dataSet.Tables.OfType<DataTable>();
-        return dataContext.AddTables(dataTables);
+        return catalog.AddTables(dataTables);
     }
 
-    public static DataContext AddTables(this DataContext dataContext, params IEnumerable<DataTable> dataTables)
+    public static Catalog AddTables(this Catalog catalog, params IEnumerable<DataTable> dataTables)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
         if (dataTables is null)
-            return dataContext;
+            return catalog;
 
         var tableDefinitions = dataTables.Select(CreateTable);
-        return dataContext.AddTables(tableDefinitions);
+        return catalog.AddTables(tableDefinitions);
     }
 
-    public static DataContext AddRelationships(this DataContext dataContext, DataSet dataSet)
+    public static Catalog AddRelationships(this Catalog catalog, DataSet dataSet)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
         ThrowIfNull(dataSet);
 
         var dataRelations = dataSet.Relations.OfType<DataRelation>();
-        return dataContext.AddRelationships(dataRelations);
+        return catalog.AddRelationships(dataRelations);
     }
 
-    public static DataContext AddRelationships(this DataContext dataContext, params IEnumerable<DataRelation> dataRelations)
+    public static Catalog AddRelationships(this Catalog catalog, params IEnumerable<DataRelation> dataRelations)
     {
-        ThrowIfNull(dataContext);
+        ThrowIfNull(catalog);
 
         if (dataRelations is null)
-            return dataContext;
+            return catalog;
 
-        var relationships = dataRelations.Select(r => CreateRelationship(dataContext.Tables, r)).OfType<RelationshipDefinition>();
-        return dataContext.AddRelationships(relationships);
+        var relationships = dataRelations.Select(r => CreateRelationship(catalog.Tables, r)).OfType<RelationshipDefinition>();
+        return catalog.AddRelationships(relationships);
     }
 
     private static TableDefinition CreateTable(DataTable dataTable)

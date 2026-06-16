@@ -23,7 +23,7 @@ public class ReaderPreparationBenchmarks
     public Workload.Shape Shape { get; set; }
 
     private BaselineNQuery.DataContext _oldContext = null!;
-    private CurrentNQuery.DataContext _newContext = null!;
+    private CurrentNQuery.Catalog _newContext = null!;
     private string _sql = null!;
 
     [GlobalSetup]
@@ -36,7 +36,7 @@ public class ReaderPreparationBenchmarks
         _oldContext = BaselineNQuery.DataContext.Default.AddTables(baselineTable);
 
         var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
-        _newContext = CurrentNQuery.DataContext.Default.AddTables(currentTable);
+        _newContext = CurrentNQuery.Catalog.Default.AddTables(currentTable);
     }
 
     [Benchmark(Baseline = true)]
