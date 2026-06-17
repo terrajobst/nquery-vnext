@@ -12,9 +12,9 @@ public class EmptyRowBufferTests : RowBufferTests
     }
 
     [Fact]
-    public void RowBuffers_Empty_IndexerThrows()
+    public void RowBuffers_Empty_AccessThrows()
     {
         var buffer = new EmptyRowBuffer();
-        Assert.Throws<ArgumentOutOfRangeException>(() => buffer[0]);
+        Assert.Throws<ArgumentOutOfRangeException>(() => buffer.GetObject(0));
     }
 }

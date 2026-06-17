@@ -7,9 +7,19 @@ namespace NQuery.Tests.CodeAnalysis.Iterators;
 //   LeftOuter   = (preserveBuild: true,  preserveProbe: false)
 //   RightOuter  = (preserveBuild: false, preserveProbe: true)
 //   FullOuter   = (preserveBuild: true,  preserveProbe: true)
-// The remainder predicate receives the combined (build ++ probe) buffer.
+// The remainder predicate receives the combined (build ++ probe) buffer. Columns keep
+// their container, so a flat output column maps to a container index per its type (e.g.
+// for an (int, string) build joined to an (int, string) probe, the ints are 32-bit
+// columns 0/1 and the strings are object columns 0/1).
 public class EmittedHashMatchIteratorTests : IteratorTests
 {
+    private static EmittedHashMatchIterator Join(MockedIterator build, MockedIterator probe, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false)
+    {
+        var buildKey = RowBufferTestSupport.IntKey(build.RowBuffer, 0);
+        var probeKey = RowBufferTestSupport.IntKey(probe.RowBuffer, 0);
+        return new EmittedHashMatchIterator(build, probe, buildKey, probeKey, remainder, preserveBuild, preserveProbe, semi, anti, probing);
+    }
+
     [Theory]
     [InlineData(false, false)] // Inner
     [InlineData(true, false)]  // LeftOuter
@@ -25,28 +35,28 @@ public class EmittedHashMatchIteratorTests : IteratorTests
 
         const int passCount = 2;
 
-        using (var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe))
+        using (var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe))
         {
             for (var i = 0; i < passCount; i++)
             {
                 iterator.Open();
 
                 Assert.True(iterator.Read());
-                Assert.Equal(2, iterator.RowBuffer[0]);
-                Assert.Equal(2, iterator.RowBuffer[1]);
+                Assert.Equal(2, iterator.RowBuffer.NullableInt32(0));
+                Assert.Equal(2, iterator.RowBuffer.NullableInt32(1));
 
                 if (preserveProbe)
                 {
                     Assert.True(iterator.Read());
-                    Assert.Null(iterator.RowBuffer[0]);
-                    Assert.Equal(3, iterator.RowBuffer[1]);
+                    Assert.Null(iterator.RowBuffer.NullableInt32(0));
+                    Assert.Equal(3, iterator.RowBuffer.NullableInt32(1));
                 }
 
                 if (preserveBuild)
                 {
                     Assert.True(iterator.Read());
-                    Assert.Equal(1, iterator.RowBuffer[0]);
-                    Assert.Null(iterator.RowBuffer[1]);
+                    Assert.Equal(1, iterator.RowBuffer.NullableInt32(0));
+                    Assert.Null(iterator.RowBuffer.NullableInt32(1));
                 }
 
                 Assert.False(iterator.Read());
@@ -68,13 +78,12 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, false)]  // LeftOuter
     public void Iterators_EmittedHashMatch_ReturnsEmpty_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
     {
-        var buildRows = Array.Empty<object>();
         var probeRows = new object?[] { 2, 3 };
 
-        using var build = new MockedIterator(buildRows);
+        using var build = MockedIterator.Empty(typeof(int));
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
         AssertEmpty(iterator);
     }
 
@@ -83,7 +92,6 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, true)]  // FullOuter
     public void Iterators_EmittedHashMatch_ReturnsProbe_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
     {
-        var buildRows = Array.Empty<object>();
         var probeRows = new object?[] { 2, 3 };
         var expected = new object?[,]
         {
@@ -91,11 +99,11 @@ public class EmittedHashMatchIteratorTests : IteratorTests
             {null, 3}
         };
 
-        using var build = new MockedIterator(buildRows);
+        using var build = MockedIterator.Empty(typeof(int));
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
-        AssertProduces(iterator, expected);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
+        AssertProduces(iterator, new[] { typeof(int), typeof(int) }, expected);
     }
 
     [Theory]
@@ -104,12 +112,11 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     public void Iterators_EmittedHashMatch_ReturnsEmpty_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2 };
-        var probeRows = Array.Empty<object>();
 
         using var build = new MockedIterator(buildRows);
-        using var probe = new MockedIterator(probeRows);
+        using var probe = MockedIterator.Empty(typeof(int));
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
         AssertEmpty(iterator);
     }
 
@@ -119,7 +126,6 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     public void Iterators_EmittedHashMatch_ReturnsBuild_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2 };
-        var probeRows = Array.Empty<object>();
         var expected = new object?[,]
         {
             {1, null},
@@ -127,10 +133,10 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         };
 
         using var build = new MockedIterator(buildRows);
-        using var probe = new MockedIterator(probeRows);
+        using var probe = MockedIterator.Empty(typeof(int));
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
-        AssertProduces(iterator, expected);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
+        AssertProduces(iterator, new[] { typeof(int), typeof(int) }, expected);
     }
 
     [Theory]
@@ -149,28 +155,30 @@ public class EmittedHashMatchIteratorTests : IteratorTests
             {null, "Bar"}
         };
 
-        using var build = new MockedIterator(buildRows);
-        using var probe = new MockedIterator(probeRows);
+        var columnTypes = new[] { typeof(int), typeof(string) };
+        using var build = new MockedIterator(columnTypes, buildRows);
+        using var probe = new MockedIterator(columnTypes, probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
         iterator.Open();
 
+        // 32-bit columns: build.int(0), probe.int(1); object columns: build.string(0), probe.string(1).
         if (preserveProbe)
         {
             Assert.True(iterator.Read());
-            Assert.Null(iterator.RowBuffer[0]);
-            Assert.Null(iterator.RowBuffer[1]);
-            Assert.Null(iterator.RowBuffer[2]);
-            Assert.Equal("Bar", iterator.RowBuffer[3]);
+            Assert.Null(iterator.RowBuffer.NullableInt32(0));
+            Assert.Null(iterator.RowBuffer.String(0));
+            Assert.Null(iterator.RowBuffer.NullableInt32(1));
+            Assert.Equal("Bar", iterator.RowBuffer.String(1));
         }
 
         if (preserveBuild)
         {
             Assert.True(iterator.Read());
-            Assert.Null(iterator.RowBuffer[0]);
-            Assert.Equal("Foo", iterator.RowBuffer[1]);
-            Assert.Null(iterator.RowBuffer[2]);
-            Assert.Null(iterator.RowBuffer[3]);
+            Assert.Null(iterator.RowBuffer.NullableInt32(0));
+            Assert.Equal("Foo", iterator.RowBuffer.String(0));
+            Assert.Null(iterator.RowBuffer.NullableInt32(1));
+            Assert.Null(iterator.RowBuffer.String(1));
         }
 
         Assert.False(iterator.Read());
@@ -202,7 +210,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild, preserveProbe);
+        using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
         AssertProduces(iterator, expected);
     }
 
@@ -234,71 +242,69 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        // Layout:
-        // 0               | 1            | 2               | 3            | 4
-        // ----------------+--------------+-----------------+--------------+---------------
-        // build.ProjectId | build.TaskId | probe.ProjectId | probe.TaskId | probe.TaskName
-        var remainder = new EmittedPredicate(rb => Equals(rb[1], rb[3]));
+        // 32-bit columns: build.ProjectId(0), build.TaskId(1), probe.ProjectId(2), probe.TaskId(3);
+        // object columns: probe.TaskName(0). The remainder matches build.TaskId == probe.TaskId.
+        var remainder = new EmittedPredicate(rb => Equals(rb.NullableInt32(1), rb.NullableInt32(3)));
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, remainder, preserveBuild, preserveProbe);
+        using var iterator = Join(build, probe, remainder, preserveBuild, preserveProbe);
         iterator.Open();
 
         if (preserveProbe)
         {
             Assert.True(iterator.Read());
-            Assert.Null(iterator.RowBuffer[0]);
-            Assert.Null(iterator.RowBuffer[1]);
-            Assert.Equal(0, iterator.RowBuffer[2]);
-            Assert.Equal(0, iterator.RowBuffer[3]);
-            Assert.Equal("Unmatched1", iterator.RowBuffer[4]);
+            Assert.Null(iterator.RowBuffer.NullableInt32(0));
+            Assert.Null(iterator.RowBuffer.NullableInt32(1));
+            Assert.Equal(0, iterator.RowBuffer.NullableInt32(2));
+            Assert.Equal(0, iterator.RowBuffer.NullableInt32(3));
+            Assert.Equal("Unmatched1", iterator.RowBuffer.String(0));
         }
 
         Assert.True(iterator.Read());
-        Assert.Equal(1, iterator.RowBuffer[0]);
-        Assert.Equal(1, iterator.RowBuffer[1]);
-        Assert.Equal(1, iterator.RowBuffer[2]);
-        Assert.Equal(1, iterator.RowBuffer[3]);
-        Assert.Equal("Project1-Task-1", iterator.RowBuffer[4]);
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(0));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(1));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(2));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(3));
+        Assert.Equal("Project1-Task-1", iterator.RowBuffer.String(0));
 
         Assert.True(iterator.Read());
-        Assert.Equal(1, iterator.RowBuffer[0]);
-        Assert.Equal(2, iterator.RowBuffer[1]);
-        Assert.Equal(1, iterator.RowBuffer[2]);
-        Assert.Equal(2, iterator.RowBuffer[3]);
-        Assert.Equal("Project1-Task-2", iterator.RowBuffer[4]);
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(0));
+        Assert.Equal(2, iterator.RowBuffer.NullableInt32(1));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(2));
+        Assert.Equal(2, iterator.RowBuffer.NullableInt32(3));
+        Assert.Equal("Project1-Task-2", iterator.RowBuffer.String(0));
 
         if (preserveProbe)
         {
             Assert.True(iterator.Read());
-            Assert.Null(iterator.RowBuffer[0]);
-            Assert.Null(iterator.RowBuffer[1]);
-            Assert.Equal(1, iterator.RowBuffer[2]);
-            Assert.Equal(3, iterator.RowBuffer[3]);
-            Assert.Equal("Unmatched2", iterator.RowBuffer[4]);
+            Assert.Null(iterator.RowBuffer.NullableInt32(0));
+            Assert.Null(iterator.RowBuffer.NullableInt32(1));
+            Assert.Equal(1, iterator.RowBuffer.NullableInt32(2));
+            Assert.Equal(3, iterator.RowBuffer.NullableInt32(3));
+            Assert.Equal("Unmatched2", iterator.RowBuffer.String(0));
         }
 
         Assert.True(iterator.Read());
-        Assert.Equal(2, iterator.RowBuffer[0]);
-        Assert.Equal(1, iterator.RowBuffer[1]);
-        Assert.Equal(2, iterator.RowBuffer[2]);
-        Assert.Equal(1, iterator.RowBuffer[3]);
-        Assert.Equal("Project2-Task-1", iterator.RowBuffer[4]);
+        Assert.Equal(2, iterator.RowBuffer.NullableInt32(0));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(1));
+        Assert.Equal(2, iterator.RowBuffer.NullableInt32(2));
+        Assert.Equal(1, iterator.RowBuffer.NullableInt32(3));
+        Assert.Equal("Project2-Task-1", iterator.RowBuffer.String(0));
 
         if (preserveBuild)
         {
             Assert.True(iterator.Read());
-            Assert.Equal(2, iterator.RowBuffer[0]);
-            Assert.Equal(2, iterator.RowBuffer[1]);
-            Assert.Null(iterator.RowBuffer[2]);
-            Assert.Null(iterator.RowBuffer[3]);
-            Assert.Null(iterator.RowBuffer[4]);
+            Assert.Equal(2, iterator.RowBuffer.NullableInt32(0));
+            Assert.Equal(2, iterator.RowBuffer.NullableInt32(1));
+            Assert.Null(iterator.RowBuffer.NullableInt32(2));
+            Assert.Null(iterator.RowBuffer.NullableInt32(3));
+            Assert.Null(iterator.RowBuffer.String(0));
 
             Assert.True(iterator.Read());
-            Assert.Equal(3, iterator.RowBuffer[0]);
-            Assert.Equal(1, iterator.RowBuffer[1]);
-            Assert.Null(iterator.RowBuffer[2]);
-            Assert.Null(iterator.RowBuffer[3]);
-            Assert.Null(iterator.RowBuffer[4]);
+            Assert.Equal(3, iterator.RowBuffer.NullableInt32(0));
+            Assert.Equal(1, iterator.RowBuffer.NullableInt32(1));
+            Assert.Null(iterator.RowBuffer.NullableInt32(2));
+            Assert.Null(iterator.RowBuffer.NullableInt32(3));
+            Assert.Null(iterator.RowBuffer.String(0));
         }
 
         Assert.False(iterator.Read());
@@ -315,11 +321,11 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: true);
+        using var iterator = Join(build, probe, _ => true, preserveBuild: false, preserveProbe: false, semi: true);
 
-        var rows = Drain(iterator);
-        Assert.Equal(1, iterator.RowBuffer.Count);
-        Assert.Equal(new object[] { 2, 3 }, SingleColumn(rows));
+        var rows = Drain(iterator, buildIntColumns: 1);
+        Assert.Equal(1, iterator.RowBuffer.Bits32Count);
+        Assert.Equal(new object?[] { 2, 3 }, SingleColumn(rows));
     }
 
     [Fact]
@@ -331,11 +337,11 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
+        using var iterator = Join(build, probe, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
 
-        var rows = Drain(iterator);
-        Assert.Equal(1, iterator.RowBuffer.Count);
-        Assert.Equal(new object[] { 1 }, SingleColumn(rows));
+        var rows = Drain(iterator, buildIntColumns: 1);
+        Assert.Equal(1, iterator.RowBuffer.Bits32Count);
+        Assert.Equal(new object?[] { 1 }, SingleColumn(rows));
     }
 
     // A NULL build key never matches, so semi excludes it and anti keeps it.
@@ -348,9 +354,9 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
+        using var iterator = Join(build, probe, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
 
-        var rows = Drain(iterator);
+        var rows = Drain(iterator, buildIntColumns: 1);
         Assert.Equal(new object?[] { null }, SingleColumn(rows));
     }
 
@@ -365,35 +371,40 @@ public class EmittedHashMatchIteratorTests : IteratorTests
         using var build = new MockedIterator(buildRows);
         using var probe = new MockedIterator(probeRows);
 
-        using var iterator = new EmittedHashMatchIterator(build, probe, 0, 0, _ => true, preserveBuild: false, preserveProbe: false, semi: true, anti: false, probing: true);
+        using var iterator = Join(build, probe, _ => true, preserveBuild: false, preserveProbe: false, semi: true, anti: false, probing: true);
 
-        var rows = Drain(iterator);
-        Assert.Equal(2, iterator.RowBuffer.Count);
+        iterator.Open();
+        Assert.Equal(2, iterator.RowBuffer.Bits32Count);
 
-        var byKey = rows.ToDictionary(r => r[0], r => r[1]);
-        Assert.Equal(false, byKey[1]);
-        Assert.Equal(true, byKey[2]);
-        Assert.Equal(true, byKey[3]);
+        var byKey = new Dictionary<int, bool>();
+        while (iterator.Read())
+            byKey[iterator.RowBuffer.NullableInt32(0)!.Value] = iterator.RowBuffer.Bool(1);
+
+        Assert.False(byKey[1]);
+        Assert.True(byKey[2]);
+        Assert.True(byKey[3]);
     }
 
-    // Collects every produced row; the assertions compare the build column
-    // order-independently so they don't pin down the flush order.
-    private static List<object[]> Drain(Iterator iterator)
+    // Collects every produced row (build columns are ints; a probing semi appends a
+    // trailing bool marker). The assertions compare the build column order-independently
+    // so they don't pin down the flush order.
+    private static List<object?[]> Drain(Iterator iterator, int buildIntColumns)
     {
-        var result = new List<object[]>();
+        var result = new List<object?[]>();
         iterator.Open();
         while (iterator.Read())
         {
-            var row = new object[iterator.RowBuffer.Count];
-            for (var i = 0; i < row.Length; i++)
-                row[i] = iterator.RowBuffer[i];
+            var rb = iterator.RowBuffer;
+            var row = new object?[rb.Bits32Count];
+            for (var i = 0; i < rb.Bits32Count; i++)
+                row[i] = i < buildIntColumns ? rb.NullableInt32(i) : rb.Bool(i);
             result.Add(row);
         }
 
         return result;
     }
 
-    private static object[] SingleColumn(List<object[]> rows)
+    private static object?[] SingleColumn(List<object?[]> rows)
     {
         return rows.Select(r => r[0]).OrderBy(v => v).ToArray();
     }

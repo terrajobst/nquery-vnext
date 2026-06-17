@@ -1,8 +1,8 @@
 using System.Collections;
+using System.Collections.Immutable;
 
 using NQuery.Metadata;
 using NQuery.CodeAnalysis.Iterators;
-using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
 
@@ -18,12 +18,11 @@ public class TableIteratorTests : IteratorTests
     {
         var table = TableDefinition.Create("Table", rows, typeof(int), NullProviders.PropertyProvider);
 
-        var valueSelectors = new Func<object, object>[]
-        {
-            r => (int) r*10
-        };
+        var layout = RowBufferLayout.Create(new[] { typeof(int) });
+        var writers = ImmutableArray.Create<Action<object, ArrayRowBuffer>>(
+            (r, buffer) => buffer.Write32Bit<int>(0, (int)r * 10));
 
-        return new TableIterator(table, valueSelectors);
+        return new TableIterator(table, layout, writers);
     }
 
     private sealed class MockedEnumerable : IEnumerable, IEnumerator, IDisposable

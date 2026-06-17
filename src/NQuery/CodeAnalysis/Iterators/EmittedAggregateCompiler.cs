@@ -10,12 +10,15 @@ namespace NQuery.CodeAnalysis.Iterators;
 // accumulator becomes a typed variable (state0, state1, ...); the three emitted delegates close
 // over that same set of variables, so initializing/folding/reading never boxes the accumulators.
 // Invoking the factory hoists a fresh set of variables into a new closure -- one per iterator.
+//
+// The result store writes each aggregate's value typed into its output column (the columns the
+// grouping values do not occupy), so the only boxing left is each row's aggregate argument.
 internal static class EmittedAggregateCompiler
 {
-    public static Func<EmittedAggregates> Compile(ImmutableArray<LogicalAggregatedValue> aggregates, FrozenDictionary<ValueSlot, int> slotIndices, int outputOffset)
+    public static Func<EmittedAggregates> Compile(ImmutableArray<LogicalAggregatedValue> aggregates, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices, ImmutableArray<RowBufferColumn> outputColumns, ImmutableArray<Type> outputTypes)
     {
         var buffer = Expression.Parameter(typeof(RowBuffer), "buffer");
-        var target = Expression.Parameter(typeof(object[]), "target");
+        var target = Expression.Parameter(typeof(ArrayRowBuffer), "target");
 
         var states = new ParameterExpression[aggregates.Length];
         var seedStatements = new Expression[aggregates.Length];
@@ -43,15 +46,15 @@ internal static class EmittedAggregateCompiler
                     Expression.ReferenceNotEqual(arg, Expression.Constant(null, typeof(object))),
                     Expression.Assign(state, Expression.Invoke(fold.Accumulate, state, Expression.Convert(arg, valueType)))));
 
-            // target[outputOffset + i] = (object)result(state)
-            storeStatements[i] = Expression.Assign(
-                Expression.ArrayAccess(target, Expression.Constant(outputOffset + i)),
-                Expression.Convert(Expression.Invoke(fold.Result, state), typeof(object)));
+            // target.Write*(column, (TSlot?)result(state))
+            var slotType = outputTypes[i];
+            var result = Expression.Convert(Expression.Invoke(fold.Result, state), slotType.GetNullableType());
+            storeStatements[i] = EmittedExpressionCompiler.BuildWriteCall(target, outputColumns[i], slotType, result);
         }
 
         var initialize = Expression.Lambda<Action>(AsBody(seedStatements));
         var accumulate = Expression.Lambda<Action<RowBuffer>>(AsBody(accumulateStatements), buffer);
-        var storeResults = Expression.Lambda<Action<object[]>>(AsBody(storeStatements), target);
+        var storeResults = Expression.Lambda<Action<ArrayRowBuffer>>(AsBody(storeStatements), target);
 
         var factory = Expression.Lambda<Func<EmittedAggregates>>(
             Expression.Block(

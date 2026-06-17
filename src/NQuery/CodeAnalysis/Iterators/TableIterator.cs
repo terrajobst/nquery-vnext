@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Immutable;
 
-using NQuery.CodeAnalysis.Symbols;
 using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Iterators;
@@ -9,16 +8,16 @@ namespace NQuery.CodeAnalysis.Iterators;
 internal sealed class TableIterator : Iterator
 {
     private readonly TableDefinition _table;
-    private readonly ImmutableArray<Func<object, object>> _definedValues;
+    private readonly ImmutableArray<Action<object, ArrayRowBuffer>> _columnWriters;
     private readonly ArrayRowBuffer _rowBuffer;
 
     private IEnumerator? _rows;
 
-    public TableIterator(TableDefinition table, IEnumerable<Func<object, object>> valueSelectors)
+    public TableIterator(TableDefinition table, RowBufferLayout layout, ImmutableArray<Action<object, ArrayRowBuffer>> columnWriters)
     {
         _table = table;
-        _definedValues = valueSelectors.ToImmutableArray();
-        _rowBuffer = new ArrayRowBuffer(_definedValues.Length);
+        _columnWriters = columnWriters;
+        _rowBuffer = new ArrayRowBuffer(layout);
     }
 
     public override RowBuffer RowBuffer
@@ -48,8 +47,9 @@ internal sealed class TableIterator : Iterator
         if (!rows.MoveNext())
             return false;
 
-        for (var i = 0; i < _definedValues.Length; i++)
-            _rowBuffer.Array[i] = _definedValues[i](rows.Current!);
+        var current = rows.Current!;
+        foreach (var writer in _columnWriters)
+            writer(current, _rowBuffer);
 
         return true;
     }

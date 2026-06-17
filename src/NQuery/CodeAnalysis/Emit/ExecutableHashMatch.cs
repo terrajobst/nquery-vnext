@@ -65,18 +65,21 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
     {
         var build = _build.CreateIterator(outer);
         var probe = _probe.CreateIterator(outer);
-        var buildIndex = _build.OutputValueSlots.IndexOf(_buildKey);
-        var probeIndex = _probe.OutputValueSlots.IndexOf(_probeKey);
+
+        // The join key on each side is read boxed (it becomes the hash-table key), so it
+        // is resolved to an entry over that side's row buffer.
+        var buildKey = new RowBufferAllocation(null, build.RowBuffer, _build.OutputValueSlots)[_buildKey];
+        var probeKey = new RowBufferAllocation(null, probe.RowBuffer, _probe.OutputValueSlots)[_probeKey];
 
         // A correlated remainder reads the outer row; hand the outer buffer to the iterator
         // so it can prepend it (outer ++ build ++ probe) when evaluating the remainder.
         var remainderOuter = _correlated ? outer : null;
-        return new EmittedHashMatchIterator(build, probe, buildIndex, probeIndex, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter);
+        return new EmittedHashMatchIterator(build, probe, buildKey, probeKey, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter);
     }
 
     // Each conjunct already yields false on NULL; an empty remainder means the hash
     // key alone decides the match.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, int> slotIndices)
+    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;

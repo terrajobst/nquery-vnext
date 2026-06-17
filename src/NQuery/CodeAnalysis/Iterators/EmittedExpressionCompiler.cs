@@ -18,44 +18,55 @@ namespace NQuery.CodeAnalysis.Iterators;
 // only difference is how value slots resolve.
 internal sealed class EmittedExpressionCompiler
 {
-    private static readonly PropertyInfo RowBufferIndexer = typeof(RowBuffer).GetProperty("Item", new[] { typeof(int) })!;
     private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object))!;
 
-    private readonly FrozenDictionary<ValueSlot, int> _slotIndices;
+    private static readonly MethodInfo ReadObjectMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.ReadObject))!;
+    private static readonly MethodInfo Read32BitMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.Read32Bit))!;
+    private static readonly MethodInfo Read64BitMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.Read64Bit))!;
+    private static readonly MethodInfo Read128BitMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.Read128Bit))!;
+
+    private static readonly MethodInfo WriteObjectMethod = typeof(ArrayRowBuffer).GetMethod(nameof(ArrayRowBuffer.WriteObject))!;
+    private static readonly MethodInfo Write32BitMethod = typeof(ArrayRowBuffer).GetMethod(nameof(ArrayRowBuffer.Write32Bit))!;
+    private static readonly MethodInfo Write64BitMethod = typeof(ArrayRowBuffer).GetMethod(nameof(ArrayRowBuffer.Write64Bit))!;
+    private static readonly MethodInfo Write128BitMethod = typeof(ArrayRowBuffer).GetMethod(nameof(ArrayRowBuffer.Write128Bit))!;
+
+    private readonly FrozenDictionary<ValueSlot, RowBufferColumn> _slotIndices;
     private readonly ParameterExpression _rowBuffer = Expression.Parameter(typeof(RowBuffer));
     private readonly List<ParameterExpression> _locals = new();
     private readonly List<Expression> _assignments = new();
 
-    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, int> slotIndices)
+    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         _slotIndices = slotIndices;
     }
 
     // The row buffer's column layout follows the producing operator's output slot
-    // order, so a slot's runtime index is just its ordinal there.
-    public static FrozenDictionary<ValueSlot, int> CreateSlotIndices(ImmutableArray<ValueSlot> outputValueSlots)
+    // order, so a slot resolves to its container-relative address in that layout.
+    public static FrozenDictionary<ValueSlot, RowBufferColumn> CreateSlotIndices(ImmutableArray<ValueSlot> outputValueSlots)
     {
-        var map = new Dictionary<ValueSlot, int>(outputValueSlots.Length);
-        for (var i = 0; i < outputValueSlots.Length; i++)
-        {
-            if (!map.ContainsKey(outputValueSlots[i]))
-                map.Add(outputValueSlots[i], i);
-        }
-
-        return map.ToFrozenDictionary();
+        return RowBufferLayout.CreateSlotMap(outputValueSlots);
     }
 
-    public static EmittedFunction CompileFunction(LogicalExpression expression, FrozenDictionary<ValueSlot, int> slotIndices)
+    public static EmittedFunction CompileFunction(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         return Compile<EmittedFunction>(expression, typeof(object), slotIndices);
     }
 
-    public static EmittedPredicate CompilePredicate(LogicalExpression expression, FrozenDictionary<ValueSlot, int> slotIndices)
+    public static EmittedPredicate CompilePredicate(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         return Compile<EmittedPredicate>(expression, typeof(bool), slotIndices);
     }
 
-    private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, FrozenDictionary<ValueSlot, int> slotIndices) where TDelegate : Delegate
+    // Compiles an expression directly into a typed store of its value into a target
+    // ArrayRowBuffer column -- the value never gets boxed through object. Used by the
+    // compute scalar to fill its computed columns.
+    public static Action<RowBuffer, ArrayRowBuffer> CompileWriter(LogicalExpression expression, RowBufferColumn target, Type slotType, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    {
+        var compiler = new EmittedExpressionCompiler(slotIndices);
+        return compiler.BuildWriter(expression, target, slotType);
+    }
+
+    private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices) where TDelegate : Delegate
     {
         var compiler = new EmittedExpressionCompiler(slotIndices);
         var lambda = compiler.BuildLambda(expression, typeof(TDelegate), targetType);
@@ -64,14 +75,58 @@ internal sealed class EmittedExpressionCompiler
 
     private LambdaExpression BuildLambda(LogicalExpression expression, Type delegateType, Type targetType)
     {
-        var actualExpression = BuildCachedExpression(expression);
-        var coalescedExpression = targetType.CanBeNull()
-                                      ? actualExpression
-                                      : Expression.Coalesce(actualExpression, Expression.Default(targetType));
-        var resultExpression = Expression.Convert(coalescedExpression, targetType);
-        var expressions = _assignments.Concat(new[] { resultExpression });
-        var body = Expression.Block(_locals, expressions);
+        var body = BuildBody(expression, targetType);
         return Expression.Lambda(delegateType, body, _rowBuffer);
+    }
+
+    private Action<RowBuffer, ArrayRowBuffer> BuildWriter(LogicalExpression expression, RowBufferColumn target, Type slotType)
+    {
+        var value = BuildBody(expression, slotType.GetNullableType());
+        var targetBuffer = Expression.Parameter(typeof(ArrayRowBuffer));
+        var write = BuildWriteCall(targetBuffer, target, slotType, value);
+        return Expression.Lambda<Action<RowBuffer, ArrayRowBuffer>>(write, _rowBuffer, targetBuffer).Compile();
+    }
+
+    // Builds a call that stores `value` (already the column's nullable type) into the
+    // target column. Shared by the compute-scalar writer, the table-scan column writers,
+    // and the aggregate result store.
+    public static Expression BuildWriteCall(Expression targetBuffer, RowBufferColumn target, Type slotType, Expression value)
+    {
+        var index = Expression.Constant(target.Index);
+        return target.Kind switch
+        {
+            RowBufferColumnKind.Object => Expression.Call(targetBuffer, WriteObjectMethod.MakeGenericMethod(slotType.GetNullableType()), index, value),
+            RowBufferColumnKind.Bits32 => Expression.Call(targetBuffer, Write32BitMethod.MakeGenericMethod(slotType), index, value),
+            RowBufferColumnKind.Bits64 => Expression.Call(targetBuffer, Write64BitMethod.MakeGenericMethod(slotType), index, value),
+            RowBufferColumnKind.Bits128 => Expression.Call(targetBuffer, Write128BitMethod.MakeGenericMethod(slotType), index, value),
+            _ => throw ExceptionBuilder.UnexpectedValue(target.Kind)
+        };
+    }
+
+    private Expression BuildBody(LogicalExpression expression, Type targetType)
+    {
+        var actualExpression = BuildCachedExpression(expression);
+
+        // A bare NULL literal carries the NullType sentinel, which has no coercion to a
+        // value type's nullable form -- its value is simply null (or the coalesced
+        // default for a non-nullable target, matching a NULL predicate's FALSE).
+        Expression resultExpression;
+        if (actualExpression.Type.IsNull())
+        {
+            resultExpression = targetType.CanBeNull()
+                                   ? Expression.Constant(null, targetType)
+                                   : Expression.Default(targetType);
+        }
+        else
+        {
+            var coalescedExpression = targetType.CanBeNull()
+                                          ? actualExpression
+                                          : Expression.Coalesce(actualExpression, Expression.Default(targetType));
+            resultExpression = Expression.Convert(coalescedExpression, targetType);
+        }
+
+        var expressions = _assignments.Concat(new[] { resultExpression });
+        return Expression.Block(_locals, expressions);
     }
 
     private Expression BuildCachedExpression(LogicalExpression expression)
@@ -294,13 +349,21 @@ internal sealed class EmittedExpressionCompiler
 
     private Expression BuildValueSlotExpression(LogicalValueSlotExpression expression)
     {
-        var index = _slotIndices[expression.ValueSlot];
+        var slot = expression.ValueSlot;
+        var column = _slotIndices[slot];
+        var index = Expression.Constant(column.Index);
 
-        return
-            Expression.Convert(
-                Expression.MakeIndex(_rowBuffer, RowBufferIndexer, new[] { Expression.Constant(index) }),
-                expression.ValueSlot.Type.GetNullableType()
-            );
+        // The typed read returns the slot's value already lifted to its nullable shape
+        // (Nullable<T> for value types, a possibly-null reference otherwise), so no
+        // boxing convert is needed -- the rest of the builder lifts/lowers from here.
+        return column.Kind switch
+        {
+            RowBufferColumnKind.Object => Expression.Call(_rowBuffer, ReadObjectMethod.MakeGenericMethod(slot.Type.GetNullableType()), index),
+            RowBufferColumnKind.Bits32 => Expression.Call(_rowBuffer, Read32BitMethod.MakeGenericMethod(slot.Type), index),
+            RowBufferColumnKind.Bits64 => Expression.Call(_rowBuffer, Read64BitMethod.MakeGenericMethod(slot.Type), index),
+            RowBufferColumnKind.Bits128 => Expression.Call(_rowBuffer, Read128BitMethod.MakeGenericMethod(slot.Type), index),
+            _ => throw ExceptionBuilder.UnexpectedValue(column.Kind)
+        };
     }
 
     private static Expression BuildVariableExpression(LogicalVariableExpression expression)

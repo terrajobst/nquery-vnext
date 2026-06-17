@@ -24,7 +24,7 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
     private readonly ExecutableOperator _right;
     private readonly PhysicalJoinKind _joinKind;
     private readonly ValueSlot? _probe;
-    private readonly ImmutableArray<int> _outerReferenceIndices;
+    private readonly ImmutableArray<ValueSlot> _outerReferences;
     private readonly EmittedPredicate _predicate;
     private readonly EmittedPredicate _passthruPredicate;
 
@@ -37,9 +37,9 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
         _probe = probe;
 
         // The outer references are exposed to the right by projecting the left's
-        // row buffer down to just these columns; precompute their positions in the
-        // left's output (which is the left iterator's row-buffer layout).
-        _outerReferenceIndices = outerReferences.Select(s => left.OutputValueSlots.IndexOf(s)).ToImmutableArray();
+        // row buffer down to just these columns. The projection is resolved per
+        // execution from the left iterator's row-buffer layout.
+        _outerReferences = outerReferences;
 
         // The predicates see both sides, and -- when this join is inside an Apply -- the
         // ambient outer scope ahead of them, so a join condition can reference an outer slot
@@ -65,9 +65,10 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
         // under. A plain join's right is independent, so it just sees the outer it
         // was handed.
         var rightOuter = outer;
-        if (!_outerReferenceIndices.IsEmpty)
+        if (!_outerReferences.IsEmpty)
         {
-            var projectedLeft = new ProjectedRowBuffer(_outerReferenceIndices.Select(i => new RowBufferEntry(left.RowBuffer, i)));
+            var leftAllocation = new RowBufferAllocation(null, left.RowBuffer, _left.OutputValueSlots);
+            var projectedLeft = new ProjectedRowBuffer(_outerReferences.Select(s => leftAllocation[s]));
             rightOuter = outer is null ? projectedLeft : new CombinedRowBuffer(outer, projectedLeft);
         }
 
@@ -92,7 +93,7 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
 
     // An empty condition list means an unconditional (cross) join, so the
     // predicate is constant true. Each conjunct already yields false on NULL.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, int> slotIndices)
+    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;

@@ -4,12 +4,12 @@ namespace NQuery.CodeAnalysis.Iterators;
 // accumulator variables (hoisted into a closure -- a fresh set per factory call). There is no
 // per-aggregate object and no boxed accumulator: each fold's state lives in its own CLR type.
 //
-//   Initialize()              -- seed every accumulator
-//   Accumulate(rowBuffer)     -- fold the current row into every accumulator
-//   StoreResults(outputArray) -- write every result after the grouping columns
+//   Initialize()                -- seed every accumulator
+//   Accumulate(rowBuffer)       -- fold the current row into every accumulator
+//   StoreResults(outputBuffer)  -- write every result, typed, into the aggregate columns
 internal sealed class EmittedAggregates
 {
-    public EmittedAggregates(Action initialize, Action<RowBuffer> accumulate, Action<object[]> storeResults)
+    public EmittedAggregates(Action initialize, Action<RowBuffer> accumulate, Action<ArrayRowBuffer> storeResults)
     {
         Initialize = initialize;
         Accumulate = accumulate;
@@ -20,5 +20,5 @@ internal sealed class EmittedAggregates
 
     public Action<RowBuffer> Accumulate { get; }
 
-    public Action<object[]> StoreResults { get; }
+    public Action<ArrayRowBuffer> StoreResults { get; }
 }

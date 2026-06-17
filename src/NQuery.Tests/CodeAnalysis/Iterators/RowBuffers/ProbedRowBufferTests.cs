@@ -4,13 +4,6 @@ namespace NQuery.Tests.CodeAnalysis.Iterators.RowBuffers;
 
 public class ProbedRowBufferTests : RowBufferTests
 {
-    private static ArrayRowBuffer Buffer(params object[] values)
-    {
-        var buffer = new ArrayRowBuffer(values.Length);
-        values.CopyTo(buffer.Array, 0);
-        return buffer;
-    }
-
     [Fact]
     public void RowBuffers_Probed_AppendsProbeColumn_DefaultsToFalse()
     {
@@ -45,7 +38,7 @@ public class ProbedRowBufferTests : RowBufferTests
         var buffer = new ProbedRowBuffer(inner);
         buffer.SetProbe(true);
 
-        inner.Array[0] = 9;
+        inner.Write32Bit<int>(0, 9);
         AssertContract(buffer, 9, true);
     }
 }

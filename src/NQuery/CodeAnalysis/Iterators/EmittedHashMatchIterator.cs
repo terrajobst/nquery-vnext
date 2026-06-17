@@ -25,8 +25,8 @@ internal sealed class EmittedHashMatchIterator : Iterator
 
     private readonly Iterator _build;
     private readonly Iterator _probe;
-    private readonly int _buildIndex;
-    private readonly int _probeIndex;
+    private readonly RowBufferEntry _buildKey;
+    private readonly RowBufferEntry _probeKey;
     private readonly EmittedPredicate _remainder;
     private readonly bool _preserveBuild;
     private readonly bool _preserveProbe;
@@ -44,18 +44,18 @@ internal sealed class EmittedHashMatchIterator : Iterator
     private Phase _currentPhase;
     private bool _probeMatched;
 
-    public EmittedHashMatchIterator(Iterator build, Iterator probe, int buildIndex, int probeIndex, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
+    public EmittedHashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
     {
         _build = build;
         _probe = probe;
-        _buildIndex = buildIndex;
-        _probeIndex = probeIndex;
+        _buildKey = buildKey;
+        _probeKey = probeKey;
         _remainder = remainder;
         _preserveBuild = preserveBuild;
         _preserveProbe = preserveProbe;
         _semi = semi;
         _anti = anti;
-        _rowBuffer = new HashMatchRowBuffer(build.RowBuffer.Count, probe.RowBuffer.Count);
+        _rowBuffer = new HashMatchRowBuffer(build.RowBuffer, probe.RowBuffer);
 
         // When this hash match is correlated (inside an Apply's right side), its remainder
         // references the outer row. The outer buffer is prepended to the (build ++ probe)
@@ -119,17 +119,16 @@ internal sealed class EmittedHashMatchIterator : Iterator
 
         while (_build.Read())
         {
-            var keyValue = _build.RowBuffer[_buildIndex] ?? NullKey;
-            var rowValues = new object[_build.RowBuffer.Count];
-            _build.RowBuffer.CopyTo(rowValues, 0);
-            AddToHashtable(keyValue, rowValues);
+            var keyValue = _buildKey.GetValue() ?? NullKey;
+            var row = _build.RowBuffer.Clone();
+            AddToHashtable(keyValue, row);
         }
     }
 
-    private void AddToHashtable(object keyValue, object[] values)
+    private void AddToHashtable(object keyValue, ArrayRowBuffer row)
     {
         _hashTable.TryGetValue(keyValue, out var existing);
-        var entry = new HashMatchEntry { RowValues = values, Next = existing };
+        var entry = new HashMatchEntry { Row = row, Next = existing };
         _hashTable[keyValue] = entry;
 
         // Keep the build rows in scan order as well; the flush pass walks this list (not
@@ -177,7 +176,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
                         }
 
                         _probeMatched = false;
-                        var probeValue = _probe.RowBuffer[_probeIndex];
+                        var probeValue = _probeKey.GetValue();
                         if (probeValue is not null)
                             _hashTable.TryGetValue(probeValue, out _entry);
                     }

@@ -59,8 +59,8 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
 
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
-        var predicate = new EmittedPredicate(rb => Equals(rb[0], rb[1]));
-        var passthru = new EmittedPredicate(rb => (int)rb[0] % 2 == 0);
+        var predicate = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
+        var passthru = new EmittedPredicate(rb => rb.NullableInt32(0)!.Value % 2 == 0);
 
         using (var iterator = new LeftOuterNestedLoopsIterator(left, right, predicate, passthru))
         {
@@ -174,7 +174,7 @@ public class LeftOuterNestedLoopsIteratorTests : IteratorTests
 
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
-        var predicate = new EmittedPredicate(rb => Equals(rb[0], rb[2]));
+        var predicate = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
 
         using var iterator = new LeftOuterNestedLoopsIterator(left, right, predicate, _ => false);
         AssertProduces(iterator, expected);

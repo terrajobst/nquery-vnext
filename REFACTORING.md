@@ -1,5 +1,6 @@
 # NQuery Major Refactoring
 
+<<<<<<< HEAD
 * Are properties on the show plan used at all?
 * Do we need the step functions in BuiltInAggregates? Seems like should emit
   them as expressions.
@@ -9,6 +10,21 @@
     typed slots eventually. Doing so probably means that Aggregator can
     disappear entirely and instead we have three void returning functions that
     we compile during emit (initialize, accumulate, get result)
+=======
+* Use Int128 on .NET Core, for .NET Framework rename the Bit128 type to
+  System.Int128, but the shape identical. Now need to copy .NET Core's type.
+  Can we make the fields private?
+* I think each part we iterator over a group of this that read or write from a
+  row buffer (table scan) we should have a single Action that was compiled with
+  the loop unrolled.
+* We should make we can run the tests on .NET Framework and on .NET Core.
+
+---
+
+* Do we have any public fields? They should be properties.
+* Do we have static GetXxx() or properties returning `IEnumerable<T>` that
+  should really be materialized `ImmutableArray<T>`?
+>>>>>>> 560fc59e (Refactor to typed row buffers)
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize
@@ -16,7 +32,10 @@
   one. Or do we need that? I'd assume we'd prefer the non-nullable one because
   of the way we handle conversions (our types are always non-null T and T is
   always better than an implicit conversion from T to T?)
+<<<<<<< HEAD
 * Fix the indentation of new Catalog()
+=======
+>>>>>>> 560fc59e (Refactor to typed row buffers)
 
 ## Port Common Table Expressions
 

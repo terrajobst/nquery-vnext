@@ -8,7 +8,7 @@ internal sealed class TopWithTiesIterator : TopIterator
     private readonly ImmutableArray<RowBufferEntry> _tieEntries;
     private readonly ImmutableArray<IComparer> _tieComparers;
 
-    private readonly object[] _lastTieEntryValues;
+    private readonly object?[] _lastTieEntryValues;
     private bool _limitReached;
 
     public TopWithTiesIterator(Iterator input, int limit, IEnumerable<RowBufferEntry> tieEntries, IEnumerable<IComparer> tieComparers)
@@ -16,7 +16,7 @@ internal sealed class TopWithTiesIterator : TopIterator
     {
         _tieEntries = tieEntries.ToImmutableArray();
         _tieComparers = tieComparers.ToImmutableArray();
-        _lastTieEntryValues = new object[_tieEntries.Length];
+        _lastTieEntryValues = new object?[_tieEntries.Length];
     }
 
     public override void Open()

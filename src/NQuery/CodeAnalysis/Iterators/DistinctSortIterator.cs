@@ -1,12 +1,10 @@
-using System.Collections;
-
 namespace NQuery.CodeAnalysis.Iterators;
 
 internal sealed class DistinctSortIterator : SortIterator
 {
-    private object[]? _lastSpooledRow;
+    private ArrayRowBuffer? _lastSpooledRow;
 
-    public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
+    public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<System.Collections.IComparer> comparers)
         : base(input, sortEntries, comparers)
     {
     }
@@ -37,17 +35,15 @@ internal sealed class DistinctSortIterator : SortIterator
 
             var currentRow = GetCurrentRow();
 
-            for (var i = 0; i < SortIndices.Length; i++)
+            for (var i = 0; i < SortColumns.Length; i++)
             {
-                var entryIndex = SortIndices[i];
-                var comparer = Comparers[i];
-                var valueOfLastRow = _lastSpooledRow[entryIndex];
-                var valueOfThisRow = currentRow[entryIndex];
+                var valueOfLastRow = _lastSpooledRow.GetBoxedValue(SortColumns[i], SortTypes[i]);
+                var valueOfThisRow = currentRow.GetBoxedValue(SortColumns[i], SortTypes[i]);
 
-                if (valueOfLastRow == valueOfThisRow)
+                if (Equals(valueOfLastRow, valueOfThisRow))
                     continue;
 
-                if (comparer.Compare(valueOfLastRow, valueOfThisRow) == 0)
+                if (Comparers[i].Compare(valueOfLastRow, valueOfThisRow) == 0)
                     continue;
 
                 atLeastOneRecordFound = true;

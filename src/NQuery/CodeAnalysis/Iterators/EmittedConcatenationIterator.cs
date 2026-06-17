@@ -22,7 +22,7 @@ internal sealed class EmittedConcatenationIterator : Iterator
     {
         _inputs = inputs.ToImmutableArray();
         _inputRowBuffers = entries.Select(e => new ProjectedRowBuffer(e)).ToImmutableArray();
-        _rowBuffer = new IndirectedRowBuffer(_inputRowBuffers[0].Count, _inputRowBuffers[0]);
+        _rowBuffer = new IndirectedRowBuffer(_inputRowBuffers[0], _inputRowBuffers[0]);
     }
 
     public override RowBuffer RowBuffer => _rowBuffer;

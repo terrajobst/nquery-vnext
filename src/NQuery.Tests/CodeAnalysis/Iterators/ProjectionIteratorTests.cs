@@ -13,7 +13,7 @@ public class ProjectionIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var entries = new[]
         {
-            new RowBufferEntry(input.RowBuffer, 0)
+            RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0)
         };
 
         using (var iterator = new ProjectionIterator(input, entries))
@@ -55,10 +55,11 @@ public class ProjectionIteratorTests : IteratorTests
         };
 
         using var input = new MockedIterator(rows);
+        var inputTypes = new[] { typeof(int), typeof(string) };
         var entries = new[]
         {
-            new RowBufferEntry(input.RowBuffer, 1),
-            new RowBufferEntry(input.RowBuffer, 0)
+            RowBufferTestSupport.Entry(input.RowBuffer, inputTypes, 1),
+            RowBufferTestSupport.Entry(input.RowBuffer, inputTypes, 0)
         };
 
         using var iterator = new ProjectionIterator(input, entries);
@@ -77,9 +78,10 @@ public class ProjectionIteratorTests : IteratorTests
         var expected = new object[] { "One", "Two" };
 
         using var input = new MockedIterator(rows);
+        var inputTypes = new[] { typeof(int), typeof(string) };
         var entries = new[]
         {
-            new RowBufferEntry(input.RowBuffer, 1)
+            RowBufferTestSupport.Entry(input.RowBuffer, inputTypes, 1)
         };
 
         using var iterator = new ProjectionIterator(input, entries);

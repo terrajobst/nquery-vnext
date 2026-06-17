@@ -34,7 +34,7 @@ public sealed class CompiledQuery
     private QueryReader CreateReader(bool schemaOnly)
     {
         var columnNamesAndTypes = OutputColumns.Select(c => (c.Name, c.Type.ToOutputType())).ToImmutableArray();
-        return new QueryReader(BuildIterator(), columnNamesAndTypes, schemaOnly);
+        return new QueryReader(BuildIterator(), columnNamesAndTypes, _plan.OutputValueSlots, schemaOnly);
     }
 
     private Iterator BuildIterator()

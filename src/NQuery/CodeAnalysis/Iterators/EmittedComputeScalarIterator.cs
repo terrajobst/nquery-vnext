@@ -2,27 +2,28 @@ using System.Collections.Immutable;
 
 namespace NQuery.CodeAnalysis.Iterators;
 
-// Like ComputeScalarIterator, but its functions take the input row buffer as a
-// parameter, so the compiled functions are shared across executions.
+// Computes its columns by running the compiled writers over the input row, storing
+// each result typed into its own appended buffer. The writers take the row buffer as a
+// parameter, so they are compiled once and shared across executions.
 //
-// When this compute is the correlated part of an Apply's right side, its functions
+// When this compute is the correlated part of an Apply's right side, its writers
 // reference the outer (left) row. The outer buffer is then prepended to the input
-// buffer (matching the (outer ++ input) slot layout the functions were compiled
+// buffer (matching the (outer ++ input) slot layout the writers were compiled
 // against); the computed columns are still appended to the input's own columns.
 internal sealed class EmittedComputeScalarIterator : Iterator
 {
     private readonly Iterator _input;
-    private readonly ImmutableArray<EmittedFunction> _functions;
+    private readonly ImmutableArray<Action<RowBuffer, ArrayRowBuffer>> _writers;
     private readonly RowBuffer _functionRowBuffer;
     private readonly ArrayRowBuffer _rowBuffer;
     private readonly CombinedRowBuffer _combinedRowBuffer;
 
-    public EmittedComputeScalarIterator(Iterator input, ImmutableArray<EmittedFunction> functions, RowBuffer? outer)
+    public EmittedComputeScalarIterator(Iterator input, ImmutableArray<Action<RowBuffer, ArrayRowBuffer>> writers, RowBufferLayout computedLayout, RowBuffer? outer)
     {
         _input = input;
-        _functions = functions;
+        _writers = writers;
         _functionRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);
-        _rowBuffer = new ArrayRowBuffer(functions.Length);
+        _rowBuffer = new ArrayRowBuffer(computedLayout);
         _combinedRowBuffer = new CombinedRowBuffer(input.RowBuffer, _rowBuffer);
     }
 
@@ -37,8 +38,8 @@ internal sealed class EmittedComputeScalarIterator : Iterator
         if (!_input.Read())
             return false;
 
-        for (var i = 0; i < _functions.Length; i++)
-            _rowBuffer.Array[i] = _functions[i](_functionRowBuffer);
+        foreach (var writer in _writers)
+            writer(_functionRowBuffer, _rowBuffer);
 
         return true;
     }

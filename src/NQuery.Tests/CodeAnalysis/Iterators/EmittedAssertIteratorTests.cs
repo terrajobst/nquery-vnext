@@ -72,7 +72,7 @@ public class EmittedAssertIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
         // Asserts outer == input; both are 5, so it passes.
-        using var iterator = new EmittedAssertIterator(input, rb => Equals(rb[0], rb[1]), "mismatch", outer);
+        using var iterator = new EmittedAssertIterator(input, rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)), "mismatch", outer);
         AssertProduces(iterator, rows);
     }
 }

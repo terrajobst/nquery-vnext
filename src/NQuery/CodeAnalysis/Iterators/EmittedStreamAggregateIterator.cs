@@ -11,14 +11,16 @@ namespace NQuery.CodeAnalysis.Iterators;
 // parameter and are compiled once. When this aggregate is the correlated part of an
 // Apply's right side, those functions reference the outer (left) row, so the outer
 // buffer is prepended to the input buffer -- matching the (outer ++ input) slot
-// layout the functions and group indices were resolved against.
+// layout the functions and group columns were resolved against.
 //
-// The output row buffer lays out the group values first, then the aggregate
-// results, matching PhysicalStreamAggregates's output slot order.
+// The output row buffer lays out the group values first, then the aggregate results.
+// Group values are copied in from the input row; the aggregates store their own results.
 internal sealed class EmittedStreamAggregateIterator : Iterator
 {
     private readonly Iterator _input;
-    private readonly ImmutableArray<int> _groupIndices;
+    private readonly ImmutableArray<RowBufferColumn> _groupSourceColumns;
+    private readonly ImmutableArray<RowBufferColumn> _groupOutputColumns;
+    private readonly ImmutableArray<Type> _groupTypes;
     private readonly ImmutableArray<IComparer> _comparers;
     private readonly EmittedAggregates _aggregates;
     private readonly RowBuffer _readRowBuffer;
@@ -27,14 +29,16 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
     private bool _eof;
     private bool _isFirstRecord;
 
-    public EmittedStreamAggregateIterator(Iterator input, ImmutableArray<int> groupIndices, ImmutableArray<IComparer> comparers, EmittedAggregates aggregates, int aggregateCount, RowBuffer? outer)
+    public EmittedStreamAggregateIterator(Iterator input, ImmutableArray<RowBufferColumn> groupSourceColumns, ImmutableArray<RowBufferColumn> groupOutputColumns, ImmutableArray<Type> groupTypes, ImmutableArray<IComparer> comparers, EmittedAggregates aggregates, RowBufferLayout outputLayout, RowBuffer? outer)
     {
         _input = input;
-        _groupIndices = groupIndices;
+        _groupSourceColumns = groupSourceColumns;
+        _groupOutputColumns = groupOutputColumns;
+        _groupTypes = groupTypes;
         _comparers = comparers;
         _aggregates = aggregates;
         _readRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);
-        _rowBuffer = new ArrayRowBuffer(groupIndices.Length + aggregateCount);
+        _rowBuffer = new ArrayRowBuffer(outputLayout);
     }
 
     public override RowBuffer RowBuffer => _rowBuffer;
@@ -54,11 +58,11 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
         {
             // With no GROUP BY, an empty input still yields a single row holding the
             // aggregates over zero rows (e.g. SELECT COUNT(*) returns 0).
-            if (_groupIndices.Length == 0 && _isFirstRecord)
+            if (_groupSourceColumns.Length == 0 && _isFirstRecord)
             {
                 _isFirstRecord = false;
-                InitializeAggregates();
-                StoreAggregates();
+                _aggregates.Initialize();
+                _aggregates.StoreResults(_rowBuffer);
                 return true;
             }
 
@@ -67,11 +71,11 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
 
         _isFirstRecord = false;
 
-        InitializeAggregates();
+        _aggregates.Initialize();
         StoreGroupValues();
         do
         {
-            AccumulateAggregates();
+            _aggregates.Accumulate(_readRowBuffer);
 
             if (!_input.Read())
             {
@@ -81,39 +85,24 @@ internal sealed class EmittedStreamAggregateIterator : Iterator
         }
         while (IsCurrentRowInSameGroup());
 
-        StoreAggregates();
+        _aggregates.StoreResults(_rowBuffer);
         return true;
-    }
-
-    private void InitializeAggregates()
-    {
-        _aggregates.Initialize();
-    }
-
-    private void AccumulateAggregates()
-    {
-        _aggregates.Accumulate(_readRowBuffer);
-    }
-
-    private void StoreAggregates()
-    {
-        _aggregates.StoreResults(_rowBuffer.Array);
     }
 
     private void StoreGroupValues()
     {
-        for (var i = 0; i < _groupIndices.Length; i++)
-            _rowBuffer.Array[i] = _readRowBuffer[_groupIndices[i]];
+        for (var i = 0; i < _groupSourceColumns.Length; i++)
+            _rowBuffer.CopyFrom(_readRowBuffer, _groupSourceColumns[i], _groupOutputColumns[i]);
     }
 
     private bool IsCurrentRowInSameGroup()
     {
         // The previously seen group key sits in the output buffer's leading columns;
         // compare it against the current input row's grouping values.
-        for (var i = 0; i < _groupIndices.Length; i++)
+        for (var i = 0; i < _groupSourceColumns.Length; i++)
         {
-            var previous = _rowBuffer[i];
-            var current = _readRowBuffer[_groupIndices[i]];
+            var previous = _rowBuffer.GetBoxedValue(_groupOutputColumns[i], _groupTypes[i]);
+            var current = _readRowBuffer.GetBoxedValue(_groupSourceColumns[i], _groupTypes[i]);
             if (_comparers[i].Compare(previous, current) != 0)
                 return false;
         }

@@ -8,25 +8,30 @@ namespace NQuery.CodeAnalysis.Emit;
 internal sealed class ExecutableComputeScalar : ExecutableOperator
 {
     private readonly ExecutableOperator _input;
-    private readonly ImmutableArray<EmittedFunction> _functions;
+    private readonly RowBufferLayout _computedLayout;
+    private readonly ImmutableArray<Action<RowBuffer, ArrayRowBuffer>> _writers;
 
     public ExecutableComputeScalar(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComputedValue> definedValues, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
         _input = input;
 
-        // Compile the computed expressions once. When this compute is correlated
-        // (inside an Apply's right), the expressions see the outer slots ahead of
-        // the input's, matching the (outer ++ input) buffer fed at run time.
+        // Compile the computed expressions once into typed stores. When this compute is
+        // correlated (inside an Apply's right), the expressions see the outer slots ahead
+        // of the input's, matching the (outer ++ input) buffer fed at run time.
         var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
         var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
-        _functions = definedValues
-                     .Select(v => EmittedExpressionCompiler.CompileFunction(v.Expression, slotIndices))
-                     .ToImmutableArray();
+
+        // The computed columns form their own little buffer (appended to the input's);
+        // each defined value writes into its column of that buffer.
+        _computedLayout = RowBufferLayout.Create(definedValues.Select(v => v.ValueSlot.Type));
+        _writers = definedValues
+                   .Select((v, i) => EmittedExpressionCompiler.CompileWriter(v.Expression, _computedLayout.Columns[i], v.ValueSlot.Type, slotIndices))
+                   .ToImmutableArray();
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
     {
-        return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _functions, outer);
+        return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _writers, _computedLayout, outer);
     }
 }

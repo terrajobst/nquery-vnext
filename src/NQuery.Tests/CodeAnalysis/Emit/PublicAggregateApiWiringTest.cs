@@ -82,13 +82,16 @@ public sealed class PublicAggregateApiWiringTest
 
         using var iterator = plan.CreateIterator();
         iterator.Open();
+
+        var allocation = new NQuery.CodeAnalysis.Iterators.RowBufferAllocation(null, iterator.RowBuffer, plan.OutputValueSlots);
+        var entries = plan.OutputValueSlots.Select(s => allocation[s]).ToArray();
+
         var rows = new List<object[]>();
         while (iterator.Read())
         {
-            var rowBuffer = iterator.RowBuffer;
-            var row = new object[rowBuffer.Count];
-            for (var i = 0; i < row.Length; i++)
-                row[i] = rowBuffer[i];
+            var row = new object[entries.Length];
+            for (var i = 0; i < entries.Length; i++)
+                row[i] = entries[i].GetValue()!;
             rows.Add(row);
         }
 

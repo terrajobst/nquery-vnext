@@ -9,16 +9,43 @@ internal sealed class MockedIterator : Iterator
 
     private int _rowIndex;
 
+    private MockedIterator(IReadOnlyList<object?[]> rows, Type[] columnTypes)
+    {
+        _rows = rows;
+        _rowBuffer = new MockedRowBuffer(columnTypes);
+    }
+
     public MockedIterator(object?[] rows)
+        : this(rows.Select(v => new[] { v }).ToArray(), RowBufferTestSupport.InferColumnTypes(Validate(rows)))
+    {
+    }
+
+    public MockedIterator(object?[,] rows)
+        : this(ToRowArray(rows), RowBufferTestSupport.InferColumnTypes(rows))
+    {
+    }
+
+    // Explicit column types -- needed when a column is all-NULL in the data (its type
+    // can't be inferred) but must still land in a specific container.
+    public MockedIterator(Type[] columnTypes, object?[,] rows)
+        : this(ToRowArray(rows), columnTypes)
+    {
+    }
+
+    public static MockedIterator Empty(params Type[] columnTypes)
+    {
+        return new MockedIterator(Array.Empty<object?[]>(), columnTypes);
+    }
+
+    private static object?[] Validate(object?[] rows)
     {
         if (rows.Any(v => v is object[]))
             throw new ArgumentException("Nested array detected. Use two-dimensional array for multiple columns.");
 
-        _rows = rows.Select(v => new[] { v }).ToArray();
-        _rowBuffer = new MockedRowBuffer(1);
+        return rows;
     }
 
-    public MockedIterator(object?[,] rows)
+    private static object?[][] ToRowArray(object?[,] rows)
     {
         var rowCount = rows.GetLength(0);
         var entryCount = rows.GetLength(1);
@@ -30,13 +57,10 @@ internal sealed class MockedIterator : Iterator
             rowArray[i] = new object?[entryCount];
 
             for (var j = 0; j < entryCount; j++)
-            {
                 rowArray[i][j] = rows[i, j];
-            }
         }
 
-        _rows = rowArray;
-        _rowBuffer = new MockedRowBuffer(entryCount);
+        return rowArray;
     }
 
     public override RowBuffer RowBuffer => _rowBuffer;
@@ -63,7 +87,7 @@ internal sealed class MockedIterator : Iterator
         if (_rowIndex == _rows.Count)
             return false;
 
-        _rowBuffer.Value = _rows[_rowIndex];
+        _rowBuffer.SetRow(_rows[_rowIndex]);
 
         TotalReadCount++;
         _rowIndex++;

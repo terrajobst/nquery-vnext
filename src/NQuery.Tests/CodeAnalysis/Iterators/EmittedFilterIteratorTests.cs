@@ -49,7 +49,7 @@ public class EmittedFilterIteratorTests : IteratorTests
         var expected = new object[] { 2, 4 };
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedFilterIterator(input, rb => (int)rb[0] % 2 == 0, outer: null);
+        using var iterator = new EmittedFilterIterator(input, rb => rb.NullableInt32(0)!.Value % 2 == 0, outer: null);
         AssertProduces(iterator, expected);
     }
 
@@ -64,7 +64,7 @@ public class EmittedFilterIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
         // rb[0] is the outer value (2), rb[1] is the input value -> keep input > outer.
-        using var iterator = new EmittedFilterIterator(input, rb => (int)rb[1] > (int)rb[0], outer);
+        using var iterator = new EmittedFilterIterator(input, rb => rb.NullableInt32(1)!.Value > rb.NullableInt32(0)!.Value, outer);
         AssertProduces(iterator, expected);
     }
 }

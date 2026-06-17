@@ -6,6 +6,8 @@ namespace NQuery.Tests.CodeAnalysis.Iterators;
 
 public class EmittedConcatenationIteratorTests : IteratorTests
 {
+    private static readonly Type[] IntColumn = { typeof(int) };
+
     [Fact]
     public void Iterators_EmittedConcatenation_ForwardsProperly()
     {
@@ -18,9 +20,9 @@ public class EmittedConcatenationIteratorTests : IteratorTests
 
         var entries = new[]
         {
-            ImmutableArray.Create(new RowBufferEntry(inputs[0].RowBuffer, 0)),
-            ImmutableArray.Create(new RowBufferEntry(inputs[1].RowBuffer, 0)),
-            ImmutableArray.Create(new RowBufferEntry(inputs[2].RowBuffer, 0))
+            ImmutableArray.Create(RowBufferTestSupport.Entry(inputs[0].RowBuffer, IntColumn, 0)),
+            ImmutableArray.Create(RowBufferTestSupport.Entry(inputs[1].RowBuffer, IntColumn, 0)),
+            ImmutableArray.Create(RowBufferTestSupport.Entry(inputs[2].RowBuffer, IntColumn, 0))
         };
 
         var expected = new object[] { 1, 2, 3, 4, 5, 6 };
@@ -67,7 +69,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
 
         var expected = new object[] { 5, 6 };
 
-        var entries = inputs.Select(i => ImmutableArray.Create(new RowBufferEntry(i.RowBuffer, 0)));
+        var entries = inputs.Select(i => ImmutableArray.Create(RowBufferTestSupport.Entry(i.RowBuffer, IntColumn, 0)));
 
         using var iterator = new EmittedConcatenationIterator(inputs, entries);
         AssertProduces(iterator, expected);
@@ -88,13 +90,16 @@ public class EmittedConcatenationIteratorTests : IteratorTests
             {"Two", 2}
         });
 
+        var firstTypes = new[] { typeof(int), typeof(string) };
+        var secondTypes = new[] { typeof(string), typeof(int) };
+
         var inputs = new[] { first, second };
         var entries = new[]
         {
             // first is already (value, name)
-            ImmutableArray.Create(new RowBufferEntry(first.RowBuffer, 0), new RowBufferEntry(first.RowBuffer, 1)),
+            ImmutableArray.Create(RowBufferTestSupport.Entry(first.RowBuffer, firstTypes, 0), RowBufferTestSupport.Entry(first.RowBuffer, firstTypes, 1)),
             // second is (name, value) -> reorder to (value, name)
-            ImmutableArray.Create(new RowBufferEntry(second.RowBuffer, 1), new RowBufferEntry(second.RowBuffer, 0))
+            ImmutableArray.Create(RowBufferTestSupport.Entry(second.RowBuffer, secondTypes, 1), RowBufferTestSupport.Entry(second.RowBuffer, secondTypes, 0))
         };
 
         var expected = new object?[,]

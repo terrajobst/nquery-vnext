@@ -207,8 +207,8 @@ public class EmitterExecutionTests
         var text = "SELECT e.FirstName, e.EmployeeID + 1 FROM Employees e WHERE e.City = 'London'";
         var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)));
 
-        var first = Drain(plan.CreateIterator());
-        var second = Drain(plan.CreateIterator());
+        var first = Drain(plan);
+        var second = Drain(plan);
 
         Assert.NotEmpty(first);
         Assert.Equal(first.Count, second.Count);
@@ -231,7 +231,7 @@ public class EmitterExecutionTests
     {
         var physicalQuery = Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance));
         var plan = Emitter.Emit(physicalQuery);
-        return Drain(plan.CreateIterator());
+        return Drain(plan);
     }
 
     // The pipeline with no logical optimization: a correlated subquery stays an Apply and
@@ -241,22 +241,26 @@ public class EmitterExecutionTests
     {
         var physicalQuery = Planner.Plan(Algebrizer.Algebrize(Bind(text)));
         var plan = Emitter.Emit(physicalQuery);
-        return Drain(plan.CreateIterator());
+        return Drain(plan);
     }
 
-    private static List<object[]> Drain(Iterator iterator)
+    private static List<object[]> Drain(NQuery.CodeAnalysis.Emit.ExecutablePlan plan)
     {
+        var iterator = plan.CreateIterator();
         using (iterator)
         {
             iterator.Open();
 
+            // Resolve each output column to its row-buffer address (the reader does the same).
+            var allocation = new NQuery.CodeAnalysis.Iterators.RowBufferAllocation(null, iterator.RowBuffer, plan.OutputValueSlots);
+            var entries = plan.OutputValueSlots.Select(s => allocation[s]).ToArray();
+
             var rows = new List<object[]>();
             while (iterator.Read())
             {
-                var rowBuffer = iterator.RowBuffer;
-                var row = new object[rowBuffer.Count];
-                for (var i = 0; i < row.Length; i++)
-                    row[i] = rowBuffer[i];
+                var row = new object[entries.Length];
+                for (var i = 0; i < entries.Length; i++)
+                    row[i] = entries[i].GetValue()!;
                 rows.Add(row);
             }
 

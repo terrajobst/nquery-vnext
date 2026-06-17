@@ -6,30 +6,52 @@ namespace NQuery.CodeAnalysis.Iterators;
 internal class SortIterator : Iterator
 {
     private readonly Iterator _input;
+    private readonly RowBuffer _materializationSource;
     private readonly SpooledRowBuffer _spooledRowBuffer;
-    private readonly ImmutableArray<RowBufferEntry> _outerSortEntries;
 
     public SortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
     {
         _input = input;
-        var sortEntryArray = sortEntries.ToImmutableArray();
+        var entries = sortEntries.ToImmutableArray();
         Comparers = comparers.ToImmutableArray();
 
-        // We need to have enough room to store the entire input
-        // as well as all sort entries that aren't already part
-        // of the input (for instance, if they come for an outer
-        // reference).
+        // Sort keys the input doesn't produce (outer references) must be captured along
+        // with each row, so they are projected and appended after the input's columns in
+        // the materialized row. The exposed row stays just the input's columns.
+        var outerEntries = entries.Where(e => e.RowBuffer != input.RowBuffer).Distinct().ToImmutableArray();
+        _materializationSource = outerEntries.IsEmpty
+            ? input.RowBuffer
+            : new CombinedRowBuffer(input.RowBuffer, new ProjectedRowBuffer(outerEntries));
 
-        _outerSortEntries = sortEntryArray.Where(e => e.RowBuffer != _input.RowBuffer)
-                                          .ToImmutableArray();
+        SortColumns = ResolveSortColumns(entries, outerEntries, input.RowBuffer);
+        SortTypes = entries.Select(e => e.Type).ToImmutableArray();
+        _spooledRowBuffer = new SpooledRowBuffer(input.RowBuffer);
+    }
 
-        var exposedCount = input.RowBuffer.Count;
-        var spooledCount = input.RowBuffer.Count + _outerSortEntries.Length;
-        _spooledRowBuffer = new SpooledRowBuffer(exposedCount, spooledCount);
-        SortIndices = sortEntryArray.Select(e => e.RowBuffer == _input.RowBuffer
-                                                ? e.Index
-                                                : input.RowBuffer.Count + _outerSortEntries.IndexOf(e))
-                                    .ToImmutableArray();
+    // Each sort key's column within a materialized row: input keys keep their column (the
+    // input's columns lead each container); appended outer keys sit after them per kind.
+    private static ImmutableArray<RowBufferColumn> ResolveSortColumns(ImmutableArray<RowBufferEntry> entries, ImmutableArray<RowBufferEntry> outerEntries, RowBuffer input)
+    {
+        var outerColumns = new Dictionary<RowBufferEntry, RowBufferColumn>();
+        var objectIndex = input.ObjectCount;
+        var bits32Index = input.Bits32Count;
+        var bits64Index = input.Bits64Count;
+        var bits128Index = input.Bits128Count;
+
+        foreach (var entry in outerEntries)
+        {
+            var index = entry.Column.Kind switch
+            {
+                RowBufferColumnKind.Object => objectIndex++,
+                RowBufferColumnKind.Bits32 => bits32Index++,
+                RowBufferColumnKind.Bits64 => bits64Index++,
+                RowBufferColumnKind.Bits128 => bits128Index++,
+                _ => throw ExceptionBuilder.UnexpectedValue(entry.Column.Kind)
+            };
+            outerColumns.Add(entry, new RowBufferColumn(entry.Column.Kind, index));
+        }
+
+        return entries.Select(e => e.RowBuffer == input ? e.Column : outerColumns[e]).ToImmutableArray();
     }
 
     public override RowBuffer RowBuffer
@@ -37,39 +59,25 @@ internal class SortIterator : Iterator
         get { return _spooledRowBuffer; }
     }
 
-    public ImmutableArray<int> SortIndices { get; }
+    protected ImmutableArray<RowBufferColumn> SortColumns { get; }
 
-    public ImmutableArray<IComparer> Comparers { get; }
+    protected ImmutableArray<Type> SortTypes { get; }
 
-    protected object[] GetCurrentRow()
+    protected ImmutableArray<IComparer> Comparers { get; }
+
+    protected ArrayRowBuffer GetCurrentRow()
     {
         return _spooledRowBuffer.Rows![_spooledRowBuffer.RowIndex];
     }
 
-    private IReadOnlyList<object[]> SortInput()
+    private IReadOnlyList<ArrayRowBuffer> SortInput()
     {
-        var result = new List<object[]>();
+        var result = new List<ArrayRowBuffer>();
 
         while (_input.Read())
-        {
-            var rowValues = new object[_spooledRowBuffer.SpooledCount];
+            result.Add(_materializationSource.Clone());
 
-            // First, we copy the input
-
-            _input.RowBuffer.CopyTo(rowValues, 0);
-
-            // Now we copy the remainder
-
-            for (var i = 0; i < _outerSortEntries.Length; i++)
-            {
-                var targetIndex = _input.RowBuffer.Count + i;
-                rowValues[targetIndex] = _outerSortEntries[i].GetValue();
-            }
-
-            result.Add(rowValues);
-        }
-
-        var rowComparer = new RowComparer(SortIndices, Comparers);
+        var rowComparer = new RowComparer(SortColumns, SortTypes, Comparers);
         result.Sort(rowComparer);
         return result;
     }
@@ -102,56 +110,68 @@ internal class SortIterator : Iterator
         return true;
     }
 
+    // Exposes the materialized rows as the input's layout. A materialized row may carry
+    // extra trailing columns (captured outer sort keys); only the leading input columns
+    // are exposed, so the consumer sees the input's shape.
     private sealed class SpooledRowBuffer : RowBuffer
     {
-        public SpooledRowBuffer(int exposedCount, int spooledCount)
+        public SpooledRowBuffer(RowBuffer template)
         {
-            Count = exposedCount;
-            SpooledCount = spooledCount;
+            ObjectCount = template.ObjectCount;
+            Bits32Count = template.Bits32Count;
+            Bits64Count = template.Bits64Count;
+            Bits128Count = template.Bits128Count;
         }
 
-        public IReadOnlyList<object[]>? Rows { get; set; }
+        public IReadOnlyList<ArrayRowBuffer>? Rows { get; set; }
 
         public int RowIndex { get; set; }
 
-        public override int Count { get; }
+        public override int ObjectCount { get; }
 
-        public int SpooledCount { get; }
+        public override int Bits32Count { get; }
 
-        public override object this[int index]
-        {
-            get { return Rows![RowIndex][index]; }
-        }
+        public override int Bits64Count { get; }
 
-        public override void CopyTo(object[] array, int destinationIndex)
-        {
-            var source = Rows![RowIndex];
-            Array.Copy(source, 0, array, destinationIndex, Count);
-        }
+        public override int Bits128Count { get; }
+
+        private ArrayRowBuffer Current => Rows![RowIndex];
+
+        public override object? GetObject(int index) => Current.GetObject(index);
+
+        public override uint GetBits32(int index) => Current.GetBits32(index);
+
+        public override ulong GetBits64(int index) => Current.GetBits64(index);
+
+        public override Bits128 GetBits128(int index) => Current.GetBits128(index);
+
+        public override bool IsNull32(int index) => Current.IsNull32(index);
+
+        public override bool IsNull64(int index) => Current.IsNull64(index);
+
+        public override bool IsNull128(int index) => Current.IsNull128(index);
     }
 
-    private sealed class RowComparer : IComparer<object[]>
+    private sealed class RowComparer : IComparer<ArrayRowBuffer>
     {
-        private readonly ImmutableArray<int> _sortEntries;
+        private readonly ImmutableArray<RowBufferColumn> _sortColumns;
+        private readonly ImmutableArray<Type> _sortTypes;
         private readonly ImmutableArray<IComparer> _comparers;
 
-        public RowComparer(ImmutableArray<int> sortEntries, ImmutableArray<IComparer> comparers)
+        public RowComparer(ImmutableArray<RowBufferColumn> sortColumns, ImmutableArray<Type> sortTypes, ImmutableArray<IComparer> comparers)
         {
-            _sortEntries = sortEntries;
+            _sortColumns = sortColumns;
+            _sortTypes = sortTypes;
             _comparers = comparers;
         }
 
-        public int Compare(object[]? x, object[]? y)
+        public int Compare(ArrayRowBuffer? x, ArrayRowBuffer? y)
         {
-            // Compare all columns
-
             var index = 0;
-            while (index < _sortEntries.Length)
+            while (index < _sortColumns.Length)
             {
-                var valueIndex = _sortEntries[index];
-
-                var value1 = x![valueIndex];
-                var value2 = y![valueIndex];
+                var value1 = x!.GetBoxedValue(_sortColumns[index], _sortTypes[index]);
+                var value2 = y!.GetBoxedValue(_sortColumns[index], _sortTypes[index]);
 
                 if (value1 is null && value2 is not null)
                     return -1;

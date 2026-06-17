@@ -101,48 +101,49 @@ internal sealed class LeftOuterNestedLoopsIterator : NestedLoopsIterator
 
     private sealed class LeftOuterNestedLoopsRowBuffer : RowBuffer
     {
-        private readonly RowBuffer _left;
         private readonly RowBuffer _right;
-        private readonly IndirectedRowBuffer _indirectedRowBuffer;
-        private readonly NullRowBuffer _rightNullRowBuffer;
+        private readonly IndirectedRowBuffer _indirectedRight;
+        private readonly NullRowBuffer _rightNull;
+        private readonly CombinedRowBuffer _combined;
 
         public LeftOuterNestedLoopsRowBuffer(RowBuffer left, RowBuffer right)
         {
-            _left = left;
             _right = right;
-            _indirectedRowBuffer = new IndirectedRowBuffer(_right.Count, _right);
-            _rightNullRowBuffer = new NullRowBuffer(right.Count);
-        }
-
-        public override int Count
-        {
-            get { return _left.Count + _right.Count; }
+            _rightNull = new NullRowBuffer(right);
+            _indirectedRight = new IndirectedRowBuffer(right, right);
+            _combined = new CombinedRowBuffer(left, _indirectedRight);
         }
 
         public void SetRight()
         {
-            _indirectedRowBuffer.ActiveRowBuffer = _right;
+            _indirectedRight.ActiveRowBuffer = _right;
         }
 
         public void SetRightToNull()
         {
-            _indirectedRowBuffer.ActiveRowBuffer = _rightNullRowBuffer;
+            _indirectedRight.ActiveRowBuffer = _rightNull;
         }
 
-        public override object this[int index]
-        {
-            get
-            {
-                return index < _left.Count
-                           ? _left[index]
-                           : _indirectedRowBuffer[index - _left.Count];
-            }
-        }
+        public override int ObjectCount => _combined.ObjectCount;
 
-        public override void CopyTo(object[] array, int destinationIndex)
-        {
-            _left.CopyTo(array, destinationIndex);
-            _indirectedRowBuffer.CopyTo(array, _left.Count + destinationIndex);
-        }
+        public override int Bits32Count => _combined.Bits32Count;
+
+        public override int Bits64Count => _combined.Bits64Count;
+
+        public override int Bits128Count => _combined.Bits128Count;
+
+        public override object? GetObject(int index) => _combined.GetObject(index);
+
+        public override uint GetBits32(int index) => _combined.GetBits32(index);
+
+        public override ulong GetBits64(int index) => _combined.GetBits64(index);
+
+        public override Bits128 GetBits128(int index) => _combined.GetBits128(index);
+
+        public override bool IsNull32(int index) => _combined.IsNull32(index);
+
+        public override bool IsNull64(int index) => _combined.IsNull64(index);
+
+        public override bool IsNull128(int index) => _combined.IsNull128(index);
     }
 }

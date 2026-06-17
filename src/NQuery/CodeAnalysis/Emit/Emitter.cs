@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Linq.Expressions;
 
 using NQuery.CodeAnalysis.Algebra;
+using NQuery.CodeAnalysis.Iterators;
 using NQuery.CodeAnalysis.Planning;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.Metadata;
@@ -70,18 +71,25 @@ internal static class Emitter
     private static ExecutableOperator EmitTableScan(PhysicalTableScan node)
     {
         var schemaTable = (SchemaTableSymbol)node.TableInstance.Table;
-        var accessors = node.DefinedValues
-                            .Select(ci => ci.Column)
-                            .Select(c => BuildColumnAccess(c.Definition!))
-                            .ToImmutableArray();
-        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition, accessors);
+        var layout = RowBufferLayout.Create(node.OutputValueSlots);
+        var columns = node.DefinedValues.Select(ci => ci.Column).ToImmutableArray();
+
+        var writers = ImmutableArray.CreateBuilder<Action<object, ArrayRowBuffer>>(columns.Length);
+        for (var i = 0; i < columns.Length; i++)
+            writers.Add(BuildColumnWriter(columns[i].Definition!, layout.Columns[i], node.OutputValueSlots[i].Type));
+
+        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition, layout, writers.ToImmutable());
     }
 
-    private static Func<object, object> BuildColumnAccess(ColumnDefinition definition)
+    // A column scan reads its value as object (the data source hands back object) and
+    // stores it typed into the row buffer -- one unbox/cast at the source boundary.
+    private static Action<object, ArrayRowBuffer> BuildColumnWriter(ColumnDefinition definition, RowBufferColumn target, Type slotType)
     {
-        var instance = Expression.Parameter(typeof(object));
-        var body = definition.CreateInvocation(instance);
-        return Expression.Lambda<Func<object, object>>(body, instance).Compile();
+        var row = Expression.Parameter(typeof(object));
+        var buffer = Expression.Parameter(typeof(ArrayRowBuffer));
+        var value = Expression.Convert(definition.CreateInvocation(row), slotType.GetNullableType());
+        var write = EmittedExpressionCompiler.BuildWriteCall(buffer, target, slotType, value);
+        return Expression.Lambda<Action<object, ArrayRowBuffer>>(write, row, buffer).Compile();
     }
 
     private static ExecutableOperator EmitFilter(PhysicalFilter node, ImmutableArray<ValueSlot> outerSlots)

@@ -26,6 +26,10 @@ internal sealed class ExecutablePlan
 
     public ImmutableArray<QueryColumnInstanceSymbol> OutputColumns { get; }
 
+    // The root operator's output slots, in column order -- used to resolve each output
+    // column to its row-buffer address for the reader.
+    public ImmutableArray<Algebra.ValueSlot> OutputValueSlots => _root.OutputValueSlots;
+
     public Iterator CreateIterator()
     {
         return _root.CreateIterator(outer: null);

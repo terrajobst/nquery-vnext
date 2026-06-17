@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 
+using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery;
@@ -9,16 +10,22 @@ public sealed class QueryReader : IDisposable
     private readonly ImmutableArray<string> _columnNames;
     private readonly ImmutableArray<Type> _columnTypes;
     private readonly bool _schemaOnly;
+    private readonly RowBufferEntry[] _entries;
 
     private Iterator? _iterator;
     private bool _isBof;
 
-    internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, bool schemaOnly)
+    internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, ImmutableArray<ValueSlot> outputValueSlots, bool schemaOnly)
     {
         _iterator = iterator;
         _schemaOnly = schemaOnly;
         _columnNames = columnNamesAndTypes.Select(t => t.ColumnName).ToImmutableArray();
         _columnTypes = columnNamesAndTypes.Select(t => t.ColumnType).ToImmutableArray();
+
+        // Resolve each output column to its row-buffer address once; reading a column
+        // then boxes that one cell on demand.
+        var allocation = new RowBufferAllocation(null, iterator.RowBuffer, outputValueSlots);
+        _entries = outputValueSlots.Select(s => allocation[s]).ToArray();
 
         if (!_schemaOnly)
             _iterator.Open();
@@ -66,12 +73,12 @@ public sealed class QueryReader : IDisposable
             if (_isBof || _iterator is null)
                 throw new InvalidOperationException(Resources.InvalidAttemptToRead);
 
-            return _iterator.RowBuffer[columnIndex];
+            return _entries[columnIndex].GetValue()!;
         }
     }
 
     public int ColumnCount
     {
-        get { return _iterator!.RowBuffer.Count; }
+        get { return _entries.Length; }
     }
 }

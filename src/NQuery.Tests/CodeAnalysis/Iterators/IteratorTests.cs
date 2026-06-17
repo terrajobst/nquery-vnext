@@ -23,8 +23,17 @@ public class IteratorTests
 
     internal static void AssertProduces(Iterator iterator, object?[,] data)
     {
+        AssertProduces(iterator, RowBufferTestSupport.InferColumnTypes(data), data);
+    }
+
+    // Explicit column types -- needed when a column is all-NULL in the data (its type
+    // can't be inferred) but the buffer stores it in a bit container.
+    internal static void AssertProduces(Iterator iterator, Type[] types, object?[,] data)
+    {
         var rowCount = data.GetLength(0);
-        var entryCount = data.GetLength(1);
+        var columnCount = data.GetLength(1);
+
+        var layout = RowBufferLayout.Create(types);
 
         iterator.Open();
 
@@ -32,16 +41,11 @@ public class IteratorTests
         {
             Assert.True(iterator.Read());
 
-            Assert.Equal(entryCount, iterator.RowBuffer.Count);
+            var buffer = iterator.RowBuffer;
+            Assert.Equal(columnCount, buffer.ObjectCount + buffer.Bits32Count + buffer.Bits64Count + buffer.Bits128Count);
 
-            var row = new object[iterator.RowBuffer.Count];
-            iterator.RowBuffer.CopyTo(row, 0);
-
-            for (var j = 0; j < entryCount; j++)
-            {
-                Assert.Equal(data[i, j], iterator.RowBuffer[j]);
-                Assert.Equal(data[i, j], row[j]);
-            }
+            for (var j = 0; j < columnCount; j++)
+                Assert.Equal(data[i, j], buffer.GetBoxedValue(layout.Columns[j], types[j]));
         }
 
         Assert.False(iterator.Read());
