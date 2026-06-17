@@ -13,7 +13,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
     private readonly object?[] _objects;
     private readonly uint[] _bits32;
     private readonly ulong[] _bits64;
-    private readonly Bits128[] _bits128;
+    private readonly Int128[] _bits128;
     private readonly ulong[] _null32;
     private readonly ulong[] _null64;
     private readonly ulong[] _null128;
@@ -23,7 +23,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
         _objects = objectCount == 0 ? Array.Empty<object?>() : new object?[objectCount];
         _bits32 = bits32Count == 0 ? Array.Empty<uint>() : new uint[bits32Count];
         _bits64 = bits64Count == 0 ? Array.Empty<ulong>() : new ulong[bits64Count];
-        _bits128 = bits128Count == 0 ? Array.Empty<Bits128>() : new Bits128[bits128Count];
+        _bits128 = bits128Count == 0 ? Array.Empty<Int128>() : new Int128[bits128Count];
         _null32 = NewNullMask(bits32Count);
         _null64 = NewNullMask(bits64Count);
         _null128 = NewNullMask(bits128Count);
@@ -48,7 +48,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => _bits64[index];
 
-    public override Bits128 GetBits128(int index) => _bits128[index];
+    public override Int128 GetBits128(int index) => _bits128[index];
 
     public override bool IsNull32(int index) => GetNull(_null32, index);
 
@@ -125,10 +125,10 @@ internal sealed class ArrayRowBuffer : RowBuffer
 
         SetNull(_null128, index, false);
         var v = value.GetValueOrDefault();
-        Bits128 raw;
+        Int128 raw;
 
-        if (typeof(T) == typeof(decimal)) { var d = Unsafe.As<T, decimal>(ref v); raw = Unsafe.As<decimal, Bits128>(ref d); }
-        else if (typeof(T) == typeof(Guid)) { var g = Unsafe.As<T, Guid>(ref v); raw = Unsafe.As<Guid, Bits128>(ref g); }
+        if (typeof(T) == typeof(decimal)) { var d = Unsafe.As<T, decimal>(ref v); raw = Unsafe.As<decimal, Int128>(ref d); }
+        else if (typeof(T) == typeof(Guid)) { var g = Unsafe.As<T, Guid>(ref v); raw = Unsafe.As<Guid, Int128>(ref g); }
         else throw new NotSupportedException($"{typeof(T)} is not a 128-bit row buffer type.");
 
         _bits128[index] = raw;
@@ -227,7 +227,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
         SetNull(_null64, index, isNull);
     }
 
-    internal void SetBits128Raw(int index, Bits128 value, bool isNull)
+    internal void SetBits128Raw(int index, Int128 value, bool isNull)
     {
         _bits128[index] = value;
         SetNull(_null128, index, isNull);

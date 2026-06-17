@@ -31,7 +31,7 @@ internal sealed class NullRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => 0;
 
-    public override Bits128 GetBits128(int index) => default;
+    public override Int128 GetBits128(int index) => default;
 
     public override bool IsNull32(int index) => true;
 

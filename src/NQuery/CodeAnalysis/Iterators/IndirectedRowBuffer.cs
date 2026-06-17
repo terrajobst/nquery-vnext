@@ -35,7 +35,7 @@ internal sealed class IndirectedRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => ActiveRowBuffer.GetBits64(index);
 
-    public override Bits128 GetBits128(int index) => ActiveRowBuffer.GetBits128(index);
+    public override Int128 GetBits128(int index) => ActiveRowBuffer.GetBits128(index);
 
     public override bool IsNull32(int index) => ActiveRowBuffer.IsNull32(index);
 

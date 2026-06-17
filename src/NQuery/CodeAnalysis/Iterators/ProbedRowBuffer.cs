@@ -37,7 +37,7 @@ internal sealed class ProbedRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => _rowBuffer.GetBits64(index);
 
-    public override Bits128 GetBits128(int index) => _rowBuffer.GetBits128(index);
+    public override Int128 GetBits128(int index) => _rowBuffer.GetBits128(index);
 
     public override bool IsNull32(int index)
     {

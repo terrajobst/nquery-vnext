@@ -43,7 +43,7 @@ internal sealed class CombinedRowBuffer : RowBuffer
                    : _right.GetBits64(index - _left.Bits64Count);
     }
 
-    public override Bits128 GetBits128(int index)
+    public override Int128 GetBits128(int index)
     {
         return index < _left.Bits128Count
                    ? _left.GetBits128(index)

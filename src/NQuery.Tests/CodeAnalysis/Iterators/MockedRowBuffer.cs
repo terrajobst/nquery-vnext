@@ -44,7 +44,7 @@ internal sealed class MockedRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => _buffer.GetBits64(index);
 
-    public override Bits128 GetBits128(int index) => _buffer.GetBits128(index);
+    public override Int128 GetBits128(int index) => _buffer.GetBits128(index);
 
     public override bool IsNull32(int index) => _buffer.IsNull32(index);
 

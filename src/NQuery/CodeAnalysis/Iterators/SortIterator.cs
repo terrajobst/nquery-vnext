@@ -143,7 +143,7 @@ internal class SortIterator : Iterator
 
         public override ulong GetBits64(int index) => Current.GetBits64(index);
 
-        public override Bits128 GetBits128(int index) => Current.GetBits128(index);
+        public override Int128 GetBits128(int index) => Current.GetBits128(index);
 
         public override bool IsNull32(int index) => Current.IsNull32(index);
 

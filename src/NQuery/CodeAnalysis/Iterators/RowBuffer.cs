@@ -27,7 +27,7 @@ internal abstract class RowBuffer
 
     public abstract ulong GetBits64(int index);
 
-    public abstract Bits128 GetBits128(int index);
+    public abstract Int128 GetBits128(int index);
 
     public abstract bool IsNull32(int index);
 
@@ -89,8 +89,8 @@ internal abstract class RowBuffer
 
         var raw = GetBits128(index);
 
-        if (typeof(T) == typeof(decimal)) { var v = Unsafe.As<Bits128, decimal>(ref raw); return Unsafe.As<decimal, T>(ref v); }
-        if (typeof(T) == typeof(Guid)) { var v = Unsafe.As<Bits128, Guid>(ref raw); return Unsafe.As<Guid, T>(ref v); }
+        if (typeof(T) == typeof(decimal)) { var v = Unsafe.As<Int128, decimal>(ref raw); return Unsafe.As<decimal, T>(ref v); }
+        if (typeof(T) == typeof(Guid)) { var v = Unsafe.As<Int128, Guid>(ref raw); return Unsafe.As<Guid, T>(ref v); }
 
         throw new NotSupportedException($"{typeof(T)} is not a 128-bit row buffer type.");
     }

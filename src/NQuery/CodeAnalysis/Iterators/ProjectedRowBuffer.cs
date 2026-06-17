@@ -76,7 +76,7 @@ internal sealed class ProjectedRowBuffer : RowBuffer
         return entry.RowBuffer.GetBits64(entry.Column.Index);
     }
 
-    public override Bits128 GetBits128(int index)
+    public override Int128 GetBits128(int index)
     {
         var entry = _bits128Entries[index];
         return entry.RowBuffer.GetBits128(entry.Column.Index);

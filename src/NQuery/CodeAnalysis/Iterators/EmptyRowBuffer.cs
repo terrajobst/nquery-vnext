@@ -17,7 +17,7 @@ internal sealed class EmptyRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => throw new ArgumentOutOfRangeException(nameof(index));
 
-    public override Bits128 GetBits128(int index) => throw new ArgumentOutOfRangeException(nameof(index));
+    public override Int128 GetBits128(int index) => throw new ArgumentOutOfRangeException(nameof(index));
 
     public override bool IsNull32(int index) => throw new ArgumentOutOfRangeException(nameof(index));
 

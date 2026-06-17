@@ -53,7 +53,7 @@ internal sealed class HashMatchRowBuffer : RowBuffer
 
     public override ulong GetBits64(int index) => _combined.GetBits64(index);
 
-    public override Bits128 GetBits128(int index) => _combined.GetBits128(index);
+    public override Int128 GetBits128(int index) => _combined.GetBits128(index);
 
     public override bool IsNull32(int index) => _combined.IsNull32(index);
 
