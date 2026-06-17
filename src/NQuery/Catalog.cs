@@ -8,13 +8,13 @@ namespace NQuery;
 public sealed class Catalog
 {
     private Catalog(IImmutableList<TableDefinition> tables,
-                        IImmutableList<RelationshipDefinition> relationships,
-                        IImmutableList<FunctionDefinition> functions,
-                        IImmutableList<AggregateDefinition> aggregates,
-                        IImmutableList<VariableDefinition> variables,
-                        IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
-                        IImmutableDictionary<Type, IMethodProvider> methodProviders,
-                        IImmutableDictionary<Type, IComparer> comparers)
+                    IImmutableList<RelationshipDefinition> relationships,
+                    IImmutableList<FunctionDefinition> functions,
+                    IImmutableList<AggregateDefinition> aggregates,
+                    IImmutableList<VariableDefinition> variables,
+                    IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
+                    IImmutableDictionary<Type, IMethodProvider> methodProviders,
+                    IImmutableDictionary<Type, IComparer> comparers)
     {
         Tables = tables;
         Relationships = relationships;
@@ -48,13 +48,13 @@ public sealed class Catalog
     private static Catalog CreateEmpty()
     {
         return new Catalog(ImmutableList.Create<TableDefinition>(),
-                               ImmutableList.Create<RelationshipDefinition>(),
-                               ImmutableList.Create<FunctionDefinition>(),
-                               ImmutableList.Create<AggregateDefinition>(),
-                               ImmutableList.Create<VariableDefinition>(),
-                               ImmutableDictionary.Create<Type, IPropertyProvider>(),
-                               ImmutableDictionary.Create<Type, IMethodProvider>(),
-                               ImmutableDictionary.Create<Type, IComparer>());
+                           ImmutableList.Create<RelationshipDefinition>(),
+                           ImmutableList.Create<FunctionDefinition>(),
+                           ImmutableList.Create<AggregateDefinition>(),
+                           ImmutableList.Create<VariableDefinition>(),
+                           ImmutableDictionary.Create<Type, IPropertyProvider>(),
+                           ImmutableDictionary.Create<Type, IMethodProvider>(),
+                           ImmutableDictionary.Create<Type, IComparer>());
     }
 
     private static Catalog CreateDefault()
@@ -68,13 +68,13 @@ public sealed class Catalog
                                                  .Add(typeof(object), reflectionProvider);
         var comparers = ImmutableDictionary.Create<Type, IComparer>();
         return new Catalog(ImmutableList.Create<TableDefinition>(),
-                               ImmutableList.Create<RelationshipDefinition>(),
-                               functions,
-                               aggregates,
-                               ImmutableList.Create<VariableDefinition>(),
-                               propertyProviders,
-                               methodProviders,
-                               comparers);
+                           ImmutableList.Create<RelationshipDefinition>(),
+                           functions,
+                           aggregates,
+                           ImmutableList.Create<VariableDefinition>(),
+                           propertyProviders,
+                           methodProviders,
+                           comparers);
     }
 
     // Tables
