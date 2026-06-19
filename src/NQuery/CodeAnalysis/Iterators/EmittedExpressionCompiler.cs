@@ -31,13 +31,22 @@ internal sealed class EmittedExpressionCompiler
     private static readonly MethodInfo Write128BitMethod = typeof(ArrayRowBuffer).GetMethod(nameof(ArrayRowBuffer.Write128Bit))!;
 
     private readonly FrozenDictionary<ValueSlot, RowBufferColumn> _slotIndices;
-    private readonly ParameterExpression _rowBuffer = Expression.Parameter(typeof(RowBuffer));
+    private readonly ParameterExpression _rowBuffer;
     private readonly List<ParameterExpression> _locals = new();
     private readonly List<Expression> _assignments = new();
 
     private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+        : this(slotIndices, Expression.Parameter(typeof(RowBuffer)))
+    {
+    }
+
+    // Several values can be compiled against one shared input-buffer parameter so their
+    // bodies fold into a single lambda (see CompileRowWriter); each compiler still keeps
+    // its own locals/assignments, so the per-value blocks stay independent.
+    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices, ParameterExpression rowBuffer)
     {
         _slotIndices = slotIndices;
+        _rowBuffer = rowBuffer;
     }
 
     // The row buffer's column layout follows the producing operator's output slot
@@ -57,13 +66,28 @@ internal sealed class EmittedExpressionCompiler
         return Compile<EmittedPredicate>(expression, typeof(bool), slotIndices);
     }
 
-    // Compiles an expression directly into a typed store of its value into a target
-    // ArrayRowBuffer column -- the value never gets boxed through object. Used by the
-    // compute scalar to fill its computed columns.
-    public static Action<RowBuffer, ArrayRowBuffer> CompileWriter(LogicalExpression expression, RowBufferColumn target, Type slotType, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    // Compiles a whole set of computed values into one typed store: the per-value loop is
+    // unrolled into a single straight-line block that writes each result into its column
+    // (never boxed through object), so a computed row costs one delegate invocation instead
+    // of one per value. Used by the compute scalar to fill its computed columns. Each value
+    // gets its own compiler -- so its locals stay scoped -- but they all share the input and
+    // target buffer parameters so the bodies fold into a single lambda.
+    public static Action<RowBuffer, ArrayRowBuffer> CompileRowWriter(ImmutableArray<LogicalComputedValue> definedValues, RowBufferLayout computedLayout, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
-        var compiler = new EmittedExpressionCompiler(slotIndices);
-        return compiler.BuildWriter(expression, target, slotType);
+        var rowBuffer = Expression.Parameter(typeof(RowBuffer));
+        var targetBuffer = Expression.Parameter(typeof(ArrayRowBuffer));
+
+        var writes = new Expression[definedValues.Length];
+        for (var i = 0; i < definedValues.Length; i++)
+        {
+            var slotType = definedValues[i].ValueSlot.Type;
+            var compiler = new EmittedExpressionCompiler(slotIndices, rowBuffer);
+            var value = compiler.BuildBody(definedValues[i].Expression, slotType.GetNullableType());
+            writes[i] = BuildWriteCall(targetBuffer, computedLayout.Columns[i], slotType, value);
+        }
+
+        var body = writes.Length == 0 ? (Expression)Expression.Empty() : Expression.Block(writes);
+        return Expression.Lambda<Action<RowBuffer, ArrayRowBuffer>>(body, rowBuffer, targetBuffer).Compile();
     }
 
     private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices) where TDelegate : Delegate
@@ -77,14 +101,6 @@ internal sealed class EmittedExpressionCompiler
     {
         var body = BuildBody(expression, targetType);
         return Expression.Lambda(delegateType, body, _rowBuffer);
-    }
-
-    private Action<RowBuffer, ArrayRowBuffer> BuildWriter(LogicalExpression expression, RowBufferColumn target, Type slotType)
-    {
-        var value = BuildBody(expression, slotType.GetNullableType());
-        var targetBuffer = Expression.Parameter(typeof(ArrayRowBuffer));
-        var write = BuildWriteCall(targetBuffer, target, slotType, value);
-        return Expression.Lambda<Action<RowBuffer, ArrayRowBuffer>>(write, _rowBuffer, targetBuffer).Compile();
     }
 
     // Builds a call that stores `value` (already the column's nullable type) into the

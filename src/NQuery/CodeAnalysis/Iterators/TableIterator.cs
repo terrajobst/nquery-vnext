@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Immutable;
 
 using NQuery.Metadata;
 
@@ -8,15 +7,15 @@ namespace NQuery.CodeAnalysis.Iterators;
 internal sealed class TableIterator : Iterator
 {
     private readonly TableDefinition _table;
-    private readonly ImmutableArray<Action<object, ArrayRowBuffer>> _columnWriters;
+    private readonly Action<object, ArrayRowBuffer> _rowWriter;
     private readonly ArrayRowBuffer _rowBuffer;
 
     private IEnumerator? _rows;
 
-    public TableIterator(TableDefinition table, RowBufferLayout layout, ImmutableArray<Action<object, ArrayRowBuffer>> columnWriters)
+    public TableIterator(TableDefinition table, RowBufferLayout layout, Action<object, ArrayRowBuffer> rowWriter)
     {
         _table = table;
-        _columnWriters = columnWriters;
+        _rowWriter = rowWriter;
         _rowBuffer = new ArrayRowBuffer(layout);
     }
 
@@ -48,8 +47,7 @@ internal sealed class TableIterator : Iterator
             return false;
 
         var current = rows.Current!;
-        foreach (var writer in _columnWriters)
-            writer(current, _rowBuffer);
+        _rowWriter(current, _rowBuffer);
 
         return true;
     }

@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
@@ -9,14 +7,14 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
     [Fact]
     public void Iterators_EmittedComputeScalar_ForwardsProperly()
     {
-        var writers = ImmutableArray<Action<RowBuffer, ArrayRowBuffer>>.Empty;
+        Action<RowBuffer, ArrayRowBuffer> writer = (_, _) => { };
         var layout = RowBufferLayout.Create(Array.Empty<Type>());
 
         var rows = new object[] { 1, 2 };
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        using (var iterator = new EmittedComputeScalarIterator(input, writers, layout, outer: null))
+        using (var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -34,10 +32,10 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
     {
         var rows = Array.Empty<object>();
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
-        var writers = ImmutableArray.Create<Action<RowBuffer, ArrayRowBuffer>>((_, target) => target.Write32Bit<int>(0, 1));
+        Action<RowBuffer, ArrayRowBuffer> writer = (_, target) => target.Write32Bit<int>(0, 1);
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedComputeScalarIterator(input, writers, layout, outer: null);
+        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null);
 
         AssertEmpty(iterator);
     }
@@ -59,8 +57,8 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
-        var writers = ImmutableArray.Create<Action<RowBuffer, ArrayRowBuffer>>((rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) * 3));
-        using var iterator = new EmittedComputeScalarIterator(input, writers, layout, outer: null);
+        Action<RowBuffer, ArrayRowBuffer> writer = (rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) * 3);
+        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null);
 
         AssertProduces(iterator, expected);
     }
@@ -82,8 +80,8 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
         // rb.NullableInt32(0) is the outer value (10), rb.NullableInt32(1) is the input value -> outer + input.
-        var writers = ImmutableArray.Create<Action<RowBuffer, ArrayRowBuffer>>((rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) + rb.NullableInt32(1)));
-        using var iterator = new EmittedComputeScalarIterator(input, writers, layout, outer);
+        Action<RowBuffer, ArrayRowBuffer> writer = (rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) + rb.NullableInt32(1));
+        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer);
 
         AssertProduces(iterator, expected);
     }

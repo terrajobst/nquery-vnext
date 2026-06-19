@@ -72,24 +72,34 @@ internal static class Emitter
     {
         var schemaTable = (SchemaTableSymbol)node.TableInstance.Table;
         var layout = RowBufferLayout.Create(node.OutputValueSlots);
-        var columns = node.DefinedValues.Select(ci => ci.Column).ToImmutableArray();
+        var definitions = node.DefinedValues.Select(ci => ci.Column.Definition!).ToImmutableArray();
 
-        var writers = ImmutableArray.CreateBuilder<Action<object, ArrayRowBuffer>>(columns.Length);
-        for (var i = 0; i < columns.Length; i++)
-            writers.Add(BuildColumnWriter(columns[i].Definition!, layout.Columns[i], node.OutputValueSlots[i].Type));
+        var rowWriter = BuildRowWriter(definitions, layout, node.OutputValueSlots);
 
-        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition, layout, writers.ToImmutable());
+        return new ExecutableTableScan(node.OutputValueSlots, schemaTable.Definition, layout, rowWriter);
     }
 
-    // A column scan reads its value as object (the data source hands back object) and
-    // stores it typed into the row buffer -- one unbox/cast at the source boundary.
-    private static Action<object, ArrayRowBuffer> BuildColumnWriter(ColumnDefinition definition, RowBufferColumn target, Type slotType)
+    // Compiles the whole row's column reads into a single delegate: the per-column loop
+    // is unrolled at compile time into one straight-line block, so each scanned row costs
+    // a single delegate invocation instead of one per column. Each column reads its value
+    // as object (the data source hands back object) and stores it typed into the row
+    // buffer -- one unbox/cast at the source boundary.
+    private static Action<object, ArrayRowBuffer> BuildRowWriter(ImmutableArray<ColumnDefinition> definitions, RowBufferLayout layout, ImmutableArray<ValueSlot> outputValueSlots)
     {
         var row = Expression.Parameter(typeof(object));
         var buffer = Expression.Parameter(typeof(ArrayRowBuffer));
-        var value = Expression.Convert(definition.CreateInvocation(row), slotType.GetNullableType());
-        var write = EmittedExpressionCompiler.BuildWriteCall(buffer, target, slotType, value);
-        return Expression.Lambda<Action<object, ArrayRowBuffer>>(write, row, buffer).Compile();
+
+        var writes = new Expression[definitions.Length];
+        for (var i = 0; i < definitions.Length; i++)
+        {
+            var slotType = outputValueSlots[i].Type;
+            var value = Expression.Convert(definitions[i].CreateInvocation(row), slotType.GetNullableType());
+            writes[i] = EmittedExpressionCompiler.BuildWriteCall(buffer, layout.Columns[i], slotType, value);
+        }
+
+        // A scan with no referenced columns still produces rows; its writer is a no-op.
+        var body = writes.Length == 0 ? (Expression)Expression.Empty() : Expression.Block(writes);
+        return Expression.Lambda<Action<object, ArrayRowBuffer>>(body, row, buffer).Compile();
     }
 
     private static ExecutableOperator EmitFilter(PhysicalFilter node, ImmutableArray<ValueSlot> outerSlots)

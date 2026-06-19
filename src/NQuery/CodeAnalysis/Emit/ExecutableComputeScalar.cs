@@ -9,7 +9,7 @@ internal sealed class ExecutableComputeScalar : ExecutableOperator
 {
     private readonly ExecutableOperator _input;
     private readonly RowBufferLayout _computedLayout;
-    private readonly ImmutableArray<Action<RowBuffer, ArrayRowBuffer>> _writers;
+    private readonly Action<RowBuffer, ArrayRowBuffer> _writer;
 
     public ExecutableComputeScalar(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComputedValue> definedValues, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
@@ -25,13 +25,11 @@ internal sealed class ExecutableComputeScalar : ExecutableOperator
         // The computed columns form their own little buffer (appended to the input's);
         // each defined value writes into its column of that buffer.
         _computedLayout = RowBufferLayout.Create(definedValues.Select(v => v.ValueSlot.Type));
-        _writers = definedValues
-                   .Select((v, i) => EmittedExpressionCompiler.CompileWriter(v.Expression, _computedLayout.Columns[i], v.ValueSlot.Type, slotIndices))
-                   .ToImmutableArray();
+        _writer = EmittedExpressionCompiler.CompileRowWriter(definedValues, _computedLayout, slotIndices);
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
     {
-        return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _writers, _computedLayout, outer);
+        return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _writer, _computedLayout, outer);
     }
 }

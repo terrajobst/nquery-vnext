@@ -10,15 +10,15 @@ internal sealed class ExecutableTableScan : ExecutableOperator
 {
     private readonly TableDefinition _definition;
     private readonly RowBufferLayout _layout;
-    private readonly ImmutableArray<Action<object, ArrayRowBuffer>> _columnWriters;
+    private readonly Action<object, ArrayRowBuffer> _rowWriter;
 
-    public ExecutableTableScan(ImmutableArray<ValueSlot> outputValueSlots, TableDefinition definition, RowBufferLayout layout, ImmutableArray<Action<object, ArrayRowBuffer>> columnWriters)
+    public ExecutableTableScan(ImmutableArray<ValueSlot> outputValueSlots, TableDefinition definition, RowBufferLayout layout, Action<object, ArrayRowBuffer> rowWriter)
         : base(outputValueSlots)
     {
         _definition = definition;
         _layout = layout;
-        _columnWriters = columnWriters;
+        _rowWriter = rowWriter;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer) => new TableIterator(_definition, _layout, _columnWriters);
+    public override Iterator CreateIterator(RowBuffer? outer) => new TableIterator(_definition, _layout, _rowWriter);
 }

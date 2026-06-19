@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Immutable;
 
 using NQuery.Metadata;
 using NQuery.CodeAnalysis.Iterators;
@@ -19,10 +18,10 @@ public class TableIteratorTests : IteratorTests
         var table = TableDefinition.Create("Table", rows, typeof(int), NullProviders.PropertyProvider);
 
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
-        var writers = ImmutableArray.Create<Action<object, ArrayRowBuffer>>(
-            (r, buffer) => buffer.Write32Bit<int>(0, (int)r * 10));
+        Action<object, ArrayRowBuffer> rowWriter =
+            (r, buffer) => buffer.Write32Bit<int>(0, (int)r * 10);
 
-        return new TableIterator(table, layout, writers);
+        return new TableIterator(table, layout, rowWriter);
     }
 
     private sealed class MockedEnumerable : IEnumerable, IEnumerator, IDisposable
