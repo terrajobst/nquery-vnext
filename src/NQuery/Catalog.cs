@@ -59,8 +59,6 @@ public sealed class Catalog
 
     private static Catalog CreateDefault()
     {
-        var functions = BuiltInFunctions.GetFunctions().ToImmutableList();
-        var aggregates = BuiltInAggregates.GetAggregates().ToImmutableList();
         var reflectionProvider = new ReflectionProvider();
         var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
                                                    .Add(typeof(object), reflectionProvider);
@@ -69,8 +67,8 @@ public sealed class Catalog
         var comparers = ImmutableDictionary.Create<Type, IComparer>();
         return new Catalog(ImmutableList.Create<TableDefinition>(),
                            ImmutableList.Create<RelationshipDefinition>(),
-                           functions,
-                           aggregates,
+                           BuiltInFunctions.Functions,
+                           BuiltInAggregates.Aggregates,
                            ImmutableList.Create<VariableDefinition>(),
                            propertyProviders,
                            methodProviders,

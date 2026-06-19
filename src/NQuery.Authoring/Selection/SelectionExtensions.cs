@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.Authoring.Selection.Providers;
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
@@ -6,24 +8,20 @@ namespace NQuery.Authoring.Selection;
 
 public static class SelectionExtensions
 {
-    public static IEnumerable<ISelectionSpanProvider> GetStandardSelectionSpanProviders()
-    {
-        return new ISelectionSpanProvider[]
-               {
-                   new ArgumentListSelectionSpanProvider(),
-                   new CommonTableExpressionColumnNameListSelectionSpanProvider(),
-                   new CommonTableExpressionQuerySelectionSpanProvider(),
-                   new FromClauseSelectionSpanProvider(),
-                   new GroupByClauseSelectionSpanProvider(),
-                   new OrderedQuerySelectionSpanProvider(),
-                   new SelectClauseSelectionSpanProvider()
-               };
-    }
+    public static ImmutableArray<ISelectionSpanProvider> StandardSelectionSpanProviders { get; } =
+    [
+        new ArgumentListSelectionSpanProvider(),
+        new CommonTableExpressionColumnNameListSelectionSpanProvider(),
+        new CommonTableExpressionQuerySelectionSpanProvider(),
+        new FromClauseSelectionSpanProvider(),
+        new GroupByClauseSelectionSpanProvider(),
+        new OrderedQuerySelectionSpanProvider(),
+        new SelectClauseSelectionSpanProvider()
+    ];
 
     public static TextSpan ExtendSelection(this SyntaxTree syntaxTree, TextSpan selectedSpan)
     {
-        var providers = GetStandardSelectionSpanProviders();
-        return syntaxTree.ExtendSelection(selectedSpan, providers);
+        return syntaxTree.ExtendSelection(selectedSpan, StandardSelectionSpanProviders);
     }
 
     public static TextSpan ExtendSelection(this SyntaxTree syntaxTree, TextSpan selectedSpan, IEnumerable<ISelectionSpanProvider> providers)

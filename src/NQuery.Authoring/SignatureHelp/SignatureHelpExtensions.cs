@@ -11,23 +11,19 @@ namespace NQuery.Authoring.SignatureHelp;
 
 public static class SignatureHelpExtensions
 {
-    public static IEnumerable<ISignatureHelpModelProvider> GetStandardSignatureHelpModelProviders()
-    {
-        return new ISignatureHelpModelProvider[]
-               {
-                   new CastSignatureHelpModelProvider(),
-                   new CoalesceSignatureHelpModelProvider(),
-                   new CountAllSignatureHelpModelProvider(),
-                   new FunctionSignatureHelpModelProvider(),
-                   new MethodSignatureHelpModelProvider(),
-                   new NullIfSignatureHelpModelProvider()
-               };
-    }
+    public static ImmutableArray<ISignatureHelpModelProvider> StandardSignatureHelpModelProviders { get; } =
+    [
+        new CastSignatureHelpModelProvider(),
+        new CoalesceSignatureHelpModelProvider(),
+        new CountAllSignatureHelpModelProvider(),
+        new FunctionSignatureHelpModelProvider(),
+        new MethodSignatureHelpModelProvider(),
+        new NullIfSignatureHelpModelProvider()
+    ];
 
     public static SignatureHelpModel? GetSignatureHelpModel(this SemanticModel semanticModel, int position)
     {
-        var providers = GetStandardSignatureHelpModelProviders();
-        return semanticModel.GetSignatureHelpModel(position, providers);
+        return semanticModel.GetSignatureHelpModel(position, StandardSignatureHelpModelProviders);
     }
 
     public static SignatureHelpModel? GetSignatureHelpModel(this SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers)

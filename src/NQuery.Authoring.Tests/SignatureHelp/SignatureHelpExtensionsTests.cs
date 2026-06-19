@@ -7,6 +7,6 @@ public class SignatureHelpExtensionsTests : ExtensionTests
     [Fact]
     public void SignatureHelpExtensions_ReturnsAllProviders()
     {
-        AssertAllProvidersAreExposed(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders);
+        AssertAllProvidersAreExposed(SignatureHelpExtensions.StandardSignatureHelpModelProviders);
     }
 }

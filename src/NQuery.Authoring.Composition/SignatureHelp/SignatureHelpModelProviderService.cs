@@ -11,7 +11,7 @@ internal sealed class SignatureHelpModelProviderService : ISignatureHelpModelPro
     [ImportingConstructor]
     public SignatureHelpModelProviderService([ImportMany] IEnumerable<ISignatureHelpModelProvider> providers)
     {
-        Providers = providers.Concat(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders()).ToImmutableArray();
+        Providers = SignatureHelpExtensions.StandardSignatureHelpModelProviders.AddRange(providers);
     }
 
     public ImmutableArray<ISignatureHelpModelProvider> Providers { get; }

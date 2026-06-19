@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.Authoring.Highlighting.Highlighters;
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
@@ -6,24 +8,20 @@ namespace NQuery.Authoring.Highlighting;
 
 public static class HighlightingExtensions
 {
-    public static IEnumerable<IHighlighter> GetStandardHighlighters()
-    {
-        return new IHighlighter[]
-                   {
-                       new CaseKeywordHighlighter(),
-                       new CastKeywordHighlighter(),
-                       new SelectQueryKeywordHighlighter(),
-                       new OrderedQueryKeywordHighlighter(),
-                       new InnerJoinKeywordHighlighter(),
-                       new OuterJoinKeywordHighlighter(),
-                       new SymbolReferenceHighlighter()
-                   };
-    }
+    public static ImmutableArray<IHighlighter> StandardHighlighters { get; } =
+    [
+        new CaseKeywordHighlighter(),
+        new CastKeywordHighlighter(),
+        new SelectQueryKeywordHighlighter(),
+        new OrderedQueryKeywordHighlighter(),
+        new InnerJoinKeywordHighlighter(),
+        new OuterJoinKeywordHighlighter(),
+        new SymbolReferenceHighlighter()
+    ];
 
     public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position)
     {
-        var highlighters = GetStandardHighlighters();
-        return semanticModel.GetHighlights(position, highlighters);
+        return semanticModel.GetHighlights(position, StandardHighlighters);
     }
 
     public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position, IEnumerable<IHighlighter> highlighters)

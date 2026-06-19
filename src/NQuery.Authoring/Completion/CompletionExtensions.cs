@@ -8,23 +8,19 @@ namespace NQuery.Authoring.Completion;
 
 public static class CompletionExtensions
 {
-    public static IEnumerable<ICompletionProvider> GetStandardCompletionProviders()
-    {
-        return new ICompletionProvider[]
-               {
-                   new AliasCompletionProvider(),
-                   new JoinCompletionProvider(),
-                   new KeywordCompletionProvider(),
-                   new SymbolCompletionProvider(),
-                   new TypeCompletionProvider(),
-                   new CommonTableExpressionCompletionProvider()
-               };
-    }
+    public static ImmutableArray<ICompletionProvider> StandardCompletionProviders { get; } =
+    [
+        new AliasCompletionProvider(),
+        new JoinCompletionProvider(),
+        new KeywordCompletionProvider(),
+        new SymbolCompletionProvider(),
+        new TypeCompletionProvider(),
+        new CommonTableExpressionCompletionProvider()
+    ];
 
     public static CompletionModel GetCompletionModel(this SemanticModel semanticModel, int position)
     {
-        var providers = GetStandardCompletionProviders();
-        return semanticModel.GetCompletionModel(position, providers);
+        return semanticModel.GetCompletionModel(position, StandardCompletionProviders);
     }
 
     public static CompletionModel GetCompletionModel(this SemanticModel semanticModel, int position, IEnumerable<ICompletionProvider> providers)

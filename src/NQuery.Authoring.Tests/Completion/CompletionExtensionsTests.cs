@@ -7,6 +7,6 @@ public class CompletionExtensionsTests : ExtensionTests
     [Fact]
     public void CompletionExtensionsTests_ReturnsAllProviders()
     {
-        AssertAllProvidersAreExposed(CompletionExtensions.GetStandardCompletionProviders);
+        AssertAllProvidersAreExposed(CompletionExtensions.StandardCompletionProviders);
     }
 }

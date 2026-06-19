@@ -11,7 +11,7 @@ internal sealed class OutliningService : IOutliningService
     [ImportingConstructor]
     public OutliningService([ImportMany] IEnumerable<IOutliner> matchers)
     {
-        Outliners = matchers.Concat(OutliningExtensions.GetStandardOutliners()).ToImmutableArray();
+        Outliners = OutliningExtensions.StandardOutliners.AddRange(matchers);
     }
 
     public ImmutableArray<IOutliner> Outliners { get; }

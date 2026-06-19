@@ -19,9 +19,6 @@
 
 ---
 
-* Do we have any public fields? They should be properties.
-* Do we have static GetXxx() or properties returning `IEnumerable<T>` that
-  should really be materialized `ImmutableArray<T>`?
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize

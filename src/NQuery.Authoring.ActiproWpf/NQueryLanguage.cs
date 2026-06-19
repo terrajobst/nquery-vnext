@@ -45,7 +45,7 @@ public sealed class NQueryLanguage : SyntaxLanguage
     private void RegisterStructureMatcher()
     {
         var matcher = new NQueryBraceMatcher();
-        matcher.Matchers.AddRange(BraceMatchingExtensions.GetStandardBraceMatchers());
+        matcher.Matchers.AddRange(BraceMatchingExtensions.StandardBraceMatchers);
 
         RegisterService<INQueryBraceMatcher>(matcher);
         RegisterService<IStructureMatcher>(matcher);
@@ -84,7 +84,7 @@ public sealed class NQueryLanguage : SyntaxLanguage
         RegisterService(provider);
 
         var outliner = new NQueryOutliner();
-        outliner.Outliners.AddRange(OutliningExtensions.GetStandardOutliners());
+        outliner.Outliners.AddRange(OutliningExtensions.StandardOutliners);
 
         RegisterService<INQueryOutliner>(outliner);
         RegisterService<IOutliner>(outliner);
@@ -96,7 +96,7 @@ public sealed class NQueryLanguage : SyntaxLanguage
         RegisterService(controller);
 
         var provider = new NQueryCompletionProvider(this);
-        provider.Providers.AddRange(CompletionExtensions.GetStandardCompletionProviders());
+        provider.Providers.AddRange(CompletionExtensions.StandardCompletionProviders);
 
         RegisterService<INQueryCompletionProvider>(provider);
         RegisterService<ICompletionProvider>(provider);
@@ -105,7 +105,7 @@ public sealed class NQueryLanguage : SyntaxLanguage
     private void RegisterQuickInfoProvider()
     {
         var provider = new NQueryQuickInfoProvider(this);
-        provider.Providers.AddRange(QuickInfoExtensions.GetStandardQuickInfoModelProviders());
+        provider.Providers.AddRange(QuickInfoExtensions.StandardQuickInfoModelProviders);
 
         RegisterService<INQueryQuickInfoProvider>(provider);
         RegisterService<IQuickInfoProvider>(provider);
@@ -117,7 +117,7 @@ public sealed class NQueryLanguage : SyntaxLanguage
         RegisterService(controller);
 
         var provider = new NQuerySignatureHelpProvider();
-        provider.Providers.AddRange(SignatureHelpExtensions.GetStandardSignatureHelpModelProviders());
+        provider.Providers.AddRange(SignatureHelpExtensions.StandardSignatureHelpModelProviders);
 
         RegisterService<INQuerySignatureHelpProvider>(provider);
         RegisterService<IParameterInfoProvider>(provider);

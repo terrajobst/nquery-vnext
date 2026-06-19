@@ -11,7 +11,7 @@ internal sealed class QuickInfoModelProviderService : IQuickInfoModelProviderSer
     [ImportingConstructor]
     public QuickInfoModelProviderService([ImportMany] IEnumerable<IQuickInfoModelProvider> providers)
     {
-        Providers = providers.Concat(QuickInfoExtensions.GetStandardQuickInfoModelProviders()).ToImmutableArray();
+        Providers = QuickInfoExtensions.StandardQuickInfoModelProviders.AddRange(providers);
     }
 
     public ImmutableArray<IQuickInfoModelProvider> Providers { get; }

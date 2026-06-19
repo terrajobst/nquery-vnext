@@ -11,7 +11,7 @@ internal sealed class CodeIssueProviderService : ICodeIssueProviderService
     [ImportingConstructor]
     public CodeIssueProviderService([ImportMany] IEnumerable<ICodeIssueProvider> matchers)
     {
-        Providers = matchers.Concat(CodeActionExtensions.GetStandardIssueProviders()).ToImmutableArray();
+        Providers = CodeActionExtensions.StandardIssueProviders.AddRange(matchers);
     }
 
     public ImmutableArray<ICodeIssueProvider> Providers { get; }

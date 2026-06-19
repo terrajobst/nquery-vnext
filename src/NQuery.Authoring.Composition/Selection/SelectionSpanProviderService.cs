@@ -11,7 +11,7 @@ internal sealed class SelectionSpanProviderService : ISelectionSpanProviderServi
     [ImportingConstructor]
     public SelectionSpanProviderService([ImportMany] IEnumerable<ISelectionSpanProvider> providers)
     {
-        Providers = providers.Concat(SelectionExtensions.GetStandardSelectionSpanProviders()).ToImmutableArray();
+        Providers = SelectionExtensions.StandardSelectionSpanProviders.AddRange(providers);
     }
 
     public ImmutableArray<ISelectionSpanProvider> Providers { get; }

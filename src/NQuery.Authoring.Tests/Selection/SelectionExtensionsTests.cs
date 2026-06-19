@@ -9,7 +9,7 @@ public class SelectionExtensionsTests : ExtensionTests
     [Fact]
     public void SelectionExtensions_ReturnsAllProviders()
     {
-        AssertAllProvidersAreExposed(SelectionExtensions.GetStandardSelectionSpanProviders);
+        AssertAllProvidersAreExposed(SelectionExtensions.StandardSelectionSpanProviders);
     }
 
     [Fact]

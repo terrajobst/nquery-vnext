@@ -11,7 +11,7 @@ internal sealed class HighlighterService : IHighlighterService
     [ImportingConstructor]
     public HighlighterService([ImportMany] IEnumerable<IHighlighter> highlighters)
     {
-        Highlighters = highlighters.Concat(HighlightingExtensions.GetStandardHighlighters()).ToImmutableArray();
+        Highlighters = HighlightingExtensions.StandardHighlighters.AddRange(highlighters);
     }
 
     public ImmutableArray<IHighlighter> Highlighters { get; }

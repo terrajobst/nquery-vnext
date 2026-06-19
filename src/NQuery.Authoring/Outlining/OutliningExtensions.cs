@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.Authoring.Outlining.Outliners;
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
@@ -6,16 +8,13 @@ namespace NQuery.Authoring.Outlining;
 
 public static class OutliningExtensions
 {
-    public static IEnumerable<IOutliner> GetStandardOutliners()
-    {
-        return new IOutliner[]
-        {
-            new SelectQueryOutliner(),
-            new OrderedQueryOutliner(),
-            new MultiLineCommentOutliner(),
-            new SingleLineCommentOutliner()
-        };
-    }
+    public static ImmutableArray<IOutliner> StandardOutliners { get; } =
+    [
+        new SelectQueryOutliner(),
+        new OrderedQueryOutliner(),
+        new MultiLineCommentOutliner(),
+        new SingleLineCommentOutliner()
+    ];
 
     public static IReadOnlyList<OutliningRegionSpan> FindRegions(this SyntaxNode root)
     {
@@ -29,8 +28,7 @@ public static class OutliningExtensions
 
     public static IReadOnlyList<OutliningRegionSpan> FindRegions(this SyntaxNode root, TextSpan span)
     {
-        var outliners = GetStandardOutliners();
-        return root.FindRegions(span, outliners);
+        return root.FindRegions(span, StandardOutliners);
     }
 
     public static IReadOnlyList<OutliningRegionSpan> FindRegions(this SyntaxNode root, TextSpan span, IEnumerable<IOutliner> outliners)

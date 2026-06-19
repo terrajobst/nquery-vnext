@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.CodeAnalysis;
 
@@ -5,32 +7,28 @@ namespace NQuery.Authoring.QuickInfo;
 
 public static class QuickInfoExtensions
 {
-    public static IEnumerable<IQuickInfoModelProvider> GetStandardQuickInfoModelProviders()
-    {
-        return new IQuickInfoModelProvider[]
-               {
-                   new CastExpressionQuickInfoModelProvider(),
-                   new CoalesceExpressionQuickInfoModelProvider(),
-                   new CommonTableExpressionColumnNameQuickInfoModelProvider(),
-                   new CommonTableExpressionQuickInfoModelProvider(),
-                   new CountAllExpressionQuickInfoModelProvider(),
-                   new DerivedTableReferenceQuickInfoModelProvider(),
-                   new ExpressionSelectColumnQuickInfoModelProvider(),
-                   new FunctionInvocationExpressionQuickInfoModelProvider(),
-                   new MethodInvocationExpressionQuickInfoModelProvider(),
-                   new NamedTableReferenceQuickInfoModelProvider(),
-                   new NameExpressionQuickInfoModelProvider(),
-                   new NullIfQuickInfoModelProvider(),
-                   new PropertyAccessExpressionQuickInfoModelProvider(),
-                   new VariableExpressionQuickInfoModelProvider(),
-                   new WildcardSelectColumnQuickInfoModelProvider()
-               };
-    }
+    public static ImmutableArray<IQuickInfoModelProvider> StandardQuickInfoModelProviders { get; } =
+    [
+        new CastExpressionQuickInfoModelProvider(),
+        new CoalesceExpressionQuickInfoModelProvider(),
+        new CommonTableExpressionColumnNameQuickInfoModelProvider(),
+        new CommonTableExpressionQuickInfoModelProvider(),
+        new CountAllExpressionQuickInfoModelProvider(),
+        new DerivedTableReferenceQuickInfoModelProvider(),
+        new ExpressionSelectColumnQuickInfoModelProvider(),
+        new FunctionInvocationExpressionQuickInfoModelProvider(),
+        new MethodInvocationExpressionQuickInfoModelProvider(),
+        new NamedTableReferenceQuickInfoModelProvider(),
+        new NameExpressionQuickInfoModelProvider(),
+        new NullIfQuickInfoModelProvider(),
+        new PropertyAccessExpressionQuickInfoModelProvider(),
+        new VariableExpressionQuickInfoModelProvider(),
+        new WildcardSelectColumnQuickInfoModelProvider()
+    ];
 
     public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position)
     {
-        var providers = GetStandardQuickInfoModelProviders();
-        return semanticModel.GetQuickInfoModel(position, providers);
+        return semanticModel.GetQuickInfoModel(position, StandardQuickInfoModelProviders);
     }
 
     public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position, IEnumerable<IQuickInfoModelProvider> providers)

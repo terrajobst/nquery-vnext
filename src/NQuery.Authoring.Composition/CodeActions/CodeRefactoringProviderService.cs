@@ -11,7 +11,7 @@ internal sealed class CodeRefactoringProviderService : ICodeRefactoringProviderS
     [ImportingConstructor]
     public CodeRefactoringProviderService([ImportMany] IEnumerable<ICodeRefactoringProvider> matchers)
     {
-        Providers = matchers.Concat(CodeActionExtensions.GetStandardRefactoringProviders()).ToImmutableArray();
+        Providers = CodeActionExtensions.StandardRefactoringProviders.AddRange(matchers);
     }
 
     public ImmutableArray<ICodeRefactoringProvider> Providers { get; }

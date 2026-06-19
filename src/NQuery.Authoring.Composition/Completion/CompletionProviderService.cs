@@ -11,7 +11,7 @@ internal sealed class CompletionProviderService : ICompletionProviderService
     [ImportingConstructor]
     public CompletionProviderService([ImportMany] IEnumerable<ICompletionProvider> providers)
     {
-        Providers = providers.Concat(CompletionExtensions.GetStandardCompletionProviders()).ToImmutableArray();
+        Providers = CompletionExtensions.StandardCompletionProviders.AddRange(providers);
     }
 
     public ImmutableArray<ICompletionProvider> Providers { get; }

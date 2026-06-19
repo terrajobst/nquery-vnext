@@ -11,7 +11,7 @@ internal sealed class BraceMatcherService : IBraceMatcherService
     [ImportingConstructor]
     public BraceMatcherService([ImportMany] IEnumerable<IBraceMatcher> matchers)
     {
-        Matchers = matchers.Concat(BraceMatchingExtensions.GetStandardBraceMatchers()).ToImmutableArray();
+        Matchers = BraceMatchingExtensions.StandardBraceMatchers.AddRange(matchers);
     }
 
     public ImmutableArray<IBraceMatcher> Matchers { get; }

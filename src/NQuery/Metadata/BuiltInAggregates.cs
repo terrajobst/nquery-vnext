@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq.Expressions;
 
@@ -16,11 +17,6 @@ namespace NQuery.Metadata;
 // IComparable, string building -- is plain System.Linq.Expressions.
 internal static class BuiltInAggregates
 {
-    public static IEnumerable<AggregateDefinition> GetAggregates()
-    {
-        return new[] { Count, Avg, Max, Min, Sum, StdDev, Var, Concat };
-    }
-
     // -----------------------------
     // --- Aggregate definitions ---
     // -----------------------------
@@ -128,6 +124,18 @@ internal static class BuiltInAggregates
             Expression.Lambda(accumulate, state, value),
             Expression.Lambda(Expression.Call(join, Expression.Constant(", "), state), state));
     });
+
+    public static ImmutableList<AggregateDefinition> Aggregates { get; } =
+    [
+        Count,
+        Avg,
+        Max,
+        Min,
+        Sum,
+        StdDev,
+        Var,
+        Concat
+    ];
 
     // -------------------------------------------------------------
     // --- Shared fold builders for the parameterized aggregates ---
