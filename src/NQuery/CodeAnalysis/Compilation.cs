@@ -127,7 +127,7 @@ public sealed class Compilation
         return Catalog == catalog ? this : Create(catalog, SyntaxTree);
     }
 
-    public static readonly Compilation Empty = Create(Catalog.Empty, SyntaxTree.Empty);
+    public static Compilation Empty { get; } = Create(Catalog.Empty, SyntaxTree.Empty);
 
     public SyntaxTree SyntaxTree { get; }
 

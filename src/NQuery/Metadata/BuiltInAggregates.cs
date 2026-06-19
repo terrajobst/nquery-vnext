@@ -27,7 +27,7 @@ internal static class BuiltInAggregates
 
     // Count and Any are also used directly by the algebrizer (cardinality guard and
     // scalar-subquery collapse), which wraps them in a symbol on demand.
-    public static readonly AggregateDefinition Count = AggregateDefinition.Create("COUNT", _ =>
+    public static AggregateDefinition Count { get; } = AggregateDefinition.Create("COUNT", _ =>
     {
         var count = Expression.Parameter(typeof(int), "count");
         var value = Expression.Parameter(typeof(object), "value");
@@ -38,7 +38,7 @@ internal static class BuiltInAggregates
     });
 
     // ANY is used internally (correlated subqueries), not registered as a callable aggregate.
-    public static readonly AggregateDefinition Any = AggregateDefinition.Create("ANY", argumentType =>
+    public static AggregateDefinition Any { get; } = AggregateDefinition.Create("ANY", argumentType =>
     {
         var stateType = MakeNullable(argumentType);
         var current = Expression.Parameter(stateType, "current");
@@ -49,7 +49,7 @@ internal static class BuiltInAggregates
             Expression.Lambda(current, current));
     });
 
-    public static readonly AggregateDefinition Sum = AggregateDefinition.Create("SUM", argumentType =>
+    public static AggregateDefinition Sum { get; } = AggregateDefinition.Create("SUM", argumentType =>
     {
         var sumType = ResolveBinaryType(BinaryOperatorKind.Add, argumentType, argumentType);
         var stateType = MakeNullable(sumType);
@@ -65,7 +65,7 @@ internal static class BuiltInAggregates
             Expression.Lambda(state, state));
     });
 
-    public static readonly AggregateDefinition Avg = AggregateDefinition.Create("AVG", argumentType =>
+    public static AggregateDefinition Avg { get; } = AggregateDefinition.Create("AVG", argumentType =>
     {
         var sumType = ResolveBinaryType(BinaryOperatorKind.Add, argumentType, argumentType);
         var quotientType = ResolveBinaryType(BinaryOperatorKind.Divide, sumType, typeof(int));
@@ -94,15 +94,15 @@ internal static class BuiltInAggregates
             Expression.Lambda(resultBody, state));
     });
 
-    public static readonly AggregateDefinition Min = AggregateDefinition.Create("MIN", argumentType => MinMax(argumentType, isMin: true));
+    public static AggregateDefinition Min { get; } = AggregateDefinition.Create("MIN", argumentType => MinMax(argumentType, isMin: true));
 
-    public static readonly AggregateDefinition Max = AggregateDefinition.Create("MAX", argumentType => MinMax(argumentType, isMin: false));
+    public static AggregateDefinition Max { get; } = AggregateDefinition.Create("MAX", argumentType => MinMax(argumentType, isMin: false));
 
-    public static readonly AggregateDefinition Var = AggregateDefinition.Create("VAR", argumentType => VarStdDev(argumentType, isVar: true));
+    public static AggregateDefinition Var { get; } = AggregateDefinition.Create("VAR", argumentType => VarStdDev(argumentType, isVar: true));
 
-    public static readonly AggregateDefinition StdDev = AggregateDefinition.Create("STDEV", argumentType => VarStdDev(argumentType, isVar: false));
+    public static AggregateDefinition StdDev { get; } = AggregateDefinition.Create("STDEV", argumentType => VarStdDev(argumentType, isVar: false));
 
-    public static readonly AggregateDefinition Concat = AggregateDefinition.Create("CONCAT", argumentType =>
+    public static AggregateDefinition Concat { get; } = AggregateDefinition.Create("CONCAT", argumentType =>
     {
         var state = Expression.Parameter(typeof(SortedSet<string>), "values");
         var value = Expression.Parameter(argumentType, "value");

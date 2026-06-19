@@ -24,7 +24,7 @@ namespace NQuery.CodeAnalysis.Optimization;
 // reference and must run in a Once batch rather than a fixed point.
 internal sealed class JoinOrderer : LogicalOperatorRewriter
 {
-    public static readonly JoinOrderer Instance = new();
+    public static JoinOrderer Instance { get; } = new();
 
     private JoinOrderer()
     {

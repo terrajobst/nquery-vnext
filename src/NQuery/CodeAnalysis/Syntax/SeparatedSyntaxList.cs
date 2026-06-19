@@ -8,7 +8,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
 {
     private readonly ImmutableArray<Entry> _entries;
 
-    public static readonly SeparatedSyntaxList<TNode> Empty = new(Array.Empty<SyntaxNodeOrToken>());
+    public static SeparatedSyntaxList<TNode> Empty { get; } = new(Array.Empty<SyntaxNodeOrToken>());
 
     internal SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
     {

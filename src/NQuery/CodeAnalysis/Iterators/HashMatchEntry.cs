@@ -6,7 +6,7 @@ namespace NQuery.CodeAnalysis.Iterators;
 // materialized clone of the build row (see RowBuffer.Clone), so it outlives the cursor.
 internal sealed class HashMatchEntry
 {
-    public ArrayRowBuffer Row = null!;
-    public HashMatchEntry? Next;
-    public bool Matched;
+    public ArrayRowBuffer Row { get; set; } = null!;
+    public HashMatchEntry? Next { get; set; }
+    public bool Matched { get; set; }
 }

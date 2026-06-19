@@ -26,8 +26,8 @@ public sealed class Catalog
         Comparers = comparers;
     }
 
-    public static readonly Catalog Empty = CreateEmpty();
-    public static readonly Catalog Default = CreateDefault();
+    public static Catalog Empty { get; } = CreateEmpty();
+    public static Catalog Default { get; } = CreateDefault();
 
     public IImmutableList<TableDefinition> Tables { get; }
 

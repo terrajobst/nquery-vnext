@@ -12,7 +12,7 @@ internal sealed class OverloadResolutionResult<T>
         Candidates = candidates.ToImmutableArray();
     }
 
-    public static readonly OverloadResolutionResult<T> None = new(null, null, Array.Empty<OverloadResolutionCandidate<T>>());
+    public static OverloadResolutionResult<T> None { get; } = new(null, null, Array.Empty<OverloadResolutionCandidate<T>>());
 
     public OverloadResolutionCandidate<T>? Best { get; }
 

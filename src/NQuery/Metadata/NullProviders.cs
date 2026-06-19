@@ -22,6 +22,6 @@ public static class NullProviders
         }
     }
 
-    public static readonly IPropertyProvider PropertyProvider = new NullPropertyProvider();
-    public static readonly IMethodProvider MethodProvider = new NullMethodProvider();
+    public static IPropertyProvider PropertyProvider { get; } = new NullPropertyProvider();
+    public static IMethodProvider MethodProvider { get; } = new NullMethodProvider();
 }

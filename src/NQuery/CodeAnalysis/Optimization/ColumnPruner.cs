@@ -18,7 +18,7 @@ namespace NQuery.CodeAnalysis.Optimization;
 // post-order, which is the wrong direction, so the traversal is hand-rolled in Worker.)
 internal sealed class ColumnPruner : LogicalOperatorRewriter
 {
-    public static readonly ColumnPruner Instance = new();
+    public static ColumnPruner Instance { get; } = new();
 
     private ColumnPruner()
     {

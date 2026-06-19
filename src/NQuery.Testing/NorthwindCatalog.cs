@@ -6,7 +6,7 @@ namespace NQuery;
 
 public static class NorthwindCatalog
 {
-    public static readonly Catalog Instance = Catalog.Default.AddTablesAndRelationships(CreateDataSet());
+    public static Catalog Instance { get; } = Catalog.Default.AddTablesAndRelationships(CreateDataSet());
 
     // The raw Northwind data as an engine-neutral DataSet. Exposed so other engines (e.g.
     // the baseline build in the differential tests) can build their own Catalog from

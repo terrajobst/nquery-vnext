@@ -4,7 +4,7 @@ namespace NQuery.Authoring.BraceMatching;
 
 public struct BraceMatchingResult
 {
-    public static readonly BraceMatchingResult None = new();
+    public static BraceMatchingResult None { get; } = new();
 
     public BraceMatchingResult(TextSpan left, TextSpan right)
     {

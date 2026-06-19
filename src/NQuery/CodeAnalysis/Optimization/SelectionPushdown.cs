@@ -16,7 +16,7 @@ namespace NQuery.CodeAnalysis.Optimization;
 // projects/computes is a future refinement.
 internal sealed class SelectionPushdown : LogicalOperatorRewriter
 {
-    public static readonly SelectionPushdown Instance = new();
+    public static SelectionPushdown Instance { get; } = new();
 
     private SelectionPushdown()
     {

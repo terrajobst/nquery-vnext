@@ -21,7 +21,7 @@ namespace NQuery.CodeAnalysis.Optimization;
 // the operator, so without this pass the layers survive into the physical plan.
 internal sealed class ProjectMerger : LogicalOperatorRewriter
 {
-    public static readonly ProjectMerger Instance = new();
+    public static ProjectMerger Instance { get; } = new();
 
     private ProjectMerger()
     {

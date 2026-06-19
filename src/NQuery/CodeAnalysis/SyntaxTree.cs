@@ -154,7 +154,7 @@ public sealed class SyntaxTree
             : ParseQuery(newText);
     }
 
-    public static readonly SyntaxTree Empty = ParseQuery(string.Empty);
+    public static SyntaxTree Empty { get; } = ParseQuery(string.Empty);
 
     public CompilationUnitSyntax Root { get; }
 

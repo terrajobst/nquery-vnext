@@ -8,9 +8,9 @@ public static class TypeFacts
     private static class UnknownType { }
     private static class NullType { }
 
-    public static readonly Type Missing = typeof(MissingType);
-    public static readonly Type Unknown = typeof(UnknownType);
-    public static readonly Type Null = typeof(NullType);
+    public static Type Missing { get; } = typeof(MissingType);
+    public static Type Unknown { get; } = typeof(UnknownType);
+    public static Type Null { get; } = typeof(NullType);
 
     public static bool IsMissing(this Type type)
     {
