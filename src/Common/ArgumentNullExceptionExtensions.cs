@@ -29,6 +29,12 @@ namespace System.Diagnostics.CodeAnalysis
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.ReturnValue)]
     internal sealed class NotNullAttribute : Attribute;
 
+    [AttributeUsage(AttributeTargets.Parameter)]
+    internal sealed class NotNullWhenAttribute(bool returnValue) : Attribute
+    {
+        public bool ReturnValue { get; } = returnValue;
+    }
+
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     internal sealed class DoesNotReturnAttribute : Attribute;
 }

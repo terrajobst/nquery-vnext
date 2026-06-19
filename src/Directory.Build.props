@@ -17,7 +17,7 @@
 
   <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
     <OutputType>Exe</OutputType>
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformDotnetTestSupport Condition="'$(TargetFramework)' == 'net8.0'">true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IsPackable)' != 'false'">

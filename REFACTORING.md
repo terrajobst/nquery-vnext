@@ -4,6 +4,13 @@
   can be compiled, rather than with an interface
     - Similar to columns, properties, and methods
 * Are properties on the show plan used at all?
+* I don't like that the algebrizer needs to create symbols and binds Count and
+  Any.
+* When creating tables, columns, properties, and methods we need to normalize
+  int? to int. During overload resolution we should always prefer the nullable
+  one. Or do we need that? I'd assume we'd prefer the non-nullable one because
+  of the way we handle conversions (our types are always non-null T and T is
+  always better than an implicit conversion from T to T?)
 
 ## Port Common Table Expressions
 

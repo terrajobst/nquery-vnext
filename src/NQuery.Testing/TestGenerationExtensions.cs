@@ -43,8 +43,8 @@ public static class TestGenerationExtensions
             ).GetText();
         }
 
-        await using var stringWriter = new StringWriter();
-        await using (var writer = new IndentedTextWriter(stringWriter))
+        using var stringWriter = new StringWriter();
+        using (var writer = new IndentedTextWriter(stringWriter))
         {
             writer.Indent = 2;
 

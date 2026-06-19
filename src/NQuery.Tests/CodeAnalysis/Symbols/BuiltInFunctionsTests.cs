@@ -122,7 +122,11 @@ public sealed class BuiltInFunctionsTests : BuiltInSymbolsTests
     public void BuiltInFunctions_Format()
     {
         AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 %");
+#if NETFRAMEWORK
+        AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", "12.30 %");
+#else
         AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", "12\u066b30\u066a\u061c");
+#endif
     }
 
     [Fact]

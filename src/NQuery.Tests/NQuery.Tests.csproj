@@ -1,12 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net481</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <Compile Remove="OldEngine.cs" />
+    <Compile Remove="OldEngineDifferentialTests.cs" />
+    <Compile Remove="Oracle\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,10 +34,10 @@
       collide with the live ones in deps.json (both keyed by project name) and an engine would
       fail to load at run time.
     -->
-    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
+    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true" Condition="'$(TargetFramework)' == 'net8.0'">
       <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\debug_net8.0\NQuery.Baseline.dll</HintPath>
     </Reference>
-    <Reference Include="NQuery.Data.Baseline" Aliases="baseline" Private="true">
+    <Reference Include="NQuery.Data.Baseline" Aliases="baseline" Private="true" Condition="'$(TargetFramework)' == 'net8.0'">
       <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery.Data\debug_net8.0\NQuery.Data.Baseline.dll</HintPath>
     </Reference>
   </ItemGroup>

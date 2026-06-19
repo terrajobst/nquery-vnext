@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net8.0;net481</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
@@ -9,6 +9,10 @@
     <ProjectReference Include="..\NQuery.Dynamic\NQuery.Dynamic.csproj" />
     <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <PackageReference Include="Microsoft.CSharp" />
   </ItemGroup>
 
 </Project>
