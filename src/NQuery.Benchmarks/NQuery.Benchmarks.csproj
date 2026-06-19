@@ -15,6 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Shared, engine-neutral Northwind data. Linked (not copied) from NQuery.Testing and
+         loaded by NorthwindWorkload via the manifest name set here. -->
+    <EmbeddedResource Include="..\NQuery.Testing\Resources\Northwind.xml" Link="Northwind.xml" LogicalName="Northwind.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!--
       The live engine (assembly "NQuery") is the new version from this worktree and is
       referenced normally, so its types are just NQuery.*. The baseline is the NQuery project

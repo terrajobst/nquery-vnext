@@ -21,6 +21,8 @@ internal static class Validator
 
     public static int Run()
     {
+        var failures = 0;
+
         var rows = Workload.BuildRows(1_000);
 
         var baselineTable = new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Numbers", rows));
@@ -29,9 +31,19 @@ internal static class Validator
         var currentTable = CurrentMetadata.TableDefinition.Create("Numbers", rows);
         var currentContext = CurrentNQuery.Catalog.Default.AddTables(currentTable);
 
+        failures += Validate(Queries, baselineContext, currentContext);
+        failures += Validate(NorthwindQueries, BuildNorthwindBaseline(), BuildNorthwindCurrent());
+
+        Console.WriteLine();
+        Console.WriteLine(failures == 0 ? "All queries match." : $"{failures} mismatch(es).");
+        return failures == 0 ? 0 : 1;
+    }
+
+    private static int Validate(IEnumerable<string> queries, BaselineNQuery.DataContext baselineContext, CurrentNQuery.Catalog currentContext)
+    {
         var failures = 0;
 
-        foreach (var sql in Queries)
+        foreach (var sql in queries)
         {
             var expected = RunBaseline(baselineContext, sql);
             var actual = RunCurrent(currentContext, sql);
@@ -50,9 +62,26 @@ internal static class Validator
             }
         }
 
-        Console.WriteLine();
-        Console.WriteLine(failures == 0 ? "All queries match." : $"{failures} mismatch(es).");
-        return failures == 0 ? 0 : 1;
+        return failures;
+    }
+
+    private static readonly string[] NorthwindQueries =
+        Enum.GetValues<NorthwindWorkload.Shape>().Select(NorthwindWorkload.Sql).ToArray();
+
+    private static BaselineNQuery.DataContext BuildNorthwindBaseline()
+    {
+        return BaselineNQuery.DataContext.Default.AddTables(
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Customers", NorthwindWorkload.Customers())),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Orders", NorthwindWorkload.Orders())),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails())));
+    }
+
+    private static CurrentNQuery.Catalog BuildNorthwindCurrent()
+    {
+        return CurrentNQuery.Catalog.Default.AddTables(
+            CurrentMetadata.TableDefinition.Create("Customers", NorthwindWorkload.Customers()),
+            CurrentMetadata.TableDefinition.Create("Orders", NorthwindWorkload.Orders()),
+            CurrentMetadata.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails()));
     }
 
     private static List<object?[]> RunBaseline(BaselineNQuery.DataContext context, string sql)
