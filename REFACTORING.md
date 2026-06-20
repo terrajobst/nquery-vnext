@@ -1,24 +1,5 @@
 # NQuery Major Refactoring
 
-* Are properties on the show plan used at all?
-* Do we need the step functions in BuiltInAggregates? Seems like should emit
-  them as expressions.
-* What does the emitter have an abstraction (Aggregator and FoldAggregator)?
-* Can we change the for loops for all aggregates to more or less be emitted as well?
-  - It seems we need this if we want the aggregates to be stored in strongly
-    typed slots eventually. Doing so probably means that Aggregator can
-    disappear entirely and instead we have three void returning functions that
-    we compile during emit (initialize, accumulate, get result)
-* Use Int128 on .NET Core, for .NET Framework rename the Bit128 type to
-  System.Int128, but the shape identical. Now need to copy .NET Core's type.
-  Can we make the fields private?
-* I think each part we iterator over a group of this that read or write from a
-  row buffer (table scan) we should have a single Action that was compiled with
-  the loop unrolled.
-* We should make we can run the tests on .NET Framework and on .NET Core.
-
----
-
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize
@@ -26,7 +7,6 @@
   one. Or do we need that? I'd assume we'd prefer the non-nullable one because
   of the way we handle conversions (our types are always non-null T and T is
   always better than an implicit conversion from T to T?)
-* Fix the indentation of new Catalog()
 
 ## Port Common Table Expressions
 
