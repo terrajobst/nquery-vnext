@@ -146,31 +146,4 @@ internal abstract class RowBuffer
         throw new NotSupportedException($"{type} is not a 128-bit row buffer type.");
     }
 
-    // Materializes this row into a standalone, writable buffer -- used by the buffering
-    // iterators (Sort, HashMatch) to capture rows that outlive the cursor position. Each
-    // container is copied raw, so no value is boxed.
-    public ArrayRowBuffer Clone()
-    {
-        var clone = new ArrayRowBuffer(ObjectCount, Bits32Count, Bits64Count, Bits128Count);
-        CopyContainersInto(clone);
-        return clone;
-    }
-
-    // Copies every container into the leading positions of `target` (which must be at
-    // least as wide per container). Used by Clone and by buffering iterators that
-    // materialize a row into a wider layout.
-    public void CopyContainersInto(ArrayRowBuffer target)
-    {
-        for (var i = 0; i < ObjectCount; i++)
-            target.SetObjectRaw(i, GetObject(i));
-
-        for (var i = 0; i < Bits32Count; i++)
-            target.SetBits32Raw(i, GetBits32(i), IsNull32(i));
-
-        for (var i = 0; i < Bits64Count; i++)
-            target.SetBits64Raw(i, GetBits64(i), IsNull64(i));
-
-        for (var i = 0; i < Bits128Count; i++)
-            target.SetBits128Raw(i, GetBits128(i), IsNull128(i));
-    }
 }

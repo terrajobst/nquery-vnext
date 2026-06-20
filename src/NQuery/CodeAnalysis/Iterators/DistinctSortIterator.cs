@@ -2,7 +2,9 @@ namespace NQuery.CodeAnalysis.Iterators;
 
 internal sealed class DistinctSortIterator : SortIterator
 {
-    private ArrayRowBuffer? _lastSpooledRow;
+    private const int NoRow = -1;
+
+    private int _lastRow = NoRow;
 
     public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<System.Collections.IComparer> comparers)
         : base(input, sortEntries, comparers)
@@ -12,17 +14,17 @@ internal sealed class DistinctSortIterator : SortIterator
     public override void Open()
     {
         base.Open();
-        _lastSpooledRow = null;
+        _lastRow = NoRow;
     }
 
     public override bool Read()
     {
-        if (_lastSpooledRow is null)
+        if (_lastRow == NoRow)
         {
             if (!base.Read())
                 return false;
 
-            _lastSpooledRow = GetCurrentRow();
+            _lastRow = CurrentRow;
             return true;
         }
 
@@ -33,12 +35,12 @@ internal sealed class DistinctSortIterator : SortIterator
             if (!base.Read())
                 break;
 
-            var currentRow = GetCurrentRow();
+            var currentRow = CurrentRow;
 
             for (var i = 0; i < SortColumns.Length; i++)
             {
-                var valueOfLastRow = _lastSpooledRow.GetBoxedValue(SortColumns[i], SortTypes[i]);
-                var valueOfThisRow = currentRow.GetBoxedValue(SortColumns[i], SortTypes[i]);
+                var valueOfLastRow = GetSortKey(_lastRow, i);
+                var valueOfThisRow = GetSortKey(currentRow, i);
 
                 if (Equals(valueOfLastRow, valueOfThisRow))
                     continue;
@@ -52,7 +54,7 @@ internal sealed class DistinctSortIterator : SortIterator
 
             if (atLeastOneRecordFound)
             {
-                _lastSpooledRow = currentRow;
+                _lastRow = currentRow;
                 break;
             }
         }

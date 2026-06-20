@@ -7,6 +7,10 @@
   one. Or do we need that? I'd assume we'd prefer the non-nullable one because
   of the way we handle conversions (our types are always non-null T and T is
   always better than an implicit conversion from T to T?)
+* Add strongly-typed version of Northwind with classes for everything.
+    - Add a subdirectory Northwind in NQuery.Testing
+* We need to change the comparer contract to support `IComparer<T>`. We probably
+  should still support `IComparer` as well.
 
 ## Port Common Table Expressions
 
@@ -108,3 +112,5 @@ execution; no evaluation test drives a CTE through the new engine.
   returns `Expression<object>`.
 * Probably means `CompiledExpression<T>` should have a target type.
 * Are properties on the show plan used at all?
+* Add an LSP and add a VS Code plugin that replaces the VS based editor
+  experience (we should keep the Actipro one though)

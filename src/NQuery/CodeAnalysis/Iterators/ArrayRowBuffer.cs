@@ -212,9 +212,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
         }
     }
 
-    // Raw, type-agnostic stores used by Clone() and the per-container gluing copies.
-    internal void SetObjectRaw(int index, object? value) => _objects[index] = value;
-
+    // Raw, type-agnostic stores used by the per-container gluing copies (see CopyFrom).
     internal void SetBits32Raw(int index, uint value, bool isNull)
     {
         _bits32[index] = value;

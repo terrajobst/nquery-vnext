@@ -1,9 +1,9 @@
 namespace NQuery.CodeAnalysis.Iterators;
 
 // The combined build ++ probe output of a hash match. Each side is an indirected buffer
-// whose backing can be swapped per row: a build entry's materialized row or an all-NULL
-// pad (an unmatched outer row), and the live probe row or an all-NULL pad. The combined
-// view glues the two sides per container (via CombinedRowBuffer).
+// whose backing can be swapped per row: a build row (a cursor over the build spool) or an
+// all-NULL pad (an unmatched outer row), and the live probe row or an all-NULL pad. The
+// combined view glues the two sides per container (via CombinedRowBuffer).
 internal sealed class HashMatchRowBuffer : RowBuffer
 {
     private readonly IndirectedRowBuffer _build;
@@ -25,9 +25,9 @@ internal sealed class HashMatchRowBuffer : RowBuffer
         _combined = new CombinedRowBuffer(_build, _probe);
     }
 
-    public void SetBuild(HashMatchEntry? entry)
+    public void SetBuild(RowBuffer? buildRow)
     {
-        _build.ActiveRowBuffer = entry is null ? _buildNull : entry.Row;
+        _build.ActiveRowBuffer = buildRow ?? _buildNull;
     }
 
     public void SetProbe(RowBuffer? rowBuffer)

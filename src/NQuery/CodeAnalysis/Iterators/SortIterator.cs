@@ -65,27 +65,50 @@ internal class SortIterator : Iterator
 
     protected ImmutableArray<IComparer> Comparers { get; }
 
-    protected ArrayRowBuffer GetCurrentRow()
-    {
-        return _spooledRowBuffer.Rows![_spooledRowBuffer.RowIndex];
-    }
+    // The store row index the cursor currently sits on (after mapping through the sort order).
+    protected int CurrentRow => _spooledRowBuffer.CurrentRow;
 
-    private IReadOnlyList<ArrayRowBuffer> SortInput()
+    // The sort keys for every row, boxed once at spool time and laid out row-major
+    // (row * SortColumns.Length + column). Comparisons -- the sort's and DISTINCT's --
+    // read these instead of re-boxing the typed columns on every probe, which is what
+    // made the sort allocate O(rows * log rows) boxed values instead of O(rows).
+    private object?[] _keys = Array.Empty<object?>();
+
+    protected object? GetSortKey(int row, int column) => _keys[row * SortColumns.Length + column];
+
+    private void SortInput()
     {
-        var result = new List<ArrayRowBuffer>();
+        var store = new SpooledRowStore(_materializationSource);
+        var keyCount = SortColumns.Length;
+        var keys = new List<object?>();
 
         while (_input.Read())
-            result.Add(_materializationSource.Clone());
+        {
+            store.Append(_materializationSource);
 
-        var rowComparer = new RowComparer(SortColumns, SortTypes, Comparers);
-        result.Sort(rowComparer);
-        return result;
+            // The materialization source is positioned on the row just appended; box its
+            // sort keys now so the comparer never has to.
+            for (var c = 0; c < keyCount; c++)
+                keys.Add(_materializationSource.GetBoxedValue(SortColumns[c], SortTypes[c]));
+        }
+
+        _keys = keys.ToArray();
+
+        var order = new int[store.Count];
+        for (var i = 0; i < order.Length; i++)
+            order[i] = i;
+
+        // Sort the index array, not the row data: the rows stay put in the columnar store
+        // and only the cheap int[] is permuted.
+        Array.Sort(order, new RowComparer(_keys, keyCount, Comparers));
+
+        _spooledRowBuffer.SetRows(store, order);
     }
 
     public override void Open()
     {
         _input.Open();
-        _spooledRowBuffer.Rows = null;
+        _spooledRowBuffer.Reset();
     }
 
     public override void Dispose()
@@ -95,26 +118,21 @@ internal class SortIterator : Iterator
 
     public override bool Read()
     {
-        var rows = _spooledRowBuffer.Rows;
-        if (rows is null)
-        {
-            rows = SortInput();
-            _spooledRowBuffer.Rows = rows;
-            _spooledRowBuffer.RowIndex = -1;
-        }
+        if (_spooledRowBuffer.Store is null)
+            SortInput();
 
-        if (_spooledRowBuffer.RowIndex == rows.Count - 1)
-            return false;
-
-        _spooledRowBuffer.RowIndex++;
-        return true;
+        return _spooledRowBuffer.MoveNext();
     }
 
-    // Exposes the materialized rows as the input's layout. A materialized row may carry
-    // extra trailing columns (captured outer sort keys); only the leading input columns
-    // are exposed, so the consumer sees the input's shape.
+    // A cursor over the columnar spool, exposed to the consumer as the input's layout. A
+    // materialized row may carry extra trailing columns (captured outer sort keys), but the
+    // exposed container counts are the input's, so the consumer sees the input's shape; the
+    // raw accessors read straight from the store, mapping the cursor position through the
+    // sort order.
     private sealed class SpooledRowBuffer : RowBuffer
     {
+        private int _position = -1;
+
         public SpooledRowBuffer(RowBuffer template)
         {
             ObjectCount = template.ObjectCount;
@@ -123,9 +141,34 @@ internal class SortIterator : Iterator
             Bits128Count = template.Bits128Count;
         }
 
-        public IReadOnlyList<ArrayRowBuffer>? Rows { get; set; }
+        public SpooledRowStore? Store { get; private set; }
 
-        public int RowIndex { get; set; }
+        private int[]? _order;
+
+        public int CurrentRow => _order![_position];
+
+        public void Reset()
+        {
+            Store = null;
+            _order = null;
+            _position = -1;
+        }
+
+        public void SetRows(SpooledRowStore store, int[] order)
+        {
+            Store = store;
+            _order = order;
+            _position = -1;
+        }
+
+        public bool MoveNext()
+        {
+            if (_position == _order!.Length - 1)
+                return false;
+
+            _position++;
+            return true;
+        }
 
         public override int ObjectCount { get; }
 
@@ -135,43 +178,43 @@ internal class SortIterator : Iterator
 
         public override int Bits128Count { get; }
 
-        private ArrayRowBuffer Current => Rows![RowIndex];
+        public override object? GetObject(int index) => Store!.GetObject(CurrentRow, index);
 
-        public override object? GetObject(int index) => Current.GetObject(index);
+        public override uint GetBits32(int index) => Store!.GetBits32(CurrentRow, index);
 
-        public override uint GetBits32(int index) => Current.GetBits32(index);
+        public override ulong GetBits64(int index) => Store!.GetBits64(CurrentRow, index);
 
-        public override ulong GetBits64(int index) => Current.GetBits64(index);
+        public override Int128 GetBits128(int index) => Store!.GetBits128(CurrentRow, index);
 
-        public override Int128 GetBits128(int index) => Current.GetBits128(index);
+        public override bool IsNull32(int index) => Store!.IsNull32(CurrentRow, index);
 
-        public override bool IsNull32(int index) => Current.IsNull32(index);
+        public override bool IsNull64(int index) => Store!.IsNull64(CurrentRow, index);
 
-        public override bool IsNull64(int index) => Current.IsNull64(index);
-
-        public override bool IsNull128(int index) => Current.IsNull128(index);
+        public override bool IsNull128(int index) => Store!.IsNull128(CurrentRow, index);
     }
 
-    private sealed class RowComparer : IComparer<ArrayRowBuffer>
+    private sealed class RowComparer : IComparer<int>
     {
-        private readonly ImmutableArray<RowBufferColumn> _sortColumns;
-        private readonly ImmutableArray<Type> _sortTypes;
+        private readonly object?[] _keys;
+        private readonly int _keyCount;
         private readonly ImmutableArray<IComparer> _comparers;
 
-        public RowComparer(ImmutableArray<RowBufferColumn> sortColumns, ImmutableArray<Type> sortTypes, ImmutableArray<IComparer> comparers)
+        public RowComparer(object?[] keys, int keyCount, ImmutableArray<IComparer> comparers)
         {
-            _sortColumns = sortColumns;
-            _sortTypes = sortTypes;
+            _keys = keys;
+            _keyCount = keyCount;
             _comparers = comparers;
         }
 
-        public int Compare(ArrayRowBuffer? x, ArrayRowBuffer? y)
+        public int Compare(int x, int y)
         {
-            var index = 0;
-            while (index < _sortColumns.Length)
+            var xBase = x * _keyCount;
+            var yBase = y * _keyCount;
+
+            for (var index = 0; index < _keyCount; index++)
             {
-                var value1 = x!.GetBoxedValue(_sortColumns[index], _sortTypes[index]);
-                var value2 = y!.GetBoxedValue(_sortColumns[index], _sortTypes[index]);
+                var value1 = _keys[xBase + index];
+                var value2 = _keys[yBase + index];
 
                 if (value1 is null && value2 is not null)
                     return -1;
@@ -186,8 +229,6 @@ internal class SortIterator : Iterator
                     if (result != 0)
                         return result;
                 }
-
-                index++;
             }
 
             return 0;

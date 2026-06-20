@@ -10,7 +10,7 @@ public class HashMatchRowBufferTests : RowBufferTests
     public void RowBuffers_HashMatch_ExposesBuildEntryThenProbe()
     {
         var buffer = new HashMatchRowBuffer(Buffer(0, 0), Buffer(0));
-        buffer.SetBuild(new HashMatchEntry { Row = Buffer(1, 2) });
+        buffer.SetBuild(Buffer(1, 2));
         buffer.SetProbe(Buffer(9));
 
         AssertContract(buffer, 1, 2, 9);
@@ -30,7 +30,7 @@ public class HashMatchRowBufferTests : RowBufferTests
     public void RowBuffers_HashMatch_NullProbe_PadsProbeSideWithNull()
     {
         var buffer = new HashMatchRowBuffer(Buffer(0, 0), Buffer(0));
-        buffer.SetBuild(new HashMatchEntry { Row = Buffer(1, 2) });
+        buffer.SetBuild(Buffer(1, 2));
         buffer.SetProbe(null);
 
         AssertContract(buffer, new object?[] { 1, 2, null }, Int2Int);
@@ -41,11 +41,11 @@ public class HashMatchRowBufferTests : RowBufferTests
     {
         var buffer = new HashMatchRowBuffer(Buffer(0), Buffer("x"));
 
-        buffer.SetBuild(new HashMatchEntry { Row = Buffer(1) });
+        buffer.SetBuild(Buffer(1));
         buffer.SetProbe(Buffer("a"));
         AssertContract(buffer, 1, "a");
 
-        buffer.SetBuild(new HashMatchEntry { Row = Buffer(2) });
+        buffer.SetBuild(Buffer(2));
         buffer.SetProbe(Buffer("b"));
         AssertContract(buffer, 2, "b");
     }
