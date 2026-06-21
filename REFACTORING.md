@@ -1,5 +1,13 @@
 # NQuery Major Refactoring
 
+* Why does iterator contain so many emitter types?
+* Sort is 25x slower.
+    - Did we benchmark all iterators?
+    - What about nested loops?
+    - What about probe/passthru?
+* We need to change the comparer contract to support `IComparer<T>`. We probably
+  should still support `IComparer` as well.
+* Merge the strongly typed Northwind changes
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize
@@ -7,10 +15,6 @@
   one. Or do we need that? I'd assume we'd prefer the non-nullable one because
   of the way we handle conversions (our types are always non-null T and T is
   always better than an implicit conversion from T to T?)
-* Add strongly-typed version of Northwind with classes for everything.
-    - Add a subdirectory Northwind in NQuery.Testing
-* We need to change the comparer contract to support `IComparer<T>`. We probably
-  should still support `IComparer` as well.
 
 ## Port Common Table Expressions
 

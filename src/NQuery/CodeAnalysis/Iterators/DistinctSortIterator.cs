@@ -28,37 +28,19 @@ internal sealed class DistinctSortIterator : SortIterator
             return true;
         }
 
-        var atLeastOneRecordFound = false;
-
         while (true)
         {
             if (!base.Read())
-                break;
+                return false;
 
             var currentRow = CurrentRow;
 
-            for (var i = 0; i < SortColumns.Length; i++)
-            {
-                var valueOfLastRow = GetSortKey(_lastRow, i);
-                var valueOfThisRow = GetSortKey(currentRow, i);
-
-                if (Equals(valueOfLastRow, valueOfThisRow))
-                    continue;
-
-                if (Comparers[i].Compare(valueOfLastRow, valueOfThisRow) == 0)
-                    continue;
-
-                atLeastOneRecordFound = true;
-                break;
-            }
-
-            if (atLeastOneRecordFound)
+            // A non-zero comparison means the keys differ -- a new distinct row.
+            if (CompareRows(_lastRow, currentRow) != 0)
             {
                 _lastRow = currentRow;
-                break;
+                return true;
             }
         }
-
-        return atLeastOneRecordFound;
     }
 }

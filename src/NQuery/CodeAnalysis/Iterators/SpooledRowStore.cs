@@ -1,16 +1,22 @@
 namespace NQuery.CodeAnalysis.Iterators;
 
-// A columnar spool for the buffering iterators (Sort): instead of one ArrayRowBuffer per
-// row -- each owning up to four backing arrays plus null masks -- the whole row set shares
-// one set of arrays per container, laid out row-major. A row is just an index; column c of
-// row r lives at r * <count> + c. Appending N rows therefore allocates O(containers) arrays
-// total (amortized by doubling) rather than O(N * containers), which is what made the
-// per-row Clone() path allocate -- and collect -- so heavily.
+// A columnar spool for the buffering iterators (Sort, hash-match build): the row set is
+// stored unboxed, segregated by container, instead of one ArrayRowBuffer (with its own
+// arrays) per row. A row is just an index.
 //
-// Rows are never moved once stored; callers sort an int[] of row indices instead (see
-// SortIterator), so a sort only permutes a cheap index array, not the row data.
+// Storage is chunked -- a list of fixed-size blocks, each a small columnar slab for
+// ChunkRows rows. Growing the spool appends a new block; it never reallocates the existing
+// ones. That matters because the alternative (one flat array per container, doubled via
+// Array.Resize) throws away the old array on every growth step, so spooling N rows would
+// allocate ~2x the live size in transient array garbage and overshoot capacity by up to 2x.
+// Chunks pay neither: total allocation tracks the live size and overshoot is bounded by one
+// block. Rows never move once stored, so a sort permutes a cheap int[] of indices instead.
 internal sealed class SpooledRowStore
 {
+    private const int ChunkRows = 256;
+    private const int ChunkShift = 8;
+    private const int ChunkMask = ChunkRows - 1;
+
     private readonly int _objectCount;
     private readonly int _bits32Count;
     private readonly int _bits64Count;
@@ -19,15 +25,7 @@ internal sealed class SpooledRowStore
     private readonly int _null64Words;
     private readonly int _null128Words;
 
-    private object?[] _objects;
-    private uint[] _bits32;
-    private ulong[] _bits64;
-    private Int128[] _bits128;
-    private ulong[] _null32;
-    private ulong[] _null64;
-    private ulong[] _null128;
-
-    private int _capacity;
+    private readonly List<Chunk> _chunks = new();
     private int _count;
 
     public SpooledRowStore(RowBuffer template)
@@ -44,15 +42,6 @@ internal sealed class SpooledRowStore
         _null32Words = WordCount(bits32Count);
         _null64Words = WordCount(bits64Count);
         _null128Words = WordCount(bits128Count);
-
-        _capacity = 0;
-        _objects = Array.Empty<object?>();
-        _bits32 = Array.Empty<uint>();
-        _bits64 = Array.Empty<ulong>();
-        _bits128 = Array.Empty<Int128>();
-        _null32 = Array.Empty<ulong>();
-        _null64 = Array.Empty<ulong>();
-        _null128 = Array.Empty<ulong>();
     }
 
     public int Count => _count;
@@ -65,50 +54,57 @@ internal sealed class SpooledRowStore
 
     public int Bits128Count => _bits128Count;
 
-    // Copies the source row's containers into the next free slot, raw (no boxing), exactly
-    // as RowBuffer.CopyContainersInto would into a standalone ArrayRowBuffer.
+    // Copies the source row's containers into the next free slot, raw (no boxing).
     public void Append(RowBuffer source)
     {
-        EnsureCapacity(_count + 1);
         var row = _count;
+        var chunkIndex = row >> ChunkShift;
+        if (chunkIndex == _chunks.Count)
+            _chunks.Add(new Chunk(this));
 
-        var objectBase = row * _objectCount;
+        var chunk = _chunks[chunkIndex];
+        var slot = row & ChunkMask;
+
+        var objectBase = slot * _objectCount;
         for (var i = 0; i < _objectCount; i++)
-            _objects[objectBase + i] = source.GetObject(i);
+            chunk.Objects[objectBase + i] = source.GetObject(i);
 
-        var bits32Base = row * _bits32Count;
-        var null32Base = row * _null32Words;
+        var bits32Base = slot * _bits32Count;
+        var null32Base = slot * _null32Words;
         for (var i = 0; i < _bits32Count; i++)
         {
-            _bits32[bits32Base + i] = source.GetBits32(i);
-            SetNull(_null32, null32Base, i, source.IsNull32(i));
+            chunk.Bits32[bits32Base + i] = source.GetBits32(i);
+            SetNull(chunk.Null32, null32Base, i, source.IsNull32(i));
         }
 
-        var bits64Base = row * _bits64Count;
-        var null64Base = row * _null64Words;
+        var bits64Base = slot * _bits64Count;
+        var null64Base = slot * _null64Words;
         for (var i = 0; i < _bits64Count; i++)
         {
-            _bits64[bits64Base + i] = source.GetBits64(i);
-            SetNull(_null64, null64Base, i, source.IsNull64(i));
+            chunk.Bits64[bits64Base + i] = source.GetBits64(i);
+            SetNull(chunk.Null64, null64Base, i, source.IsNull64(i));
         }
 
-        var bits128Base = row * _bits128Count;
-        var null128Base = row * _null128Words;
+        var bits128Base = slot * _bits128Count;
+        var null128Base = slot * _null128Words;
         for (var i = 0; i < _bits128Count; i++)
         {
-            _bits128[bits128Base + i] = source.GetBits128(i);
-            SetNull(_null128, null128Base, i, source.IsNull128(i));
+            chunk.Bits128[bits128Base + i] = source.GetBits128(i);
+            SetNull(chunk.Null128, null128Base, i, source.IsNull128(i));
         }
 
         _count++;
     }
 
-    // Resets the row count so the storage (and its capacity) can be reused across
-    // re-executions; object references in the used range are released for the GC.
+    // Resets the row count so the chunks (and their capacity) can be reused across
+    // re-executions; object references are released for the GC.
     public void Clear()
     {
         if (_objectCount > 0)
-            Array.Clear(_objects, 0, _count * _objectCount);
+        {
+            foreach (var chunk in _chunks)
+                Array.Clear(chunk.Objects, 0, chunk.Objects.Length);
+        }
 
         _count = 0;
     }
@@ -117,38 +113,46 @@ internal sealed class SpooledRowStore
     // its build side at one of these and moves it row to row.
     public Cursor CreateCursor() => new(this);
 
-    public object? GetObject(int row, int index) => _objects[row * _objectCount + index];
-
-    public uint GetBits32(int row, int index) => _bits32[row * _bits32Count + index];
-
-    public ulong GetBits64(int row, int index) => _bits64[row * _bits64Count + index];
-
-    public Int128 GetBits128(int row, int index) => _bits128[row * _bits128Count + index];
-
-    public bool IsNull32(int row, int index) => GetNull(_null32, row * _null32Words, index);
-
-    public bool IsNull64(int row, int index) => GetNull(_null64, row * _null64Words, index);
-
-    public bool IsNull128(int row, int index) => GetNull(_null128, row * _null128Words, index);
-
-    private void EnsureCapacity(int required)
+    public object? GetObject(int row, int index)
     {
-        if (required <= _capacity)
-            return;
+        var chunk = _chunks[row >> ChunkShift];
+        return chunk.Objects[(row & ChunkMask) * _objectCount + index];
+    }
 
-        var newCapacity = _capacity == 0 ? 16 : _capacity * 2;
-        if (newCapacity < required)
-            newCapacity = required;
+    public uint GetBits32(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return chunk.Bits32[(row & ChunkMask) * _bits32Count + index];
+    }
 
-        if (_objectCount > 0) Array.Resize(ref _objects, newCapacity * _objectCount);
-        if (_bits32Count > 0) Array.Resize(ref _bits32, newCapacity * _bits32Count);
-        if (_bits64Count > 0) Array.Resize(ref _bits64, newCapacity * _bits64Count);
-        if (_bits128Count > 0) Array.Resize(ref _bits128, newCapacity * _bits128Count);
-        if (_null32Words > 0) Array.Resize(ref _null32, newCapacity * _null32Words);
-        if (_null64Words > 0) Array.Resize(ref _null64, newCapacity * _null64Words);
-        if (_null128Words > 0) Array.Resize(ref _null128, newCapacity * _null128Words);
+    public ulong GetBits64(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return chunk.Bits64[(row & ChunkMask) * _bits64Count + index];
+    }
 
-        _capacity = newCapacity;
+    public Int128 GetBits128(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return chunk.Bits128[(row & ChunkMask) * _bits128Count + index];
+    }
+
+    public bool IsNull32(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return GetNull(chunk.Null32, (row & ChunkMask) * _null32Words, index);
+    }
+
+    public bool IsNull64(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return GetNull(chunk.Null64, (row & ChunkMask) * _null64Words, index);
+    }
+
+    public bool IsNull128(int row, int index)
+    {
+        var chunk = _chunks[row >> ChunkShift];
+        return GetNull(chunk.Null128, (row & ChunkMask) * _null128Words, index);
     }
 
     private static int WordCount(int count) => (count + 63) >> 6;
@@ -168,9 +172,34 @@ internal sealed class SpooledRowStore
             mask[word] &= ~bit;
     }
 
+    // One fixed-size columnar block: ChunkRows rows' worth of each container. Empty
+    // containers share Array.Empty so a narrow row shape costs nothing for the kinds it
+    // doesn't use.
+    private sealed class Chunk
+    {
+        public readonly object?[] Objects;
+        public readonly uint[] Bits32;
+        public readonly ulong[] Bits64;
+        public readonly Int128[] Bits128;
+        public readonly ulong[] Null32;
+        public readonly ulong[] Null64;
+        public readonly ulong[] Null128;
+
+        public Chunk(SpooledRowStore store)
+        {
+            Objects = store._objectCount == 0 ? Array.Empty<object?>() : new object?[ChunkRows * store._objectCount];
+            Bits32 = store._bits32Count == 0 ? Array.Empty<uint>() : new uint[ChunkRows * store._bits32Count];
+            Bits64 = store._bits64Count == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._bits64Count];
+            Bits128 = store._bits128Count == 0 ? Array.Empty<Int128>() : new Int128[ChunkRows * store._bits128Count];
+            Null32 = store._null32Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null32Words];
+            Null64 = store._null64Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null64Words];
+            Null128 = store._null128Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null128Words];
+        }
+    }
+
     // A RowBuffer view onto one row of the store. Reuses the base class's typed/boxed
-    // decode machinery; raw access goes straight to the store's arrays. The position
-    // (Row) is mutable so one instance can be walked across rows without allocating.
+    // decode machinery; raw access goes straight to the store's chunks. The position (Row)
+    // is mutable so one instance can be walked across rows without allocating.
     internal sealed class Cursor : RowBuffer
     {
         private readonly SpooledRowStore _store;

@@ -8,12 +8,18 @@ internal class SortIterator : Iterator
     private readonly Iterator _input;
     private readonly RowBuffer _materializationSource;
     private readonly SpooledRowBuffer _spooledRowBuffer;
+    private readonly EmittedRowComparer _rowComparer;
+
+    // The order-array comparer for the current spool: it positions two store cursors and
+    // invokes the compiled delegate. Rebuilt per Open (bound to that run's store), reused by
+    // DISTINCT collapsing via CompareRows.
+    private RowComparer? _comparer;
 
     public SortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
     {
         _input = input;
         var entries = sortEntries.ToImmutableArray();
-        Comparers = comparers.ToImmutableArray();
+        var comparerArray = comparers.ToImmutableArray();
 
         // Sort keys the input doesn't produce (outer references) must be captured along
         // with each row, so they are projected and appended after the input's columns in
@@ -23,9 +29,13 @@ internal class SortIterator : Iterator
             ? input.RowBuffer
             : new CombinedRowBuffer(input.RowBuffer, new ProjectedRowBuffer(outerEntries));
 
-        SortColumns = ResolveSortColumns(entries, outerEntries, input.RowBuffer);
-        SortTypes = entries.Select(e => e.Type).ToImmutableArray();
+        var sortColumns = ResolveSortColumns(entries, outerEntries, input.RowBuffer);
+        var sortTypes = entries.Select(e => e.Type).ToImmutableArray();
         _spooledRowBuffer = new SpooledRowBuffer(input.RowBuffer);
+
+        // Compile the whole multi-key comparison once, specialized to these columns and
+        // comparers; the spool rows are then sorted with one typed delegate, no boxing.
+        _rowComparer = EmittedRowComparerCompiler.Compile(sortColumns, sortTypes, comparerArray);
     }
 
     // Each sort key's column within a materialized row: input keys keep their column (the
@@ -59,40 +69,18 @@ internal class SortIterator : Iterator
         get { return _spooledRowBuffer; }
     }
 
-    protected ImmutableArray<RowBufferColumn> SortColumns { get; }
-
-    protected ImmutableArray<Type> SortTypes { get; }
-
-    protected ImmutableArray<IComparer> Comparers { get; }
-
     // The store row index the cursor currently sits on (after mapping through the sort order).
     protected int CurrentRow => _spooledRowBuffer.CurrentRow;
 
-    // The sort keys for every row, boxed once at spool time and laid out row-major
-    // (row * SortColumns.Length + column). Comparisons -- the sort's and DISTINCT's --
-    // read these instead of re-boxing the typed columns on every probe, which is what
-    // made the sort allocate O(rows * log rows) boxed values instead of O(rows).
-    private object?[] _keys = Array.Empty<object?>();
-
-    protected object? GetSortKey(int row, int column) => _keys[row * SortColumns.Length + column];
+    // Compares two spooled rows on the sort keys via the compiled delegate. DISTINCT uses it
+    // to decide whether the current row opens a new group (a non-zero result).
+    protected int CompareRows(int rowX, int rowY) => _comparer!.Compare(rowX, rowY);
 
     private void SortInput()
     {
         var store = new SpooledRowStore(_materializationSource);
-        var keyCount = SortColumns.Length;
-        var keys = new List<object?>();
-
         while (_input.Read())
-        {
             store.Append(_materializationSource);
-
-            // The materialization source is positioned on the row just appended; box its
-            // sort keys now so the comparer never has to.
-            for (var c = 0; c < keyCount; c++)
-                keys.Add(_materializationSource.GetBoxedValue(SortColumns[c], SortTypes[c]));
-        }
-
-        _keys = keys.ToArray();
 
         var order = new int[store.Count];
         for (var i = 0; i < order.Length; i++)
@@ -100,7 +88,8 @@ internal class SortIterator : Iterator
 
         // Sort the index array, not the row data: the rows stay put in the columnar store
         // and only the cheap int[] is permuted.
-        Array.Sort(order, new RowComparer(_keys, keyCount, Comparers));
+        _comparer = new RowComparer(store, _rowComparer);
+        Array.Sort(order, _comparer);
 
         _spooledRowBuffer.SetRows(store, order);
     }
@@ -193,45 +182,27 @@ internal class SortIterator : Iterator
         public override bool IsNull128(int index) => Store!.IsNull128(CurrentRow, index);
     }
 
+    // Adapts the compiled row comparer to Array.Sort over the order array: it owns two
+    // reusable cursors onto the spool, positions them at the two rows, and invokes the
+    // delegate. Comparing indices keeps the row data put.
     private sealed class RowComparer : IComparer<int>
     {
-        private readonly object?[] _keys;
-        private readonly int _keyCount;
-        private readonly ImmutableArray<IComparer> _comparers;
+        private readonly SpooledRowStore.Cursor _x;
+        private readonly SpooledRowStore.Cursor _y;
+        private readonly EmittedRowComparer _comparer;
 
-        public RowComparer(object?[] keys, int keyCount, ImmutableArray<IComparer> comparers)
+        public RowComparer(SpooledRowStore store, EmittedRowComparer comparer)
         {
-            _keys = keys;
-            _keyCount = keyCount;
-            _comparers = comparers;
+            _x = store.CreateCursor();
+            _y = store.CreateCursor();
+            _comparer = comparer;
         }
 
         public int Compare(int x, int y)
         {
-            var xBase = x * _keyCount;
-            var yBase = y * _keyCount;
-
-            for (var index = 0; index < _keyCount; index++)
-            {
-                var value1 = _keys[xBase + index];
-                var value2 = _keys[yBase + index];
-
-                if (value1 is null && value2 is not null)
-                    return -1;
-
-                if (value1 is not null && value2 is null)
-                    return +1;
-
-                if (value1 is not null && value2 is not null)
-                {
-                    var result = _comparers[index].Compare(value1, value2);
-
-                    if (result != 0)
-                        return result;
-                }
-            }
-
-            return 0;
+            _x.Row = x;
+            _y.Row = y;
+            return _comparer(_x, _y);
         }
     }
 }

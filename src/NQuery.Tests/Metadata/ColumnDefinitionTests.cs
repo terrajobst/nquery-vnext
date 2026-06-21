@@ -79,11 +79,12 @@ public sealed class ColumnDefinitionTests
         Assert.Equal(42, reader[0]);
     }
 
-    // Mirrors how Emitter.BuildColumnAccess turns a column definition into a row accessor.
+    // CreateInvocation now yields the value in its own CLR type (the row writer lifts it to
+    // the typed slot, no boxing); this helper boxes to object for its own object-typed accessor.
     private static Func<object, object> BuildAccessor(ColumnDefinition column)
     {
         var instance = Expression.Parameter(typeof(object));
-        var body = column.CreateInvocation(instance);
+        var body = Expression.Convert(column.CreateInvocation(instance), typeof(object));
         return Expression.Lambda<Func<object, object>>(body, instance).Compile();
     }
 }

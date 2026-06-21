@@ -81,9 +81,10 @@ internal static class Emitter
 
     // Compiles the whole row's column reads into a single delegate: the per-column loop
     // is unrolled at compile time into one straight-line block, so each scanned row costs
-    // a single delegate invocation instead of one per column. Each column reads its value
-    // as object (the data source hands back object) and stores it typed into the row
-    // buffer -- one unbox/cast at the source boundary.
+    // a single delegate invocation instead of one per column. Each column produces its
+    // value in its own CLR type, which is lifted to the column's nullable shape and stored
+    // typed into the row buffer. A typed accessor therefore never boxes; only an
+    // object-typed source (e.g. a DataRow indexer) costs one unbox at the boundary.
     private static Action<object, ArrayRowBuffer> BuildRowWriter(ImmutableArray<ColumnDefinition> definitions, RowBufferLayout layout, ImmutableArray<ValueSlot> outputValueSlots)
     {
         var row = Expression.Parameter(typeof(object));

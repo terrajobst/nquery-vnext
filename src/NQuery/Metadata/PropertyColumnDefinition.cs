@@ -14,17 +14,11 @@ internal sealed class PropertyColumnDefinition : ColumnDefinition
         _property = property;
     }
 
+    // Returns the property value in its own CLR type -- not boxed to object. The row
+    // writer lifts it to the column's nullable shape and stores it typed, so a value-typed
+    // column never boxes on the way into the row buffer.
     internal override Expression CreateInvocation(Expression instance)
     {
-        return
-            Expression.Convert(
-                _property.CreateInvocation(
-                    Expression.Convert(
-                        instance,
-                        _rowType
-                    )
-                ),
-                typeof(object)
-            );
+        return _property.CreateInvocation(Expression.Convert(instance, _rowType));
     }
 }
