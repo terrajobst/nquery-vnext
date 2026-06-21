@@ -1,10 +1,12 @@
 # NQuery Major Refactoring
 
+* Make sure we handle nullable value types
+* Make Instance return InstancedType and see whether the tests are still
+  passing.
 * Benchmarking
     - What about other iterators, like TopWithTies, NestedLoops etc
 * We need to change the comparer contract to support `IComparer<T>`. We probably
   should still support `IComparer` as well.
-* Merge the strongly typed Northwind changes
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 * When creating tables, columns, properties, and methods we need to normalize
