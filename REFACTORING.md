@@ -107,6 +107,9 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
+* TypeSymbol
+    - Support type aliases
+    - Host methods and properties on TypeSymbol, lazily loaded.
 * We still need to support cases where the type isn't known until runtime. That
   should probably be `compilation.CompileExpression(typeof(SomeType))` that
   returns `Expression<object>`.
