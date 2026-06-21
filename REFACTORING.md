@@ -1,10 +1,5 @@
 # NQuery Major Refactoring
 
-* Why does iterator contain so many emitter types?
-* Sort is 25x slower.
-    - Did we benchmark all iterators?
-    - What about nested loops?
-    - What about probe/passthru?
 * We need to change the comparer contract to support `IComparer<T>`. We probably
   should still support `IComparer` as well.
 * Merge the strongly typed Northwind changes

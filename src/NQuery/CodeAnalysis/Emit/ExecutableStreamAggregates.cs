@@ -22,7 +22,7 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
     private readonly ImmutableArray<RowBufferColumn> _groupOutputColumns;
     private readonly ImmutableArray<Type> _groupTypes;
     private readonly ImmutableArray<IComparer> _comparers;
-    private readonly Func<EmittedAggregates> _aggregatesFactory;
+    private readonly Func<CompiledAggregates> _aggregatesFactory;
 
     public ExecutableStreamAggregates(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
@@ -32,7 +32,7 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
         // Compile against (outer ++ input) when correlated, matching the buffer the
         // iterator feeds; otherwise just the input's own slots.
         var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
-        var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
+        var slotIndices = ExpressionCompiler.CreateSlotIndices(slots);
 
         _outputLayout = RowBufferLayout.Create(outputValueSlots);
 
@@ -45,12 +45,12 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
         // The aggregate results land in the output columns after the grouping columns.
         var aggregateColumns = _outputLayout.Columns.Skip(groups.Length).ToImmutableArray();
         var aggregateTypes = aggregates.Select(a => a.Output.Type).ToImmutableArray();
-        _aggregatesFactory = EmittedAggregateCompiler.Compile(aggregates, slotIndices, aggregateColumns, aggregateTypes);
+        _aggregatesFactory = AggregateCompiler.Compile(aggregates, slotIndices, aggregateColumns, aggregateTypes);
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
     {
         var input = _input.CreateIterator(outer);
-        return new EmittedStreamAggregateIterator(input, _groupSourceColumns, _groupOutputColumns, _groupTypes, _comparers, _aggregatesFactory(), _outputLayout, outer);
+        return new StreamAggregateIterator(input, _groupSourceColumns, _groupOutputColumns, _groupTypes, _comparers, _aggregatesFactory(), _outputLayout, outer);
     }
 }

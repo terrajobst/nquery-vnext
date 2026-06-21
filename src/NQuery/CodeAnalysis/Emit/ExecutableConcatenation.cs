@@ -30,6 +30,6 @@ internal sealed class ExecutableConcatenation : ExecutableOperator
                                          var allocation = Allocate(_inputs[i], inputs[i]);
                                          return _definedValues.Select(d => allocation[d.InputValueSlots[i]]).ToImmutableArray();
                                      });
-        return new EmittedConcatenationIterator(inputs, inputEntries);
+        return new ConcatenationIterator(inputs, inputEntries);
     }
 }

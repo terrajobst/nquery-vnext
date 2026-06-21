@@ -39,8 +39,8 @@ public class LeftSemiNestedLoopsIteratorTests : IteratorTests
 
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
-        var predicate = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
-        var passthru = new EmittedPredicate(rb => rb.NullableInt32(0)!.Value % 2 == 0);
+        var predicate = new CompiledPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
+        var passthru = new CompiledPredicate(rb => rb.NullableInt32(0)!.Value % 2 == 0);
 
         using (var iterator = new LeftSemiNestedLoopsIterator(left, right, predicate, passthru))
         {
@@ -104,7 +104,7 @@ public class LeftSemiNestedLoopsIteratorTests : IteratorTests
 
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
-        var passthru = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), 2));
+        var passthru = new CompiledPredicate(rb => Equals(rb.NullableInt32(0), 2));
 
         using var iterator = new LeftSemiNestedLoopsIterator(left, right, _ => true, passthru);
         AssertProduces(iterator, expected);
@@ -136,7 +136,7 @@ public class LeftSemiNestedLoopsIteratorTests : IteratorTests
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
         // left columns rb[0..1], right column rb[2].
-        var predicate = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
+        var predicate = new CompiledPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
 
         using var iterator = new LeftSemiNestedLoopsIterator(left, right, predicate, _ => false);
         AssertProduces(iterator, expected);

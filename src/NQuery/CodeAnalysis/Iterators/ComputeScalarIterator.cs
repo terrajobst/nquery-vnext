@@ -8,7 +8,7 @@ namespace NQuery.CodeAnalysis.Iterators;
 // reference the outer (left) row. The outer buffer is then prepended to the input
 // buffer (matching the (outer ++ input) slot layout the writers were compiled
 // against); the computed columns are still appended to the input's own columns.
-internal sealed class EmittedComputeScalarIterator : Iterator
+internal sealed class ComputeScalarIterator : Iterator
 {
     private readonly Iterator _input;
     private readonly Action<RowBuffer, ArrayRowBuffer> _writer;
@@ -16,7 +16,7 @@ internal sealed class EmittedComputeScalarIterator : Iterator
     private readonly ArrayRowBuffer _rowBuffer;
     private readonly CombinedRowBuffer _combinedRowBuffer;
 
-    public EmittedComputeScalarIterator(Iterator input, Action<RowBuffer, ArrayRowBuffer> writer, RowBufferLayout computedLayout, RowBuffer? outer)
+    public ComputeScalarIterator(Iterator input, Action<RowBuffer, ArrayRowBuffer> writer, RowBufferLayout computedLayout, RowBuffer? outer)
     {
         _input = input;
         _writer = writer;

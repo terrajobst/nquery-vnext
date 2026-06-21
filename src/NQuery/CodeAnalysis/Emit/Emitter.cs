@@ -95,7 +95,7 @@ internal static class Emitter
         {
             var slotType = outputValueSlots[i].Type;
             var value = Expression.Convert(definitions[i].CreateInvocation(row), slotType.GetNullableType());
-            writes[i] = EmittedExpressionCompiler.BuildWriteCall(buffer, layout.Columns[i], slotType, value);
+            writes[i] = ExpressionCompiler.BuildWriteCall(buffer, layout.Columns[i], slotType, value);
         }
 
         // A scan with no referenced columns still produces rows; its writer is a no-op.

@@ -5,18 +5,19 @@ using System.Reflection;
 
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Binding;
+using NQuery.CodeAnalysis.Iterators;
 using NQuery.CodeAnalysis.Symbols;
 
-namespace NQuery.CodeAnalysis.Iterators;
+namespace NQuery.CodeAnalysis.Emit;
 
 // Compiles a LogicalExpression into a delegate that takes the row buffer as a
 // parameter. A value-slot reference indexes that parameter buffer at a position
 // determined statically from the operator's output slot order -- nothing about a
 // particular execution is baked in, so the delegate is compiled once and reused.
 //
-// The three-valued-logic handling mirrors ExpressionBuilder/ScalarEmitter; the
-// only difference is how value slots resolve.
-internal sealed class EmittedExpressionCompiler
+// NULLs follow SQL three-valued logic: an operand that is NULL generally makes the
+// whole result NULL, except where AND/OR can short-circuit to FALSE/TRUE.
+internal sealed class ExpressionCompiler
 {
     private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object))!;
 
@@ -35,7 +36,7 @@ internal sealed class EmittedExpressionCompiler
     private readonly List<ParameterExpression> _locals = new();
     private readonly List<Expression> _assignments = new();
 
-    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    private ExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
         : this(slotIndices, Expression.Parameter(typeof(RowBuffer)))
     {
     }
@@ -43,7 +44,7 @@ internal sealed class EmittedExpressionCompiler
     // Several values can be compiled against one shared input-buffer parameter so their
     // bodies fold into a single lambda (see CompileRowWriter); each compiler still keeps
     // its own locals/assignments, so the per-value blocks stay independent.
-    private EmittedExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices, ParameterExpression rowBuffer)
+    private ExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices, ParameterExpression rowBuffer)
     {
         _slotIndices = slotIndices;
         _rowBuffer = rowBuffer;
@@ -56,14 +57,14 @@ internal sealed class EmittedExpressionCompiler
         return RowBufferLayout.CreateSlotMap(outputValueSlots);
     }
 
-    public static EmittedFunction CompileFunction(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    public static CompiledFunction CompileFunction(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
-        return Compile<EmittedFunction>(expression, typeof(object), slotIndices);
+        return Compile<CompiledFunction>(expression, typeof(object), slotIndices);
     }
 
-    public static EmittedPredicate CompilePredicate(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    public static CompiledPredicate CompilePredicate(LogicalExpression expression, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
-        return Compile<EmittedPredicate>(expression, typeof(bool), slotIndices);
+        return Compile<CompiledPredicate>(expression, typeof(bool), slotIndices);
     }
 
     // Compiles a whole set of computed values into one typed store: the per-value loop is
@@ -81,7 +82,7 @@ internal sealed class EmittedExpressionCompiler
         for (var i = 0; i < definedValues.Length; i++)
         {
             var slotType = definedValues[i].ValueSlot.Type;
-            var compiler = new EmittedExpressionCompiler(slotIndices, rowBuffer);
+            var compiler = new ExpressionCompiler(slotIndices, rowBuffer);
             var value = compiler.BuildBody(definedValues[i].Expression, slotType.GetNullableType());
             writes[i] = BuildWriteCall(targetBuffer, computedLayout.Columns[i], slotType, value);
         }
@@ -92,7 +93,7 @@ internal sealed class EmittedExpressionCompiler
 
     private static TDelegate Compile<TDelegate>(LogicalExpression expression, Type targetType, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices) where TDelegate : Delegate
     {
-        var compiler = new EmittedExpressionCompiler(slotIndices);
+        var compiler = new ExpressionCompiler(slotIndices);
         var lambda = compiler.BuildLambda(expression, typeof(TDelegate), targetType);
         return (TDelegate)lambda.Compile();
     }
@@ -477,7 +478,7 @@ internal sealed class EmittedExpressionCompiler
         var targetType = expression.Type;
         var delegateType = typeof(Func<,>).MakeGenericType(typeof(RowBuffer), targetType);
 
-        var nested = new EmittedExpressionCompiler(_slotIndices);
+        var nested = new ExpressionCompiler(_slotIndices);
         var lambda = nested.BuildLambda(expression, delegateType, targetType);
 
         // The nested scope reads from the same row buffer; pass it through.

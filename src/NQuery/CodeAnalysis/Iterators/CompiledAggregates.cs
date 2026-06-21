@@ -7,9 +7,9 @@ namespace NQuery.CodeAnalysis.Iterators;
 //   Initialize()                -- seed every accumulator
 //   Accumulate(rowBuffer)       -- fold the current row into every accumulator
 //   StoreResults(outputBuffer)  -- write every result, typed, into the aggregate columns
-internal sealed class EmittedAggregates
+internal sealed class CompiledAggregates
 {
-    public EmittedAggregates(Action initialize, Action<RowBuffer> accumulate, Action<ArrayRowBuffer> storeResults)
+    public CompiledAggregates(Action initialize, Action<RowBuffer> accumulate, Action<ArrayRowBuffer> storeResults)
     {
         Initialize = initialize;
         Accumulate = accumulate;

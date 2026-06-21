@@ -17,16 +17,16 @@ namespace NQuery.CodeAnalysis.Emit;
 // subtree's own filters/computes.
 internal sealed class ExecutableNestedLoops : ExecutableOperator
 {
-    private static readonly EmittedPredicate AlwaysTrue = _ => true;
-    private static readonly EmittedPredicate AlwaysFalse = _ => false;
+    private static readonly CompiledPredicate AlwaysTrue = _ => true;
+    private static readonly CompiledPredicate AlwaysFalse = _ => false;
 
     private readonly ExecutableOperator _left;
     private readonly ExecutableOperator _right;
     private readonly PhysicalJoinKind _joinKind;
     private readonly ValueSlot? _probe;
     private readonly ImmutableArray<ValueSlot> _outerReferences;
-    private readonly EmittedPredicate _predicate;
-    private readonly EmittedPredicate _passthruPredicate;
+    private readonly CompiledPredicate _predicate;
+    private readonly CompiledPredicate _passthruPredicate;
 
     public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, PhysicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
@@ -49,11 +49,11 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
         // Apply encloses this join, in which case the layout is just (left ++ right).
         var combined = left.OutputValueSlots.AddRange(right.OutputValueSlots);
         var predicateSlots = outerSlots.IsEmpty ? combined : outerSlots.AddRange(combined);
-        var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(predicateSlots);
+        var slotIndices = ExpressionCompiler.CreateSlotIndices(predicateSlots);
         _predicate = CompileConjunction(conditions, slotIndices);
         _passthruPredicate = passthruPredicate is null
             ? AlwaysFalse
-            : EmittedExpressionCompiler.CompilePredicate(passthruPredicate, slotIndices);
+            : ExpressionCompiler.CompilePredicate(passthruPredicate, slotIndices);
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
@@ -93,13 +93,13 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
 
     // An empty condition list means an unconditional (cross) join, so the
     // predicate is constant true. Each conjunct already yields false on NULL.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    private static CompiledPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;
 
         var predicates = conditions
-                         .Select(c => EmittedExpressionCompiler.CompilePredicate(c, slotIndices))
+                         .Select(c => ExpressionCompiler.CompilePredicate(c, slotIndices))
                          .ToImmutableArray();
 
         if (predicates.Length == 1)

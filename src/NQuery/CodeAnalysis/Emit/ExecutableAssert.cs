@@ -12,7 +12,7 @@ namespace NQuery.CodeAnalysis.Emit;
 internal sealed class ExecutableAssert : ExecutableOperator
 {
     private readonly ExecutableOperator _input;
-    private readonly EmittedPredicate _predicate;
+    private readonly CompiledPredicate _predicate;
     private readonly string _message;
 
     public ExecutableAssert(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, LogicalExpression condition, string message, ImmutableArray<ValueSlot> outerSlots)
@@ -22,17 +22,17 @@ internal sealed class ExecutableAssert : ExecutableOperator
         _message = message;
 
         var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
-        var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
+        var slotIndices = ExpressionCompiler.CreateSlotIndices(slots);
 
         // NOTE: CompilePredicate coalesces a NULL result to false, so a NULL condition
         //       fires the assert. That suits the only current use (count <= 1, never
         //       NULL); a nullable assert condition would need NULL-passes semantics
         //       (the assert treated NULL as success).
-        _predicate = EmittedExpressionCompiler.CompilePredicate(condition, slotIndices);
+        _predicate = ExpressionCompiler.CompilePredicate(condition, slotIndices);
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
     {
-        return new EmittedAssertIterator(_input.CreateIterator(outer), _predicate, _message, outer);
+        return new AssertIterator(_input.CreateIterator(outer), _predicate, _message, outer);
     }
 }

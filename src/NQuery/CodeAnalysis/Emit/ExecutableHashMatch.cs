@@ -19,7 +19,7 @@ namespace NQuery.CodeAnalysis.Emit;
 // ExecutableNestedLoops. outerSlots is empty iff no Apply encloses this join.
 internal sealed class ExecutableHashMatch : ExecutableOperator
 {
-    private static readonly EmittedPredicate AlwaysTrue = _ => true;
+    private static readonly CompiledPredicate AlwaysTrue = _ => true;
 
     private readonly ExecutableOperator _build;
     private readonly ExecutableOperator _probe;
@@ -30,7 +30,7 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
     private readonly bool _semi;
     private readonly bool _anti;
     private readonly bool _probing;
-    private readonly EmittedPredicate _remainder;
+    private readonly CompiledPredicate _remainder;
     private readonly bool _correlated;
 
     public ExecutableHashMatch(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator build, ExecutableOperator probe, PhysicalHashMatchKind kind, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ImmutableArray<ValueSlot> outerSlots, ValueSlot? probeColumn = null)
@@ -57,7 +57,7 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
         _correlated = !outerSlots.IsEmpty;
         var combined = build.OutputValueSlots.AddRange(probe.OutputValueSlots);
         var remainderSlots = _correlated ? outerSlots.AddRange(combined) : combined;
-        var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(remainderSlots);
+        var slotIndices = ExpressionCompiler.CreateSlotIndices(remainderSlots);
         _remainder = CompileConjunction(remainder, slotIndices);
     }
 
@@ -74,18 +74,18 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
         // A correlated remainder reads the outer row; hand the outer buffer to the iterator
         // so it can prepend it (outer ++ build ++ probe) when evaluating the remainder.
         var remainderOuter = _correlated ? outer : null;
-        return new EmittedHashMatchIterator(build, probe, buildKey, probeKey, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter);
+        return new HashMatchIterator(build, probe, buildKey, probeKey, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter);
     }
 
     // Each conjunct already yields false on NULL; an empty remainder means the hash
     // key alone decides the match.
-    private static EmittedPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
+    private static CompiledPredicate CompileConjunction(ImmutableArray<LogicalExpression> conditions, FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices)
     {
         if (conditions.IsEmpty)
             return AlwaysTrue;
 
         var predicates = conditions
-                         .Select(c => EmittedExpressionCompiler.CompilePredicate(c, slotIndices))
+                         .Select(c => ExpressionCompiler.CompilePredicate(c, slotIndices))
                          .ToImmutableArray();
 
         if (predicates.Length == 1)

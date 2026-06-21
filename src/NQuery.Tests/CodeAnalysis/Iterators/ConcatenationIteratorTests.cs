@@ -4,12 +4,12 @@ using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
 
-public class EmittedConcatenationIteratorTests : IteratorTests
+public class ConcatenationIteratorTests : IteratorTests
 {
     private static readonly Type[] IntColumn = { typeof(int) };
 
     [Fact]
-    public void Iterators_EmittedConcatenation_ForwardsProperly()
+    public void Iterators_Concatenation_ForwardsProperly()
     {
         var inputs = new[]
         {
@@ -27,7 +27,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
 
         var expected = new object[] { 1, 2, 3, 4, 5, 6 };
 
-        using (var iterator = new EmittedConcatenationIterator(inputs, entries))
+        using (var iterator = new ConcatenationIterator(inputs, entries))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -44,7 +44,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedConcatenation_ReturnsEmpty_IfAllEmpty()
+    public void Iterators_Concatenation_ReturnsEmpty_IfAllEmpty()
     {
         var inputs = new[]
         {
@@ -54,12 +54,12 @@ public class EmittedConcatenationIteratorTests : IteratorTests
 
         var entries = inputs.Select(_ => ImmutableArray<RowBufferEntry>.Empty);
 
-        using var iterator = new EmittedConcatenationIterator(inputs, entries);
+        using var iterator = new ConcatenationIterator(inputs, entries);
         AssertEmpty(iterator);
     }
 
     [Fact]
-    public void Iterators_EmittedConcatenation_SkipsEmpty()
+    public void Iterators_Concatenation_SkipsEmpty()
     {
         var inputs = new[]
         {
@@ -71,7 +71,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
 
         var entries = inputs.Select(i => ImmutableArray.Create(RowBufferTestSupport.Entry(i.RowBuffer, IntColumn, 0)));
 
-        using var iterator = new EmittedConcatenationIterator(inputs, entries);
+        using var iterator = new ConcatenationIterator(inputs, entries);
         AssertProduces(iterator, expected);
     }
 
@@ -79,7 +79,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
     // second input's columns are reversed, and its entries reorder them to match the
     // first input's (value, name) layout.
     [Fact]
-    public void Iterators_EmittedConcatenation_RemapsColumnsPerInput()
+    public void Iterators_Concatenation_RemapsColumnsPerInput()
     {
         using var first = new MockedIterator(new object?[,]
         {
@@ -108,7 +108,7 @@ public class EmittedConcatenationIteratorTests : IteratorTests
             {2, "Two"}
         };
 
-        using var iterator = new EmittedConcatenationIterator(inputs, entries);
+        using var iterator = new ConcatenationIterator(inputs, entries);
         AssertProduces(iterator, expected);
     }
 }

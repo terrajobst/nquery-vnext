@@ -15,21 +15,21 @@ namespace NQuery.CodeAnalysis.Iterators;
 //
 // The output row buffer lays out the group values first, then the aggregate results.
 // Group values are copied in from the input row; the aggregates store their own results.
-internal sealed class EmittedStreamAggregateIterator : Iterator
+internal sealed class StreamAggregateIterator : Iterator
 {
     private readonly Iterator _input;
     private readonly ImmutableArray<RowBufferColumn> _groupSourceColumns;
     private readonly ImmutableArray<RowBufferColumn> _groupOutputColumns;
     private readonly ImmutableArray<Type> _groupTypes;
     private readonly ImmutableArray<IComparer> _comparers;
-    private readonly EmittedAggregates _aggregates;
+    private readonly CompiledAggregates _aggregates;
     private readonly RowBuffer _readRowBuffer;
     private readonly ArrayRowBuffer _rowBuffer;
 
     private bool _eof;
     private bool _isFirstRecord;
 
-    public EmittedStreamAggregateIterator(Iterator input, ImmutableArray<RowBufferColumn> groupSourceColumns, ImmutableArray<RowBufferColumn> groupOutputColumns, ImmutableArray<Type> groupTypes, ImmutableArray<IComparer> comparers, EmittedAggregates aggregates, RowBufferLayout outputLayout, RowBuffer? outer)
+    public StreamAggregateIterator(Iterator input, ImmutableArray<RowBufferColumn> groupSourceColumns, ImmutableArray<RowBufferColumn> groupOutputColumns, ImmutableArray<Type> groupTypes, ImmutableArray<IComparer> comparers, CompiledAggregates aggregates, RowBufferLayout outputLayout, RowBuffer? outer)
     {
         _input = input;
         _groupSourceColumns = groupSourceColumns;

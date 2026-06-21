@@ -2,16 +2,16 @@ using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
 
-public class EmittedAssertIteratorTests : IteratorTests
+public class AssertIteratorTests : IteratorTests
 {
     [Fact]
-    public void Iterators_EmittedAssert_ForwardsProperly()
+    public void Iterators_Assert_ForwardsProperly()
     {
         var rows = new object[] { 1, 2 };
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        using (var iterator = new EmittedAssertIterator(input, _ => true, string.Empty, outer: null))
+        using (var iterator = new AssertIterator(input, _ => true, string.Empty, outer: null))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -25,38 +25,38 @@ public class EmittedAssertIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedAssert_DoesNotTriggerAssert_WhenTrue()
+    public void Iterators_Assert_DoesNotTriggerAssert_WhenTrue()
     {
         var rows = new object[] { 1 };
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedAssertIterator(input, _ => true, string.Empty, outer: null);
+        using var iterator = new AssertIterator(input, _ => true, string.Empty, outer: null);
 
         AssertProduces(iterator, expected);
     }
 
     [Fact]
-    public void Iterators_EmittedAssert_DoesNotTriggerAssert_WhenFalseAndInputEmpty()
+    public void Iterators_Assert_DoesNotTriggerAssert_WhenFalseAndInputEmpty()
     {
         var rows = Array.Empty<object>();
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedAssertIterator(input, _ => false, string.Empty, outer: null);
+        using var iterator = new AssertIterator(input, _ => false, string.Empty, outer: null);
 
         AssertProduces(iterator, expected);
     }
 
     [Fact]
-    public void Iterators_EmittedAssert_TriggersAssert_WhenFalseAndInputNonEmpty()
+    public void Iterators_Assert_TriggersAssert_WhenFalseAndInputNonEmpty()
     {
         const string message = "This should be detected";
 
         var rows = new object[] { 1 };
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedAssertIterator(input, _ => false, message, outer: null);
+        using var iterator = new AssertIterator(input, _ => false, message, outer: null);
         iterator.Open();
 
         var exception = Assert.Throws<InvalidOperationException>(() => iterator.Read());
@@ -65,14 +65,14 @@ public class EmittedAssertIteratorTests : IteratorTests
 
     // Hole: the outer-correlation path. The predicate sees (outer ++ input).
     [Fact]
-    public void Iterators_EmittedAssert_EvaluatesPredicateAgainstOuterThenInput()
+    public void Iterators_Assert_EvaluatesPredicateAgainstOuterThenInput()
     {
         var rows = new object[] { 5 };
         var outer = new MockedRowBuffer(new object[] { 5 });
 
         using var input = new MockedIterator(rows);
         // Asserts outer == input; both are 5, so it passes.
-        using var iterator = new EmittedAssertIterator(input, rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)), "mismatch", outer);
+        using var iterator = new AssertIterator(input, rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)), "mismatch", outer);
         AssertProduces(iterator, rows);
     }
 }

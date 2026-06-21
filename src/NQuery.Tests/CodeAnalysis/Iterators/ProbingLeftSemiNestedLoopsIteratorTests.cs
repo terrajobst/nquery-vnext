@@ -107,7 +107,7 @@ public class ProbingLeftSemiNestedLoopsIteratorTests : IteratorTests
         using var left = new MockedIterator(leftRows);
         using var right = new MockedIterator(rightRows);
         // left columns rb[0..1], right column rb[2].
-        var predicate = new EmittedPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
+        var predicate = new CompiledPredicate(rb => Equals(rb.NullableInt32(0), rb.NullableInt32(1)));
 
         using var iterator = new ProbingLeftSemiNestedLoopsIterator(left, right, predicate);
         AssertProduces(iterator, expected);

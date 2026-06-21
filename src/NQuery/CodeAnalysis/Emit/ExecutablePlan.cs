@@ -10,7 +10,7 @@ namespace NQuery.CodeAnalysis.Emit;
 // execution -- the IEnumerable/IEnumerator relationship.
 //
 // Expression-bearing operators (filter, compute) compile their delegates once at
-// emit time via EmittedExpressionCompiler -- those delegates take the row buffer
+// emit time via ExpressionCompiler -- those delegates take the row buffer
 // as a parameter, so they are reused across executions. CreateIterator() then
 // only instantiates fresh stateful iterators (plus the cheap per-run row-buffer
 // entries used by sort/top/project).

@@ -19,7 +19,7 @@ namespace NQuery.CodeAnalysis.Iterators;
 // probing semi (probe set) instead emits *every* build row with a trailing boolean
 // reporting whether it matched -- the decorrelated form of EXISTS, whose enclosing
 // filter then tests that boolean.
-internal sealed class EmittedHashMatchIterator : Iterator
+internal sealed class HashMatchIterator : Iterator
 {
     private static readonly object NullKey = new();
 
@@ -27,7 +27,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
     private readonly Iterator _probe;
     private readonly RowBufferEntry _buildKey;
     private readonly RowBufferEntry _probeKey;
-    private readonly EmittedPredicate _remainder;
+    private readonly CompiledPredicate _remainder;
     private readonly bool _preserveBuild;
     private readonly bool _preserveProbe;
     private readonly bool _semi;
@@ -53,7 +53,7 @@ internal sealed class EmittedHashMatchIterator : Iterator
     private Phase _currentPhase;
     private bool _probeMatched;
 
-    public EmittedHashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
+    public HashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, CompiledPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
     {
         _build = build;
         _probe = probe;

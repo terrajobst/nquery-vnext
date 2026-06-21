@@ -2,10 +2,10 @@ using NQuery.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators;
 
-public class EmittedComputeScalarIteratorTests : IteratorTests
+public class ComputeScalarIteratorTests : IteratorTests
 {
     [Fact]
-    public void Iterators_EmittedComputeScalar_ForwardsProperly()
+    public void Iterators_ComputeScalar_ForwardsProperly()
     {
         Action<RowBuffer, ArrayRowBuffer> writer = (_, _) => { };
         var layout = RowBufferLayout.Create(Array.Empty<Type>());
@@ -14,7 +14,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        using (var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null))
+        using (var iterator = new ComputeScalarIterator(input, writer, layout, outer: null))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -28,20 +28,20 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedComputeScalar_ReturnsEmpty_IfInputIsEmpty()
+    public void Iterators_ComputeScalar_ReturnsEmpty_IfInputIsEmpty()
     {
         var rows = Array.Empty<object>();
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
         Action<RowBuffer, ArrayRowBuffer> writer = (_, target) => target.Write32Bit<int>(0, 1);
 
         using var input = new MockedIterator(rows);
-        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null);
+        using var iterator = new ComputeScalarIterator(input, writer, layout, outer: null);
 
         AssertEmpty(iterator);
     }
 
     [Fact]
-    public void Iterators_EmittedComputeScalar_ComputesValues()
+    public void Iterators_ComputeScalar_ComputesValues()
     {
         var rows = new object[]
         {
@@ -58,7 +58,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
         Action<RowBuffer, ArrayRowBuffer> writer = (rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) * 3);
-        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer: null);
+        using var iterator = new ComputeScalarIterator(input, writer, layout, outer: null);
 
         AssertProduces(iterator, expected);
     }
@@ -66,7 +66,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
     // Hole: the outer-correlation path. The function sees (outer ++ input); the computed
     // column is still appended to the input's own columns.
     [Fact]
-    public void Iterators_EmittedComputeScalar_ComputesValues_UsingOuter()
+    public void Iterators_ComputeScalar_ComputesValues_UsingOuter()
     {
         var rows = new object[] { 4, 6, 8 };
         var expected = new object?[,]
@@ -81,7 +81,7 @@ public class EmittedComputeScalarIteratorTests : IteratorTests
         var layout = RowBufferLayout.Create(new[] { typeof(int) });
         // rb.NullableInt32(0) is the outer value (10), rb.NullableInt32(1) is the input value -> outer + input.
         Action<RowBuffer, ArrayRowBuffer> writer = (rb, target) => target.Write32Bit<int>(0, rb.NullableInt32(0) + rb.NullableInt32(1));
-        using var iterator = new EmittedComputeScalarIterator(input, writer, layout, outer);
+        using var iterator = new ComputeScalarIterator(input, writer, layout, outer);
 
         AssertProduces(iterator, expected);
     }

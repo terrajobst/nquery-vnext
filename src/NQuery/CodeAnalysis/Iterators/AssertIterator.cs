@@ -7,14 +7,14 @@ namespace NQuery.CodeAnalysis.Iterators;
 // When the assert is the correlated part of an Apply's right side, the outer buffer
 // is prepended to the input buffer, matching the (outer ++ input) slot layout the
 // predicate was compiled against.
-internal sealed class EmittedAssertIterator : Iterator
+internal sealed class AssertIterator : Iterator
 {
     private readonly Iterator _input;
-    private readonly EmittedPredicate _predicate;
+    private readonly CompiledPredicate _predicate;
     private readonly string _message;
     private readonly RowBuffer _predicateRowBuffer;
 
-    public EmittedAssertIterator(Iterator input, EmittedPredicate predicate, string message, RowBuffer? outer)
+    public AssertIterator(Iterator input, CompiledPredicate predicate, string message, RowBuffer? outer)
     {
         _input = input;
         _predicate = predicate;

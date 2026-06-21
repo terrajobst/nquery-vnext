@@ -4,14 +4,14 @@ internal sealed class LeftSemiNestedLoopsIterator : NestedLoopsIterator
 {
     private readonly Iterator _left;
     private readonly Iterator _right;
-    private readonly EmittedPredicate _predicate;
-    private readonly EmittedPredicate _passthruPredicate;
+    private readonly CompiledPredicate _predicate;
+    private readonly CompiledPredicate _passthruPredicate;
     private readonly RowBuffer _predicateRowBuffer;
 
     private bool _bof;
     private bool _advanceOuter;
 
-    public LeftSemiNestedLoopsIterator(Iterator left, Iterator right, EmittedPredicate predicate, EmittedPredicate passthruPredicate, RowBuffer? outer = null)
+    public LeftSemiNestedLoopsIterator(Iterator left, Iterator right, CompiledPredicate predicate, CompiledPredicate passthruPredicate, RowBuffer? outer = null)
     {
         _left = left;
         _right = right;

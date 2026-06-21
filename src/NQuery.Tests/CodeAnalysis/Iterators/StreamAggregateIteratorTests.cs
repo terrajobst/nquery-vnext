@@ -9,17 +9,17 @@ namespace NQuery.Tests.CodeAnalysis.Iterators;
 // accumulate, store) that the emitter compiles. The tests here stand in hand-written delegates
 // for those, so they exercise the iterator rather than the real aggregate compilation. The
 // output buffer lays out the grouping columns first, then the aggregate results.
-public class EmittedStreamAggregateIteratorTests : IteratorTests
+public class StreamAggregateIteratorTests : IteratorTests
 {
-    private static EmittedAggregates None()
+    private static CompiledAggregates None()
     {
-        return new EmittedAggregates(() => { }, _ => { }, _ => { });
+        return new CompiledAggregates(() => { }, _ => { }, _ => { });
     }
 
     // Builds the iterator the way the executable operator does: grouping columns are read
     // from the input layout and written to the leading output columns; the aggregate
     // results occupy the trailing output columns.
-    private static EmittedStreamAggregateIterator CreateAggregate(MockedIterator input, Type[] inputTypes, int[] groupColumns, Type[] aggregateTypes, EmittedAggregates aggregates, RowBuffer? outer = null)
+    private static StreamAggregateIterator CreateAggregate(MockedIterator input, Type[] inputTypes, int[] groupColumns, Type[] aggregateTypes, CompiledAggregates aggregates, RowBuffer? outer = null)
     {
         var inputLayout = RowBufferLayout.Create(inputTypes);
         var groupTypes = groupColumns.Select(i => inputTypes[i]).ToArray();
@@ -30,16 +30,16 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
         var groupOutput = outputLayout.Columns.Take(groupColumns.Length).ToImmutableArray();
         var comparers = groupColumns.Select(_ => (IComparer)Comparer.Default).ToImmutableArray();
 
-        return new EmittedStreamAggregateIterator(input, groupSource, groupOutput, groupTypes.ToImmutableArray(), comparers, aggregates, outputLayout, outer);
+        return new StreamAggregateIterator(input, groupSource, groupOutput, groupTypes.ToImmutableArray(), comparers, aggregates, outputLayout, outer);
     }
 
     // MAX and MIN over the int in the given 32-bit column, written to the first two
     // aggregate (32-bit) output columns.
-    private static EmittedAggregates MaxMin(int valueColumn)
+    private static CompiledAggregates MaxMin(int valueColumn)
     {
         int? max = null;
         int? min = null;
-        return new EmittedAggregates(
+        return new CompiledAggregates(
             () => { max = null; min = null; },
             rb =>
             {
@@ -55,7 +55,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ForwardsProperly()
+    public void Iterators_StreamAggregate_ForwardsProperly()
     {
         var rows = new object[] { 1, 2 };
         var expected = new object[1, 0];
@@ -76,7 +76,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ReturnsEmpty_IfInputEmptyAndGrouped()
+    public void Iterators_StreamAggregate_ReturnsEmpty_IfInputEmptyAndGrouped()
     {
         var rows = Array.Empty<object>();
 
@@ -87,7 +87,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ReturnsSingleRow_IfInputEmptyAndNotGrouped()
+    public void Iterators_StreamAggregate_ReturnsSingleRow_IfInputEmptyAndNotGrouped()
     {
         var rows = Array.Empty<object>();
         var expected = new object[1, 0];
@@ -99,7 +99,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ComputeAggregates_WhenNotGrouped()
+    public void Iterators_StreamAggregate_ComputeAggregates_WhenNotGrouped()
     {
         var rows = new object[] { 1, 2, 3 };
         var expected = new object?[,]
@@ -114,7 +114,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ComputeAggregates_WhenGrouped()
+    public void Iterators_StreamAggregate_ComputeAggregates_WhenGrouped()
     {
         var rows = new object?[,]
         {
@@ -139,7 +139,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
     // Hole: the outer-correlation path. The read buffer is (outer ++ input), so an
     // argument can combine the outer row with each input row.
     [Fact]
-    public void Iterators_EmittedStreamAggregate_ComputeAggregates_UsingOuter()
+    public void Iterators_StreamAggregate_ComputeAggregates_UsingOuter()
     {
         var rows = new object[] { 1, 2, 3 };
         var expected = new object?[,]
@@ -152,7 +152,7 @@ public class EmittedStreamAggregateIteratorTests : IteratorTests
 
         // rb.NullableInt32(0) is the outer value (100), rb.NullableInt32(1) is the input value; MAX over their sum.
         int? max = null;
-        var aggregates = new EmittedAggregates(
+        var aggregates = new CompiledAggregates(
             () => max = null,
             rb =>
             {

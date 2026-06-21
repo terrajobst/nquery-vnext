@@ -9,7 +9,7 @@ namespace NQuery.CodeAnalysis.Iterators;
 //
 // Distinctness (plain UNION) is handled by a distinct sort the planner places above
 // this node, so the concatenation itself never deduplicates.
-internal sealed class EmittedConcatenationIterator : Iterator
+internal sealed class ConcatenationIterator : Iterator
 {
     private readonly ImmutableArray<Iterator> _inputs;
     private readonly ImmutableArray<ProjectedRowBuffer> _inputRowBuffers;
@@ -18,7 +18,7 @@ internal sealed class EmittedConcatenationIterator : Iterator
     private int _currentInputIndex;
     private bool _currentInputIsOpen;
 
-    public EmittedConcatenationIterator(IEnumerable<Iterator> inputs, IEnumerable<ImmutableArray<RowBufferEntry>> entries)
+    public ConcatenationIterator(IEnumerable<Iterator> inputs, IEnumerable<ImmutableArray<RowBufferEntry>> entries)
     {
         _inputs = inputs.ToImmutableArray();
         _inputRowBuffers = entries.Select(e => new ProjectedRowBuffer(e)).ToImmutableArray();

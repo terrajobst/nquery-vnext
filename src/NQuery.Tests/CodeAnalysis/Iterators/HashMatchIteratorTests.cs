@@ -11,13 +11,13 @@ namespace NQuery.Tests.CodeAnalysis.Iterators;
 // their container, so a flat output column maps to a container index per its type (e.g.
 // for an (int, string) build joined to an (int, string) probe, the ints are 32-bit
 // columns 0/1 and the strings are object columns 0/1).
-public class EmittedHashMatchIteratorTests : IteratorTests
+public class HashMatchIteratorTests : IteratorTests
 {
-    private static EmittedHashMatchIterator Join(MockedIterator build, MockedIterator probe, EmittedPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false)
+    private static HashMatchIterator Join(MockedIterator build, MockedIterator probe, CompiledPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false)
     {
         var buildKey = RowBufferTestSupport.IntKey(build.RowBuffer, 0);
         var probeKey = RowBufferTestSupport.IntKey(probe.RowBuffer, 0);
-        return new EmittedHashMatchIterator(build, probe, buildKey, probeKey, remainder, preserveBuild, preserveProbe, semi, anti, probing);
+        return new HashMatchIterator(build, probe, buildKey, probeKey, remainder, preserveBuild, preserveProbe, semi, anti, probing);
     }
 
     [Theory]
@@ -25,7 +25,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, false)]  // LeftOuter
     [InlineData(false, true)]  // RightOuter
     [InlineData(true, true)]   // FullOuter
-    public void Iterators_EmittedHashMatch_ForwardsProperly(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_ForwardsProperly(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2 };
         var probeRows = new object?[] { 2, 3 };
@@ -76,7 +76,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [Theory]
     [InlineData(false, false)] // Inner
     [InlineData(true, false)]  // LeftOuter
-    public void Iterators_EmittedHashMatch_ReturnsEmpty_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_ReturnsEmpty_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var probeRows = new object?[] { 2, 3 };
 
@@ -90,7 +90,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [Theory]
     [InlineData(false, true)] // RightOuter
     [InlineData(true, true)]  // FullOuter
-    public void Iterators_EmittedHashMatch_ReturnsProbe_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_ReturnsProbe_IfBuildIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var probeRows = new object?[] { 2, 3 };
         var expected = new object?[,]
@@ -109,7 +109,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [Theory]
     [InlineData(false, false)] // Inner
     [InlineData(false, true)]  // RightOuter
-    public void Iterators_EmittedHashMatch_ReturnsEmpty_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_ReturnsEmpty_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2 };
 
@@ -123,7 +123,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [Theory]
     [InlineData(true, false)] // LeftOuter
     [InlineData(true, true)]  // FullOuter
-    public void Iterators_EmittedHashMatch_ReturnsBuild_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_ReturnsBuild_IfProbeIsEmpty(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2 };
         var expected = new object?[,]
@@ -144,7 +144,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public void Iterators_EmittedHashMatch_DoesNotMatchNulls(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_DoesNotMatchNulls(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[,]
         {
@@ -189,7 +189,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public void Iterators_EmittedHashMatch_MatchesDuplicates(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_MatchesDuplicates(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[] { 1, 2, 3 };
         var probeRows = new object?[,]
@@ -219,7 +219,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     [InlineData(true, false)]
     [InlineData(false, true)]
     [InlineData(true, true)]
-    public void Iterators_EmittedHashMatch_MatchesWithRemainder(bool preserveBuild, bool preserveProbe)
+    public void Iterators_HashMatch_MatchesWithRemainder(bool preserveBuild, bool preserveProbe)
     {
         var buildRows = new object?[,]
         {
@@ -244,7 +244,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
 
         // 32-bit columns: build.ProjectId(0), build.TaskId(1), probe.ProjectId(2), probe.TaskId(3);
         // object columns: probe.TaskName(0). The remainder matches build.TaskId == probe.TaskId.
-        var remainder = new EmittedPredicate(rb => Equals(rb.NullableInt32(1), rb.NullableInt32(3)));
+        var remainder = new CompiledPredicate(rb => Equals(rb.NullableInt32(1), rb.NullableInt32(3)));
 
         using var iterator = Join(build, probe, remainder, preserveBuild, preserveProbe);
         iterator.Open();
@@ -313,7 +313,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     // Semi/anti consume the probe only to mark matches and then output the build side:
     // semi keeps the build rows that matched, anti the ones that did not.
     [Fact]
-    public void Iterators_EmittedHashMatch_Semi_EmitsMatchedBuildRows()
+    public void Iterators_HashMatch_Semi_EmitsMatchedBuildRows()
     {
         var buildRows = new object?[] { 1, 2, 3 };
         var probeRows = new object?[] { 2, 3, 4 };
@@ -329,7 +329,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     }
 
     [Fact]
-    public void Iterators_EmittedHashMatch_AntiSemi_EmitsUnmatchedBuildRows()
+    public void Iterators_HashMatch_AntiSemi_EmitsUnmatchedBuildRows()
     {
         var buildRows = new object?[] { 1, 2, 3 };
         var probeRows = new object?[] { 2, 3, 4 };
@@ -346,7 +346,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
 
     // A NULL build key never matches, so semi excludes it and anti keeps it.
     [Fact]
-    public void Iterators_EmittedHashMatch_AntiSemi_KeepsNullKeyBuildRow()
+    public void Iterators_HashMatch_AntiSemi_KeepsNullKeyBuildRow()
     {
         var buildRows = new object?[] { 1, null };
         var probeRows = new object?[] { 1, null };
@@ -363,7 +363,7 @@ public class EmittedHashMatchIteratorTests : IteratorTests
     // A probing semi (decorrelated EXISTS) emits every build row with a trailing boolean
     // marker reporting whether it matched.
     [Fact]
-    public void Iterators_EmittedHashMatch_ProbingSemi_EmitsAllBuildRowsWithMarker()
+    public void Iterators_HashMatch_ProbingSemi_EmitsAllBuildRowsWithMarker()
     {
         var buildRows = new object?[] { 1, 2, 3 };
         var probeRows = new object?[] { 2, 3, 4 };

@@ -31,12 +31,12 @@ Iterator
 │   └── TopWithTiesIterator                   — top including ties
 ├── ConstantIterator                          — one row
 ├── EmptyIterator                             — zero rows
-├── EmittedAssertIterator                     — validates condition
-├── EmittedComputeScalarIterator              — evaluates computed slots
-├── EmittedConcatenationIterator              — concatenates child rows
-├── EmittedFilterIterator                     — evaluates predicate
-├── EmittedHashMatchIterator                  — hash equi-join
-├── EmittedStreamAggregateIterator            — sorted stream aggregation
+├── AssertIterator                     — validates condition
+├── ComputeScalarIterator              — evaluates computed slots
+├── ConcatenationIterator              — concatenates child rows
+├── FilterIterator                     — evaluates predicate
+├── HashMatchIterator                  — hash equi-join
+├── StreamAggregateIterator            — sorted stream aggregation
 ├── ProjectionIterator                        — passes subset of values
 └── TableIterator                             — reads from ITable
 ```

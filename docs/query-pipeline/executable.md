@@ -10,7 +10,7 @@ public static ExecutablePlan Emit(PhysicalQuery query);
 
 ## Key responsibility: compile-once expressions
 
-All filter predicates, computed column expressions, sort keys, and join conditions are **compiled to delegates** at emit time. The `EmittedExpressionCompiler` compiles NQuery expressions into LINQ `Expression<Tree>` instances and then into `Func<RowBuffer, object>` delegates. Because these delegates take the row buffer as a parameter, they are reusable across all rows and across multiple executions.
+All filter predicates, computed column expressions, sort keys, and join conditions are **compiled to delegates** at emit time. The `ExpressionCompiler` compiles NQuery expressions into LINQ `Expression<Tree>` instances and then into `Func<RowBuffer, object>` delegates. Because these delegates take the row buffer as a parameter, they are reusable across all rows and across multiple executions.
 
 All expressions are compiled once at emit time rather than per-row at execution time.
 

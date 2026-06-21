@@ -20,16 +20,16 @@ internal sealed class ExecutableComputeScalar : ExecutableOperator
         // correlated (inside an Apply's right), the expressions see the outer slots ahead
         // of the input's, matching the (outer ++ input) buffer fed at run time.
         var slots = outerSlots.IsEmpty ? input.OutputValueSlots : outerSlots.AddRange(input.OutputValueSlots);
-        var slotIndices = EmittedExpressionCompiler.CreateSlotIndices(slots);
+        var slotIndices = ExpressionCompiler.CreateSlotIndices(slots);
 
         // The computed columns form their own little buffer (appended to the input's);
         // each defined value writes into its column of that buffer.
         _computedLayout = RowBufferLayout.Create(definedValues.Select(v => v.ValueSlot.Type));
-        _writer = EmittedExpressionCompiler.CompileRowWriter(definedValues, _computedLayout, slotIndices);
+        _writer = ExpressionCompiler.CompileRowWriter(definedValues, _computedLayout, slotIndices);
     }
 
     public override Iterator CreateIterator(RowBuffer? outer)
     {
-        return new EmittedComputeScalarIterator(_input.CreateIterator(outer), _writer, _computedLayout, outer);
+        return new ComputeScalarIterator(_input.CreateIterator(outer), _writer, _computedLayout, outer);
     }
 }
