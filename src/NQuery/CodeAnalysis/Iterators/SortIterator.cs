@@ -8,11 +8,10 @@ internal class SortIterator : Iterator
     private readonly Iterator _input;
     private readonly RowBuffer _materializationSource;
     private readonly SpooledRowBuffer _spooledRowBuffer;
-    private readonly EmittedRowComparer _rowComparer;
+    private readonly ImmutableArray<SortKey> _sortKeys;
 
-    // The order-array comparer for the current spool: it positions two store cursors and
-    // invokes the compiled delegate. Rebuilt per Open (bound to that run's store), reused by
-    // DISTINCT collapsing via CompareRows.
+    // The order-array comparer for the current spool. Rebuilt per Open once the keys are
+    // decoded, reused by DISTINCT collapsing via CompareRows.
     private RowComparer? _comparer;
 
     public SortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
@@ -33,9 +32,9 @@ internal class SortIterator : Iterator
         var sortTypes = entries.Select(e => e.Type).ToImmutableArray();
         _spooledRowBuffer = new SpooledRowBuffer(input.RowBuffer);
 
-        // Compile the whole multi-key comparison once, specialized to these columns and
-        // comparers; the spool rows are then sorted with one typed delegate, no boxing.
-        _rowComparer = EmittedRowComparerCompiler.Compile(sortColumns, sortTypes, comparerArray);
+        // One sort key per column. Each decodes its column once per spooled row into a typed
+        // array (see SortKey), so the comparisons that drive the sort never re-decode.
+        _sortKeys = sortColumns.Select((column, i) => SortKey.Create(column, sortTypes[i], comparerArray[i])).ToImmutableArray();
     }
 
     // Each sort key's column within a materialized row: input keys keep their column (the
@@ -82,13 +81,18 @@ internal class SortIterator : Iterator
         while (_input.Read())
             store.Append(_materializationSource);
 
+        // Decode each sort key once into its typed array, so the comparisons below are pure
+        // typed array loads.
+        foreach (var key in _sortKeys)
+            key.Decode(store, store.Count);
+
         var order = new int[store.Count];
         for (var i = 0; i < order.Length; i++)
             order[i] = i;
 
         // Sort the index array, not the row data: the rows stay put in the columnar store
         // and only the cheap int[] is permuted.
-        _comparer = new RowComparer(store, _rowComparer);
+        _comparer = new RowComparer(_sortKeys);
         Array.Sort(order, _comparer);
 
         _spooledRowBuffer.SetRows(store, order);
@@ -182,27 +186,28 @@ internal class SortIterator : Iterator
         public override bool IsNull128(int index) => Store!.IsNull128(CurrentRow, index);
     }
 
-    // Adapts the compiled row comparer to Array.Sort over the order array: it owns two
-    // reusable cursors onto the spool, positions them at the two rows, and invokes the
-    // delegate. Comparing indices keeps the row data put.
+    // Adapts the decoded sort keys to Array.Sort over the order array: it walks the keys in
+    // priority order, returning the first non-zero comparison. Comparing indices keeps the
+    // row data put; the keys are typed arrays, so each comparison is allocation-free.
     private sealed class RowComparer : IComparer<int>
     {
-        private readonly SpooledRowStore.Cursor _x;
-        private readonly SpooledRowStore.Cursor _y;
-        private readonly EmittedRowComparer _comparer;
+        private readonly ImmutableArray<SortKey> _keys;
 
-        public RowComparer(SpooledRowStore store, EmittedRowComparer comparer)
+        public RowComparer(ImmutableArray<SortKey> keys)
         {
-            _x = store.CreateCursor();
-            _y = store.CreateCursor();
-            _comparer = comparer;
+            _keys = keys;
         }
 
         public int Compare(int x, int y)
         {
-            _x.Row = x;
-            _y.Row = y;
-            return _comparer(_x, _y);
+            foreach (var key in _keys)
+            {
+                var result = key.Compare(x, y);
+                if (result != 0)
+                    return result;
+            }
+
+            return 0;
         }
     }
 }
