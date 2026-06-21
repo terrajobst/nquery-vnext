@@ -103,8 +103,8 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
-* CompiledQuery and ExpressionEvaluator should go to CodeAnalysis
-* ExpressionEvaluator should probably be renamed to CompiledExpression.
+* Both `Query` and `Expression<T>` extract values as object. We should have a
+  path that won't convert via object
 * Ideally we'd have `CompiledExpression<T>`
 * We still need to support cases where the type isn't known until runtime. That
   should probably be `compilation.CompileExpression(typeof(SomeType))` that

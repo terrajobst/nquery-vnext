@@ -12,8 +12,8 @@ public class CompiledQueryTests
         var compilation = Compilation.Create(catalog, syntaxTree);
         var compiledQuery = compilation.Compile();
 
-        var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
-        var value = expressionEvaluator.Evaluate();
+        var compiledExpression = compiledQuery.CompileExpression();
+        var value = compiledExpression.Evaluate();
 
         Assert.Null(value);
     }

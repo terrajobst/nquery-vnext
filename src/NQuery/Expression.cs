@@ -4,7 +4,7 @@ namespace NQuery;
 
 public sealed class Expression<T>
 {
-    private ExpressionEvaluator? _expressionEvaluator;
+    private CompiledExpression? _compiledExpression;
 
     private Expression(Catalog catalog, string text, T nullValue, Type targetType)
     {
@@ -39,18 +39,18 @@ public sealed class Expression<T>
         return new Expression<T>(catalog, text, nullValue, targetType);
     }
 
-    private ExpressionEvaluator EnsureCompiled()
+    private CompiledExpression EnsureCompiled()
     {
-        if (_expressionEvaluator is null)
+        if (_compiledExpression is null)
         {
             var syntaxTree = SyntaxTree.ParseExpression(Text);
             var compilation = Compilation.Create(Catalog, syntaxTree);
             var compiledQuery = compilation.Compile();
-            var expressionEvaluator = compiledQuery.CreateExpressionEvaluator();
-            Interlocked.CompareExchange(ref _expressionEvaluator, expressionEvaluator, null);
+            var compiledExpression = compiledQuery.CompileExpression();
+            Interlocked.CompareExchange(ref _compiledExpression, compiledExpression, null);
         }
 
-        return _expressionEvaluator;
+        return _compiledExpression;
     }
 
     public Type Resolve()

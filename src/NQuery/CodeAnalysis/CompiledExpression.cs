@@ -1,10 +1,10 @@
-namespace NQuery;
+namespace NQuery.CodeAnalysis;
 
-public sealed class ExpressionEvaluator
+public sealed class CompiledExpression
 {
     private readonly Func<object?> _evaluator;
 
-    internal ExpressionEvaluator(Type type, Func<object?> evaluator)
+    internal CompiledExpression(Type type, Func<object?> evaluator)
     {
         Type = type;
         _evaluator = evaluator;

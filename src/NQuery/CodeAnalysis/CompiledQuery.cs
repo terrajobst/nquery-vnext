@@ -1,11 +1,10 @@
 using System.Collections.Immutable;
 
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Emit;
 using NQuery.CodeAnalysis.Iterators;
 using NQuery.CodeAnalysis.Symbols;
 
-namespace NQuery;
+namespace NQuery.CodeAnalysis;
 
 // Every compilation -- top-level query and bare expression alike -- is an emitted
 // ExecutablePlan. (A bare expression is wrapped in a one-row projection by the algebrizer,
@@ -42,14 +41,14 @@ public sealed class CompiledQuery
         return _plan.CreateIterator();
     }
 
-    public ExpressionEvaluator CreateExpressionEvaluator()
+    public CompiledExpression CompileExpression()
     {
         // If the query is empty, just return null
         if (OutputColumns.Length == 0)
-            return new ExpressionEvaluator(typeof(object), () => null);
+            return new CompiledExpression(typeof(object), () => null);
 
         var expressionType = OutputColumns[0].Type;
-        return new ExpressionEvaluator(expressionType, EvaluateQueryAsExpression);
+        return new CompiledExpression(expressionType, EvaluateQueryAsExpression);
     }
 
     private object? EvaluateQueryAsExpression()
