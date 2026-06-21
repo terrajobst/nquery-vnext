@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using NQuery.CodeAnalysis;
+using NQuery.Northwind;
 
 namespace NQuery.Tests.CodeAnalysis.Binding;
 

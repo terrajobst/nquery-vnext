@@ -15,6 +15,7 @@ using NQuery;
 using NQuery.Authoring;
 using NQuery.CodeAnalysis;
 using NQuery.Data;
+using NQuery.Northwind;
 
 using NQueryViewer.Editor;
 

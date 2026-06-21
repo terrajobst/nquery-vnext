@@ -1,4 +1,5 @@
 using NQuery.CodeAnalysis;
+using NQuery.Northwind;
 
 namespace NQuery.Tests;
 

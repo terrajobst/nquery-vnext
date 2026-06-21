@@ -2,7 +2,7 @@ using System.Data;
 
 using NQuery.Data;
 
-namespace NQuery;
+namespace NQuery.Northwind;
 
 public static class NorthwindCatalog
 {

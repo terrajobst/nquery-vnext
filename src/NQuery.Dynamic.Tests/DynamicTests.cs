@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 
+using NQuery.Northwind;
+
 namespace NQuery.Dynamic.Tests;
 
 public class DynamicTests

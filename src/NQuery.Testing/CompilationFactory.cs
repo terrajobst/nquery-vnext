@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
+using NQuery.Northwind;
 
 namespace NQuery;
 

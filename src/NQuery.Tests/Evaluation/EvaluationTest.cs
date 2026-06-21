@@ -1,3 +1,5 @@
+using NQuery.Northwind;
+
 namespace NQuery.Tests.Evaluation;
 
 public abstract class EvaluationTest

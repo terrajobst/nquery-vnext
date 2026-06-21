@@ -6,6 +6,7 @@ using NQuery.CodeAnalysis.Iterators;
 using NQuery.CodeAnalysis.Optimization;
 using NQuery.CodeAnalysis.Planning;
 using NQuery.Metadata;
+using NQuery.Northwind;
 
 namespace NQuery.Tests.CodeAnalysis.Emit;
 

@@ -18,7 +18,7 @@ namespace NQuery.Tests;
 internal static class OldEngine
 {
     private static readonly BaselineContext Northwind =
-        BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.NorthwindCatalog.CreateDataSet());
+        BaselineData.AddTablesAndRelations(BaselineContext.Default, global::NQuery.Northwind.NorthwindCatalog.CreateDataSet());
 
     public static List<object[]> RunQuery(string text)
     {

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using NQuery.Northwind;
+
 namespace NQuery.Tests;
 
 // Differential correctness gate: each query runs through both the current engine and the

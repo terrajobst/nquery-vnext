@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using NQuery.Northwind;
+
 namespace NQuery.Tests.Oracle;
 
 // Differential correctness against SQLite as the oracle: each query runs through the live NQuery

@@ -1,5 +1,6 @@
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.Metadata;
+using NQuery.Northwind;
 
 namespace NQuery.Tests;
 

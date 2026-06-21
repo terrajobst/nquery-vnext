@@ -3,6 +3,8 @@ using System.Data;
 
 using Microsoft.Data.Sqlite;
 
+using NQuery.Northwind;
+
 namespace NQuery.Tests.Oracle;
 
 // Test oracle for "what is the correct result of a query". Each differential test runs a query

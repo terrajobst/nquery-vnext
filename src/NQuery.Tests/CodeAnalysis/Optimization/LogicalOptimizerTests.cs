@@ -4,6 +4,7 @@ using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Binding;
 using NQuery.CodeAnalysis.Optimization;
+using NQuery.Northwind;
 
 namespace NQuery.Tests.CodeAnalysis.Optimization;
 
