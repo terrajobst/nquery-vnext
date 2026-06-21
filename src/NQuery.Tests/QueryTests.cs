@@ -83,6 +83,68 @@ public class QueryTests
     }
 
     [Fact]
+    public void Query_ExecuteScalarOfT_ReturnsTypedValue()
+    {
+        var dataTable = TestData.IdNameTable();
+        var catalog = Catalog.Default.AddTables(dataTable);
+
+        var query = Query.Create(catalog, "SELECT Id FROM Table");
+
+        Assert.Equal(1, query.ExecuteScalar<int>());
+    }
+
+    [Fact]
+    public void Query_ExecuteScalarOfT_ReturnsDefault_IfEmpty()
+    {
+        var dataTable = TestData.IdNameTable();
+        var catalog = Catalog.Default.AddTables(dataTable);
+
+        var query = Query.Create(catalog, "SELECT Id FROM Table WHERE Id = 999");
+
+        Assert.Equal(0, query.ExecuteScalar<int>());
+    }
+
+    [Fact]
+    public void QueryReader_GetFieldValueOfT_ReadsTyped()
+    {
+        var dataTable = TestData.IdNameTable();
+        var catalog = Catalog.Default.AddTables(dataTable);
+
+        var query = Query.Create(catalog, "SELECT Id, Name FROM Table");
+        using var reader = query.ExecuteReader();
+
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetFieldValue<int>(0));
+        Assert.Equal("One", reader.GetFieldValue<string>(1));
+    }
+
+    [Fact]
+    public void QueryReader_GetFieldValueOfT_RecompilesPerType_ForSameColumn()
+    {
+        var dataTable = TestData.IdNameTable();
+        var catalog = Catalog.Default.AddTables(dataTable);
+
+        var query = Query.Create(catalog, "SELECT Id FROM Table");
+        using var reader = query.ExecuteReader();
+
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetFieldValue<int>(0));
+        Assert.Equal(1, reader.GetFieldValue<int?>(0));
+        Assert.Equal(1, reader.GetFieldValue<object>(0));
+    }
+
+    [Fact]
+    public void QueryReader_GetFieldValueOfT_NullableReadsNull_NonNullableThrows()
+    {
+        var query = Query.Create(Catalog.Default, "SELECT CAST(NULL AS int)");
+        using var reader = query.ExecuteReader();
+
+        Assert.True(reader.Read());
+        Assert.Null(reader.GetFieldValue<int?>(0));
+        Assert.Throws<InvalidOperationException>(() => reader.GetFieldValue<int>(0));
+    }
+
+    [Fact]
     public void Query_ExecuteScalarReturnsFirstValue()
     {
         var dataTable = TestData.IdNameTable();

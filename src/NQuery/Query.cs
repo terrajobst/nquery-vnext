@@ -43,7 +43,9 @@ public sealed class Query
 
     public T ExecuteScalar<T>()
     {
-        return (T)ExecuteScalar()!;
+        // Reads the first value as T without boxing it through object; SQL NULL (and an empty
+        // result) yields default(T). The typed reader is compiled once and cached on the query.
+        return EnsureCompiled().ScalarReader<T>().Evaluate();
     }
 
     public QueryReader ExecuteReader()

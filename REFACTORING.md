@@ -1,5 +1,7 @@
 # NQuery Major Refactoring
 
+* Benchmarking
+    - What about other iterators, like TopWithTies, NestedLoops etc
 * We need to change the comparer contract to support `IComparer<T>`. We probably
   should still support `IComparer` as well.
 * Merge the strongly typed Northwind changes
@@ -103,13 +105,9 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
-* Both `Query` and `Expression<T>` extract values as object. We should have a
-  path that won't convert via object
-* Ideally we'd have `CompiledExpression<T>`
 * We still need to support cases where the type isn't known until runtime. That
   should probably be `compilation.CompileExpression(typeof(SomeType))` that
   returns `Expression<object>`.
-* Probably means `CompiledExpression<T>` should have a target type.
 * Are properties on the show plan used at all?
 * Add an LSP and add a VS Code plugin that replaces the VS based editor
   experience (we should keep the Actipro one though)

@@ -4,7 +4,7 @@ namespace NQuery;
 
 public sealed class Expression<T>
 {
-    private CompiledExpression? _compiledExpression;
+    private CompiledExpression<T>? _compiledExpression;
 
     private Expression(Catalog catalog, string text, T nullValue, Type targetType)
     {
@@ -39,14 +39,14 @@ public sealed class Expression<T>
         return new Expression<T>(catalog, text, nullValue, targetType);
     }
 
-    private CompiledExpression EnsureCompiled()
+    private CompiledExpression<T> EnsureCompiled()
     {
         if (_compiledExpression is null)
         {
             var syntaxTree = SyntaxTree.ParseExpression(Text);
             var compilation = Compilation.Create(Catalog, syntaxTree);
             var compiledQuery = compilation.Compile();
-            var compiledExpression = compiledQuery.CompileExpression();
+            var compiledExpression = compiledQuery.CompileExpression(NullValue);
             Interlocked.CompareExchange(ref _compiledExpression, compiledExpression, null);
         }
 
@@ -60,10 +60,8 @@ public sealed class Expression<T>
 
     public T Evaluate()
     {
-        var result = EnsureCompiled().Evaluate();
-        return result is null
-            ? NullValue
-            : (T)result;
+        // The compiled reader already substitutes NullValue for SQL NULL and returns T unboxed.
+        return EnsureCompiled().Evaluate();
     }
 
     public Catalog Catalog { get; }
