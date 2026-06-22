@@ -13,6 +13,8 @@ public abstract class TableSymbol : Symbol
 
     public abstract TableKind TableKind { get; }
 
+    public abstract Type Type { get; }
+
     public virtual TableDefinition? Definition
     {
         get { return null; }

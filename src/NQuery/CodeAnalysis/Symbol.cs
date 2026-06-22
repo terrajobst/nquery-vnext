@@ -15,8 +15,6 @@ public abstract class Symbol
 
     public string Name { get; }
 
-    public abstract Type Type { get; }
-
     public sealed override string ToString()
     {
         return SymbolMarkup.ForSymbol(this).ToString();

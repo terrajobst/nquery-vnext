@@ -26,7 +26,7 @@ public sealed class PropertySymbol : Symbol
         get { return SymbolKind.Property; }
     }
 
-    public override Type Type
+    public Type Type
     {
         get { return Definition.Type; }
     }

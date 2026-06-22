@@ -13,5 +13,5 @@ public sealed class ParameterSymbol : Symbol
         get { return SymbolKind.Parameter; }
     }
 
-    public override Type Type { get; }
+    public Type Type { get; }
 }

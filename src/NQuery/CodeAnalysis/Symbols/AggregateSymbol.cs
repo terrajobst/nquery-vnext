@@ -16,9 +16,4 @@ public sealed class AggregateSymbol : Symbol
     {
         get { return SymbolKind.Aggregate; }
     }
-
-    public override Type Type
-    {
-        get { return TypeFacts.Missing; }
-    }
 }

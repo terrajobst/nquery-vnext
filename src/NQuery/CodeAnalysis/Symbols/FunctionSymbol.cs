@@ -32,7 +32,7 @@ public sealed class FunctionSymbol : Symbol, IInvocableSymbol
 
     public Type ReturnType { get; }
 
-    public override Type Type
+    public Type Type
     {
         get { return ReturnType; }
     }

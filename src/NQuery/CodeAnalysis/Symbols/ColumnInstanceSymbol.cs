@@ -11,6 +11,8 @@ public abstract class ColumnInstanceSymbol : Symbol
 
     public abstract ColumnInstanceKind ColumnInstanceKind { get; }
 
+    public abstract Type Type { get; }
+
     public virtual TableInstanceSymbol? TableInstance
     {
         get { return null; }

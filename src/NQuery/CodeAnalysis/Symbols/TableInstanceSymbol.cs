@@ -37,7 +37,7 @@ public sealed class TableInstanceSymbol : Symbol
 
     internal ImmutableArray<TableColumnInstanceSymbol> TableColumnInstances { get; }
 
-    public override Type Type
+    public Type Type
     {
         get { return Table.Type; }
     }

@@ -24,7 +24,7 @@ public sealed class VariableSymbol : Symbol
         get { return SymbolKind.Variable; }
     }
 
-    public override Type Type
+    public Type Type
     {
         get { return Definition.Type; }
     }

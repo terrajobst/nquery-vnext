@@ -111,3 +111,8 @@ execution; no evaluation test drives a CTE through the new engine.
 * Are properties on the show plan used at all?
 * Add an LSP and add a VS Code plugin that replaces the VS based editor
   experience (we should keep the Actipro one though)
+* InstantiatedAggregateSymbol. Today it's conceptually an open generic. We don't
+  have a symbol that captures the instantiated aggregate. We should consider
+  adding one (and have it implement IInvocableSymbol) and have quick info show
+  the signature. Maybe we can simplify this using a Roslyn style API that
+  collapses generic and instantiated generics into a single ITypeSymbol.

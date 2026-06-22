@@ -23,7 +23,7 @@ public sealed class ColumnSymbol : Symbol
         get { return SymbolKind.Column; }
     }
 
-    public override Type Type { get; }
+    public Type Type { get; }
 
     public ColumnDefinition? Definition { get; }
 }

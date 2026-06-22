@@ -33,7 +33,7 @@ public sealed class MethodSymbol : Symbol, IInvocableSymbol
 
     public Type ReturnType { get; }
 
-    public override Type Type
+    public Type Type
     {
         get { return ReturnType; }
     }
