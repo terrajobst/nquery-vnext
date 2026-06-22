@@ -21,12 +21,9 @@ namespace NQuery.CodeAnalysis.Iterators;
 // filter then tests that boolean.
 internal sealed class HashMatchIterator : Iterator
 {
-    private static readonly object NullKey = new();
-
     private readonly Iterator _build;
     private readonly Iterator _probe;
-    private readonly RowBufferEntry _buildKey;
-    private readonly RowBufferEntry _probeKey;
+    private readonly HashJoinProbe _table;
     private readonly CompiledPredicate _remainder;
     private readonly bool _preserveBuild;
     private readonly bool _preserveProbe;
@@ -43,10 +40,8 @@ internal sealed class HashMatchIterator : Iterator
     private readonly SpooledRowStore _buildStore;
     private readonly SpooledRowStore.Cursor _buildCursor;
 
-    private const int NoEntry = -1;
+    private const int NoEntry = HashJoinProbe.NoEntry;
 
-    private Dictionary<object, int> _hashTable = null!;
-    private List<int> _next = null!;
     private bool[] _matched = null!;
     private int _entry;
     private int _flushIndex;
@@ -57,8 +52,7 @@ internal sealed class HashMatchIterator : Iterator
     {
         _build = build;
         _probe = probe;
-        _buildKey = buildKey;
-        _probeKey = probeKey;
+        _table = HashJoinProbe.Create(buildKey, probeKey);
         _remainder = remainder;
         _preserveBuild = preserveBuild;
         _preserveProbe = preserveProbe;
@@ -126,28 +120,20 @@ internal sealed class HashMatchIterator : Iterator
     private void BuildHashtable()
     {
         _buildStore.Clear();
-        _hashTable = new Dictionary<object, int>();
-        _next = new List<int>();
+        _table.Clear();
 
+        // Chains each new build row at the head of its key's bucket (the table lists a
+        // bucket's rows newest-first; see HashJoinProbe). The flush pass walks rows in scan
+        // order (index order), not the chain, so unmatched/semi/anti rows preserve the build
+        // input's order.
         while (_build.Read())
         {
-            var keyValue = _buildKey.GetValue() ?? NullKey;
             var row = _buildStore.Count;
             _buildStore.Append(_build.RowBuffer);
-            AddToHashtable(keyValue, row);
+            _table.Add(row);
         }
 
         _matched = _buildStore.Count == 0 ? Array.Empty<bool>() : new bool[_buildStore.Count];
-    }
-
-    // Chains the new build row at the head of its key's bucket (so a bucket lists its rows
-    // newest-first); _next[row] points at the previous head, NoEntry terminating the chain.
-    // The flush pass walks rows in scan order (index order), not the chain, so unmatched/
-    // semi/anti rows preserve the build input's order.
-    private void AddToHashtable(object keyValue, int row)
-    {
-        _next.Add(_hashTable.TryGetValue(keyValue, out var existing) ? existing : NoEntry);
-        _hashTable[keyValue] = row;
     }
 
     public override bool Read()
@@ -161,7 +147,7 @@ internal sealed class HashMatchIterator : Iterator
 
                 while (!matchFound)
                 {
-                    _entry = _entry == NoEntry ? NoEntry : _next[_entry];
+                    _entry = _entry == NoEntry ? NoEntry : _table.GetNext(_entry);
 
                     if (_entry == NoEntry)
                     {
@@ -189,9 +175,7 @@ internal sealed class HashMatchIterator : Iterator
                         }
 
                         _probeMatched = false;
-                        var probeValue = _probeKey.GetValue();
-                        if (probeValue is not null && _hashTable.TryGetValue(probeValue, out var head))
-                            _entry = head;
+                        _entry = _table.GetHead();
                     }
 
                     if (_entry != NoEntry)

@@ -20,8 +20,7 @@ internal sealed class StreamAggregateIterator : Iterator
     private readonly Iterator _input;
     private readonly ImmutableArray<RowBufferColumn> _groupSourceColumns;
     private readonly ImmutableArray<RowBufferColumn> _groupOutputColumns;
-    private readonly ImmutableArray<Type> _groupTypes;
-    private readonly ImmutableArray<IComparer> _comparers;
+    private readonly ImmutableArray<GroupKeyComparer> _groupComparers;
     private readonly CompiledAggregates _aggregates;
     private readonly RowBuffer _readRowBuffer;
     private readonly ArrayRowBuffer _rowBuffer;
@@ -34,8 +33,12 @@ internal sealed class StreamAggregateIterator : Iterator
         _input = input;
         _groupSourceColumns = groupSourceColumns;
         _groupOutputColumns = groupOutputColumns;
-        _groupTypes = groupTypes;
-        _comparers = comparers;
+
+        // One typed comparer per grouping column, so the same-group test below compares the
+        // group key unboxed (see GroupKeyComparer); source and output columns share a kind.
+        _groupComparers = groupSourceColumns
+                          .Select((c, i) => GroupKeyComparer.Create(groupTypes[i], c.Kind, comparers[i]))
+                          .ToImmutableArray();
         _aggregates = aggregates;
         _readRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);
         _rowBuffer = new ArrayRowBuffer(outputLayout);
@@ -101,9 +104,7 @@ internal sealed class StreamAggregateIterator : Iterator
         // compare it against the current input row's grouping values.
         for (var i = 0; i < _groupSourceColumns.Length; i++)
         {
-            var previous = _rowBuffer.GetBoxedValue(_groupOutputColumns[i], _groupTypes[i]);
-            var current = _readRowBuffer.GetBoxedValue(_groupSourceColumns[i], _groupTypes[i]);
-            if (_comparers[i].Compare(previous, current) != 0)
+            if (!_groupComparers[i].Equal(_rowBuffer, _groupOutputColumns[i], _readRowBuffer, _groupSourceColumns[i]))
                 return false;
         }
 

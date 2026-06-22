@@ -1,10 +1,9 @@
 # NQuery Major Refactoring
 
+* We should remove the typed-Northwind stuff from the benchmark -- we have it
+  natively in NQuery.Data.Testing now.
 * Make Instance return InstancedType and see whether the tests are still
   passing.
-* Benchmarking
-    - We're still boxing (StreamAggregates, TopWithTies, HashMatchIterator)
-    - What about other iterators, like TopWithTies, NestedLoops etc
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 

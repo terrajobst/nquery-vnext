@@ -5,18 +5,18 @@ namespace NQuery.CodeAnalysis.Iterators;
 
 internal sealed class TopWithTiesIterator : TopIterator
 {
-    private readonly ImmutableArray<RowBufferEntry> _tieEntries;
-    private readonly ImmutableArray<IComparer> _tieComparers;
+    private readonly ImmutableArray<TieColumn> _tieColumns;
 
-    private readonly object?[] _lastTieEntryValues;
     private bool _limitReached;
 
     public TopWithTiesIterator(Iterator input, int limit, IEnumerable<RowBufferEntry> tieEntries, IEnumerable<IComparer> tieComparers)
         : base(input, limit)
     {
-        _tieEntries = tieEntries.ToImmutableArray();
-        _tieComparers = tieComparers.ToImmutableArray();
-        _lastTieEntryValues = new object?[_tieEntries.Length];
+        // One typed column per tie-breaker, so capturing the last emitted row and testing
+        // each candidate for a tie compares the ORDER BY values unboxed (see TieColumn).
+        _tieColumns = tieEntries
+                      .Zip(tieComparers, TieColumn.Create)
+                      .ToImmutableArray();
     }
 
     public override void Open()
@@ -44,8 +44,8 @@ internal sealed class TopWithTiesIterator : TopIterator
             }
             else
             {
-                for (var i = 0; i < _tieEntries.Length; i++)
-                    _lastTieEntryValues[i] = _tieEntries[i].GetValue();
+                foreach (var column in _tieColumns)
+                    column.Capture();
 
                 return true;
             }
@@ -53,21 +53,12 @@ internal sealed class TopWithTiesIterator : TopIterator
 
         // Check if the tie values of this row are equal to the one of last row.
 
-        var allTieValuesAreEqual = true;
-
-        for (var i = 0; i < _tieEntries.Length; i++)
+        foreach (var column in _tieColumns)
         {
-            var lastTieValue = _lastTieEntryValues[i];
-            var thisTieValue = _tieEntries[i].GetValue();
-            var comparer = _tieComparers[i];
-
-            if (comparer.Compare(lastTieValue, thisTieValue) == 0)
-                continue;
-
-            allTieValuesAreEqual = false;
-            break;
+            if (!column.MatchesCaptured())
+                return false;
         }
 
-        return allTieValuesAreEqual;
+        return true;
     }
 }

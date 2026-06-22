@@ -95,6 +95,21 @@ internal abstract class RowBuffer
         throw new NotSupportedException($"{typeof(T)} is not a 128-bit row buffer type.");
     }
 
+    // Reads a value-typed column unboxed, dispatching on the column's container kind. The
+    // grouping, tie, and hash-join key paths use this to compare and hash keys without the
+    // boxing GetBoxedValue would incur; T is the column's non-nullable CLR type.
+    public T? ReadValue<T>(RowBufferColumn column)
+        where T : struct
+    {
+        return column.Kind switch
+        {
+            RowBufferColumnKind.Bits32 => Read32Bit<T>(column.Index),
+            RowBufferColumnKind.Bits64 => Read64Bit<T>(column.Index),
+            RowBufferColumnKind.Bits128 => Read128Bit<T>(column.Index),
+            _ => throw ExceptionBuilder.UnexpectedValue(column.Kind)
+        };
+    }
+
     // Reads a column boxed to object -- used only at the boundaries that still deal in
     // object (the output reader, sort/group comparisons, hash keys). `type` is the
     // column's non-nullable CLR type, used to pick the decode.

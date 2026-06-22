@@ -45,6 +45,11 @@ public static class NorthwindWorkload
         // Three-table join (Customers x Orders x Order Details) + group + aggregate + sort:
         // a realistic report that pushes rows through every buffer-heavy operator at once.
         Report,
+
+        // TOP ... WITH TIES over Order Details, ordered on a value-typed column. After the
+        // limit row, the iterator compares each candidate's tie column against the last
+        // emitted row -- the per-row tie test that used to box both values.
+        TopWithTies,
     }
 
     public static string Sql(Shape shape) => shape switch
@@ -72,6 +77,10 @@ public static class NorthwindWorkload
             "INNER JOIN [Order Details] od ON o.OrderID = od.OrderID " +
             "GROUP BY c.Country " +
             "ORDER BY c.Country",
+        Shape.TopWithTies =>
+            "SELECT TOP 100 WITH TIES OrderID, ProductID, UnitPrice " +
+            "FROM [Order Details] " +
+            "ORDER BY Quantity DESC",
         _ => throw new ArgumentOutOfRangeException(nameof(shape)),
     };
 
