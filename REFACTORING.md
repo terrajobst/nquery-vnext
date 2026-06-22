@@ -1,7 +1,5 @@
 # NQuery Major Refactoring
 
-* Make Instance return InstancedType and see whether the tests are still
-  passing.
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 
