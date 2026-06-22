@@ -27,8 +27,9 @@ internal abstract class SortKey
         if (column.Kind == RowBufferColumnKind.Object)
             return new ObjectSortKey(column, descending, inner);
 
-        // A registered (non-default) comparer must be honored as-is (it may box); the default
-        // ordering is done typed through Comparer<T>.Default.
+        // A registered (non-default) comparer is honored through its IComparer<T> face (LookupComparer
+        // guarantees one for the column type, so the typed path never boxes); the default ordering is
+        // done typed through Comparer<T>.Default.
         var custom = ReferenceEquals(inner, Comparer.Default) ? null : inner;
         var keyType = typeof(TypedSortKey<>).MakeGenericType(type);
         return (SortKey)Activator.CreateInstance(keyType, column, descending, custom)!;
@@ -41,14 +42,16 @@ internal sealed class TypedSortKey<T> : SortKey
 {
     private readonly RowBufferColumn _column;
     private readonly bool _descending;
-    private readonly IComparer? _custom;
+    private readonly IComparer<T>? _custom;
     private T?[] _keys = Array.Empty<T?>();
 
     public TypedSortKey(RowBufferColumn column, bool descending, IComparer? custom)
     {
         _column = column;
         _descending = descending;
-        _custom = custom;
+        // LookupComparer hands back a comparer that implements IComparer<T> for this column's type,
+        // so the typed comparison below avoids boxing. The default case arrives as a null custom.
+        _custom = (IComparer<T>?)custom;
     }
 
     public override void Decode(SpooledRowStore store, int count)

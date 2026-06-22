@@ -5,8 +5,6 @@
 * Benchmarking
     - We're still boxing (StreamAggregates, TopWithTies, HashMatchIterator)
     - What about other iterators, like TopWithTies, NestedLoops etc
-* We need to change the comparer contract to support `IComparer<T>`. We probably
-  should still support `IComparer` as well.
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 

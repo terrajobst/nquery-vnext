@@ -60,7 +60,7 @@ internal sealed class GlobalBinder : Binder
     {
         var registeredComparer = Lookup(_catalog.Comparers, type);
         if (registeredComparer is not null)
-            return registeredComparer;
+            return CatalogComparer.EnsureTyped(type, registeredComparer);
 
         return type.IsComparable() ? Comparer.Default : null;
     }

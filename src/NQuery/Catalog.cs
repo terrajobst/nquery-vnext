@@ -378,6 +378,18 @@ public sealed class Catalog
         return WithComparers(newProviders);
     }
 
+    public Catalog AddComparer<T>(IComparer<T> comparer)
+    {
+        ThrowIfNull(comparer);
+
+        // The dictionary is keyed by the non-generic IComparer, so a comparer that only implements
+        // IComparer<T> is wrapped to expose the non-generic side the rest of the pipeline still uses.
+        // The typed side is recovered without boxing when the comparer reaches a typed sort key.
+        var stored = comparer as IComparer ?? new UnboxingComparer<T>(comparer);
+        var newProviders = Comparers.Add(typeof(T), stored);
+        return WithComparers(newProviders);
+    }
+
     public Catalog AddComparers(IEnumerable<KeyValuePair<Type, IComparer>> comparer)
     {
         ThrowIfNull(comparer);
