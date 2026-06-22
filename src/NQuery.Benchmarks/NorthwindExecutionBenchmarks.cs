@@ -2,6 +2,8 @@ extern alias baseline;
 
 using BenchmarkDotNet.Attributes;
 
+using NQuery.Northwind;
+
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
 using CurrentNQuery = NQuery;
@@ -49,18 +51,20 @@ public class NorthwindExecutionBenchmarks
 
     private static BaselineNQuery.DataContext BuildBaselineContext()
     {
+        var data = NorthwindData.Instance;
         return BaselineNQuery.DataContext.Default.AddTables(
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Customers", NorthwindWorkload.Customers())),
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Orders", NorthwindWorkload.Orders())),
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails())));
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Customers", data.Customers)),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Orders", data.Orders)),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Order Details", data.OrderDetails)));
     }
 
     private static CurrentNQuery.Catalog BuildCurrentCatalog()
     {
+        var data = NorthwindData.Instance;
         return CurrentNQuery.Catalog.Default.AddTables(
-            CurrentMetadata.TableDefinition.Create("Customers", NorthwindWorkload.Customers()),
-            CurrentMetadata.TableDefinition.Create("Orders", NorthwindWorkload.Orders()),
-            CurrentMetadata.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails()));
+            CurrentMetadata.TableDefinition.Create("Customers", data.Customers),
+            CurrentMetadata.TableDefinition.Create("Orders", data.Orders),
+            CurrentMetadata.TableDefinition.Create("Order Details", data.OrderDetails));
     }
 
     private static int Drain(BaselineNQuery.QueryReader reader)

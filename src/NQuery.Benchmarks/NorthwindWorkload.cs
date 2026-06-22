@@ -1,28 +1,10 @@
-using System.Data;
-using System.Reflection;
-
 namespace NQuery.Benchmarks;
 
-// Engine-neutral Northwind workload shared by the benchmarks and the validator. Nothing
-// here references NQuery types, so it lives on neither side of the extern-alias boundary.
-//
-// The data is materialized into strongly typed records up front, on purpose. The row-buffer
-// refactor we are measuring stores values in typed backing arrays instead of boxing them
-// into object[]. A DataSet/DataRow source hands every cell back as object (DataRow stores
-// its values as object internally), so reading from one would box at the source on *both*
-// engines and the per-row source cost would swamp the buffer difference we want to show.
-// Reading into typed records first makes the source cheap and identical, so what's left to
-// measure is the buffer work -- the thing that actually changed. The records deliberately
-// keep the original Northwind column types (decimal/short/float/int), which is where the
-// no-boxing win shows up.
+// The benchmark query shapes against the real Northwind schema. The data itself lives in
+// NQuery.Testing (NQuery.Northwind.NorthwindData), so both engines run over identical rows;
+// this file only owns the SQL we measure.
 public static class NorthwindWorkload
 {
-    public sealed record Customer(string CustomerID, string Country);
-
-    public sealed record Order(int OrderID, string CustomerID);
-
-    public sealed record OrderDetail(int OrderID, int ProductID, decimal UnitPrice, short Quantity, float Discount);
-
     public enum Shape
     {
         // Table scan + filter + project over the widest base table (Order Details, ~2155
@@ -83,44 +65,4 @@ public static class NorthwindWorkload
             "ORDER BY Quantity DESC",
         _ => throw new ArgumentOutOfRangeException(nameof(shape)),
     };
-
-    public static Customer[] Customers() => _customers.Value;
-    public static Order[] Orders() => _orders.Value;
-    public static OrderDetail[] OrderDetails() => _orderDetails.Value;
-
-    private static readonly Lazy<DataSet> _dataSet = new(LoadDataSet);
-
-    private static readonly Lazy<Customer[]> _customers = new(() =>
-        Rows("Customers", r => new Customer((string)r["CustomerID"], r["Country"] as string ?? "")));
-
-    private static readonly Lazy<Order[]> _orders = new(() =>
-        Rows("Orders", r => new Order((int)r["OrderID"], (string)r["CustomerID"])));
-
-    private static readonly Lazy<OrderDetail[]> _orderDetails = new(() =>
-        Rows("Order Details", r => new OrderDetail(
-            (int)r["OrderID"],
-            (int)r["ProductID"],
-            (decimal)r["UnitPrice"],
-            (short)r["Quantity"],
-            (float)r["Discount"])));
-
-    private static T[] Rows<T>(string table, Func<DataRow, T> selector)
-    {
-        var rows = _dataSet.Value.Tables[table]!.Rows;
-        var result = new T[rows.Count];
-        for (var i = 0; i < result.Length; i++)
-            result[i] = selector(rows[i]);
-        return result;
-    }
-
-    private static DataSet LoadDataSet()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("Northwind.xml")
-            ?? throw new InvalidOperationException("Embedded resource 'Northwind.xml' was not found.");
-
-        var dataSet = new DataSet();
-        dataSet.ReadXml(stream);
-        return dataSet;
-    }
 }

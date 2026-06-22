@@ -1,5 +1,7 @@
 extern alias baseline;
 
+using NQuery.Northwind;
+
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
 using CurrentNQuery = NQuery;
@@ -70,18 +72,20 @@ internal static class Validator
 
     private static BaselineNQuery.DataContext BuildNorthwindBaseline()
     {
+        var data = NorthwindData.Instance;
         return BaselineNQuery.DataContext.Default.AddTables(
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Customers", NorthwindWorkload.Customers())),
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Orders", NorthwindWorkload.Orders())),
-            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails())));
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Customers", data.Customers)),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Orders", data.Orders)),
+            new BaselineSymbols.SchemaTableSymbol(BaselineSymbols.TableDefinition.Create("Order Details", data.OrderDetails)));
     }
 
     private static CurrentNQuery.Catalog BuildNorthwindCurrent()
     {
+        var data = NorthwindData.Instance;
         return CurrentNQuery.Catalog.Default.AddTables(
-            CurrentMetadata.TableDefinition.Create("Customers", NorthwindWorkload.Customers()),
-            CurrentMetadata.TableDefinition.Create("Orders", NorthwindWorkload.Orders()),
-            CurrentMetadata.TableDefinition.Create("Order Details", NorthwindWorkload.OrderDetails()));
+            CurrentMetadata.TableDefinition.Create("Customers", data.Customers),
+            CurrentMetadata.TableDefinition.Create("Orders", data.Orders),
+            CurrentMetadata.TableDefinition.Create("Order Details", data.OrderDetails));
     }
 
     private static List<object?[]> RunBaseline(BaselineNQuery.DataContext context, string sql)
