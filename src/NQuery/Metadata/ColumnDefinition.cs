@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata;
 
 public abstract class ColumnDefinition
@@ -9,8 +11,12 @@ public abstract class ColumnDefinition
         ThrowIfNull(name);
         ThrowIfNull(dataType);
 
+        // The engine models nullability separately from the CLR type (SQL NULL is orthogonal,
+        // and the row buffer tracks null apart from the stored bits), so Nullable<T> is erased
+        // to T at the metadata boundary -- value types stay unboxed and the type system only
+        // ever sees non-nullable CLR types. See TypeFacts.GetNonNullableType.
         Name = name;
-        DataType = dataType;
+        DataType = dataType.GetNonNullableType();
     }
 
     public string Name { get; }

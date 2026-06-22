@@ -183,7 +183,26 @@ public sealed class Catalog
             return this;
 
         var newFunctions = functions.ToImmutableList();
+        EnsureNoCollidingFunctions(newFunctions);
         return new Catalog(Tables, Relationships, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
+    }
+
+    // Unlike methods (which a reflection provider collapses during import), functions reach the
+    // binder as separate symbols and are picked by overload resolution. Once Nullable<T> is erased,
+    // two functions whose parameters differ only by nullability -- or that are outright identical --
+    // become indistinguishable signatures, so resolving a call to either would be ambiguous. Reject
+    // them eagerly here (the parameter types are already erased) rather than failing at the call site.
+    private static void EnsureNoCollidingFunctions(IEnumerable<FunctionDefinition> functions)
+    {
+        var seen = new HashSet<FunctionDefinition>(SignatureEqualityComparer.Instance);
+        foreach (var function in functions)
+        {
+            if (!seen.Add(function))
+            {
+                var parameters = string.Join(", ", function.GetParameterTypes().Select(t => t.FullName ?? t.Name));
+                throw new ArgumentException(string.Format(Resources.DuplicateFunctionSignature, $"{function.Name}({parameters})"), nameof(functions));
+            }
+        }
     }
 
     // Aggregates

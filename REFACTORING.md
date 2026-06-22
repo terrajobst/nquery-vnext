@@ -1,19 +1,14 @@
 # NQuery Major Refactoring
 
-* Make sure we handle nullable value types
 * Make Instance return InstancedType and see whether the tests are still
   passing.
 * Benchmarking
+    - We're still boxing (StreamAggregates, TopWithTies, HashMatchIterator)
     - What about other iterators, like TopWithTies, NestedLoops etc
 * We need to change the comparer contract to support `IComparer<T>`. We probably
   should still support `IComparer` as well.
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
-* When creating tables, columns, properties, and methods we need to normalize
-  int? to int. During overload resolution we should always prefer the nullable
-  one. Or do we need that? I'd assume we'd prefer the non-nullable one because
-  of the way we handle conversions (our types are always non-null T and T is
-  always better than an implicit conversion from T to T?)
 
 ## Port Common Table Expressions
 

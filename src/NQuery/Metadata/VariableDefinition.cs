@@ -1,3 +1,5 @@
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata;
 
 public sealed class VariableDefinition
@@ -8,8 +10,10 @@ public sealed class VariableDefinition
 
     private VariableDefinition(string name, Type type, object? value)
     {
+        // Nullable<T> is erased to T at the metadata boundary; nullability is tracked separately
+        // by the engine (see ColumnDefinition for the rationale).
         Name = name;
-        _type = type;
+        _type = type.GetNonNullableType();
         Value = value;
     }
 

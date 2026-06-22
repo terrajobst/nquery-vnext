@@ -1,3 +1,5 @@
+using NQuery.Metadata;
+
 namespace NQuery.Tests;
 
 public class CatalogTests
@@ -54,6 +56,45 @@ public class CatalogTests
         var before = Catalog.Empty;
         var after = before.WithFunctions(before.Functions);
         Assert.Same(before, after);
+    }
+
+    [Fact]
+    public void Catalog_AddFunctions_Throws_OnIdenticalSignatures()
+    {
+        var first = FunctionDefinition.Create<int, int>("F", x => x);
+        var second = FunctionDefinition.Create<int, int>("F", x => x + 1);
+
+        Assert.Throws<ArgumentException>(() => Catalog.Empty.AddFunctions(first, second));
+    }
+
+    [Fact]
+    public void Catalog_AddFunctions_Throws_OnNullabilityOnlyDifference()
+    {
+        // After Nullable<T> erasure both functions have the signature F(Int32).
+        var nonNullable = FunctionDefinition.Create<int, int>("F", x => x);
+        var nullable = FunctionDefinition.Create<int?, int>("F", x => x.GetValueOrDefault());
+
+        Assert.Throws<ArgumentException>(() => Catalog.Empty.AddFunctions(nonNullable, nullable));
+    }
+
+    [Fact]
+    public void Catalog_AddFunctions_Throws_WhenCollidingWithAlreadyRegistered()
+    {
+        var catalog = Catalog.Empty.AddFunctions(FunctionDefinition.Create<int, int>("F", x => x));
+
+        Assert.Throws<ArgumentException>(
+            () => catalog.AddFunctions(FunctionDefinition.Create<int?, int>("F", x => x.GetValueOrDefault())));
+    }
+
+    [Fact]
+    public void Catalog_AddFunctions_Allows_OverloadsThatDifferByParameterType()
+    {
+        var overInt = FunctionDefinition.Create<int, int>("F", x => x);
+        var overString = FunctionDefinition.Create<string, int>("F", s => s.Length);
+
+        var catalog = Catalog.Empty.AddFunctions(overInt, overString);
+
+        Assert.Equal(2, catalog.Functions.Count(f => string.Equals(f.Name, "F", StringComparison.OrdinalIgnoreCase)));
     }
 
     [Fact]

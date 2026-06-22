@@ -1,6 +1,8 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata;
 
 public abstract class PropertyDefinition
@@ -10,8 +12,10 @@ public abstract class PropertyDefinition
         ThrowIfNull(name);
         ThrowIfNull(type);
 
+        // Nullable<T> is erased to T at the metadata boundary; nullability is tracked separately
+        // by the engine (see ColumnDefinition for the rationale).
         Name = name;
-        Type = type;
+        Type = type.GetNonNullableType();
     }
 
     public string Name { get; }

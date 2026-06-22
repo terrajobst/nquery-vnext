@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
 
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata;
 
 public abstract class FunctionDefinition
@@ -11,9 +13,12 @@ public abstract class FunctionDefinition
         ThrowIfNull(returnType);
         ThrowIfNull(parameters);
 
+        // Nullable<T> is erased to T at the metadata boundary; nullability is tracked separately
+        // by the engine (see ColumnDefinition). Parameters self-erase via ParameterDefinition.
         Name = name;
-        ReturnType = returnType;
+        ReturnType = returnType.GetNonNullableType();
         Parameters = parameters.ToImmutableArray();
+        SignatureHashCode = SignatureEqualityComparer.GetHashCode(this);
     }
 
     public string Name { get; }
@@ -21,6 +26,9 @@ public abstract class FunctionDefinition
     public Type ReturnType { get; }
 
     public ImmutableArray<ParameterDefinition> Parameters { get; }
+
+    // Precomputed signature hash (name + parameter types); see SignatureEqualityComparer.
+    internal int SignatureHashCode { get; }
 
     public IEnumerable<Type> GetParameterTypes()
     {
@@ -78,7 +86,9 @@ public abstract class FunctionDefinition
         internal override Expression CreateInvocation(IEnumerable<Expression> arguments)
         {
             var instance = _function.Target is null ? null : Expression.Constant(_function.Target);
-            return Expression.Call(instance, _function.Method, arguments);
+            // See ReflectionMethodDefinition: coerce lowered arguments back to the delegate's
+            // actual parameter types, which may still be Nullable<T>.
+            return Expression.Call(instance, _function.Method, CoerceArguments.ToParameters(_function.Method, arguments));
         }
     }
 

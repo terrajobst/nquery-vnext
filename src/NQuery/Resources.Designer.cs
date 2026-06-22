@@ -1969,7 +1969,16 @@ internal class Resources {
             return ResourceManager.GetString("VariableValueTypeMismatch", resourceCulture);
         }
     }
-    
+
+    /// <summary>
+    ///   Looks up a localized string similar to The catalog already contains a function with the signature &apos;{0}&apos;. Functions whose parameters differ only by nullability are considered identical..
+    /// </summary>
+    internal static string DuplicateFunctionSignature {
+        get {
+            return ResourceManager.GetString("DuplicateFunctionSignature", resourceCulture);
+        }
+    }
+
     /// <summary>
     ///   Looks up a localized string similar to WHEN expression must evaluate to &apos;{0}&apos;..
     /// </summary>

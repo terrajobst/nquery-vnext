@@ -219,16 +219,12 @@ public static class TypeFacts
 
     public static bool IsNullableOfT(this Type type)
     {
-        return type.IsValueType &&
-               type.IsGenericType &&
-               type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        return Nullable.GetUnderlyingType(type) is not null;
     }
 
     public static Type GetNonNullableType(this Type type)
     {
-        return type.IsNullableOfT()
-                   ? type.GetGenericArguments().Single()
-                   : type;
+        return Nullable.GetUnderlyingType(type) ?? type;
     }
 
     public static Type GetNullableType(this Type type)

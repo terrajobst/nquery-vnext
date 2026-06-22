@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
 
+using NQuery.CodeAnalysis;
 
 namespace NQuery.Metadata;
 
@@ -19,27 +20,44 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
 
     public BindingFlags BindingFlags { get; }
 
+    private static int GetInheritanceDistance(Type type, MemberInfo member)
+    {
+        var distance = 0;
+        var declaringType = member.DeclaringType;
+
+        while (declaringType is not null && declaringType != type)
+        {
+            distance++;
+            declaringType = declaringType.BaseType;
+        }
+
+        return distance;
+    }
+
     private static bool ExistingMemberIsMoreSpecific(Type type, MemberInfo existingMember, MemberInfo newMember)
     {
-        var existingMemberDeclaringType = existingMember.DeclaringType;
-        var newMemberDeclaringType = newMember.DeclaringType;
+        return GetInheritanceDistance(type, existingMember) > GetInheritanceDistance(type, newMember);
+    }
 
-        var existingMemberDistance = 0;
-        var newMemberDistance = 0;
+    // Like ExistingMemberIsMoreSpecific, but with a deterministic tie-break for methods that now
+    // collide only because Nullable<T> was erased from their parameters (e.g. Foo(int) and Foo(int?)
+    // share a signature). Inheritance distance stays the primary key; when it ties -- the usual case
+    // for two overloads on the same type -- prefer the signature with fewer nullable parameters, so
+    // the surviving overload is chosen on purpose rather than by reflection order.
+    private static bool ExistingMethodIsMoreSpecific(Type type, MethodInfo existingMethod, MethodInfo newMethod)
+    {
+        var existingDistance = GetInheritanceDistance(type, existingMethod);
+        var newDistance = GetInheritanceDistance(type, newMethod);
 
-        while (existingMemberDeclaringType is not null && existingMemberDeclaringType != type)
-        {
-            existingMemberDistance++;
-            existingMemberDeclaringType = existingMemberDeclaringType.BaseType;
-        }
+        if (existingDistance != newDistance)
+            return existingDistance > newDistance;
 
-        while (newMemberDeclaringType is not null && newMemberDeclaringType != type)
-        {
-            newMemberDistance++;
-            newMemberDeclaringType = newMemberDeclaringType.BaseType;
-        }
+        return CountNullableParameters(existingMethod) <= CountNullableParameters(newMethod);
+    }
 
-        return existingMemberDistance > newMemberDistance;
+    private static int CountNullableParameters(MethodInfo method)
+    {
+        return method.GetParameters().Count(p => p.ParameterType.IsNullableOfT());
     }
 
     private sealed class PropertyTable
@@ -178,7 +196,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
         if (existingMethodEntry is not null)
         {
             // OK we have one. Check if the existing member is not more specific.
-            if (ExistingMemberIsMoreSpecific(declaringType, existingMethodEntry.MethodInfo, methodInfo))
+            if (ExistingMethodIsMoreSpecific(declaringType, existingMethodEntry.MethodInfo, methodInfo))
             {
                 // The existing member is more specific. So we don't add the new one.
                 return;

@@ -447,6 +447,9 @@
   <data name="VariableValueTypeMismatch" xml:space="preserve">
     <value>The value '{0}' cannot be assigned to variable of type {1}.</value>
   </data>
+  <data name="DuplicateFunctionSignature" xml:space="preserve">
+    <value>The catalog already contains a function with the signature '{0}'. Functions whose parameters differ only by nullability are considered identical.</value>
+  </data>
   <data name="ParentColumnNotFound" xml:space="preserve">
     <value>Parent column '{0}' in table '{1}' not found.</value>
   </data>

@@ -2,6 +2,8 @@ using System.Collections.Immutable;
 using System.Linq.Expressions;
 using System.Reflection;
 
+using NQuery.CodeAnalysis;
+
 namespace NQuery.Metadata;
 
 public abstract class MethodDefinition
@@ -12,8 +14,10 @@ public abstract class MethodDefinition
         ThrowIfNull(returnType);
         ThrowIfNull(parameters);
 
+        // Nullable<T> is erased to T at the metadata boundary; nullability is tracked separately
+        // by the engine (see ColumnDefinition). Parameters self-erase via ParameterDefinition.
         Name = name;
-        ReturnType = returnType;
+        ReturnType = returnType.GetNonNullableType();
         Parameters = parameters.ToImmutableArray();
     }
 
