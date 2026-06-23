@@ -39,6 +39,19 @@
     <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
       <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</HintPath>
     </Reference>
+    <!-- The original NQuery engine from the sibling "nquery-old" repo, whose NQuery.csproj was
+         converted in-place to an SDK-style net8.0 library with AssemblyName=NQuery.Old. Build it
+         separately beforehand (Release):
+
+           dotnet build ..\..\..\nquery-old\Src\NQuery\NQuery.csproj -c Release
+
+         Like the baseline, it is consumed as an aliased Reference (addressed as old::NQuery.*)
+         rather than a ProjectReference, so the original engine loads side-by-side with the live
+         and baseline NQuery.* types. Its output is plain bin\Release (not artifacts), as the old
+         repo has no Directory.Build.props. -->
+    <Reference Include="NQuery.Old" Aliases="old" Private="true">
+      <HintPath>..\..\..\nquery-old\Src\NQuery\bin\Release\net8.0\NQuery.Old.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

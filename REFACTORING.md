@@ -89,6 +89,29 @@ execution; no evaluation test drives a CTE through the new engine.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
+* Port the index spool for correlated subqueries
+    - The Northwind `NestedLoops` benchmark (a correlated scalar `SELECT TOP 1 ...
+      ORDER BY` per customer) is the one shape where the old engine crushes us:
+      ~76us / 61KB vs the refactored engine's ~1.6ms / 506KB (and baseline's
+      ~3.2ms / 1.9MB). See `docs/benchmarks.md`.
+    - When a subquery has no decorrelation rule it survives as a dependent join,
+      so we re-run the inner `Top -> Sort -> Filter -> Scan` for *every* outer row:
+      O(outer x inner). The old engine instead recognizes that the correlated
+      filter predicate is an equality between an inner column and an outer
+      reference (`o.CustomerID = c.CustomerID`) and rewrites the per-row `Filter`
+      into an index spool (`Compilation/SpoolInserter.cs` +
+      `Execution Plan/IndexSpoolIterator.cs`): it scans the inner input *once*,
+      builds a `Dictionary<key, List<row>>` keyed by the inner column, and then
+      probes it by the outer value on each iteration. That turns the cost into
+      O(inner + outer) and is essentially SQL Server's lazy/eager spool.
+    - Correctness caveat the old engine already flagged (the `// TODO` at the top
+      of `SpoolInserter.cs`): the cached spool is only valid when the spooled
+      *input* does not itself depend on an outer reference. If it does, the spool
+      must be invalidated whenever the outer reference changes (an eager spool),
+      otherwise it returns stale rows. The old code does not distinguish lazy from
+      eager spools, so a naive port would be a correctness bug; we should only
+      build the persistent spool when the input is independent of all outer
+      references, and fall back (or rebuild) otherwise.
 * Use new C# language features
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?

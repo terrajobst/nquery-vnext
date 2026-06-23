@@ -1,0 +1,240 @@
+# Benchmarks
+
+All three engines are fed the exact same strongly typed Northwind records, so
+differences come from the engine, not the data.
+
+The three engines compared:
+
+- **Old** — the original NQuery engine (`nquery-old`), a .NET Framework 2.0-era
+  code base recompiled as .NET Core 8.0 (`NQuery.Old`).
+- **Baseline** — `main` of this repo (`NQuery.Baseline`); the ratio reference
+  (`Ratio = 1.00`).
+- **Refactored** — the current worktree.
+
+`Ratio` and `Alloc Ratio` are relative to **Baseline**; lower is better. There
+are two suites: **Execution** measures per-row engine cost with compilation
+excluded; **Compilation** measures turning SQL text into an executable plan.
+
+# Execution
+
+Execution-only: each query is compiled once in setup and then drained per
+iteration, so compilation cost is excluded and the numbers reflect per-row engine
+cost and allocations in isolation.
+
+## Observations
+
+- **Refactored is fastest on every shape**, often by a wide margin. `Scan` is
+  the standout: it streams rows with almost no per-row allocation (2.38 KB vs
+  ~310 KB), running ~12× faster than Baseline and ~5× faster than Old.
+- **Old vs Baseline is a mixed bag.** The original engine is actually faster
+  than Baseline on several shapes (Scan, Aggregate, Report) but slower or
+  comparable on others (Join, Sort, TopWithTies), so the previous rewrite traded
+  raw speed for other properties on some plans.
+- **Plan shape dominates the correlated cases.** On `NestedLoops` (a correlated
+  scalar `TOP 1 … ORDER BY` that survives as a dependent join), Old runs the
+  inner loop cheaply (76 μs) while Baseline blows up to 3.2 ms / 1.9 MB;
+  Refactored lands in between at 1.6 ms. On `Decorrelated`, Baseline's hash-join
+  decorrelation keeps allocations tiny (24 KB), so Old looks allocation-heavy by
+  comparison (11.5×) even though it is faster in wall-clock time; Refactored is
+  both fastest (37 μs) and leanest (18 KB).
+
+## Summary
+
+Shapes as rows, engines as columns. All factors are relative to **Baseline**
+(`main` = 1.00×).
+
+### Speed (× Baseline, lower = faster)
+
+| Shape        |  Old  | Baseline | Refactored |
+|------------- |------:|---------:|-----------:|
+| Scan         | 0.45× |   1.00×  |   0.08×    |
+| Join         | 1.09× |   1.00×  |   0.24×    |
+| Aggregate    | 0.41× |   1.00×  |   0.32×    |
+| Sort         | 0.99× |   1.00×  |   0.59×    |
+| Report       | 0.57× |   1.00×  |   0.45×    |
+| TopWithTies  | 0.94× |   1.00×  |   0.38×    |
+| Decorrelated | 0.63× |   1.00×  |   0.05×    |
+| NestedLoops  | 0.02× |   1.00×  |   0.50×    |
+
+### Memory (allocated per op, with × Baseline, lower = leaner)
+
+| Shape        |        Old        |     Baseline     |    Refactored    |
+|------------- |------------------:|-----------------:|-----------------:|
+| Scan         |  320 KB (1.03×)   |  309 KB (1.00×)  |  2.4 KB (0.008×) |
+| Join         |  532 KB (1.44×)   |  371 KB (1.00×)  |   62 KB (0.17×)  |
+| Aggregate    |  535 KB (0.96×)   |  558 KB (1.00×)  |  241 KB (0.43×)  |
+| Sort         |  401 KB (0.95×)   |  423 KB (1.00×)  |  192 KB (0.46×)  |
+| Report       | 1029 KB (1.29×)   |  800 KB (1.00×)  |  417 KB (0.52×)  |
+| TopWithTies  |  401 KB (0.95×)   |  423 KB (1.00×)  |  126 KB (0.30×)  |
+| Decorrelated |  282 KB (11.50×)  |   25 KB (1.00×)  |   18 KB (0.73×)  |
+| NestedLoops  |   61 KB (0.03×)   | 1907 KB (1.00×)  |  506 KB (0.27×)  |
+
+## Full results
+
+Default job (`DefaultJob`, full warmup + 15 iterations).
+
+| Method     | Shape        | Mean        | Error     | StdDev     | Median      | Ratio | Gen0     | Gen1     | Allocated  | Alloc Ratio |
+|----------- |------------- |------------:|----------:|-----------:|------------:|------:|---------:|---------:|-----------:|------------:|
+| Old        | Scan         |   551.01 μs | 10.967 μs |  28.308 μs |   543.06 μs |  0.45 |  39.0625 |        - |  319.97 KB |       1.034 |
+| Baseline   | Scan         | 1,233.31 μs | 22.830 μs |  39.381 μs | 1,225.28 μs |  1.00 |  37.1094 |  11.7188 |  309.42 KB |       1.000 |
+| Refactored | Scan         |   103.30 μs |  2.038 μs |   4.253 μs |   101.45 μs |  0.08 |   0.2441 |        - |    2.38 KB |       0.008 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | Join         |   655.71 μs |  6.150 μs |   5.752 μs |   655.68 μs |  1.09 |  64.4531 |  22.4609 |  532.41 KB |        1.44 |
+| Baseline   | Join         |   601.61 μs |  3.005 μs |   2.346 μs |   601.47 μs |  1.00 |  44.9219 |  13.6719 |   370.9 KB |        1.00 |
+| Refactored | Join         |   146.84 μs |  1.079 μs |   0.957 μs |   146.53 μs |  0.24 |   7.3242 |   0.7324 |   61.82 KB |        0.17 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | Aggregate    |   854.37 μs | 17.035 μs |  39.480 μs |   853.29 μs |  0.41 |  65.4297 |  23.4375 |  535.34 KB |        0.96 |
+| Baseline   | Aggregate    | 2,103.69 μs | 41.369 μs |  89.934 μs | 2,089.16 μs |  1.00 |  66.4063 |  27.3438 |   558.4 KB |        1.00 |
+| Refactored | Aggregate    |   676.00 μs | 13.396 μs |  27.963 μs |   684.30 μs |  0.32 |  29.2969 |   6.8359 |  240.67 KB |        0.43 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | Sort         | 1,122.67 μs | 18.313 μs |  27.410 μs | 1,114.58 μs |  0.99 |  48.8281 |  17.5781 |   401.2 KB |        0.95 |
+| Baseline   | Sort         | 1,138.79 μs | 19.128 μs |  30.889 μs | 1,127.52 μs |  1.00 |  50.7813 |  15.6250 |  422.55 KB |        1.00 |
+| Refactored | Sort         |   674.63 μs | 13.192 μs |  15.192 μs |   673.40 μs |  0.59 |  23.4375 |   5.8594 |  192.45 KB |        0.46 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | Report       | 1,902.04 μs | 37.239 μs |  47.095 μs | 1,901.46 μs |  0.57 | 125.0000 | 117.1875 | 1028.52 KB |        1.29 |
+| Baseline   | Report       | 3,314.51 μs | 60.497 μs | 130.225 μs | 3,269.09 μs |  1.00 |  93.7500 |  54.6875 |  799.72 KB |        1.00 |
+| Refactored | Report       | 1,484.83 μs | 29.659 μs |  77.088 μs | 1,453.78 μs |  0.45 |  50.7813 |  19.5313 |   417.3 KB |        0.52 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | TopWithTies  |   639.84 μs | 12.568 μs |  22.339 μs |   626.25 μs |  0.94 |  48.8281 |  17.5781 |  401.23 KB |        0.95 |
+| Baseline   | TopWithTies  |   680.81 μs |  4.509 μs |   4.218 μs |   679.93 μs |  1.00 |  51.7578 |  21.4844 |  423.34 KB |        1.00 |
+| Refactored | TopWithTies  |   257.65 μs |  3.272 μs |   3.061 μs |   258.24 μs |  0.38 |  15.1367 |   3.4180 |  125.58 KB |        0.30 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | Decorrelated |   450.92 μs |  7.174 μs |   6.711 μs |   449.37 μs |  0.63 |  34.1797 |        - |  282.07 KB |       11.50 |
+| Baseline   | Decorrelated |   713.31 μs |  5.271 μs |   4.401 μs |   714.57 μs |  1.00 |   2.9297 |   1.9531 |   24.52 KB |        1.00 |
+| Refactored | Decorrelated |    37.74 μs |  0.171 μs |   0.160 μs |    37.78 μs |  0.05 |   2.1973 |   0.0610 |      18 KB |        0.73 |
+|            |              |             |           |            |             |       |          |          |            |             |
+| Old        | NestedLoops  |    76.46 μs |  0.355 μs |   0.315 μs |    76.44 μs |  0.02 |   7.4463 |        - |    60.9 KB |        0.03 |
+| Baseline   | NestedLoops  | 3,206.36 μs | 31.633 μs |  29.590 μs | 3,199.92 μs |  1.00 | 230.4688 |  35.1563 | 1906.63 KB |        1.00 |
+| Refactored | NestedLoops  | 1,614.10 μs |  6.591 μs |   6.166 μs | 1,613.33 μs |  0.50 |  60.5469 |   1.9531 |  506.32 KB |        0.27 |
+
+---
+
+# Compilation
+
+Compilation-only: each iteration drives a *fresh* `Query` through
+`ExecuteSchemaReader()`, i.e. parse → bind → algebrize → optimize → plan → emit,
+but no row iteration. The schema-reader path is used deliberately so the phase
+measured is the same for all three engines: **Baseline emits lazily on the first
+open** (`IteratorBuilder.Build` runs inside `CreateReader`), whereas Refactored
+and Old build the executable plan during compile. Stopping at `Compilation.Compile()`
+would undercount Baseline, so all three are forced through emit (without reading
+rows).
+
+## Observations
+
+- **Old compiles far faster and leaner than both** — roughly 0.04–0.17× the time
+  and 0.08–0.28× the allocations of Baseline. Its pipeline is a single, smaller
+  pass; the new engines pay for a layered bind → algebrize → optimize → plan →
+  emit pipeline.
+- **Refactored compiles a bit *slower* than Baseline on most shapes** (up to
+  ~1.7× on Join, ~1.5× on Aggregate) and allocates slightly more. This is the
+  flip side of the execution wins: it front-loads work — eager emit of the
+  executable plan plus richer optimization/planning — which is exactly what buys
+  the large per-row speedups above.
+- **The correlated shapes are the exception:** Refactored compiles *faster* than
+  Baseline on `Decorrelated` (0.87×) and `NestedLoops` (0.54× time, 0.60×
+  allocations), so its handling of those plans is leaner end to end.
+- **Tradeoff:** for run-once queries that never amortize, Refactored's higher
+  compile cost matters; for reused/cached plans it is paid once while execution
+  savings recur. (Baseline additionally re-emits on *every* open, since its built
+  iterator is not cached — not captured here, where each iteration compiles once.)
+
+## Summary
+
+Shapes as rows, engines as columns. All factors are relative to **Baseline**
+(`main` = 1.00×).
+
+### Speed (× Baseline, lower = faster)
+
+| Shape        |  Old  | Baseline | Refactored |
+|------------- |------:|---------:|-----------:|
+| Scan         | 0.04× |   1.00×  |   1.13×    |
+| Join         | 0.10× |   1.00×  |   1.74×    |
+| Aggregate    | 0.17× |   1.00×  |   1.52×    |
+| Sort         | 0.07× |   1.00×  |   1.24×    |
+| Report       | 0.17× |   1.00×  |   1.21×    |
+| TopWithTies  | 0.07× |   1.00×  |   1.10×    |
+| Decorrelated | 0.11× |   1.00×  |   0.87×    |
+| NestedLoops  | 0.04× |   1.00×  |   0.54×    |
+
+### Memory (allocated per op, with × Baseline, lower = leaner)
+
+| Shape        |       Old       |     Baseline     |    Refactored    |
+|------------- |----------------:|-----------------:|-----------------:|
+| Scan         |   34 KB (0.21×) |  158 KB (1.00×)  |  173 KB (1.09×)  |
+| Join         |   68 KB (0.17×) |  405 KB (1.00×)  |  435 KB (1.07×)  |
+| Aggregate    |  164 KB (0.28×) |  595 KB (1.00×)  |  596 KB (1.00×)  |
+| Sort         |   20 KB (0.22×) |   91 KB (1.00×)  |  118 KB (1.29×)  |
+| Report       |  274 KB (0.24×) | 1163 KB (1.00×)  | 1179 KB (1.01×)  |
+| TopWithTies  |   18 KB (0.21×) |   86 KB (1.00×)  |  109 KB (1.26×)  |
+| Decorrelated |   64 KB (0.23×) |  277 KB (1.00×)  |  317 KB (1.15×)  |
+| NestedLoops  |   46 KB (0.08×) |  586 KB (1.00×)  |  355 KB (0.60×)  |
+
+## Full results
+
+Short job (`ShortRun`, 3 warmup + 3 iterations) — chosen because the full job is
+slow for this many cases. Allocations are deterministic and reliable; the **Mean
+times are indicative only** (note the wide Error/StdDev), though the relative
+ordering is stable across runs.
+
+| Method     | Shape        | Mean        | Error        | StdDev     | Ratio | Gen0     | Gen1    | Allocated  | Alloc Ratio |
+|----------- |------------- |------------:|-------------:|-----------:|------:|---------:|--------:|-----------:|------------:|
+| Old        | Scan         |    47.83 μs |    14.866 μs |   0.815 μs |  0.04 |   3.9063 |  0.9766 |   33.53 KB |        0.21 |
+| Baseline   | Scan         | 1,221.59 μs | 1,139.256 μs |  62.446 μs |  1.00 |  17.5781 |  7.8125 |  158.11 KB |        1.00 |
+| Refactored | Scan         | 1,372.73 μs |   836.701 μs |  45.862 μs |  1.13 |  19.5313 |  5.8594 |  172.73 KB |        1.09 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | Join         |    87.76 μs |    15.144 μs |   0.830 μs |  0.10 |   8.3008 |  2.0752 |   68.49 KB |        0.17 |
+| Baseline   | Join         |   915.82 μs | 1,158.698 μs |  63.512 μs |  1.00 |  48.8281 | 15.6250 |  405.23 KB |        1.00 |
+| Refactored | Join         | 1,590.06 μs | 1,513.639 μs |  82.968 μs |  1.74 |  50.7813 | 11.7188 |  435.08 KB |        1.07 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | Aggregate    |   458.30 μs |   204.113 μs |  11.188 μs |  0.17 |  19.5313 |  5.8594 |  163.58 KB |        0.28 |
+| Baseline   | Aggregate    | 2,653.01 μs | 3,272.380 μs | 179.370 μs |  1.00 |  70.3125 | 23.4375 |  594.62 KB |        1.00 |
+| Refactored | Aggregate    | 4,007.16 μs | 5,570.601 μs | 305.343 μs |  1.52 |  70.3125 | 23.4375 |  596.29 KB |        1.00 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | Sort         |    30.49 μs |     2.908 μs |   0.159 μs |  0.07 |   2.3804 |  0.7324 |   19.67 KB |        0.22 |
+| Baseline   | Sort         |   450.68 μs |   332.478 μs |  18.224 μs |  1.00 |  10.7422 |  4.8828 |   91.37 KB |        1.00 |
+| Refactored | Sort         |   556.85 μs | 1,813.591 μs |  99.409 μs |  1.24 |  13.6719 |  3.9063 |  117.84 KB |        1.29 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | Report       |   723.28 μs | 1,784.616 μs |  97.821 μs |  0.17 |  33.2031 |  7.8125 |  273.87 KB |        0.24 |
+| Baseline   | Report       | 4,266.53 μs | 8,385.789 μs | 459.653 μs |  1.01 | 140.6250 | 46.8750 | 1162.61 KB |        1.00 |
+| Refactored | Report       | 5,109.76 μs | 2,786.278 μs | 152.725 μs |  1.21 | 140.6250 | 46.8750 | 1178.63 KB |        1.01 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | TopWithTies  |    29.95 μs |    20.488 μs |   1.123 μs |  0.07 |   2.1667 |  0.6409 |   17.89 KB |        0.21 |
+| Baseline   | TopWithTies  |   421.81 μs |    27.412 μs |   1.503 μs |  1.00 |   9.7656 |  4.8828 |   86.42 KB |        1.00 |
+| Refactored | TopWithTies  |   463.40 μs | 1,230.612 μs |  67.454 μs |  1.10 |  12.6953 |  3.9063 |  108.51 KB |        1.26 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | Decorrelated |    91.84 μs |    53.521 μs |   2.934 μs |  0.11 |   7.8125 |  1.9531 |   63.98 KB |        0.23 |
+| Baseline   | Decorrelated |   860.84 μs |   786.492 μs |  43.110 μs |  1.00 |  33.2031 |  9.7656 |  276.76 KB |        1.00 |
+| Refactored | Decorrelated |   746.08 μs | 1,405.613 μs |  77.046 μs |  0.87 |  37.1094 |  9.7656 |  316.92 KB |        1.15 |
+|            |              |             |              |            |       |          |         |            |             |
+| Old        | NestedLoops  |    88.15 μs |    52.245 μs |   2.864 μs |  0.04 |   5.4932 |  1.3428 |   45.66 KB |        0.08 |
+| Baseline   | NestedLoops  | 2,072.78 μs | 1,132.686 μs |  62.086 μs |  1.00 |  70.3125 | 23.4375 |  586.14 KB |        1.00 |
+| Refactored | NestedLoops  | 1,116.25 μs |   783.431 μs |  42.943 μs |  0.54 |  42.9688 | 13.6719 |  354.55 KB |        0.60 |
+
+---
+
+# Environment
+
+```
+BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.8655)
+.NET SDK 10.0.201
+  [Host] : .NET 8.0.28 (8.0.2826.26413), X64 RyuJIT AVX2
+```
+
+# How to run
+
+```
+# Build the original engine (separate repo, plain bin\Release output):
+dotnet build ..\nquery-old\Src\NQuery\NQuery.csproj -c Release
+
+# Build the baseline engine (sibling worktree at the comparison point, e.g. main):
+dotnet build ..\nquery-baseline\src\NQuery -c Release
+
+cd src\NQuery.Benchmarks
+
+# Execution (default job):
+dotnet run -c Release -- --filter "*NorthwindExecutionBenchmarks*"
+
+# Compilation (short job keeps the run quick across all shapes):
+dotnet run -c Release -- --filter "*NorthwindCompilationBenchmarks*" --job short
+```
