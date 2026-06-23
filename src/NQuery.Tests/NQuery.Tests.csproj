@@ -12,6 +12,9 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <Compile Remove="OldEngine.cs" />
     <Compile Remove="OldEngineDifferentialTests.cs" />
+    <!-- Reuses RowSet (under Oracle\, removed below), so it is net8.0-only like the rest of the
+         temporary differential harness. -->
+    <Compile Remove="OldEngineDefinitionTests.cs" />
     <Compile Remove="Oracle\*.cs" />
   </ItemGroup>
 

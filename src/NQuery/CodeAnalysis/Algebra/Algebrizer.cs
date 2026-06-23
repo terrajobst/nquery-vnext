@@ -41,6 +41,13 @@ internal sealed class Algebrizer
     // value-identity translation; nothing downstream of the algebrizer sees an IBoundValue.
     private readonly Dictionary<IBoundValue, ValueSlot> _slots = new();
 
+    // The slot each already-algebrized subquery resolves to, keyed by the bound subselect node
+    // (reference identity). A binder lowering can reference the same subselect node more than
+    // once -- COALESCE, NULLIF, and a simple CASE's input all duplicate their operand -- and we
+    // must algebrize it only once; see AlgebrizeSingleRowSubselect for why a second Apply would
+    // break slot uniqueness.
+    private readonly Dictionary<BoundExpression, ValueSlot> _subselectSlots = new();
+
     public static LogicalQuery Algebrize(BoundQuery query)
     {
         ThrowIfNull(query);
@@ -624,8 +631,22 @@ internal sealed class Algebrizer
 
     // A scalar subquery becomes a LeftOuter apply that exposes its value slot; the expression
     // is replaced by a reference to that slot.
+    //
+    // The same node can be handed to us more than once: a binder lowering that duplicates an
+    // operand -- COALESCE(x, y) => CASE WHEN x IS NOT NULL THEN x ELSE y END, NULLIF, and a
+    // simple CASE's input -- references the one BoundSingleRowSubselect in several places. We
+    // must algebrize it once: each call adds an Apply, and because the subquery's value slots
+    // are minted per symbol (GetSlot), every Apply would re-mint the *same* slots, leaving the
+    // plan with one slot defined by two operators -- which plan verification rejects. So the
+    // first call records the slot the expression resolves to and later calls just reference it.
+    // This is sound because those lowerings evaluate the first occurrence unconditionally (it
+    // sits in the first WHEN/comparison, with no passthru guard), so its Apply already covers
+    // every row a later, guarded occurrence could need.
     private LogicalExpression AlgebrizeSingleRowSubselect(BoundSingleRowSubselect node, List<PendingApply> applies)
     {
+        if (_subselectSlots.TryGetValue(node, out var cachedSlot))
+            return new LogicalValueSlotExpression(cachedSlot);
+
         var relation = AlgebrizeQuery(node.Query);
         var value = GetSlot(node.Value);
 
@@ -634,6 +655,7 @@ internal sealed class Algebrizer
         if (ReturnsAtMostOneRow(relation))
         {
             applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
+            _subselectSlots.Add(node, value);
             return new LogicalValueSlotExpression(value);
         }
 
@@ -650,6 +672,7 @@ internal sealed class Algebrizer
         relation = new LogicalAssert(relation, condition, Resources.SubqueryReturnedMoreThanRow);
 
         applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
+        _subselectSlots.Add(node, valueAgg.Output);
         return new LogicalValueSlotExpression(valueAgg.Output);
     }
 
@@ -695,6 +718,11 @@ internal sealed class Algebrizer
     // binder deferred; those are applied over the subquery before the semi apply.
     private LogicalExpression AlgebrizeExistsSubselect(BoundExistsSubselect node, List<PendingApply> applies)
     {
+        // Algebrize once even if a binder lowering references this node more than once -- a second
+        // semi apply would re-mint the subquery's per-symbol slots (see AlgebrizeSingleRowSubselect).
+        if (_subselectSlots.TryGetValue(node, out var cachedProbe))
+            return new LogicalValueSlotExpression(cachedProbe);
+
         var relation = AlgebrizeQuery(node.Query);
 
         if (!node.ComputedValues.IsEmpty)
@@ -705,6 +733,7 @@ internal sealed class Algebrizer
 
         var probe = _valueSlotFactory.CreateTemporary(typeof(bool));
         applies.Add(new PendingApply(LogicalApplyKind.LeftSemi, relation, probe, CurrentPassthru));
+        _subselectSlots.Add(node, probe);
         return new LogicalValueSlotExpression(probe);
     }
 

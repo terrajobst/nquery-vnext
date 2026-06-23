@@ -1415,4 +1415,52 @@ public partial class ExpressionTests
         var result = EvaluateBinary("OR", type, type, left, right);
         Assert.Equal(expectedResult, result);
     }
+
+    // Relational comparison of strings (the old engine supported it; the refactored engine did
+    // not, so e.g. a join with an inequality on string keys -- ON et.TerritoryID >= t.TerritoryID
+    // -- failed to bind). Ordering is culture-sensitive, matching the old engine.
+    [Theory]
+    [InlineData("<", "apple", "banana", true)]
+    [InlineData("<", "banana", "apple", false)]
+    [InlineData("<", "apple", "apple", false)]
+    [InlineData("<=", "apple", "apple", true)]
+    [InlineData("<=", "banana", "apple", false)]
+    [InlineData(">", "banana", "apple", true)]
+    [InlineData(">", "apple", "banana", false)]
+    [InlineData(">=", "apple", "apple", true)]
+    [InlineData(">=", "apple", "banana", false)]
+    public void Expression_Binary_BuiltIn_StringRelational(string op, string left, string right, bool expectedResult)
+    {
+        var result = EvaluateBinary(op, typeof(string), typeof(string), left, right);
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Theory]
+    [InlineData("<")]
+    [InlineData("<=")]
+    [InlineData(">")]
+    [InlineData(">=")]
+    public void Expression_Binary_BuiltIn_StringRelational_Null(string op)
+    {
+        Assert.Null(EvaluateBinary(op, typeof(string), typeof(string), null, "apple"));
+        Assert.Null(EvaluateBinary(op, typeof(string), typeof(string), "apple", null));
+        Assert.Null(EvaluateBinary(op, typeof(string), typeof(string), null, null));
+    }
+
+    // Both operands are the untyped NULL literal: no overload can anchor a type, but the result is
+    // NULL regardless of the operator. Previously this reported an "ambiguous operator" error.
+    [Theory]
+    [InlineData("+")]
+    [InlineData("-")]
+    [InlineData("*")]
+    [InlineData("=")]
+    [InlineData("!=")]
+    [InlineData("<")]
+    [InlineData(">")]
+    public void Expression_Binary_BothNullLiterals_EvaluateToNull(string op)
+    {
+        var text = "NULL " + op + " NULL";
+        var result = Expression<object>.Create(Catalog.Default, text).Evaluate();
+        Assert.Null(result);
+    }
 }

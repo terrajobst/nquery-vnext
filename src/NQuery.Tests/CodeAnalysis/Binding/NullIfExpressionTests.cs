@@ -32,4 +32,19 @@ public class NullIfExpressionTests
         Assert.Empty(diagnostics);
         Assert.Equal(typeof(double), type);
     }
+
+    // SQL-standard NULLIF: NULL when the operands are equal, otherwise the left value -- including
+    // when the comparison is unknown because the right operand is NULL. The previous
+    // "WHEN left != right THEN left" lowering wrongly returned NULL for NULLIF(2, NULL).
+    [Theory]
+    [InlineData("NULLIF(2, 2)", null)]
+    [InlineData("NULLIF(2, 3)", 2)]
+    [InlineData("NULLIF(2, NULL)", 2)]
+    [InlineData("NULLIF(NULL, 2)", null)]
+    [InlineData("NULLIF(NULL, NULL)", null)]
+    public void NullIf_EvaluatesToSqlStandard(string text, object? expected)
+    {
+        var result = Expression<object>.Create(Catalog.Default, text).Evaluate();
+        Assert.Equal(expected, result);
+    }
 }

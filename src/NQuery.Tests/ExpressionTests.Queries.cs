@@ -61,4 +61,40 @@ public partial class ExpressionTests
 
         Assert.True(result);
     }
+
+    // A scalar subquery used as an operand that the binder lowers by *duplicating* that operand
+    // -- COALESCE, NULLIF, and the input of a simple (searched) CASE -- must still compile and
+    // run. Each lowering references the same BoundSingleRowSubselect node more than once (e.g.
+    // COALESCE(x, y) => CASE WHEN x IS NOT NULL THEN x ELSE y END references x twice), and the
+    // algebrizer visits every occurrence. Because a subquery's value slots are minted per symbol,
+    // each visit emitted a TableScan minting the *same* slots, so the algebrized plan defined a
+    // slot from two operators and tripped plan verification with "value slot ... is introduced by
+    // more than one operator". These run against the typed Northwind catalog.
+    [Fact]
+    public void Expression_Queries_SingleRowSubselect_InCoalesce()
+    {
+        var text = "COALESCE((SELECT MAX(EmployeeID) FROM Employees), 10)";
+        var expression = Expression<int>.Create(NorthwindCatalog.InstanceTyped, text);
+
+        Assert.Equal(9, expression.Evaluate());
+    }
+
+    [Fact]
+    public void Expression_Queries_SingleRowSubselect_InNullIf()
+    {
+        var text = "NULLIF((SELECT MAX(EmployeeID) FROM Employees), 0)";
+        var expression = Expression<int>.Create(NorthwindCatalog.InstanceTyped, text);
+
+        Assert.Equal(9, expression.Evaluate());
+    }
+
+    [Fact]
+    public void Expression_Queries_SingleRowSubselect_AsSimpleCaseInput()
+    {
+        // Two WHEN labels, so the lowered form references the subquery input twice.
+        var text = "CASE (SELECT MAX(EmployeeID) FROM Employees) WHEN 1 THEN 'one' WHEN 9 THEN 'nine' ELSE 'other' END";
+        var expression = Expression<string>.Create(NorthwindCatalog.InstanceTyped, text);
+
+        Assert.Equal("nine", expression.Evaluate());
+    }
 }

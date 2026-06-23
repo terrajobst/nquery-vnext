@@ -62,4 +62,18 @@ public class CombinedQueryTest
     {
         AssertBindsToCommonTypes<ExceptQuerySyntax>("EXCEPT");
     }
+
+    // A column that is the untyped NULL literal on every side has no comparer, but standard SQL
+    // still allows the union and collapses the all-NULL rows to a single NULL row. Previously this
+    // reported "the data type '<null>' cannot be used in UNION".
+    [Fact]
+    public void Union_AllowsAllNullColumn_AndCollapsesToSingleNullRow()
+    {
+        using var reader = Query.Create(Catalog.Default, "SELECT NULL UNION SELECT NULL").ExecuteReader();
+
+        Assert.Equal(1, reader.ColumnCount);
+        Assert.True(reader.Read());
+        Assert.Null(reader[0]);
+        Assert.False(reader.Read());
+    }
 }

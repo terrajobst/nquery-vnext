@@ -475,7 +475,10 @@ internal sealed class ExpressionCompiler
 
     private Expression BuildNestedScopeInvocation(LogicalExpression expression)
     {
-        var targetType = expression.Type;
+        // The nested lambda must return the nullable form: a CASE branch (or its WHEN condition)
+        // can evaluate to NULL, and a non-nullable return type would coalesce that NULL to the
+        // type's default (e.g. CASE ... THEN NULL ELSE 2 would yield 0 instead of NULL).
+        var targetType = expression.Type.GetNullableType();
         var delegateType = typeof(Func<,>).MakeGenericType(typeof(RowBuffer), targetType);
 
         var nested = new ExpressionCompiler(_slotIndices);

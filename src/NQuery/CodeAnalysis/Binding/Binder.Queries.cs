@@ -251,7 +251,11 @@ partial class Binder
     {
         var missingComparer = Comparer.Default;
 
-        if (type.IsError())
+        // IsError: avoid a cascading diagnostic. IsNull: every value in an all-NULL column (e.g.
+        // SELECT NULL UNION SELECT NULL) is NULL, and set operations compare NULLs as equal without
+        // consulting the comparer, so any comparer works and the operation is valid (standard SQL
+        // yields a single NULL row) rather than an "uncomparable type" error.
+        if (type.IsError() || type.IsNull())
             return missingComparer;
 
         var comparer = LookupComparer(type);

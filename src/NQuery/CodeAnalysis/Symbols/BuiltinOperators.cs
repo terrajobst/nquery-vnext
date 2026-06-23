@@ -15,6 +15,11 @@ internal static class BuiltInOperators
     public static MethodInfo SoundsLikeMethod { get; } = new Func<string, string, bool>(SoundsLike).Method;
     public static MethodInfo PowerMethod { get; } = new Func<double, double, double>(Math.Pow).Method;
 
+    public static MethodInfo StringLessMethod { get; } = new Func<string, string, bool>(StringLess).Method;
+    public static MethodInfo StringLessOrEqualMethod { get; } = new Func<string, string, bool>(StringLessOrEqual).Method;
+    public static MethodInfo StringGreaterMethod { get; } = new Func<string, string, bool>(StringGreater).Method;
+    public static MethodInfo StringGreaterOrEqualMethod { get; } = new Func<string, string, bool>(StringGreaterOrEqual).Method;
+
     public static MethodInfo DecimalAddMethod { get; } = typeof(decimal).GetMethod("op_Addition", new[] { typeof(decimal), typeof(decimal) })!;
     public static MethodInfo DecimalDivideMethod { get; } = typeof(decimal).GetMethod("op_Division", new[] { typeof(decimal), typeof(decimal) })!;
     public static MethodInfo DecimalEqualsMethod { get; } = typeof(decimal).GetMethod("op_Equality", new[] { typeof(decimal), typeof(decimal) })!;
@@ -28,6 +33,14 @@ internal static class BuiltInOperators
     public static MethodInfo DecimalSubtractMethod { get; } = typeof(decimal).GetMethod("op_Subtraction", new[] { typeof(decimal), typeof(decimal) })!;
     public static MethodInfo DecimalUnaryNegationMethod { get; } = typeof(decimal).GetMethod("op_UnaryNegation", new[] { typeof(decimal) })!;
     public static MethodInfo DecimalUnaryIdentityMethod { get; } = typeof(decimal).GetMethod("op_UnaryPlus", new[] { typeof(decimal) })!;
+
+    // Relational comparison of strings. NULL operands are filtered out before the operator
+    // runs (see ExpressionCompiler.BuildBinaryExpression), so these only see non-null strings.
+    // Culture-sensitive ordering, matching the old engine's BuiltinOperators.
+    private static bool StringLess(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) < 0;
+    private static bool StringLessOrEqual(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) <= 0;
+    private static bool StringGreater(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) > 0;
+    private static bool StringGreaterOrEqual(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) >= 0;
 
     private static bool SimilarTo(string str, string regex)
     {

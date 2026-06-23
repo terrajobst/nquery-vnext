@@ -35,7 +35,12 @@ partial class Binder
 
         foreach (var target in boundExpressions)
         {
-            if (target.Type.IsError() || target.Type == commonType)
+            // The NULL literal's type is never a useful common type: every other type would have
+            // to "convert to NULL", and the result column would be typeless. The common type of
+            // {NULL, T} is T (NULL converts to it). Skipping NULL as a candidate also avoids an
+            // ambiguity (both NULL and T qualify) that would otherwise fall back to the first
+            // expression's type -- NULL -- and emit a bogus conversion to the NULL type.
+            if (target.Type.IsError() || target.Type.IsNull() || target.Type == commonType)
                 continue;
 
             var allOthersCanConvertToTarget = true;
@@ -371,6 +376,20 @@ partial class Binder
         if (left.Type.IsError() || right.Type.IsError())
             return new BoundBinaryExpression(left, operatorKind, OverloadResolutionResult<BinaryOperatorSignature>.None, right);
 
+        // Both operands are the untyped NULL literal, so no overload can anchor a concrete type and
+        // resolution would report an (unhelpful) ambiguity. The result is NULL regardless of the
+        // operator, so bind it as a typed NULL: bool for the predicate operators (so it stays valid
+        // as a WHERE/CASE condition), an untyped NULL otherwise. This mirrors the old engine, which
+        // short-circuited any binary operator with a NULL operand to a NULL placeholder. A single
+        // NULL operand still resolves normally -- the other operand anchors the type.
+        if (left.Type.IsNull() && right.Type.IsNull())
+        {
+            var nullLiteral = new BoundLiteralExpression(null);
+            return ProducesBoolean(operatorKind)
+                       ? BindConversion(diagnosticSpan, nullLiteral, typeof(bool))
+                       : nullLiteral;
+        }
+
         // TODO: We should consider supporting three-state-short-circuit evaluation.
         //
         // TODO: C# doesn't allow overloading && or ||. Instead, you need to overload & and | *and* you need to define operator true/operator false:
@@ -397,6 +416,17 @@ partial class Binder
         var convertedRight = BindArgument(right, result, 1);
 
         return new BoundBinaryExpression(convertedLeft, operatorKind, result, convertedRight);
+    }
+
+    // Whether the operator yields a boolean (the comparison, logical, and pattern operators).
+    private static bool ProducesBoolean(BinaryOperatorKind operatorKind)
+    {
+        return operatorKind is
+            BinaryOperatorKind.Equal or BinaryOperatorKind.NotEqual or
+            BinaryOperatorKind.Less or BinaryOperatorKind.LessOrEqual or
+            BinaryOperatorKind.Greater or BinaryOperatorKind.GreaterOrEqual or
+            BinaryOperatorKind.LogicalAnd or BinaryOperatorKind.LogicalOr or
+            BinaryOperatorKind.Like or BinaryOperatorKind.SimilarTo or BinaryOperatorKind.SoundsLike;
     }
 
     private BoundExpression BindBinaryExpression(TextSpan diagnosticSpan, SyntaxToken? notKeyword, BinaryOperatorKind operatorKind, ExpressionSyntax left, ExpressionSyntax right)
@@ -569,14 +599,21 @@ partial class Binder
         //
         // ===>
         //
-        // CASE WHEN left != right THEN left END
+        // CASE WHEN left = right THEN NULL ELSE left END
+        //
+        // SQL-standard NULLIF: NULL when the operands compare equal, otherwise the left value.
+        // The earlier "WHEN left != right THEN left" form (no ELSE) was wrong when an operand is
+        // NULL: the comparison is then unknown, so it fell through to NULL instead of yielding the
+        // left value -- e.g. NULLIF(2, NULL) returned NULL instead of 2. The THEN is a typed NULL
+        // (of the left's type) so it unifies with the ELSE.
 
         var expressions = BindToCommonType(new[] { node.LeftExpression, node.RightExpression });
         var boundLeft = expressions[0];
         var boundRight = expressions[1];
-        var boundComparison = BindBinaryExpression(node.Span, BinaryOperatorKind.NotEqual, boundLeft, boundRight);
-        var boundCaseLabel = new BoundCaseLabel(boundComparison, boundLeft);
-        return new BoundCaseExpression(new[] { boundCaseLabel }, null);
+        var boundComparison = BindBinaryExpression(node.Span, BinaryOperatorKind.Equal, boundLeft, boundRight);
+        var boundNull = BindConversion(node.Span, new BoundLiteralExpression(null), boundLeft.Type);
+        var boundCaseLabel = new BoundCaseLabel(boundComparison, boundNull);
+        return new BoundCaseExpression(new[] { boundCaseLabel }, boundLeft);
     }
 
     private BoundExpression BindInExpression(InExpressionSyntax node)

@@ -1,5 +1,9 @@
 # NQuery Major Refactoring
 
+* We should use Ordinal for all string comparisons
+* Ask Claude if the old unit tests did test something that we don't (unlikely)
+* Ask Claude if the old engine had interesting optimizations that we don't have
+
 ## Port Common Table Expressions
 
 The new binder fully binds CTEs (BindCommonTableExpressionQuery, recursive
@@ -121,6 +125,11 @@ execution; no evaluation test drives a CTE through the new engine.
 * We still need to support cases where the type isn't known until runtime. That
   should probably be `compilation.CompileExpression(typeof(SomeType))` that
   returns `Expression<object>`.
+* Add a formatter
+    - Should use some standard SQL formatting rules
+    - Should probably handle long lines
+    - Should probably handle keyword casing
+    - Should probably offer identifier normalization (brackets, quotes, always)
 * Are properties on the show plan used at all?
 * Add an LSP and add a VS Code plugin that replaces the VS based editor
   experience (we should keep the Actipro one though)
@@ -129,3 +138,4 @@ execution; no evaluation test drives a CTE through the new engine.
   adding one (and have it implement IInvocableSymbol) and have quick info show
   the signature. Maybe we can simplify this using a Roslyn style API that
   collapses generic and instantiated generics into a single ITypeSymbol.
+* What are standard SQL types and how should they map to our primitives?

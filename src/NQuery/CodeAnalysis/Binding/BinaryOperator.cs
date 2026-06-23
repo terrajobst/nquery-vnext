@@ -117,7 +117,8 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Less, typeof(bool), typeof(ulong)),
         new(BinaryOperatorKind.Less, typeof(bool), typeof(float)),
         new(BinaryOperatorKind.Less, typeof(bool), typeof(double)),
-        new(BinaryOperatorKind.Less, BuiltInOperators.DecimalLessMethod)
+        new(BinaryOperatorKind.Less, BuiltInOperators.DecimalLessMethod),
+        new(BinaryOperatorKind.Less, BuiltInOperators.StringLessMethod)
     };
 
     private static readonly BinaryOperatorSignature[] BuiltInGreaterSignatures =
@@ -128,7 +129,8 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(ulong)),
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(float)),
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(double)),
-        new(BinaryOperatorKind.Greater, BuiltInOperators.DecimalGreaterMethod)
+        new(BinaryOperatorKind.Greater, BuiltInOperators.DecimalGreaterMethod),
+        new(BinaryOperatorKind.Greater, BuiltInOperators.StringGreaterMethod)
     };
 
     private static readonly BinaryOperatorSignature[] BuiltInLessOrEqualSignatures =
@@ -139,7 +141,8 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(ulong)),
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(float)),
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(double)),
-        new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.DecimalLessOrEqualMethod)
+        new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.DecimalLessOrEqualMethod),
+        new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.StringLessOrEqualMethod)
     };
 
     private static readonly BinaryOperatorSignature[] BuiltInGreaterOrEqualSignatures =
@@ -150,7 +153,8 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(ulong)),
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(float)),
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(double)),
-        new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.DecimalGreaterOrEqualMethod)
+        new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.DecimalGreaterOrEqualMethod),
+        new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.StringGreaterOrEqualMethod)
     };
 
     private static readonly BinaryOperatorSignature[] BuiltInBitAndSignatures =
