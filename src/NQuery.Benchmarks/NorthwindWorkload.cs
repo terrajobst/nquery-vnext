@@ -32,6 +32,20 @@ public static class NorthwindWorkload
         // limit row, the iterator compares each candidate's tie column against the last
         // emitted row -- the per-row tie test that used to box both values.
         TopWithTies,
+
+        // Correlated EXISTS with an equality predicate. ApplyPushdown decorrelates it into a
+        // LeftSemi join, which the planner realizes as a single Hash Match -- Orders scanned
+        // once, outer rows probe the hash table:
+        //     Hash Match (LeftSemi) [c.CustomerID = o.CustomerID]
+        // Paired with NestedLoops below: the same "consult each customer's orders" correlation,
+        // run as one hash pass instead of a per-row re-scan.
+        Decorrelated,
+
+        // Correlated scalar TOP 1 ... ORDER BY. A Top over a Sort has no decorrelation rule, so
+        // the Apply survives as a dependent join -- a correlated nested loop that re-runs the
+        // inner Filter/Sort/Top for every customer:
+        //     Nested Loops (LeftOuter) Outer References := [c.CustomerID]
+        NestedLoops,
     }
 
     public static string Sql(Shape shape) => shape switch
@@ -63,6 +77,14 @@ public static class NorthwindWorkload
             "SELECT TOP 100 WITH TIES OrderID, ProductID, UnitPrice " +
             "FROM [Order Details] " +
             "ORDER BY Quantity DESC",
+        Shape.Decorrelated =>
+            "SELECT c.CustomerID " +
+            "FROM Customers c " +
+            "WHERE EXISTS (SELECT * FROM Orders o WHERE o.CustomerID = c.CustomerID)",
+        Shape.NestedLoops =>
+            "SELECT c.CustomerID, " +
+            "       (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID ORDER BY o.OrderID DESC) " +
+            "FROM Customers c",
         _ => throw new ArgumentOutOfRangeException(nameof(shape)),
     };
 }

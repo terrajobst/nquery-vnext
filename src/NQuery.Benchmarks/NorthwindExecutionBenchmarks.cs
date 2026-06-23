@@ -24,7 +24,9 @@ public class NorthwindExecutionBenchmarks
         NorthwindWorkload.Shape.Aggregate,
         NorthwindWorkload.Shape.Sort,
         NorthwindWorkload.Shape.Report,
-        NorthwindWorkload.Shape.TopWithTies)]
+        NorthwindWorkload.Shape.TopWithTies,
+        NorthwindWorkload.Shape.Decorrelated,
+        NorthwindWorkload.Shape.NestedLoops)]
     public NorthwindWorkload.Shape Shape { get; set; }
 
     private BaselineNQuery.Query _old = null!;

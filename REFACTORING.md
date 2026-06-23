@@ -1,10 +1,5 @@
 # NQuery Major Refactoring
 
-* Add a benchmark that compares correlated subquery performance between old and new.
-    - We should have one case where the old engine didn't decorrelate but the
-      new one does
-    - We should have one case where neither can decorrelate (to test nested loop
-      performance)
 * I don't like that the algebrizer needs to create symbols and binds Count and
   Any.
 
