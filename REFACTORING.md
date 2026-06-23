@@ -50,13 +50,6 @@ execution; no evaluation test drives a CTE through the new engine.
 * Make sure that all plans are executable
 * Add more correlation tests exploiting the new `CROSS APPLY` and `OUTER APPLY`
   to reach more cases
-* A correctness test that runs in debug builds and asserts the bound tree is
-  correct after each optimization step:
-    - every referenced ValueSlot is either defined by a descendant or is a
-      declared outer reference (this is the silent-wrong-result guard from our
-      earlier discussion);
-    - no slot is defined twice;
-    - physical/logical node kinds appear where they're allowed.
 * Per pass behavioral tests
 * A small set (~a dozen) of curated snapshots for interesting queries which
   assert the full plan in approval testing style

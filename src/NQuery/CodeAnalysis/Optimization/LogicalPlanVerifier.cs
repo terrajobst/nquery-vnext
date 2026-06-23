@@ -25,7 +25,29 @@ internal static class LogicalPlanVerifier
     {
         ThrowIfNull(root);
         VerifyOperator(root, ImmutableArray<ValueSlot>.Empty, source);
+        PlanVerification.RequireUniqueDefinitions(source, root, Children, n => n.DefinedValueSlots, n => n.Kind.ToString());
     }
+
+    // The direct child operators of a node, for the slot-uniqueness walk. (The scope
+    // walk above recurses into the same children inline, but its per-kind methods also
+    // thread the apply scope, so they don't compose into a plain child enumeration.)
+    private static ImmutableArray<LogicalOperator> Children(LogicalOperator node) =>
+        node switch
+        {
+            LogicalFilter n => [n.Input],
+            LogicalCompute n => [n.Input],
+            LogicalProject n => [n.Input],
+            LogicalAggregate n => [n.Input],
+            LogicalSort n => [n.Input],
+            LogicalTop n => [n.Input],
+            LogicalAssert n => [n.Input],
+            LogicalJoin n => [n.Left, n.Right],
+            LogicalApply n => [n.Left, n.Right],
+            LogicalIntersectOrExcept n => [n.Left, n.Right],
+            LogicalUnion n => n.Inputs,
+            LogicalEmpty or LogicalConstant or LogicalTableScan => [],
+            _ => throw ExceptionBuilder.UnexpectedValue(node.Kind),
+        };
 
     private static void VerifyOperator(LogicalOperator node, ImmutableArray<ValueSlot> outerSlots, string source)
     {

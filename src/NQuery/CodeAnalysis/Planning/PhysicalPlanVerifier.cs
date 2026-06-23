@@ -33,7 +33,28 @@ internal static class PhysicalPlanVerifier
     {
         ThrowIfNull(query);
         VerifyOperator(query.Root, ImmutableArray<ValueSlot>.Empty);
+        PlanVerification.RequireUniqueDefinitions(Source, query.Root, Children, n => n.DefinedValueSlots, n => n.Kind.ToString());
     }
+
+    // The direct child operators of a node, for the slot-uniqueness walk. (The scope
+    // walk above recurses into the same children inline, but its per-kind methods also
+    // thread the apply scope, so they don't compose into a plain child enumeration.)
+    private static ImmutableArray<PhysicalOperator> Children(PhysicalOperator node) =>
+        node switch
+        {
+            PhysicalFilter n => [n.Input],
+            PhysicalComputeScalar n => [n.Input],
+            PhysicalProject n => [n.Input],
+            PhysicalSort n => [n.Input],
+            PhysicalTop n => [n.Input],
+            PhysicalStreamAggregates n => [n.Input],
+            PhysicalAssert n => [n.Input],
+            PhysicalNestedLoops n => [n.Left, n.Right],
+            PhysicalHashMatch n => [n.Build, n.Probe],
+            PhysicalConcatenation n => n.Inputs,
+            PhysicalEmpty or PhysicalConstant or PhysicalTableScan => [],
+            _ => throw ExceptionBuilder.UnexpectedValue(node.Kind),
+        };
 
     // outerSlots is the ambient scope an enclosing Apply makes available -- exactly
     // what the emitter prepends to the row buffer. It accumulates as we descend into

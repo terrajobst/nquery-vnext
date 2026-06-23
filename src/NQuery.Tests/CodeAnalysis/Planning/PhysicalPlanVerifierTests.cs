@@ -74,6 +74,35 @@ public class PhysicalPlanVerifierTests
         Assert.Contains(ghost.Name, exception.Message);
     }
 
+    [Fact]
+    public void PhysicalPlanVerifier_Rejects_SlotIntroducedTwice()
+    {
+        // The same slot minted on both sides of a join -- the shape a rewrite that
+        // duplicated a subtree without re-minting its slots would produce. Each side is
+        // well-scoped on its own, so only the uniqueness check catches it.
+        var factory = new ValueSlotFactory();
+        var slot = factory.CreateNamed("dup", typeof(bool));
+        var join = new PhysicalNestedLoops(PhysicalJoinKind.Inner, Leaf(slot), Leaf(slot), ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null, ImmutableArray<ValueSlot>.Empty);
+        var query = new PhysicalQuery(join, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+
+        var exception = Assert.Throws<InvalidOperationException>(() => PhysicalPlanVerifier.Verify(query));
+        Assert.Contains(slot.Name, exception.Message);
+    }
+
+    [Fact]
+    public void PhysicalPlanVerifier_Accepts_SlotThreadedThroughManyOperators()
+    {
+        // A slot defined once at the leaf and merely passed up through Filter/Project is
+        // not a double definition: only the leaf introduces it.
+        var factory = new ValueSlotFactory();
+        var slot = factory.CreateNamed("c", typeof(bool));
+        var filter = new PhysicalFilter(Leaf(slot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
+        var project = new PhysicalProject(filter, ImmutableArray.Create(slot));
+        var query = new PhysicalQuery(project, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+
+        PhysicalPlanVerifier.Verify(query);
+    }
+
     // A minimal leaf operator that outputs exactly the given slots: a compute of a
     // literal per slot over a one-row constant. The verifier only inspects slot
     // identity, so the literal's value is irrelevant.

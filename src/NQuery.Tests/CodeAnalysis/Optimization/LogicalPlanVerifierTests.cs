@@ -66,6 +66,34 @@ public class LogicalPlanVerifierTests
     }
 
     [Fact]
+    public void LogicalPlanVerifier_Rejects_SlotIntroducedTwice()
+    {
+        // A malformed tree in which the same slot is minted on both sides of a join --
+        // the shape a rewrite that duplicated a subtree without re-minting its slots
+        // would produce. Each side is well-scoped on its own, so only the uniqueness
+        // check catches it.
+        var factory = new ValueSlotFactory();
+        var slot = factory.CreateNamed("dup", typeof(bool));
+        var join = new LogicalJoin(LogicalJoinKind.Inner, Leaf(slot), Leaf(slot), ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null);
+
+        var exception = Assert.Throws<InvalidOperationException>(() => LogicalPlanVerifier.Verify(join, Source));
+        Assert.Contains(slot.Name, exception.Message);
+    }
+
+    [Fact]
+    public void LogicalPlanVerifier_Accepts_SlotThreadedThroughManyOperators()
+    {
+        // A slot defined once at the leaf and merely passed up through Filter/Project is
+        // not a double definition: only the leaf introduces it.
+        var factory = new ValueSlotFactory();
+        var slot = factory.CreateNamed("c", typeof(bool));
+        var filter = new LogicalFilter(Leaf(slot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
+        var project = new LogicalProject(filter, ImmutableArray.Create(slot));
+
+        LogicalPlanVerifier.Verify(project, Source);
+    }
+
+    [Fact]
     public void LogicalPlanVerifier_Failure_NamesSourceOperatorAndScope()
     {
         // The message must be actionable: it names the source (here, the pass), the
