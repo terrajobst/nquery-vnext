@@ -999,7 +999,31 @@ partial class Binder
 
         var value = boundQuery.OutputColumns.First().BoundValue;
 
-        return new BoundSingleRowSubselect(value, boundQuery);
+        var valueAggregate = CreateGuardValueAggregate(value);
+        var countAggregate = CreateGuardCountAggregate();
+
+        return new BoundSingleRowSubselect(value, boundQuery, valueAggregate, countAggregate);
+    }
+
+    // The cardinality guard the algebrizer may wrap around a scalar subquery (see
+    // BoundSingleRowSubselect): ANY collapses the surviving row to the scalar value, COUNT detects
+    // the too-many-rows error. Created here so the algebrizer doesn't have to mint symbols or folds.
+    private BoundAggregatedValue CreateGuardValueAggregate(IBoundValue value)
+    {
+        var output = ValueFactory.CreateTemporary(value.Type);
+        var symbol = new AggregateSymbol(BuiltInAggregates.Any);
+        var fold = BuiltInAggregates.Any.CreateFold(value.Type)!;
+        var argument = new BoundValueExpression(value);
+        return new BoundAggregatedValue(output, symbol, fold, argument);
+    }
+
+    private BoundAggregatedValue CreateGuardCountAggregate()
+    {
+        var output = ValueFactory.CreateTemporary(typeof(int));
+        var symbol = new AggregateSymbol(BuiltInAggregates.Count);
+        var fold = BuiltInAggregates.Count.CreateFold(typeof(int))!;
+        var argument = new BoundLiteralExpression(0);
+        return new BoundAggregatedValue(output, symbol, fold, argument);
     }
 
     private BoundExpression BindExistsSubselect(ExistsSubselectSyntax node)

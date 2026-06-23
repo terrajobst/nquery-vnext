@@ -1,8 +1,5 @@
 # NQuery Major Refactoring
 
-* I don't like that the algebrizer needs to create symbols and binds Count and
-  Any.
-
 ## Port Common Table Expressions
 
 The new binder fully binds CTEs (BindCommonTableExpressionQuery, recursive
@@ -78,6 +75,13 @@ execution; no evaluation test drives a CTE through the new engine.
 * Unique state
     - Keep track of which keys are unique
     - Add support for tables to declare unique combinations of keys
+    - Once we track max-cardinality/at-most-one-row as a query property, fold the
+      scalar-subquery guard into it: the binder eagerly creates the Any/Count
+      guard aggregates on every BoundSingleRowSubselect, but the algebrizer
+      discards them whenever ReturnsAtMostOneRow holds. With a shared cardinality
+      property both the binder's guard decision and Algebrizer.ReturnsAtMostOneRow
+      read the same source, so the aggregates can become nullable and be created
+      only when actually needed.
 * Null state
     - Keep track of null state
     - Leverage null state from columns (`Nullable<T>`, nullable reference types)

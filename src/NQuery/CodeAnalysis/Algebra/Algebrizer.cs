@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Binding;
-using NQuery.Metadata;
 using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.CodeAnalysis.Algebra;
@@ -638,37 +637,20 @@ internal sealed class Algebrizer
             return new LogicalValueSlotExpression(value);
         }
 
-        var guarded = GuardSingleRow(relation, value, out var output);
-        applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, guarded, probe: null, CurrentPassthru));
-        return new LogicalValueSlotExpression(output);
-    }
+        // The binder pre-created the guard aggregates (so symbol/fold binding stays out of here).
+        // Lower them through the same path used for SELECT-list aggregates: ANY collapses the
+        // surviving row to the scalar value, COUNT lets us assert there was at most one row.
+        var guardApplies = new List<PendingApply>();
+        var valueAgg = AlgebrizeAggregatedValue(node.ValueAggregate, guardApplies);
+        var countAgg = AlgebrizeAggregatedValue(node.CountAggregate, guardApplies);
+        relation = WrapInApplies(relation, guardApplies);
+        relation = new LogicalAggregate(relation, ImmutableArray<LogicalComparedValue>.Empty, ImmutableArray.Create(valueAgg, countAgg));
 
-    // ANY(value) collapses the (zero or one) surviving rows to the scalar result; COUNT detects
-    // the error case. With no GROUP BY the aggregate always yields a single row, so the assert
-    // sees one row carrying both the value and the count.
-    private LogicalOperator GuardSingleRow(LogicalOperator relation, ValueSlot value, out ValueSlot output)
-    {
-        var anyOutput = _valueSlotFactory.CreateTemporary(value.Type);
-        var countOutput = _valueSlotFactory.CreateTemporary(typeof(int));
+        var condition = Binary(new LogicalValueSlotExpression(countAgg.Output), BinaryOperatorKind.LessOrEqual, new LogicalLiteralExpression(1));
+        relation = new LogicalAssert(relation, condition, Resources.SubqueryReturnedMoreThanRow);
 
-        var any = new LogicalAggregatedValue(
-            anyOutput,
-            new AggregateSymbol(BuiltInAggregates.Any),
-            BuiltInAggregates.Any.CreateFold(value.Type)!,
-            new LogicalValueSlotExpression(value));
-
-        var count = new LogicalAggregatedValue(
-            countOutput,
-            new AggregateSymbol(BuiltInAggregates.Count),
-            BuiltInAggregates.Count.CreateFold(typeof(int))!,
-            new LogicalLiteralExpression(0));
-
-        var aggregate = new LogicalAggregate(relation, ImmutableArray<LogicalComparedValue>.Empty, ImmutableArray.Create(any, count));
-
-        var condition = Binary(new LogicalValueSlotExpression(countOutput), BinaryOperatorKind.LessOrEqual, new LogicalLiteralExpression(1));
-
-        output = anyOutput;
-        return new LogicalAssert(aggregate, condition, Resources.SubqueryReturnedMoreThanRow);
+        applies.Add(new PendingApply(LogicalApplyKind.LeftOuter, relation, probe: null, CurrentPassthru));
+        return new LogicalValueSlotExpression(valueAgg.Output);
     }
 
     // Whether a relation provably returns at most one row, so the cardinality guard can be
