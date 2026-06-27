@@ -2,7 +2,6 @@
 
 * We should use Ordinal for all string comparisons
 * Ask Claude if the old unit tests did test something that we don't (unlikely)
-* Ask Claude if the old engine had interesting optimizations that we don't have
 
 ## Port Common Table Expressions
 
@@ -48,6 +47,78 @@ execution; no evaluation test drives a CTE through the new engine.
     - We can have an extension point for providing statistics or even
       compute/sample our own during compilation, maybe a behavior that can be
       turned of entire or by table.
+* Target typed enums
+    - Support enums without registering a `TypeName` variable per type or adding
+      static type members, using a leading-dot implicit-member syntax
+      (Swift-style) such as `FIND(x.Name, .FromStart)` or `WHERE x.Option =
+      .FromStart`.
+    - The leading dot makes the expression unambiguously target-typed, so it can
+      never collide with a column or variable name — no shadowing rules and no
+      risk of a query silently changing meaning. No enum registry is needed: the
+      target type (a function parameter, or the other side of a comparison)
+      names the enum, and `.FromStart` is validated against its members.
+    - Implementation-wise the lexer already emits `DotToken` for a leading dot
+      (so `.5` floats are unaffected) and only one case is added to
+      `ParsePrimaryExpression`; the harder part is binding, which must invert
+      NQuery's bottom-up flow: the bare `.member` has no intrinsic type (like
+      `NULL`), so it becomes a deferred candidate node that overload resolution
+      leaves applicable to any enum parameter defining that member, then
+      `BindArgument` rewrites it to a literal once an overload is selected. The
+      comparison case (`= .FromStart`, `IN`, `CASE`) additionally requires
+      `BindBinaryExpression` to push the concrete enum operand's type into the
+      candidate, since binary operators don't target-type their operands by
+      default.
+
+## Missing optimizations from the old engine
+
+A pass-by-pass comparison of the old `Compilation` pipeline against the new
+`LogicalOptimizer` / `Planner` turned up seven optimizations we don't have. They
+are listed roughly in priority order; the first three are the highest value.
+Some overlap existing entries above and below — cross-referenced where they do.
+
+1. **Constant folding.** The old engine ran `ConstantFolder` both before and
+   after algebrization; the new engine folds nothing (the only `Fold` code is
+   aggregate folds). So `1+1`, `WHERE 1=0`, `@p IS NULL` for a known parameter,
+   etc. are never simplified. Beyond the direct win, this is a prerequisite for
+   (2): without folding, a contradiction predicate never becomes an empty input.
+2. **Null/empty-scan propagation** (old `NullScanOptimizer`). Collapse provably
+   empty inputs up the tree: a contradiction predicate or empty leaf becomes an
+   empty scan, then filters/joins/unions above it fold away. We have
+   `LogicalEmpty`/`LogicalConstant` nodes but nothing *produces* `Empty` from a
+   `WHERE 1=0` or propagates it. Pairs with (1) — neither fires without the
+   other. Subsumes the "Detect Filters/Join condition that are always false"
+   bullet under *More features*.
+3. **Compute pushdown** (old `ComputationPusher`). Push `ComputeScalar` *down*
+   past joins/filters so expressions evaluate on the smallest row set, closest to
+   the leaves. Our `ProjectMerger` only collapses/removes projects — it never
+   relocates a compute to reduce how many rows it runs over. Clearest pure-runtime
+   win; complements the "Merge ComputeScalar() nodes" bullet under *More features*.
+4. **Semi-join simplification** (old `SemiJoinSimplifier`). Inside a semi-join's
+   right side only existence matters, so result/sort/distinct nodes there are
+   redundant and can be stripped. No equivalent today.
+5. **Outer-join reordering** (old `OuterJoinReorderer`). Pull a LOJ out of an
+   enclosing IJ (`(A LOJ B) IJ C -> (A IJ C) LOJ B` when the IJ does not depend
+   on B), exposing more inner-join orderings to `JoinOrderer`. Our join orderer
+   only reorders contiguous inner-join regions, so an interposed outer join blocks
+   reorderings the old engine could unblock.
+6. **At-most-one-row reordering** (old `AtMostOneRowReorderer`). Drop `Top`/`Sort`
+   when the input provably yields <=1 row, and reorder semi-joins over an
+   at-most-one-row LOJ. Needs a max-cardinality query property — see the "Unique
+   state" bullet under *Miscellaneous*, which already wants the same property for
+   the scalar-subquery guard.
+7. **W** (old `SpoolInserter`). Our
+   strategy is to decorrelate via `ApplyPushdown`, which is better when it works;
+   but a `LogicalApply` that survives decorrelation is lowered to plain nested
+   loops that re-execute the inner subtree per outer row. Already captured in
+   detail by "Port the index spool for correlated subqueries" under
+   *Miscellaneous* (with the lazy-vs-eager correctness caveat); listed here for
+   completeness.
+
+Not worth copying: `OutputListGenerator`, `RowBufferEntryNamer`,
+`FullOuterJoinExpander`, and `OuterReferenceLabeler` are bookkeeping for the old
+row-buffer execution model that the value-slot / `Planner` design handles
+structurally. The one thing *neither* engine does is a cost model — see "Cost
+model / cardinality estimation" under *More features*.
 
 ## More test coverage
 
@@ -139,3 +210,164 @@ execution; no evaluation test drives a CTE through the new engine.
   the signature. Maybe we can simplify this using a Roslyn style API that
   collapses generic and instantiated generics into a single ITypeSymbol.
 * What are standard SQL types and how should they map to our primitives?
+
+## CTE Design
+
+This is the concrete design for finishing CTE support; it supersedes the
+sketch under *Port Common Table Expressions* above. Binding, validation, and
+authoring are already complete (`BindCommonTableExpressionQuery`,
+`RecursiveCommonTableExpressionChecker`, `CommonTableExpressionSymbol` carrying
+`Anchor` + `RecursiveMembers`). Everything below is about *consuming* that from
+the algebrizer down. Today a CTE reference falls through to a plain
+`LogicalTableScan` and `Emitter.EmitTableScan` throws on the
+`(SchemaTableSymbol)` cast.
+
+### Non-recursive CTEs: inline at algebrize time
+
+Treat a non-recursive CTE reference like a derived table, but instantiate the
+anchor's logical subtree *per reference* with fresh value slots using the
+existing `LogicalOperatorCloner` (its doc comment already anticipates this).
+This is deliberately **not** a barrier: inlining lets the optimizer specialize
+each copy and push predicates into the body. A single reference needs no clone;
+each additional reference gets a slot-disjoint clone.
+
+### Recursive CTEs: a monolithic, opaque logical node lowered in the planner
+
+Represent recursion as a single opaque logical operator that survives binding,
+algebra, and optimization unchanged:
+
+* `LogicalRecursiveUnion` - owns the anchor subtree, the recursive-member
+  subtree(s), the unified output slots, and a recursion identity token naming
+  the canonical working-table slots.
+* `LogicalRecursiveReference` - the self-reference leaf (the working table).
+
+Keeping it opaque gives the **optimizer barrier for free**: no pass needs to
+learn to "skip a spool region." The optimizer still recurses *into* the anchor
+and member subtrees and optimizes them normally; it just never moves anything
+*across* the boundary or decorrelates the reference. The reference leaf must
+read like a non-empty table scan so empty/constant propagation does not fold it
+away.
+
+Lower `LogicalRecursiveUnion` in the **Planner**, exactly as `LogicalJoin`
+lowers to `{PhysicalHashMatch | PhysicalNestedLoops}` and `LogicalApply` lowers
+to a decorrelated join or nested loops. This decouples representation from
+execution strategy and is where the index spool could be selected later.
+
+### Execution model: working table (breadth-first), not stack spool
+
+Two strategies are possible:
+
+* **Stack spool / depth-first / row-at-a-time** - the legacy
+  (`nquery-baseline`) approach: `Concat` + correlated nested loops + a
+  `TableSpoolStack` shared by a push iterator and a pop leaf. The recursive
+  reference is a *single row*, so the recursive join is *always* correlated
+  nested loops.
+* **Working table / breadth-first / set-at-a-time** - the recursive reference
+  is the *whole current frontier* as a scannable set, so the recursive join is
+  an ordinary join the planner can satisfy with a hash match.
+
+Choose the **working table** model:
+
+* Set-at-a-time exposes the recursive reference as a relation, so the normal
+  join planner picks a hash join for the recursive step. The stack-spool model
+  forecloses that.
+* NQuery has **no indexes**, so the stack spool's per-row re-scan of the base
+  relation has no index-seek rescue (the way SQL Server's does) - a hierarchy
+  walk degrades to O(N^2). The working table does one base scan per round and a
+  hash join against the frontier: O(D*N).
+* The industry mainstream (PostgreSQL, MySQL, Oracle's recursive `WITH`,
+  SQLite) all use the working-table/breadth-first model; SQL Server is the
+  outlier that relies on index seeks.
+* "Let the optimizer choose" is achieved **not** by maintaining two recursion
+  drivers (no mainstream engine does - a fixpoint has no cardinality estimate
+  to cost), but by one set-at-a-time driver plus the existing join planner
+  choosing the recursive step's join (hash / nested-loops / future index spool).
+
+Keep the stack-spool / index-spool as a possible future *physical*
+specialization for the narrow correlated-re-seek case; do not commit the
+representation to it.
+
+### Iterators
+
+* `RecursionIterator` - emits anchor rows (staging them as the round-0
+  frontier), then ping-pongs two `SpooledRowStore`s (working / next): each round
+  re-opens the recursive body over the working store, appends produced rows to
+  the next store and emits them, then swaps and clears; stops when a round
+  produces no rows. `MAXRECURSION` (default 100) is a per-round counter.
+* `RecursiveReferenceIterator` - snapshots the current working store on `Open`,
+  scans `0..Count`. It is effectively a table scan over a frozen set.
+* `RecursiveWorkTable` - the one small shared-by-reference handle connecting the
+  driver and the reference leaf (unavoidable: the leaf lives in a different
+  subtree).
+
+Breadth-first is markedly simpler in the demand-pull iterator model: the
+reference is a scan, the driver is a two-store swap, and the recursion level is
+just the round number - no bespoke stack, no per-row body re-open, no
+materialize-to-push ordering.
+
+### Traversal order caveat
+
+Breadth-first changes output row order versus the old engine's depth-first.
+This is standards-conformant (no order is guaranteed without `ORDER BY`), but
+the `nquery-old` CTE evaluation corpus reflects depth-first ordering - port
+those tests with an explicit `ORDER BY`, or accept the order difference.
+
+### Cloning the recursion node
+
+`LogicalRecursiveReference` is a **back-edge** to its `LogicalRecursiveUnion`,
+so the recursive-member subtree is a graph, not a tree, and a structural
+deep-copy desyncs (the bottom-up clone visits the descendant reference before
+the ancestor union exists). Use **identity-based cloning**: both the union and
+every reference hold a shared recursion token. When cloning a
+`LogicalRecursiveUnion`, *pre-seed* the clone scope - mint the new token and
+fresh canonical working-table slots and register old->new - **before** cloning
+children, so every back-edge encountered during the descent rewires to the
+clone. Invariant: a union and all its references are cloned together as one
+slot-scope unit; assert that a reference's token resolves within scope. Extend
+`LogicalOperatorCloner` with a recursion-token map and a special-cased
+`CloneRecursiveUnion`.
+
+### Reuse vs. new infrastructure
+
+Reuse: all syntax/binding/validation; `CommonTableExpressionSymbol.Anchor` /
+`RecursiveMembers`; `LogicalOperatorCloner`; `LogicalUnion` ->
+`ConcatenationIterator`; `SpooledRowStore`; `LogicalApply`/`LogicalJoin` ->
+nested loops; `LogicalCompute`; `LogicalAssert`.
+
+New: `LogicalRecursiveUnion` / `LogicalRecursiveReference` (+ kinds, rewriter /
+cloner hooks, show plan); their `Physical*` counterparts (+ `Planner`,
+`PhysicalPlanVerifier`, show plan); their `Executable*` counterparts + `Emitter`
+branches; `RecursionIterator` + `RecursiveReferenceIterator` +
+`RecursiveWorkTable`; a defensive guard on the `EmitTableScan`
+`SchemaTableSymbol` cast.
+
+### Phasing
+
+1. Non-recursive, single reference - unblocks the `AlgebrizerTests` CTE case and
+   makes a CTE *execute* end-to-end.
+2. Non-recursive, multiple references - clone per reference.
+3. Recursive (working-table model + iterators).
+
+Add evaluation tests throughout (none exist today): port the `nquery-old` CTE
+corpus and compare each CTE's output against the hand-inlined equivalent.
+
+### Open questions / cleanups
+
+* **`CommonTableExpressionSymbol` construction.** The constructor leaks a
+  partially-constructed `this` into binder callbacks and encodes an implicit,
+  load-bearing ordering between two callbacks (anchor must set `Columns` before
+  the recursive members bind). Collapse to a single callback returning
+  `(Anchor, Members, Columns)`, or move orchestration into the binder with an
+  explicit two-phase `Complete`.
+* **Syntactic recursion detection.** `IsRecursive` is a sound over-approximation
+  but decides a *binding* property *syntactically, pre-binding*: a name that
+  merely collides with a base table (or an inner-scope table) is reported as
+  malformed recursion ("no UNION ALL") rather than what it is. This is faithful
+  to the SQL Server dialect (same behavior and message) but diverges from
+  ANSI/PostgreSQL, where `RECURSIVE` gates self-visibility. A more precise design
+  classifies a member as recursive iff a reference actually *resolves to* the
+  CTE symbol (post-binding) - worthwhile only if dialect compatibility or
+  diagnostic quality becomes a goal.
+* **Benchmark** deep vs. wide hierarchies to validate the working-table choice,
+  and ensure the recursive join builds its hash on the (small) frontier, not the
+  base relation.
