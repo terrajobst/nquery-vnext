@@ -7,7 +7,6 @@ gotchas below are the ones worth remembering.
 Test projects:
 - `src/NQuery.Tests`
 - `src/NQuery.Authoring.Tests`
-- `src/NQuery.Dynamic.Tests`
 
 Each multi-targets `net8.0` and `net481`, built to:
 `artifacts/bin/<Project>/debug_<tfm>/<Project>.exe`

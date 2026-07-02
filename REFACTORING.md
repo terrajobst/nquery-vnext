@@ -10,8 +10,6 @@
 
 ## More features
 
-* Delete NQuery.Dynamic
-    - This adds basically zero functionality
 * Add support for `VALUES()`
     - We probably want derived table column syntax (like we do for CTEs) first
     - We probably want to share the syntax / machinery with CTE

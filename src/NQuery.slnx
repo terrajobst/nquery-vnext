@@ -9,7 +9,6 @@
     <File Path="xunit.runner.json" />
   </Folder>
   <Folder Name="/Core Tests/">
-    <Project Path="NQuery.Dynamic.Tests/NQuery.Dynamic.Tests.csproj" />
     <Project Path="NQuery.Testing/NQuery.Testing.csproj" />
     <Project Path="NQuery.Tests/NQuery.Tests.csproj" />
   </Folder>
@@ -18,7 +17,6 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="NQuery.Data/NQuery.Data.csproj" />
-    <Project Path="NQuery.Dynamic/NQuery.Dynamic.csproj" />
     <Project Path="NQuery/NQuery.csproj" />
   </Folder>
   <Folder Name="/Services Common/">
