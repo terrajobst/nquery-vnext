@@ -13,12 +13,12 @@ public class OrderedQuerySelectionSpanProviderTests : SelectionSpanProviderTests
     [Fact]
     public void SelectionExtensions_OrderedQuery()
     {
-        var query = @"
-                SELECT  e.Country,
-                        e.City
-                FROM    Employees e
-                ORDER   BY {{{e.Country DESC},} e.City}
-            ";
+        var query = """
+            SELECT  e.Country,
+                    e.City
+            FROM    Employees e
+            ORDER   BY {{{e.Country DESC},} e.City}
+            """;
 
         AssertIsMatch(query);
     }

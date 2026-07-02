@@ -13,17 +13,17 @@ public class SortOrderTests : CodeRefactoringTests
     [Fact]
     public void SortOrder_CanConvertImplicitToExplicit()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName| /*after*/
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName| /*after*/
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName ASC /*after*/
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName ASC /*after*/
+            """;
 
         var description = "To explicit sort order";
 
@@ -33,17 +33,17 @@ public class SortOrderTests : CodeRefactoringTests
     [Fact]
     public void SortOrder_CanConvertImplicitToDescending()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName| /*after*/
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName| /*after*/
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName DESC /*after*/
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName DESC /*after*/
+            """;
 
         var description = "To descending";
 
@@ -53,17 +53,17 @@ public class SortOrderTests : CodeRefactoringTests
     [Fact]
     public void SortOrder_CanConvertExplicitToImplicit()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName ASC| /*after*/
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName ASC| /*after*/
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName /*after*/
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName /*after*/
+            """;
 
         var description = "To implicit sort order";
 
@@ -73,17 +73,17 @@ public class SortOrderTests : CodeRefactoringTests
     [Fact]
     public void SortOrder_CanConvertExplicitToAscending()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName ASC| /*after*/
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName ASC| /*after*/
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                ORDER   BY e.FirstName DESC /*after*/
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            ORDER   BY e.FirstName DESC /*after*/
+            """;
 
         var description = "To descending";
 

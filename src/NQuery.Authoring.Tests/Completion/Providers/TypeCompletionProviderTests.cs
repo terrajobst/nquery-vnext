@@ -8,9 +8,7 @@ public class TypeCompletionProviderTests
 {
     private static CompletionModel GetCompletionModel(string queryWithJoinMarker)
     {
-        var normalized = queryWithJoinMarker.NormalizeCode();
-
-        var compilation = CompilationFactory.CreateQuery(normalized, out int position);
+        var compilation = CompilationFactory.CreateQuery(queryWithJoinMarker, out int position);
         var semanticModel = compilation.GetSemanticModel();
 
         var provider = new TypeCompletionProvider();
@@ -49,9 +47,9 @@ public class TypeCompletionProviderTests
     [Fact]
     public void TypeCompletionProvider_ReturnsTypes()
     {
-        var query = @"
-                SELECT  CAST(1 AS |
-            ";
+        var query = """
+            SELECT  CAST(1 AS |
+            """;
 
         AssertIsMatch(query);
     }
@@ -59,9 +57,9 @@ public class TypeCompletionProviderTests
     [Fact]
     public void TypeCompletionProvider_DoesNotReturnTypes_IfNoAs()
     {
-        var query = @"
-                SELECT  CAST(1 |
-            ";
+        var query = """
+            SELECT  CAST(1 |
+            """;
 
         AssertIsNotMatch(query);
     }

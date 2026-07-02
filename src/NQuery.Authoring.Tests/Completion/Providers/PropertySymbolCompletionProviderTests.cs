@@ -30,10 +30,10 @@ public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_ReturnsProperties_AfterDot()
     {
-        var query = @"
-                SELECT  e.FirstName.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, typeof(string), "Length");
     }
@@ -41,10 +41,10 @@ public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_ReturnsProperties_AfterText()
     {
-        var query = @"
-                SELECT  e.FirstName.Len|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.Len|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, typeof(string), "Length");
     }
@@ -52,10 +52,10 @@ public class PropertySymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_DoesNotReturnProperties_ForTableInstance()
     {
-        var query = @"
-                SELECT  e.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.|
+            FROM    Employees e
+            """;
 
         AssertIsNoMatch(query);
     }

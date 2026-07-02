@@ -9,15 +9,12 @@ public abstract class CommenterTests
 
     protected void AssertIsMatch(string queryWithMarkers, string expectedQuery)
     {
-        var query = queryWithMarkers.NormalizeCode()
-                                    .ParseSingleSpan(out var selection);
+        var query = queryWithMarkers.ParseSingleSpan(out var selection);
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var actualTree = ToggleComment(syntaxTree, selection);
 
         var actualQuery = actualTree.Text.GetText();
-
-        expectedQuery = expectedQuery.NormalizeCode();
 
         Assert.Equal(expectedQuery, actualQuery);
     }

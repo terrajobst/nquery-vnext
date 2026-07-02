@@ -13,22 +13,22 @@ public class CommonTableExpressionQuerySelectionSpanProviderTests : SelectionSpa
     [Fact]
     public void SelectionExtensions_CommonTableExpressionQuery()
     {
-        var query = @"
-                WITH {{{LondonEmps AS
-                (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.City = 'London'
-                )},}
-                SeattleEmps AS
-                (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.City = 'Seattle'
-                )}
+        var query = """
+            WITH {{{LondonEmps AS
+            (
                 SELECT  *
-                FROM    Employees
-            ";
+                FROM    Employees e
+                WHERE   e.City = 'London'
+            )},}
+            SeattleEmps AS
+            (
+                SELECT  *
+                FROM    Employees e
+                WHERE   e.City = 'Seattle'
+            )}
+            SELECT  *
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }

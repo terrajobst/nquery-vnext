@@ -13,10 +13,10 @@ public class DateBraceMatcherTests : BraceMatcherTests
     [Fact]
     public void DateBraceMatcher_Matches()
     {
-        var query = @"
-                SELECT  {#}10/10/1993{#}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {#}10/10/1993{#}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }

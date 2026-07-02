@@ -30,11 +30,11 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_NamedTables_IfUnnamed()
     {
-        var query = @"
-                SELECT  *
-                FROM    {Employees},
-                        {Employees}
-            ";
+        var query = """
+            SELECT  *
+            FROM    {Employees},
+                    {Employees}
+            """;
 
         AssertHasErrors(query);
     }
@@ -42,11 +42,11 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_NamedTables_IfNamed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees {e},
-                        EmployeeTerritories AS {e}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees {e},
+                    EmployeeTerritories AS {e}
+            """;
 
         AssertHasErrors(query);
     }
@@ -54,11 +54,11 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_DerivedTables()
     {
-        var query = @"
-                SELECT  *
-                FROM    (SELECT * FROM Employees) {e},
-                        (SELECT * FROM EmployeeTerritories) AS {e}
-            ";
+        var query = """
+            SELECT  *
+            FROM    (SELECT * FROM Employees) {e},
+                    (SELECT * FROM EmployeeTerritories) AS {e}
+            """;
 
         AssertHasErrors(query);
     }
@@ -66,11 +66,11 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_NamedAndDerivedTable()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees AS {e},
-                        (SELECT * FROM EmployeeTerritories) {e}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees AS {e},
+                    (SELECT * FROM EmployeeTerritories) {e}
+            """;
 
         AssertHasErrors(query);
     }
@@ -78,11 +78,11 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_NamedTables_InJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees AS {e}
-                            INNER JOIN Employees AS {e} ON TRUE
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees AS {e}
+                        INNER JOIN Employees AS {e} ON TRUE
+            """;
 
         AssertHasErrors(query);
     }
@@ -90,13 +90,13 @@ public class TableRelationTests
     [Fact]
     public void TableRelation_DuplicateAliases_Between_NamedTables_InDifferentJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees AS e
-                            JOIN EmployeeTerritories AS {t} ON TRUE,
-                        Region r
-                            JOIN Territories {t} ON TRUE
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees AS e
+                        JOIN EmployeeTerritories AS {t} ON TRUE,
+                    Region r
+                        JOIN Territories {t} ON TRUE
+            """;
 
         AssertHasErrors(query);
     }

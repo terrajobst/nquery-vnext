@@ -14,12 +14,12 @@ public class OrderByOrdinalTests : CodeIssueTests
     [Fact]
     public void OrderByOrdinal_DoesNotTrigger_ForNamedReference()
     {
-        var query = @"
-                SELECT  e.EmployeeID,
-                        e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY FullName
-             ";
+        var query = """
+            SELECT  e.EmployeeID,
+                    e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY FullName
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);
@@ -28,12 +28,12 @@ public class OrderByOrdinalTests : CodeIssueTests
     [Fact]
     public void OrderByOrdinal_DoesNotTrigger_ForUnnamed()
     {
-        var query = @"
-                SELECT  e.EmployeeID,
-                        e.FirstName + ' ' + e.LastName
-                FROM    Employees e
-                ORDER   BY 2
-             ";
+        var query = """
+            SELECT  e.EmployeeID,
+                    e.FirstName + ' ' + e.LastName
+            FROM    Employees e
+            ORDER   BY 2
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);
@@ -42,12 +42,12 @@ public class OrderByOrdinalTests : CodeIssueTests
     [Fact]
     public void OrderByOrdinal_FindsOrdinalReference()
     {
-        var query = @"
-                SELECT  e.EmployeeID,
-                        e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY 2
-            ";
+        var query = """
+            SELECT  e.EmployeeID,
+                    e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY 2
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -58,19 +58,19 @@ public class OrderByOrdinalTests : CodeIssueTests
     [Fact]
     public void OrderByOrdinal_FixesOrdinalReference()
     {
-        var query = @"
-                SELECT  e.EmployeeID,
-                        e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY 2
-            ";
+        var query = """
+            SELECT  e.EmployeeID,
+                    e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY 2
+            """;
 
-        var fixedQuery = @"
-                SELECT  e.EmployeeID,
-                        e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY FullName
-            ";
+        var fixedQuery = """
+            SELECT  e.EmployeeID,
+                    e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY FullName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);

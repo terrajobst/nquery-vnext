@@ -43,17 +43,17 @@ public class OrderByTests
     [Fact]
     public void OrderBy_BindsByPosition_WhenAppliedToUnion()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  x.Name.Length
-                FROM    Table x
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  x.Name.Length
+            FROM    Table x
 
-                UNION
+            UNION
 
-                SELECT  y.Id
-                FROM    Table y
+            SELECT  y.Id
+            FROM    Table y
 
-                ORDER   BY 1
-            ");
+            ORDER   BY 1
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -99,17 +99,17 @@ public class OrderByTests
     [Fact]
     public void OrderBy_BindsByName_WhenAppliedToUnion()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  COUNT(*) * 2 AS Test
-                FROM    Table x
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  COUNT(*) * 2 AS Test
+            FROM    Table x
 
-                UNION
+            UNION
 
-                SELECT  y.Id
-                FROM    Table y
+            SELECT  y.Id
+            FROM    Table y
 
-                ORDER   BY Test
-            ");
+            ORDER   BY Test
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -150,17 +150,17 @@ public class OrderByTests
     [Fact]
     public void OrderBy_BindsByStructure_WhenAppliedToUnion()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  COUNT(*) * 2
-                FROM    Table x
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  COUNT(*) * 2
+            FROM    Table x
 
-                UNION
+            UNION
 
-                SELECT  y.Id
-                FROM    Table y
+            SELECT  y.Id
+            FROM    Table y
 
-                ORDER   BY COUNT(*) * 2
-            ");
+            ORDER   BY COUNT(*) * 2
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -181,24 +181,24 @@ public class OrderByTests
     [Fact]
     public void OrderBy_BindsByStructure_WhenAppliedToCombinedQueries()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                (
-                    SELECT  x.Name.Length + x.Id
-                    FROM    Table x
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            (
+                SELECT  x.Name.Length + x.Id
+                FROM    Table x
 
-                    UNION
+                UNION
 
-                    SELECT  y.Id * 10
-                    FROM    Table y
-                )
+                SELECT  y.Id * 10
+                FROM    Table y
+            )
 
-                EXCEPT
+            EXCEPT
 
-                SELECT  z.Id * 100
-                FROM    Table z
+            SELECT  z.Id * 100
+            FROM    Table z
 
-                ORDER   BY x.Name.Length + x.Id
-            ");
+            ORDER   BY x.Name.Length + x.Id
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -249,17 +249,17 @@ public class OrderByTests
     [Fact]
     public void OrderBy_DisallowsExpressionsNotInSelectList_WhenAppliedToUnion()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  COUNT(*)
-                FROM    Table x
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  COUNT(*)
+            FROM    Table x
 
-                UNION
+            UNION
 
-                SELECT  y.Id
-                FROM    Table y
+            SELECT  y.Id
+            FROM    Table y
 
-                ORDER   BY COUNT(*) * 2
-            ");
+            ORDER   BY COUNT(*) * 2
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();

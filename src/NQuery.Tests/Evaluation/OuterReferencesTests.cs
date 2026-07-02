@@ -5,14 +5,14 @@ public class OuterReferencesTests : EvaluationTest
     [Fact]
     public void OuterReferences_AreNot_Removed()
     {
-        var text = @"
-                SELECT  (
-                            SELECT  COUNT(*)
-                            FROM    EmployeeTerritories et
-                            WHERE   et.EmployeeID = e.EmployeeID
-                        ) AS TerritoryCount
-                FROM    Employees e
-            ";
+        var text = """
+            SELECT  (
+                        SELECT  COUNT(*)
+                        FROM    EmployeeTerritories et
+                        WHERE   et.EmployeeID = e.EmployeeID
+                    ) AS TerritoryCount
+            FROM    Employees e
+            """;
 
         var expected = new[] {
             2,

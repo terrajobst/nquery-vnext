@@ -7,10 +7,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_Named_WithoutAlias()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.NamedTableReference);
@@ -20,10 +20,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_Named_WithAlias()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.NamedTableReference);
@@ -35,11 +35,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_CrossJoined()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees
-                            CROSS JOIN EmployeeTerritories}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees
+                        CROSS JOIN EmployeeTerritories}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CrossJoinedTableReference);
@@ -54,11 +54,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_CrossApplied()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e
-                            CROSS APPLY (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e
+                        CROSS APPLY (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CrossAppliedTableReference);
@@ -102,11 +102,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterApplied()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e
-                            OUTER APPLY (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e
+                        OUTER APPLY (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterAppliedTableReference);
@@ -150,11 +150,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_InnerJoined_WithJoinKeyword()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e
-                            INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e
+                        INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
@@ -186,11 +186,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_InnerJoined_WithInnerJoinKeywords()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e
-                            JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e
+                        JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
@@ -221,15 +221,15 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_InnerJoined_WithComplexStructure()
     {
-        const string text = @"
-                SELECT  *
-                FROM        {(Employees e
-                                INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID)
-                        INNER JOIN
-                            (Territories t
-                                INNER JOIN Region r ON r.RegionID = t.RegionID)
-                        ON et.TerritoryID = t.TerritoryID}
-            ";
+        const string text = """
+            SELECT  *
+            FROM        {(Employees e
+                            INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID)
+                    INNER JOIN
+                        (Territories t
+                            INNER JOIN Region r ON r.RegionID = t.RegionID)
+                    ON et.TerritoryID = t.TerritoryID}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.InnerJoinedTableReference);
@@ -307,11 +307,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithLeftKeyword()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            LEFT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        LEFT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -343,11 +343,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithLeftOuterKeywords()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            LEFT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        LEFT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -380,11 +380,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithRightKeyword()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            RIGHT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        RIGHT JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -416,11 +416,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithRightOuterKeywords()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            RIGHT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        RIGHT OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -453,11 +453,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithFullKeyword()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            FULL JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        FULL JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -489,11 +489,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_OuterJoined_WithFullOuterKeywords()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {Employees e1
-                            FULL OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {Employees e1
+                        FULL OUTER JOIN Employees e2 ON e2.EmployeeID = e1.ReportsTo}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OuterJoinedTableReference);
@@ -526,10 +526,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_Derived()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {(SELECT * FROM Employees) d}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {(SELECT * FROM Employees) d}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.DerivedTableReference);
@@ -550,10 +550,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_Derived_WithAsKeyword()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {(SELECT * FROM Employees) AS d}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {(SELECT * FROM Employees) AS d}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.DerivedTableReference);
@@ -575,10 +575,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Table_Parenthesized_WithNamed()
     {
-        const string text = @"
-                SELECT  *
-                FROM    {(Employees)}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    {(Employees)}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ParenthesizedTableReference);

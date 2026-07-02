@@ -19,10 +19,10 @@ public class NullIfSignatureHelpModelProviderTests : SignatureHelpModelProviderT
     [Fact]
     public void NullIfSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT  {NULLIF({e.EmployeeId},{ 1})}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {NULLIF({e.EmployeeId},{ 1})}
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

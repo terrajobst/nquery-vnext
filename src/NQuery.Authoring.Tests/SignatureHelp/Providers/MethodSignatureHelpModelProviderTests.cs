@@ -20,9 +20,9 @@ public class MethodSignatureHelpModelProviderTests : SignatureHelpModelProviderT
     [Fact]
     public void MethodSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT {'a'.Substring({ 1},{ 2})}
-            ";
+        var query = """
+            SELECT {'a'.Substring({ 1},{ 2})}
+            """;
 
         AssertIsMatch(query);
     }

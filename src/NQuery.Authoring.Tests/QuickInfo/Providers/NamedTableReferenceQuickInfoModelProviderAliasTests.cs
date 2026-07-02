@@ -26,10 +26,10 @@ public class NamedTableReferenceQuickInfoModelProviderAliasTests : QuickInfoMode
     [Fact]
     public void NamedTableReferenceQuickInfoModelProvider_MatchesInAlias()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees {e}
-             ";
+        var query = """
+            SELECT  *
+            FROM    Employees {e}
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class NamedTableReferenceQuickInfoModelProviderAliasTests : QuickInfoMode
     [Fact]
     public void NamedTableReferenceQuickInfoModelProvider_DoesNotMatchInAliasUnresolved()
     {
-        var query = @"
-                SELECT  *
-                FROM    Xxxxxxxxx {e}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Xxxxxxxxx {e}
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class NamedTableReferenceQuickInfoModelProviderAliasTests : QuickInfoMode
     [Fact]
     public void NamedTableReferenceQuickInfoModelProvider_DoesNotMatchInAs()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees {AS} e
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees {AS} e
+            """;
 
         AssertIsNotMatch(query);
     }

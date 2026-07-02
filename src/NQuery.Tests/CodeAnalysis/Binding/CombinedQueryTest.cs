@@ -10,21 +10,21 @@ public class CombinedQueryTest
     private static void AssertBindsToCommonTypes<T>(string queryCombinator)
         where T : QuerySyntax
     {
-        var query = $@"
-                SELECT  e.EmployeeID * 2.0,
-                        e.LastName,
-                        e.FirstName,
-                        e.ReportsTo
-                FROM    Employees e
+        var query = $"""
+            SELECT  e.EmployeeID * 2.0,
+                    e.LastName,
+                    e.FirstName,
+                    e.ReportsTo
+            FROM    Employees e
 
-                {queryCombinator}
+            {queryCombinator}
 
-                SELECT  e.EmployeeID,
-                        e.LastName,
-                        e.FirstName,
-                        e.ReportsTo * 2.0
-                FROM    Employees e
-            ";
+            SELECT  e.EmployeeID,
+                    e.LastName,
+                    e.FirstName,
+                    e.ReportsTo * 2.0
+            FROM    Employees e
+            """;
 
         var compilation = CompilationFactory.CreateQuery(query);
         var combinedQuery = compilation.SyntaxTree.Root.DescendantNodes().OfType<T>().Single();

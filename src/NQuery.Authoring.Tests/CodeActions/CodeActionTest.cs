@@ -25,12 +25,9 @@ public abstract class CodeActionTest
 
     protected void AssertFixes(string query, string expectedFixedQuery, string expectedActionDescription)
     {
-        var trimmedQuery = query.NormalizeCode();
-        var trimmedExpectedQuery = expectedFixedQuery.NormalizeCode();
-
-        var actions = GetActions(trimmedQuery);
+        var actions = GetActions(query);
         var action = actions.Single(a => a.Description == expectedActionDescription);
         var syntaxTree = action.GetEdit();
-        Assert.Equal(trimmedExpectedQuery, syntaxTree.Text.GetText());
+        Assert.Equal(expectedFixedQuery, syntaxTree.Text.GetText());
     }
 }

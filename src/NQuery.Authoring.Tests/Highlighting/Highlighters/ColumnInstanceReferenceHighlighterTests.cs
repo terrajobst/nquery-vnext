@@ -13,12 +13,12 @@ public class ColumnInstanceReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void ColumnInstanceReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  e.{FirstName},
-                        e.LastName
-                FROM    Employees e
-                WHERE   e.{FirstName} = 'Andrew'
-            ";
+        var query = """
+            SELECT  e.{FirstName},
+                    e.LastName
+            FROM    Employees e
+            WHERE   e.{FirstName} = 'Andrew'
+            """;
 
         AssertIsMatch(query);
     }

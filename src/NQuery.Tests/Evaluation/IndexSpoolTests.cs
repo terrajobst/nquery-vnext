@@ -18,19 +18,19 @@ public class IndexSpoolTests : EvaluationTest
     {
         // The probe is e.ReportsTo, which is NULL for the boss -- the subquery must
         // yield NULL for that row, not match anything.
-        var text = @"
+        var text = """
             SELECT  e.EmployeeID,
                     (SELECT TOP 1 e2.EmployeeID FROM Employees e2 WHERE e2.EmployeeID = e.ReportsTo ORDER BY e2.EmployeeID)
             FROM    Employees e
             ORDER   BY 1
-        ";
+            """;
 
-        var equivalent = @"
+        var equivalent = """
             SELECT  e.EmployeeID,
                     e.ReportsTo
             FROM    Employees e
             ORDER   BY 1
-        ";
+            """;
 
         AssertProducesSameAs(text, equivalent);
     }
@@ -41,14 +41,14 @@ public class IndexSpoolTests : EvaluationTest
         // The index key is e2.ReportsTo, which is NULL for the boss -- that row must
         // not be indexed under any key. The equivalent computes the same "first direct
         // report" through a group-by and hash join (a completely different plan).
-        var text = @"
+        var text = """
             SELECT  e.EmployeeID,
                     (SELECT TOP 1 e2.EmployeeID FROM Employees e2 WHERE e2.ReportsTo = e.EmployeeID ORDER BY e2.EmployeeID)
             FROM    Employees e
             ORDER   BY 1
-        ";
+            """;
 
-        var equivalent = @"
+        var equivalent = """
             SELECT  e.EmployeeID,
                     d.FirstReport
             FROM    Employees e
@@ -56,7 +56,7 @@ public class IndexSpoolTests : EvaluationTest
                                    FROM Employees e2
                                    GROUP BY e2.ReportsTo) d ON d.Manager = e.EmployeeID
             ORDER   BY 1
-        ";
+            """;
 
         AssertProducesSameAs(text, equivalent);
     }
@@ -67,13 +67,13 @@ public class IndexSpoolTests : EvaluationTest
         // TOP 2 blocks decorrelation, so the apply survives and the spool serves
         // multiple rows per probe, re-probed per outer row. The expectation -- the two
         // smallest order ids per employee -- is computed straight from the data.
-        var text = @"
+        var text = """
             SELECT  e.EmployeeID,
                     d.OrderID
             FROM    Employees e
                         CROSS APPLY (SELECT TOP 2 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID ORDER BY o.OrderID) d
             ORDER   BY 1, 2
-        ";
+            """;
 
         var expected = NorthwindData.Instance.Employees
             .OrderBy(e => e.EmployeeID)
@@ -93,7 +93,7 @@ public class IndexSpoolTests : EvaluationTest
     {
         // The second, non-equality conjunct stays above the spool and must still be
         // evaluated against every outer row.
-        var text = @"
+        var text = """
             SELECT  e.EmployeeID,
                     (SELECT TOP 1 o.OrderID
                      FROM   Orders o
@@ -101,16 +101,16 @@ public class IndexSpoolTests : EvaluationTest
                      ORDER  BY o.OrderID)
             FROM    Employees e
             ORDER   BY 1
-        ";
+            """;
 
-        var equivalent = @"
+        var equivalent = """
             SELECT  e.EmployeeID,
                     (SELECT MIN(o.OrderID)
                      FROM   Orders o
                      WHERE  o.EmployeeID = e.EmployeeID AND o.OrderID % 2 = e.EmployeeID % 2)
             FROM    Employees e
             ORDER   BY 1
-        ";
+            """;
 
         AssertProducesSameAs(text, equivalent);
     }

@@ -13,10 +13,10 @@ public class AddAsAliasTests : CodeRefactoringTests
     [Fact]
     public void AddAsAlias_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
     {
-        var query = @"
-                SELECT  e.EmployeeID
-                FROM    Employees AS e|
-            ";
+        var query = """
+            SELECT  e.EmployeeID
+            FROM    Employees AS e|
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -24,15 +24,15 @@ public class AddAsAliasTests : CodeRefactoringTests
     [Fact]
     public void AddAsAlias_InsertsAs()
     {
-        var query = @"
-                SELECT  e.EmployeeID
-                FROM    Employees /* before */ e| /* after */
-            ";
+        var query = """
+            SELECT  e.EmployeeID
+            FROM    Employees /* before */ e| /* after */
+            """;
 
-        var fixedQuery = @"
-                SELECT  e.EmployeeID
-                FROM    Employees /* before */ AS e /* after */
-            ";
+        var fixedQuery = """
+            SELECT  e.EmployeeID
+            FROM    Employees /* before */ AS e /* after */
+            """;
 
         AssertFixes(query, fixedQuery, "Add 'AS' keyword");
     }

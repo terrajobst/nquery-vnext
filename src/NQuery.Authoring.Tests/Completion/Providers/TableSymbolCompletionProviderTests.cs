@@ -39,10 +39,10 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsTables_AfterFrom()
     {
-        var query = @"
-                SELECT  *
-                FROM    |
-            ";
+        var query = """
+            SELECT  *
+            FROM    |
+            """;
 
         AssertIsMatch(query, "Employees");
     }
@@ -50,10 +50,10 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsTables_AfterOnKeyword()
     {
-        var query = @"
-                SELECT  *
-                FROM    Or|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Or|
+            """;
 
         AssertIsMatch(query, "Orders");
     }
@@ -61,11 +61,11 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsTables_InJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            INNER JOIN Emp|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        INNER JOIN Emp|
+            """;
 
         AssertIsMatch(query, "EmployeeTerritories");
     }
@@ -73,10 +73,10 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsOnlyTables_InTableContext()
     {
-        var query = @"
-                SELECT  *
-                FROM    |
-            ";
+        var query = """
+            SELECT  *
+            FROM    |
+            """;
 
         AssertReturnsOnlyTables(query);
     }
@@ -84,10 +84,10 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_DoesNotReturnTables_InGlobalContext()
     {
-        var query = @"
-                SELECT  |
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  |
+            FROM    Employees e
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -95,11 +95,11 @@ public class TableSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_DoesNotReturnTables_InJoinCondition()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            INNER JOIN EmployeeTerritories et ON |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        INNER JOIN EmployeeTerritories et ON |
+            """;
 
         AssertIsNoMatch(query);
     }

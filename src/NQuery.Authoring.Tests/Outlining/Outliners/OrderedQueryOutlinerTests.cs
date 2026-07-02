@@ -13,12 +13,12 @@ public class OrderedQueryOutlinerTests : OutlinerTests
     [Fact]
     public void OrderedQueryOutliner_FindsSelectWithOrderByQuery()
     {
-        var query = @"
-                {SELECT  *
-                FROM    Employees e
-                WHERE   e.City = 'London'
-                ORDER   BY 1}
-            ";
+        var query = """
+            {SELECT  *
+            FROM    Employees e
+            WHERE   e.City = 'London'
+            ORDER   BY 1}
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -26,19 +26,19 @@ public class OrderedQueryOutlinerTests : OutlinerTests
     [Fact]
     public void OrderedQueryOutliner_FindsNonSelectQueries()
     {
-        var query = @"
-                {(
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.City = 'London'
+        var query = """
+            {(
+                SELECT  *
+                FROM    Employees e
+                WHERE   e.City = 'London'
 
-                    UNION   ALL
+                UNION   ALL
 
-                    SELECT  *
-                    FROM    Employees
-                )
-                ORDER   BY 1}
-            ";
+                SELECT  *
+                FROM    Employees
+            )
+            ORDER   BY 1}
+            """;
 
         AssertIsMatch(query, "...");
     }
@@ -46,9 +46,9 @@ public class OrderedQueryOutlinerTests : OutlinerTests
     [Fact]
     public void OrderedQueryOutliner_DoesNotTriggerSingleLineQueries()
     {
-        var query = @"
-                SELECT  * FROM Employees ORDER BY 1
-            ";
+        var query = """
+            SELECT  * FROM Employees ORDER BY 1
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -56,11 +56,11 @@ public class OrderedQueryOutlinerTests : OutlinerTests
     [Fact]
     public void OrderedQueryOutliner_DoesNotTriggerForUnorderedQueries()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.City = 'London'
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.City = 'London'
+            """;
 
         AssertIsNoMatch(query);
     }

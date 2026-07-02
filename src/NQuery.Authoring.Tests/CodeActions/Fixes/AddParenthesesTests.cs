@@ -13,17 +13,17 @@ public class AddParenthesesTests : CodeFixTests
     [Fact]
     public void AddParentheses_ToNameExpression()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.Address.StartsWith|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.Address.StartsWith|
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.Address.StartsWith()
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.Address.StartsWith()
+            """;
 
         AssertFixes(query, fixedQuery, "Add parentheses");
     }
@@ -31,17 +31,17 @@ public class AddParenthesesTests : CodeFixTests
     [Fact]
     public void AddParentheses_ToPropertyExpression()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   GETDATE| = e.Birthdate
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   GETDATE| = e.Birthdate
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   GETDATE() = e.Birthdate
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   GETDATE() = e.Birthdate
+            """;
 
         AssertFixes(query, fixedQuery, "Add parentheses");
     }

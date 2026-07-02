@@ -15,10 +15,10 @@ public class SelectionExtensionsTests : ExtensionTests
     [Fact]
     public void SelectionExtensions_Grows()
     {
-        var query = @"
-                SELECT  e.First|Name
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.First|Name
+            FROM    Employees e
+            """;
 
         var compilation = CompilationFactory.CreateQuery(query, out int position);
         var syntaxTree = compilation.SyntaxTree;

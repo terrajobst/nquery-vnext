@@ -17,17 +17,17 @@ public class FlipBinaryOperatorSidesTests : CodeRefactoringTests
     {
         var operatorText = kind.GetText();
 
-        var query = $@"
-                SELECT  *
-                FROM    Employees e
-                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
-            ";
+        var query = $"""
+            SELECT  *
+            FROM    Employees e
+            WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
+            """;
 
-        var fixedQuery = $@"
-                SELECT  *
-                FROM    Employees e
-                WHERE   /* prefix */ 'Andrew' /* before */ {operatorText} /* after */ e.FirstName /* suffix */
-            ";
+        var fixedQuery = $"""
+            SELECT  *
+            FROM    Employees e
+            WHERE   /* prefix */ 'Andrew' /* before */ {operatorText} /* after */ e.FirstName /* suffix */
+            """;
 
         var description = $"Flip '{operatorText}' operands";
 
@@ -41,17 +41,17 @@ public class FlipBinaryOperatorSidesTests : CodeRefactoringTests
         var operatorText = kind.GetText();
         var otherOperatorText = SyntaxFacts.SwapBinaryExpressionTokenKind(kind).GetText();
 
-        var query = $@"
-                SELECT  *
-                FROM    Employees e
-                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
-            ";
+        var query = $"""
+            SELECT  *
+            FROM    Employees e
+            WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
+            """;
 
-        var fixedQuery = $@"
-                SELECT  *
-                FROM    Employees e
-                WHERE   /* prefix */ 'Andrew' /* before */ {otherOperatorText} /* after */ e.FirstName /* suffix */
-            ";
+        var fixedQuery = $"""
+            SELECT  *
+            FROM    Employees e
+            WHERE   /* prefix */ 'Andrew' /* before */ {otherOperatorText} /* after */ e.FirstName /* suffix */
+            """;
 
         var description = $"Flip '{operatorText}' operator to '{otherOperatorText}'";
 
@@ -64,11 +64,11 @@ public class FlipBinaryOperatorSidesTests : CodeRefactoringTests
     {
         var operatorText = kind.GetText();
 
-        var query = $@"
-                SELECT  *
-                FROM    Employees e
-                WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
-            ";
+        var query = $"""
+            SELECT  *
+            FROM    Employees e
+            WHERE   /* prefix */ e.FirstName /* before */ {operatorText}| /* after */ 'Andrew' /* suffix */
+            """;
 
         AssertDoesNotTrigger(query);
     }

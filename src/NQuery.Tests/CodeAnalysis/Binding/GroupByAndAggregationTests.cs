@@ -80,14 +80,14 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnsFromDifferentQueriesInAggregate()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  COUNT(*)
-                FROM    Table t1
-                HAVING  1 >= ALL (
-                            SELECT  SUM(t1.Id + t2.Id)
-                            FROM    Table t2
-                        )
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  COUNT(*)
+            FROM    Table t1
+            HAVING  1 >= ALL (
+                        SELECT  SUM(t1.Id + t2.Id)
+                        FROM    Table t2
+                    )
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -111,11 +111,11 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInSelect_WhenGrouped_UnlessAggregated()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      COUNT(t.Id)
-                    FROM        Table t
-                    GROUP BY    t.Name
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      COUNT(t.Id)
+            FROM        Table t
+            GROUP BY    t.Name
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -126,11 +126,11 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInSelect_WhenGrouped_UnlessSameAsGroup()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      t.Name + ' ' + t.Id.ToString()
-                    FROM        Table t
-                    GROUP BY    t.Name + ' ' + t.Id.ToString()
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      t.Name + ' ' + t.Id.ToString()
+            FROM        Table t
+            GROUP BY    t.Name + ' ' + t.Id.ToString()
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -201,14 +201,14 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInSelect_UnlessBelongsToDifferentQuery()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                SELECT  COUNT(*)
-                FROM    Table t1
-                HAVING  1 >= ALL (
-                            SELECT  SUM(t1.Id)
-                            FROM    Table t2
-                        )
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT  COUNT(*)
+            FROM    Table t1
+            HAVING  1 >= ALL (
+                        SELECT  SUM(t1.Id)
+                        FROM    Table t2
+                    )
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -231,12 +231,12 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInHaving_WhenGrouped_UnlessAggregated()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      1
-                    FROM        Table t
-                    GROUP BY    t.Name
-                    HAVING      SUM(t.Id) > 10
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      1
+            FROM        Table t
+            GROUP BY    t.Name
+            HAVING      SUM(t.Id) > 10
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -247,12 +247,12 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInHaving_WhenGrouped_UnlessSameAsGroup()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      1
-                    FROM        Table t
-                    GROUP BY    t.Name
-                    HAVING      t.Name <> 'test'
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      1
+            FROM        Table t
+            GROUP BY    t.Name
+            HAVING      t.Name <> 'test'
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -299,12 +299,12 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInOrderBy_WhenGrouped_UnlessAggregated()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      1
-                    FROM        Table t
-                    GROUP BY    t.Name
-                    ORDER BY    SUM(t.Id)
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      1
+            FROM        Table t
+            GROUP BY    t.Name
+            ORDER BY    SUM(t.Id)
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
@@ -315,12 +315,12 @@ public class GroupByAndAggregationTests
     [Fact]
     public void GroupByAndAggregation_DisallowsColumnInstanceInOrderBy_WhenGrouped_UnlessSameAsGroup()
     {
-        var syntaxTree = SyntaxTree.ParseQuery(@"
-                    SELECT      1
-                    FROM        Table t
-                    GROUP BY    t.Id, t.Name + '*'
-                    ORDER BY    t.Name + '*'
-            ");
+        var syntaxTree = SyntaxTree.ParseQuery("""
+            SELECT      1
+            FROM        Table t
+            GROUP BY    t.Id, t.Name + '*'
+            ORDER BY    t.Name + '*'
+            """);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameTable();
         var semanticModel = compilation.GetSemanticModel();
         var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();

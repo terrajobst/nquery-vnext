@@ -19,10 +19,10 @@ public class CoalesceSignatureHelpModelProviderTests : SignatureHelpModelProvide
     [Fact]
     public void CoalesceSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT  {COALESCE({e.ReportsTo},{ e.EmployeeId})}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {COALESCE({e.ReportsTo},{ e.EmployeeId})}
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

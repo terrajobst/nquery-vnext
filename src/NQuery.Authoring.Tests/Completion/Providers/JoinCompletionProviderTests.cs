@@ -8,9 +8,7 @@ public class JoinCompletionProviderTests
 {
     private static void AssertIsMatch(string queryWithJoinMarker)
     {
-        var normalized = queryWithJoinMarker.NormalizeCode();
-
-        var queryWithJoin = normalized.ParseSingleSpan(out var span);
+        var queryWithJoin = queryWithJoinMarker.ParseSingleSpan(out var span);
         var condition = queryWithJoin.Substring(span);
         var query = queryWithJoin.Remove(span.Start, span.Length);
         var position = span.Start;
@@ -34,11 +32,11 @@ public class JoinCompletionProviderTests
     [Fact]
     public void JoinCompletionProvider_ReturnsJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            INNER JOIN EmployeeTerritories et ON {et.EmployeeID = e.EmployeeID}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        INNER JOIN EmployeeTerritories et ON {et.EmployeeID = e.EmployeeID}
+            """;
 
         AssertIsMatch(query);
     }
@@ -46,11 +44,11 @@ public class JoinCompletionProviderTests
     [Fact]
     public void JoinCompletionProvider_CorrectlyEscapes()
     {
-        var query = @"
-                SELECT  *
-                FROM    Orders o
-                            INNER JOIN [Order Details] ON {[Order Details].OrderID = o.OrderID}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Orders o
+                        INNER JOIN [Order Details] ON {[Order Details].OrderID = o.OrderID}
+            """;
 
         AssertIsMatch(query);
     }

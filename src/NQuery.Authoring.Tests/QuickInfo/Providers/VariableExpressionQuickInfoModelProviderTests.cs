@@ -27,11 +27,11 @@ public class VariableExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void VariableExpressionQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId = @{EmployeeId}
-             ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId = @{EmployeeId}
+            """;
 
         AssertIsMatch(query, dc => dc.AddVariables(VariableDefinition.Create("EmployeeId", typeof(int))));
     }
@@ -39,11 +39,11 @@ public class VariableExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void VariableExpressionQuickInfoModelProvider_MatchesInAt()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId = {@}EmployeeId
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId = {@}EmployeeId
+            """;
 
         AssertIsMatch(query, dc => dc.AddVariables(VariableDefinition.Create("EmployeeId", typeof(int))));
     }
@@ -51,11 +51,11 @@ public class VariableExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void VariableExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId = {@EmployeeId}
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId = {@EmployeeId}
+            """;
 
         AssertIsNotMatch(query);
     }

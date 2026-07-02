@@ -23,9 +23,9 @@ public class FunctionSignatureHelpModelProviderTests : SignatureHelpModelProvide
     [Fact]
     public void FunctionSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT {SUBSTRING({'a'},{ 1},{ 2})}
-            ";
+        var query = """
+            SELECT {SUBSTRING({'a'},{ 1},{ 2})}
+            """;
 
         AssertIsMatch(query);
     }

@@ -14,15 +14,15 @@ public class ColumnsInExistsTests : CodeIssueTests
     [Fact]
     public void ColumnInExists_DoesNotTrigger_ForSelectStar()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   EXISTS (
-                            SELECT  *
-                            FROM    EmployeeTerritories et
-                            WHERE   et.EmployeeID = e.EmployeeID
-                        )
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   EXISTS (
+                        SELECT  *
+                        FROM    EmployeeTerritories et
+                        WHERE   et.EmployeeID = e.EmployeeID
+                    )
+            """;
 
         var codeIssues = GetIssues(query);
 
@@ -32,18 +32,18 @@ public class ColumnsInExistsTests : CodeIssueTests
     [Fact]
     public void ColumnInExists_FindsUnnecessaryColumns()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   EXISTS (
-                            SELECT  -- Before
-                                    et.EmployeeID, -- Test 1
-                                    et.TerritoryID -- Test 2
-                                    -- After
-                            FROM    EmployeeTerritories et
-                            WHERE   et.EmployeeID = e.EmployeeID
-                        )
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   EXISTS (
+                        SELECT  -- Before
+                                et.EmployeeID, -- Test 1
+                                et.TerritoryID -- Test 2
+                                -- After
+                        FROM    EmployeeTerritories et
+                        WHERE   et.EmployeeID = e.EmployeeID
+                    )
+            """;
 
         var codeIssues = GetIssues(query);
 
@@ -67,30 +67,30 @@ public class ColumnsInExistsTests : CodeIssueTests
     [Fact]
     public void ColumnInExists_FixesUnnecessaryColumns()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   EXISTS (
-                            SELECT  -- Before
-                                    et.EmployeeID, -- Test 1
-                                    et.TerritoryID -- Test 2
-                                    -- After
-                            FROM    EmployeeTerritories et
-                            WHERE   et.EmployeeID = e.EmployeeID
-                        )
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   EXISTS (
+                        SELECT  -- Before
+                                et.EmployeeID, -- Test 1
+                                et.TerritoryID -- Test 2
+                                -- After
+                        FROM    EmployeeTerritories et
+                        WHERE   et.EmployeeID = e.EmployeeID
+                    )
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   EXISTS (
-                            SELECT  -- Before
-                                    * -- Test 2
-                                    -- After
-                            FROM    EmployeeTerritories et
-                            WHERE   et.EmployeeID = e.EmployeeID
-                        )
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   EXISTS (
+                        SELECT  -- Before
+                                * -- Test 2
+                                -- After
+                        FROM    EmployeeTerritories et
+                        WHERE   et.EmployeeID = e.EmployeeID
+                    )
+            """;
 
         var codeIssues = GetIssues(query);
 

@@ -19,9 +19,9 @@ public class CastSignatureHelpModelProviderTests : SignatureHelpModelProviderTes
     [Fact]
     public void CastSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT {CAST({100 }AS{ DOUBLE})}
-            ";
+        var query = """
+            SELECT {CAST({100 }AS{ DOUBLE})}
+            """;
 
         AssertIsMatch(query);
     }

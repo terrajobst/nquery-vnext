@@ -13,11 +13,11 @@ public class SelectClauseSelectionSpanProviderTests : SelectionSpanProviderTests
     [Fact]
     public void SelectionExtensions_SelectClause()
     {
-        var query = @"
-                SELECT  {{{e.Country},}
-                        e.City}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {{{e.Country},}
+                    e.City}
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

@@ -26,10 +26,10 @@ public class ExpressionSelectColumnQuickInfoModelProviderTests : QuickInfoModelP
     [Fact]
     public void ExpressionSelectColumnQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName AS {[Full Name]}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName AS {[Full Name]}
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class ExpressionSelectColumnQuickInfoModelProviderTests : QuickInfoModelP
     [Fact]
     public void ExpressionSelectColumnQuickInfoModelProvider_DoesNotMatchInExpression()
     {
-        var query = @"
-                SELECT  {e.FirstName + ' ' + e.LastName} AS [Full Name]
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {e.FirstName + ' ' + e.LastName} AS [Full Name]
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class ExpressionSelectColumnQuickInfoModelProviderTests : QuickInfoModelP
     [Fact]
     public void ExpressionSelectColumnQuickInfoModelProvider_DoesNotMatchForAs()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName {AS} [Full Name]
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName {AS} [Full Name]
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -59,10 +59,10 @@ public class ExpressionSelectColumnQuickInfoModelProviderTests : QuickInfoModelP
     [Fact]
     public void ExpressionSelectColumnQuickInfoModelProvider_DoesNotMatchForUnnamed()
     {
-        var query = @"
-                SELECT  {e.FirstName + ' ' + e.LastName}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {e.FirstName + ' ' + e.LastName}
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

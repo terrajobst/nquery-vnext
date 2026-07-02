@@ -13,11 +13,11 @@ public class AggregateReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void AggregateReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  {COUNT}(*),
-                        {COUNT}(e.ReportsTo)
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {COUNT}(*),
+                    {COUNT}(e.ReportsTo)
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

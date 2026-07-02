@@ -28,9 +28,7 @@ public class CommonTableExpressionCompletionProviderTests
 
     private static CompletionModel GetCompletionModel(string queryWithPosition)
     {
-        var normalized = queryWithPosition.NormalizeCode();
-
-        var query = normalized.ParseSinglePosition(out var position);
+        var query = queryWithPosition.ParseSinglePosition(out var position);
 
         var compilation = CompilationFactory.CreateQuery(query);
         var semanticModel = compilation.GetSemanticModel();
@@ -45,9 +43,9 @@ public class CommonTableExpressionCompletionProviderTests
     [Fact]
     public void CommonTableExpressionCompletionProvider_ReturnsBuilder_WhenValidPrefixIsPresent()
     {
-        var query = @"
-                WITH rec|
-            ";
+        var query = """
+            WITH rec|
+            """;
 
         AssertIsMatch(query);
     }
@@ -55,9 +53,9 @@ public class CommonTableExpressionCompletionProviderTests
     [Fact]
     public void CommonTableExpressionCompletionProvider_ReturnsNoBuilder_WhenRecursiveIsMissing()
     {
-        var query = @"
-                WITH |
-            ";
+        var query = """
+            WITH |
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -65,9 +63,9 @@ public class CommonTableExpressionCompletionProviderTests
     [Fact]
     public void CommonTableExpressionCompletionProvider_ReturnsNoBuilder_WhenRecursiveIsPresent()
     {
-        var query = @"
-                WITH recursive|
-            ";
+        var query = """
+            WITH recursive|
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -75,15 +73,15 @@ public class CommonTableExpressionCompletionProviderTests
     [Fact]
     public void CommonTableExpressionCompletionProvider_ReturnsNoBuilder_WhenInQuery()
     {
-        var query = @"
-                WITH Emps AS
-                (
-                    SELECT  |
-                    FROM    Employees e
-                )
-                SELECT  *
-                FROM    Emps
-            ";
+        var query = """
+            WITH Emps AS
+            (
+                SELECT  |
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
         AssertIsNoMatch(query);
     }

@@ -59,11 +59,11 @@ public class ComparerTests
     [Fact]
     public void Union_RequiresAllColumnsToBeComparable()
     {
-        var source = @"
-                SELECT * FROM Table
-                UNION
-                SELECT * FROM Table
-            ";
+        var source = """
+            SELECT * FROM Table
+            UNION
+            SELECT * FROM Table
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
@@ -77,11 +77,11 @@ public class ComparerTests
     [Fact]
     public void Union_RequiresAllColumnsToBeComparable_UnlessAllIsSpecified()
     {
-        var source = @"
-                SELECT * FROM Table
-                UNION ALL
-                SELECT * FROM Table
-            ";
+        var source = """
+            SELECT * FROM Table
+            UNION ALL
+            SELECT * FROM Table
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
@@ -94,11 +94,11 @@ public class ComparerTests
     [Fact]
     public void Except_RequiresAllColumnsToBeComparable()
     {
-        var source = @"
-                SELECT * FROM Table
-                EXCEPT
-                SELECT * FROM Table
-            ";
+        var source = """
+            SELECT * FROM Table
+            EXCEPT
+            SELECT * FROM Table
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();
@@ -112,11 +112,11 @@ public class ComparerTests
     [Fact]
     public void Intersect_RequiresAllColumnsToBeComparable()
     {
-        var source = @"
-                SELECT * FROM Table
-                INTERSECT
-                SELECT * FROM Table
-            ";
+        var source = """
+            SELECT * FROM Table
+            INTERSECT
+            SELECT * FROM Table
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(source);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree).WithIdNameDataTable();

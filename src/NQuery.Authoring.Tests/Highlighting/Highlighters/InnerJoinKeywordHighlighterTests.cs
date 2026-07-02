@@ -13,11 +13,11 @@ public class InnerJoinKeywordHighlighterTests : HighlighterTests
     [Fact]
     public void InnerJoinKeywordHighlighter_MatchesInnerJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            {INNER} {JOIN} EmployeeTerritories et {ON} et.EmployeeID = e.EmployeeID
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        {INNER} {JOIN} EmployeeTerritories et {ON} et.EmployeeID = e.EmployeeID
+            """;
 
         AssertIsMatch(query);
     }
@@ -25,11 +25,11 @@ public class InnerJoinKeywordHighlighterTests : HighlighterTests
     [Fact]
     public void InnerJoinKeywordHighlighter_MatchesJoin()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            {JOIN} EmployeeTerritories et {ON} et.EmployeeID = e.EmployeeID
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        {JOIN} EmployeeTerritories et {ON} et.EmployeeID = e.EmployeeID
+            """;
 
         AssertIsMatch(query);
     }

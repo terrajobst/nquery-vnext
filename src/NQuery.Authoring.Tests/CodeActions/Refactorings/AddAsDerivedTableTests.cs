@@ -13,13 +13,13 @@ public class AddAsDerivedTableTests : CodeRefactoringTests
     [Fact]
     public void AddAsDerivedTable_DoesNotTrigger_WhenKeywordIsAlreadyPresent()
     {
-        var query = @"
-                SELECT  *
-                FROM    (
-                            SELECT  *
-                            FROM    Employees e
-                        ) AS d|
-            ";
+        var query = """
+            SELECT  *
+            FROM    (
+                        SELECT  *
+                        FROM    Employees e
+                    ) AS d|
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -27,21 +27,21 @@ public class AddAsDerivedTableTests : CodeRefactoringTests
     [Fact]
     public void AddAsDerivedTable_InsertsAs()
     {
-        var query = @"
-                SELECT  *
-                FROM    (
-                            SELECT  *
-                            FROM    Employees e
-                        ) /* before */ d| /* after */
-            ";
+        var query = """
+            SELECT  *
+            FROM    (
+                        SELECT  *
+                        FROM    Employees e
+                    ) /* before */ d| /* after */
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    (
-                            SELECT  *
-                            FROM    Employees e
-                        ) /* before */ AS d /* after */
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    (
+                        SELECT  *
+                        FROM    Employees e
+                    ) /* before */ AS d /* after */
+            """;
 
         AssertFixes(query, fixedQuery, "Add 'AS' keyword");
     }

@@ -13,10 +13,10 @@ public class QualifyColumnTests : CodeRefactoringTests
     [Fact]
     public void QualifyColumn_DoesNotTrigger_WhenColumnIsQualified()
     {
-        var query = @"
-                SELECT  e.EmployeeID|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.EmployeeID|
+            FROM    Employees e
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -24,10 +24,10 @@ public class QualifyColumnTests : CodeRefactoringTests
     [Fact]
     public void QualifyColumn_DoesNotTrigger_WhenColumnCannotBeResolved()
     {
-        var query = @"
-                SELECT  NotFirstName|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  NotFirstName|
+            FROM    Employees e
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -35,15 +35,15 @@ public class QualifyColumnTests : CodeRefactoringTests
     [Fact]
     public void QualifyColumn_InsertsQualifier()
     {
-        var query = @"
-                SELECT  EmployeeID|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  EmployeeID|
+            FROM    Employees e
+            """;
 
-        var fixedQuery = @"
-                SELECT  e.EmployeeID
-                FROM    Employees e
-            ";
+        var fixedQuery = """
+            SELECT  e.EmployeeID
+            FROM    Employees e
+            """;
 
         AssertFixes(query, fixedQuery, "Qualify column");
     }
@@ -51,15 +51,15 @@ public class QualifyColumnTests : CodeRefactoringTests
     [Fact]
     public void QualifyColumn_InsertsQualifierAndEscapes()
     {
-        var query = @"
-                SELECT  EmployeeID|
-                FROM    Employees [the ]]emp]
-            ";
+        var query = """
+            SELECT  EmployeeID|
+            FROM    Employees [the ]]emp]
+            """;
 
-        var fixedQuery = @"
-                SELECT  [the ]]emp].EmployeeID
-                FROM    Employees [the ]]emp]
-            ";
+        var fixedQuery = """
+            SELECT  [the ]]emp].EmployeeID
+            FROM    Employees [the ]]emp]
+            """;
 
         AssertFixes(query, fixedQuery, "Qualify column");
     }

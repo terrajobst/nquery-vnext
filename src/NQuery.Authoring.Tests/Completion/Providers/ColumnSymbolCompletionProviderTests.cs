@@ -46,10 +46,10 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsColumns_InGlobalContext()
     {
-        var query = @"
-                SELECT  |
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  |
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, "e", "EmployeeID");
     }
@@ -57,10 +57,10 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsColumns_AfterDot()
     {
-        var query = @"
-                SELECT  e.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, "e", "EmployeeID");
     }
@@ -68,10 +68,10 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsColumns_AfterText()
     {
-        var query = @"
-                SELECT  e.First|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.First|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, "e", "FirstName");
     }
@@ -79,11 +79,11 @@ public class ColumnSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsAmbiguous()
     {
-        var query = @"
-                SELECT  |
-                FROM    Employees e
-                            INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID
-            ";
+        var query = """
+            SELECT  |
+            FROM    Employees e
+                        INNER JOIN EmployeeTerritories et ON et.EmployeeID = e.EmployeeID
+            """;
 
         AssertIsAmbiguousMatch(query, "e", "EmployeeID");
     }

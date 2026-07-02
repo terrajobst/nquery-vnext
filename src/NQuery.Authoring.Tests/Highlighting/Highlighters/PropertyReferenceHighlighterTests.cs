@@ -13,11 +13,11 @@ public class PropertyReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void PropertyReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  e.FirstName.{Length},
-                        e.LastName.{Length},
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.{Length},
+                    e.LastName.{Length},
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

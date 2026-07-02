@@ -13,10 +13,10 @@ public class IdentifierBraceMatcherTests : BraceMatcherTests
     [Fact]
     public void IdentifierBraceMatcher_DoesNotMatchRegularIdentifier()
     {
-        var query = @"
-                SELECT  {}FirstName{}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {}FirstName{}
+            FROM    Employees
+            """;
 
         AssertIsNoMatch(query);
     }

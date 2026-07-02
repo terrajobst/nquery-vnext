@@ -9,13 +9,13 @@ public class DynamicTests
     [Fact]
     public void Dynamic_ExecuteDynamicSequenceAllowsLateBoundAccess()
     {
-        var text = @"
-                SELECT  c.CategoryID,
-                        c.CategoryName
-                FROM    Categories c
-                WHERE   c.CategoryID < 3
-                ORDER   BY 1
-            ";
+        var text = """
+            SELECT  c.CategoryID,
+                    c.CategoryName
+            FROM    Categories c
+            WHERE   c.CategoryID < 3
+            ORDER   BY 1
+            """;
 
         var catalog = NorthwindCatalog.Instance;
         var query = Query.Create(catalog, text);

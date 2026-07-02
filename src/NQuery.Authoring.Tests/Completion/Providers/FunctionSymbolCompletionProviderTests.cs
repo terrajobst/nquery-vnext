@@ -24,10 +24,10 @@ public class FunctionSymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_ReturnsFunctions_InGlobalContext()
     {
-        var query = @"
-                SELECT  |
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  |
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "SIN");
     }
@@ -35,10 +35,10 @@ public class FunctionSymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_ReturnsFunctions_AfterText()
     {
-        var query = @"
-                SELECT  S|
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  S|
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "SIN");
     }
@@ -46,10 +46,10 @@ public class FunctionSymbolCompletionProviderTests : SymbolCompletionProviderTes
     [Fact]
     public void SymbolCompletionProvider_ReturnsFunctions_AfterContextualKeyword()
     {
-        var query = @"
-                SELECT  Left|
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  Left|
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "LEFT");
     }

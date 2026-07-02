@@ -26,10 +26,10 @@ public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelPro
     [Fact]
     public void WildcardSelectColumnQuickInfoModelProvider_MatchesInAlias()
     {
-        var query = @"
-                SELECT  {e}.*
-                FROM    Employees e
-             ";
+        var query = """
+            SELECT  {e}.*
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelPro
     [Fact]
     public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchesUnresolved()
     {
-        var query = @"
-                SELECT  {x}.*
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {x}.*
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class WildcardSelectColumnQuickInfoModelProviderTests : QuickInfoModelPro
     [Fact]
     public void WildcardSelectColumnQuickInfoModelProvider_DoesNotMatchAfterDot()
     {
-        var query = @"
-                SELECT  e.{*}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.{*}
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

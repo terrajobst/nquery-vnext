@@ -13,11 +13,11 @@ public class SelectColumnReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void SelectColumnReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName {FullName}
-                FROM    Employees e
-                ORDER   BY {FullName}
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName {FullName}
+            FROM    Employees e
+            ORDER   BY {FullName}
+            """;
 
         AssertIsMatch(query);
     }

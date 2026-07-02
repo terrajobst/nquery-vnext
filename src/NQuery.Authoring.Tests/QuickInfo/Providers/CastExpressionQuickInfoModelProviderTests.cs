@@ -25,9 +25,9 @@ public class CastExpressionQuickInfoModelProviderTests : QuickInfoModelProviderT
     [Fact]
     public void CastExpressionQuickInfoModelProvider_MatchesInCast()
     {
-        var query = @"
-                SELECT  {CAST}(1 AS FLOAT)
-            ";
+        var query = """
+            SELECT  {CAST}(1 AS FLOAT)
+            """;
 
         AssertIsMatch(query);
     }
@@ -35,9 +35,9 @@ public class CastExpressionQuickInfoModelProviderTests : QuickInfoModelProviderT
     [Fact]
     public void CastExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  CAST({1 AS FLOAT)}
-            ";
+        var query = """
+            SELECT  CAST({1 AS FLOAT)}
+            """;
 
         AssertIsNotMatch(query);
     }

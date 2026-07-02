@@ -26,10 +26,10 @@ public class MethodInvocationExpressionQuickInfoModelProviderTests : QuickInfoMo
     [Fact]
     public void MethodInvocationExpressionQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  e.EmployeeID.ToString(e.FirstName.{Substring}(2))
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.EmployeeID.ToString(e.FirstName.{Substring}(2))
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class MethodInvocationExpressionQuickInfoModelProviderTests : QuickInfoMo
     [Fact]
     public void MethodInvocationExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  e.EmployeeID.ToString(e.FirstName.{Xxx}(2))
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.EmployeeID.ToString(e.FirstName.{Xxx}(2))
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class MethodInvocationExpressionQuickInfoModelProviderTests : QuickInfoMo
     [Fact]
     public void MethodInvocationExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  e.EmployeeID.ToString(e.FirstName.Substring({2)})
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.EmployeeID.ToString(e.FirstName.Substring({2)})
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

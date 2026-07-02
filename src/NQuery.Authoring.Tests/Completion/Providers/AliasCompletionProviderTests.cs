@@ -28,9 +28,7 @@ public class AliasCompletionProviderTests
 
     private static CompletionModel GetCompletionModel(string queryWithPosition)
     {
-        var normalized = queryWithPosition.NormalizeCode();
-
-        var query = normalized.ParseSinglePosition(out var position);
+        var query = queryWithPosition.ParseSinglePosition(out var position);
 
         var compilation = CompilationFactory.CreateQuery(query);
         var semanticModel = compilation.GetSemanticModel();
@@ -45,10 +43,10 @@ public class AliasCompletionProviderTests
     [Fact]
     public void AliasCompletionProvider_ReturnsBuilder_WhenValidPrefixIsPresent()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees a|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees a|
+            """;
 
         AssertIsMatch(query);
     }
@@ -56,10 +54,10 @@ public class AliasCompletionProviderTests
     [Fact]
     public void AliasCompletionProvider_ReturnsNoBuilder_WhenAsIsMissing()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees |
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -67,10 +65,10 @@ public class AliasCompletionProviderTests
     [Fact]
     public void AliasCompletionProvider_ReturnsNoBuilder_WhenAsIsPresent()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees as|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees as|
+            """;
 
         AssertIsNoMatch(query);
     }

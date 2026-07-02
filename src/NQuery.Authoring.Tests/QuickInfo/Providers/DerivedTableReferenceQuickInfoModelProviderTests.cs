@@ -26,13 +26,13 @@ public class DerivedTableReferenceQuickInfoModelProviderTests : QuickInfoModelPr
     [Fact]
     public void DerivedTableReferenceQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  *
-                FROM    (
-                            SELECT  *
-                            FROM    Employees
-                        ) {emps}
-            ";
+        var query = """
+            SELECT  *
+            FROM    (
+                        SELECT  *
+                        FROM    Employees
+                    ) {emps}
+            """;
 
         AssertIsMatch(query);
     }
@@ -40,13 +40,13 @@ public class DerivedTableReferenceQuickInfoModelProviderTests : QuickInfoModelPr
     [Fact]
     public void DerivedTableReferenceQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  *
-                FROM    {(
-                            SELECT  *
-                            FROM    Employees
-                        )} emps
-            ";
+        var query = """
+            SELECT  *
+            FROM    {(
+                        SELECT  *
+                        FROM    Employees
+                    )} emps
+            """;
 
         AssertIsNotMatch(query);
     }

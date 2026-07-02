@@ -89,11 +89,12 @@ public sealed class EagerAndLazyTests
     [Fact]
     public void Evaluation_CaseWhen_NonNullFunction_LazyOnce()
     {
-        const string text = @"
-                CASE
-                    WHEN NON_NULL_INT32(ir) = 42 THEN 42
-                    ELSE NULL_INT32(ir)
-                END";
+        const string text = """
+            CASE
+                WHEN NON_NULL_INT32(ir) = 42 THEN 42
+                ELSE NULL_INT32(ir)
+            END
+            """;
 
         var result = EvaluateAndCountInvocations(text);
         Assert.Equal(42, result.Result);
@@ -104,12 +105,13 @@ public sealed class EagerAndLazyTests
     [Fact]
     public void Evaluation_CaseWhen_NonNullNestedFunction_LazyOnce()
     {
-        const string text = @"
-                CASE
-                    WHEN TO_INT32(NON_NULL_INT32(ir)) = 42 THEN 42
-                    WHEN TO_INT32(NON_NULL_INT32(ir)) != 42 THEN 0
-                    ELSE TO_INT32(NULL_INT32(ir))
-                END";
+        const string text = """
+            CASE
+                WHEN TO_INT32(NON_NULL_INT32(ir)) = 42 THEN 42
+                WHEN TO_INT32(NON_NULL_INT32(ir)) != 42 THEN 0
+                ELSE TO_INT32(NULL_INT32(ir))
+            END
+            """;
 
         var result = EvaluateAndCountInvocations(text);
         Assert.Equal(42, result.Result);
@@ -120,11 +122,12 @@ public sealed class EagerAndLazyTests
     [Fact]
     public void Evaluation_CaseWhen_NullFunction_LazyOnce()
     {
-        const string text = @"
-                CASE
-                    WHEN NULL_INT32(ir) = 0 THEN 42
-                    ELSE 0
-                END";
+        const string text = """
+            CASE
+                WHEN NULL_INT32(ir) = 0 THEN 42
+                ELSE 0
+            END
+            """;
 
         var result = EvaluateAndCountInvocations(text);
         Assert.Equal(0, result.Result);

@@ -13,14 +13,14 @@ public class CommonTableExpressionReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void CommonTableExpressionReferenceHighlighter_Matches()
     {
-        var query = @"
-                WITH {Emps} (
-                    SELECT  *
-                    FROM    Employees
-                )
+        var query = """
+            WITH {Emps} (
                 SELECT  *
-                FROM    {Emps} em
-            ";
+                FROM    Employees
+            )
+            SELECT  *
+            FROM    {Emps} em
+            """;
 
         AssertIsMatch(query);
     }

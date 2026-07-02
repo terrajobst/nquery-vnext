@@ -12,15 +12,15 @@ public class OuterApplyTests
         // Like CROSS APPLY, the right side of an OUTER APPLY is evaluated per left row and may
         // reference the left's columns. Binding it puts the left's tables in scope, so the
         // correlated reference resolves without any diagnostics.
-        var text = @"
-                SELECT  e.EmployeeID, oa.OrderID
-                FROM    Employees e
-                            OUTER APPLY (
-                                SELECT  o.OrderID
-                                FROM    Orders o
-                                WHERE   o.EmployeeID = e.EmployeeID
-                            ) oa
-            ";
+        var text = """
+            SELECT  e.EmployeeID, oa.OrderID
+            FROM    Employees e
+                        OUTER APPLY (
+                            SELECT  o.OrderID
+                            FROM    Orders o
+                            WHERE   o.EmployeeID = e.EmployeeID
+                        ) oa
+            """;
 
         var diagnostics = GetDiagnostics(text);
 

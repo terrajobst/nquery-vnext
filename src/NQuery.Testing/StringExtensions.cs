@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Text;
 
 using NQuery.CodeAnalysis.Text;
 
@@ -9,44 +8,6 @@ public static class StringExtensions
 {
     extension(string text)
     {
-        public string NormalizeCode()
-        {
-            return text.Unindent().Trim();
-        }
-
-        public string Unindent()
-        {
-            var minIndent = int.MaxValue;
-
-            using (var stringReader = new StringReader(text))
-            {
-                string? line;
-                while ((line = stringReader.ReadLine()) is not null)
-                {
-                    if (string.IsNullOrWhiteSpace(line))
-                        continue;
-
-                    var indent = line.Length - line.TrimStart().Length;
-                    minIndent = Math.Min(minIndent, indent);
-                }
-            }
-
-            var sb = new StringBuilder();
-            using (var stringReader = new StringReader(text))
-            {
-                string? line;
-                while ((line = stringReader.ReadLine()) is not null)
-                {
-                    var unindentedLine = line.Length < minIndent
-                        ? line
-                        : line.Substring(minIndent);
-                    sb.AppendLine(unindentedLine);
-                }
-            }
-
-            return sb.ToString();
-        }
-
         public string Substring(TextSpan span)
         {
             return text.Substring(span.Start, span.Length);

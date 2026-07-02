@@ -13,18 +13,18 @@ public class CommonTableExpressionColumnNameListSelectionSpanProviderTests : Sel
     [Fact]
     public void SelectionExtensions_CommonTableExpressionColumnNameList()
     {
-        var query = @"
-                WITH LondonEmps ({{{FN},} LN, RC}) AS
-                (
-                    SELECT  e.FirstName,
-                            e.LastName,
-                            e.RegionCode
-                    FROM    Employees e
-                    WHERE   e.City = 'London'
-                )
-                SELECT  *
-                FROM    LondonEmps
-            ";
+        var query = """
+            WITH LondonEmps ({{{FN},} LN, RC}) AS
+            (
+                SELECT  e.FirstName,
+                        e.LastName,
+                        e.RegionCode
+                FROM    Employees e
+                WHERE   e.City = 'London'
+            )
+            SELECT  *
+            FROM    LondonEmps
+            """;
 
         AssertIsMatch(query);
     }

@@ -26,10 +26,10 @@ public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoMode
     [Fact]
     public void PropertyAccessExpressionQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  FirstName.{Length}
-                FROM    Employees
-             ";
+        var query = """
+            SELECT  FirstName.{Length}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoMode
     [Fact]
     public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  FirstName.{Xxx}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  FirstName.{Xxx}
+            FROM    Employees
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoMode
     [Fact]
     public void PropertyAccessExpressionQuickInfoModelProvider_DoesNotMatchBeforeDot()
     {
-        var query = @"
-                SELECT  {FirstName}.Length
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {FirstName}.Length
+            FROM    Employees
+            """;
 
         AssertIsNotMatch(query);
     }

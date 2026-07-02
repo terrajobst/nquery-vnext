@@ -13,15 +13,15 @@ public class CaseBraceMatcherTests : BraceMatcherTests
     [Fact]
     public void CaseBraceMatcher_Matches()
     {
-        var query = @"
-                SELECT  {CASE}
-                            WHEN ReportsTo IS NULL THEN
-                                'The Boss'
-                            ELSE
-                                'Minion'
-                        {END}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {CASE}
+                        WHEN ReportsTo IS NULL THEN
+                            'The Boss'
+                        ELSE
+                            'Minion'
+                    {END}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }

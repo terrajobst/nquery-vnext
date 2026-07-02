@@ -14,7 +14,7 @@ public class CommonTableExpressionTests : EvaluationTest
     [Fact]
     public void Evaluation_Cte_SingleReference()
     {
-        var text = @"
+        var text = """
             WITH LowIds AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -23,23 +23,23 @@ public class CommonTableExpressionTests : EvaluationTest
             SELECT  t.EmployeeID
             FROM    LowIds t
             ORDER   BY 1
-        ";
+            """;
 
         var expected = new[] { 1, 2, 3 };
 
         AssertProduces(text, expected);
-        AssertProducesSameAs(text, @"
+        AssertProducesSameAs(text, """
             SELECT  e.EmployeeID
             FROM    Employees e
             WHERE   e.EmployeeID <= 3
             ORDER   BY 1
-        ");
+            """);
     }
 
     [Fact]
     public void Evaluation_Cte_ColumnList()
     {
-        var text = @"
+        var text = """
             WITH E (Id, Name) AS (
                 SELECT  e.EmployeeID,
                         e.FirstName
@@ -48,7 +48,7 @@ public class CommonTableExpressionTests : EvaluationTest
             SELECT  E.Id
             FROM    E
             WHERE   E.Name = 'Andrew'
-        ";
+            """;
 
         var expected = new[] { 2 };
 
@@ -58,7 +58,7 @@ public class CommonTableExpressionTests : EvaluationTest
     [Fact]
     public void Evaluation_Cte_StarExpansion()
     {
-        var text = @"
+        var text = """
             WITH E AS (
                 SELECT  *
                 FROM    Employees e
@@ -67,7 +67,7 @@ public class CommonTableExpressionTests : EvaluationTest
             SELECT  E.EmployeeID
             FROM    E
             ORDER   BY 1
-        ";
+            """;
 
         var expected = new[] { 5, 6, 7, 9 };
 
@@ -78,7 +78,7 @@ public class CommonTableExpressionTests : EvaluationTest
     public void Evaluation_Cte_MultipleReferences()
     {
         // Each reference is a separate, slot-disjoint instantiation of the CTE's body.
-        var text = @"
+        var text = """
             WITH E AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -89,7 +89,7 @@ public class CommonTableExpressionTests : EvaluationTest
             FROM    E l
                         INNER JOIN E r ON l.EmployeeID = r.EmployeeID + 1
             ORDER   BY 1
-        ";
+            """;
 
         var expected = new[] { (2, 1), (3, 2), (4, 3) };
 
@@ -101,7 +101,7 @@ public class CommonTableExpressionTests : EvaluationTest
     {
         // A CTE can reference every CTE defined before it; the inner reference is
         // inlined inside the outer CTE's instantiation.
-        var text = @"
+        var text = """
             WITH LondonEmployees AS (
                 SELECT  *
                 FROM    Employees e
@@ -114,7 +114,7 @@ public class CommonTableExpressionTests : EvaluationTest
             SELECT  t.EmployeeID
             FROM    LateLondonEmployees t
             ORDER   BY 1
-        ";
+            """;
 
         var expected = new[] { 6, 7, 9 };
 
@@ -124,7 +124,7 @@ public class CommonTableExpressionTests : EvaluationTest
     [Fact]
     public void Evaluation_Cte_InSubquery()
     {
-        var text = @"
+        var text = """
             WITH LondonEmployees AS (
                 SELECT  *
                 FROM    Employees e
@@ -135,7 +135,7 @@ public class CommonTableExpressionTests : EvaluationTest
             WHERE   e.EmployeeID IN (SELECT le.EmployeeID FROM LondonEmployees le)
                     AND EXISTS (SELECT * FROM LondonEmployees le2 WHERE le2.EmployeeID = e.EmployeeID)
             ORDER   BY 1
-        ";
+            """;
 
         var expected = new[] { 5, 6, 7, 9 };
 
@@ -145,14 +145,14 @@ public class CommonTableExpressionTests : EvaluationTest
     [Fact]
     public void Evaluation_Cte_Aggregation()
     {
-        var text = @"
+        var text = """
             WITH E AS (
                 SELECT  *
                 FROM    Employees e
             )
             SELECT  COUNT(*)
             FROM    E
-        ";
+            """;
 
         var expected = new[] { 9 };
 
@@ -162,7 +162,7 @@ public class CommonTableExpressionTests : EvaluationTest
     [Fact]
     public void Evaluation_Cte_Recursive()
     {
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID,
                         0 AS Level
@@ -180,7 +180,7 @@ public class CommonTableExpressionTests : EvaluationTest
                     eh.Level
             FROM    EmployeeHierarchy eh
             ORDER   BY eh.Level, eh.EmployeeID
-        ";
+            """;
 
         var expected = new[]
         {
@@ -197,7 +197,7 @@ public class CommonTableExpressionTests : EvaluationTest
     {
         // Two anchors seed the boss twice; two identical recursive members double each
         // round's expansion, so level N contributes 2^(N+1) copies of each employee.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -223,7 +223,7 @@ public class CommonTableExpressionTests : EvaluationTest
             )
             SELECT  COUNT(*)
             FROM    EmployeeHierarchy
-        ";
+            """;
 
         // Level 0: the boss, twice. Level 1: five direct reports, 2 anchors x 2 members
         // = 4 copies each. Level 2: three, 8 copies each.
@@ -237,7 +237,7 @@ public class CommonTableExpressionTests : EvaluationTest
     {
         // The recursive union and its self-references are cloned as one unit per
         // outer reference.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID,
                         0 AS Level
@@ -256,7 +256,7 @@ public class CommonTableExpressionTests : EvaluationTest
             FROM    EmployeeHierarchy l
                         INNER JOIN EmployeeHierarchy r ON l.EmployeeID = r.EmployeeID
             ORDER   BY r.Level, l.EmployeeID
-        ";
+            """;
 
         var expected = new[]
         {
@@ -274,7 +274,7 @@ public class CommonTableExpressionTests : EvaluationTest
         // A non-equi FULL OUTER JOIN is expanded by the planner into two branches, each
         // a slot-disjoint clone of both inputs -- which clones the recursive unions and
         // their back-edge references as one unit.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -289,7 +289,7 @@ public class CommonTableExpressionTests : EvaluationTest
             SELECT  COUNT(*)
             FROM    EmployeeHierarchy l
                         FULL OUTER JOIN EmployeeHierarchy r ON l.EmployeeID < r.EmployeeID
-        ";
+            """;
 
         // 9 distinct employees per side: 36 pairs with l < r, plus one unmatched row on
         // each side (l = 9 and r = 1).
@@ -302,7 +302,7 @@ public class CommonTableExpressionTests : EvaluationTest
     public void Evaluation_Cte_Recursive_EmptyAnchor()
     {
         // An anchor producing no rows terminates the recursion immediately.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -316,7 +316,7 @@ public class CommonTableExpressionTests : EvaluationTest
             )
             SELECT  eh.EmployeeID
             FROM    EmployeeHierarchy eh
-        ";
+            """;
 
         var expected = Array.Empty<int>();
 
@@ -328,7 +328,7 @@ public class CommonTableExpressionTests : EvaluationTest
     {
         // The self-join never shrinks the frontier, so the recursion hits the
         // MAXRECURSION default (100), matching SQL Server and the legacy engine.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -342,7 +342,7 @@ public class CommonTableExpressionTests : EvaluationTest
             )
             SELECT  eh.EmployeeID
             FROM    EmployeeHierarchy eh
-        ";
+            """;
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
         {

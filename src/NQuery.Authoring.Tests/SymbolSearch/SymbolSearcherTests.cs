@@ -38,14 +38,14 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsColumns()
     {
-        var sql = @"
-                SELECT  e.{FirstName},
-                        e.LastName
-                FROM    Employees e
-                WHERE   e.{FirstName} = 'Andrew'
-                AND     e.LastName = 'Fuller'
-                ORDER   BY LastName, FirstName
-            ";
+        var sql = """
+            SELECT  e.{FirstName},
+                    e.LastName
+            FROM    Employees e
+            WHERE   e.{FirstName} = 'Andrew'
+            AND     e.LastName = 'Fuller'
+            ORDER   BY LastName, FirstName
+            """;
 
         AssertIsMatch(sql);
     }
@@ -53,12 +53,12 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsColumnInstances()
     {
-        var sql = @"
-                SELECT  e.FirstName + ' ' + e.LastName AS {FullName}
-                FROM    Employees e
-                WHERE   e.City = 'London'
-                ORDER   BY {FullName}
-            ";
+        var sql = """
+            SELECT  e.FirstName + ' ' + e.LastName AS {FullName}
+            FROM    Employees e
+            WHERE   e.City = 'London'
+            ORDER   BY {FullName}
+            """;
 
         AssertIsMatch(sql);
     }
@@ -66,11 +66,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsTableInstances()
     {
-        var sql = @"
-                SELECT  {e}.FirstName,
-                        {e}.LastName
-                FROM    Employees {e}
-            ";
+        var sql = """
+            SELECT  {e}.FirstName,
+                    {e}.LastName
+            FROM    Employees {e}
+            """;
 
         AssertIsMatch(sql);
     }
@@ -78,11 +78,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsTableInstances_IfNoAlias()
     {
-        var sql = @"
-                SELECT  {Employees}.FirstName,
-                        {Employees}.LastName
-                FROM    Employees
-            ";
+        var sql = """
+            SELECT  {Employees}.FirstName,
+                    {Employees}.LastName
+            FROM    Employees
+            """;
 
         AssertIsMatch(sql);
     }
@@ -90,12 +90,12 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsTables()
     {
-        var sql = @"
-                SELECT  e1.FirstName,
-                        e1.LastName
-                FROM    {Employees} e1
-                            CROSS JOIN {Employees} e2
-            ";
+        var sql = """
+            SELECT  e1.FirstName,
+                    e1.LastName
+            FROM    {Employees} e1
+                        CROSS JOIN {Employees} e2
+            """;
 
         AssertIsMatch(sql);
     }
@@ -103,11 +103,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsDerivedTables()
     {
-        var sql = @"
-                SELECT  {d}.FirstName,
-                        {d}.LastName
-                FROM    (SELECT * FROM Employees) {d}
-            ";
+        var sql = """
+            SELECT  {d}.FirstName,
+                    {d}.LastName
+            FROM    (SELECT * FROM Employees) {d}
+            """;
 
         AssertIsMatch(sql);
     }
@@ -115,16 +115,16 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsCommonTableExpressions()
     {
-        var sql = @"
-                WITH {LondonEmps} AS
-                (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.City = 'London'
-                )
+        var sql = """
+            WITH {LondonEmps} AS
+            (
                 SELECT  *
-                FROM    {LondonEmps}
-            ";
+                FROM    Employees e
+                WHERE   e.City = 'London'
+            )
+            SELECT  *
+            FROM    {LondonEmps}
+            """;
 
         AssertIsMatch(sql);
     }
@@ -132,11 +132,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsProperties()
     {
-        var sql = @"
-                SELECT  e.FirstName.{Length},
-                        e.LastName.{Length}
-                FROM    Employees e
-            ";
+        var sql = """
+            SELECT  e.FirstName.{Length},
+                    e.LastName.{Length}
+            FROM    Employees e
+            """;
 
         AssertIsMatch(sql);
     }
@@ -144,11 +144,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsMethods()
     {
-        var sql = @"
-                SELECT  e.EmployeeID.{ToString}().ToString(),
-                        e.BirthDate.Year.{ToString}()
-                FROM    Employees e
-            ";
+        var sql = """
+            SELECT  e.EmployeeID.{ToString}().ToString(),
+                    e.BirthDate.Year.{ToString}()
+            FROM    Employees e
+            """;
 
         AssertIsMatch(sql);
     }
@@ -156,11 +156,11 @@ public class SymbolSearcherTests
     [Fact]
     public void SymbolSearcher_FindsCountAggregate()
     {
-        var sql = @"
-                SELECT  {COUNT}(*),
-                        {COUNT}(e.ReportsTo)
-                FROM    Employees e
-            ";
+        var sql = """
+            SELECT  {COUNT}(*),
+                    {COUNT}(e.ReportsTo)
+            FROM    Employees e
+            """;
 
         AssertIsMatch(sql);
     }

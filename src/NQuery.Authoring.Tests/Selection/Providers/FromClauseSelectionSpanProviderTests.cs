@@ -13,12 +13,12 @@ public class FromClauseSelectionSpanProviderTests : SelectionSpanProviderTests
     [Fact]
     public void SelectionExtensions_FromClause()
     {
-        var query = @"
-                SELECT  *
-                FROM    {{{Employees e},}
-                        EmployeeTerritories et,
-                        Territories t}
-            ";
+        var query = """
+            SELECT  *
+            FROM    {{{Employees e},}
+                    EmployeeTerritories et,
+                    Territories t}
+            """;
 
         AssertIsMatch(query);
     }

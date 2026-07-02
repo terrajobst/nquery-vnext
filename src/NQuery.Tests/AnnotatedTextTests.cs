@@ -81,15 +81,15 @@ public class AnnotatedTextTests
     [Fact]
     public static void AnnotatedText_ParsesCombination()
     {
-        var text = @"
-                This| {is} a {replacement:change}. At| this {:brand new }{span}.
-            ".NormalizeCode();
+        var text = """
+            This| {is} a {replacement:change}. At| this {:brand new }{span}.
+            """;
 
         var annotatedText = AnnotatedText.Parse(text);
 
-        var expectedText = @"
-                This is a replacement. At this span.
-            ".NormalizeCode();
+        var expectedText = """
+            This is a replacement. At this span.
+            """;
         var expectedSpans = new[]
         {
             new TextSpan(4, 0),

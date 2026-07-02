@@ -33,10 +33,10 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void CountAllExpressionQuickInfoModelProvider_MatchesInCount()
     {
-        var query = @"
-                SELECT  {COUNT}(*)
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {COUNT}(*)
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -44,10 +44,10 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  {COUNT}(*)
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {COUNT}(*)
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query, dc => dc.RemoveAggregates(GetCountAggregate(dc)));
     }
@@ -55,10 +55,10 @@ public class CountAllExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void CountAllExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  COUNT({*)}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  COUNT({*)}
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

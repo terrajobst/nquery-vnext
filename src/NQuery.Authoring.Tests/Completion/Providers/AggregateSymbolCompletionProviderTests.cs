@@ -24,10 +24,10 @@ public class AggregateSymbolCompletionProviderTests : SymbolCompletionProviderTe
     [Fact]
     public void SymbolCompletionProvider_ReturnsAggregates_InGlobalContext()
     {
-        var query = @"
-                SELECT  |
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  |
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "COUNT");
     }
@@ -35,10 +35,10 @@ public class AggregateSymbolCompletionProviderTests : SymbolCompletionProviderTe
     [Fact]
     public void SymbolCompletionProvider_ReturnsAggregates_AfterText()
     {
-        var query = @"
-                SELECT  S|
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  S|
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "SUM");
     }

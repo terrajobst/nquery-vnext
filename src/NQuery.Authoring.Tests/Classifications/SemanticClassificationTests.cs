@@ -12,22 +12,22 @@ public class SemanticClassificationTests
     [Fact]
     public void SemanticClassification_Classifies()
     {
-        var query = @"
-                WITH Emps AS (
-                    SELECT  e.*
-                    FROM    Employees e
-                )
-                SELECT  COUNT(*),
-                        SUM(d.EmployeeId)
-                FROM    (
-                            SELECT *,
-                                   FirstName + ' ' + LastName AS FullName
-                            FROM Emps
-                        ) d
-                WHERE   d.ReportsTo = @Manager
-                AND     LEN(LastName) = LastName.Length
-                AND     LastName.Substring(0, ReportsTo) = '2'
-            ";
+        var query = """
+            WITH Emps AS (
+                SELECT  e.*
+                FROM    Employees e
+            )
+            SELECT  COUNT(*),
+                    SUM(d.EmployeeId)
+            FROM    (
+                        SELECT *,
+                               FirstName + ' ' + LastName AS FullName
+                        FROM Emps
+                    ) d
+            WHERE   d.ReportsTo = @Manager
+            AND     LEN(LastName) = LastName.Length
+            AND     LastName.Substring(0, ReportsTo) = '2'
+            """;
 
         var pieces = new (string Text, SemanticClassification Classification)[]
                      {

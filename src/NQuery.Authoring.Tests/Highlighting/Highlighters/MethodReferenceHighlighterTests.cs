@@ -13,12 +13,12 @@ public class MethodReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void MethodReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  e.FirstName.{Substring}(1),
-                        e.LastName.{Substring}(2),
-                        e.LastName.Substring(3, 1)
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.{Substring}(1),
+                    e.LastName.{Substring}(2),
+                    e.LastName.Substring(3, 1)
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }

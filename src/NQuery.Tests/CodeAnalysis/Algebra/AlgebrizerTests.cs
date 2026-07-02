@@ -76,10 +76,10 @@ public class AlgebrizerTests
     {
         // Each reference instantiates the CTE's body; the second is a slot-disjoint
         // clone, so the two scans of Employees define distinct slots.
-        var text = @"
+        var text = """
             WITH X AS (SELECT e.EmployeeID FROM Employees e)
             SELECT a.EmployeeID FROM X a INNER JOIN X b ON a.EmployeeID = b.EmployeeID
-        ";
+            """;
         var logicalQuery = Algebrizer.Algebrize(Bind(text));
 
         var scans = logicalQuery.Root.DescendantsAndSelf().OfType<LogicalTableScan>().ToList();
@@ -92,14 +92,14 @@ public class AlgebrizerTests
     [Fact]
     public void Algebrizer_BuildsRecursiveUnion_ForRecursiveCte()
     {
-        var text = @"
+        var text = """
             WITH X AS (
                 SELECT e.EmployeeID FROM Employees e WHERE e.ReportsTo IS NULL
                 UNION ALL
                 SELECT e.EmployeeID FROM Employees e INNER JOIN X x ON e.ReportsTo = x.EmployeeID
             )
             SELECT x.EmployeeID FROM X x
-        ";
+            """;
         var logicalQuery = Algebrizer.Algebrize(Bind(text));
 
         var union = Assert.Single(logicalQuery.Root.DescendantsAndSelf().OfType<LogicalRecursiveUnion>());

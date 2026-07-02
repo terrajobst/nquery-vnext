@@ -14,17 +14,17 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FindsUnusedNonRecursive()
     {
-        var query = @"
-                WITH Emps AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var query = """
+            WITH Emps AS (
                 SELECT  *
-                FROM    Emps e
-            ";
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps e
+            """;
 
         var issues = GetIssues(query);
 
@@ -36,27 +36,27 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FindsUnusedRecursive()
     {
-        var query = @"
-                WITH Emps AS (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.ReportsTo IS NULL
-                    UNION   ALL
-                    SELECT  *
-                    FROM    Employees e
-                                INNER JOIN Emps m ON m.EmployeeID = e.ReportsTo
-                ), EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                    WHERE   e.ReportsTo IS NULL
-                    UNION   ALL
-                    SELECT  *
-                    FROM    Employees e
-                                INNER JOIN EmpsUnused m ON m.EmployeeID = e.ReportsTo
-                )
+        var query = """
+            WITH Emps AS (
                 SELECT  *
-                FROM    Emps e
-            ";
+                FROM    Employees e
+                WHERE   e.ReportsTo IS NULL
+                UNION   ALL
+                SELECT  *
+                FROM    Employees e
+                            INNER JOIN Emps m ON m.EmployeeID = e.ReportsTo
+            ), EmpsUnused AS (
+                SELECT  *
+                FROM    Employees e
+                WHERE   e.ReportsTo IS NULL
+                UNION   ALL
+                SELECT  *
+                FROM    Employees e
+                            INNER JOIN EmpsUnused m ON m.EmployeeID = e.ReportsTo
+            )
+            SELECT  *
+            FROM    Emps e
+            """;
 
         var issues = GetIssues(query);
 
@@ -68,19 +68,19 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfSingle()
     {
-        var query = @"
-                WITH EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var query = """
+            WITH EmpsUnused AS (
                 SELECT  *
-                FROM    Employees
-            ";
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Employees
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees
+            """;
 
         var issues = GetIssues(query);
 
@@ -94,34 +94,34 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfFirst()
     {
-        var query = @"
-                WITH EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var query = """
+            WITH EmpsUnused AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), Emps1 AS (
+                SELECT  *
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                WITH Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var fixedQuery = """
+            WITH Emps1 AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
         var issues = GetIssues(query);
 
@@ -135,34 +135,34 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfMiddle()
     {
-        var query = @"
-                WITH Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var query = """
+            WITH Emps1 AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), EmpsUnused AS (
+                SELECT  *
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                WITH Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var fixedQuery = """
+            WITH Emps1 AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
         var issues = GetIssues(query);
 
@@ -176,34 +176,34 @@ public class UnusedCommonTableExpressionTests : CodeIssueTests
     [Fact]
     public void UnusedCommonTableExpression_FixedUnusedNonRecursive_IfLast()
     {
-        var query = @"
-                WITH Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), EmpsUnused AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var query = """
+            WITH Emps1 AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            ), EmpsUnused AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                WITH Emps1 AS (
-                    SELECT  *
-                    FROM    Employees e
-                ), Emps2 AS (
-                    SELECT  *
-                    FROM    Employees e
-                )
+        var fixedQuery = """
+            WITH Emps1 AS (
                 SELECT  *
-                FROM    Emps1 e1
-                            INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
-            ";
+                FROM    Employees e
+            ), Emps2 AS (
+                SELECT  *
+                FROM    Employees e
+            )
+            SELECT  *
+            FROM    Emps1 e1
+                        INNER JOIN Emps2 e2 ON e2.EmployeeID = e1.ReportsTo
+            """;
 
         var issues = GetIssues(query);
 

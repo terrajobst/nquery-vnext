@@ -26,10 +26,10 @@ public class NameExpressionQuickInfoModelProviderTests : QuickInfoModelProviderT
     [Fact]
     public void NameExpressionQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  {FirstName}
-                FROM    Employees
-             ";
+        var query = """
+            SELECT  {FirstName}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class NameExpressionQuickInfoModelProviderTests : QuickInfoModelProviderT
     [Fact]
     public void NameExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  {Xxx}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {Xxx}
+            FROM    Employees
+            """;
 
         AssertIsNotMatch(query);
     }

@@ -7,9 +7,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Alias_WithAsKeyword()
     {
-        const string text = @"
-                SELECT 1 {AS X}
-            ";
+        const string text = """
+            SELECT 1 {AS X}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.Alias);
@@ -20,9 +20,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Alias_WithoutAsKeyword()
     {
-        const string text = @"
-                SELECT 1 {X}
-            ";
+        const string text = """
+            SELECT 1 {X}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.Alias);
@@ -32,13 +32,13 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithAllClauses()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees
-                WHERE   FALSE
-                GROUP   BY EmployeeID
-                HAVING  TRUE
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees
+            WHERE   FALSE
+            GROUP   BY EmployeeID
+            HAVING  TRUE
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -69,9 +69,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithSelectClause()
     {
-        const string text = @"
-                SELECT  1
-            ";
+        const string text = """
+            SELECT  1
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -85,10 +85,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithFromClause()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -105,10 +105,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithWhereClause()
     {
-        const string text = @"
-                SELECT  *
-                WHERE   FALSE
-            ";
+        const string text = """
+            SELECT  *
+            WHERE   FALSE
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -125,10 +125,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithGroupByClause()
     {
-        const string text = @"
-                SELECT  *
-                GROUP   BY x
-            ";
+        const string text = """
+            SELECT  *
+            GROUP   BY x
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -147,10 +147,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Select_WithHavingClause()
     {
-        const string text = @"
-                SELECT  *
-                HAVING  FALSE
-            ";
+        const string text = """
+            SELECT  *
+            HAVING  FALSE
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -167,9 +167,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_SelectClause()
     {
-        const string text = @"
-                SELECT x
-            ";
+        const string text = """
+            SELECT x
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -183,9 +183,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_SelectClause_WithDistinct()
     {
-        const string text = @"
-                SELECT DISTINCT x
-            ";
+        const string text = """
+            SELECT DISTINCT x
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -200,9 +200,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_SelectClause_WithAll()
     {
-        const string text = @"
-                SELECT ALL x
-            ";
+        const string text = """
+            SELECT ALL x
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -217,9 +217,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_SelectClause_WithTopClause()
     {
-        const string text = @"
-                SELECT TOP 10 *
-            ";
+        const string text = """
+            SELECT TOP 10 *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -235,9 +235,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_SelectClause_WithMultipleColumns()
     {
-        const string text = @"
-                SELECT a, b
-            ";
+        const string text = """
+            SELECT a, b
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.SelectQuery);
@@ -255,9 +255,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause()
     {
-        const string text = @"
-                SELECT {TOP 10} *
-            ";
+        const string text = """
+            SELECT {TOP 10} *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -268,9 +268,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithTies()
     {
-        const string text = @"
-                SELECT {TOP 10 WITH TIES} *
-            ";
+        const string text = """
+            SELECT {TOP 10 WITH TIES} *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -283,9 +283,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithTies_WithoutTiesKeyword()
     {
-        const string text = @"
-                SELECT {TOP 10 WITH }*
-            ";
+        const string text = """
+            SELECT {TOP 10 WITH }*
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -299,9 +299,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithTies_WithoutWithKeyword()
     {
-        const string text = @"
-                SELECT {TOP 10 TIES} *
-            ";
+        const string text = """
+            SELECT {TOP 10 TIES} *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -315,9 +315,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithInvalidLimit_NumericLiteral()
     {
-        const string text = @"
-                SELECT {TOP 10.3} *
-            ";
+        const string text = """
+            SELECT {TOP 10.3} *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -329,9 +329,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithInvalidLimit_DateLiteral()
     {
-        const string text = @"
-                SELECT {TOP }#10-10-1998# *
-            ";
+        const string text = """
+            SELECT {TOP }#10-10-1998# *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -343,9 +343,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithInvalidLimit_StringLiteral()
     {
-        const string text = @"
-                SELECT {TOP }'1' *
-            ";
+        const string text = """
+            SELECT {TOP }'1' *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -357,9 +357,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_TopClause_WithMissingLimit()
     {
-        const string text = @"
-                SELECT {TOP }*
-            ";
+        const string text = """
+            SELECT {TOP }*
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.TopClause);
@@ -371,9 +371,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_ExpressionSelectColumn_WithAlias()
     {
-        const string text = @"
-                SELECT  {1 AS x}
-            ";
+        const string text = """
+            SELECT  {1 AS x}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
@@ -387,9 +387,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_ExpressionSelectColumn_WithoutAlias()
     {
-        const string text = @"
-                SELECT  {1}
-            ";
+        const string text = """
+            SELECT  {1}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
@@ -400,9 +400,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_WildcardSelectColumn_WithTableAlias()
     {
-        const string text = @"
-                SELECT  {t.*}
-            ";
+        const string text = """
+            SELECT  {t.*}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
@@ -414,9 +414,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_WildcardSelectColumn_WithoutTableAlias()
     {
-        const string text = @"
-                SELECT  {*}
-            ";
+        const string text = """
+            SELECT  {*}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.WildcardSelectColumn);
@@ -426,10 +426,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_FromClause()
     {
-        const string text = @"
-                SELECT  *
-                {FROM    Employees}
-            ";
+        const string text = """
+            SELECT  *
+            {FROM    Employees}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.FromClause);
@@ -441,10 +441,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_FromClause_WithMultipleTableReferences()
     {
-        const string text = @"
-                SELECT  *
-                {FROM    Employees, EmployeeTerritories}
-            ";
+        const string text = """
+            SELECT  *
+            {FROM    Employees, EmployeeTerritories}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.FromClause);
@@ -459,11 +459,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_WhereClause()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees e
-                {WHERE   TRUE}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees e
+            {WHERE   TRUE}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.WhereClause);
@@ -475,11 +475,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_GroupByClause()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees e
-                {GROUP   BY e.Country}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees e
+            {GROUP   BY e.Country}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.GroupByClause);
@@ -496,11 +496,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_GroupByClause_WithMultipleColumns()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees e
-                {GROUP   BY e.Country, e.City}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees e
+            {GROUP   BY e.Country, e.City}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.GroupByClause);
@@ -524,11 +524,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_GroupByColumn()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees e
-                GROUP   BY {Country}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees e
+            GROUP   BY {Country}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.GroupByColumn);
@@ -539,12 +539,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_HavingClause()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees e
-                GROUP   BY e.Country, e.City
-                {HAVING  TRUE}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees e
+            GROUP   BY e.Country, e.City
+            {HAVING  TRUE}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.HavingClause);
@@ -556,10 +556,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Ordered()
     {
-        const string text = @"
-                SELECT  *
-                ORDER   BY 1
-            ";
+        const string text = """
+            SELECT  *
+            ORDER   BY 1
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OrderedQuery);
@@ -578,10 +578,10 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Ordered_WithMultipleColumns()
     {
-        const string text = @"
-                SELECT  *
-                ORDER   BY 1, 2
-            ";
+        const string text = """
+            SELECT  *
+            ORDER   BY 1, 2
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OrderedQuery);
@@ -604,11 +604,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_OrderByColumn_WithDescendingModifier()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   BY {FirstName DESC}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees
+            ORDER   BY {FirstName DESC}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OrderByColumn);
@@ -620,11 +620,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_OrderByColumn_WithAscendingModifier()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   BY {FirstName ASC}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees
+            ORDER   BY {FirstName ASC}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OrderByColumn);
@@ -636,11 +636,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_OrderByColumn_WithoutModifier()
     {
-        const string text = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   BY {FirstName}
-            ";
+        const string text = """
+            SELECT  *
+            FROM    Employees
+            ORDER   BY {FirstName}
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.OrderByColumn);
@@ -651,9 +651,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Parenthesized()
     {
-        const string text = @"
-                (SELECT *)
-            ";
+        const string text = """
+            (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ParenthesizedQuery);
@@ -669,9 +669,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Union_WithoutAllKeyword()
     {
-        const string text = @"
-                SELECT * UNION SELECT *
-            ";
+        const string text = """
+            SELECT * UNION SELECT *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.UnionQuery);
@@ -691,9 +691,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Union_WithAllKeyword()
     {
-        const string text = @"
-                SELECT * UNION ALL SELECT *
-            ";
+        const string text = """
+            SELECT * UNION ALL SELECT *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.UnionQuery);
@@ -714,9 +714,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Intersect()
     {
-        const string text = @"
-                SELECT * INTERSECT SELECT *
-            ";
+        const string text = """
+            SELECT * INTERSECT SELECT *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.IntersectQuery);
@@ -736,9 +736,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_Except()
     {
-        const string text = @"
-                SELECT * EXCEPT SELECT *
-            ";
+        const string text = """
+            SELECT * EXCEPT SELECT *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ExceptQuery);
@@ -758,12 +758,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpression()
     {
-        const string text = @"
-                WITH CTE AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH CTE AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
@@ -788,12 +788,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpression_WithRecursiveKeyword()
     {
-        const string text = @"
-                WITH RECURSIVE CTE AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH RECURSIVE CTE AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
@@ -819,14 +819,14 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpression_WithMultipleExpressions()
     {
-        const string text = @"
-                WITH CTE1 AS (
-                    SELECT *
-                ), CTE2 AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH CTE1 AS (
+                SELECT *
+            ), CTE2 AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionQuery);
@@ -862,12 +862,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpressionColumnNameList_WithSingleColumn()
     {
-        const string text = @"
-                WITH CTE {(x)} AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH CTE {(x)} AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
@@ -880,12 +880,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpressionColumnNameList_WithMultipleColumns()
     {
-        const string text = @"
-                WITH CTE {(x, y)} AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH CTE {(x, y)} AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnNameList);
@@ -901,12 +901,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Query_CommonTableExpressionColumnName()
     {
-        const string text = @"
-                WITH CTE ({x}, y) AS (
-                    SELECT *
-                )
-                SELECT  *
-            ";
+        const string text = """
+            WITH CTE ({x}, y) AS (
+                SELECT *
+            )
+            SELECT  *
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.CommonTableExpressionColumnName);

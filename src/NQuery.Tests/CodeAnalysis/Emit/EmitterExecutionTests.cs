@@ -224,7 +224,7 @@ public class EmitterExecutionTests
         // per-execution registry (created in ExecutablePlan.CreateIterator), so one
         // emitted plan can build and run iterators from many threads at once without
         // executions seeing each other's recursion state.
-        var text = @"
+        var text = """
             WITH EmployeeHierarchy AS (
                 SELECT  e.EmployeeID
                 FROM    Employees e
@@ -237,7 +237,7 @@ public class EmitterExecutionTests
             SELECT  eh.EmployeeID
             FROM    EmployeeHierarchy eh
             ORDER   BY 1
-        ";
+            """;
         var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)));
 
         var reference = Drain(plan);

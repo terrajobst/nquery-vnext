@@ -13,13 +13,13 @@ public class GroupByClauseSelectionSpanProviderTests : SelectionSpanProviderTest
     [Fact]
     public void SelectionExtensions_GroupByClause()
     {
-        var query = @"
-                SELECT  e.Country,
-                        e.City,
-                        COUNT(*)
-                FROM    Employees e
-                GROUP   BY {{{e.Country},} e.City}
-            ";
+        var query = """
+            SELECT  e.Country,
+                    e.City,
+                    COUNT(*)
+            FROM    Employees e
+            GROUP   BY {{{e.Country},} e.City}
+            """;
 
         AssertIsMatch(query);
     }

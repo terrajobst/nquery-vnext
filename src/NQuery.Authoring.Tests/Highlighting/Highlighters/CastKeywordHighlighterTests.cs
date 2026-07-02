@@ -13,9 +13,9 @@ public class CastKeywordHighlighterTests : HighlighterTests
     [Fact]
     public void CastKeywordHighlighter_Matches()
     {
-        var query = @"
-                SELECT {CAST}(1 {AS} FLOAT)
-            ";
+        var query = """
+            SELECT {CAST}(1 {AS} FLOAT)
+            """;
 
         AssertIsMatch(query);
     }

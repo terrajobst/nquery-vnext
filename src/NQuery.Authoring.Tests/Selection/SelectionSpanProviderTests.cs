@@ -11,8 +11,7 @@ public abstract class SelectionSpanProviderTests
 
     protected void AssertIsMatch(string queryWithMarkers)
     {
-        var query = queryWithMarkers.NormalizeCode()
-                                    .ParseSpans(out var spans);
+        var query = queryWithMarkers.ParseSpans(out var spans);
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
 

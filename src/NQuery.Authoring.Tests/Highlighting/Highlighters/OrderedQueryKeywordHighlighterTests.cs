@@ -13,15 +13,15 @@ public class OrderedQueryKeywordHighlighterTests : HighlighterTests
     [Fact]
     public void OrderedQueryKeywordHighlighter_Matches()
     {
-        var query = @"
-                {SELECT} e.City,
-                         COUNT(*) [#Employees]
-                {FROM}   Employees e
-                {WHERE}  e.ReportsTo IS NOT NULL
-                {GROUP   BY} e.City
-                {HAVING} COUNT(*) > 1
-                {ORDER   BY} [#Employees] DESC
-            ";
+        var query = """
+            {SELECT} e.City,
+                     COUNT(*) [#Employees]
+            {FROM}   Employees e
+            {WHERE}  e.ReportsTo IS NOT NULL
+            {GROUP   BY} e.City
+            {HAVING} COUNT(*) > 1
+            {ORDER   BY} [#Employees] DESC
+            """;
 
         AssertIsMatch(query);
     }

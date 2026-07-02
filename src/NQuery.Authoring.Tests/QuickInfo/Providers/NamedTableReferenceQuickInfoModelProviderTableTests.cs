@@ -26,10 +26,10 @@ public class NamedTableReferenceQuickInfoModelProviderTableTests : QuickInfoMode
     [Fact]
     public void NamedTableReferenceQuickInfoModelProvider_MatchesInTable()
     {
-        var query = @"
-                SELECT  *
-                FROM    {Employees} e
-             ";
+        var query = """
+            SELECT  *
+            FROM    {Employees} e
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class NamedTableReferenceQuickInfoModelProviderTableTests : QuickInfoMode
     [Fact]
     public void NamedTableReferenceQuickInfoModelProvider_DoesNotMatchUnresolved()
     {
-        var query = @"
-                SELECT  *
-                FROM    {Xxxxxxxxx} e
-            ";
+        var query = """
+            SELECT  *
+            FROM    {Xxxxxxxxx} e
+            """;
 
         AssertIsNotMatch(query);
     }

@@ -13,11 +13,11 @@ public class ArgumentListSelectionSpanProviderTests : SelectionSpanProviderTests
     [Fact]
     public void SelectionExtensions_ArgumentList()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.FirstName.Substring({{{1},} 2}) = 'te'
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.FirstName.Substring({{{1},} 2}) = 'te'
+            """;
 
         AssertIsMatch(query);
     }

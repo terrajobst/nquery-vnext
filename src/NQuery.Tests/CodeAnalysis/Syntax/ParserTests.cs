@@ -7,9 +7,9 @@ public partial class ParserTests
     [Fact]
     public void Parser_Error_SkipsBadTokens()
     {
-        const string text = @"
-                'First' + !'Last'
-            ";
+        const string text = """
+            'First' + !'Last'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.AddExpression);
@@ -26,9 +26,9 @@ public partial class ParserTests
     [Fact]
     public void Parser_Error_DetectsErrorAtEnd()
     {
-        const string text = @"
-                SELECT 'foo' WITH
-            ";
+        const string text = """
+            SELECT 'foo' WITH
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(text);
 
@@ -49,10 +49,10 @@ public partial class ParserTests
     [Fact]
     public void Parser_Error_MissingIdentifier_IsInserted_IfKeywordOnNextLine()
     {
-        const string text = @"
-                SELECT   {o.
-                FROM}     Orders
-            ";
+        const string text = """
+            SELECT   {o.
+            FROM}     Orders
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);
@@ -68,10 +68,10 @@ public partial class ParserTests
     [Fact]
     public void Parser_Error_MissingIdentifier_IsInserted_AndSkipsKeyword_IfKeywordOnSameLine()
     {
-        const string text = @"
-                SELECT   {o.Or
-                FROM}     Orders
-            ";
+        const string text = """
+            SELECT   {o.Or
+            FROM}     Orders
+            """;
 
         using var enumerator = AssertingEnumerator.ForQuery(text);
         enumerator.AssertNode(SyntaxKind.ExpressionSelectColumn);

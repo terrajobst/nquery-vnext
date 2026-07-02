@@ -13,14 +13,14 @@ public class MultiLineCommentOutlinerTests : OutlinerTests
     [Fact]
     public void MultiLineCommentOutliner_FindsComments_IfLeading()
     {
-        var query = @"
-                {/*
-                 * This is a query.
-                 */}
-                SELECT  FirstName,
-                        LastName
-                FROM    Employees
-            ";
+        var query = """
+            {/*
+             * This is a query.
+             */}
+            SELECT  FirstName,
+                    LastName
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "/* ...");
     }
@@ -28,12 +28,12 @@ public class MultiLineCommentOutlinerTests : OutlinerTests
     [Fact]
     public void MultiLineCommentOutliner_FindsComments_IfTrailing()
     {
-        var query = @"
-                SELECT  FirstName, {/* First
-                                      Column */}
-                        LastName
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  FirstName, {/* First
+                                  Column */}
+                    LastName
+            FROM    Employees
+            """;
 
         AssertIsMatch(query, "/* First ...");
     }
@@ -41,14 +41,14 @@ public class MultiLineCommentOutlinerTests : OutlinerTests
     [Fact]
     public void MultiLineCommentOutliner_FindsComments_AtEof()
     {
-        var query = @"
-                SELECT  FirstName,
-                        LastName
-                FROM    Employees
-                {/*
-                  End of query
-                */}
-            ";
+        var query = """
+            SELECT  FirstName,
+                    LastName
+            FROM    Employees
+            {/*
+              End of query
+            */}
+            """;
 
         AssertIsMatch(query, "/* ...");
     }
@@ -56,12 +56,12 @@ public class MultiLineCommentOutlinerTests : OutlinerTests
     [Fact]
     public void MultiLineCommentOutliner_DoesNotTriggerForSingeLines()
     {
-        var query = @"
-                /* The Query */
-                SELECT  FirstName, /* First Column */
-                        LastName   /* Second Column */
-                FROM    Employees
-            ";
+        var query = """
+            /* The Query */
+            SELECT  FirstName, /* First Column */
+                    LastName   /* Second Column */
+            FROM    Employees
+            """;
 
         AssertIsNoMatch(query);
     }

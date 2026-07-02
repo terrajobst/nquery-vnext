@@ -25,10 +25,10 @@ public class NullIfQuickInfoModelProviderTests : QuickInfoModelProviderTests
     [Fact]
     public void NullIfQuickInfoModelProvider_MatchesInNullIf()
     {
-        var query = @"
-                SELECT  {NULLIF}(e.FirstName, 'Andrew')
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {NULLIF}(e.FirstName, 'Andrew')
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -36,10 +36,10 @@ public class NullIfQuickInfoModelProviderTests : QuickInfoModelProviderTests
     [Fact]
     public void NullIfQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  NULLIF({e.FirstName, 'Andrew')}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  NULLIF({e.FirstName, 'Andrew')}
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

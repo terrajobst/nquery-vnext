@@ -12,9 +12,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_ArgumentList_WithNoArguments()
     {
-        const string text = @"
-                TO_INT16{()}
-            ";
+        const string text = """
+            TO_INT16{()}
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.ArgumentList);
@@ -25,9 +25,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_ArgumentList_WithSingleArgument()
     {
-        const string text = @"
-                TO_INT16{('1')}
-            ";
+        const string text = """
+            TO_INT16{('1')}
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.ArgumentList);
@@ -40,9 +40,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_ArgumentList_WithMultipleArguments()
     {
-        const string text = @"
-                TO_INT16{(1, 2)}
-            ";
+        const string text = """
+            TO_INT16{(1, 2)}
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.ArgumentList);
@@ -58,9 +58,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Between()
     {
-        const string text = @"
-                1 BETWEEN 2 AND 3
-            ";
+        const string text = """
+            1 BETWEEN 2 AND 3
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.BetweenExpression);
@@ -77,9 +77,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Between_WithNotKeyword()
     {
-        const string text = @"
-                1 NOT BETWEEN 2 AND 3
-            ";
+        const string text = """
+            1 NOT BETWEEN 2 AND 3
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.BetweenExpression);
@@ -377,9 +377,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Binary()
     {
-        const string text = @"
-                2 * 3
-            ";
+        const string text = """
+            2 * 3
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.MultiplyExpression);
@@ -455,11 +455,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_Searched_WithoutElse()
     {
-        const string text = @"
-                CASE 1
-                    WHEN 1 THEN 'One'
-                END
-            ";
+        const string text = """
+            CASE 1
+                WHEN 1 THEN 'One'
+            END
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseExpression);
@@ -479,12 +479,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_Searched_WithElse()
     {
-        const string text = @"
-                CASE 1
-                    WHEN 1 THEN 'One'
-                    ELSE 'Unknown'
-                END
-            ";
+        const string text = """
+            CASE 1
+                WHEN 1 THEN 'One'
+                ELSE 'Unknown'
+            END
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseExpression);
@@ -508,11 +508,11 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_Regular_WithoutElse()
     {
-        const string text = @"
-                CASE
-                    WHEN 1 THEN 'One'
-                END
-            ";
+        const string text = """
+            CASE
+                WHEN 1 THEN 'One'
+            END
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseExpression);
@@ -530,12 +530,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_Regular_WithElse()
     {
-        const string text = @"
-                CASE
-                    WHEN 1 THEN 'One'
-                    ELSE 'Unknown'
-                END
-            ";
+        const string text = """
+            CASE
+                WHEN 1 THEN 'One'
+                ELSE 'Unknown'
+            END
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseExpression);
@@ -557,12 +557,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_Label()
     {
-        const string text = @"
-                CASE
-                    {WHEN 1 THEN 'One'}
-                    ELSE 'Unknown'
-                END
-            ";
+        const string text = """
+            CASE
+                {WHEN 1 THEN 'One'}
+                ELSE 'Unknown'
+            END
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseLabel);
@@ -577,12 +577,12 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Case_ElseLabel()
     {
-        const string text = @"
-                CASE
-                    WHEN 1 THEN 'One'
-                    {ELSE 'Unknown'}
-                END AS X
-            ";
+        const string text = """
+            CASE
+                WHEN 1 THEN 'One'
+                {ELSE 'Unknown'}
+            END AS X
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CaseElseLabel);
@@ -594,9 +594,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Cast()
     {
-        const string text = @"
-                CAST(1 AS BYTE)
-            ";
+        const string text = """
+            CAST(1 AS BYTE)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CastExpression);
@@ -612,9 +612,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Coalesce_WithNoArguments()
     {
-        const string text = @"
-                COALESCE()
-            ";
+        const string text = """
+            COALESCE()
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CoalesceExpression);
@@ -635,9 +635,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Coalesce_WithSingleArguments()
     {
-        const string text = @"
-                COALESCE(1)
-            ";
+        const string text = """
+            COALESCE(1)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CoalesceExpression);
@@ -657,9 +657,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Coalesce_WithTwoArguments()
     {
-        const string text = @"
-                COALESCE(1, 2)
-            ";
+        const string text = """
+            COALESCE(1, 2)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CoalesceExpression);
@@ -677,9 +677,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Coalesce_WithThreeArguments()
     {
-        const string text = @"
-                COALESCE(1, 2, 3)
-            ";
+        const string text = """
+            COALESCE(1, 2, 3)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CoalesceExpression);
@@ -700,9 +700,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_CountAll()
     {
-        const string text = @"
-                COUNT(*)
-            ";
+        const string text = """
+            COUNT(*)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.CountAllExpression);
@@ -715,9 +715,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_FunctionInvocation()
     {
-        const string text = @"
-                TO_INT32('1')
-            ";
+        const string text = """
+            TO_INT32('1')
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.FunctionInvocationExpression);
@@ -749,9 +749,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_FunctionInvocation_WithMultipleArguments()
     {
-        const string text = @"
-                FORMAT(0.75, 'P2')
-            ";
+        const string text = """
+            FORMAT(0.75, 'P2')
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.FunctionInvocationExpression);
@@ -769,9 +769,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_In()
     {
-        const string text = @"
-                1 IN (1)
-            ";
+        const string text = """
+            1 IN (1)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InExpression);
@@ -788,9 +788,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_In_WithNoValues()
     {
-        const string text = @"
-                1 IN ()
-            ";
+        const string text = """
+            1 IN ()
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InExpression);
@@ -808,9 +808,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_In_WithMultipleValues()
     {
-        const string text = @"
-                1 IN (1, 2)
-            ";
+        const string text = """
+            1 IN (1, 2)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InExpression);
@@ -830,9 +830,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_In_WithNotKeyword()
     {
-        const string text = @"
-                1 NOT IN (1, 2)
-            ";
+        const string text = """
+            1 NOT IN (1, 2)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InExpression);
@@ -853,9 +853,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_InQuery()
     {
-        const string text = @"
-                1 IN (SELECT *)
-            ";
+        const string text = """
+            1 IN (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InQueryExpression);
@@ -874,9 +874,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_InQuery_WithNotKeyword()
     {
-        const string text = @"
-                1 NOT IN (SELECT *)
-            ";
+        const string text = """
+            1 NOT IN (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InQueryExpression);
@@ -896,9 +896,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_InQuery_IfQueryIsParenthesized()
     {
-        const string text = @"
-                1 IN ((((SELECT *))))
-            ";
+        const string text = """
+            1 IN ((((SELECT *))))
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.InQueryExpression);
@@ -926,9 +926,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_IsNull()
     {
-        const string text = @"
-                 X IS NULL
-            ";
+        const string text = """
+            X IS NULL
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.IsNullExpression);
@@ -941,9 +941,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_IsNull_WithNotKeyword()
     {
-        const string text = @"
-                 X IS NOT NULL
-            ";
+        const string text = """
+            X IS NOT NULL
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.IsNullExpression);
@@ -957,9 +957,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Like()
     {
-        const string text = @"
-                'x' LIKE 'y'
-            ";
+        const string text = """
+            'x' LIKE 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LikeExpression);
@@ -973,9 +973,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Like_WithNotKeyword()
     {
-        const string text = @"
-                'x' NOT LIKE 'y'
-            ";
+        const string text = """
+            'x' NOT LIKE 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LikeExpression);
@@ -990,9 +990,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Literal_WithStringLiteral()
     {
-        const string text = @"
-                'x'
-            ";
+        const string text = """
+            'x'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LiteralExpression);
@@ -1002,9 +1002,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Literal_WithNumericLiteral()
     {
-        const string text = @"
-                1
-            ";
+        const string text = """
+            1
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LiteralExpression);
@@ -1014,9 +1014,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Literal_WithNullLiteral()
     {
-        const string text = @"
-                NULL
-            ";
+        const string text = """
+            NULL
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LiteralExpression);
@@ -1026,9 +1026,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Literal_WithDateLiteral()
     {
-        const string text = @"
-                #2015-09-14#
-            ";
+        const string text = """
+            #2015-09-14#
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.LiteralExpression);
@@ -1038,9 +1038,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_MethodInvocation()
     {
-        const string text = @"
-                x.SomeMethod(1)
-            ";
+        const string text = """
+            x.SomeMethod(1)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.MethodInvocationExpression);
@@ -1058,9 +1058,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_MethodInvocation_WithMultipleArguments()
     {
-        const string text = @"
-                x.SomeMethod(1, '2')
-            ";
+        const string text = """
+            x.SomeMethod(1, '2')
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.MethodInvocationExpression);
@@ -1127,9 +1127,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Name()
     {
-        const string text = @"
-                x
-            ";
+        const string text = """
+            x
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.NameExpression);
@@ -1150,9 +1150,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_NullIf()
     {
-        const string text = @"
-                NULLIF(1, 2)
-            ";
+        const string text = """
+            NULLIF(1, 2)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.NullIfExpression);
@@ -1169,9 +1169,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Parenthesized()
     {
-        const string text = @"
-                (1)
-            ";
+        const string text = """
+            (1)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.ParenthesizedExpression);
@@ -1184,9 +1184,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_PropertyAccess()
     {
-        const string text = @"
-                x.Prop
-            ";
+        const string text = """
+            x.Prop
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.PropertyAccessExpression);
@@ -1214,9 +1214,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_SimilarTo()
     {
-        const string text = @"
-                'x' SIMILAR TO 'y'
-            ";
+        const string text = """
+            'x' SIMILAR TO 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.SimilarToExpression);
@@ -1231,9 +1231,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_SimilarTo_WithNotKeyword()
     {
-        const string text = @"
-                'x' NOT SIMILAR TO 'y'
-            ";
+        const string text = """
+            'x' NOT SIMILAR TO 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.SimilarToExpression);
@@ -1249,9 +1249,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_SoundsLike()
     {
-        const string text = @"
-                'x' SOUNDS LIKE 'y'
-            ";
+        const string text = """
+            'x' SOUNDS LIKE 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.SoundsLikeExpression);
@@ -1266,9 +1266,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_SoundsLike_WithNotKeyword()
     {
-        const string text = @"
-                'x' NOT SOUNDS LIKE 'y'
-            ";
+        const string text = """
+            'x' NOT SOUNDS LIKE 'y'
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.SoundsLikeExpression);
@@ -1284,9 +1284,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_AllAnySubselect_WithAll()
     {
-        const string text = @"
-                x >= ALL (SELECT *)
-            ";
+        const string text = """
+            x >= ALL (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.AllAnySubselect);
@@ -1306,9 +1306,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_AllAnySubselect_WithAny()
     {
-        const string text = @"
-                x < ANY (SELECT *)
-            ";
+        const string text = """
+            x < ANY (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.AllAnySubselect);
@@ -1328,9 +1328,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_AllAnySubselect_WithSome()
     {
-        const string text = @"
-                1 !> SOME (SELECT *)
-            ";
+        const string text = """
+            1 !> SOME (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.AllAnySubselect);
@@ -1350,9 +1350,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_AllAnySubselect_WithSome_AndInvalidOperator()
     {
-        const string text = @"
-                1 + SOME (SELECT *)
-            ";
+        const string text = """
+            1 + SOME (SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.AllAnySubselect);
@@ -1373,9 +1373,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_ExistsSubselect()
     {
-        const string text = @"
-                EXISTS(SELECT *)
-            ";
+        const string text = """
+            EXISTS(SELECT *)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.ExistsSubselect);
@@ -1392,9 +1392,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_SingleRowSubselect()
     {
-        const string text = @"
-                (SELECT 1)
-            ";
+        const string text = """
+            (SELECT 1)
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.SingleRowSubselect);
@@ -1411,9 +1411,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Unary()
     {
-        const string text = @"
-                -1
-            ";
+        const string text = """
+            -1
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.NegationExpression);
@@ -1483,9 +1483,9 @@ partial class ParserTests
     [Fact]
     public void Parser_Parse_Expression_Variable()
     {
-        const string text = @"
-                @var
-            ";
+        const string text = """
+            @var
+            """;
 
         using var enumerator = AssertingEnumerator.ForExpression(text);
         enumerator.AssertNode(SyntaxKind.VariableExpression);

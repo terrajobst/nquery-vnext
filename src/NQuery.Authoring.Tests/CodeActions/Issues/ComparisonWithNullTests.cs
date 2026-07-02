@@ -14,11 +14,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfExpressionThatYieldsNull()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo + NULL > 1
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo + NULL > 1
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -30,11 +30,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfEqualsNull()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo = NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo = NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -45,17 +45,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfEqualsNull()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo = NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo = NULL
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -70,11 +70,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfNotEqualsNull1()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo != NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo != NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -85,17 +85,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfNotEqualsNull1()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo != NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo != NULL
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NOT NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NOT NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -110,11 +110,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfNotEqualsNull2()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo <> NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo <> NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -125,17 +125,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfNotEqualsNull2()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo <> NULL
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo <> NULL
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NOT NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NOT NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -150,11 +150,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfEqualsNull_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL = e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL = e.ReportsTo
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -165,17 +165,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfEqualsNull_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL = e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL = e.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -190,11 +190,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfNotEqualsNull1_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL != e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL != e.ReportsTo
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -205,17 +205,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfNotEqualsNull1_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL != e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL != e.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NOT NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NOT NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -230,11 +230,11 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FindsUsageOfNotEqualsNull2_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL <> e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL <> e.ReportsTo
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -245,17 +245,17 @@ public class ComparisonWithNullTests : CodeIssueTests
     [Fact]
     public void ComparisonWithNull_FixesUsageOfNotEqualsNull2_Reversed()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   NULL <> e.ReportsTo
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   NULL <> e.ReportsTo
+            """;
 
-        var fixedQuery = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IS NOT NULL
-            ";
+        var fixedQuery = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IS NOT NULL
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);

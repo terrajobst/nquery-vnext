@@ -13,11 +13,11 @@ public class TableInstanceReferenceHighlighterTests : HighlighterTests
     [Fact]
     public void TableInstanceReferenceHighlighter_Matches()
     {
-        var query = @"
-                SELECT  {em}.FirstName,
-                        {em}.LastName
-                FROM    Employees {em}
-            ";
+        var query = """
+            SELECT  {em}.FirstName,
+                    {em}.LastName
+            FROM    Employees {em}
+            """;
 
         AssertIsMatch(query);
     }

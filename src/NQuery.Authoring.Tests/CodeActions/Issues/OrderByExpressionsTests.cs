@@ -14,12 +14,12 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_DoesNotTrigger_ForColumnExpressions()
     {
-        var query = @"
-                SELECT  FirstName,
-                        e.LastName
-                FROM    Employees e
-                ORDER   BY FirstName, e.LastName
-            ";
+        var query = """
+            SELECT  FirstName,
+                    e.LastName
+            FROM    Employees e
+            ORDER   BY FirstName, e.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);
@@ -28,11 +28,11 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_DoesNotTrigger_ForOrdinalReferences()
     {
-        var query = @"
-                SELECT  FirstName + ' ' + e.LastName
-                FROM    Employees e
-                ORDER   BY 1
-            ";
+        var query = """
+            SELECT  FirstName + ' ' + e.LastName
+            FROM    Employees e
+            ORDER   BY 1
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);
@@ -41,11 +41,11 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithOrdinal()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName
-                FROM    Employees e
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName
+            FROM    Employees e
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -56,17 +56,17 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithOrdinal()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName
-                FROM    Employees e
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName
+            FROM    Employees e
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
-        var fixedQuery = @"
-                SELECT  e.FirstName + ' ' + e.LastName
-                FROM    Employees e
-                ORDER   BY 1
-            ";
+        var fixedQuery = """
+            SELECT  e.FirstName + ' ' + e.LastName
+            FROM    Employees e
+            ORDER   BY 1
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -81,11 +81,11 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithAlias()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -96,17 +96,17 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithAlias()
     {
-        var query = @"
-                SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            SELECT  e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
-        var fixedQuery = @"
-                SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                FROM    Employees e
-                ORDER   BY FullName
-            ";
+        var fixedQuery = """
+            SELECT  e.FirstName + ' ' + e.LastName AS FullName
+            FROM    Employees e
+            ORDER   BY FullName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -121,13 +121,13 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithOrdinal_IfAppliedToParenthesizedQuery()
     {
-        var query = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName
-                    FROM    Employees e
-                )
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName
+                FROM    Employees e
+            )
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -138,21 +138,21 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithOrdinal_IfAppliedToParenthesizedQuery()
     {
-        var query = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName
-                    FROM    Employees e
-                )
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName
+                FROM    Employees e
+            )
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
-        var fixedQuery = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName
-                    FROM    Employees e
-                )
-                ORDER   BY 1
-            ";
+        var fixedQuery = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName
+                FROM    Employees e
+            )
+            ORDER   BY 1
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -167,13 +167,13 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithAlias_IfAppliedToParenthesizedQuery()
     {
-        var query = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                    FROM    Employees e
-                )
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName AS FullName
+                FROM    Employees e
+            )
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -184,21 +184,21 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithAlias_IfAppliedToParenthesizedQuery()
     {
-        var query = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                    FROM    Employees e
-                )
-                ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
-            ";
+        var query = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName AS FullName
+                FROM    Employees e
+            )
+            ORDER   BY e.FirstName /* marker */ + ' ' + e.LastName
+            """;
 
-        var fixedQuery = @"
-                (
-                    SELECT  e.FirstName + ' ' + e.LastName AS FullName
-                    FROM    Employees e
-                )
-                ORDER   BY FullName
-            ";
+        var fixedQuery = """
+            (
+                SELECT  e.FirstName + ' ' + e.LastName AS FullName
+                FROM    Employees e
+            )
+            ORDER   BY FullName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -213,18 +213,18 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithOrdinal_IfAppliedToUnionQuery()
     {
-        var query = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName
-                    FROM    Employees e1
+        var query = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -235,31 +235,31 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithOrdinal_IfAppliedToUnionQuery()
     {
-        var query = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName
-                    FROM    Employees e1
+        var query = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
+            """;
 
-        var fixedQuery = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName
-                    FROM    Employees e1
+        var fixedQuery = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY 1
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY 1
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -274,18 +274,18 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FindsUsageOfExpressionThatCanBeReplacedWithAlias_IfAppliedToUnionQuery()
     {
-        var query = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
-                    FROM    Employees e1
+        var query = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);
@@ -296,31 +296,31 @@ public class OrderByExpressionsTests : CodeIssueTests
     [Fact]
     public void OrderByExpressions_FixesUsageOfExpressionThatCanBeReplacedWithAlias_IfAppliedToUnionQuery()
     {
-        var query = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
-                    FROM    Employees e1
+        var query = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY e1.FirstName /* marker */ + ' ' + e1.LastName
+            """;
 
-        var fixedQuery = @"
-                (
-                    SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
-                    FROM    Employees e1
+        var fixedQuery = """
+            (
+                SELECT  e1.FirstName + ' ' + e1.LastName AS FullName
+                FROM    Employees e1
 
-                    UNION
+                UNION
 
-                    SELECT  e2.FirstName + ' ' + e2.LastName
-                    FROM    Employees e2
-                )
-                ORDER   BY FullName
-            ";
+                SELECT  e2.FirstName + ' ' + e2.LastName
+                FROM    Employees e2
+            )
+            ORDER   BY FullName
+            """;
 
         var issues = GetIssues(query);
         Assert.Single(issues);

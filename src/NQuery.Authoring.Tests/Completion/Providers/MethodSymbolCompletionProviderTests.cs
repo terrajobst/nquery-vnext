@@ -38,10 +38,10 @@ public class MethodSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsMethods_AfterDot()
     {
-        var query = @"
-                SELECT  e.FirstName.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, typeof(string), "Contains");
     }
@@ -49,10 +49,10 @@ public class MethodSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_ReturnsMethods_AfterText()
     {
-        var query = @"
-                SELECT  e.FirstName.Sub|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.FirstName.Sub|
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query, typeof(string), "Substring");
     }
@@ -60,10 +60,10 @@ public class MethodSymbolCompletionProviderTests : SymbolCompletionProviderTests
     [Fact]
     public void SymbolCompletionProvider_DoesNotReturnMethods_ForTableInstance()
     {
-        var query = @"
-                SELECT  e.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.|
+            FROM    Employees e
+            """;
 
         AssertIsNoMatch(query);
     }

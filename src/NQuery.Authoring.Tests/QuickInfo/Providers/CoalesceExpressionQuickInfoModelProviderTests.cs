@@ -25,10 +25,10 @@ public class CoalesceExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void CoalesceExpressionQuickInfoModelProvider_MatchesInCoalesce()
     {
-        var query = @"
-                SELECT  {COALESCE}(e.ReportsTo, e.EmployeeId)
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  {COALESCE}(e.ReportsTo, e.EmployeeId)
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -36,10 +36,10 @@ public class CoalesceExpressionQuickInfoModelProviderTests : QuickInfoModelProvi
     [Fact]
     public void CoalesceExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  COALESCE({e.ReportsTo, e.EmployeeId)}
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  COALESCE({e.ReportsTo, e.EmployeeId)}
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

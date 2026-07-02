@@ -13,10 +13,10 @@ public class RemoveRedundantBracketsTests : CodeRefactoringTests
     [Fact]
     public void RemoveRedundantBrackets_DoesNotTrigger_WhenBracketsAreRequired()
     {
-        var query = @"
-                SELECT  COUNT(*) [#Rows|]
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  COUNT(*) [#Rows|]
+            FROM    Employees
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -24,10 +24,10 @@ public class RemoveRedundantBracketsTests : CodeRefactoringTests
     [Fact]
     public void RemoveRedundantBrackets_DoesNotTrigger_ForKeywords()
     {
-        var query = @"
-                SELECT  COUNT(*) [#Rows]
-                FROM|    Employees
-            ";
+        var query = """
+            SELECT  COUNT(*) [#Rows]
+            FROM|    Employees
+            """;
 
         AssertDoesNotTrigger(query);
     }
@@ -35,15 +35,15 @@ public class RemoveRedundantBracketsTests : CodeRefactoringTests
     [Fact]
     public void RemoveRedundantBrackets_RemovesBrackets()
     {
-        var query = @"
-                SELECT  COUNT(*) [Rows|]
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  COUNT(*) [Rows|]
+            FROM    Employees
+            """;
 
-        var fixedQuery = @"
-                SELECT  COUNT(*) Rows
-                FROM    Employees
-            ";
+        var fixedQuery = """
+            SELECT  COUNT(*) Rows
+            FROM    Employees
+            """;
 
         AssertFixes(query, fixedQuery, "Remove redundant brackets");
     }

@@ -64,13 +64,13 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNothing_InMultiLineComment()
     {
-        var query = @"
-                /*
-                 * SELECT |
-                 */
-                SELECT  *
-                FROM    Employees e
-            ";
+        var query = """
+            /*
+             * SELECT |
+             */
+            SELECT  *
+            FROM    Employees e
+            """;
 
         AssertIsEmpty(query);
     }
@@ -78,11 +78,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNothing_InSingleLineComment()
     {
-        var query = @"
-                // SELECT |
-                SELECT  *
-                FROM    Employees e
-            ";
+        var query = """
+            // SELECT |
+            SELECT  *
+            FROM    Employees e
+            """;
 
         AssertIsEmpty(query);
     }
@@ -90,10 +90,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNothing_InString()
     {
-        var query = @"
-                SELECT  'T|'
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  'T|'
+            FROM    Employees e
+            """;
 
         AssertIsEmpty(query);
     }
@@ -101,10 +101,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNothing_InPropertyAccess()
     {
-        var query = @"
-                SELECT  e.|
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  e.|
+            FROM    Employees e
+            """;
 
         AssertIsEmpty(query);
     }
@@ -112,9 +112,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNot_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "NOT");
     }
@@ -122,9 +122,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsCast_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "CAST");
     }
@@ -132,9 +132,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsCoalesce_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "COALESCE");
     }
@@ -142,9 +142,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNullIf_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "NULLIF");
     }
@@ -152,9 +152,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNull_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "NULL");
     }
@@ -162,9 +162,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsNull_IfAfterIs()
     {
-        var query = @"
-                SELECT 1 IS |
-            ";
+        var query = """
+            SELECT 1 IS |
+            """;
 
         AssertIsMatch(query, "NULL");
     }
@@ -172,9 +172,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTrue_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "TRUE");
     }
@@ -182,9 +182,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsFalse_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "FALSE");
     }
@@ -192,9 +192,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsExists_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "EXISTS");
     }
@@ -202,9 +202,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsCase_IfExpressionStart()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "CASE");
     }
@@ -212,9 +212,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAnd_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "AND");
     }
@@ -222,9 +222,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOr_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "OR");
     }
@@ -232,9 +232,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsIs_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "IS");
     }
@@ -242,9 +242,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsLike_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "LIKE");
     }
@@ -252,9 +252,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsLike_IfAfterSounds()
     {
-        var query = @"
-                SELECT 'test' SOUNDS |
-            ";
+        var query = """
+            SELECT 'test' SOUNDS |
+            """;
 
         AssertIsMatch(query, "LIKE");
     }
@@ -262,9 +262,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSounds_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "SOUNDS");
     }
@@ -272,9 +272,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSimilar_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "SIMILAR");
     }
@@ -282,9 +282,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsBetween_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "BETWEEN");
     }
@@ -292,9 +292,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsIn_IfAfterExpression()
     {
-        var query = @"
-                SELECT 1 |
-            ";
+        var query = """
+            SELECT 1 |
+            """;
 
         AssertIsMatch(query, "IN");
     }
@@ -302,9 +302,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTo_IfAfterSimilar()
     {
-        var query = @"
-                SELECT 'test' SIMILAR |
-            ";
+        var query = """
+            SELECT 'test' SIMILAR |
+            """;
 
         AssertIsMatch(query, "TO");
     }
@@ -312,9 +312,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsDistinct_IfAfterSelect()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "DISTINCT");
     }
@@ -322,9 +322,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTop_IfAfterSelect()
     {
-        var query = @"
-                SELECT |
-            ";
+        var query = """
+            SELECT |
+            """;
 
         AssertIsMatch(query, "TOP");
     }
@@ -332,9 +332,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTop_IfAfterAll()
     {
-        var query = @"
-                SELECT ALL |
-            ";
+        var query = """
+            SELECT ALL |
+            """;
 
         AssertIsMatch(query, "TOP");
     }
@@ -342,9 +342,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTop_IfAfterDistinct()
     {
-        var query = @"
-                SELECT DISTINCT |
-            ";
+        var query = """
+            SELECT DISTINCT |
+            """;
 
         AssertIsMatch(query, "TOP");
     }
@@ -352,9 +352,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsWith_IfBeforeQuery()
     {
-        var query = @"
-                |
-            ";
+        var query = """
+            |
+            """;
 
         AssertIsMatch(query, "WITH");
     }
@@ -362,9 +362,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsWith_IfAfterTop()
     {
-        var query = @"
-                SELECT TOP 10 |
-            ";
+        var query = """
+            SELECT TOP 10 |
+            """;
 
         AssertIsMatch(query, "WITH");
     }
@@ -372,9 +372,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsRecursive_IfAfterWith()
     {
-        var query = @"
-                WITH |
-            ";
+        var query = """
+            WITH |
+            """;
 
         AssertIsMatch(query, "RECURSIVE");
     }
@@ -382,9 +382,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsTies_IfAfterWith()
     {
-        var query = @"
-                SELECT TOP 10 WITH |
-            ";
+        var query = """
+            SELECT TOP 10 WITH |
+            """;
 
         AssertIsMatch(query, "TIES");
     }
@@ -392,9 +392,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAs_IfInColumnAlias()
     {
-        var query = @"
-                SELECT  1 |
-            ";
+        var query = """
+            SELECT  1 |
+            """;
 
         AssertIsMatch(query, "AS");
     }
@@ -402,10 +402,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAs_IfInTableAlias()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees |
+            """;
 
         AssertIsMatch(query, "AS");
     }
@@ -413,9 +413,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAs_IfInCast()
     {
-        var query = @"
-                SELECT CAST(1 |
-            ";
+        var query = """
+            SELECT CAST(1 |
+            """;
 
         AssertIsMatch(query, "AS");
     }
@@ -423,9 +423,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAs_IfCommonTableExpressionName()
     {
-        var query = @"
-                WITH MyCte |
-            ";
+        var query = """
+            WITH MyCte |
+            """;
 
         AssertIsMatch(query, "AS");
     }
@@ -433,10 +433,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsWhen_IfInCase()
     {
-        var query = @"
-                SELECT CASE e.ReportsTo
-                          |
-            ";
+        var query = """
+            SELECT CASE e.ReportsTo
+                      |
+            """;
 
         AssertIsMatch(query, "WHEN");
     }
@@ -444,10 +444,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsThen_IfAfterThen()
     {
-        var query = @"
-                SELECT CASE e.ReportsTo
-                          WHEN 2 |
-            ";
+        var query = """
+            SELECT CASE e.ReportsTo
+                      WHEN 2 |
+            """;
 
         AssertIsMatch(query, "THEN");
     }
@@ -455,11 +455,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsElse_IfAfterThen()
     {
-        var query = @"
-                SELECT CASE e.ReportsTo
-                          WHEN 2 THEN 2
-                          |
-            ";
+        var query = """
+            SELECT CASE e.ReportsTo
+                      WHEN 2 THEN 2
+                      |
+            """;
 
         AssertIsMatch(query, "ELSE");
     }
@@ -467,11 +467,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsEnd_IfAfterThen()
     {
-        var query = @"
-                SELECT CASE e.ReportsTo
-                          WHEN 2 THEN 2
-                       |
-            ";
+        var query = """
+            SELECT CASE e.ReportsTo
+                      WHEN 2 THEN 2
+                   |
+            """;
 
         AssertIsMatch(query, "END");
     }
@@ -479,11 +479,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsBy_IfAfterOrder()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            ORDER   |
+            """;
 
         AssertIsMatch(query, "BY");
     }
@@ -491,11 +491,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsBy_IfAfterGroup()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                GROUP   |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            GROUP   |
+            """;
 
         AssertIsMatch(query, "BY");
     }
@@ -503,11 +503,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAsc_IfAfterExpressionInOrderBy()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   BY 1 |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            ORDER   BY 1 |
+            """;
 
         AssertIsMatch(query, "ASC");
     }
@@ -515,11 +515,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsDesc_IfAfterExpressionInOrderBy()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                ORDER   BY 1, 2 |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            ORDER   BY 1, 2 |
+            """;
 
         AssertIsMatch(query, "DESC");
     }
@@ -535,9 +535,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSelect_IfBeforeQuery()
     {
-        var query = @"
-                |
-            ";
+        var query = """
+            |
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -545,9 +545,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedQuery()
     {
-        var query = @"
-                (|
-            ";
+        var query = """
+            (|
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -555,9 +555,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSelect_IfParenthesizedExpression()
     {
-        var query = @"
-                SELECT (|
-            ";
+        var query = """
+            SELECT (|
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -565,11 +565,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSelect_IfInInExpression()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.ReportsTo IN (|
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.ReportsTo IN (|
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -577,10 +577,10 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsFrom_IfInQuery()
     {
-        var query = @"
-                SELECT  *
-                |
-            ";
+        var query = """
+            SELECT  *
+            |
+            """;
 
         AssertIsMatch(query, "FROM");
     }
@@ -588,11 +588,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsWhere_IfInQuery()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            |
+            """;
 
         AssertIsMatch(query, "WHERE");
     }
@@ -600,11 +600,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsGroup_IfInQuery()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            |
+            """;
 
         AssertIsMatch(query, "GROUP");
     }
@@ -612,11 +612,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsHaving_IfInQuery()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            |
+            """;
 
         AssertIsMatch(query, "HAVING");
     }
@@ -624,13 +624,13 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOrder_IfAfterQuery()
     {
-        var query = @"
-                (
-                    SELECT  *
-                    FROM    Employees
-                )
-                |
-            ";
+        var query = """
+            (
+                SELECT  *
+                FROM    Employees
+            )
+            |
+            """;
 
         AssertIsMatch(query, "ORDER");
     }
@@ -638,11 +638,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsUnion_IfAfterQuery()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
-                |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees
+            |
+            """;
 
         AssertIsMatch(query, "UNION");
     }
@@ -650,17 +650,17 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsIntersect_IfAfterQuery()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
+        var query = """
+            SELECT  *
+            FROM    Employees
 
-                UNION
+            UNION
 
-                SELECT  *
-                FROM    Employees
+            SELECT  *
+            FROM    Employees
 
-                |
-            ";
+            |
+            """;
 
         AssertIsMatch(query, "INTERSECT");
     }
@@ -668,13 +668,13 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsExcept_IfAfterQuery()
     {
-        var query = @"
-                (
-                    SELECT  *
-                    FROM    Employees
-                )
-                |
-            ";
+        var query = """
+            (
+                SELECT  *
+                FROM    Employees
+            )
+            |
+            """;
 
         AssertIsMatch(query, "EXCEPT");
     }
@@ -682,9 +682,9 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAll_IfAfterSelect()
     {
-        var query = @"
-                SELECT  |
-            ";
+        var query = """
+            SELECT  |
+            """;
 
         AssertIsMatch(query, "ALL");
     }
@@ -692,12 +692,12 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAll_IfAfterUnion()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees
+        var query = """
+            SELECT  *
+            FROM    Employees
 
-                UNION   |
-            ";
+            UNION   |
+            """;
 
         AssertIsMatch(query, "ALL");
     }
@@ -705,11 +705,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAll_IfInAllAny()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId >= |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId >= |
+            """;
 
         AssertIsMatch(query, "ALL");
     }
@@ -717,11 +717,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsAny_IfInAllAny()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId >= |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId >= |
+            """;
 
         AssertIsMatch(query, "ANY");
     }
@@ -729,11 +729,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsSome_IfInAllAny()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.EmployeeId >= |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.EmployeeId >= |
+            """;
 
         AssertIsMatch(query, "SOME");
     }
@@ -741,11 +741,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -753,11 +753,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterInner()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            INNER |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        INNER |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -765,11 +765,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterOuter()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            LEFT OUTER |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        LEFT OUTER |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -777,11 +777,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterLeft()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            LEFT |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        LEFT |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -789,11 +789,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterRight()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            RIGHT |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        RIGHT |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -801,11 +801,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterFull()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            FULL |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        FULL |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -813,11 +813,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsJoin_IfAfterCross()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            CROSS |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        CROSS |
+            """;
 
         AssertIsMatch(query, "JOIN");
     }
@@ -825,11 +825,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsApply_IfAfterCross()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            CROSS |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        CROSS |
+            """;
 
         AssertIsMatch(query, "APPLY");
     }
@@ -837,11 +837,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsApply_IfAfterOuter()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            OUTER |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        OUTER |
+            """;
 
         AssertIsMatch(query, "APPLY");
     }
@@ -849,11 +849,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsInner_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "INNER");
     }
@@ -861,11 +861,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsCross_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "CROSS");
     }
@@ -873,11 +873,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsLeft_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "LEFT");
     }
@@ -885,11 +885,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsRight_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "RIGHT");
     }
@@ -897,11 +897,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsFull_IfAfterTableReference()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        |
+            """;
 
         AssertIsMatch(query, "FULL");
     }
@@ -909,11 +909,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOuter_IfAfterLeft()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            LEFT |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        LEFT |
+            """;
 
         AssertIsMatch(query, "OUTER");
     }
@@ -921,11 +921,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOuter_IfAfterRight()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            RIGHT |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        RIGHT |
+            """;
 
         AssertIsMatch(query, "OUTER");
     }
@@ -933,11 +933,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOuter_IfAfterFull()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            FULL |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        FULL |
+            """;
 
         AssertIsMatch(query, "OUTER");
     }
@@ -945,11 +945,11 @@ public class KeywordCompletionProviderTests
     [Fact]
     public void KeywordCompletionProvider_ReturnsOn_IfBeforeJoinCondition()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                            INNER JOIN EmployeeTerritories et |
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+                        INNER JOIN EmployeeTerritories et |
+            """;
 
         AssertIsMatch(query, "ON");
     }

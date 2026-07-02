@@ -13,10 +13,10 @@ public class StringQuoteBraceMatcherTests : BraceMatcherTests
     [Fact]
     public void StringQuoteBraceMatcher_Matches()
     {
-        var query = @"
-                SELECT  {'}An employee{'}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {'}An employee{'}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }

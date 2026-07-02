@@ -14,35 +14,35 @@ public class RecursiveCodeIssueProviderTests : CodeIssueTests
     [Fact]
     public void RecursiveCodeIssueProvider_FixesMissingRecursive()
     {
-        var query = @"
-                WITH Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
+        var query = """
+            WITH Emps AS
+            (
+                SELECT  *
+                FROM    Employees
 
-                    UNION   ALL
+                UNION   ALL
 
-                    SELECT  *
-                    FROM    Emps
-                )
                 SELECT  *
                 FROM    Emps
-            ";
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
-        var fixedQuery = @"
-                WITH RECURSIVE Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
+        var fixedQuery = """
+            WITH RECURSIVE Emps AS
+            (
+                SELECT  *
+                FROM    Employees
 
-                    UNION   ALL
+                UNION   ALL
 
-                    SELECT  *
-                    FROM    Emps
-                )
                 SELECT  *
                 FROM    Emps
-            ";
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
         var issues = GetIssues(query);
 
@@ -60,25 +60,25 @@ public class RecursiveCodeIssueProviderTests : CodeIssueTests
     [Fact]
     public void RecursiveCodeIssueProvider_FixesUnnecessaryRecursive()
     {
-        var query = @"
-                WITH RECURSIVE Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
-                )
+        var query = """
+            WITH RECURSIVE Emps AS
+            (
                 SELECT  *
-                FROM    Emps
-            ";
+                FROM    Employees
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
-        var fixedQuery = @"
-                WITH Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
-                )
+        var fixedQuery = """
+            WITH Emps AS
+            (
                 SELECT  *
-                FROM    Emps
-            ";
+                FROM    Employees
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
         var issues = GetIssues(query);
 
@@ -96,20 +96,20 @@ public class RecursiveCodeIssueProviderTests : CodeIssueTests
     [Fact]
     public void RecursiveCodeIssueProvider_DoesNotTrigger_ForRecursive()
     {
-        var query = @"
-                WITH RECURSIVE Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
+        var query = """
+            WITH RECURSIVE Emps AS
+            (
+                SELECT  *
+                FROM    Employees
 
-                    UNION   ALL
+                UNION   ALL
 
-                    SELECT  *
-                    FROM    Emps
-                )
                 SELECT  *
                 FROM    Emps
-            ";
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);
@@ -118,15 +118,15 @@ public class RecursiveCodeIssueProviderTests : CodeIssueTests
     [Fact]
     public void RecursiveCodeIssueProvider_DoesNotTrigger_ForNonRecursive()
     {
-        var query = @"
-                WITH Emps AS
-                (
-                    SELECT  *
-                    FROM    Employees
-                )
+        var query = """
+            WITH Emps AS
+            (
                 SELECT  *
-                FROM    Emps
-            ";
+                FROM    Employees
+            )
+            SELECT  *
+            FROM    Emps
+            """;
 
         var issues = GetIssues(query);
         Assert.Empty(issues);

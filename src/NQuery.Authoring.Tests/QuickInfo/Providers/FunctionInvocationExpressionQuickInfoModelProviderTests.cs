@@ -26,10 +26,10 @@ public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfo
     [Fact]
     public void FunctionInvocationExpressionQuickInfoModelProvider_MatchesInName()
     {
-        var query = @"
-                SELECT  LEFT(e.FirstName, {LEN}(e.FirstName))
-                FROM    Employees e
-             ";
+        var query = """
+            SELECT  LEFT(e.FirstName, {LEN}(e.FirstName))
+            FROM    Employees e
+            """;
 
         AssertIsMatch(query);
     }
@@ -37,10 +37,10 @@ public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfo
     [Fact]
     public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchForUnresolved()
     {
-        var query = @"
-                SELECT  LEFT(e.FirstName, {XXX}(e.FirstName))
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  LEFT(e.FirstName, {XXX}(e.FirstName))
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }
@@ -48,10 +48,10 @@ public class FunctionInvocationExpressionQuickInfoModelProviderTests : QuickInfo
     [Fact]
     public void FunctionInvocationExpressionQuickInfoModelProvider_DoesNotMatchInParentheses()
     {
-        var query = @"
-                SELECT  LEFT(e.FirstName, LEN({e.FirstName)})
-                FROM    Employees e
-            ";
+        var query = """
+            SELECT  LEFT(e.FirstName, LEN({e.FirstName)})
+            FROM    Employees e
+            """;
 
         AssertIsNotMatch(query);
     }

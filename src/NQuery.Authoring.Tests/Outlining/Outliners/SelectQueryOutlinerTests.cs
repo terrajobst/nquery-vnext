@@ -13,11 +13,11 @@ public class SelectQueryOutlinerTests : OutlinerTests
     [Fact]
     public void SelectQueryOutliner_FindsSelectQuery()
     {
-        var query = @"
-                {SELECT  *
-                FROM    Employees e
-                WHERE   e.City = 'London'}
-            ";
+        var query = """
+            {SELECT  *
+            FROM    Employees e
+            WHERE   e.City = 'London'}
+            """;
 
         AssertIsMatch(query, "SELECT");
     }
@@ -25,9 +25,9 @@ public class SelectQueryOutlinerTests : OutlinerTests
     [Fact]
     public void SelectQueryOutliner_DoesNotTriggerForSingleLineQueries()
     {
-        var query = @"
-                SELECT  1, 2, 3
-            ";
+        var query = """
+            SELECT  1, 2, 3
+            """;
 
         AssertIsNoMatch(query);
     }
@@ -35,12 +35,12 @@ public class SelectQueryOutlinerTests : OutlinerTests
     [Fact]
     public void SelectQueryOutliner_DoesNotTriggerForOrderedQueries()
     {
-        var query = @"
-                SELECT  *
-                FROM    Employees e
-                WHERE   e.City = 'London'
-                ORDER   BY 1
-            ";
+        var query = """
+            SELECT  *
+            FROM    Employees e
+            WHERE   e.City = 'London'
+            ORDER   BY 1
+            """;
 
         AssertIsNoMatch(query);
     }

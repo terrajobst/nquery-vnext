@@ -13,10 +13,10 @@ public class QuotedIdentifierBraceMatcherTests : BraceMatcherTests
     [Fact]
     public void IdentifierBraceMatcher_MatchesQuotes()
     {
-        var query = @"
-                SELECT  {""}FirstName{""}
-                FROM    Employees
-            ";
+        var query = """
+            SELECT  {"}FirstName{"}
+            FROM    Employees
+            """;
 
         AssertIsMatch(query);
     }

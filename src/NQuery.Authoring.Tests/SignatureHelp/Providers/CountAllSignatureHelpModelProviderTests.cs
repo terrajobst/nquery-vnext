@@ -21,9 +21,9 @@ public class CountAllSignatureHelpModelProviderTests : SignatureHelpModelProvide
     [Fact]
     public void CountAllSignatureHelpModelProvider_Matches()
     {
-        var query = @"
-                SELECT {COUNT({*})}
-            ";
+        var query = """
+            SELECT {COUNT({*})}
+            """;
 
         AssertIsMatch(query);
     }

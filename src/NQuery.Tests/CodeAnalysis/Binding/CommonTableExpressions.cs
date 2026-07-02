@@ -10,13 +10,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_PreferColumnListOverQueryColumns()
     {
-        const string query = @"
-                WITH MyCte(A, B) AS
-                (
-                    SELECT 'x' AS C1, 'y' AS C2
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte(A, B) AS
+            (
+                SELECT 'x' AS C1, 'y' AS C2
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -33,13 +34,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_UseQueryColumnNames_IfNoColumnListIsSpecified()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT 'x' AS C1, 'y' AS C2
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT 'x' AS C1, 'y' AS C2
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -56,22 +58,23 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_CanBindToPreviouslyDefinedExpressions()
     {
-        const string query = @"
-                WITH MyCte1 AS
-                (
-                    SELECT 'x' AS C
-                ), MyCte2 AS
-                (
-                    SELECT  'x' AS C
-                    FROM    MyCte1
-                ), MyCte3 AS
-                (
-                    SELECT  'x' AS C
-                    FROM    MyCte1
-                                CROSS JOIN MyCte2
-                )
-                SELECT  *
-                FROM    MyCte3";
+        const string query = """
+            WITH MyCte1 AS
+            (
+                SELECT 'x' AS C
+            ), MyCte2 AS
+            (
+                SELECT  'x' AS C
+                FROM    MyCte1
+            ), MyCte3 AS
+            (
+                SELECT  'x' AS C
+                FROM    MyCte1
+                            CROSS JOIN MyCte2
+            )
+            SELECT  *
+            FROM    MyCte3
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -101,23 +104,24 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_CanBindToSelf_WithSingleAnchor()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT  1 AS Id,
-                            -1 AS ReportsTo
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT  1 AS Id,
+                        -1 AS ReportsTo
 
-                    UNION ALL
+                UNION ALL
 
-                    SELECT  d.Id,
-                            d.ReportsTo
-                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
-                             UNION ALL
-                             SELECT 3, 1) d
-                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
-                )
-                SELECT  *
-                FROM    MyCte";
+                SELECT  d.Id,
+                        d.ReportsTo
+                FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                         UNION ALL
+                         SELECT 3, 1) d
+                             INNER JOIN MyCte c ON c.Id = d.ReportsTo
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -137,28 +141,29 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_CanBindToSelf_WithMultipleAnchors()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT  1 AS Id,
-                            -1 AS ReportsTo
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT  1 AS Id,
+                        -1 AS ReportsTo
 
-                    UNION ALL
+                UNION ALL
 
-                    SELECT  2 AS Id,
-                            -1 AS ReportsTo
+                SELECT  2 AS Id,
+                        -1 AS ReportsTo
 
-                    UNION ALL
+                UNION ALL
 
-                    SELECT  d.Id,
-                            d.ReportsTo
-                    FROM    (SELECT 3 AS Id, 1 AS ReportsTo
-                             UNION ALL
-                             SELECT 4, 1) d
-                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
-                )
-                SELECT  *
-                FROM    MyCte";
+                SELECT  d.Id,
+                        d.ReportsTo
+                FROM    (SELECT 3 AS Id, 1 AS ReportsTo
+                         UNION ALL
+                         SELECT 4, 1) d
+                             INNER JOIN MyCte c ON c.Id = d.ReportsTo
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -178,13 +183,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectColumnsWithoutNames_IfNoColumnListIsSpecified()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT 'x' AS, 'y' AS C2
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT 'x' AS, 'y' AS C2
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -206,13 +212,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectDuplicateColumnNames()
     {
-        const string query = @"
-                WITH MyCte (A, A) AS
-                (
-                    SELECT 1 AS, '2' AS C2
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte (A, A) AS
+            (
+                SELECT 1 AS, '2' AS C2
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -237,13 +244,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectDuplicateColumnNames_IfNoColumnListIsSpecified()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT 1 AS A, '2' AS A
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT 1 AS A, '2' AS A
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -268,16 +276,17 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectDuplicateTableNames()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT 1 AS One
-                ), MyCte AS
-                (
-                    SELECT '2' AS Two
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT 1 AS One
+            ), MyCte AS
+            (
+                SELECT '2' AS Two
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -301,13 +310,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectIfFewerColumnsInQueryThanSpecifiedInColumnList()
     {
-        const string query = @"
-                WITH MyCte(A, B) AS
-                (
-                    SELECT 'x' AS C1
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte(A, B) AS
+            (
+                SELECT 'x' AS C1
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -329,13 +339,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectIfMoreColumnsInQueryThanSpecifiedInColumnList()
     {
-        const string query = @"
-                WITH MyCte(A) AS
-                (
-                    SELECT 'x' AS C1, 2 AS C2
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte(A) AS
+            (
+                SELECT 'x' AS C1, 2 AS C2
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -357,13 +368,14 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectMissingUnionAll()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT * FROM MyCte
-                )
-                SELECT  *
-                FROM    MyCte";
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT * FROM MyCte
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -377,27 +389,28 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectMissingAnchorInUnionAll()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT  d.Id,
-                            d.ReportsTo
-                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
-                             UNION ALL
-                             SELECT 3, 1) d
-                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT  d.Id,
+                        d.ReportsTo
+                FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                         UNION ALL
+                         SELECT 3, 1) d
+                             INNER JOIN MyCte c ON c.Id = d.ReportsTo
 
-                    UNION
+                UNION
 
-                    SELECT  d.Id,
-                            d.ReportsTo
-                    FROM    (SELECT 2 AS Id, 1 AS ReportsTo
-                             UNION ALL
-                             SELECT 3, 1) d
-                                 INNER JOIN MyCte c ON c.Id = d.ReportsTo
-                )
-                SELECT  *
-                FROM    MyCte";
+                SELECT  d.Id,
+                        d.ReportsTo
+                FROM    (SELECT 2 AS Id, 1 AS ReportsTo
+                         UNION ALL
+                         SELECT 3, 1) d
+                             INNER JOIN MyCte c ON c.Id = d.ReportsTo
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
@@ -410,23 +423,24 @@ public class CommonTableExpressions
     [Fact]
     public void CTE_DetectMissingUnionAll_ButContinuesForUnion()
     {
-        const string query = @"
-                WITH MyCte AS
-                (
-                    SELECT  1 AS Id,
-                            -1 AS ReportsTo
+        const string query = """
+            WITH MyCte AS
+            (
+                SELECT  1 AS Id,
+                        -1 AS ReportsTo
 
-                    UNION
+                UNION
 
-                    SELECT d.Id,
-                           d.ReportsTo
-                    FROM   (SELECT 2 AS Id, 1 AS ReportsTo
-                            UNION ALL
-                            SELECT 3, 1) d
-                                INNER JOIN MyCte c ON c.Id = d.ReportsTo
-                )
-                SELECT  *
-                FROM    MyCte";
+                SELECT d.Id,
+                       d.ReportsTo
+                FROM   (SELECT 2 AS Id, 1 AS ReportsTo
+                        UNION ALL
+                        SELECT 3, 1) d
+                            INNER JOIN MyCte c ON c.Id = d.ReportsTo
+            )
+            SELECT  *
+            FROM    MyCte
+            """;
 
         var syntaxTree = SyntaxTree.ParseQuery(query);
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
