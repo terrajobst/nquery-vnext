@@ -11,38 +11,50 @@ public static class ActiproTextExtensions
     private static readonly ConditionalWeakTable<ITextDocument, SourceTextContainer> ProviderMap = new();
     private static readonly ConditionalWeakTable<ITextSnapshot, SourceText> SnapshotMap = new();
 
-    public static SourceTextContainer ToSourceTextContainer(this ITextDocument textDocument)
+    extension(ITextDocument textDocument)
     {
-        ThrowIfNull(textDocument);
+        public SourceTextContainer ToSourceTextContainer()
+        {
+            ThrowIfNull(textDocument);
 
-        return ProviderMap.GetValue(textDocument, tb => new ActiproSourceTextContainer(tb));
+            return ProviderMap.GetValue(textDocument, tb => new ActiproSourceTextContainer(tb));
+        }
     }
 
-    public static SourceText ToSourceText(this ITextSnapshot textSnapshot)
+    extension(ITextSnapshot textSnapshot)
     {
-        ThrowIfNull(textSnapshot);
+        public SourceText ToSourceText()
+        {
+            ThrowIfNull(textSnapshot);
 
-        var container = (ActiproSourceTextContainer)textSnapshot.Document.ToSourceTextContainer();
-        return SnapshotMap.GetValue(textSnapshot, ts => new ActiproSourceText(container, ts));
+            var container = (ActiproSourceTextContainer)textSnapshot.Document.ToSourceTextContainer();
+            return SnapshotMap.GetValue(textSnapshot, ts => new ActiproSourceText(container, ts));
+        }
     }
 
-    public static ITextSnapshot ToTextSnapshot(this SourceText text)
+    extension(SourceText text)
     {
-        ThrowIfNull(text);
+        public ITextSnapshot ToTextSnapshot()
+        {
+            ThrowIfNull(text);
 
-        if (text is not ActiproSourceText actiproSourceText)
-            throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(text));
+            if (text is not ActiproSourceText actiproSourceText)
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(text));
 
-        return actiproSourceText.Snapshot;
+            return actiproSourceText.Snapshot;
+        }
     }
 
-    public static ITextDocument ToTextDocument(this SourceTextContainer container)
+    extension(SourceTextContainer container)
     {
-        ThrowIfNull(container);
+        public ITextDocument ToTextDocument()
+        {
+            ThrowIfNull(container);
 
-        if (container is not ActiproSourceTextContainer actiproSourceTextContainer)
-            throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(container));
+            if (container is not ActiproSourceTextContainer actiproSourceTextContainer)
+                throw new ArgumentException(Resources.SourceTextMustOriginateFromActiproEditor, nameof(container));
 
-        return actiproSourceTextContainer.TextDocument;
+            return actiproSourceTextContainer.TextDocument;
+        }
     }
 }

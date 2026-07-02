@@ -26,16 +26,19 @@ public static class QuickInfoExtensions
         new WildcardSelectColumnQuickInfoModelProvider()
     ];
 
-    public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position)
+    extension(SemanticModel semanticModel)
     {
-        return semanticModel.GetQuickInfoModel(position, StandardQuickInfoModelProviders);
-    }
+        public QuickInfoModel? GetQuickInfoModel(int position)
+        {
+            return semanticModel.GetQuickInfoModel(position, StandardQuickInfoModelProviders);
+        }
 
-    public static QuickInfoModel? GetQuickInfoModel(this SemanticModel semanticModel, int position, IEnumerable<IQuickInfoModelProvider> providers)
-    {
-        return (from p in providers
-                let m = p.GetModel(semanticModel, position)
-                where m is not null
-                select m).FirstOrDefault();
+        public QuickInfoModel? GetQuickInfoModel(int position, IEnumerable<IQuickInfoModelProvider> providers)
+        {
+            return (from p in providers
+                    let m = p.GetModel(semanticModel, position)
+                    where m is not null
+                    select m).FirstOrDefault();
+        }
     }
 }

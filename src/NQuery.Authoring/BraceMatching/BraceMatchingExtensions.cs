@@ -16,16 +16,19 @@ public static class BraceMatchingExtensions
         new ParenthesisBraceMatcher(),
     ];
 
-    public static BraceMatchingResult MatchBraces(this SyntaxTree syntaxTree, int position)
+    extension(SyntaxTree syntaxTree)
     {
-        return syntaxTree.MatchBraces(position, StandardBraceMatchers);
-    }
+        public BraceMatchingResult MatchBraces(int position)
+        {
+            return syntaxTree.MatchBraces(position, StandardBraceMatchers);
+        }
 
-    public static BraceMatchingResult MatchBraces(this SyntaxTree syntaxTree, int position, IEnumerable<IBraceMatcher> braceMatchers)
-    {
-        return (from m in braceMatchers
-                let r = m.MatchBraces(syntaxTree, position)
-                where r.IsValid
-                select r).DefaultIfEmpty(BraceMatchingResult.None).First();
+        public BraceMatchingResult MatchBraces(int position, IEnumerable<IBraceMatcher> braceMatchers)
+        {
+            return (from m in braceMatchers
+                    let r = m.MatchBraces(syntaxTree, position)
+                    where r.IsValid
+                    select r).DefaultIfEmpty(BraceMatchingResult.None).First();
+        }
     }
 }

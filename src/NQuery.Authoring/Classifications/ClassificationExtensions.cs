@@ -5,29 +5,32 @@ namespace NQuery.Authoring.Classifications;
 
 public static class ClassificationExtensions
 {
-    public static IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax(this SyntaxNode root)
+    extension(SyntaxNode root)
     {
-        return root.ClassifySyntax(root.FullSpan);
-    }
+        public IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax()
+        {
+            return root.ClassifySyntax(root.FullSpan);
+        }
 
-    public static IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax(this SyntaxNode root, TextSpan span)
-    {
-        var result = new List<SyntaxClassificationSpan>();
-        var worker = new SyntaxClassificationWorker(result, span);
-        worker.ClassifyNode(root);
-        return result;
-    }
+        public IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax(TextSpan span)
+        {
+            var result = new List<SyntaxClassificationSpan>();
+            var worker = new SyntaxClassificationWorker(result, span);
+            worker.ClassifyNode(root);
+            return result;
+        }
 
-    public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(this SyntaxNode root, SemanticModel semanticModel)
-    {
-        return root.ClassifySemantics(semanticModel, root.FullSpan);
-    }
+        public IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(SemanticModel semanticModel)
+        {
+            return root.ClassifySemantics(semanticModel, root.FullSpan);
+        }
 
-    public static IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(this SyntaxNode root, SemanticModel semanticModel, TextSpan span)
-    {
-        var result = new List<SemanticClassificationSpan>();
-        var worker = new SemanticClassificationWorker(result, semanticModel, span);
-        worker.ClassifyNode(root);
-        return result;
+        public IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(SemanticModel semanticModel, TextSpan span)
+        {
+            var result = new List<SemanticClassificationSpan>();
+            var worker = new SemanticClassificationWorker(result, semanticModel, span);
+            worker.ClassifyNode(root);
+            return result;
+        }
     }
 }

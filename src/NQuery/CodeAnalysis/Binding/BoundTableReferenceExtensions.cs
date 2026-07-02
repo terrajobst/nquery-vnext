@@ -6,11 +6,14 @@ namespace NQuery.CodeAnalysis.Binding;
 
 internal static class BoundTableReferenceExtensions
 {
-    public static ImmutableArray<TableInstanceSymbol> GetDeclaredTableInstances(this BoundTableReference node)
+    extension(BoundTableReference node)
     {
-        var result = new List<TableInstanceSymbol>();
-        GetDeclaredTableInstances(result, node);
-        return result.ToImmutableArray();
+        public ImmutableArray<TableInstanceSymbol> GetDeclaredTableInstances()
+        {
+            var result = new List<TableInstanceSymbol>();
+            GetDeclaredTableInstances(result, node);
+            return result.ToImmutableArray();
+        }
     }
 
     private static void GetDeclaredTableInstances(List<TableInstanceSymbol> receiver, BoundTableReference node)

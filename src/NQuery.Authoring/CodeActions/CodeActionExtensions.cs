@@ -16,16 +16,6 @@ public static class CodeActionExtensions
         new AddToGroupByCodeFixProvider()
     ];
 
-    public static IEnumerable<ICodeAction> GetFixes(this SemanticModel semanticModel, int position)
-    {
-        return semanticModel.GetFixes(position, StandardFixProviders);
-    }
-
-    public static IEnumerable<ICodeAction> GetFixes(this SemanticModel semanticModel, int position, IEnumerable<ICodeFixProvider> providers)
-    {
-        return providers.SelectMany(p => p.GetFixes(semanticModel, position));
-    }
-
     public static ImmutableArray<ICodeIssueProvider> StandardIssueProviders { get; } =
     [
         new ColumnsInExistsCodeIssueProvider(),
@@ -35,16 +25,6 @@ public static class CodeActionExtensions
         new UnusedCommonTableExpressionCodeIssueProvider(),
         new RecursiveCodeIssueProvider()
     ];
-
-    public static IEnumerable<CodeIssue> GetIssues(this SemanticModel semanticModel)
-    {
-        return semanticModel.GetIssues(StandardIssueProviders);
-    }
-
-    public static IEnumerable<CodeIssue> GetIssues(this SemanticModel semanticModel, IEnumerable<ICodeIssueProvider> providers)
-    {
-        return providers.SelectMany(p => p.GetIssues(semanticModel));
-    }
 
     public static ImmutableArray<ICodeRefactoringProvider> StandardRefactoringProviders { get; } =
     [
@@ -60,13 +40,36 @@ public static class CodeActionExtensions
         new RemoveRedundantParenthesisCodeRefactoringProvider()
     ];
 
-    public static IEnumerable<ICodeAction> GetRefactorings(this SemanticModel semanticModel, int position)
+    extension(SemanticModel semanticModel)
     {
-        return semanticModel.GetRefactorings(position, StandardRefactoringProviders);
-    }
+        public IEnumerable<ICodeAction> GetFixes(int position)
+        {
+            return semanticModel.GetFixes(position, StandardFixProviders);
+        }
 
-    public static IEnumerable<ICodeAction> GetRefactorings(this SemanticModel semanticModel, int position, IEnumerable<ICodeRefactoringProvider> providers)
-    {
-        return providers.SelectMany(p => p.GetRefactorings(semanticModel, position));
+        public IEnumerable<ICodeAction> GetFixes(int position, IEnumerable<ICodeFixProvider> providers)
+        {
+            return providers.SelectMany(p => p.GetFixes(semanticModel, position));
+        }
+
+        public IEnumerable<CodeIssue> GetIssues()
+        {
+            return semanticModel.GetIssues(StandardIssueProviders);
+        }
+
+        public IEnumerable<CodeIssue> GetIssues(IEnumerable<ICodeIssueProvider> providers)
+        {
+            return providers.SelectMany(p => p.GetIssues(semanticModel));
+        }
+
+        public IEnumerable<ICodeAction> GetRefactorings(int position)
+        {
+            return semanticModel.GetRefactorings(position, StandardRefactoringProviders);
+        }
+
+        public IEnumerable<ICodeAction> GetRefactorings(int position, IEnumerable<ICodeRefactoringProvider> providers)
+        {
+            return providers.SelectMany(p => p.GetRefactorings(semanticModel, position));
+        }
     }
 }

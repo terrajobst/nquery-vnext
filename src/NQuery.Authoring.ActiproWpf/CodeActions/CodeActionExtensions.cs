@@ -6,9 +6,12 @@ namespace NQuery.Authoring.ActiproWpf.CodeActions;
 
 public static class CodeActionExtensions
 {
-    public static void RegisterCodeActionCommands(this SyntaxEditor syntaxEditor)
+    extension(SyntaxEditor syntaxEditor)
     {
-        syntaxEditor.CommandBindings.Add(new ExpandCodeActionListEditAction().CreateCommandBinding(ExpandCodeActionListEditAction.Command));
-        syntaxEditor.InputBindings.Add(new InputBinding(ExpandCodeActionListEditAction.Command, new KeyGesture(Key.OemPeriod, ModifierKeys.Control)));
+        public void RegisterCodeActionCommands()
+        {
+            syntaxEditor.CommandBindings.Add(new ExpandCodeActionListEditAction().CreateCommandBinding(ExpandCodeActionListEditAction.Command));
+            syntaxEditor.InputBindings.Add(new InputBinding(ExpandCodeActionListEditAction.Command, new KeyGesture(Key.OemPeriod, ModifierKeys.Control)));
+        }
     }
 }

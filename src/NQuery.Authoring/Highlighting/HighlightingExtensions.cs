@@ -19,21 +19,24 @@ public static class HighlightingExtensions
         new SymbolReferenceHighlighter()
     ];
 
-    public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position)
+    extension(SemanticModel semanticModel)
     {
-        return semanticModel.GetHighlights(position, StandardHighlighters);
-    }
-
-    public static IEnumerable<TextSpan> GetHighlights(this SemanticModel semanticModel, int position, IEnumerable<IHighlighter> highlighters)
-    {
-        var result = new List<TextSpan>();
-
-        foreach (var highlighter in highlighters)
+        public IEnumerable<TextSpan> GetHighlights(int position)
         {
-            var highlights = highlighter.GetHighlights(semanticModel, position);
-            result.AddRange(highlights);
+            return semanticModel.GetHighlights(position, StandardHighlighters);
         }
 
-        return result;
+        public IEnumerable<TextSpan> GetHighlights(int position, IEnumerable<IHighlighter> highlighters)
+        {
+            var result = new List<TextSpan>();
+
+            foreach (var highlighter in highlighters)
+            {
+                var highlights = highlighter.GetHighlights(semanticModel, position);
+                result.AddRange(highlights);
+            }
+
+            return result;
+        }
     }
 }

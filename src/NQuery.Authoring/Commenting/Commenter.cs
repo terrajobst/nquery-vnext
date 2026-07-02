@@ -7,168 +7,171 @@ namespace NQuery.Authoring.Commenting;
 
 public static class Commenter
 {
-    public static SyntaxTree ToggleSingleLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
+    extension(SyntaxTree syntaxTree)
     {
-        ThrowIfNull(syntaxTree);
-
-        var comments = syntaxTree.GetConsecutiveSingleLineComments(textSpan);
-        return comments.IsDefaultOrEmpty
-                ? syntaxTree.CommentSingleLineComment(textSpan)
-                : syntaxTree.UncommentSingleLineComment(comments);
-    }
-
-    private static ImmutableArray<SyntaxTrivia> GetConsecutiveSingleLineComments(this SyntaxTree syntaxTree, TextSpan textSpan)
-    {
-        if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
-            return ImmutableArray<SyntaxTrivia>.Empty;
-
-        var result = ImmutableArray.CreateBuilder<SyntaxTrivia>();
-
-        // If we find any trivia between the comments that isn't a single
-        // line comment or a line break, they aren't consecutive.
-        //
-        // NOTE: We include the start and end trivia because we haven't
-        //       yet verified whether they are actually single line comments.
-
-        for (var i = startIndex; i <= endIndex; i++)
+        public SyntaxTree ToggleSingleLineComment(TextSpan textSpan)
         {
-            switch (trivias[i].Kind)
-            {
-                case SyntaxKind.SingleLineCommentTrivia:
-                    result.Add(trivias[i]);
-                    break;
-                case SyntaxKind.EndOfLineTrivia:
-                    // Ignore
-                    break;
-                default:
-                    return ImmutableArray<SyntaxTrivia>.Empty;
-            }
+            ThrowIfNull(syntaxTree);
+
+            var comments = syntaxTree.GetConsecutiveSingleLineComments(textSpan);
+            return comments.IsDefaultOrEmpty
+                    ? syntaxTree.CommentSingleLineComment(textSpan)
+                    : syntaxTree.UncommentSingleLineComment(comments);
         }
 
-        return result.ToImmutable();
-    }
-
-    private static SyntaxTree CommentSingleLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
-    {
-        var text = syntaxTree.Text;
-        var startLine = text.GetLineNumberFromPosition(textSpan.Start);
-        var endLine = text.GetLineNumberFromPosition(textSpan.End);
-        var lineCount = endLine - startLine + 1;
-
-        var changes = Enumerable.Range(startLine, lineCount)
-                                .Select(i => text.Lines[i])
-                                .Select(l => TextChange.ForInsertion(l.Span.Start, @"--"));
-
-        return syntaxTree.WithChanges(changes);
-    }
-
-    private static SyntaxTree UncommentSingleLineComment(this SyntaxTree syntaxTree, ImmutableArray<SyntaxTrivia> textSpan)
-    {
-        var changes = textSpan.Select(t => TextChange.ForDeletion(new TextSpan(t.Span.Start, 2)));
-        return syntaxTree.WithChanges(changes);
-    }
-
-    public static SyntaxTree ToggleMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
-    {
-        ThrowIfNull(syntaxTree);
-
-        var comment = syntaxTree.GetMultiLineComment(textSpan);
-        return comment is not null
-            ? syntaxTree.UncommentMultiLineComment(comment)
-            : syntaxTree.CommentMultiLineComment(textSpan);
-    }
-
-    private static SyntaxTrivia? GetMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
-    {
-        if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
-            return null;
-
-        // Is it a single comment?
-
-        if (startIndex != endIndex)
-            return null;
-
-        var comment = trivias[startIndex];
-
-        // OK, it's a single comment. Now let's see whether it's actually
-        // a multi line comment.
-
-        return comment.Kind == SyntaxKind.MultiLineCommentTrivia
-                ? comment
-                : null;
-    }
-
-    private static SyntaxTree CommentMultiLineComment(this SyntaxTree syntaxTree, TextSpan textSpan)
-    {
-        var empty = new[]
+        private ImmutableArray<SyntaxTrivia> GetConsecutiveSingleLineComments(TextSpan textSpan)
         {
-            TextChange.ForInsertion(textSpan.Start, @"/**/"),
-        };
+            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
+                return ImmutableArray<SyntaxTrivia>.Empty;
 
-        var surround = new[]
+            var result = ImmutableArray.CreateBuilder<SyntaxTrivia>();
+
+            // If we find any trivia between the comments that isn't a single
+            // line comment or a line break, they aren't consecutive.
+            //
+            // NOTE: We include the start and end trivia because we haven't
+            //       yet verified whether they are actually single line comments.
+
+            for (var i = startIndex; i <= endIndex; i++)
+            {
+                switch (trivias[i].Kind)
+                {
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        result.Add(trivias[i]);
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        // Ignore
+                        break;
+                    default:
+                        return ImmutableArray<SyntaxTrivia>.Empty;
+                }
+            }
+
+            return result.ToImmutable();
+        }
+
+        private SyntaxTree CommentSingleLineComment(TextSpan textSpan)
         {
-            TextChange.ForInsertion(textSpan.Start, @"/*"),
-            TextChange.ForInsertion(textSpan.End, @"*/")
-        };
+            var text = syntaxTree.Text;
+            var startLine = text.GetLineNumberFromPosition(textSpan.Start);
+            var endLine = text.GetLineNumberFromPosition(textSpan.End);
+            var lineCount = endLine - startLine + 1;
 
-        var changes = textSpan.Length == 0 ? empty : surround;
+            var changes = Enumerable.Range(startLine, lineCount)
+                                    .Select(i => text.Lines[i])
+                                    .Select(l => TextChange.ForInsertion(l.Span.Start, @"--"));
 
-        return syntaxTree.WithChanges(changes);
-    }
+            return syntaxTree.WithChanges(changes);
+        }
 
-    private static SyntaxTree UncommentMultiLineComment(this SyntaxTree syntaxTree, SyntaxTrivia comment)
-    {
-        var changes = new List<TextChange>(2);
+        private SyntaxTree UncommentSingleLineComment(ImmutableArray<SyntaxTrivia> textSpan)
+        {
+            var changes = textSpan.Select(t => TextChange.ForDeletion(new TextSpan(t.Span.Start, 2)));
+            return syntaxTree.WithChanges(changes);
+        }
 
-        changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.Start, 2)));
+        public SyntaxTree ToggleMultiLineComment(TextSpan textSpan)
+        {
+            ThrowIfNull(syntaxTree);
 
-        if (comment.IsTerminated())
-            changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.End - 2, 2)));
+            var comment = syntaxTree.GetMultiLineComment(textSpan);
+            return comment is not null
+                ? syntaxTree.UncommentMultiLineComment(comment)
+                : syntaxTree.CommentMultiLineComment(textSpan);
+        }
 
-        return syntaxTree.WithChanges(changes);
-    }
+        private SyntaxTrivia? GetMultiLineComment(TextSpan textSpan)
+        {
+            if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
+                return null;
 
-    private static bool TryGetStartAndEndComment(this SyntaxTree syntaxTree, TextSpan textSpan, out ImmutableArray<SyntaxTrivia> trivias, out int startIndex, out int endIndex)
-    {
-        startIndex = -1;
-        endIndex = -1;
-        trivias = ImmutableArray<SyntaxTrivia>.Empty;
+            // Is it a single comment?
 
-        // Find the associated token
+            if (startIndex != endIndex)
+                return null;
 
-        var startToken = syntaxTree.Root.FindToken(textSpan.Start, true);
-        var endToken = syntaxTree.Root.FindToken(textSpan.End, true)
-                                      .GetPreviousIfCurrentContainsOrTouchesPosition(textSpan.End);
+            var comment = trivias[startIndex];
 
-        // If span is over different tokens, then the trivia cannot be
-        // from the same collection.
+            // OK, it's a single comment. Now let's see whether it's actually
+            // a multi line comment.
 
-        if (startToken != endToken)
-            return false;
+            return comment.Kind == SyntaxKind.MultiLineCommentTrivia
+                    ? comment
+                    : null;
+        }
 
-        var token = startToken;
+        private SyntaxTree CommentMultiLineComment(TextSpan textSpan)
+        {
+            var empty = new[]
+            {
+                TextChange.ForInsertion(textSpan.Start, @"/**/"),
+            };
 
-        // In order for the trivia to come from the same collection they
-        // must both be leading or both be trailing.
+            var surround = new[]
+            {
+                TextChange.ForInsertion(textSpan.Start, @"/*"),
+                TextChange.ForInsertion(textSpan.End, @"*/")
+            };
 
-        var spanIsBeforeToken = textSpan.End <= token.Span.Start;
-        var spanIsAfterToken = textSpan.Start >= token.Span.End;
-        if (!spanIsBeforeToken && !spanIsAfterToken)
-            return false;
+            var changes = textSpan.Length == 0 ? empty : surround;
 
-        // Select trivia collection
+            return syntaxTree.WithChanges(changes);
+        }
 
-        trivias = spanIsBeforeToken ? token.LeadingTrivia : token.TrailingTrivia;
+        private SyntaxTree UncommentMultiLineComment(SyntaxTrivia comment)
+        {
+            var changes = new List<TextChange>(2);
 
-        // Find the indices of the trivia that contain the start and end positions.
+            changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.Start, 2)));
 
-        startIndex = FindCommentIndex(trivias, textSpan.Start);
-        endIndex = FindCommentIndex(trivias, textSpan.End);
+            if (comment.IsTerminated())
+                changes.Add(TextChange.ForDeletion(new TextSpan(comment.Span.End - 2, 2)));
 
-        if (startIndex < 0 || endIndex < 0)
-            return false;
+            return syntaxTree.WithChanges(changes);
+        }
 
-        return true;
+        private bool TryGetStartAndEndComment(TextSpan textSpan, out ImmutableArray<SyntaxTrivia> trivias, out int startIndex, out int endIndex)
+        {
+            startIndex = -1;
+            endIndex = -1;
+            trivias = ImmutableArray<SyntaxTrivia>.Empty;
+
+            // Find the associated token
+
+            var startToken = syntaxTree.Root.FindToken(textSpan.Start, true);
+            var endToken = syntaxTree.Root.FindToken(textSpan.End, true)
+                                          .GetPreviousIfCurrentContainsOrTouchesPosition(textSpan.End);
+
+            // If span is over different tokens, then the trivia cannot be
+            // from the same collection.
+
+            if (startToken != endToken)
+                return false;
+
+            var token = startToken;
+
+            // In order for the trivia to come from the same collection they
+            // must both be leading or both be trailing.
+
+            var spanIsBeforeToken = textSpan.End <= token.Span.Start;
+            var spanIsAfterToken = textSpan.Start >= token.Span.End;
+            if (!spanIsBeforeToken && !spanIsAfterToken)
+                return false;
+
+            // Select trivia collection
+
+            trivias = spanIsBeforeToken ? token.LeadingTrivia : token.TrailingTrivia;
+
+            // Find the indices of the trivia that contain the start and end positions.
+
+            startIndex = FindCommentIndex(trivias, textSpan.Start);
+            endIndex = FindCommentIndex(trivias, textSpan.End);
+
+            if (startIndex < 0 || endIndex < 0)
+                return false;
+
+            return true;
+        }
     }
 
     private static int FindCommentIndex(ImmutableArray<SyntaxTrivia> trivias, int position)

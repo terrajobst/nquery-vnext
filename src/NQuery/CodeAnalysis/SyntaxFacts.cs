@@ -34,17 +34,317 @@ public static class SyntaxFacts
         return (ExpressionSyntax)tree.Root.Root!;
     }
 
-    public static bool IsLiteral(this SyntaxKind kind)
+    extension(SyntaxKind kind)
     {
-        return kind == SyntaxKind.DateLiteralToken ||
-               kind == SyntaxKind.NumericLiteralToken ||
-               kind == SyntaxKind.StringLiteralToken;
-    }
+        public bool IsLiteral()
+        {
+            return kind == SyntaxKind.DateLiteralToken ||
+                   kind == SyntaxKind.NumericLiteralToken ||
+                   kind == SyntaxKind.StringLiteralToken;
+        }
 
-    public static bool IsComment(this SyntaxKind kind)
-    {
-        return kind == SyntaxKind.SingleLineCommentTrivia ||
-               kind == SyntaxKind.MultiLineCommentTrivia;
+        public bool IsComment()
+        {
+            return kind == SyntaxKind.SingleLineCommentTrivia ||
+                   kind == SyntaxKind.MultiLineCommentTrivia;
+        }
+
+        public string GetText()
+        {
+            switch (kind)
+            {
+                case SyntaxKind.BitwiseNotToken:
+                    return @"~";
+                case SyntaxKind.AmpersandToken:
+                    return @"&";
+                case SyntaxKind.BarToken:
+                    return @"|";
+                case SyntaxKind.CaretToken:
+                    return @"^";
+                case SyntaxKind.AtToken:
+                    return @"@";
+                case SyntaxKind.LeftParenthesisToken:
+                    return @"(";
+                case SyntaxKind.RightParenthesisToken:
+                    return @")";
+                case SyntaxKind.PlusToken:
+                    return @"+";
+                case SyntaxKind.MinusToken:
+                    return @"-";
+                case SyntaxKind.AsteriskToken:
+                    return @"*";
+                case SyntaxKind.SlashToken:
+                    return @"/";
+                case SyntaxKind.PercentToken:
+                    return @"%";
+                case SyntaxKind.AsteriskAsteriskToken:
+                    return @"**";
+                case SyntaxKind.CommaToken:
+                    return @",";
+                case SyntaxKind.DotToken:
+                    return @".";
+                case SyntaxKind.EqualsToken:
+                    return @"=";
+                case SyntaxKind.ExclamationEqualsToken:
+                    return @"!=";
+                case SyntaxKind.LessGreaterToken:
+                    return @"<>";
+                case SyntaxKind.LessToken:
+                    return @"<";
+                case SyntaxKind.LessEqualToken:
+                    return @"<=";
+                case SyntaxKind.GreaterToken:
+                    return @">";
+                case SyntaxKind.GreaterEqualToken:
+                    return @">=";
+                case SyntaxKind.ExclamationLessToken:
+                    return @"!<";
+                case SyntaxKind.ExclamationGreaterToken:
+                    return @"!>";
+                case SyntaxKind.LessLessToken:
+                    return @"<<";
+                case SyntaxKind.GreaterGreaterToken:
+                    return @">>";
+                case SyntaxKind.AndKeyword:
+                    return @"AND";
+                case SyntaxKind.OrKeyword:
+                    return @"OR";
+                case SyntaxKind.IsKeyword:
+                    return @"IS";
+                case SyntaxKind.NullKeyword:
+                    return @"NULL";
+                case SyntaxKind.NotKeyword:
+                    return @"NOT";
+                case SyntaxKind.LikeKeyword:
+                    return @"LIKE";
+                case SyntaxKind.SoundsKeyword:
+                    return @"SOUNDS";
+                case SyntaxKind.SimilarKeyword:
+                    return @"SIMILAR";
+                case SyntaxKind.ToKeyword:
+                    return @"TO";
+                case SyntaxKind.BetweenKeyword:
+                    return @"BETWEEN";
+                case SyntaxKind.InKeyword:
+                    return @"IN";
+                case SyntaxKind.CastKeyword:
+                    return @"CAST";
+                case SyntaxKind.AsKeyword:
+                    return @"AS";
+                case SyntaxKind.CoalesceKeyword:
+                    return @"COALESCE";
+                case SyntaxKind.NullIfKeyword:
+                    return @"NULLIF";
+                case SyntaxKind.CaseKeyword:
+                    return @"CASE";
+                case SyntaxKind.WhenKeyword:
+                    return @"WHEN";
+                case SyntaxKind.ThenKeyword:
+                    return @"THEN";
+                case SyntaxKind.ElseKeyword:
+                    return @"ELSE";
+                case SyntaxKind.EndKeyword:
+                    return @"END";
+                case SyntaxKind.TrueKeyword:
+                    return @"TRUE";
+                case SyntaxKind.FalseKeyword:
+                    return @"FALSE";
+                case SyntaxKind.SelectKeyword:
+                    return @"SELECT";
+                case SyntaxKind.TopKeyword:
+                    return @"TOP";
+                case SyntaxKind.DistinctKeyword:
+                    return @"DISTINCT";
+                case SyntaxKind.FromKeyword:
+                    return @"FROM";
+                case SyntaxKind.WhereKeyword:
+                    return @"WHERE";
+                case SyntaxKind.GroupKeyword:
+                    return @"GROUP";
+                case SyntaxKind.ByKeyword:
+                    return @"BY";
+                case SyntaxKind.HavingKeyword:
+                    return @"HAVING";
+                case SyntaxKind.OrderKeyword:
+                    return @"ORDER";
+                case SyntaxKind.AscKeyword:
+                    return @"ASC";
+                case SyntaxKind.DescKeyword:
+                    return @"DESC";
+                case SyntaxKind.UnionKeyword:
+                    return @"UNION";
+                case SyntaxKind.AllKeyword:
+                    return @"ALL";
+                case SyntaxKind.IntersectKeyword:
+                    return @"INTERSECT";
+                case SyntaxKind.ExceptKeyword:
+                    return @"EXCEPT";
+                case SyntaxKind.ExistsKeyword:
+                    return @"EXISTS";
+                case SyntaxKind.AnyKeyword:
+                    return @"ANY";
+                case SyntaxKind.SomeKeyword:
+                    return @"SOME";
+                case SyntaxKind.JoinKeyword:
+                    return @"JOIN";
+                case SyntaxKind.InnerKeyword:
+                    return @"INNER";
+                case SyntaxKind.CrossKeyword:
+                    return @"CROSS";
+                case SyntaxKind.ApplyKeyword:
+                    return @"APPLY";
+                case SyntaxKind.LeftKeyword:
+                    return @"LEFT";
+                case SyntaxKind.RightKeyword:
+                    return @"RIGHT";
+                case SyntaxKind.OuterKeyword:
+                    return @"OUTER";
+                case SyntaxKind.FullKeyword:
+                    return @"FULL";
+                case SyntaxKind.OnKeyword:
+                    return @"ON";
+                case SyntaxKind.WithKeyword:
+                    return @"WITH";
+                case SyntaxKind.TiesKeyword:
+                    return @"TIES";
+                case SyntaxKind.RecursiveKeyword:
+                    return @"RECURSIVE";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        public string GetDisplayText()
+        {
+            switch (kind)
+            {
+                case SyntaxKind.EndOfFileToken:
+                    return Resources.TokenEndOfFile;
+
+                case SyntaxKind.IdentifierToken:
+                    return Resources.TokenIdentifier;
+
+                case SyntaxKind.NumericLiteralToken:
+                    return Resources.TokenNumericLiteral;
+
+                case SyntaxKind.StringLiteralToken:
+                    return Resources.TokenStringLiteral;
+
+                case SyntaxKind.DateLiteralToken:
+                    return Resources.TokenDateLiteral;
+
+                default:
+                    return GetText(kind);
+            }
+        }
+
+        public bool IsIdentifierOrKeyword()
+        {
+            return kind == SyntaxKind.IdentifierToken || kind.IsKeyword();
+        }
+
+        public bool IsKeyword()
+        {
+            switch (kind)
+            {
+                // Keywords
+
+                case SyntaxKind.AndKeyword:
+                case SyntaxKind.OrKeyword:
+                case SyntaxKind.IsKeyword:
+                case SyntaxKind.NullKeyword:
+                case SyntaxKind.NotKeyword:
+                case SyntaxKind.LikeKeyword:
+                case SyntaxKind.SoundsKeyword:
+                case SyntaxKind.SimilarKeyword:
+                case SyntaxKind.BetweenKeyword:
+                case SyntaxKind.InKeyword:
+                case SyntaxKind.CastKeyword:
+                case SyntaxKind.AsKeyword:
+                case SyntaxKind.CoalesceKeyword:
+                case SyntaxKind.NullIfKeyword:
+                case SyntaxKind.CaseKeyword:
+                case SyntaxKind.WhenKeyword:
+                case SyntaxKind.ThenKeyword:
+                case SyntaxKind.ElseKeyword:
+                case SyntaxKind.EndKeyword:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                case SyntaxKind.ToKeyword:
+
+                // Contextual keywords
+
+                case SyntaxKind.SelectKeyword:
+                case SyntaxKind.TopKeyword:
+                case SyntaxKind.DistinctKeyword:
+                case SyntaxKind.FromKeyword:
+                case SyntaxKind.WhereKeyword:
+                case SyntaxKind.GroupKeyword:
+                case SyntaxKind.ByKeyword:
+                case SyntaxKind.HavingKeyword:
+                case SyntaxKind.OrderKeyword:
+                case SyntaxKind.AscKeyword:
+                case SyntaxKind.DescKeyword:
+                case SyntaxKind.UnionKeyword:
+                case SyntaxKind.AllKeyword:
+                case SyntaxKind.IntersectKeyword:
+                case SyntaxKind.ExceptKeyword:
+                case SyntaxKind.ExistsKeyword:
+                case SyntaxKind.AnyKeyword:
+                case SyntaxKind.SomeKeyword:
+                case SyntaxKind.JoinKeyword:
+                case SyntaxKind.InnerKeyword:
+                case SyntaxKind.CrossKeyword:
+                case SyntaxKind.ApplyKeyword:
+                case SyntaxKind.LeftKeyword:
+                case SyntaxKind.RightKeyword:
+                case SyntaxKind.OuterKeyword:
+                case SyntaxKind.FullKeyword:
+                case SyntaxKind.OnKeyword:
+                case SyntaxKind.WithKeyword:
+                case SyntaxKind.TiesKeyword:
+                case SyntaxKind.RecursiveKeyword:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        public bool IsPunctuation()
+        {
+            switch (kind)
+            {
+                case SyntaxKind.BitwiseNotToken:
+                case SyntaxKind.AmpersandToken:
+                case SyntaxKind.BarToken:
+                case SyntaxKind.CaretToken:
+                case SyntaxKind.LeftParenthesisToken:
+                case SyntaxKind.RightParenthesisToken:
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                case SyntaxKind.AsteriskToken:
+                case SyntaxKind.SlashToken:
+                case SyntaxKind.PercentToken:
+                case SyntaxKind.AsteriskAsteriskToken:
+                case SyntaxKind.CommaToken:
+                case SyntaxKind.DotToken:
+                case SyntaxKind.EqualsToken:
+                case SyntaxKind.ExclamationEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessEqualToken:
+                case SyntaxKind.LessGreaterToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterEqualToken:
+                case SyntaxKind.ExclamationLessToken:
+                case SyntaxKind.ExclamationGreaterToken:
+                case SyntaxKind.GreaterGreaterToken:
+                case SyntaxKind.LessLessToken:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 
     public static IEnumerable<SyntaxKind> GetKeywordKinds()
@@ -112,308 +412,64 @@ public static class SyntaxFacts
         yield return SyntaxKind.RightKeyword;
     }
 
-    public static string GetText(this SyntaxKind kind)
+    extension(SyntaxToken token)
     {
-        switch (kind)
+        public string GetDisplayText()
         {
-            case SyntaxKind.BitwiseNotToken:
-                return @"~";
-            case SyntaxKind.AmpersandToken:
-                return @"&";
-            case SyntaxKind.BarToken:
-                return @"|";
-            case SyntaxKind.CaretToken:
-                return @"^";
-            case SyntaxKind.AtToken:
-                return @"@";
-            case SyntaxKind.LeftParenthesisToken:
-                return @"(";
-            case SyntaxKind.RightParenthesisToken:
-                return @")";
-            case SyntaxKind.PlusToken:
-                return @"+";
-            case SyntaxKind.MinusToken:
-                return @"-";
-            case SyntaxKind.AsteriskToken:
-                return @"*";
-            case SyntaxKind.SlashToken:
-                return @"/";
-            case SyntaxKind.PercentToken:
-                return @"%";
-            case SyntaxKind.AsteriskAsteriskToken:
-                return @"**";
-            case SyntaxKind.CommaToken:
-                return @",";
-            case SyntaxKind.DotToken:
-                return @".";
-            case SyntaxKind.EqualsToken:
-                return @"=";
-            case SyntaxKind.ExclamationEqualsToken:
-                return @"!=";
-            case SyntaxKind.LessGreaterToken:
-                return @"<>";
-            case SyntaxKind.LessToken:
-                return @"<";
-            case SyntaxKind.LessEqualToken:
-                return @"<=";
-            case SyntaxKind.GreaterToken:
-                return @">";
-            case SyntaxKind.GreaterEqualToken:
-                return @">=";
-            case SyntaxKind.ExclamationLessToken:
-                return @"!<";
-            case SyntaxKind.ExclamationGreaterToken:
-                return @"!>";
-            case SyntaxKind.LessLessToken:
-                return @"<<";
-            case SyntaxKind.GreaterGreaterToken:
-                return @">>";
-            case SyntaxKind.AndKeyword:
-                return @"AND";
-            case SyntaxKind.OrKeyword:
-                return @"OR";
-            case SyntaxKind.IsKeyword:
-                return @"IS";
-            case SyntaxKind.NullKeyword:
-                return @"NULL";
-            case SyntaxKind.NotKeyword:
-                return @"NOT";
-            case SyntaxKind.LikeKeyword:
-                return @"LIKE";
-            case SyntaxKind.SoundsKeyword:
-                return @"SOUNDS";
-            case SyntaxKind.SimilarKeyword:
-                return @"SIMILAR";
-            case SyntaxKind.ToKeyword:
-                return @"TO";
-            case SyntaxKind.BetweenKeyword:
-                return @"BETWEEN";
-            case SyntaxKind.InKeyword:
-                return @"IN";
-            case SyntaxKind.CastKeyword:
-                return @"CAST";
-            case SyntaxKind.AsKeyword:
-                return @"AS";
-            case SyntaxKind.CoalesceKeyword:
-                return @"COALESCE";
-            case SyntaxKind.NullIfKeyword:
-                return @"NULLIF";
-            case SyntaxKind.CaseKeyword:
-                return @"CASE";
-            case SyntaxKind.WhenKeyword:
-                return @"WHEN";
-            case SyntaxKind.ThenKeyword:
-                return @"THEN";
-            case SyntaxKind.ElseKeyword:
-                return @"ELSE";
-            case SyntaxKind.EndKeyword:
-                return @"END";
-            case SyntaxKind.TrueKeyword:
-                return @"TRUE";
-            case SyntaxKind.FalseKeyword:
-                return @"FALSE";
-            case SyntaxKind.SelectKeyword:
-                return @"SELECT";
-            case SyntaxKind.TopKeyword:
-                return @"TOP";
-            case SyntaxKind.DistinctKeyword:
-                return @"DISTINCT";
-            case SyntaxKind.FromKeyword:
-                return @"FROM";
-            case SyntaxKind.WhereKeyword:
-                return @"WHERE";
-            case SyntaxKind.GroupKeyword:
-                return @"GROUP";
-            case SyntaxKind.ByKeyword:
-                return @"BY";
-            case SyntaxKind.HavingKeyword:
-                return @"HAVING";
-            case SyntaxKind.OrderKeyword:
-                return @"ORDER";
-            case SyntaxKind.AscKeyword:
-                return @"ASC";
-            case SyntaxKind.DescKeyword:
-                return @"DESC";
-            case SyntaxKind.UnionKeyword:
-                return @"UNION";
-            case SyntaxKind.AllKeyword:
-                return @"ALL";
-            case SyntaxKind.IntersectKeyword:
-                return @"INTERSECT";
-            case SyntaxKind.ExceptKeyword:
-                return @"EXCEPT";
-            case SyntaxKind.ExistsKeyword:
-                return @"EXISTS";
-            case SyntaxKind.AnyKeyword:
-                return @"ANY";
-            case SyntaxKind.SomeKeyword:
-                return @"SOME";
-            case SyntaxKind.JoinKeyword:
-                return @"JOIN";
-            case SyntaxKind.InnerKeyword:
-                return @"INNER";
-            case SyntaxKind.CrossKeyword:
-                return @"CROSS";
-            case SyntaxKind.ApplyKeyword:
-                return @"APPLY";
-            case SyntaxKind.LeftKeyword:
-                return @"LEFT";
-            case SyntaxKind.RightKeyword:
-                return @"RIGHT";
-            case SyntaxKind.OuterKeyword:
-                return @"OUTER";
-            case SyntaxKind.FullKeyword:
-                return @"FULL";
-            case SyntaxKind.OnKeyword:
-                return @"ON";
-            case SyntaxKind.WithKeyword:
-                return @"WITH";
-            case SyntaxKind.TiesKeyword:
-                return @"TIES";
-            case SyntaxKind.RecursiveKeyword:
-                return @"RECURSIVE";
-            default:
-                return string.Empty;
+            ThrowIfNull(token);
+
+            var result = token.Text;
+            return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
         }
-    }
 
-    public static string GetDisplayText(this SyntaxKind kind)
-    {
-        switch (kind)
+        public bool IsQuotedIdentifier()
         {
-            case SyntaxKind.EndOfFileToken:
-                return Resources.TokenEndOfFile;
+            ThrowIfNull(token);
 
-            case SyntaxKind.IdentifierToken:
-                return Resources.TokenIdentifier;
-
-            case SyntaxKind.NumericLiteralToken:
-                return Resources.TokenNumericLiteral;
-
-            case SyntaxKind.StringLiteralToken:
-                return Resources.TokenStringLiteral;
-
-            case SyntaxKind.DateLiteralToken:
-                return Resources.TokenDateLiteral;
-
-            default:
-                return GetText(kind);
+            return token.Kind == SyntaxKind.IdentifierToken &&
+                   token.Text.Length > 0 &&
+                   token.Text[0] == '"';
         }
-    }
 
-    public static string GetDisplayText(this SyntaxToken token)
-    {
-        ThrowIfNull(token);
-
-        var result = token.Text;
-        return !string.IsNullOrEmpty(result) ? result : token.Kind.GetDisplayText();
-    }
-
-    public static bool IsIdentifierOrKeyword(this SyntaxKind kind)
-    {
-        return kind == SyntaxKind.IdentifierToken || kind.IsKeyword();
-    }
-
-    public static bool IsKeyword(this SyntaxKind kind)
-    {
-        switch (kind)
+        public bool IsParenthesizedIdentifier()
         {
-            // Keywords
+            ThrowIfNull(token);
 
-            case SyntaxKind.AndKeyword:
-            case SyntaxKind.OrKeyword:
-            case SyntaxKind.IsKeyword:
-            case SyntaxKind.NullKeyword:
-            case SyntaxKind.NotKeyword:
-            case SyntaxKind.LikeKeyword:
-            case SyntaxKind.SoundsKeyword:
-            case SyntaxKind.SimilarKeyword:
-            case SyntaxKind.BetweenKeyword:
-            case SyntaxKind.InKeyword:
-            case SyntaxKind.CastKeyword:
-            case SyntaxKind.AsKeyword:
-            case SyntaxKind.CoalesceKeyword:
-            case SyntaxKind.NullIfKeyword:
-            case SyntaxKind.CaseKeyword:
-            case SyntaxKind.WhenKeyword:
-            case SyntaxKind.ThenKeyword:
-            case SyntaxKind.ElseKeyword:
-            case SyntaxKind.EndKeyword:
-            case SyntaxKind.TrueKeyword:
-            case SyntaxKind.FalseKeyword:
-            case SyntaxKind.ToKeyword:
-
-            // Contextual keywords
-
-            case SyntaxKind.SelectKeyword:
-            case SyntaxKind.TopKeyword:
-            case SyntaxKind.DistinctKeyword:
-            case SyntaxKind.FromKeyword:
-            case SyntaxKind.WhereKeyword:
-            case SyntaxKind.GroupKeyword:
-            case SyntaxKind.ByKeyword:
-            case SyntaxKind.HavingKeyword:
-            case SyntaxKind.OrderKeyword:
-            case SyntaxKind.AscKeyword:
-            case SyntaxKind.DescKeyword:
-            case SyntaxKind.UnionKeyword:
-            case SyntaxKind.AllKeyword:
-            case SyntaxKind.IntersectKeyword:
-            case SyntaxKind.ExceptKeyword:
-            case SyntaxKind.ExistsKeyword:
-            case SyntaxKind.AnyKeyword:
-            case SyntaxKind.SomeKeyword:
-            case SyntaxKind.JoinKeyword:
-            case SyntaxKind.InnerKeyword:
-            case SyntaxKind.CrossKeyword:
-            case SyntaxKind.ApplyKeyword:
-            case SyntaxKind.LeftKeyword:
-            case SyntaxKind.RightKeyword:
-            case SyntaxKind.OuterKeyword:
-            case SyntaxKind.FullKeyword:
-            case SyntaxKind.OnKeyword:
-            case SyntaxKind.WithKeyword:
-            case SyntaxKind.TiesKeyword:
-            case SyntaxKind.RecursiveKeyword:
-                return true;
-
-            default:
-                return false;
+            return token.Kind == SyntaxKind.IdentifierToken &&
+                   token.Text.Length > 0 &&
+                   token.Text[0] == '[';
         }
-    }
 
-    public static bool IsPunctuation(this SyntaxKind kind)
-    {
-        switch (kind)
+        public bool Matches(string text)
         {
-            case SyntaxKind.BitwiseNotToken:
-            case SyntaxKind.AmpersandToken:
-            case SyntaxKind.BarToken:
-            case SyntaxKind.CaretToken:
-            case SyntaxKind.LeftParenthesisToken:
-            case SyntaxKind.RightParenthesisToken:
-            case SyntaxKind.PlusToken:
-            case SyntaxKind.MinusToken:
-            case SyntaxKind.AsteriskToken:
-            case SyntaxKind.SlashToken:
-            case SyntaxKind.PercentToken:
-            case SyntaxKind.AsteriskAsteriskToken:
-            case SyntaxKind.CommaToken:
-            case SyntaxKind.DotToken:
-            case SyntaxKind.EqualsToken:
-            case SyntaxKind.ExclamationEqualsToken:
-            case SyntaxKind.LessToken:
-            case SyntaxKind.LessEqualToken:
-            case SyntaxKind.LessGreaterToken:
-            case SyntaxKind.GreaterToken:
-            case SyntaxKind.GreaterEqualToken:
-            case SyntaxKind.ExclamationLessToken:
-            case SyntaxKind.ExclamationGreaterToken:
-            case SyntaxKind.GreaterGreaterToken:
-            case SyntaxKind.LessLessToken:
-                return true;
-            default:
-                return false;
+            ThrowIfNull(token);
+            ThrowIfNull(text);
+
+            var comparison = token.IsQuotedIdentifier()
+                                 ? StringComparison.Ordinal
+                                 : StringComparison.OrdinalIgnoreCase;
+            return string.Equals(token.ValueText, text, comparison);
+        }
+
+        public bool IsTerminated()
+        {
+            ThrowIfNull(token);
+
+            switch (token.Kind)
+            {
+                case SyntaxKind.IdentifierToken:
+                    if (token.IsQuotedIdentifier())
+                        return EndsWithUnescapedChar(token.Text, '"');
+                    if (token.IsParenthesizedIdentifier())
+                        return EndsWithUnescapedChar(token.Text, ']');
+                    return true;
+                case SyntaxKind.StringLiteralToken:
+                    return EndsWithUnescapedChar(token.Text, '\'');
+                case SyntaxKind.DateLiteralToken:
+                    return token.Text.Length >= 2 && token.Text.EndsWith(@"#");
+                default:
+                    return true;
+            }
         }
     }
 
@@ -661,66 +717,19 @@ public static class SyntaxFacts
         }
     }
 
-    public static bool IsQuotedIdentifier(this SyntaxToken token)
+    extension(SyntaxTrivia trivia)
     {
-        ThrowIfNull(token);
-
-        return token.Kind == SyntaxKind.IdentifierToken &&
-               token.Text.Length > 0 &&
-               token.Text[0] == '"';
-    }
-
-    public static bool IsParenthesizedIdentifier(this SyntaxToken token)
-    {
-        ThrowIfNull(token);
-
-        return token.Kind == SyntaxKind.IdentifierToken &&
-               token.Text.Length > 0 &&
-               token.Text[0] == '[';
-    }
-
-    public static bool Matches(this SyntaxToken token, string text)
-    {
-        ThrowIfNull(token);
-        ThrowIfNull(text);
-
-        var comparison = token.IsQuotedIdentifier()
-                             ? StringComparison.Ordinal
-                             : StringComparison.OrdinalIgnoreCase;
-        return string.Equals(token.ValueText, text, comparison);
-    }
-
-    public static bool IsTerminated(this SyntaxToken token)
-    {
-        ThrowIfNull(token);
-
-        switch (token.Kind)
+        public bool IsTerminated()
         {
-            case SyntaxKind.IdentifierToken:
-                if (token.IsQuotedIdentifier())
-                    return EndsWithUnescapedChar(token.Text, '"');
-                if (token.IsParenthesizedIdentifier())
-                    return EndsWithUnescapedChar(token.Text, ']');
-                return true;
-            case SyntaxKind.StringLiteralToken:
-                return EndsWithUnescapedChar(token.Text, '\'');
-            case SyntaxKind.DateLiteralToken:
-                return token.Text.Length >= 2 && token.Text.EndsWith(@"#");
-            default:
-                return true;
-        }
-    }
+            ThrowIfNull(trivia);
 
-    public static bool IsTerminated(this SyntaxTrivia trivia)
-    {
-        ThrowIfNull(trivia);
-
-        switch (trivia.Kind)
-        {
-            case SyntaxKind.MultiLineCommentTrivia:
-                return trivia.Text.Length >= 4 && trivia.Text.EndsWith(@"*/");
-            default:
-                return true;
+            switch (trivia.Kind)
+            {
+                case SyntaxKind.MultiLineCommentTrivia:
+                    return trivia.Text.Length >= 4 && trivia.Text.EndsWith(@"*/");
+                default:
+                    return true;
+            }
         }
     }
 
@@ -1053,189 +1062,204 @@ public static class SyntaxFacts
         }
     }
 
-    internal static UnaryOperatorKind ToUnaryOperatorKind(this SyntaxKind expressionKind)
+    extension(SyntaxKind expressionKind)
     {
-        switch (expressionKind)
+        internal UnaryOperatorKind ToUnaryOperatorKind()
         {
-            case SyntaxKind.ComplementExpression:
-                return UnaryOperatorKind.Complement;
-            case SyntaxKind.IdentityExpression:
-                return UnaryOperatorKind.Identity;
-            case SyntaxKind.NegationExpression:
-                return UnaryOperatorKind.Negation;
-            case SyntaxKind.LogicalNotExpression:
-                return UnaryOperatorKind.LogicalNot;
-            default:
-                throw ExceptionBuilder.UnexpectedValue(expressionKind);
+            switch (expressionKind)
+            {
+                case SyntaxKind.ComplementExpression:
+                    return UnaryOperatorKind.Complement;
+                case SyntaxKind.IdentityExpression:
+                    return UnaryOperatorKind.Identity;
+                case SyntaxKind.NegationExpression:
+                    return UnaryOperatorKind.Negation;
+                case SyntaxKind.LogicalNotExpression:
+                    return UnaryOperatorKind.LogicalNot;
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(expressionKind);
+            }
+        }
+
+        internal BinaryOperatorKind ToBinaryOperatorKind()
+        {
+            switch (expressionKind)
+            {
+                case SyntaxKind.BitwiseAndExpression:
+                    return BinaryOperatorKind.BitAnd;
+                case SyntaxKind.BitwiseOrExpression:
+                    return BinaryOperatorKind.BitOr;
+                case SyntaxKind.ExclusiveOrExpression:
+                    return BinaryOperatorKind.BitXor;
+                case SyntaxKind.AddExpression:
+                    return BinaryOperatorKind.Add;
+                case SyntaxKind.SubExpression:
+                    return BinaryOperatorKind.Sub;
+                case SyntaxKind.MultiplyExpression:
+                    return BinaryOperatorKind.Multiply;
+                case SyntaxKind.DivideExpression:
+                    return BinaryOperatorKind.Divide;
+                case SyntaxKind.ModuloExpression:
+                    return BinaryOperatorKind.Modulus;
+                case SyntaxKind.PowerExpression:
+                    return BinaryOperatorKind.Power;
+                case SyntaxKind.EqualExpression:
+                    return BinaryOperatorKind.Equal;
+                case SyntaxKind.NotEqualExpression:
+                    return BinaryOperatorKind.NotEqual;
+                case SyntaxKind.LessExpression:
+                    return BinaryOperatorKind.Less;
+                case SyntaxKind.NotGreaterExpression:
+                case SyntaxKind.LessOrEqualExpression:
+                    return BinaryOperatorKind.LessOrEqual;
+                case SyntaxKind.GreaterExpression:
+                    return BinaryOperatorKind.Greater;
+                case SyntaxKind.NotLessExpression:
+                case SyntaxKind.GreaterOrEqualExpression:
+                    return BinaryOperatorKind.GreaterOrEqual;
+                case SyntaxKind.LeftShiftExpression:
+                    return BinaryOperatorKind.LeftShift;
+                case SyntaxKind.RightShiftExpression:
+                    return BinaryOperatorKind.RightShift;
+                case SyntaxKind.LogicalAndExpression:
+                    return BinaryOperatorKind.LogicalAnd;
+                case SyntaxKind.LogicalOrExpression:
+                    return BinaryOperatorKind.LogicalOr;
+                case SyntaxKind.LikeExpression:
+                    return BinaryOperatorKind.Like;
+                case SyntaxKind.SoundsLikeExpression:
+                    return BinaryOperatorKind.SoundsLike;
+                case SyntaxKind.SimilarToExpression:
+                    return BinaryOperatorKind.SimilarTo;
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(expressionKind);
+            }
         }
     }
 
-    internal static BinaryOperatorKind ToBinaryOperatorKind(this SyntaxKind expressionKind)
+    extension(UnaryOperatorKind operatorKind)
     {
-        switch (expressionKind)
+        internal string ToDisplayName()
         {
-            case SyntaxKind.BitwiseAndExpression:
-                return BinaryOperatorKind.BitAnd;
-            case SyntaxKind.BitwiseOrExpression:
-                return BinaryOperatorKind.BitOr;
-            case SyntaxKind.ExclusiveOrExpression:
-                return BinaryOperatorKind.BitXor;
-            case SyntaxKind.AddExpression:
-                return BinaryOperatorKind.Add;
-            case SyntaxKind.SubExpression:
-                return BinaryOperatorKind.Sub;
-            case SyntaxKind.MultiplyExpression:
-                return BinaryOperatorKind.Multiply;
-            case SyntaxKind.DivideExpression:
-                return BinaryOperatorKind.Divide;
-            case SyntaxKind.ModuloExpression:
-                return BinaryOperatorKind.Modulus;
-            case SyntaxKind.PowerExpression:
-                return BinaryOperatorKind.Power;
-            case SyntaxKind.EqualExpression:
-                return BinaryOperatorKind.Equal;
-            case SyntaxKind.NotEqualExpression:
-                return BinaryOperatorKind.NotEqual;
-            case SyntaxKind.LessExpression:
-                return BinaryOperatorKind.Less;
-            case SyntaxKind.NotGreaterExpression:
-            case SyntaxKind.LessOrEqualExpression:
-                return BinaryOperatorKind.LessOrEqual;
-            case SyntaxKind.GreaterExpression:
-                return BinaryOperatorKind.Greater;
-            case SyntaxKind.NotLessExpression:
-            case SyntaxKind.GreaterOrEqualExpression:
-                return BinaryOperatorKind.GreaterOrEqual;
-            case SyntaxKind.LeftShiftExpression:
-                return BinaryOperatorKind.LeftShift;
-            case SyntaxKind.RightShiftExpression:
-                return BinaryOperatorKind.RightShift;
-            case SyntaxKind.LogicalAndExpression:
-                return BinaryOperatorKind.LogicalAnd;
-            case SyntaxKind.LogicalOrExpression:
-                return BinaryOperatorKind.LogicalOr;
-            case SyntaxKind.LikeExpression:
-                return BinaryOperatorKind.Like;
-            case SyntaxKind.SoundsLikeExpression:
-                return BinaryOperatorKind.SoundsLike;
-            case SyntaxKind.SimilarToExpression:
-                return BinaryOperatorKind.SimilarTo;
-            default:
-                throw ExceptionBuilder.UnexpectedValue(expressionKind);
+            switch (operatorKind)
+            {
+                case UnaryOperatorKind.Identity:
+                    return SyntaxKind.PlusToken.GetText();
+                case UnaryOperatorKind.Negation:
+                    return SyntaxKind.MinusToken.GetText();
+                case UnaryOperatorKind.Complement:
+                    return SyntaxKind.BitwiseNotToken.GetText();
+                case UnaryOperatorKind.LogicalNot:
+                    return SyntaxKind.NotKeyword.GetText();
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(operatorKind);
+            }
         }
     }
 
-    internal static string ToDisplayName(this UnaryOperatorKind operatorKind)
+    extension(BinaryOperatorKind operatorKind)
     {
-        switch (operatorKind)
+        internal string ToDisplayName()
         {
-            case UnaryOperatorKind.Identity:
-                return SyntaxKind.PlusToken.GetText();
-            case UnaryOperatorKind.Negation:
-                return SyntaxKind.MinusToken.GetText();
-            case UnaryOperatorKind.Complement:
-                return SyntaxKind.BitwiseNotToken.GetText();
-            case UnaryOperatorKind.LogicalNot:
-                return SyntaxKind.NotKeyword.GetText();
-            default:
-                throw ExceptionBuilder.UnexpectedValue(operatorKind);
+            switch (operatorKind)
+            {
+                case BinaryOperatorKind.Power:
+                    return SyntaxKind.AsteriskAsteriskToken.GetText();
+
+                case BinaryOperatorKind.Multiply:
+                    return SyntaxKind.AsteriskToken.GetText();
+
+                case BinaryOperatorKind.Divide:
+                    return SyntaxKind.SlashToken.GetText();
+
+                case BinaryOperatorKind.Modulus:
+                    return SyntaxKind.PercentToken.GetText();
+
+                case BinaryOperatorKind.Add:
+                    return SyntaxKind.PlusToken.GetText();
+
+                case BinaryOperatorKind.Sub:
+                    return SyntaxKind.MinusToken.GetText();
+
+                case BinaryOperatorKind.Equal:
+                    return SyntaxKind.EqualsToken.GetText();
+
+                case BinaryOperatorKind.NotEqual:
+                    return SyntaxKind.ExclamationEqualsToken.GetText();
+
+                case BinaryOperatorKind.Less:
+                    return SyntaxKind.LessToken.GetText();
+
+                case BinaryOperatorKind.LessOrEqual:
+                    return SyntaxKind.LessEqualToken.GetText();
+
+                case BinaryOperatorKind.Greater:
+                    return SyntaxKind.GreaterToken.GetText();
+
+                case BinaryOperatorKind.GreaterOrEqual:
+                    return SyntaxKind.GreaterEqualToken.GetText();
+
+                case BinaryOperatorKind.BitXor:
+                    return SyntaxKind.CaretToken.GetText();
+
+                case BinaryOperatorKind.BitAnd:
+                    return SyntaxKind.AmpersandToken.GetText();
+
+                case BinaryOperatorKind.BitOr:
+                    return SyntaxKind.BarToken.GetText();
+
+                case BinaryOperatorKind.LeftShift:
+                    return SyntaxKind.LessLessToken.GetText();
+
+                case BinaryOperatorKind.RightShift:
+                    return SyntaxKind.GreaterGreaterToken.GetText();
+
+                case BinaryOperatorKind.Like:
+                    return SyntaxKind.LikeKeyword.GetText();
+
+                case BinaryOperatorKind.SimilarTo:
+                    return SyntaxKind.SimilarKeyword.GetText() + @" " + SyntaxKind.ToKeyword.GetText();
+
+                case BinaryOperatorKind.SoundsLike:
+                    return SyntaxKind.SoundsKeyword.GetText() + @" " + SyntaxKind.LikeKeyword.GetText();
+
+                case BinaryOperatorKind.LogicalAnd:
+                    return SyntaxKind.AndKeyword.GetText();
+
+                case BinaryOperatorKind.LogicalOr:
+                    return SyntaxKind.OrKeyword.GetText();
+
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(operatorKind);
+            }
         }
     }
 
-    internal static string ToDisplayName(this BinaryOperatorKind operatorKind)
+    extension(SyntaxKind binaryExpressionKind)
     {
-        switch (operatorKind)
+        public bool IsValidAllAnyOperator()
         {
-            case BinaryOperatorKind.Power:
-                return SyntaxKind.AsteriskAsteriskToken.GetText();
-
-            case BinaryOperatorKind.Multiply:
-                return SyntaxKind.AsteriskToken.GetText();
-
-            case BinaryOperatorKind.Divide:
-                return SyntaxKind.SlashToken.GetText();
-
-            case BinaryOperatorKind.Modulus:
-                return SyntaxKind.PercentToken.GetText();
-
-            case BinaryOperatorKind.Add:
-                return SyntaxKind.PlusToken.GetText();
-
-            case BinaryOperatorKind.Sub:
-                return SyntaxKind.MinusToken.GetText();
-
-            case BinaryOperatorKind.Equal:
-                return SyntaxKind.EqualsToken.GetText();
-
-            case BinaryOperatorKind.NotEqual:
-                return SyntaxKind.ExclamationEqualsToken.GetText();
-
-            case BinaryOperatorKind.Less:
-                return SyntaxKind.LessToken.GetText();
-
-            case BinaryOperatorKind.LessOrEqual:
-                return SyntaxKind.LessEqualToken.GetText();
-
-            case BinaryOperatorKind.Greater:
-                return SyntaxKind.GreaterToken.GetText();
-
-            case BinaryOperatorKind.GreaterOrEqual:
-                return SyntaxKind.GreaterEqualToken.GetText();
-
-            case BinaryOperatorKind.BitXor:
-                return SyntaxKind.CaretToken.GetText();
-
-            case BinaryOperatorKind.BitAnd:
-                return SyntaxKind.AmpersandToken.GetText();
-
-            case BinaryOperatorKind.BitOr:
-                return SyntaxKind.BarToken.GetText();
-
-            case BinaryOperatorKind.LeftShift:
-                return SyntaxKind.LessLessToken.GetText();
-
-            case BinaryOperatorKind.RightShift:
-                return SyntaxKind.GreaterGreaterToken.GetText();
-
-            case BinaryOperatorKind.Like:
-                return SyntaxKind.LikeKeyword.GetText();
-
-            case BinaryOperatorKind.SimilarTo:
-                return SyntaxKind.SimilarKeyword.GetText() + @" " + SyntaxKind.ToKeyword.GetText();
-
-            case BinaryOperatorKind.SoundsLike:
-                return SyntaxKind.SoundsKeyword.GetText() + @" " + SyntaxKind.LikeKeyword.GetText();
-
-            case BinaryOperatorKind.LogicalAnd:
-                return SyntaxKind.AndKeyword.GetText();
-
-            case BinaryOperatorKind.LogicalOr:
-                return SyntaxKind.OrKeyword.GetText();
-
-            default:
-                throw ExceptionBuilder.UnexpectedValue(operatorKind);
+            return binaryExpressionKind == SyntaxKind.EqualExpression ||
+                   binaryExpressionKind == SyntaxKind.NotEqualExpression ||
+                   binaryExpressionKind == SyntaxKind.NotLessExpression ||
+                   binaryExpressionKind == SyntaxKind.NotGreaterExpression ||
+                   binaryExpressionKind == SyntaxKind.LessExpression ||
+                   binaryExpressionKind == SyntaxKind.LessOrEqualExpression ||
+                   binaryExpressionKind == SyntaxKind.GreaterExpression ||
+                   binaryExpressionKind == SyntaxKind.GreaterOrEqualExpression;
         }
     }
 
-    public static bool IsValidAllAnyOperator(this SyntaxKind binaryExpressionKind)
+    extension(SyntaxKind syntaxKind)
     {
-        return binaryExpressionKind == SyntaxKind.EqualExpression ||
-               binaryExpressionKind == SyntaxKind.NotEqualExpression ||
-               binaryExpressionKind == SyntaxKind.NotLessExpression ||
-               binaryExpressionKind == SyntaxKind.NotGreaterExpression ||
-               binaryExpressionKind == SyntaxKind.LessExpression ||
-               binaryExpressionKind == SyntaxKind.LessOrEqualExpression ||
-               binaryExpressionKind == SyntaxKind.GreaterExpression ||
-               binaryExpressionKind == SyntaxKind.GreaterOrEqualExpression;
-    }
-
-    public static bool CanHaveLeadingNot(this SyntaxKind syntaxKind)
-    {
-        return syntaxKind == SyntaxKind.BetweenKeyword ||
-               syntaxKind == SyntaxKind.InKeyword ||
-               syntaxKind == SyntaxKind.LikeKeyword ||
-               syntaxKind == SyntaxKind.SimilarKeyword ||
-               syntaxKind == SyntaxKind.SoundsKeyword;
+        public bool CanHaveLeadingNot()
+        {
+            return syntaxKind == SyntaxKind.BetweenKeyword ||
+                   syntaxKind == SyntaxKind.InKeyword ||
+                   syntaxKind == SyntaxKind.LikeKeyword ||
+                   syntaxKind == SyntaxKind.SimilarKeyword ||
+                   syntaxKind == SyntaxKind.SoundsKeyword;
+        }
     }
 
     public static IEnumerable<string> GetTypeNames()

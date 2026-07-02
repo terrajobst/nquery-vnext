@@ -12,225 +12,234 @@ public static class TypeFacts
     public static Type Unknown { get; } = typeof(UnknownType);
     public static Type Null { get; } = typeof(NullType);
 
-    public static bool IsMissing(this Type type)
+    extension(Type type)
     {
-        return type == Missing;
-    }
-
-    public static bool IsUnknown(this Type type)
-    {
-        return type == Unknown;
-    }
-
-    public static bool IsError(this Type type)
-    {
-        return type.IsMissing() || type.IsUnknown();
-    }
-
-    public static bool IsNull(this Type type)
-    {
-        return type == Null;
-    }
-
-    internal static Type ToOutputType(this Type type)
-    {
-        return type.IsNull() ? typeof(object) : type;
-    }
-
-    internal static bool IsNonBoolean(this Type type)
-    {
-        return !type.IsError() && type != typeof(bool);
-    }
-
-    internal static bool IsIntrinsicNumericType(this KnownType value)
-    {
-        switch (value)
+        public bool IsMissing()
         {
-            case KnownType.SByte:
-            case KnownType.Byte:
-            case KnownType.Int16:
-            case KnownType.UInt16:
-            case KnownType.Int32:
-            case KnownType.UInt32:
-            case KnownType.Int64:
-            case KnownType.UInt64:
-            case KnownType.Char:
-            case KnownType.Single:
-            case KnownType.Double:
-                return true;
+            return type == Missing;
+        }
 
-            case KnownType.Decimal:
-            case KnownType.Boolean:
-            case KnownType.String:
-            case KnownType.Object:
-                return false;
+        public bool IsUnknown()
+        {
+            return type == Unknown;
+        }
 
-            default:
-                throw ExceptionBuilder.UnexpectedValue(value);
+        public bool IsError()
+        {
+            return type.IsMissing() || type.IsUnknown();
+        }
+
+        public bool IsNull()
+        {
+            return type == Null;
+        }
+
+        internal Type ToOutputType()
+        {
+            return type.IsNull() ? typeof(object) : type;
+        }
+
+        internal bool IsNonBoolean()
+        {
+            return !type.IsError() && type != typeof(bool);
+        }
+
+        internal KnownType? GetKnownType()
+        {
+            if (type == typeof(byte))
+                return KnownType.Byte;
+
+            if (type == typeof(sbyte))
+                return KnownType.SByte;
+
+            if (type == typeof(char))
+                return KnownType.Char;
+
+            if (type == typeof(short))
+                return KnownType.Int16;
+
+            if (type == typeof(ushort))
+                return KnownType.UInt16;
+
+            if (type == typeof(int))
+                return KnownType.Int32;
+
+            if (type == typeof(uint))
+                return KnownType.UInt32;
+
+            if (type == typeof(long))
+                return KnownType.Int64;
+
+            if (type == typeof(ulong))
+                return KnownType.UInt64;
+
+            if (type == typeof(float))
+                return KnownType.Single;
+
+            if (type == typeof(double))
+                return KnownType.Double;
+
+            if (type == typeof(decimal))
+                return KnownType.Decimal;
+
+            if (type == typeof(bool))
+                return KnownType.Boolean;
+
+            if (type == typeof(string))
+                return KnownType.String;
+
+            if (type == typeof(object))
+                return KnownType.Object;
+
+            return null;
+        }
+
+        public string ToDisplayName()
+        {
+            if (type.IsUnknown())
+                return Resources.TypeUnknown;
+
+            if (type.IsNull())
+                return Resources.TypeNull;
+
+            if (type.IsMissing())
+                return Resources.TypeMissing;
+
+            var knownType = type.GetKnownType();
+            return knownType is null ? type.Name : knownType.Value.ToDisplayName();
+        }
+
+        public bool IsComparable()
+        {
+            var comparable = typeof(IComparable);
+            return comparable.IsAssignableFrom(type);
+        }
+
+        public bool CanBeNull()
+        {
+            var isReferenceType = type.IsClass;
+            var isNullableOfT = type.IsNullableOfT();
+            return isReferenceType || isNullableOfT;
+        }
+
+        public bool IsNullableOfT()
+        {
+            return Nullable.GetUnderlyingType(type) is not null;
+        }
+
+        public Type GetNonNullableType()
+        {
+            return Nullable.GetUnderlyingType(type) ?? type;
+        }
+
+        public Type GetNullableType()
+        {
+            return type.CanBeNull()
+                       ? type
+                       : typeof(Nullable<>).MakeGenericType(type);
         }
     }
 
-    internal static bool IsSignedNumericType(this KnownType value)
+    extension(KnownType value)
     {
-        switch (value)
+        internal bool IsIntrinsicNumericType()
         {
-            case KnownType.SByte:
-            case KnownType.Int16:
-            case KnownType.Int32:
-            case KnownType.Int64:
-                return true;
+            switch (value)
+            {
+                case KnownType.SByte:
+                case KnownType.Byte:
+                case KnownType.Int16:
+                case KnownType.UInt16:
+                case KnownType.Int32:
+                case KnownType.UInt32:
+                case KnownType.Int64:
+                case KnownType.UInt64:
+                case KnownType.Char:
+                case KnownType.Single:
+                case KnownType.Double:
+                    return true;
 
-            default:
-                return false;
+                case KnownType.Decimal:
+                case KnownType.Boolean:
+                case KnownType.String:
+                case KnownType.Object:
+                    return false;
+
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(value);
+            }
+        }
+
+        internal bool IsSignedNumericType()
+        {
+            switch (value)
+            {
+                case KnownType.SByte:
+                case KnownType.Int16:
+                case KnownType.Int32:
+                case KnownType.Int64:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        internal bool IsUnsignedNumericType()
+        {
+            switch (value)
+            {
+                case KnownType.Byte:
+                case KnownType.UInt16:
+                case KnownType.UInt32:
+                case KnownType.UInt64:
+                    return true;
+
+                default:
+                    return false;
+            }
         }
     }
 
-    internal static bool IsUnsignedNumericType(this KnownType value)
+    extension(KnownType type)
     {
-        switch (value)
+        private string ToDisplayName()
         {
-            case KnownType.Byte:
-            case KnownType.UInt16:
-            case KnownType.UInt32:
-            case KnownType.UInt64:
-                return true;
-
-            default:
-                return false;
+            switch (type)
+            {
+                case KnownType.SByte:
+                    return @"SBYTE";
+                case KnownType.Byte:
+                    return @"BYTE";
+                case KnownType.Int16:
+                    return @"SHORT";
+                case KnownType.UInt16:
+                    return @"USHORT";
+                case KnownType.Int32:
+                    return @"INT";
+                case KnownType.UInt32:
+                    return @"UINT";
+                case KnownType.Int64:
+                    return @"LONG";
+                case KnownType.UInt64:
+                    return @"ULONG";
+                case KnownType.Char:
+                    return @"CHAR";
+                case KnownType.Single:
+                    return @"FLOAT";
+                case KnownType.Double:
+                    return @"DOUBLE";
+                case KnownType.Decimal:
+                    return @"DECIMAL";
+                case KnownType.Boolean:
+                    return @"BOOL";
+                case KnownType.String:
+                    return @"STRING";
+                case KnownType.Object:
+                    return @"OBJECT";
+                default:
+                    throw ExceptionBuilder.UnexpectedValue(type);
+            }
         }
-    }
-
-    internal static KnownType? GetKnownType(this Type type)
-    {
-        if (type == typeof(byte))
-            return KnownType.Byte;
-
-        if (type == typeof(sbyte))
-            return KnownType.SByte;
-
-        if (type == typeof(char))
-            return KnownType.Char;
-
-        if (type == typeof(short))
-            return KnownType.Int16;
-
-        if (type == typeof(ushort))
-            return KnownType.UInt16;
-
-        if (type == typeof(int))
-            return KnownType.Int32;
-
-        if (type == typeof(uint))
-            return KnownType.UInt32;
-
-        if (type == typeof(long))
-            return KnownType.Int64;
-
-        if (type == typeof(ulong))
-            return KnownType.UInt64;
-
-        if (type == typeof(float))
-            return KnownType.Single;
-
-        if (type == typeof(double))
-            return KnownType.Double;
-
-        if (type == typeof(decimal))
-            return KnownType.Decimal;
-
-        if (type == typeof(bool))
-            return KnownType.Boolean;
-
-        if (type == typeof(string))
-            return KnownType.String;
-
-        if (type == typeof(object))
-            return KnownType.Object;
-
-        return null;
-    }
-
-    public static string ToDisplayName(this Type type)
-    {
-        if (type.IsUnknown())
-            return Resources.TypeUnknown;
-
-        if (type.IsNull())
-            return Resources.TypeNull;
-
-        if (type.IsMissing())
-            return Resources.TypeMissing;
-
-        var knownType = type.GetKnownType();
-        return knownType is null ? type.Name : knownType.Value.ToDisplayName();
-    }
-
-    private static string ToDisplayName(this KnownType type)
-    {
-        switch (type)
-        {
-            case KnownType.SByte:
-                return @"SBYTE";
-            case KnownType.Byte:
-                return @"BYTE";
-            case KnownType.Int16:
-                return @"SHORT";
-            case KnownType.UInt16:
-                return @"USHORT";
-            case KnownType.Int32:
-                return @"INT";
-            case KnownType.UInt32:
-                return @"UINT";
-            case KnownType.Int64:
-                return @"LONG";
-            case KnownType.UInt64:
-                return @"ULONG";
-            case KnownType.Char:
-                return @"CHAR";
-            case KnownType.Single:
-                return @"FLOAT";
-            case KnownType.Double:
-                return @"DOUBLE";
-            case KnownType.Decimal:
-                return @"DECIMAL";
-            case KnownType.Boolean:
-                return @"BOOL";
-            case KnownType.String:
-                return @"STRING";
-            case KnownType.Object:
-                return @"OBJECT";
-            default:
-                throw ExceptionBuilder.UnexpectedValue(type);
-        }
-    }
-
-    public static bool IsComparable(this Type type)
-    {
-        var comparable = typeof(IComparable);
-        return comparable.IsAssignableFrom(type);
-    }
-
-    public static bool CanBeNull(this Type type)
-    {
-        var isReferenceType = type.IsClass;
-        var isNullableOfT = type.IsNullableOfT();
-        return isReferenceType || isNullableOfT;
-    }
-
-    public static bool IsNullableOfT(this Type type)
-    {
-        return Nullable.GetUnderlyingType(type) is not null;
-    }
-
-    public static Type GetNonNullableType(this Type type)
-    {
-        return Nullable.GetUnderlyingType(type) ?? type;
-    }
-
-    public static Type GetNullableType(this Type type)
-    {
-        return type.CanBeNull()
-                   ? type
-                   : typeof(Nullable<>).MakeGenericType(type);
     }
 }

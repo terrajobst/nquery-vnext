@@ -5,28 +5,31 @@ namespace NQuery.Authoring.SymbolSearch;
 
 public static class SymbolSearcher
 {
-    public static SymbolSpan? FindSymbol(this SemanticModel semanticModel, int position)
+    extension(SemanticModel semanticModel)
     {
-        ThrowIfNull(semanticModel);
+        public SymbolSpan? FindSymbol(int position)
+        {
+            ThrowIfNull(semanticModel);
 
-        var syntaxTree = semanticModel.SyntaxTree;
-        return syntaxTree.Root.FindNodes(position)
-                              .SelectMany(n => GetSymbolSpans(semanticModel, n))
-                              .Where(s => s.Span.ContainsOrTouches(position))
-                              .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
-    }
+            var syntaxTree = semanticModel.SyntaxTree;
+            return syntaxTree.Root.FindNodes(position)
+                                  .SelectMany(n => GetSymbolSpans(semanticModel, n))
+                                  .Where(s => s.Span.ContainsOrTouches(position))
+                                  .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
+        }
 
-    public static IEnumerable<SymbolSpan> FindUsages(this SemanticModel semanticModel, Symbol symbol)
-    {
-        ThrowIfNull(semanticModel);
-        ThrowIfNull(symbol);
+        public IEnumerable<SymbolSpan> FindUsages(Symbol symbol)
+        {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(symbol);
 
-        var syntaxTree = semanticModel.SyntaxTree;
+            var syntaxTree = semanticModel.SyntaxTree;
 
-        return from n in syntaxTree.Root.DescendantNodes()
-               from s in GetSymbolSpans(semanticModel, n)
-               where s.Symbol == symbol
-               select s;
+            return from n in syntaxTree.Root.DescendantNodes()
+                   from s in GetSymbolSpans(semanticModel, n)
+                   where s.Symbol == symbol
+                   select s;
+        }
     }
 
     private static IEnumerable<SymbolSpan> GetSymbolSpans(SemanticModel semanticModel, SyntaxNode node)

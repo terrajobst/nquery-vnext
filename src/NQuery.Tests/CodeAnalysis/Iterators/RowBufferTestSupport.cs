@@ -80,23 +80,26 @@ internal static class RowBufferTestSupport
 // predicates.
 internal static class RowBufferTestExtensions
 {
-    public static int Int32(this RowBuffer rowBuffer, int columnIndex)
+    extension(RowBuffer rowBuffer)
     {
-        return rowBuffer.Read32Bit<int>(columnIndex)!.Value;
-    }
+        public int Int32(int columnIndex)
+        {
+            return rowBuffer.Read32Bit<int>(columnIndex)!.Value;
+        }
 
-    public static int? NullableInt32(this RowBuffer rowBuffer, int columnIndex)
-    {
-        return rowBuffer.Read32Bit<int>(columnIndex);
-    }
+        public int? NullableInt32(int columnIndex)
+        {
+            return rowBuffer.Read32Bit<int>(columnIndex);
+        }
 
-    public static string? String(this RowBuffer rowBuffer, int columnIndex)
-    {
-        return rowBuffer.ReadObject<string?>(columnIndex);
-    }
+        public string? String(int columnIndex)
+        {
+            return rowBuffer.ReadObject<string?>(columnIndex);
+        }
 
-    public static bool Bool(this RowBuffer rowBuffer, int columnIndex)
-    {
-        return rowBuffer.Read32Bit<bool>(columnIndex)!.Value;
+        public bool Bool(int columnIndex)
+        {
+            return rowBuffer.Read32Bit<bool>(columnIndex)!.Value;
+        }
     }
 }

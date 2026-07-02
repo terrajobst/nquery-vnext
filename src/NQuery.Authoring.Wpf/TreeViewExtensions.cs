@@ -68,26 +68,29 @@ internal static class TreeViewExtensions
         }
     }
 
-    private static void ExpandNodes(this TreeView treeView, IEnumerable<object> items, bool expandNode)
+    extension(TreeView treeView)
     {
-        var expander = new Expander(treeView, items, expandNode);
-        expander.ExpandNext();
-    }
-
-    public static void SelectNode<T>(this TreeView treeView, T? node, Func<T, T?> getParentNode, bool expandNode = false)
-        where T : class
-    {
-        if (node is null)
-            return;
-
-        var nodeStack = new Stack<object>();
-        while (node is not null)
+        private void ExpandNodes(IEnumerable<object> items, bool expandNode)
         {
-            nodeStack.Push(node);
-            node = getParentNode(node);
+            var expander = new Expander(treeView, items, expandNode);
+            expander.ExpandNext();
         }
 
-        var nodesToExpand = nodeStack.ToImmutableArray();
-        treeView.ExpandNodes(nodesToExpand, expandNode);
+        public void SelectNode<T>(T? node, Func<T, T?> getParentNode, bool expandNode = false)
+            where T : class
+        {
+            if (node is null)
+                return;
+
+            var nodeStack = new Stack<object>();
+            while (node is not null)
+            {
+                nodeStack.Push(node);
+                node = getParentNode(node);
+            }
+
+            var nodesToExpand = nodeStack.ToImmutableArray();
+            treeView.ExpandNodes(nodesToExpand, expandNode);
+        }
     }
 }

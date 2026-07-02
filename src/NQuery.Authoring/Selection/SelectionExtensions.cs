@@ -19,33 +19,36 @@ public static class SelectionExtensions
         new SelectClauseSelectionSpanProvider()
     ];
 
-    public static TextSpan ExtendSelection(this SyntaxTree syntaxTree, TextSpan selectedSpan)
+    extension(SyntaxTree syntaxTree)
     {
-        return syntaxTree.ExtendSelection(selectedSpan, StandardSelectionSpanProviders);
-    }
-
-    public static TextSpan ExtendSelection(this SyntaxTree syntaxTree, TextSpan selectedSpan, IEnumerable<ISelectionSpanProvider> providers)
-    {
-        var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
-        foreach (var span in GetNextSpans(token, providers))
+        public TextSpan ExtendSelection(TextSpan selectedSpan)
         {
-            if (!selectedSpan.Contains(span))
-                return span;
+            return syntaxTree.ExtendSelection(selectedSpan, StandardSelectionSpanProviders);
         }
 
-        var node = token.Parent;
-        while (node is not null)
+        public TextSpan ExtendSelection(TextSpan selectedSpan, IEnumerable<ISelectionSpanProvider> providers)
         {
-            foreach (var span in GetNextSpans(node, providers))
+            var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
+            foreach (var span in GetNextSpans(token, providers))
             {
                 if (!selectedSpan.Contains(span))
                     return span;
             }
 
-            node = node.Parent;
-        }
+            var node = token.Parent;
+            while (node is not null)
+            {
+                foreach (var span in GetNextSpans(node, providers))
+                {
+                    if (!selectedSpan.Contains(span))
+                        return span;
+                }
 
-        return syntaxTree.Root.Span;
+                node = node.Parent;
+            }
+
+            return syntaxTree.Root.Span;
+        }
     }
 
     private static IEnumerable<TextSpan> GetNextSpans(SyntaxNodeOrToken nodeOrToken, IEnumerable<ISelectionSpanProvider> providers)

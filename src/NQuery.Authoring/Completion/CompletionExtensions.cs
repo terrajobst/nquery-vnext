@@ -18,21 +18,24 @@ public static class CompletionExtensions
         new CommonTableExpressionCompletionProvider()
     ];
 
-    public static CompletionModel GetCompletionModel(this SemanticModel semanticModel, int position)
+    extension(SemanticModel semanticModel)
     {
-        return semanticModel.GetCompletionModel(position, StandardCompletionProviders);
-    }
+        public CompletionModel GetCompletionModel(int position)
+        {
+            return semanticModel.GetCompletionModel(position, StandardCompletionProviders);
+        }
 
-    public static CompletionModel GetCompletionModel(this SemanticModel semanticModel, int position, IEnumerable<ICompletionProvider> providers)
-    {
-        var syntaxTree = semanticModel.SyntaxTree;
-        var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
-        var applicableSpan = token?.Span ?? new TextSpan(position, 0);
+        public CompletionModel GetCompletionModel(int position, IEnumerable<ICompletionProvider> providers)
+        {
+            var syntaxTree = semanticModel.SyntaxTree;
+            var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
+            var applicableSpan = token?.Span ?? new TextSpan(position, 0);
 
-        var items = providers.SelectMany(p => p.GetItems(semanticModel, position));
-        var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
+            var items = providers.SelectMany(p => p.GetItems(semanticModel, position));
+            var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
 
-        return new CompletionModel(semanticModel, applicableSpan, sortedItems);
+            return new CompletionModel(semanticModel, applicableSpan, sortedItems);
+        }
     }
 
     private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
