@@ -34,8 +34,8 @@ internal sealed class ExecutableFilter : ExecutableOperator
     // Each conjunct already yields false on NULL, so AND-ing gives WHERE semantics.
     private static CompiledPredicate Conjoin(ImmutableArray<CompiledPredicate> predicates)
     {
-        if (predicates.Length == 1)
-            return predicates[0];
+        if (predicates is [var predicate])
+            return predicate;
 
         return rowBuffer =>
         {

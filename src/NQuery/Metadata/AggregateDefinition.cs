@@ -58,7 +58,7 @@ public abstract class AggregateDefinition
         if (!conversion.Exists)
             return null;
 
-        var method = conversion.ConversionMethods.Length == 1 ? conversion.ConversionMethods[0] : null;
+        var method = conversion.ConversionMethods is [var conversionMethod] ? conversionMethod : null;
         var state = Expression.Parameter(typeof(TState));
         var value = Expression.Parameter(argumentType);
         var body = Expression.Invoke(accumulate, state, Expression.Convert(value, typeof(TValue), method));

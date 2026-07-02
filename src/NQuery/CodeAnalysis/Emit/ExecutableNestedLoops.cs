@@ -102,8 +102,8 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
                          .Select(c => ExpressionCompiler.CompilePredicate(c, slotIndices))
                          .ToImmutableArray();
 
-        if (predicates.Length == 1)
-            return predicates[0];
+        if (predicates is [var predicate])
+            return predicate;
 
         return rowBuffer =>
         {

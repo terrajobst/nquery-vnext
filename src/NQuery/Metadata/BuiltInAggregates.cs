@@ -267,7 +267,7 @@ internal static class BuiltInAggregates
         if (!conversion.Exists)
             throw new AggregateNotApplicableException();
 
-        var method = conversion.ConversionMethods.Length == 1 ? conversion.ConversionMethods[0] : null;
+        var method = conversion.ConversionMethods is [var conversionMethod] ? conversionMethod : null;
         return Expression.Convert(value, target, method);
     }
 
