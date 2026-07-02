@@ -3,9 +3,15 @@
 * We should use Ordinal for all string comparisons
 * Ask Claude if the old unit tests did test something that we don't (unlikely)
 * Do a manual, full review, of the entire refactoring.
+* Row buffers
+    - Take a look at the row buffers. Can we collapse the arrays?
+    - We should probably collapse 32, 64, and 128 to an array of `uint`.
+    - Take a look at the spools. Can we optimize them more?
 
 ## More features
 
+* Delete NQuery.Dynamic
+    - This adds basically zero functionality
 * Add support for `VALUES()`
     - We probably want derived table column syntax (like we do for CTEs) first
     - We probably want to share the syntax / machinery with CTE
@@ -23,6 +29,11 @@
     UNION ALL
     SELECT 7, 8, 9
     ```
+* Support table-valued functions (TVFs)
+    - This applies to functions as well as methods
+    - The core building block would probably be `IEnumerable<T>`, potentially
+      with `IQueryable<T>`. The schema would be inferred via `IPropertyProvider`
+* Support tables over `IEnumerable<ValueTuple<...>>`
 * Merge ComputeScalar() nodes
 * Detect Filters/Join condition that are always false
 * Cost model / cardinality estimation.
@@ -53,6 +64,8 @@
       `BindBinaryExpression` to push the concrete enum operand's type into the
       candidate, since binary operators don't target-type their operands by
       default.
+* Should we support table definitions backed by `IQueryable<T>`? What would it
+  look like to support forwarding joins?
 
 ## Missing optimizations from the old engine
 
@@ -112,6 +125,10 @@ model / cardinality estimation" under *More features*.
 * Make sure we have argument validation for all public APIs
     - For internal/private APIs I want argument validation for public statics and
       constructors
+* VariableDefinition
+    - Should probably have a generic variant
+    - Seems a bit odd of have that live on the catalog. Logically that should
+      probably be query owned.
 * Representing AND and OR
     - Use N-ary AND and OR
     - Use NNF
@@ -142,15 +159,6 @@ model / cardinality estimation" under *More features*.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* Use new C# language features
-    - Make sure all comparisons to null use `is null` and `is not null`
-    - Make sure we use extensions blocks
-    - Collection expressions
-    - `readonly` members
-    - Raw string literals
-    - `params ReadOnlySpan<T>`
-    - List patterns?
-    - Required members?
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
 * TypeSymbol
