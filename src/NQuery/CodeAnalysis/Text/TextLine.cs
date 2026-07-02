@@ -1,6 +1,6 @@
 namespace NQuery.CodeAnalysis.Text;
 
-public struct TextLine : IEquatable<TextLine>
+public readonly struct TextLine : IEquatable<TextLine>
 {
     private readonly int _start;
     private readonly int _length;

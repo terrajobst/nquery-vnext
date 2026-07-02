@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Outlining;
 
-public struct OutliningRegionSpan
+public readonly struct OutliningRegionSpan
 {
     public OutliningRegionSpan(TextSpan span, string text)
     {

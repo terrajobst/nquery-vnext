@@ -1,6 +1,6 @@
 namespace NQuery.CodeAnalysis.Text;
 
-public struct TextLocation : IEquatable<TextLocation>
+public readonly struct TextLocation : IEquatable<TextLocation>
 {
     public TextLocation(int line, int column)
     {

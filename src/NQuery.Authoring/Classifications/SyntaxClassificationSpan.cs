@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Classifications;
 
-public struct SyntaxClassificationSpan
+public readonly struct SyntaxClassificationSpan
 {
     public SyntaxClassificationSpan(TextSpan span, SyntaxClassification classification)
     {

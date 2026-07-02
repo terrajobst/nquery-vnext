@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.BraceMatching;
 
-public struct BraceMatchingResult
+public readonly struct BraceMatchingResult
 {
     public static BraceMatchingResult None { get; } = new();
 

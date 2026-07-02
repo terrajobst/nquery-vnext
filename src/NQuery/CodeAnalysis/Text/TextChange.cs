@@ -1,6 +1,6 @@
 namespace NQuery.CodeAnalysis.Text;
 
-public struct TextChange : IEquatable<TextChange>
+public readonly struct TextChange : IEquatable<TextChange>
 {
     public static TextChange ForReplacement(TextSpan span, string newText)
     {

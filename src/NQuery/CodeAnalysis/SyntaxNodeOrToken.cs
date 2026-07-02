@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.CodeAnalysis;
 
-public struct SyntaxNodeOrToken
+public readonly struct SyntaxNodeOrToken
 {
     private readonly SyntaxNode? _syntaxNode;
     private readonly SyntaxToken? _syntaxToken;

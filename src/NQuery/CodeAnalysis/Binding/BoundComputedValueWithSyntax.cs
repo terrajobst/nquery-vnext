@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.CodeAnalysis.Binding;
 
-internal struct BoundComputedValueWithSyntax
+internal readonly struct BoundComputedValueWithSyntax
 {
     public BoundComputedValueWithSyntax(ExpressionSyntax syntax, BoundExpression expression, IBoundValue result)
     {

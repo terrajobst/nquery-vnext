@@ -199,7 +199,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
         get { return _entries.Length; }
     }
 
-    private struct Entry
+    private readonly struct Entry
     {
         public Entry(TNode node, SyntaxToken? separator)
         {

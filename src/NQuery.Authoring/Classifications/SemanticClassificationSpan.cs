@@ -2,7 +2,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Classifications;
 
-public struct SemanticClassificationSpan
+public readonly struct SemanticClassificationSpan
 {
     public SemanticClassificationSpan(TextSpan span, SemanticClassification classification)
     {

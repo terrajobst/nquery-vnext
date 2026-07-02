@@ -3,7 +3,7 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.SymbolSearch;
 
-public struct SymbolSpan : IEquatable<SymbolSpan>
+public readonly struct SymbolSpan : IEquatable<SymbolSpan>
 {
     public SymbolSpan(SymbolSpanKind kind, Symbol symbol, TextSpan span)
     {

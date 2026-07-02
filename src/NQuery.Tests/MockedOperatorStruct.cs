@@ -1,6 +1,6 @@
 namespace NQuery.Tests;
 
-public struct MockedOperatorStruct
+public readonly struct MockedOperatorStruct
 {
     private readonly string _text;
 

@@ -1,6 +1,6 @@
 namespace NQuery.CodeAnalysis.Text;
 
-public struct TextSpan : IEquatable<TextSpan>
+public readonly struct TextSpan : IEquatable<TextSpan>
 {
     public TextSpan(int start, int length)
     {

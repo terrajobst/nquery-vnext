@@ -1,6 +1,6 @@
 namespace NQuery.CodeAnalysis.Binding;
 
-internal struct BoundOrderBySelector
+internal readonly struct BoundOrderBySelector
 {
     public BoundOrderBySelector(IBoundValue value, BoundComputedValueWithSyntax? computedValue)
     {
