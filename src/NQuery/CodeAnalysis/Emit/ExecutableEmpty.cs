@@ -12,5 +12,5 @@ internal sealed class ExecutableEmpty : ExecutableOperator
     {
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer) => new EmptyIterator();
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer) => new EmptyIterator();
 }

@@ -56,9 +56,9 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
             : ExpressionCompiler.CompilePredicate(passthruPredicate, slotIndices);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var left = _left.CreateIterator(outer);
+        var left = _left.CreateIterator(workTables, outer);
 
         // A dependent join exposes its outer references (a projection of the left
         // row) to the right, accumulated onto any outer this node itself sits
@@ -72,7 +72,7 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
             rightOuter = outer is null ? projectedLeft : new CombinedRowBuffer(outer, projectedLeft);
         }
 
-        var right = _right.CreateIterator(rightOuter);
+        var right = _right.CreateIterator(workTables, rightOuter);
 
         switch (_joinKind)
         {

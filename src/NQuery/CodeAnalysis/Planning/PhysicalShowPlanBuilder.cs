@@ -43,6 +43,10 @@ internal static class PhysicalShowPlanBuilder
                 return BuildTop((PhysicalTop)node);
             case PhysicalOperatorKind.Concatenation:
                 return BuildConcatenation((PhysicalConcatenation)node);
+            case PhysicalOperatorKind.RecursiveUnion:
+                return BuildRecursiveUnion((PhysicalRecursiveUnion)node);
+            case PhysicalOperatorKind.RecursiveReference:
+                return BuildRecursiveReference((PhysicalRecursiveReference)node);
             case PhysicalOperatorKind.Assert:
                 return BuildAssert((PhysicalAssert)node);
             default:
@@ -126,6 +130,19 @@ internal static class PhysicalShowPlanBuilder
         var outputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
         var children = node.Inputs.Select(Build);
         return new ShowPlanNode($"Concatenation {outputs}", NoProperties, children);
+    }
+
+    private static ShowPlanNode BuildRecursiveUnion(PhysicalRecursiveUnion node)
+    {
+        var outputs = string.Join(@", ", node.DefinedValues.Select(d => $"{d.ValueSlot.Name} := [{string.Join(@", ", d.InputValueSlots.Select(i => i.Name))}]"));
+        var children = new[] { Build(node.Anchor) }.Concat(node.RecursiveMembers.Select(Build));
+        return new ShowPlanNode($"Recursive Union ({node.Token.Name}) {outputs}", NoProperties, children);
+    }
+
+    private static ShowPlanNode BuildRecursiveReference(PhysicalRecursiveReference node)
+    {
+        var columns = string.Join(@", ", node.OutputValueSlots.Select(s => s.Name));
+        return new ShowPlanNode($"Recursive Reference ({node.Token.Name}), DefinedValues := {columns}", NoProperties, NoChildren);
     }
 
     private static ShowPlanNode BuildAssert(PhysicalAssert node)

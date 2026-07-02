@@ -18,10 +18,12 @@ internal abstract class ExecutableOperator
 
     public ImmutableArray<ValueSlot> OutputValueSlots { get; }
 
-    // outer is the row buffer of the enclosing Apply's left side (its correlated
-    // outer references), or null at the top level. Operators thread it to their
-    // inputs; correlated filters/computes read from it.
-    public abstract Iterator CreateIterator(RowBuffer? outer);
+    // workTables is the per-execution registry a recursive union and its reference
+    // leaves resolve their shared recursion token against; every operator threads it
+    // to its inputs unchanged. outer is the row buffer of the enclosing Apply's left
+    // side (its correlated outer references), or null at the top level. Operators
+    // thread it to their inputs; correlated filters/computes read from it.
+    public abstract Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer);
 
     protected static RowBufferAllocation Allocate(ExecutableOperator input, Iterator inputIterator)
     {

@@ -45,7 +45,8 @@ internal static class LogicalPlanVerifier
             LogicalApply n => [n.Left, n.Right],
             LogicalIntersectOrExcept n => [n.Left, n.Right],
             LogicalUnion n => n.Inputs,
-            LogicalEmpty or LogicalConstant or LogicalTableScan => [],
+            LogicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
+            LogicalEmpty or LogicalConstant or LogicalTableScan or LogicalRecursiveReference => [],
             _ => throw ExceptionBuilder.UnexpectedValue(node.Kind),
         };
 
@@ -56,6 +57,7 @@ internal static class LogicalPlanVerifier
             case LogicalOperatorKind.Empty:
             case LogicalOperatorKind.Constant:
             case LogicalOperatorKind.TableScan:
+            case LogicalOperatorKind.RecursiveReference:
                 break;
 
             case LogicalOperatorKind.Filter:
@@ -78,6 +80,9 @@ internal static class LogicalPlanVerifier
                 break;
             case LogicalOperatorKind.Union:
                 VerifyUnion((LogicalUnion)node, outerSlots, source);
+                break;
+            case LogicalOperatorKind.RecursiveUnion:
+                VerifyRecursiveUnion((LogicalRecursiveUnion)node, outerSlots, source);
                 break;
             case LogicalOperatorKind.IntersectOrExcept:
                 VerifyIntersectOrExcept((LogicalIntersectOrExcept)node, outerSlots, source);
@@ -170,6 +175,24 @@ internal static class LogicalPlanVerifier
         {
             var scope = Scope(outerSlots, node.Inputs[i].OutputValueSlots);
             PlanVerification.Require(source, "Union", "unified input slot", node.DefinedValues.Select(d => d.InputValueSlots[i]), scope);
+        }
+    }
+
+    private static void VerifyRecursiveUnion(LogicalRecursiveUnion node, ImmutableArray<ValueSlot> outerSlots, string source)
+    {
+        VerifyOperator(node.Anchor, outerSlots, source);
+        foreach (var member in node.RecursiveMembers)
+            VerifyOperator(member, outerSlots, source);
+
+        // Each unified output column reads the anchor's slot and one slot per recursive
+        // member, drawn from that input alone (anchor is input 0, members follow).
+        var anchorScope = Scope(outerSlots, node.Anchor.OutputValueSlots);
+        PlanVerification.Require(source, "RecursiveUnion", "unified anchor slot", node.DefinedValues.Select(d => d.InputValueSlots[0]), anchorScope);
+
+        for (var i = 0; i < node.RecursiveMembers.Length; i++)
+        {
+            var memberScope = Scope(outerSlots, node.RecursiveMembers[i].OutputValueSlots);
+            PlanVerification.Require(source, "RecursiveUnion", "unified member slot", node.DefinedValues.Select(d => d.InputValueSlots[i + 1]), memberScope);
         }
     }
 

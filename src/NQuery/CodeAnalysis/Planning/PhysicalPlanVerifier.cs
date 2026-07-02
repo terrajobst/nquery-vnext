@@ -52,7 +52,8 @@ internal static class PhysicalPlanVerifier
             PhysicalNestedLoops n => [n.Left, n.Right],
             PhysicalHashMatch n => [n.Build, n.Probe],
             PhysicalConcatenation n => n.Inputs,
-            PhysicalEmpty or PhysicalConstant or PhysicalTableScan => [],
+            PhysicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
+            PhysicalEmpty or PhysicalConstant or PhysicalTableScan or PhysicalRecursiveReference => [],
             _ => throw ExceptionBuilder.UnexpectedValue(node.Kind),
         };
 
@@ -66,6 +67,7 @@ internal static class PhysicalPlanVerifier
             case PhysicalOperatorKind.Empty:
             case PhysicalOperatorKind.Constant:
             case PhysicalOperatorKind.TableScan:
+            case PhysicalOperatorKind.RecursiveReference:
                 break;
 
             case PhysicalOperatorKind.Filter:
@@ -91,6 +93,9 @@ internal static class PhysicalPlanVerifier
                 break;
             case PhysicalOperatorKind.Concatenation:
                 VerifyConcatenation((PhysicalConcatenation)node, outerSlots);
+                break;
+            case PhysicalOperatorKind.RecursiveUnion:
+                VerifyRecursiveUnion((PhysicalRecursiveUnion)node, outerSlots);
                 break;
             case PhysicalOperatorKind.NestedLoops:
                 VerifyNestedLoops((PhysicalNestedLoops)node, outerSlots);
@@ -175,6 +180,25 @@ internal static class PhysicalPlanVerifier
         {
             var scope = Scope(ImmutableArray<ValueSlot>.Empty, node.Inputs[i].OutputValueSlots);
             RequireAvailable(node, "unified input slot", node.DefinedValues.Select(d => d.InputValueSlots[i]), scope);
+        }
+    }
+
+    private static void VerifyRecursiveUnion(PhysicalRecursiveUnion node, ImmutableArray<ValueSlot> outerSlots)
+    {
+        VerifyOperator(node.Anchor, outerSlots);
+        foreach (var member in node.RecursiveMembers)
+            VerifyOperator(member, outerSlots);
+
+        // Each unified output reads the anchor's slot and one slot per recursive member,
+        // drawn from that input alone (the emitter's per-input allocation, like the
+        // concatenation's).
+        var anchorScope = Scope(ImmutableArray<ValueSlot>.Empty, node.Anchor.OutputValueSlots);
+        RequireAvailable(node, "unified anchor slot", node.DefinedValues.Select(d => d.InputValueSlots[0]), anchorScope);
+
+        for (var i = 0; i < node.RecursiveMembers.Length; i++)
+        {
+            var memberScope = Scope(ImmutableArray<ValueSlot>.Empty, node.RecursiveMembers[i].OutputValueSlots);
+            RequireAvailable(node, "unified member slot", node.DefinedValues.Select(d => d.InputValueSlots[i + 1]), memberScope);
         }
     }
 

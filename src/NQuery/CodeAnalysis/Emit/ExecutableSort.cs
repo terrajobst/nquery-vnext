@@ -19,9 +19,9 @@ internal sealed class ExecutableSort : ExecutableOperator
         _sortedValues = sortedValues;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var input = _input.CreateIterator(outer);
+        var input = _input.CreateIterator(workTables, outer);
         var allocation = Allocate(_input, input);
         var entries = _sortedValues.Select(v => allocation[v.ValueSlot]).ToImmutableArray();
         var comparers = _sortedValues.Select(v => v.Comparer).ToImmutableArray();

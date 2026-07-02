@@ -27,6 +27,7 @@ internal static class LogicalOperatorExtensions
             LogicalApply n => [n.Left, n.Right],
             LogicalIntersectOrExcept n => [n.Left, n.Right],
             LogicalUnion n => n.Inputs,
+            LogicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
             _ => []
         };
     }

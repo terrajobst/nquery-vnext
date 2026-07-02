@@ -28,8 +28,8 @@ internal sealed class ExecutableComputeScalar : ExecutableOperator
         _writer = ExpressionCompiler.CompileRowWriter(definedValues, _computedLayout, slotIndices);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        return new ComputeScalarIterator(_input.CreateIterator(outer), _writer, _computedLayout, outer);
+        return new ComputeScalarIterator(_input.CreateIterator(workTables, outer), _writer, _computedLayout, outer);
     }
 }

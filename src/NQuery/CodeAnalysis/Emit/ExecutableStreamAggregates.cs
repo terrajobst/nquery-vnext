@@ -48,9 +48,9 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
         _aggregatesFactory = AggregateCompiler.Compile(aggregates, slotIndices, aggregateColumns, aggregateTypes);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var input = _input.CreateIterator(outer);
+        var input = _input.CreateIterator(workTables, outer);
         return new StreamAggregateIterator(input, _groupSourceColumns, _groupOutputColumns, _groupTypes, _comparers, _aggregatesFactory(), _outputLayout, outer);
     }
 }

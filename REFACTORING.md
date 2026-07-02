@@ -2,22 +2,7 @@
 
 * We should use Ordinal for all string comparisons
 * Ask Claude if the old unit tests did test something that we don't (unlikely)
-
-## Port Common Table Expressions
-
-The new binder fully binds CTEs (BindCommonTableExpressionQuery, recursive
-validation via RecursiveCommonTableExpressionChecker), but nothing instantiates
-them downstream. A CTE reference becomes a BoundNamedTableReference →
-Algebrizer.AlgebrizeNamedTableReference → a plain LogicalTableScan over the
-CommonTableExpressionSymbol. Then Emitter.EmitTableScan does
-(SchemaTableSymbol)node.TableInstance.Table — which throws for a CTE-backed
-instance. There is no equivalent of legacy CommonTableExpressionInstantiator.
-The AlgebrizerTests CTE case (line 27) only asserts the logical shape, never
-execution; no evaluation test drives a CTE through the new engine.
-
-- Missing iterators: TableSpoolIterator, TableSpoolRefIterator, TableSpoolStack
-  (the recursive-CTE execution machinery) have no Emitted* counterparts.
-- Recursive CTEs are therefore unsupported end-to-end.
+* Do a manual, full review, of the entire refactoring.
 
 ## More features
 
@@ -211,147 +196,34 @@ model / cardinality estimation" under *More features*.
   collapses generic and instantiated generics into a single ITypeSymbol.
 * What are standard SQL types and how should they map to our primitives?
 
-## CTE Design
+## CTE follow-ups
 
-This is the concrete design for finishing CTE support; it supersedes the
-sketch under *Port Common Table Expressions* above. Binding, validation, and
-authoring are already complete (`BindCommonTableExpressionQuery`,
-`RecursiveCommonTableExpressionChecker`, `CommonTableExpressionSymbol` carrying
-`Anchor` + `RecursiveMembers`). Everything below is about *consuming* that from
-the algebrizer down. Today a CTE reference falls through to a plain
-`LogicalTableScan` and `Emitter.EmitTableScan` throws on the
-`(SchemaTableSymbol)` cast.
+CTE support is implemented end-to-end (the full "CTE Design" that used to live
+here). What shipped, for orientation:
 
-### Non-recursive CTEs: inline at algebrize time
+* Non-recursive CTEs are inlined at algebrize time, per reference
+  (`Algebrizer.AlgebrizeCommonTableExpressionReference`): the first reference
+  consumes the instantiated body, each further reference gets a slot-disjoint
+  clone via `LogicalOperatorCloner`. Deliberately not a barrier, so the
+  optimizer specializes each copy.
+* Recursive CTEs are a single opaque `LogicalRecursiveUnion` (+
+  `LogicalRecursiveReference` back-edge leaves tied to it by a
+  `RecursionToken`), lowered one-to-one in the planner and executed
+  breadth-first by `RecursionIterator` / `RecursiveReferenceIterator` /
+  `RecursiveWorkTable` over two ping-ponged `SpooledRowStore`s (the
+  working-table model, so the recursive step's join is planner-chosen -- a hash
+  match when an equi-key exists). The driver and the leaves find their shared
+  work table by resolving the token against a per-execution
+  `RecursiveWorkTableRegistry` minted in `ExecutablePlan.CreateIterator`, so
+  concurrent executions of one plan never share recursion state. `MAXRECURSION`
+  is fixed at 100, matching SQL Server's default and the legacy engine's error
+  message. Cloning the recursion node is identity-based: `CloneRecursiveUnion`
+  pre-seeds a token map before descending so back-edges rewire to the clone.
+* The `nquery-old` CTE definition corpus is no longer skipped by
+  `OldEngineDefinitionTests`, and `CommonTableExpressionTests` adds evaluation
+  coverage (including hand-inlined comparisons and the MAXRECURSION error).
 
-Treat a non-recursive CTE reference like a derived table, but instantiate the
-anchor's logical subtree *per reference* with fresh value slots using the
-existing `LogicalOperatorCloner` (its doc comment already anticipates this).
-This is deliberately **not** a barrier: inlining lets the optimizer specialize
-each copy and push predicates into the body. A single reference needs no clone;
-each additional reference gets a slot-disjoint clone.
-
-### Recursive CTEs: a monolithic, opaque logical node lowered in the planner
-
-Represent recursion as a single opaque logical operator that survives binding,
-algebra, and optimization unchanged:
-
-* `LogicalRecursiveUnion` - owns the anchor subtree, the recursive-member
-  subtree(s), the unified output slots, and a recursion identity token naming
-  the canonical working-table slots.
-* `LogicalRecursiveReference` - the self-reference leaf (the working table).
-
-Keeping it opaque gives the **optimizer barrier for free**: no pass needs to
-learn to "skip a spool region." The optimizer still recurses *into* the anchor
-and member subtrees and optimizes them normally; it just never moves anything
-*across* the boundary or decorrelates the reference. The reference leaf must
-read like a non-empty table scan so empty/constant propagation does not fold it
-away.
-
-Lower `LogicalRecursiveUnion` in the **Planner**, exactly as `LogicalJoin`
-lowers to `{PhysicalHashMatch | PhysicalNestedLoops}` and `LogicalApply` lowers
-to a decorrelated join or nested loops. This decouples representation from
-execution strategy and is where the index spool could be selected later.
-
-### Execution model: working table (breadth-first), not stack spool
-
-Two strategies are possible:
-
-* **Stack spool / depth-first / row-at-a-time** - the legacy
-  (`nquery-baseline`) approach: `Concat` + correlated nested loops + a
-  `TableSpoolStack` shared by a push iterator and a pop leaf. The recursive
-  reference is a *single row*, so the recursive join is *always* correlated
-  nested loops.
-* **Working table / breadth-first / set-at-a-time** - the recursive reference
-  is the *whole current frontier* as a scannable set, so the recursive join is
-  an ordinary join the planner can satisfy with a hash match.
-
-Choose the **working table** model:
-
-* Set-at-a-time exposes the recursive reference as a relation, so the normal
-  join planner picks a hash join for the recursive step. The stack-spool model
-  forecloses that.
-* NQuery has **no indexes**, so the stack spool's per-row re-scan of the base
-  relation has no index-seek rescue (the way SQL Server's does) - a hierarchy
-  walk degrades to O(N^2). The working table does one base scan per round and a
-  hash join against the frontier: O(D*N).
-* The industry mainstream (PostgreSQL, MySQL, Oracle's recursive `WITH`,
-  SQLite) all use the working-table/breadth-first model; SQL Server is the
-  outlier that relies on index seeks.
-* "Let the optimizer choose" is achieved **not** by maintaining two recursion
-  drivers (no mainstream engine does - a fixpoint has no cardinality estimate
-  to cost), but by one set-at-a-time driver plus the existing join planner
-  choosing the recursive step's join (hash / nested-loops / future index spool).
-
-Keep the stack-spool / index-spool as a possible future *physical*
-specialization for the narrow correlated-re-seek case; do not commit the
-representation to it.
-
-### Iterators
-
-* `RecursionIterator` - emits anchor rows (staging them as the round-0
-  frontier), then ping-pongs two `SpooledRowStore`s (working / next): each round
-  re-opens the recursive body over the working store, appends produced rows to
-  the next store and emits them, then swaps and clears; stops when a round
-  produces no rows. `MAXRECURSION` (default 100) is a per-round counter.
-* `RecursiveReferenceIterator` - snapshots the current working store on `Open`,
-  scans `0..Count`. It is effectively a table scan over a frozen set.
-* `RecursiveWorkTable` - the one small shared-by-reference handle connecting the
-  driver and the reference leaf (unavoidable: the leaf lives in a different
-  subtree).
-
-Breadth-first is markedly simpler in the demand-pull iterator model: the
-reference is a scan, the driver is a two-store swap, and the recursion level is
-just the round number - no bespoke stack, no per-row body re-open, no
-materialize-to-push ordering.
-
-### Traversal order caveat
-
-Breadth-first changes output row order versus the old engine's depth-first.
-This is standards-conformant (no order is guaranteed without `ORDER BY`), but
-the `nquery-old` CTE evaluation corpus reflects depth-first ordering - port
-those tests with an explicit `ORDER BY`, or accept the order difference.
-
-### Cloning the recursion node
-
-`LogicalRecursiveReference` is a **back-edge** to its `LogicalRecursiveUnion`,
-so the recursive-member subtree is a graph, not a tree, and a structural
-deep-copy desyncs (the bottom-up clone visits the descendant reference before
-the ancestor union exists). Use **identity-based cloning**: both the union and
-every reference hold a shared recursion token. When cloning a
-`LogicalRecursiveUnion`, *pre-seed* the clone scope - mint the new token and
-fresh canonical working-table slots and register old->new - **before** cloning
-children, so every back-edge encountered during the descent rewires to the
-clone. Invariant: a union and all its references are cloned together as one
-slot-scope unit; assert that a reference's token resolves within scope. Extend
-`LogicalOperatorCloner` with a recursion-token map and a special-cased
-`CloneRecursiveUnion`.
-
-### Reuse vs. new infrastructure
-
-Reuse: all syntax/binding/validation; `CommonTableExpressionSymbol.Anchor` /
-`RecursiveMembers`; `LogicalOperatorCloner`; `LogicalUnion` ->
-`ConcatenationIterator`; `SpooledRowStore`; `LogicalApply`/`LogicalJoin` ->
-nested loops; `LogicalCompute`; `LogicalAssert`.
-
-New: `LogicalRecursiveUnion` / `LogicalRecursiveReference` (+ kinds, rewriter /
-cloner hooks, show plan); their `Physical*` counterparts (+ `Planner`,
-`PhysicalPlanVerifier`, show plan); their `Executable*` counterparts + `Emitter`
-branches; `RecursionIterator` + `RecursiveReferenceIterator` +
-`RecursiveWorkTable`; a defensive guard on the `EmitTableScan`
-`SchemaTableSymbol` cast.
-
-### Phasing
-
-1. Non-recursive, single reference - unblocks the `AlgebrizerTests` CTE case and
-   makes a CTE *execute* end-to-end.
-2. Non-recursive, multiple references - clone per reference.
-3. Recursive (working-table model + iterators).
-
-Add evaluation tests throughout (none exist today): port the `nquery-old` CTE
-corpus and compare each CTE's output against the hand-inlined equivalent.
-
-### Open questions / cleanups
+Remaining follow-ups:
 
 * **`CommonTableExpressionSymbol` construction.** The constructor leaks a
   partially-constructed `this` into binder callbacks and encodes an implicit,
@@ -370,4 +242,5 @@ corpus and compare each CTE's output against the hand-inlined equivalent.
   diagnostic quality becomes a goal.
 * **Benchmark** deep vs. wide hierarchies to validate the working-table choice,
   and ensure the recursive join builds its hash on the (small) frontier, not the
-  base relation.
+  base relation (there is no cost model yet, and the hash match always builds on
+  the join's left).

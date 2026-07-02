@@ -31,8 +31,8 @@ internal sealed class ExecutableAssert : ExecutableOperator
         _predicate = ExpressionCompiler.CompilePredicate(condition, slotIndices);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        return new AssertIterator(_input.CreateIterator(outer), _predicate, _message, outer);
+        return new AssertIterator(_input.CreateIterator(workTables, outer), _predicate, _message, outer);
     }
 }

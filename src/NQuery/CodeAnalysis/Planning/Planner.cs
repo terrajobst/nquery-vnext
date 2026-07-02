@@ -52,6 +52,10 @@ internal static class Planner
                 return PlanStreamAggregates((LogicalAggregate)node);
             case LogicalOperatorKind.Union:
                 return PlanUnion((LogicalUnion)node);
+            case LogicalOperatorKind.RecursiveUnion:
+                return PlanRecursiveUnion((LogicalRecursiveUnion)node);
+            case LogicalOperatorKind.RecursiveReference:
+                return PlanRecursiveReference((LogicalRecursiveReference)node);
             case LogicalOperatorKind.IntersectOrExcept:
                 return PlanIntersectOrExcept((LogicalIntersectOrExcept)node);
             case LogicalOperatorKind.Sort:
@@ -109,14 +113,19 @@ internal static class Planner
             // on, so materialize it with a compute on that input. Doing it here, rather
             // than as a logical rewrite, keeps the nested-loops fallback's predicate
             // inline -- only the chosen hash match pays for the compute. The extra slot
-            // leaks into the hash match's output but is dropped by the enclosing
-            // projection (a join is never the query's output).
+            // leaks into the hash match's output, so a projection back onto the join's
+            // own outputs drops it -- there is not always an enclosing projection to do
+            // that (ProjectMerger removes one that became an identity, e.g. over inlined
+            // CTE references), and a leaked slot would widen the query's output row.
             if (key.BuildComputedValue is not null)
                 build = new PhysicalComputeScalar(build, ImmutableArray.Create(key.BuildComputedValue));
             if (key.ProbeComputedValue is not null)
                 probe = new PhysicalComputeScalar(probe, ImmutableArray.Create(key.ProbeComputedValue));
 
-            return new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe);
+            var hashMatch = new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe);
+            return key.BuildComputedValue is null && key.ProbeComputedValue is null
+                ? hashMatch
+                : new PhysicalProject(hashMatch, node.OutputValueSlots);
         }
 
         // Nested loops can't produce a full outer join. Expanding it into operators
@@ -394,6 +403,22 @@ internal static class Planner
                                .Zip(node.Comparers, (v, c) => new LogicalComparedValue(v.ValueSlot, c))
                                .ToImmutableArray();
         return new PhysicalSort(isDistinct: true, concatenation, sortedValues);
+    }
+
+    // The recursion node lowers one-to-one; only its subtrees choose algorithms. The
+    // recursive reference is an ordinary relation here, so the join planner above is
+    // free to pick a hash match for the recursive step (the working-table model's whole
+    // point); an index-spool specialization could slot in here later.
+    private static PhysicalOperator PlanRecursiveUnion(LogicalRecursiveUnion node)
+    {
+        var anchor = PlanOperator(node.Anchor);
+        var members = node.RecursiveMembers.Select(PlanOperator).ToImmutableArray();
+        return new PhysicalRecursiveUnion(node.Token, anchor, members, node.DefinedValues);
+    }
+
+    private static PhysicalOperator PlanRecursiveReference(LogicalRecursiveReference node)
+    {
+        return new PhysicalRecursiveReference(node.Token, node.OutputValueSlots);
     }
 
     private static PhysicalOperator PlanIntersectOrExcept(LogicalIntersectOrExcept node)

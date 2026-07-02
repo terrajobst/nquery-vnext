@@ -68,6 +68,12 @@ internal sealed class ColumnPruner : LogicalOperatorRewriter
                     return RewriteAggregate((LogicalAggregate)node);
                 case LogicalOperatorKind.Union:
                     return RewriteUnion((LogicalUnion)node);
+                case LogicalOperatorKind.RecursiveUnion:
+                    return RewriteRecursiveUnion((LogicalRecursiveUnion)node);
+                case LogicalOperatorKind.RecursiveReference:
+                    // A leaf whose columns are the working table's; the table carries every
+                    // CTE column (references read it positionally), so nothing is narrowed.
+                    return node;
                 case LogicalOperatorKind.IntersectOrExcept:
                     return RewriteIntersectOrExcept((LogicalIntersectOrExcept)node);
                 case LogicalOperatorKind.Sort:
@@ -213,6 +219,21 @@ internal sealed class ColumnPruner : LogicalOperatorRewriter
             return inputs == node.Inputs && kept.Length == node.DefinedValues.Length
                 ? node
                 : new LogicalUnion(node.IsUnionAll, inputs, kept, node.Comparers);
+        }
+
+        private LogicalOperator RewriteRecursiveUnion(LogicalRecursiveUnion node)
+        {
+            // The recursion boundary is opaque: the working table carries every CTE column
+            // and the reference leaves read it positionally, so no unified column can be
+            // dropped -- keep every input slot live and prune within the subtrees only.
+            foreach (var value in node.DefinedValues)
+                MarkUsed(value.InputValueSlots);
+
+            var anchor = Rewrite(node.Anchor);
+            var members = RewriteMany(node.RecursiveMembers);
+            return anchor == node.Anchor && members == node.RecursiveMembers
+                ? node
+                : new LogicalRecursiveUnion(node.Token, anchor, members, node.DefinedValues);
         }
 
         private LogicalOperator RewriteIntersectOrExcept(LogicalIntersectOrExcept node)

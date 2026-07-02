@@ -32,6 +32,9 @@ internal sealed class ExecutablePlan
 
     public Iterator CreateIterator()
     {
-        return _root.CreateIterator(outer: null);
+        // A fresh registry per execution: a recursive union and its reference leaves
+        // resolve their shared token against it, so concurrent executions of the same
+        // plan never share recursion state.
+        return _root.CreateIterator(new RecursiveWorkTableRegistry(), outer: null);
     }
 }

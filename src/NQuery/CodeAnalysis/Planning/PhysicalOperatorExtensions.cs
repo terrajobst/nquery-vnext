@@ -26,6 +26,7 @@ internal static class PhysicalOperatorExtensions
             PhysicalNestedLoops n => [n.Left, n.Right],
             PhysicalHashMatch n => [n.Build, n.Probe],
             PhysicalConcatenation n => n.Inputs,
+            PhysicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
             _ => []
         };
     }

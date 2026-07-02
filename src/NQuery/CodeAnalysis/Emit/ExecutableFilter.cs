@@ -26,9 +26,9 @@ internal sealed class ExecutableFilter : ExecutableOperator
         _predicate = Conjoin(predicates);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        return new FilterIterator(_input.CreateIterator(outer), _predicate, outer);
+        return new FilterIterator(_input.CreateIterator(workTables, outer), _predicate, outer);
     }
 
     // Each conjunct already yields false on NULL, so AND-ing gives WHERE semantics.

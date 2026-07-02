@@ -12,5 +12,5 @@ internal sealed class ExecutableConstant : ExecutableOperator
     {
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer) => new ConstantIterator();
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer) => new ConstantIterator();
 }

@@ -14,5 +14,7 @@ internal enum PhysicalOperatorKind
     Sort,
     Top,
     Concatenation,
+    RecursiveUnion,
+    RecursiveReference,
     Assert
 }

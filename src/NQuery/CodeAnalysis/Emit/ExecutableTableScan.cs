@@ -20,5 +20,5 @@ internal sealed class ExecutableTableScan : ExecutableOperator
         _rowWriter = rowWriter;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer) => new TableIterator(_definition, _layout, _rowWriter);
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer) => new TableIterator(_definition, _layout, _rowWriter);
 }

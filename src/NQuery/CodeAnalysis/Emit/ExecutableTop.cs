@@ -19,9 +19,9 @@ internal sealed class ExecutableTop : ExecutableOperator
         _tieEntries = tieEntries;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var input = _input.CreateIterator(outer);
+        var input = _input.CreateIterator(workTables, outer);
         if (_tieEntries.IsEmpty)
             return new TopIterator(input, _limit);
 

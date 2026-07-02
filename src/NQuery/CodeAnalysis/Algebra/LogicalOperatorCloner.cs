@@ -5,8 +5,8 @@ namespace NQuery.CodeAnalysis.Algebra;
 // Produces a deep copy of a logical subtree with every value slot it *defines*
 // replaced by a fresh duplicate, and every reference remapped to match. Two clones
 // of the same subtree are therefore slot-disjoint, which is what lets an operator
-// consume an input twice -- the full-outer-join expansion needs this, and CTE
-// instantiation eventually will too.
+// consume an input twice -- the full-outer-join expansion and multiply-referenced
+// CTE instantiation both need this.
 //
 // The discipline mirrors the bound-tree Instantiator: one slot map per clone;
 // children are cloned first, then the slots this node newly introduces are
@@ -21,6 +21,14 @@ namespace NQuery.CodeAnalysis.Algebra;
 internal sealed class LogicalOperatorCloner
 {
     private readonly Dictionary<ValueSlot, ValueSlot> _slotMap = new();
+
+    // A LogicalRecursiveReference is a back-edge to its LogicalRecursiveUnion, so the
+    // recursive-member subtrees form a graph, not a tree. Cloning is identity-based:
+    // CloneRecursiveUnion mints the clone's token *before* descending, so every
+    // reference encountered underneath rewires to the clone through this map. A union
+    // and its references are one slot-scope unit -- a reference whose token isn't in
+    // the map is being cloned without its union, which is malformed.
+    private readonly Dictionary<RecursionToken, RecursionToken> _tokenMap = new();
 
     public LogicalOperator Clone(LogicalOperator node)
     {
@@ -45,6 +53,10 @@ internal sealed class LogicalOperatorCloner
                 return CloneAggregate((LogicalAggregate)node);
             case LogicalOperatorKind.Union:
                 return CloneUnion((LogicalUnion)node);
+            case LogicalOperatorKind.RecursiveUnion:
+                return CloneRecursiveUnion((LogicalRecursiveUnion)node);
+            case LogicalOperatorKind.RecursiveReference:
+                return CloneRecursiveReference((LogicalRecursiveReference)node);
             case LogicalOperatorKind.IntersectOrExcept:
                 return CloneIntersectOrExcept((LogicalIntersectOrExcept)node);
             case LogicalOperatorKind.Sort:
@@ -145,6 +157,32 @@ internal sealed class LogicalOperatorCloner
                                 .Select(v => new LogicalUnifiedValue(Introduce(v.ValueSlot), v.InputValueSlots.Select(Map)))
                                 .ToImmutableArray();
         return new LogicalUnion(node.IsUnionAll, inputs, definedValues, node.Comparers);
+    }
+
+    private LogicalOperator CloneRecursiveUnion(LogicalRecursiveUnion node)
+    {
+        // Pre-seed the recursion identity before cloning children: the member subtrees
+        // contain back-edge references that must rewire to the clone's token, and the
+        // bottom-up clone visits them before this node's own values.
+        var token = new RecursionToken(node.Token.Name);
+        _tokenMap.Add(node.Token, token);
+
+        var anchor = Clone(node.Anchor);
+        var members = node.RecursiveMembers.Select(Clone).ToImmutableArray();
+        var definedValues = node.DefinedValues
+                                .Select(v => new LogicalUnifiedValue(Introduce(v.ValueSlot), v.InputValueSlots.Select(Map)))
+                                .ToImmutableArray();
+        return new LogicalRecursiveUnion(token, anchor, members, definedValues);
+    }
+
+    private LogicalOperator CloneRecursiveReference(LogicalRecursiveReference node)
+    {
+        if (!_tokenMap.TryGetValue(node.Token, out var token))
+            throw new InvalidOperationException($"Recursive reference '{node.Token.Name}' is being cloned without its recursive union; a union and its references must be cloned together as one unit.");
+
+        // Like a table scan, the leaf introduces its output slots.
+        var outputs = node.OutputValueSlots.Select(Introduce).ToImmutableArray();
+        return new LogicalRecursiveReference(token, outputs);
     }
 
     private LogicalOperator CloneIntersectOrExcept(LogicalIntersectOrExcept node)

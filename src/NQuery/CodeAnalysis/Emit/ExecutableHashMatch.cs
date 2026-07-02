@@ -61,10 +61,10 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
         _remainder = CompileConjunction(remainder, slotIndices);
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var build = _build.CreateIterator(outer);
-        var probe = _probe.CreateIterator(outer);
+        var build = _build.CreateIterator(workTables, outer);
+        var probe = _probe.CreateIterator(workTables, outer);
 
         // The join key on each side is read boxed (it becomes the hash-table key), so it
         // is resolved to an entry over that side's row buffer.

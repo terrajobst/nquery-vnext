@@ -21,9 +21,9 @@ internal sealed class ExecutableConcatenation : ExecutableOperator
         _definedValues = definedValues;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var inputs = _inputs.Select(i => i.CreateIterator(outer)).ToImmutableArray();
+        var inputs = _inputs.Select(i => i.CreateIterator(workTables, outer)).ToImmutableArray();
         var inputEntries = Enumerable.Range(0, inputs.Length)
                                      .Select(i =>
                                      {

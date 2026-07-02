@@ -48,6 +48,18 @@ internal sealed class Algebrizer
     // break slot uniqueness.
     private readonly Dictionary<BoundExpression, ValueSlot> _subselectSlots = new();
 
+    // The instantiated body of each CTE already referenced once. The symbol holds a single
+    // bound body, so algebrizing it twice would re-mint the same slots (GetSlot is keyed by
+    // IBoundValue) and leave two operators defining them; instead the first reference's
+    // instantiation is cached here and every further reference gets a slot-disjoint clone.
+    private readonly Dictionary<CommonTableExpressionSymbol, LogicalOperator> _cteInstances = new();
+
+    // The recursive CTEs whose recursive members are currently being algebrized, with the
+    // recursion token of the enclosing LogicalRecursiveUnion. A reference to one of these is
+    // the CTE's self-reference and becomes a LogicalRecursiveReference (the working table)
+    // rather than a fresh instantiation.
+    private readonly Dictionary<CommonTableExpressionSymbol, RecursionToken> _activeRecursions = new();
+
     public static LogicalQuery Algebrize(BoundQuery query)
     {
         ThrowIfNull(query);
@@ -768,10 +780,93 @@ internal sealed class Algebrizer
         return new LogicalUnifiedValue(GetSlot(value.Value), value.InputValues.Select(GetSlot));
     }
 
-    private LogicalTableScan AlgebrizeNamedTableReference(BoundNamedTableReference node)
+    private LogicalOperator AlgebrizeNamedTableReference(BoundNamedTableReference node)
     {
+        // A CTE reference is not a scannable table; it is instantiated (or, inside its own
+        // recursion, turned into a working-table reference) here.
+        if (node.TableInstance.Table is CommonTableExpressionSymbol commonTableExpression)
+            return AlgebrizeCommonTableExpressionReference(node, commonTableExpression);
+
         var slots = node.DefinedValues.Select(c => GetSlot(c.BoundValue)).ToImmutableArray();
         return new LogicalTableScan(node.TableInstance, node.DefinedValues, slots);
+    }
+
+    private LogicalOperator AlgebrizeCommonTableExpressionReference(BoundNamedTableReference node, CommonTableExpressionSymbol symbol)
+    {
+        // Inside one of the CTE's own recursive members, a reference to the CTE is the
+        // self-reference: a leaf scanning the current recursion frontier. Each reference
+        // defines its own slots (like a fresh table-scan instance); they line up with the
+        // enclosing union's columns positionally.
+        if (_activeRecursions.TryGetValue(symbol, out var token))
+        {
+            var slots = node.DefinedValues.Select(c => GetSlot(c.BoundValue)).ToImmutableArray();
+            return new LogicalRecursiveReference(token, slots);
+        }
+
+        // Instantiate the body per reference, like a derived table -- deliberately not a
+        // barrier, so the optimizer can specialize each copy and push predicates into it.
+        // The first reference consumes the instantiation as-is; every further reference
+        // gets a slot-disjoint clone (the trees are immutable, so cloning the cached
+        // original any number of times is sound).
+        if (_cteInstances.TryGetValue(symbol, out var instance))
+        {
+            instance = new LogicalOperatorCloner().Clone(instance);
+        }
+        else
+        {
+            instance = InstantiateCommonTableExpression(symbol);
+            _cteInstances.Add(symbol, instance);
+        }
+
+        // The reference's column instances alias the instance's output columns positionally
+        // (the binder builds the CTE's columns positionally from its body's output columns).
+        // Registering them before any expression is algebrized -- FROM comes first -- makes
+        // every reference to a CTE column resolve to the instance's slot, exactly like a
+        // derived table's column aliasing.
+        var outputs = instance.OutputValueSlots;
+        for (var i = 0; i < node.DefinedValues.Length; i++)
+            _slots.Add(node.DefinedValues[i].BoundValue, outputs[i]);
+
+        return instance;
+    }
+
+    // Algebrizes a CTE's bound body into the subtree a reference inlines. Non-recursive:
+    // the anchor, projected onto the CTE's columns. Recursive: a LogicalRecursiveUnion
+    // owning the anchor and the recursive members, whose self-references resolve to
+    // LogicalRecursiveReference leaves via _activeRecursions.
+    private LogicalOperator InstantiateCommonTableExpression(CommonTableExpressionSymbol symbol)
+    {
+        // A symbol without a body only comes out of error binding, and compilation stops
+        // on diagnostics before algebrization.
+        var anchorQuery = symbol.Anchor!;
+        var anchor = AlgebrizeQuery(anchorQuery);
+        var anchorOutputs = symbol.Columns
+                                  .Select((_, i) => GetSlot(anchorQuery.OutputColumns[i].BoundValue))
+                                  .ToImmutableArray();
+
+        if (symbol.RecursiveMembers.IsEmpty)
+            return new LogicalProject(anchor, anchorOutputs);
+
+        var token = new RecursionToken(symbol.Name);
+        _activeRecursions.Add(symbol, token);
+        var members = symbol.RecursiveMembers.Select(AlgebrizeQuery).ToImmutableArray();
+        _activeRecursions.Remove(symbol);
+
+        // Unify the anchor's and each member's output columns into fresh output slots --
+        // the working table's columns. InputValueSlots order: anchor first, then the
+        // members in order (the layout LogicalRecursiveUnion documents).
+        var definedValues = ImmutableArray.CreateBuilder<LogicalUnifiedValue>(symbol.Columns.Length);
+        for (var i = 0; i < symbol.Columns.Length; i++)
+        {
+            var column = symbol.Columns[i];
+            var output = _valueSlotFactory.CreateNamed($"{symbol.Name}.{column.Name}", column.Type);
+            var index = i;
+            var inputs = new[] { anchorOutputs[index] }
+                .Concat(symbol.RecursiveMembers.Select(m => GetSlot(m.OutputColumns[index].BoundValue)));
+            definedValues.Add(new LogicalUnifiedValue(output, inputs));
+        }
+
+        return new LogicalRecursiveUnion(token, anchor, members, definedValues.MoveToImmutable());
     }
 
     private readonly struct PendingApply

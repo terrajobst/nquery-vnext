@@ -61,6 +61,10 @@ internal static class Emitter
                 return EmitStreamAggregates((PhysicalStreamAggregates)node, outerSlots);
             case PhysicalOperatorKind.Concatenation:
                 return EmitConcatenation((PhysicalConcatenation)node, outerSlots);
+            case PhysicalOperatorKind.RecursiveUnion:
+                return EmitRecursiveUnion((PhysicalRecursiveUnion)node, outerSlots);
+            case PhysicalOperatorKind.RecursiveReference:
+                return EmitRecursiveReference((PhysicalRecursiveReference)node);
             case PhysicalOperatorKind.Assert:
                 return EmitAssert((PhysicalAssert)node, outerSlots);
             default:
@@ -70,7 +74,12 @@ internal static class Emitter
 
     private static ExecutableOperator EmitTableScan(PhysicalTableScan node)
     {
-        var schemaTable = (SchemaTableSymbol)node.TableInstance.Table;
+        // Only a schema table can be scanned. A CTE-backed table instance must have been
+        // instantiated by the algebrizer (AlgebrizeCommonTableExpressionReference); one
+        // reaching the emitter means that step was skipped, so fail with the cause rather
+        // than an InvalidCastException.
+        if (node.TableInstance.Table is not SchemaTableSymbol schemaTable)
+            throw new InvalidOperationException($"The table scan over '{node.TableInstance.Name}' references a {node.TableInstance.Table.TableKind} table, which has no scannable definition. Non-schema tables (e.g. common table expressions) must be instantiated during algebrization and never reach the emitter.");
         var layout = RowBufferLayout.Create(node.OutputValueSlots);
         var definitions = node.DefinedValues.Select(ci => ci.Column.Definition!).ToImmutableArray();
 
@@ -163,5 +172,21 @@ internal static class Emitter
     private static ExecutableOperator EmitAssert(PhysicalAssert node, ImmutableArray<ValueSlot> outerSlots)
     {
         return new ExecutableAssert(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.Condition, node.Message, outerSlots);
+    }
+
+    // The union and its reference leaves both carry the recursion token; at run time
+    // they resolve it against the per-execution RecursiveWorkTableRegistry, so no
+    // emit-time state connects them.
+    private static ExecutableOperator EmitRecursiveUnion(PhysicalRecursiveUnion node, ImmutableArray<ValueSlot> outerSlots)
+    {
+        var anchor = EmitOperator(node.Anchor, outerSlots);
+        var members = node.RecursiveMembers.Select(m => EmitOperator(m, outerSlots)).ToImmutableArray();
+        return new ExecutableRecursiveUnion(node.OutputValueSlots, node.Token, anchor, members, node.DefinedValues);
+    }
+
+    private static ExecutableOperator EmitRecursiveReference(PhysicalRecursiveReference node)
+    {
+        var layout = RowBufferLayout.Create(node.OutputValueSlots);
+        return new ExecutableRecursiveReference(node.OutputValueSlots, node.Token, layout);
     }
 }

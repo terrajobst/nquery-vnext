@@ -33,6 +33,10 @@ internal abstract class LogicalOperatorRewriter
                 return RewriteAggregate((LogicalAggregate)node);
             case LogicalOperatorKind.Union:
                 return RewriteUnion((LogicalUnion)node);
+            case LogicalOperatorKind.RecursiveUnion:
+                return RewriteRecursiveUnion((LogicalRecursiveUnion)node);
+            case LogicalOperatorKind.RecursiveReference:
+                return RewriteRecursiveReference((LogicalRecursiveReference)node);
             case LogicalOperatorKind.IntersectOrExcept:
                 return RewriteIntersectOrExcept((LogicalIntersectOrExcept)node);
             case LogicalOperatorKind.Sort:
@@ -99,6 +103,19 @@ internal abstract class LogicalOperatorRewriter
         var inputs = RewriteMany(node.Inputs);
         return inputs == node.Inputs ? node : new LogicalUnion(node.IsUnionAll, inputs, node.DefinedValues, node.Comparers);
     }
+
+    // The recursion boundary is opaque: passes rewrite the anchor and member subtrees
+    // normally but never move anything across the union or touch its unified outputs.
+    protected virtual LogicalOperator RewriteRecursiveUnion(LogicalRecursiveUnion node)
+    {
+        var anchor = RewriteRelation(node.Anchor);
+        var members = RewriteMany(node.RecursiveMembers);
+        return anchor == node.Anchor && members == node.RecursiveMembers
+            ? node
+            : new LogicalRecursiveUnion(node.Token, anchor, members, node.DefinedValues);
+    }
+
+    protected virtual LogicalOperator RewriteRecursiveReference(LogicalRecursiveReference node) => node;
 
     protected virtual LogicalOperator RewriteIntersectOrExcept(LogicalIntersectOrExcept node)
     {

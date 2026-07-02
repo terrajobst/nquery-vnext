@@ -218,6 +218,43 @@ public class EmitterExecutionTests
     }
 
     [Fact]
+    public void ExecutablePlan_SupportsConcurrentCreateIterator_ForRecursiveCte()
+    {
+        // A recursive union and its reference leaves share their work table through a
+        // per-execution registry (created in ExecutablePlan.CreateIterator), so one
+        // emitted plan can build and run iterators from many threads at once without
+        // executions seeing each other's recursion state.
+        var text = @"
+            WITH EmployeeHierarchy AS (
+                SELECT  e.EmployeeID
+                FROM    Employees e
+                WHERE   e.ReportsTo IS NULL
+                UNION ALL
+                SELECT  e.EmployeeID
+                FROM    Employees e
+                            INNER JOIN EmployeeHierarchy eh ON e.ReportsTo = eh.EmployeeID
+            )
+            SELECT  eh.EmployeeID
+            FROM    EmployeeHierarchy eh
+            ORDER   BY 1
+        ";
+        var plan = Emitter.Emit(Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)));
+
+        var reference = Drain(plan);
+        Assert.NotEmpty(reference);
+
+        var runs = new List<object[]>[16];
+        Parallel.For(0, runs.Length, i => runs[i] = Drain(plan));
+
+        foreach (var run in runs)
+        {
+            Assert.Equal(reference.Count, run.Count);
+            for (var i = 0; i < reference.Count; i++)
+                Assert.Equal(reference[i], run[i]);
+        }
+    }
+
+    [Fact]
     public void NewPipeline_ThrowsForMultiRowScalarSubquery()
     {
         // A scalar subquery that returns more than one row is a runtime error: the

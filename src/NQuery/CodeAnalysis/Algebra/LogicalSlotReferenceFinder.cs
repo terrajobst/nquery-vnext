@@ -57,6 +57,12 @@ internal static class LogicalSlotReferenceFinder
             case LogicalOperatorKind.Union:
                 AddUnion((LogicalUnion)node, slots);
                 break;
+            case LogicalOperatorKind.RecursiveUnion:
+                AddRecursiveUnion((LogicalRecursiveUnion)node, slots);
+                break;
+            case LogicalOperatorKind.RecursiveReference:
+                AddRecursiveReference((LogicalRecursiveReference)node, slots);
+                break;
             case LogicalOperatorKind.IntersectOrExcept:
                 AddIntersectOrExcept((LogicalIntersectOrExcept)node, slots);
                 break;
@@ -139,6 +145,21 @@ internal static class LogicalSlotReferenceFinder
                 slots.Add(input);
         foreach (var input in node.Inputs)
             AddOperator(input, slots);
+    }
+
+    private static void AddRecursiveUnion(LogicalRecursiveUnion node, HashSet<ValueSlot> slots)
+    {
+        foreach (var value in node.DefinedValues)
+            foreach (var input in value.InputValueSlots)
+                slots.Add(input);
+        AddOperator(node.Anchor, slots);
+        foreach (var member in node.RecursiveMembers)
+            AddOperator(member, slots);
+    }
+
+    private static void AddRecursiveReference(LogicalRecursiveReference node, HashSet<ValueSlot> slots)
+    {
+        // A leaf: like a table scan, it defines slots but references none.
     }
 
     private static void AddIntersectOrExcept(LogicalIntersectOrExcept node, HashSet<ValueSlot> slots)

@@ -129,12 +129,6 @@ public class OldEngineDefinitionTests
             if (document.SelectSingleNode("/test/expectedResults") is null)
                 continue;
 
-            // Skip queries that use a CTE: the current engine binds them but does not yet
-            // instantiate them downstream (see REFACTORING.md, "Port Common Table Expressions"),
-            // so they are known-unsupported rather than a differential mismatch worth flagging.
-            if (UsesCommonTableExpression(document.SelectSingleNode("/test/sql")!.InnerText))
-                continue;
-
             // A nice, stable display name: "<Folder>/<File>".
             var name = Path.Combine(
                 Path.GetFileName(Path.GetDirectoryName(file)!),
@@ -198,11 +192,6 @@ public class OldEngineDefinitionTests
     private static bool HasTopLevelOrderBy(string sql)
     {
         return SyntaxTree.ParseQuery(sql).Root.Root is OrderedQuerySyntax;
-    }
-
-    private static bool UsesCommonTableExpression(string sql)
-    {
-        return SyntaxTree.ParseQuery(sql).Root.DescendantNodes().OfType<CommonTableExpressionQuerySyntax>().Any();
     }
 
     private static List<object[]> RunQuery(string sql)

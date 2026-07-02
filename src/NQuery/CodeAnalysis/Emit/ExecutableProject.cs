@@ -17,9 +17,9 @@ internal sealed class ExecutableProject : ExecutableOperator
         _outputs = outputs;
     }
 
-    public override Iterator CreateIterator(RowBuffer? outer)
+    public override Iterator CreateIterator(RecursiveWorkTableRegistry workTables, RowBuffer? outer)
     {
-        var input = _input.CreateIterator(outer);
+        var input = _input.CreateIterator(workTables, outer);
         var allocation = Allocate(_input, input);
         var entries = _outputs.Select(s => allocation[s]);
         return new ProjectionIterator(input, entries);

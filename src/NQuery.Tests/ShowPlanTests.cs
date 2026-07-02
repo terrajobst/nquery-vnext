@@ -27,6 +27,7 @@ public class ShowPlanTests
     [InlineData("SELECT e.City FROM Employees e INTERSECT SELECT c.City FROM Customers c")]
     [InlineData("SELECT d.City FROM (SELECT e.City FROM Employees e) AS d")]
     [InlineData("WITH X AS (SELECT e.City FROM Employees e) SELECT x.City FROM X x")]
+    [InlineData("WITH X AS (SELECT e.EmployeeID FROM Employees e WHERE e.ReportsTo IS NULL UNION ALL SELECT e.EmployeeID FROM Employees e INNER JOIN X x ON e.ReportsTo = x.EmployeeID) SELECT x.EmployeeID FROM X x")]
     [InlineData("SELECT (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) FROM Employees e")]
     [InlineData("SELECT e.FirstName FROM Employees e WHERE EXISTS (SELECT * FROM Orders o WHERE o.EmployeeID = e.EmployeeID)")]
     [InlineData("SELECT e.FirstName FROM Employees e WHERE e.EmployeeID IN (SELECT o.EmployeeID FROM Orders o)")]

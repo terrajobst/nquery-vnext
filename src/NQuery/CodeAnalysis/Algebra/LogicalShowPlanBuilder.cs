@@ -43,6 +43,10 @@ internal static class LogicalShowPlanBuilder
                 return BuildAggregate((LogicalAggregate)node);
             case LogicalOperatorKind.Union:
                 return BuildUnion((LogicalUnion)node);
+            case LogicalOperatorKind.RecursiveUnion:
+                return BuildRecursiveUnion((LogicalRecursiveUnion)node);
+            case LogicalOperatorKind.RecursiveReference:
+                return BuildRecursiveReference((LogicalRecursiveReference)node);
             case LogicalOperatorKind.IntersectOrExcept:
                 return BuildIntersectOrExcept((LogicalIntersectOrExcept)node);
             case LogicalOperatorKind.Sort:
@@ -119,6 +123,19 @@ internal static class LogicalShowPlanBuilder
         var outputs = BuildUnifiedValues(node.DefinedValues);
         var children = node.Inputs.Select(Build);
         return new ShowPlanNode($"{kind} {outputs}", NoProperties, children);
+    }
+
+    private static ShowPlanNode BuildRecursiveUnion(LogicalRecursiveUnion node)
+    {
+        var outputs = BuildUnifiedValues(node.DefinedValues);
+        var children = new[] { Build(node.Anchor) }.Concat(node.RecursiveMembers.Select(Build));
+        return new ShowPlanNode($"RecursiveUnion ({node.Token.Name}) {outputs}", NoProperties, children);
+    }
+
+    private static ShowPlanNode BuildRecursiveReference(LogicalRecursiveReference node)
+    {
+        var columns = string.Join(@", ", node.OutputValueSlots.Select(s => s.Name));
+        return new ShowPlanNode($"RecursiveReference ({node.Token.Name}), DefinedValues := {columns}", NoProperties, NoChildren);
     }
 
     private static ShowPlanNode BuildIntersectOrExcept(LogicalIntersectOrExcept node)

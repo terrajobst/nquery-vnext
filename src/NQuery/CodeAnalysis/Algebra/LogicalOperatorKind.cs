@@ -12,6 +12,8 @@ internal enum LogicalOperatorKind
     Apply,
     Aggregate,
     Union,
+    RecursiveUnion,
+    RecursiveReference,
     IntersectOrExcept,
     Sort,
     Top,
