@@ -53,6 +53,7 @@ internal static class PhysicalPlanVerifier
             PhysicalHashMatch n => [n.Build, n.Probe],
             PhysicalConcatenation n => n.Inputs,
             PhysicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
+            PhysicalIndexSpool n => [n.Input],
             PhysicalEmpty or PhysicalConstant or PhysicalTableScan or PhysicalRecursiveReference => [],
             _ => throw ExceptionBuilder.UnexpectedValue(node.Kind),
         };
@@ -96,6 +97,9 @@ internal static class PhysicalPlanVerifier
                 break;
             case PhysicalOperatorKind.RecursiveUnion:
                 VerifyRecursiveUnion((PhysicalRecursiveUnion)node, outerSlots);
+                break;
+            case PhysicalOperatorKind.IndexSpool:
+                VerifyIndexSpool((PhysicalIndexSpool)node, outerSlots);
                 break;
             case PhysicalOperatorKind.NestedLoops:
                 VerifyNestedLoops((PhysicalNestedLoops)node, outerSlots);
@@ -200,6 +204,16 @@ internal static class PhysicalPlanVerifier
             var memberScope = Scope(ImmutableArray<ValueSlot>.Empty, node.RecursiveMembers[i].OutputValueSlots);
             RequireAvailable(node, "unified member slot", node.DefinedValues.Select(d => d.InputValueSlots[i + 1]), memberScope);
         }
+    }
+
+    private static void VerifyIndexSpool(PhysicalIndexSpool node, ImmutableArray<ValueSlot> outerSlots)
+    {
+        VerifyOperator(node.Input, outerSlots);
+
+        // The index key is read from the spooled rows, so it must be an input output;
+        // the probe is read from the outer row alone, so it must be an outer slot.
+        RequireAvailable(node, "index key", new[] { node.IndexKey }, Scope(ImmutableArray<ValueSlot>.Empty, node.Input.OutputValueSlots));
+        RequireAvailable(node, "probe key", new[] { node.ProbeKey }, Scope(outerSlots));
     }
 
     private static void VerifyNestedLoops(PhysicalNestedLoops node, ImmutableArray<ValueSlot> outerSlots)

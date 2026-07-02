@@ -47,6 +47,8 @@ internal static class PhysicalShowPlanBuilder
                 return BuildRecursiveUnion((PhysicalRecursiveUnion)node);
             case PhysicalOperatorKind.RecursiveReference:
                 return BuildRecursiveReference((PhysicalRecursiveReference)node);
+            case PhysicalOperatorKind.IndexSpool:
+                return BuildIndexSpool((PhysicalIndexSpool)node);
             case PhysicalOperatorKind.Assert:
                 return BuildAssert((PhysicalAssert)node);
             default:
@@ -143,6 +145,13 @@ internal static class PhysicalShowPlanBuilder
     {
         var columns = string.Join(@", ", node.OutputValueSlots.Select(s => s.Name));
         return new ShowPlanNode($"Recursive Reference ({node.Token.Name}), DefinedValues := {columns}", NoProperties, NoChildren);
+    }
+
+    private static ShowPlanNode BuildIndexSpool(PhysicalIndexSpool node)
+    {
+        var name = $"Index Spool (Lazy) [{node.IndexKey.Name} = {node.ProbeKey.Name}]";
+        var children = new[] { Build(node.Input) };
+        return new ShowPlanNode(name, NoProperties, children);
     }
 
     private static ShowPlanNode BuildAssert(PhysicalAssert node)

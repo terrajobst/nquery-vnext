@@ -25,10 +25,10 @@ internal static class Planner
     {
         ThrowIfNull(root);
 
-        return PlanOperator(root);
+        return PlanOperator(root, ImmutableArray<ValueSlot>.Empty);
     }
 
-    private static PhysicalOperator PlanOperator(LogicalOperator node)
+    private static PhysicalOperator PlanOperator(LogicalOperator node, ImmutableArray<ValueSlot> outerSlots)
     {
         switch (node.Kind)
         {
@@ -39,31 +39,31 @@ internal static class Planner
             case LogicalOperatorKind.TableScan:
                 return PlanTableScan((LogicalTableScan)node);
             case LogicalOperatorKind.Filter:
-                return PlanFilter((LogicalFilter)node);
+                return PlanFilter((LogicalFilter)node, outerSlots);
             case LogicalOperatorKind.Compute:
-                return PlanCompute((LogicalCompute)node);
+                return PlanCompute((LogicalCompute)node, outerSlots);
             case LogicalOperatorKind.Project:
-                return PlanProject((LogicalProject)node);
+                return PlanProject((LogicalProject)node, outerSlots);
             case LogicalOperatorKind.Join:
-                return PlanJoin((LogicalJoin)node);
+                return PlanJoin((LogicalJoin)node, outerSlots);
             case LogicalOperatorKind.Apply:
-                return PlanApply((LogicalApply)node);
+                return PlanApply((LogicalApply)node, outerSlots);
             case LogicalOperatorKind.Aggregate:
-                return PlanStreamAggregates((LogicalAggregate)node);
+                return PlanStreamAggregates((LogicalAggregate)node, outerSlots);
             case LogicalOperatorKind.Union:
-                return PlanUnion((LogicalUnion)node);
+                return PlanUnion((LogicalUnion)node, outerSlots);
             case LogicalOperatorKind.RecursiveUnion:
-                return PlanRecursiveUnion((LogicalRecursiveUnion)node);
+                return PlanRecursiveUnion((LogicalRecursiveUnion)node, outerSlots);
             case LogicalOperatorKind.RecursiveReference:
                 return PlanRecursiveReference((LogicalRecursiveReference)node);
             case LogicalOperatorKind.IntersectOrExcept:
-                return PlanIntersectOrExcept((LogicalIntersectOrExcept)node);
+                return PlanIntersectOrExcept((LogicalIntersectOrExcept)node, outerSlots);
             case LogicalOperatorKind.Sort:
-                return PlanSort((LogicalSort)node);
+                return PlanSort((LogicalSort)node, outerSlots);
             case LogicalOperatorKind.Top:
-                return PlanTop((LogicalTop)node);
+                return PlanTop((LogicalTop)node, outerSlots);
             case LogicalOperatorKind.Assert:
-                return PlanAssert((LogicalAssert)node);
+                return PlanAssert((LogicalAssert)node, outerSlots);
             default:
                 throw ExceptionBuilder.UnexpectedValue(node.Kind);
         }
@@ -75,25 +75,154 @@ internal static class Planner
 
     private static PhysicalOperator PlanTableScan(LogicalTableScan node) => new PhysicalTableScan(node.TableInstance, node.DefinedValues, node.OutputValueSlots);
 
-    private static PhysicalOperator PlanFilter(LogicalFilter node)
+    private static PhysicalOperator PlanFilter(LogicalFilter node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        // A correlated filter sits inside an apply's right side, so it is re-evaluated
+        // per outer row -- and so is its whole input subtree. When the correlation is an
+        // equality against an outer slot and the input is outer-independent, an index
+        // spool turns that O(outer x inner) re-scan into one scan plus a per-row probe.
+        if (!outerSlots.IsEmpty && TryPlanIndexSpool(node, outerSlots, out var indexSpool))
+            return indexSpool;
+
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalFilter(input, node.Conditions);
     }
 
-    private static PhysicalOperator PlanCompute(LogicalCompute node)
+    // Lowers a correlated filter to an index spool: the input is scanned once, indexed
+    // by the equality's inner side, and probed by the outer slot on every re-open --
+    // essentially SQL Server's lazy spool. Structural requirements:
+    //
+    //   * some conjunct is an equality between a plain outer slot (the probe) and a
+    //     value computable from the input alone (the index key);
+    //   * the input references no outer slot -- otherwise its content changes with the
+    //     outer row and a build-once spool would serve stale rows (the eager-spool
+    //     case, which we don't attempt: such filters just stay correlated filters); and
+    //   * the input reads no recursive CTE working table, whose content changes per
+    //     recursion round the same way.
+    //
+    // The other conjuncts survive around the spool: outer-independent ones move below
+    // it (evaluated once, while spooling), the rest stay above it (evaluated per row on
+    // the probed subset) -- including any further correlated equalities.
+    private static bool TryPlanIndexSpool(LogicalFilter node, ImmutableArray<ValueSlot> outerSlots, out PhysicalOperator result)
     {
-        var input = PlanOperator(node.Input);
+        result = null!;
+
+        var inputSlots = node.Input.OutputValueSlots;
+        if (!TryFindSpoolKey(node.Conditions, inputSlots, outerSlots, out var key))
+            return false;
+
+        var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(node.Input);
+        if (outerSlots.Any(referenced.Contains))
+            return false;
+
+        if (node.Input.DescendantsAndSelf().Any(d => d.Kind == LogicalOperatorKind.RecursiveReference))
+            return false;
+
+        var remainder = node.Conditions.RemoveAt(key.ConditionIndex);
+        var below = remainder.RemoveAll(c => LogicalSlotReferenceFinder.FindReferencedSlots(c).Any(outerSlots.Contains));
+        var above = remainder.RemoveRange(below);
+
+        var input = PlanOperator(node.Input, outerSlots);
+        if (!below.IsEmpty)
+            input = new PhysicalFilter(input, below);
+        if (key.IndexComputedValue is not null)
+            input = new PhysicalComputeScalar(input, ImmutableArray.Create(key.IndexComputedValue));
+
+        result = new PhysicalIndexSpool(input, key.IndexKey, key.ProbeKey);
+
+        // A computed index key leaks an extra slot into the spool's output; project
+        // back onto the filter's own outputs to drop it (same as the hash match).
+        if (key.IndexComputedValue is not null)
+            result = new PhysicalProject(result, node.OutputValueSlots);
+
+        if (!above.IsEmpty)
+            result = new PhysicalFilter(result, above);
+
+        return true;
+    }
+
+    // Finds a conjunct usable as the spool key: an equality whose one side is a plain
+    // outer slot (the probe -- evaluated against the outer row on every re-open) and
+    // whose other side is over the input only (the index key). Like the hash match's
+    // equi-key, a plain slot = slot equality is preferred; a computed inner side is
+    // materialized by a compute below the spool. A computed *outer* side has no input
+    // to attach a compute to, so it disqualifies the conjunct.
+    private static bool TryFindSpoolKey(ImmutableArray<LogicalExpression> conditions, ImmutableArray<ValueSlot> inputSlots, ImmutableArray<ValueSlot> outerSlots, out SpoolKey key)
+    {
+        return TryFindSpoolKey(conditions, inputSlots, outerSlots, plainOnly: true, out key) ||
+               TryFindSpoolKey(conditions, inputSlots, outerSlots, plainOnly: false, out key);
+    }
+
+    private static bool TryFindSpoolKey(ImmutableArray<LogicalExpression> conditions, ImmutableArray<ValueSlot> inputSlots, ImmutableArray<ValueSlot> outerSlots, bool plainOnly, out SpoolKey key)
+    {
+        for (var i = 0; i < conditions.Length; i++)
+        {
+            if (conditions[i] is not LogicalBinaryExpression { OperatorKind: BinaryOperatorKind.Equal } equal)
+                continue;
+
+            LogicalExpression indexSide;
+            ValueSlot probeKey;
+            if (equal.Left is LogicalValueSlotExpression { ValueSlot: var leftSlot } && outerSlots.Contains(leftSlot) && ReferencesOnly(equal.Right, inputSlots))
+            {
+                indexSide = equal.Right;
+                probeKey = leftSlot;
+            }
+            else if (equal.Right is LogicalValueSlotExpression { ValueSlot: var rightSlot } && outerSlots.Contains(rightSlot) && ReferencesOnly(equal.Left, inputSlots))
+            {
+                indexSide = equal.Left;
+                probeKey = rightSlot;
+            }
+            else
+            {
+                continue;
+            }
+
+            if (plainOnly && indexSide is not LogicalValueSlotExpression)
+                continue;
+
+            var indexKey = AsKeySlot(indexSide, out var indexComputedValue);
+            key = new SpoolKey(i, indexKey, probeKey, indexComputedValue);
+            return true;
+        }
+
+        key = default;
+        return false;
+    }
+
+    private readonly struct SpoolKey
+    {
+        public SpoolKey(int conditionIndex, ValueSlot indexKey, ValueSlot probeKey, LogicalComputedValue? indexComputedValue)
+        {
+            ConditionIndex = conditionIndex;
+            IndexKey = indexKey;
+            ProbeKey = probeKey;
+            IndexComputedValue = indexComputedValue;
+        }
+
+        // Which conjunct is the key equality (it is consumed by the spool).
+        public int ConditionIndex { get; }
+
+        public ValueSlot IndexKey { get; }
+
+        public ValueSlot ProbeKey { get; }
+
+        // The compute that materializes the index key, or null when it is a plain slot.
+        public LogicalComputedValue? IndexComputedValue { get; }
+    }
+
+    private static PhysicalOperator PlanCompute(LogicalCompute node, ImmutableArray<ValueSlot> outerSlots)
+    {
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalComputeScalar(input, node.DefinedValues);
     }
 
-    private static PhysicalOperator PlanProject(LogicalProject node)
+    private static PhysicalOperator PlanProject(LogicalProject node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalProject(input, node.Outputs);
     }
 
-    private static PhysicalOperator PlanJoin(LogicalJoin node)
+    private static PhysicalOperator PlanJoin(LogicalJoin node, ImmutableArray<ValueSlot> outerSlots)
     {
         // Prefer a hash match for an equi-join it supports (inner / left outer / full
         // outer / left semi / left anti-semi). It produces FULL OUTER directly, so an
@@ -106,8 +235,8 @@ internal static class Planner
         //       (and the algorithm) by cost.
         if (CanHashMatch(node.JoinKind) && TryGetEquiKey(node, out var key))
         {
-            var build = PlanOperator(node.Left);
-            var probe = PlanOperator(node.Right);
+            var build = PlanOperator(node.Left, outerSlots);
+            var probe = PlanOperator(node.Right, outerSlots);
 
             // A computed key (e.g. ON a.x + 1 = b.y) isn't a slot the hash table can key
             // on, so materialize it with a compute on that input. Doing it here, rather
@@ -132,10 +261,10 @@ internal static class Planner
         // that can is a planning-time strategy choice, so it happens here rather than
         // in the algebra: the logical tree keeps the FULL OUTER as a single join.
         if (node.JoinKind == LogicalJoinKind.FullOuter)
-            return PlanOperator(ExpandFullOuterJoin(node));
+            return PlanOperator(ExpandFullOuterJoin(node), outerSlots);
 
-        var left = PlanOperator(node.Left);
-        var right = PlanOperator(node.Right);
+        var left = PlanOperator(node.Left, outerSlots);
+        var right = PlanOperator(node.Right, outerSlots);
         return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
     }
 
@@ -358,10 +487,19 @@ internal static class Planner
     // An Apply is a dependent join: it has no join condition of its own (the
     // correlation lives in the right subtree) and is executed as nested loops with
     // the referenced left columns exposed to the right as outer references.
-    private static PhysicalOperator PlanApply(LogicalApply node)
+    private static PhysicalOperator PlanApply(LogicalApply node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var left = PlanOperator(node.Left);
-        var right = PlanOperator(node.Right);
+        var left = PlanOperator(node.Left, outerSlots);
+
+        // The right sees the left's referenced columns on top of the ambient outer
+        // scope -- the same accumulation the emitter and verifier perform. This is what
+        // lets a correlated filter inside the right be recognized as an index-spool
+        // candidate (see PlanFilter).
+        var rightOuterSlots = node.OuterReferences.IsEmpty
+            ? outerSlots
+            : outerSlots.AddRange(node.OuterReferences);
+        var right = PlanOperator(node.Right, rightOuterSlots);
+
         return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, node.Passthru, node.OuterReferences);
     }
 
@@ -377,9 +515,9 @@ internal static class Planner
         };
     }
 
-    private static PhysicalOperator PlanStreamAggregates(LogicalAggregate node)
+    private static PhysicalOperator PlanStreamAggregates(LogicalAggregate node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        var input = PlanOperator(node.Input, outerSlots);
 
         // A stream aggregate consumes its input one group at a time, so the rows must
         // arrive grouped. Sort on the grouping columns (reusing their comparers) to
@@ -390,9 +528,9 @@ internal static class Planner
         return new PhysicalStreamAggregates(input, node.Groups, node.Aggregates);
     }
 
-    private static PhysicalOperator PlanUnion(LogicalUnion node)
+    private static PhysicalOperator PlanUnion(LogicalUnion node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var inputs = node.Inputs.Select(PlanOperator).ToImmutableArray();
+        var inputs = node.Inputs.Select(i => PlanOperator(i, outerSlots)).ToImmutableArray();
         var concatenation = new PhysicalConcatenation(inputs, node.DefinedValues);
         if (node.IsUnionAll)
             return concatenation;
@@ -409,10 +547,10 @@ internal static class Planner
     // recursive reference is an ordinary relation here, so the join planner above is
     // free to pick a hash match for the recursive step (the working-table model's whole
     // point); an index-spool specialization could slot in here later.
-    private static PhysicalOperator PlanRecursiveUnion(LogicalRecursiveUnion node)
+    private static PhysicalOperator PlanRecursiveUnion(LogicalRecursiveUnion node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var anchor = PlanOperator(node.Anchor);
-        var members = node.RecursiveMembers.Select(PlanOperator).ToImmutableArray();
+        var anchor = PlanOperator(node.Anchor, outerSlots);
+        var members = node.RecursiveMembers.Select(m => PlanOperator(m, outerSlots)).ToImmutableArray();
         return new PhysicalRecursiveUnion(node.Token, anchor, members, node.DefinedValues);
     }
 
@@ -421,14 +559,14 @@ internal static class Planner
         return new PhysicalRecursiveReference(node.Token, node.OutputValueSlots);
     }
 
-    private static PhysicalOperator PlanIntersectOrExcept(LogicalIntersectOrExcept node)
+    private static PhysicalOperator PlanIntersectOrExcept(LogicalIntersectOrExcept node, ImmutableArray<ValueSlot> outerSlots)
     {
         // INTERSECT / EXCEPT lower to a distinct sort on the left feeding a semi-join
         // (intersect) or anti-semi-join (except) against the right, matching on every
         // column with NULLs treated as equal. The intersect-vs-except split is made
         // here, so there is no dedicated physical or executable set-operation node.
-        var left = PlanOperator(node.Left);
-        var right = PlanOperator(node.Right);
+        var left = PlanOperator(node.Left, outerSlots);
+        var right = PlanOperator(node.Right, outerSlots);
 
         var leftValues = left.OutputValueSlots;
         var rightValues = right.OutputValueSlots;
@@ -465,21 +603,21 @@ internal static class Planner
         return new LogicalBinaryExpression(left, kind, result, right);
     }
 
-    private static PhysicalOperator PlanSort(LogicalSort node)
+    private static PhysicalOperator PlanSort(LogicalSort node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalSort(node.IsDistinct, input, node.SortedValues);
     }
 
-    private static PhysicalOperator PlanTop(LogicalTop node)
+    private static PhysicalOperator PlanTop(LogicalTop node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalTop(input, node.Limit, node.TieEntries);
     }
 
-    private static PhysicalOperator PlanAssert(LogicalAssert node)
+    private static PhysicalOperator PlanAssert(LogicalAssert node, ImmutableArray<ValueSlot> outerSlots)
     {
-        var input = PlanOperator(node.Input);
+        var input = PlanOperator(node.Input, outerSlots);
         return new PhysicalAssert(input, node.Condition, node.Message);
     }
 }

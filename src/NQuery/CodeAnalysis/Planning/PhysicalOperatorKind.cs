@@ -16,5 +16,6 @@ internal enum PhysicalOperatorKind
     Concatenation,
     RecursiveUnion,
     RecursiveReference,
+    IndexSpool,
     Assert
 }

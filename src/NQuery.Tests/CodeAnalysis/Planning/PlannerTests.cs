@@ -102,6 +102,77 @@ public class PlannerTests
         Assert.Contains(plan.DescendantsAndSelf().OfType<PhysicalNestedLoops>(), j => j.JoinKind == PhysicalJoinKind.LeftOuter);
     }
 
+    [Fact]
+    public void Planner_BuildsIndexSpool_ForCorrelatedEqualityFilter()
+    {
+        // The correlated scalar TOP 1 subquery has no decorrelation rule, so it
+        // survives as an apply; its correlated equality filter over an independent
+        // input becomes an index spool -- one scan of Orders, probed per customer --
+        // instead of a per-customer re-scan.
+        var text = @"
+            SELECT  c.CustomerID,
+                    (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID ORDER BY o.OrderDate)
+            FROM    Customers c
+        ";
+        var spool = Plan(text).DescendantsAndSelf().OfType<PhysicalIndexSpool>().Single();
+
+        Assert.Contains(spool.IndexKey, spool.Input.OutputValueSlots);
+    }
+
+    [Fact]
+    public void Planner_BuildsIndexSpool_ForComputedIndexKey()
+    {
+        // The inner side of the equality is an expression, so the planner materializes
+        // it with a compute below the spool (like the hash match's computed key) and
+        // projects the extra slot away above it.
+        var text = @"
+            SELECT  e.EmployeeID,
+                    (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID + 1 = e.EmployeeID ORDER BY o.OrderDate)
+            FROM    Employees e
+        ";
+        var plan = Plan(text);
+        var spool = plan.DescendantsAndSelf().OfType<PhysicalIndexSpool>().Single();
+
+        Assert.IsType<PhysicalComputeScalar>(spool.Input);
+    }
+
+    [Fact]
+    public void Planner_KeepsCorrelatedResidual_AboveIndexSpool()
+    {
+        // Only the equality is consumed by the spool; the other correlated conjunct
+        // survives as a filter above it, evaluated per row on the probed subset.
+        var text = @"
+            SELECT  e.EmployeeID,
+                    (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.Freight > e.EmployeeID ORDER BY o.OrderDate)
+            FROM    Employees e
+        ";
+        var plan = Plan(text);
+        var spool = plan.DescendantsAndSelf().OfType<PhysicalIndexSpool>().Single();
+        var residual = plan.DescendantsAndSelf().OfType<PhysicalFilter>().Single(f => f.Input == spool);
+
+        Assert.Single(residual.Conditions);
+    }
+
+    [Fact]
+    public void Planner_BuildsNoIndexSpool_WhenFilterInputIsCorrelated()
+    {
+        // The equality's input subtree is itself correlated (the TOP 3 derived table
+        // filters on the outer employee), so a build-once spool would serve stale rows;
+        // the filter stays a plain correlated filter. (The inner TOP blocks selection
+        // pushdown from merging the two predicates into one filter over the scan.)
+        var text = @"
+            SELECT  e.EmployeeID,
+                    (SELECT  TOP 1 o.OrderID
+                     FROM    (SELECT TOP 3 o2.OrderID, o2.EmployeeID FROM Orders o2 WHERE o2.Freight > e.EmployeeID ORDER BY o2.OrderID) o
+                     WHERE   o.EmployeeID = e.EmployeeID
+                     ORDER   BY o.OrderID)
+            FROM    Employees e
+        ";
+        var plan = Plan(text);
+
+        Assert.Empty(plan.DescendantsAndSelf().OfType<PhysicalIndexSpool>());
+    }
+
     private static PhysicalOperator Plan(string text)
     {
         return Planner.Plan(LogicalOptimizer.Optimize(Algebrizer.Algebrize(Bind(text)), NorthwindCatalog.Instance)).Root;

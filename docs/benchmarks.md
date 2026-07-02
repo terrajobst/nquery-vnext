@@ -38,6 +38,14 @@ cost and allocations in isolation.
   comparison (11.5×) even though it is faster in wall-clock time; Refactored is
   both fastest (37 μs) and leanest (18 KB).
 
+  *Update (2026-07-02):* the `NestedLoops` rows below predate the index spool
+  (`Planner.TryPlanIndexSpool`), which was Old's advantage on this shape. With
+  the spool ported, a short-job re-run measures Refactored at **149 μs /
+  546 KB** (was 1,614 μs / 506 KB) vs Old's 80 μs / 61 KB and Baseline's
+  3,311 μs / 1,907 KB — the ~20× wall-clock gap to Old is now ~2×, with the
+  remainder being allocation-bound (the spool's columnar store plus boxed
+  keys; see the index-spool follow-ups in `REFACTORING.md`).
+
 ## Summary
 
 Shapes as rows, engines as columns. All factors are relative to **Baseline**

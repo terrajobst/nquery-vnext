@@ -91,13 +91,6 @@ Some overlap existing entries above and below — cross-referenced where they do
    at-most-one-row LOJ. Needs a max-cardinality query property — see the "Unique
    state" bullet under *Miscellaneous*, which already wants the same property for
    the scalar-subquery guard.
-7. **W** (old `SpoolInserter`). Our
-   strategy is to decorrelate via `ApplyPushdown`, which is better when it works;
-   but a `LogicalApply` that survives decorrelation is lowered to plain nested
-   loops that re-execute the inner subtree per outer row. Already captured in
-   detail by "Port the index spool for correlated subqueries" under
-   *Miscellaneous* (with the lazy-vs-eager correctness caveat); listed here for
-   completeness.
 
 Not worth copying: `OutputListGenerator`, `RowBufferEntryNamer`,
 `FullOuterJoinExpander`, and `OuterReferenceLabeler` are bookkeeping for the old
@@ -149,30 +142,15 @@ model / cardinality estimation" under *More features*.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* Port the index spool for correlated subqueries
-    - The Northwind `NestedLoops` benchmark (a correlated scalar `SELECT TOP 1 ...
-      ORDER BY` per customer) is the one shape where the old engine crushes us:
-      ~76us / 61KB vs the refactored engine's ~1.6ms / 506KB (and baseline's
-      ~3.2ms / 1.9MB). See `docs/benchmarks.md`.
-    - When a subquery has no decorrelation rule it survives as a dependent join,
-      so we re-run the inner `Top -> Sort -> Filter -> Scan` for *every* outer row:
-      O(outer x inner). The old engine instead recognizes that the correlated
-      filter predicate is an equality between an inner column and an outer
-      reference (`o.CustomerID = c.CustomerID`) and rewrites the per-row `Filter`
-      into an index spool (`Compilation/SpoolInserter.cs` +
-      `Execution Plan/IndexSpoolIterator.cs`): it scans the inner input *once*,
-      builds a `Dictionary<key, List<row>>` keyed by the inner column, and then
-      probes it by the outer value on each iteration. That turns the cost into
-      O(inner + outer) and is essentially SQL Server's lazy/eager spool.
-    - Correctness caveat the old engine already flagged (the `// TODO` at the top
-      of `SpoolInserter.cs`): the cached spool is only valid when the spooled
-      *input* does not itself depend on an outer reference. If it does, the spool
-      must be invalidated whenever the outer reference changes (an eager spool),
-      otherwise it returns stale rows. The old code does not distinguish lazy from
-      eager spools, so a naive port would be a correctness bug; we should only
-      build the persistent spool when the input is independent of all outer
-      references, and fall back (or rebuild) otherwise.
 * Use new C# language features
+    - Make sure all comparisons to null use `is null` and `is not null`
+    - Make sure we use extensions blocks
+    - Collection expressions
+    - `readonly` members
+    - Raw string literals
+    - `params ReadOnlySpan<T>`
+    - List patterns?
+    - Required members?
 * Change the authoring to have a root-object that we can add language services
   to via extension methods. Maybe a WorkspaceBuilder?
 * TypeSymbol
@@ -195,6 +173,34 @@ model / cardinality estimation" under *More features*.
   the signature. Maybe we can simplify this using a Roslyn style API that
   collapses generic and instantiated generics into a single ITypeSymbol.
 * What are standard SQL types and how should they map to our primitives?
+
+## Index spool follow-ups
+
+The port is done: when a correlated filter survives decorrelation,
+`Planner.TryPlanIndexSpool` recognizes an equality conjunct between a plain
+outer slot (the probe) and a value computable from the input (the index key; a
+computed key gets a compute below the spool, like the hash match's), requires
+the input to reference no outer slot and no recursive CTE working table -- the
+old engine's lazy-vs-eager caveat, resolved by simply declining the eager case
+-- and emits `PhysicalIndexSpool` / `IndexSpoolIterator`: one scan indexed into
+`Dictionary<key, List<row>>` over a `SpooledRowStore`, probed on every re-open.
+NULL keys are not indexed and a NULL probe matches nothing, preserving the
+filter's equality semantics.
+
+Remaining follow-ups:
+
+* The probe must be a *plain* outer slot: a computed outer side (e.g.
+  `o.CustomerID = c.CustomerID + '!'`) has no input to attach a compute to, so
+  such conjuncts are skipped. Supporting it needs a scalar expression compiled
+  against the outer row and evaluated per open.
+* Key comparison is the boxed object.Equals/GetHashCode -- the same contract
+  (and the same TODO) as the hash match's build table; fixing one should fix
+  the other.
+* The index key and probe are read boxed (`RowBufferEntry.GetValue`), one
+  boxing per spooled row plus one per outer row. A typed key path (as the hash
+  match's `HashJoinProbe` has) would remove it if it ever shows up in profiles.
+* An eager spool (rebuild on outer change) would extend coverage to correlated
+  inputs; nothing selects it today.
 
 ## CTE follow-ups
 

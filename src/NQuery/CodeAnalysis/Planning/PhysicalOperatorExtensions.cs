@@ -27,6 +27,7 @@ internal static class PhysicalOperatorExtensions
             PhysicalHashMatch n => [n.Build, n.Probe],
             PhysicalConcatenation n => n.Inputs,
             PhysicalRecursiveUnion n => [n.Anchor, .. n.RecursiveMembers],
+            PhysicalIndexSpool n => [n.Input],
             _ => []
         };
     }

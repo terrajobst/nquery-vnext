@@ -65,6 +65,8 @@ internal static class Emitter
                 return EmitRecursiveUnion((PhysicalRecursiveUnion)node, outerSlots);
             case PhysicalOperatorKind.RecursiveReference:
                 return EmitRecursiveReference((PhysicalRecursiveReference)node);
+            case PhysicalOperatorKind.IndexSpool:
+                return EmitIndexSpool((PhysicalIndexSpool)node, outerSlots);
             case PhysicalOperatorKind.Assert:
                 return EmitAssert((PhysicalAssert)node, outerSlots);
             default:
@@ -188,5 +190,10 @@ internal static class Emitter
     {
         var layout = RowBufferLayout.Create(node.OutputValueSlots);
         return new ExecutableRecursiveReference(node.OutputValueSlots, node.Token, layout);
+    }
+
+    private static ExecutableOperator EmitIndexSpool(PhysicalIndexSpool node, ImmutableArray<ValueSlot> outerSlots)
+    {
+        return new ExecutableIndexSpool(node.OutputValueSlots, EmitOperator(node.Input, outerSlots), node.IndexKey, node.ProbeKey, outerSlots);
     }
 }
