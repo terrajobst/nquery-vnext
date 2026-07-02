@@ -19,7 +19,7 @@ public class LogicalPlanVerifierTests
     {
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("c", typeof(bool));
-        var filter = new LogicalFilter(Leaf(slot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
+        var filter = new LogicalFilter(Leaf(slot), [new LogicalValueSlotExpression(slot)]);
 
         LogicalPlanVerifier.Verify(filter, Source);
     }
@@ -29,7 +29,7 @@ public class LogicalPlanVerifierTests
     {
         var factory = new ValueSlotFactory();
         var ghost = factory.CreateNamed("ghost", typeof(bool));
-        var filter = new LogicalFilter(new LogicalConstant(), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(ghost)));
+        var filter = new LogicalFilter(new LogicalConstant(), [new LogicalValueSlotExpression(ghost)]);
 
         var exception = Assert.Throws<InvalidOperationException>(() => LogicalPlanVerifier.Verify(filter, Source));
         Assert.Contains(ghost.Name, exception.Message);
@@ -43,7 +43,7 @@ public class LogicalPlanVerifierTests
         var leftSlot = factory.CreateNamed("l", typeof(bool));
         var rightSlot = factory.CreateNamed("r", typeof(bool));
 
-        var right = new LogicalFilter(Leaf(rightSlot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(leftSlot)));
+        var right = new LogicalFilter(Leaf(rightSlot), [new LogicalValueSlotExpression(leftSlot)]);
         var apply = new LogicalApply(LogicalApplyKind.Inner, Leaf(leftSlot), right, probe: null);
 
         LogicalPlanVerifier.Verify(apply, Source);
@@ -58,8 +58,8 @@ public class LogicalPlanVerifierTests
         var leftSlot = factory.CreateNamed("l", typeof(bool));
         var rightSlot = factory.CreateNamed("r", typeof(bool));
 
-        var right = new LogicalFilter(Leaf(rightSlot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(leftSlot)));
-        var join = new LogicalJoin(LogicalJoinKind.Inner, Leaf(leftSlot), right, ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null);
+        var right = new LogicalFilter(Leaf(rightSlot), [new LogicalValueSlotExpression(leftSlot)]);
+        var join = new LogicalJoin(LogicalJoinKind.Inner, Leaf(leftSlot), right, [], probe: null, passthruPredicate: null);
 
         var exception = Assert.Throws<InvalidOperationException>(() => LogicalPlanVerifier.Verify(join, Source));
         Assert.Contains(leftSlot.Name, exception.Message);
@@ -74,7 +74,7 @@ public class LogicalPlanVerifierTests
         // check catches it.
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("dup", typeof(bool));
-        var join = new LogicalJoin(LogicalJoinKind.Inner, Leaf(slot), Leaf(slot), ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null);
+        var join = new LogicalJoin(LogicalJoinKind.Inner, Leaf(slot), Leaf(slot), [], probe: null, passthruPredicate: null);
 
         var exception = Assert.Throws<InvalidOperationException>(() => LogicalPlanVerifier.Verify(join, Source));
         Assert.Contains(slot.Name, exception.Message);
@@ -87,8 +87,8 @@ public class LogicalPlanVerifierTests
         // not a double definition: only the leaf introduces it.
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("c", typeof(bool));
-        var filter = new LogicalFilter(Leaf(slot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
-        var project = new LogicalProject(filter, ImmutableArray.Create(slot));
+        var filter = new LogicalFilter(Leaf(slot), [new LogicalValueSlotExpression(slot)]);
+        var project = new LogicalProject(filter, [slot]);
 
         LogicalPlanVerifier.Verify(project, Source);
     }
@@ -102,7 +102,7 @@ public class LogicalPlanVerifierTests
         var ghost = factory.CreateNamed("ghost", typeof(bool));
         var present = factory.CreateNamed("present", typeof(bool));
         var input = Leaf(present);
-        var filter = new LogicalFilter(input, ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(ghost)));
+        var filter = new LogicalFilter(input, [new LogicalValueSlotExpression(ghost)]);
 
         var exception = Assert.Throws<InvalidOperationException>(() => LogicalPlanVerifier.Verify(filter, "after the 'SomePass' pass"));
 

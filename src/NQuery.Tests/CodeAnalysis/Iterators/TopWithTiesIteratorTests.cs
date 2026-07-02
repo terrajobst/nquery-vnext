@@ -8,7 +8,7 @@ public class TopWithTiesIteratorTests : IteratorTests
 {
     private static Iterator CreateIterator(MockedIterator input, int maxValue)
     {
-        var entries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0) };
+        var entries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0) };
         var comparers = new[] { Comparer.Default };
         return new TopWithTiesIterator(input, maxValue, entries, comparers);
     }

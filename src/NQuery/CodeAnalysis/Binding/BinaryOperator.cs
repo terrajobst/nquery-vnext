@@ -8,7 +8,7 @@ namespace NQuery.CodeAnalysis.Binding;
 internal static class BinaryOperator
 {
     private static readonly BinaryOperatorSignature[] BuiltInMultiplySignatures =
-    {
+    [
         new(BinaryOperatorKind.Multiply, typeof(int)),
         new(BinaryOperatorKind.Multiply, typeof(uint)),
         new(BinaryOperatorKind.Multiply, typeof(long)),
@@ -16,10 +16,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Multiply, typeof(float)),
         new(BinaryOperatorKind.Multiply, typeof(double)),
         new(BinaryOperatorKind.Multiply, BuiltInOperators.DecimalMultiplyMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInDivideSignatures =
-    {
+    [
         new(BinaryOperatorKind.Divide, typeof(int)),
         new(BinaryOperatorKind.Divide, typeof(uint)),
         new(BinaryOperatorKind.Divide, typeof(long)),
@@ -27,10 +27,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Divide, typeof(float)),
         new(BinaryOperatorKind.Divide, typeof(double)),
         new(BinaryOperatorKind.Divide, BuiltInOperators.DecimalDivideMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInModulusSignatures =
-    {
+    [
         new(BinaryOperatorKind.Modulus, typeof(int)),
         new(BinaryOperatorKind.Modulus, typeof(uint)),
         new(BinaryOperatorKind.Modulus, typeof(long)),
@@ -38,10 +38,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Modulus, typeof(float)),
         new(BinaryOperatorKind.Modulus, typeof(double)),
         new(BinaryOperatorKind.Modulus, BuiltInOperators.DecimalModulusMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInAddSignatures =
-    {
+    [
         new(BinaryOperatorKind.Add, typeof(int)),
         new(BinaryOperatorKind.Add, typeof(uint)),
         new(BinaryOperatorKind.Add, typeof(long)),
@@ -52,10 +52,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Add, typeof(string), typeof(string), typeof(object), BuiltInOperators.StringConcatObjectObjectMethod),
         new(BinaryOperatorKind.Add, typeof(string), typeof(object), typeof(string), BuiltInOperators.StringConcatObjectObjectMethod),
         new(BinaryOperatorKind.Add, BuiltInOperators.DecimalAddMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInSubSignatures =
-    {
+    [
         new(BinaryOperatorKind.Sub, typeof(int)),
         new(BinaryOperatorKind.Sub, typeof(uint)),
         new(BinaryOperatorKind.Sub, typeof(long)),
@@ -63,26 +63,26 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Sub, typeof(float)),
         new(BinaryOperatorKind.Sub, typeof(double)),
         new(BinaryOperatorKind.Sub, BuiltInOperators.DecimalSubtractMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLeftShiftSignatures =
-    {
+    [
         new(BinaryOperatorKind.LeftShift, typeof(int), typeof(int), typeof(int)),
         new(BinaryOperatorKind.LeftShift, typeof(uint), typeof(uint), typeof(int)),
         new(BinaryOperatorKind.LeftShift, typeof(long), typeof(long), typeof(int)),
         new(BinaryOperatorKind.LeftShift, typeof(ulong), typeof(ulong), typeof(int))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInRightShiftSignatures =
-    {
+    [
         new(BinaryOperatorKind.RightShift, typeof(int)),
         new(BinaryOperatorKind.RightShift, typeof(uint), typeof(uint), typeof(int)),
         new(BinaryOperatorKind.RightShift, typeof(long), typeof(long), typeof(int)),
         new(BinaryOperatorKind.RightShift, typeof(ulong), typeof(ulong), typeof(int))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInEqualSignatures =
-    {
+    [
         new(BinaryOperatorKind.Equal, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.Equal, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.Equal, typeof(bool), typeof(long)),
@@ -93,10 +93,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Equal, typeof(bool), typeof(object)),
         new(BinaryOperatorKind.Equal, typeof(bool), typeof(string)),
         new(BinaryOperatorKind.Equal, BuiltInOperators.DecimalEqualsMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInNotEqualSignatures =
-    {
+    [
         new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(long)),
@@ -107,10 +107,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(object)),
         new(BinaryOperatorKind.NotEqual, typeof(bool), typeof(string)),
         new(BinaryOperatorKind.NotEqual, BuiltInOperators.DecimalNotEqualsMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLessSignatures =
-    {
+    [
         new(BinaryOperatorKind.Less, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.Less, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.Less, typeof(bool), typeof(long)),
@@ -119,10 +119,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Less, typeof(bool), typeof(double)),
         new(BinaryOperatorKind.Less, BuiltInOperators.DecimalLessMethod),
         new(BinaryOperatorKind.Less, BuiltInOperators.StringLessMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInGreaterSignatures =
-    {
+    [
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(long)),
@@ -131,10 +131,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.Greater, typeof(bool), typeof(double)),
         new(BinaryOperatorKind.Greater, BuiltInOperators.DecimalGreaterMethod),
         new(BinaryOperatorKind.Greater, BuiltInOperators.StringGreaterMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLessOrEqualSignatures =
-    {
+    [
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(long)),
@@ -143,10 +143,10 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.LessOrEqual, typeof(bool), typeof(double)),
         new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.DecimalLessOrEqualMethod),
         new(BinaryOperatorKind.LessOrEqual, BuiltInOperators.StringLessOrEqualMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInGreaterOrEqualSignatures =
-    {
+    [
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(int)),
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(uint)),
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(long)),
@@ -155,64 +155,64 @@ internal static class BinaryOperator
         new(BinaryOperatorKind.GreaterOrEqual, typeof(bool), typeof(double)),
         new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.DecimalGreaterOrEqualMethod),
         new(BinaryOperatorKind.GreaterOrEqual, BuiltInOperators.StringGreaterOrEqualMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInBitAndSignatures =
-    {
+    [
         new(BinaryOperatorKind.BitAnd, typeof(int)),
         new(BinaryOperatorKind.BitAnd, typeof(uint)),
         new(BinaryOperatorKind.BitAnd, typeof(long)),
         new(BinaryOperatorKind.BitAnd, typeof(ulong)),
         new(BinaryOperatorKind.BitAnd, typeof(bool))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInBitOrSignatures =
-    {
+    [
         new(BinaryOperatorKind.BitOr, typeof(int)),
         new(BinaryOperatorKind.BitOr, typeof(uint)),
         new(BinaryOperatorKind.BitOr, typeof(long)),
         new(BinaryOperatorKind.BitOr, typeof(ulong)),
         new(BinaryOperatorKind.BitOr, typeof(bool))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInBitXorSignatures =
-    {
+    [
         new(BinaryOperatorKind.BitXor, typeof(int)),
         new(BinaryOperatorKind.BitXor, typeof(uint)),
         new(BinaryOperatorKind.BitXor, typeof(long)),
         new(BinaryOperatorKind.BitXor, typeof(ulong)),
         new(BinaryOperatorKind.BitXor, typeof(bool))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLogicalAndSignatures =
-    {
+    [
         new(BinaryOperatorKind.LogicalAnd, typeof(bool))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLogicalOrSignatures =
-    {
+    [
         new(BinaryOperatorKind.LogicalOr, typeof(bool))
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInLikeSignatures =
-    {
+    [
         new(BinaryOperatorKind.Like, BuiltInOperators.LikeMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInPowerSignatures =
-    {
+    [
         new(BinaryOperatorKind.Power, BuiltInOperators.PowerMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInSimilarToSignatures =
-    {
+    [
         new(BinaryOperatorKind.SimilarTo, BuiltInOperators.SimilarToMethod)
-    };
+    ];
 
     private static readonly BinaryOperatorSignature[] BuiltInSoundsLikeSignatures =
-    {
+    [
         new(BinaryOperatorKind.SoundsLike, BuiltInOperators.SoundsLikeMethod)
-    };
+    ];
 
     internal static OverloadResolutionResult<BinaryOperatorSignature> Resolve(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
     {
@@ -340,9 +340,9 @@ internal static class BinaryOperator
     private static ImmutableArray<BinaryOperatorSignature> GetUserDefinedSignatures(BinaryOperatorKind kind, Type leftOperandType, Type rightOperandType)
     {
         var methodName = GetOperatorMethodName(kind);
-        return (from m in GetOperatorMethods(methodName, leftOperandType, rightOperandType)
+        return [.. (from m in GetOperatorMethods(methodName, leftOperandType, rightOperandType)
                 where HasOperatorSignature(m)
-                select new BinaryOperatorSignature(kind, m)).ToImmutableArray();
+                select new BinaryOperatorSignature(kind, m))];
     }
 
     private static string GetOperatorMethodName(BinaryOperatorKind kind)

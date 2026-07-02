@@ -23,7 +23,7 @@ public abstract class KeywordHighlighter<T> : IHighlighter
             }
         }
 
-        return Enumerable.Empty<TextSpan>();
+        return [];
     }
 
     protected abstract IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, T node, int position);

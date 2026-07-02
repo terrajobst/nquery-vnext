@@ -9,10 +9,10 @@ internal sealed class OverloadResolutionResult<T>
     {
         Best = best;
         Selected = selected;
-        Candidates = candidates.ToImmutableArray();
+        Candidates = [.. candidates];
     }
 
-    public static OverloadResolutionResult<T> None { get; } = new(null, null, Array.Empty<OverloadResolutionCandidate<T>>());
+    public static OverloadResolutionResult<T> None { get; } = new(null, null, []);
 
     public OverloadResolutionCandidate<T>? Best { get; }
 

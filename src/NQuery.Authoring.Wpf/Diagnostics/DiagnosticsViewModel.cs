@@ -9,9 +9,9 @@ internal sealed class DiagnosticsViewModel
 {
     public DiagnosticsViewModel(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
     {
-        Diagnostics = (from d in diagnostics
+        Diagnostics = [.. (from d in diagnostics
                        orderby d.Span.Start, d.Span.End
-                       select new DiagnosticViewModel(d, sourceText)).ToImmutableArray();
+                       select new DiagnosticViewModel(d, sourceText))];
     }
 
     public ImmutableArray<DiagnosticViewModel> Diagnostics { get; }

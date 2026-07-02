@@ -10,14 +10,14 @@ internal sealed class ColumnsInExistsCodeIssueProvider : CodeIssueProvider<Exist
     {
         var syntaxTree = node.SyntaxTree;
         if (node.Query is not SelectQuerySyntax selectQuery)
-            return Enumerable.Empty<CodeIssue>();
+            return [];
 
         if (selectQuery.SelectClause.IsMissing)
-            return Enumerable.Empty<CodeIssue>();
+            return [];
 
         var selectClause = selectQuery.SelectClause;
         if (IsSingleSelectStar(selectClause.Columns))
-            return Enumerable.Empty<CodeIssue>();
+            return [];
 
         var start = selectClause.Columns.First().Span.Start;
         var end = selectClause.Columns.Last().Span.End;

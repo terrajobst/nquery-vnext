@@ -13,7 +13,7 @@ internal sealed class RowBufferAllocation
     {
         Parent = parent;
         RowBuffer = rowBuffer;
-        _mapping = RowBufferLayout.CreateSlotMap(valueSlots.ToImmutableArray());
+        _mapping = RowBufferLayout.CreateSlotMap([.. valueSlots]);
     }
 
     public RowBufferAllocation? Parent { get; }

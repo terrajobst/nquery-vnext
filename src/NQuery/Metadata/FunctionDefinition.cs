@@ -17,7 +17,7 @@ public abstract class FunctionDefinition
         // by the engine (see ColumnDefinition). Parameters self-erase via ParameterDefinition.
         Name = name;
         ReturnType = returnType.GetNonNullableType();
-        Parameters = parameters.ToImmutableArray();
+        Parameters = [.. parameters];
         SignatureHashCode = SignatureEqualityComparer.GetHashCode(this);
     }
 

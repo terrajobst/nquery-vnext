@@ -13,7 +13,7 @@ internal sealed class OverloadResolutionCandidate<T>
     private OverloadResolutionCandidate(T signature, IEnumerable<Conversion> argumentConversions, bool isApplicable, bool hasBetterAlternative)
     {
         Signature = signature;
-        ArgumentConversions = argumentConversions.ToImmutableArray();
+        ArgumentConversions = [.. argumentConversions];
         IsApplicable = isApplicable;
         HasBetterAlternative = hasBetterAlternative;
     }

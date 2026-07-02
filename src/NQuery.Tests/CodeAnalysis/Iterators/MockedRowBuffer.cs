@@ -19,7 +19,7 @@ internal sealed class MockedRowBuffer : RowBuffer
     }
 
     public MockedRowBuffer(object?[] values)
-        : this(values.Select(v => v?.GetType() ?? typeof(object)).ToArray())
+        : this([.. values.Select(v => v?.GetType() ?? typeof(object))])
     {
         SetRow(values);
     }

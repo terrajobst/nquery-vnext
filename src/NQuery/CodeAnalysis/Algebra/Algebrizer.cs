@@ -88,11 +88,11 @@ internal sealed class Algebrizer
         var computedValue = new BoundComputedValue(expression, result);
 
         LogicalOperator input = new LogicalConstant();
-        input = AlgebrizeCompute(input, ImmutableArray.Create(computedValue));
-        input = new LogicalProject(input, ImmutableArray.Create(GetSlot(result)));
+        input = AlgebrizeCompute(input, [computedValue]);
+        input = new LogicalProject(input, [GetSlot(result)]);
 
         var outputColumn = new QueryColumnInstanceSymbol(result.Name, result);
-        return new LogicalQuery(input, ImmutableArray.Create(outputColumn));
+        return new LogicalQuery(input, [outputColumn]);
     }
 
     private LogicalOperator AlgebrizeQuery(BoundQuery node)
@@ -126,7 +126,7 @@ internal sealed class Algebrizer
 
         var groups = node.GroupBy is null
             ? ImmutableArray<LogicalComparedValue>.Empty
-            : node.GroupBy.Groups.Select(TranslateCompared).ToImmutableArray();
+            : [.. node.GroupBy.Groups.Select(TranslateCompared)];
         var aggregates = node.Select.Aggregates;
         if (!groups.IsEmpty || !aggregates.IsEmpty)
         {
@@ -143,23 +143,23 @@ internal sealed class Algebrizer
             input = AlgebrizeCompute(input, node.Select.Projections);
 
         if (node.OrderBy is not null)
-            input = new LogicalSort(node.Select.IsDistinct, input, node.OrderBy.SortedValues.Select(TranslateCompared).ToImmutableArray());
+            input = new LogicalSort(node.Select.IsDistinct, input, [.. node.OrderBy.SortedValues.Select(TranslateCompared)]);
 
         if (node.Top is not null)
         {
             // TOP WITH TIES breaks ties using the sort keys (the binder requires an ORDER BY
             // for WITH TIES, so OrderBy is non-null here).
             var tieEntries = node.Top.WithTies && node.OrderBy is not null
-                ? node.OrderBy.SortedValues.Select(TranslateCompared).ToImmutableArray()
+                ? [.. node.OrderBy.SortedValues.Select(TranslateCompared)]
                 : ImmutableArray<LogicalComparedValue>.Empty;
             input = new LogicalTop(input, node.Top.Limit, tieEntries);
         }
 
-        input = new LogicalProject(input, node.OutputColumns.Select(c => GetSlot(c.BoundValue)).ToImmutableArray());
+        input = new LogicalProject(input, [.. node.OutputColumns.Select(c => GetSlot(c.BoundValue))]);
 
         // SELECT DISTINCT with no ORDER BY: a group-by over the output columns.
         if (!node.Select.DistinctValues.IsEmpty)
-            input = new LogicalAggregate(input, node.Select.DistinctValues.Select(TranslateCompared).ToImmutableArray(), ImmutableArray<LogicalAggregatedValue>.Empty);
+            input = new LogicalAggregate(input, [.. node.Select.DistinctValues.Select(TranslateCompared)], []);
 
         return input;
     }
@@ -169,7 +169,7 @@ internal sealed class Algebrizer
         var applies = new List<PendingApply>();
         var logicalCondition = AlgebrizeExpression(condition, applies);
         input = WrapInApplies(input, applies);
-        return new LogicalFilter(input, FlattenConjuncts(logicalCondition).ToImmutableArray());
+        return new LogicalFilter(input, [.. FlattenConjuncts(logicalCondition)]);
     }
 
     private LogicalOperator AlgebrizeCompute(LogicalOperator input, ImmutableArray<BoundComputedValue> definedValues)
@@ -257,16 +257,16 @@ internal sealed class Algebrizer
         }
 
         if (applies.Count == 0)
-            return new LogicalJoin(joinKind, joinLeft, joinRight, joinConditions.ToImmutableArray(), probe: null, passthruPredicate: null);
+            return new LogicalJoin(joinKind, joinLeft, joinRight, [.. joinConditions], probe: null, passthruPredicate: null);
 
         // For an inner join, ON is a plain filter, so a subquery-bearing conjunct can be hoisted
         // into a filter above the join, with its Apply correlated to the whole (left ++ right)
         // output. The subquery-free conjuncts stay on the join, keeping it hash-match eligible.
         if (node.JoinType == BoundJoinType.Inner)
         {
-            var innerJoin = new LogicalJoin(joinKind, joinLeft, joinRight, joinConditions.ToImmutableArray(), probe: null, passthruPredicate: null);
+            var innerJoin = new LogicalJoin(joinKind, joinLeft, joinRight, [.. joinConditions], probe: null, passthruPredicate: null);
             var withApplies = WrapInApplies(innerJoin, applies);
-            return new LogicalFilter(withApplies, subqueryConditions.ToImmutableArray());
+            return new LogicalFilter(withApplies, [.. subqueryConditions]);
         }
 
         // For an outer/semi join, hoisting the conjunct above the join would change which rows
@@ -358,7 +358,7 @@ internal sealed class Algebrizer
         var nullSlots = joinLeft.OutputValueSlots.Select(s => s.Duplicate()).ToImmutableArray();
         var nullValues = nullSlots.Select(s => new LogicalComputedValue(new LogicalLiteralExpression(null), s)).ToImmutableArray();
         var compute = new LogicalCompute(antiSemi, nullValues);
-        var branch2Project = new LogicalProject(compute, nullSlots.Concat(joinRight.OutputValueSlots).ToImmutableArray());
+        var branch2Project = new LogicalProject(compute, [.. nullSlots, .. joinRight.OutputValueSlots]);
         var branch2 = (LogicalProject)new LogicalOperatorCloner().Clone(branch2Project);
 
         var firstOutputs = branch1.OutputValueSlots;
@@ -367,7 +367,7 @@ internal sealed class Algebrizer
                                       .Select(i => new LogicalUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
                                       .ToImmutableArray();
 
-        return new LogicalUnion(isUnionAll: true, ImmutableArray.Create<LogicalOperator>(branch1, branch2), unifiedValues, ImmutableArray<IComparer>.Empty);
+        return new LogicalUnion(isUnionAll: true, [branch1, branch2], unifiedValues, []);
     }
 
     // The Apply kind an outer/semi join lowers to.
@@ -399,7 +399,7 @@ internal sealed class Algebrizer
     private LogicalOperator AlgebrizeOrderedQuery(BoundOrderedQuery node)
     {
         var input = AlgebrizeQuery(node.Query);
-        return new LogicalSort(false, input, node.SortedValues.Select(TranslateCompared).ToImmutableArray());
+        return new LogicalSort(false, input, [.. node.SortedValues.Select(TranslateCompared)]);
     }
 
     // A set-operation input: the inner query, plus the type-coercion compute/project the
@@ -411,7 +411,7 @@ internal sealed class Algebrizer
             return relation;
 
         relation = AlgebrizeCompute(relation, input.ComputedValues);
-        return new LogicalProject(relation, input.OutputValues.Select(GetSlot).ToImmutableArray());
+        return new LogicalProject(relation, [.. input.OutputValues.Select(GetSlot)]);
     }
 
     private static LogicalJoinKind MapJoinKind(BoundJoinType joinType)
@@ -678,7 +678,7 @@ internal sealed class Algebrizer
         var valueAgg = AlgebrizeAggregatedValue(node.ValueAggregate, guardApplies);
         var countAgg = AlgebrizeAggregatedValue(node.CountAggregate, guardApplies);
         relation = WrapInApplies(relation, guardApplies);
-        relation = new LogicalAggregate(relation, ImmutableArray<LogicalComparedValue>.Empty, ImmutableArray.Create(valueAgg, countAgg));
+        relation = new LogicalAggregate(relation, [], [valueAgg, countAgg]);
 
         var condition = Binary(new LogicalValueSlotExpression(countAgg.Output), BinaryOperatorKind.LessOrEqual, new LogicalLiteralExpression(1));
         relation = new LogicalAssert(relation, condition, Resources.SubqueryReturnedMoreThanRow);

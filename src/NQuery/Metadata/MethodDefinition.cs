@@ -18,7 +18,7 @@ public abstract class MethodDefinition
         // by the engine (see ColumnDefinition). Parameters self-erase via ParameterDefinition.
         Name = name;
         ReturnType = returnType.GetNonNullableType();
-        Parameters = parameters.ToImmutableArray();
+        Parameters = [.. parameters];
     }
 
     public string Name { get; }

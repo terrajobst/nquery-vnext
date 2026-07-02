@@ -143,7 +143,7 @@ public abstract class SourceText
         ThrowIfNull(oldText);
 
         if (oldText == this)
-            return Enumerable.Empty<TextChange>();
+            return [];
 
         var rootFound = false;
         var candidate = this;

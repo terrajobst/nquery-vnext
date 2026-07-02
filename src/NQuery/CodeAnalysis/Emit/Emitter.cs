@@ -23,14 +23,14 @@ internal static class Emitter
     {
         ThrowIfNull(query);
 
-        return new ExecutablePlan(EmitOperator(query.Root, ImmutableArray<ValueSlot>.Empty), query.OutputColumns);
+        return new ExecutablePlan(EmitOperator(query.Root, []), query.OutputColumns);
     }
 
     public static ExecutablePlan Emit(PhysicalOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
         ThrowIfNull(root);
 
-        return new ExecutablePlan(EmitOperator(root, ImmutableArray<ValueSlot>.Empty), outputColumns);
+        return new ExecutablePlan(EmitOperator(root, []), outputColumns);
     }
 
     private static ExecutableOperator EmitOperator(PhysicalOperator node, ImmutableArray<ValueSlot> outerSlots)

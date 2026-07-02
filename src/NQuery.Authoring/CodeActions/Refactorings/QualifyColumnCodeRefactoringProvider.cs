@@ -10,10 +10,10 @@ internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProv
     protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, NameExpressionSyntax node)
     {
         if (node.Parent is PropertyAccessExpressionSyntax)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         if (semanticModel.GetSymbol(node) is not ColumnInstanceSymbol { ColumnInstanceKind: ColumnInstanceKind.TableColumn } column)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new ICodeAction[] { new QualifyColumnCodeAction(node, column) };
     }

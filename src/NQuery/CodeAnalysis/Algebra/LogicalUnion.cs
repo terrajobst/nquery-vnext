@@ -26,5 +26,5 @@ internal sealed class LogicalUnion : LogicalOperator
 
     protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => DefinedValues.Select(v => v.ValueSlot).ToFrozenSet();
 
-    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => DefinedValues.Select(v => v.ValueSlot).ToImmutableArray();
+    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [.. DefinedValues.Select(v => v.ValueSlot)];
 }

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 using NQuery.CodeAnalysis;
 using NQuery.Northwind;
 
@@ -55,6 +56,6 @@ public class CrossApplyTests
                                      .WithCatalog(NorthwindCatalog.Instance)
                                      .WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        return syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        return [.. syntaxTree.GetDiagnostics(), .. semanticModel.GetDiagnostics()];
     }
 }

@@ -8,7 +8,7 @@ public sealed class SignatureHelpModel
 {
     public SignatureHelpModel(TextSpan applicableSpan, IEnumerable<SignatureItem> signatures, SignatureItem signature, int selectedParameter)
     {
-        Signatures = signatures.ToImmutableArray();
+        Signatures = [.. signatures];
         ApplicableSpan = applicableSpan;
         Signature = signature;
         SelectedParameter = selectedParameter;

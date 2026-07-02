@@ -13,7 +13,7 @@ public class ProjectionIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var entries = new[]
         {
-            RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0)
+            RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0)
         };
 
         using (var iterator = new ProjectionIterator(input, entries))
@@ -35,7 +35,7 @@ public class ProjectionIteratorTests : IteratorTests
         var rows = Array.Empty<object>();
 
         using var input = new MockedIterator(rows);
-        using var iterator = new ProjectionIterator(input, Enumerable.Empty<RowBufferEntry>());
+        using var iterator = new ProjectionIterator(input, []);
         AssertEmpty(iterator);
     }
 

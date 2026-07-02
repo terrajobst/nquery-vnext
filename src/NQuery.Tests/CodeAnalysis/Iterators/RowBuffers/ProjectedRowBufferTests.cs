@@ -7,7 +7,7 @@ public class ProjectedRowBufferTests : RowBufferTests
     [Fact]
     public void RowBuffers_Projected_Empty()
     {
-        var buffer = new ProjectedRowBuffer(Enumerable.Empty<RowBufferEntry>());
+        var buffer = new ProjectedRowBuffer([]);
         AssertContract(buffer);
     }
 

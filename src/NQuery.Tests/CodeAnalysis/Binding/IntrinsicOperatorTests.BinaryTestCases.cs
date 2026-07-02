@@ -22,7 +22,7 @@ partial class IntrinsicOperatorTests
     }
 
     private static readonly BinaryOperatorTestCase[] BinaryTestCases =
-    {
+    [
         new("*", "sbyte", "sbyte", "int"),
         new("*", "sbyte", "byte", "int"),
         new("*", "sbyte", "short", "int"),
@@ -4073,5 +4073,5 @@ partial class IntrinsicOperatorTests
         new("OR", "object", "bool", "#inapplicable"),
         new("OR", "object", "string", "#inapplicable"),
         new("OR", "object", "object", "#inapplicable")
-    };
+    ];
 }

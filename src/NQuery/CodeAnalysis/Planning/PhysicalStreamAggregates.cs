@@ -27,5 +27,5 @@ internal sealed class PhysicalStreamAggregates : PhysicalOperator
 
     protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Groups.Select(g => g.ValueSlot).Concat(Aggregates.Select(a => a.Output)).ToFrozenSet();
 
-    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => Groups.Select(g => g.ValueSlot).Concat(Aggregates.Select(a => a.Output)).ToImmutableArray();
+    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [.. Groups.Select(g => g.ValueSlot), .. Aggregates.Select(a => a.Output)];
 }

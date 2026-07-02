@@ -19,5 +19,5 @@ internal sealed class LogicalCompute : LogicalOperator
 
     protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => Input.DefinedValueSlots.Concat(DefinedValues.Select(c => c.ValueSlot)).ToFrozenSet();
 
-    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => Input.OutputValueSlots.Concat(DefinedValues.Select(c => c.ValueSlot)).ToImmutableArray();
+    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [.. Input.OutputValueSlots, .. DefinedValues.Select(c => c.ValueSlot)];
 }

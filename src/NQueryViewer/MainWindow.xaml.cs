@@ -258,10 +258,10 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
                 ? await document.GetSyntaxTreeAsync()
                 : semanticModel.SyntaxTree;
             var syntaxTreeDiagnostics = syntaxTree is null
-                ? Enumerable.Empty<Diagnostic>()
+                ? []
                 : syntaxTree.GetDiagnostics();
             var semanticModelDiagnostics = semanticModel is null
-                ? Enumerable.Empty<Diagnostic>()
+                ? []
                 : semanticModel.GetDiagnostics();
             var diagnostics = syntaxTreeDiagnostics.Concat(semanticModelDiagnostics);
             var text = syntaxTree?.Text;
@@ -281,7 +281,7 @@ internal sealed partial class MainWindow : IMainWindowProvider, IPartImportsSati
             var semanticModel = await document.GetSemanticModelAsync();
             var optimizationSteps = semanticModel is null
                 ? ImmutableArray<ShowPlan>.Empty
-                : semanticModel.Compilation.GetShowPlanSteps().ToImmutableArray();
+                : [.. semanticModel.Compilation.GetShowPlanSteps()];
             ShowPlanComboBox.ItemsSource = optimizationSteps;
             ShowPlanComboBox.SelectedItem = optimizationSteps.LastOrDefault();
         }

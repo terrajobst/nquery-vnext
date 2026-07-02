@@ -5,13 +5,13 @@ namespace NQuery.CodeAnalysis.Binding;
 internal sealed class BoundGroupByClause
 {
     public BoundGroupByClause(IEnumerable<BoundComparedValue> groups)
-        : this(groups, ImmutableArray<BoundComputedValue>.Empty)
+        : this(groups, [])
     {
     }
 
     public BoundGroupByClause(IEnumerable<BoundComparedValue> groups, ImmutableArray<BoundComputedValue> computedGroups)
     {
-        Groups = groups.ToImmutableArray();
+        Groups = [.. groups];
         ComputedGroups = computedGroups;
     }
 

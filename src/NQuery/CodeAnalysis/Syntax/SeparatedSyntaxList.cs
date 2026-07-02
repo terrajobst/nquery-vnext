@@ -8,7 +8,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
 {
     private readonly ImmutableArray<Entry> _entries;
 
-    public static SeparatedSyntaxList<TNode> Empty { get; } = new(Array.Empty<SyntaxNodeOrToken>());
+    public static SeparatedSyntaxList<TNode> Empty { get; } = new([]);
 
     internal SeparatedSyntaxList(IReadOnlyCollection<SyntaxNodeOrToken> nodeOrTokens)
     {
@@ -65,7 +65,7 @@ public sealed class SeparatedSyntaxList<TNode> : IList<TNode>, IReadOnlyList<TNo
                 entryIndex++;
             }
         }
-        return entries.ToImmutableArray();
+        return [.. entries];
     }
 
     public IEnumerator<TNode> GetEnumerator()

@@ -34,7 +34,7 @@ internal class SortIterator : Iterator
 
         // One sort key per column. Each decodes its column once per spooled row into a typed
         // array (see SortKey), so the comparisons that drive the sort never re-decode.
-        _sortKeys = sortColumns.Select((column, i) => SortKey.Create(column, sortTypes[i], comparerArray[i])).ToImmutableArray();
+        _sortKeys = [.. sortColumns.Select((column, i) => SortKey.Create(column, sortTypes[i], comparerArray[i]))];
     }
 
     // Each sort key's column within a materialized row: input keys keep their column (the
@@ -60,7 +60,7 @@ internal class SortIterator : Iterator
             outerColumns.Add(entry, new RowBufferColumn(entry.Column.Kind, index));
         }
 
-        return entries.Select(e => e.RowBuffer == input ? e.Column : outerColumns[e]).ToImmutableArray();
+        return [.. entries.Select(e => e.RowBuffer == input ? e.Column : outerColumns[e])];
     }
 
     public override RowBuffer RowBuffer

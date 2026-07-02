@@ -20,10 +20,10 @@ internal sealed class ArrayRowBuffer : RowBuffer
 
     public ArrayRowBuffer(int objectCount, int bits32Count, int bits64Count, int bits128Count)
     {
-        _objects = objectCount == 0 ? Array.Empty<object?>() : new object?[objectCount];
-        _bits32 = bits32Count == 0 ? Array.Empty<uint>() : new uint[bits32Count];
-        _bits64 = bits64Count == 0 ? Array.Empty<ulong>() : new ulong[bits64Count];
-        _bits128 = bits128Count == 0 ? Array.Empty<Int128>() : new Int128[bits128Count];
+        _objects = objectCount == 0 ? [] : new object?[objectCount];
+        _bits32 = bits32Count == 0 ? [] : new uint[bits32Count];
+        _bits64 = bits64Count == 0 ? [] : new ulong[bits64Count];
+        _bits128 = bits128Count == 0 ? [] : new Int128[bits128Count];
         _null32 = NewNullMask(bits32Count);
         _null64 = NewNullMask(bits64Count);
         _null128 = NewNullMask(bits128Count);
@@ -233,7 +233,7 @@ internal sealed class ArrayRowBuffer : RowBuffer
 
     private static ulong[] NewNullMask(int count)
     {
-        return count == 0 ? Array.Empty<ulong>() : new ulong[(count + 63) >> 6];
+        return count == 0 ? [] : new ulong[(count + 63) >> 6];
     }
 
     private static bool GetNull(ulong[] mask, int index)

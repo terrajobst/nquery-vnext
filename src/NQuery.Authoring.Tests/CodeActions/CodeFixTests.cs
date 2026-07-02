@@ -13,7 +13,7 @@ public abstract class CodeFixTests : CodeActionTest
 
         var provider = CreateProvider();
         var providers = new[] { provider };
-        return semanticModel.GetFixes(position, providers).ToImmutableArray();
+        return [.. semanticModel.GetFixes(position, providers)];
     }
 
     protected abstract ICodeFixProvider CreateProvider();

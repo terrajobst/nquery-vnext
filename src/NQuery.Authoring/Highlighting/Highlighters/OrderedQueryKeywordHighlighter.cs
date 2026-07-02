@@ -19,7 +19,7 @@ internal sealed class OrderedQueryKeywordHighlighter : SelectQueryKeywordHighlig
                               .FirstOrDefault() as SelectQuerySyntax;
 
         if (selectQuery is null)
-            return Enumerable.Empty<TextSpan>();
+            return [];
 
         var selectQueryHighlights = GetSelectQueryHighlights(selectQuery);
         var orderByHighlights = GetOrderByHighlights(node);

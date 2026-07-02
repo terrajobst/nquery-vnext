@@ -140,7 +140,7 @@ partial class Binder
         if (commonType is null)
             commonType = boundExpressions.First().Type;
 
-        return boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType)).ToImmutableArray();
+        return [.. boundExpressions.Select((e, i) => BindConversion(diagnosticSpanProvider(i), e, commonType))];
     }
 
     private void BindToCommonType(TextSpan diagnosticSpan, IBoundValue left, IBoundValue right, out BoundExpression? newLeft, out BoundExpression? newRight)
@@ -1137,7 +1137,7 @@ partial class Binder
         if (convertedRight != right)
         {
             var outputValue = ValueFactory.CreateTemporary(convertedRight.Type);
-            computedValues = ImmutableArray.Create(new BoundComputedValue(convertedRight, outputValue));
+            computedValues = [new BoundComputedValue(convertedRight, outputValue)];
             convertedRight = new BoundValueExpression(outputValue);
         }
 

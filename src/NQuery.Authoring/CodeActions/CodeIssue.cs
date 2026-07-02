@@ -7,7 +7,7 @@ namespace NQuery.Authoring.CodeActions;
 public sealed class CodeIssue
 {
     public CodeIssue(CodeIssueKind kind, TextSpan span, string description)
-        : this(kind, span, description, Enumerable.Empty<ICodeAction>())
+        : this(kind, span, description, [])
     {
     }
 
@@ -21,7 +21,7 @@ public sealed class CodeIssue
         Kind = kind;
         Span = span;
         Description = description;
-        Actions = actions.ToImmutableArray();
+        Actions = [.. actions];
     }
 
     public CodeIssueKind Kind { get; }

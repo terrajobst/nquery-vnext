@@ -5,14 +5,14 @@ namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class SymbolTable : IEnumerable<Symbol>
 {
-    public static SymbolTable Empty { get; } = new(Enumerable.Empty<Symbol>());
+    public static SymbolTable Empty { get; } = new([]);
 
     private readonly ImmutableArray<Symbol> _symbols;
     private readonly ILookup<string, Symbol> _lookup;
 
     private SymbolTable(IEnumerable<Symbol> symbols)
     {
-        _symbols = symbols.ToImmutableArray();
+        _symbols = [.. symbols];
         _lookup = _symbols.ToLookup(s => s.Name, StringComparer.OrdinalIgnoreCase);
     }
 

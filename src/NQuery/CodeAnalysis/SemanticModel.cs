@@ -229,7 +229,7 @@ public sealed class SemanticModel
         var node = FindClosestNodeWithBinder(_bindingResult.Root, position);
         var binder = node is null ? null : _bindingResult.GetBinder(node);
         return binder is null
-                   ? Enumerable.Empty<Symbol>()
+                   ? []
                    : LookupSymbols(binder);
     }
 
@@ -302,7 +302,7 @@ public sealed class SemanticModel
     private SyntaxNode? FindClosestNodeWithBinder(SyntaxNode root, int position)
     {
         var token = root.FindTokenContext(position);
-        return (from n in token.Parent?.AncestorsAndSelf() ?? Enumerable.Empty<SyntaxNode>()
+        return (from n in token.Parent?.AncestorsAndSelf() ?? []
                 let bc = _bindingResult.GetBinder(n)
                 where bc is not null
                 select n).FirstOrDefault();

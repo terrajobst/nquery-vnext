@@ -18,7 +18,7 @@ public sealed class NullableParameterTests : EvaluationTest
             "IncN", typeof(int), new[] { ParameterDefinition.Create("x", typeof(int?)) }, increment);
         var catalog = Catalog.Default.AddFunctions(function);
 
-        AssertProduces("SELECT IncN(41)", new[] { 42 }, catalog);
+        AssertProduces("SELECT IncN(41)", [42], catalog);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public sealed class NullableParameterTests : EvaluationTest
                              .AddVariables(VariableDefinition.Create("b", typeof(Box), new Box()))
                              .AddMethodProvider(typeof(Box), new FixedMethodProvider(method));
 
-        AssertProduces("SELECT @b.AddOne(41)", new[] { 42 }, catalog);
+        AssertProduces("SELECT @b.AddOne(41)", [42], catalog);
     }
 
     private sealed class Box
@@ -43,7 +43,7 @@ public sealed class NullableParameterTests : EvaluationTest
 
         public FixedMethodProvider(params MethodDefinition[] methods)
         {
-            _methods = methods.ToImmutableArray();
+            _methods = [.. methods];
         }
 
         public IEnumerable<MethodDefinition> GetMethods(Type type)

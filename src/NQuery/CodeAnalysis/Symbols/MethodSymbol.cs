@@ -12,7 +12,7 @@ public sealed class MethodSymbol : Symbol, IInvocableSymbol
     {
         Definition = definition;
         ReturnType = definition.ReturnType;
-        Parameters = definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type)).ToImmutableArray();
+        Parameters = [.. definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type))];
     }
 
     private static string GetName(MethodDefinition definition)

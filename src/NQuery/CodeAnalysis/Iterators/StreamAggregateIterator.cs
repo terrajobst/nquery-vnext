@@ -36,9 +36,7 @@ internal sealed class StreamAggregateIterator : Iterator
 
         // One typed comparer per grouping column, so the same-group test below compares the
         // group key unboxed (see GroupKeyComparer); source and output columns share a kind.
-        _groupComparers = groupSourceColumns
-                          .Select((c, i) => GroupKeyComparer.Create(groupTypes[i], c.Kind, comparers[i]))
-                          .ToImmutableArray();
+        _groupComparers = [.. groupSourceColumns.Select((c, i) => GroupKeyComparer.Create(groupTypes[i], c.Kind, comparers[i]))];
         _aggregates = aggregates;
         _readRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);
         _rowBuffer = new ArrayRowBuffer(outputLayout);

@@ -43,7 +43,7 @@ internal sealed class JoinOrderer : LogicalOperatorRewriter
     protected override LogicalOperator RewriteJoin(LogicalJoin node)
     {
         if (IsRegionJoin(node))
-            return OrderRegion(node, ImmutableArray<LogicalExpression>.Empty);
+            return OrderRegion(node, []);
 
         return base.RewriteJoin(node);
     }
@@ -81,7 +81,7 @@ internal sealed class JoinOrderer : LogicalOperatorRewriter
         // a filter on top. It can't reference a deferred null-supplied side -- that is
         // exactly what PullUpOuterJoins guards against -- so it is safe below them.
         if (predicates.Count > 0)
-            acc = new LogicalFilter(acc, predicates.ToImmutableArray());
+            acc = new LogicalFilter(acc, [.. predicates]);
 
         // Re-apply the deferred outer joins, innermost (most recently peeled) first, so a
         // nested chain is rebuilt in its original order.

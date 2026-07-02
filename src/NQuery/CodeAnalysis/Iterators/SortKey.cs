@@ -43,7 +43,7 @@ internal sealed class TypedSortKey<T> : SortKey
     private readonly RowBufferColumn _column;
     private readonly bool _descending;
     private readonly IComparer<T>? _custom;
-    private T?[] _keys = Array.Empty<T?>();
+    private T?[] _keys = [];
 
     public TypedSortKey(RowBufferColumn column, bool descending, IComparer? custom)
     {
@@ -56,7 +56,7 @@ internal sealed class TypedSortKey<T> : SortKey
 
     public override void Decode(SpooledRowStore store, int count)
     {
-        _keys = count == 0 ? Array.Empty<T?>() : new T?[count];
+        _keys = count == 0 ? [] : new T?[count];
 
         var cursor = store.CreateCursor();
         for (var i = 0; i < count; i++)
@@ -96,7 +96,7 @@ internal sealed class ObjectSortKey : SortKey
     private readonly RowBufferColumn _column;
     private readonly bool _descending;
     private readonly IComparer _comparer;
-    private object?[] _keys = Array.Empty<object?>();
+    private object?[] _keys = [];
 
     public ObjectSortKey(RowBufferColumn column, bool descending, IComparer comparer)
     {
@@ -107,7 +107,7 @@ internal sealed class ObjectSortKey : SortKey
 
     public override void Decode(SpooledRowStore store, int count)
     {
-        _keys = count == 0 ? Array.Empty<object?>() : new object?[count];
+        _keys = count == 0 ? [] : new object?[count];
         for (var i = 0; i < count; i++)
             _keys[i] = store.GetObject(i, _column.Index);
     }

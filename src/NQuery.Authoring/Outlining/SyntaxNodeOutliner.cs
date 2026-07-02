@@ -10,7 +10,7 @@ public abstract class SyntaxNodeOutliner<T> : IOutliner
     {
         var node = nodeOrToken.IsNode ? nodeOrToken.AsNode() : null;
         return node is not T typedNode
-            ? Enumerable.Empty<OutliningRegionSpan>()
+            ? []
             : FindRegions(typedNode);
     }
 

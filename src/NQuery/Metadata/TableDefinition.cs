@@ -16,7 +16,7 @@ public abstract class TableDefinition
         get
         {
             if (_columns.IsDefault)
-                ImmutableInterlocked.InterlockedInitialize(ref _columns, GetColumns().ToImmutableArray());
+                ImmutableInterlocked.InterlockedInitialize(ref _columns, [.. GetColumns()]);
 
             return _columns;
         }
@@ -75,6 +75,6 @@ public abstract class TableDefinition
         ThrowIfNull(rowType);
         ThrowIfNull(columns);
 
-        return new EnumerableTableDefinition(name, source, rowType, columns.ToImmutableArray());
+        return new EnumerableTableDefinition(name, source, rowType, [.. columns]);
     }
 }

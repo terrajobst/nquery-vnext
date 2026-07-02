@@ -19,15 +19,15 @@ internal sealed class AddOrderByToSelectDistinctCodeFixProvider : CodeFixProvide
         var root = semanticModel.SyntaxTree.Root;
         var column = root.DescendantNodes().OfType<OrderByColumnSyntax>().FirstOrDefault(n => n.Span.ContainsOrTouches(position));
         if (column is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         var orderedQuery = column.Ancestors().OfType<OrderedQuerySyntax>().FirstOrDefault();
         if (orderedQuery is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         var selectQuery = orderedQuery.GetAppliedSelectQuery();
         if (selectQuery is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new[] { new AddOrderByToSelectDistinctCodeAction(selectQuery, column.ColumnSelector) };
     }

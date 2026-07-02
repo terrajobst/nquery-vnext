@@ -6,7 +6,7 @@ public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
 {
     public SymbolMarkup(IEnumerable<SymbolMarkupToken> tokens)
     {
-        Tokens = tokens.ToImmutableArray();
+        Tokens = [.. tokens];
     }
 
     public ImmutableArray<SymbolMarkupToken> Tokens { get; }

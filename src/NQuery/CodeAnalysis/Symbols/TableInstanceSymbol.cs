@@ -12,7 +12,7 @@ public sealed class TableInstanceSymbol : Symbol
         : base(name)
     {
         Table = table;
-        TableColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c)).ToImmutableArray();
+        TableColumnInstances = [.. table.Columns.Select(c => new TableColumnInstanceSymbol(this, c))];
     }
 
     // Derived table: each column aliases the inner query's value.
@@ -20,7 +20,7 @@ public sealed class TableInstanceSymbol : Symbol
         : base(name)
     {
         Table = table;
-        TableColumnInstances = table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, aliasFactory(this, c))).ToImmutableArray();
+        TableColumnInstances = [.. table.Columns.Select(c => new TableColumnInstanceSymbol(this, c, aliasFactory(this, c)))];
     }
 
     public override SymbolKind Kind

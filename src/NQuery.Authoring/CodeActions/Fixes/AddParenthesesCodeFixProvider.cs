@@ -22,7 +22,7 @@ internal sealed class AddParenthesesCodeFixProvider : CodeFixProvider
                              .FirstOrDefault(n => n is NameExpressionSyntax || n is PropertyAccessExpressionSyntax);
 
         if (expression is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new[] { new AddParenthesesCodeAction(expression) };
     }

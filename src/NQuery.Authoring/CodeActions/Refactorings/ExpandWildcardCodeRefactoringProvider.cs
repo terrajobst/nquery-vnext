@@ -14,7 +14,7 @@ internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringPro
     {
         var columnInstances = semanticModel.GetColumnInstances(node).ToImmutableArray();
         if (!columnInstances.Any())
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new[] { new ExpandWildcardCodeAction(node, columnInstances) };
     }

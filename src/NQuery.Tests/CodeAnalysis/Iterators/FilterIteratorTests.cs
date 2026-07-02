@@ -60,7 +60,7 @@ public class FilterIteratorTests : IteratorTests
     {
         var rows = new object[] { 1, 2, 3, 4 };
         var expected = new object[] { 3, 4 };
-        var outer = new MockedRowBuffer(new object[] { 2 });
+        var outer = new MockedRowBuffer([2]);
 
         using var input = new MockedIterator(rows);
         // rb[0] is the outer value (2), rb[1] is the input value -> keep input > outer.

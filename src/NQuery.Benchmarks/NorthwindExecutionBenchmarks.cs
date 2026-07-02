@@ -5,11 +5,11 @@ using BenchmarkDotNet.Attributes;
 
 using NQuery.Northwind;
 
-using OldNQuery = old::NQuery;
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
-using CurrentNQuery = NQuery;
 using CurrentMetadata = NQuery.Metadata;
+using CurrentNQuery = NQuery;
+using OldNQuery = old::NQuery;
 
 namespace NQuery.Benchmarks;
 

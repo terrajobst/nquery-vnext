@@ -19,7 +19,7 @@ partial class IntrinsicOperatorTests
     }
 
     private static readonly UnaryOperatorTestCase[] UnaryTestCases =
-    {
+    [
         new("+", "sbyte", "int"),
         new("+", "byte", "int"),
         new("+", "short", "int"),
@@ -65,5 +65,5 @@ partial class IntrinsicOperatorTests
         new("~", "bool", "#inapplicable"),
         new("~", "string", "#inapplicable"),
         new("~", "object", "#inapplicable")
-   };
+   ];
 }

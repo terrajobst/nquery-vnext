@@ -19,8 +19,8 @@ public class PhysicalPlanVerifierTests
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("c", typeof(bool));
         var input = Leaf(slot);
-        var filter = new PhysicalFilter(input, ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
-        var query = new PhysicalQuery(filter, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var filter = new PhysicalFilter(input, [new LogicalValueSlotExpression(slot)]);
+        var query = new PhysicalQuery(filter, []);
 
         PhysicalPlanVerifier.Verify(query);
     }
@@ -33,8 +33,8 @@ public class PhysicalPlanVerifierTests
         var factory = new ValueSlotFactory();
         var ghost = factory.CreateNamed("ghost", typeof(bool));
         var input = new PhysicalConstant();
-        var filter = new PhysicalFilter(input, ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(ghost)));
-        var query = new PhysicalQuery(filter, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var filter = new PhysicalFilter(input, [new LogicalValueSlotExpression(ghost)]);
+        var query = new PhysicalQuery(filter, []);
 
         var exception = Assert.Throws<InvalidOperationException>(() => PhysicalPlanVerifier.Verify(query));
         Assert.Contains(ghost.Name, exception.Message);
@@ -50,9 +50,9 @@ public class PhysicalPlanVerifierTests
         var rightSlot = factory.CreateNamed("r", typeof(bool));
 
         var left = Leaf(leftSlot);
-        var right = new PhysicalFilter(Leaf(rightSlot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(leftSlot)));
-        var apply = new PhysicalNestedLoops(PhysicalJoinKind.Inner, left, right, ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null, ImmutableArray.Create(leftSlot));
-        var query = new PhysicalQuery(apply, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var right = new PhysicalFilter(Leaf(rightSlot), [new LogicalValueSlotExpression(leftSlot)]);
+        var apply = new PhysicalNestedLoops(PhysicalJoinKind.Inner, left, right, [], probe: null, passthruPredicate: null, [leftSlot]);
+        var query = new PhysicalQuery(apply, []);
 
         PhysicalPlanVerifier.Verify(query);
     }
@@ -67,8 +67,8 @@ public class PhysicalPlanVerifierTests
 
         var left = Leaf(leftSlot);
         var right = Leaf(factory.CreateNamed("r", typeof(bool)));
-        var apply = new PhysicalNestedLoops(PhysicalJoinKind.Inner, left, right, ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null, ImmutableArray.Create(ghost));
-        var query = new PhysicalQuery(apply, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var apply = new PhysicalNestedLoops(PhysicalJoinKind.Inner, left, right, [], probe: null, passthruPredicate: null, [ghost]);
+        var query = new PhysicalQuery(apply, []);
 
         var exception = Assert.Throws<InvalidOperationException>(() => PhysicalPlanVerifier.Verify(query));
         Assert.Contains(ghost.Name, exception.Message);
@@ -82,8 +82,8 @@ public class PhysicalPlanVerifierTests
         // well-scoped on its own, so only the uniqueness check catches it.
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("dup", typeof(bool));
-        var join = new PhysicalNestedLoops(PhysicalJoinKind.Inner, Leaf(slot), Leaf(slot), ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null, ImmutableArray<ValueSlot>.Empty);
-        var query = new PhysicalQuery(join, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var join = new PhysicalNestedLoops(PhysicalJoinKind.Inner, Leaf(slot), Leaf(slot), [], probe: null, passthruPredicate: null, []);
+        var query = new PhysicalQuery(join, []);
 
         var exception = Assert.Throws<InvalidOperationException>(() => PhysicalPlanVerifier.Verify(query));
         Assert.Contains(slot.Name, exception.Message);
@@ -96,9 +96,9 @@ public class PhysicalPlanVerifierTests
         // not a double definition: only the leaf introduces it.
         var factory = new ValueSlotFactory();
         var slot = factory.CreateNamed("c", typeof(bool));
-        var filter = new PhysicalFilter(Leaf(slot), ImmutableArray.Create<LogicalExpression>(new LogicalValueSlotExpression(slot)));
-        var project = new PhysicalProject(filter, ImmutableArray.Create(slot));
-        var query = new PhysicalQuery(project, ImmutableArray<QueryColumnInstanceSymbol>.Empty);
+        var filter = new PhysicalFilter(Leaf(slot), [new LogicalValueSlotExpression(slot)]);
+        var project = new PhysicalProject(filter, [slot]);
+        var query = new PhysicalQuery(project, []);
 
         PhysicalPlanVerifier.Verify(query);
     }

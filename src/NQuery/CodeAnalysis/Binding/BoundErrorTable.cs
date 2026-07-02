@@ -9,12 +9,12 @@ internal sealed class BoundErrorTable : BoundTableReference
 
     public override IEnumerable<IBoundValue> GetDefinedValues()
     {
-        return Enumerable.Empty<IBoundValue>();
+        return [];
     }
 
     public override IEnumerable<IBoundValue> GetOutputValues()
     {
-        return Enumerable.Empty<IBoundValue>();
+        return [];
     }
 
     public override string ToString()

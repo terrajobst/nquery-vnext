@@ -26,7 +26,7 @@ internal sealed class BoundSelectQuery : BoundQuery
         Select = select;
         OrderBy = orderBy;
         Top = top;
-        OutputColumns = select.Columns.Select(c => c.Column).ToImmutableArray();
+        OutputColumns = [.. select.Columns.Select(c => c.Column)];
     }
 
     public override BoundNodeKind Kind => BoundNodeKind.SelectQuery;

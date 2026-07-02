@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Symbols;
@@ -9,7 +10,7 @@ internal sealed class SchemaTableSymbol : TableSymbol
         : base(GetName(tableDefinition))
     {
         Definition = tableDefinition;
-        Columns = tableDefinition.Columns.Select(c => new ColumnSymbol(c)).ToImmutableArray();
+        Columns = [.. tableDefinition.Columns.Select(c => new ColumnSymbol(c))];
     }
 
     private static string GetName(TableDefinition tableDefinition)

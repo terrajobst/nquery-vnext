@@ -68,7 +68,7 @@ public class AssertIteratorTests : IteratorTests
     public void Iterators_Assert_EvaluatesPredicateAgainstOuterThenInput()
     {
         var rows = new object[] { 5 };
-        var outer = new MockedRowBuffer(new object[] { 5 });
+        var outer = new MockedRowBuffer([5]);
 
         using var input = new MockedIterator(rows);
         // Asserts outer == input; both are 5, so it passes.

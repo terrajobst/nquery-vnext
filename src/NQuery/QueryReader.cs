@@ -21,13 +21,13 @@ public sealed class QueryReader : IDisposable
     {
         _iterator = iterator;
         _schemaOnly = schemaOnly;
-        _columnNames = columnNamesAndTypes.Select(t => t.ColumnName).ToImmutableArray();
-        _columnTypes = columnNamesAndTypes.Select(t => t.ColumnType).ToImmutableArray();
+        _columnNames = [.. columnNamesAndTypes.Select(t => t.ColumnName)];
+        _columnTypes = [.. columnNamesAndTypes.Select(t => t.ColumnType)];
 
         // Resolve each output column to its row-buffer address once; reading a column
         // then boxes that one cell on demand.
         var allocation = new RowBufferAllocation(null, iterator.RowBuffer, outputValueSlots);
-        _entries = outputValueSlots.Select(s => allocation[s]).ToArray();
+        _entries = [.. outputValueSlots.Select(s => allocation[s])];
 
         if (!_schemaOnly)
             _iterator.Open();

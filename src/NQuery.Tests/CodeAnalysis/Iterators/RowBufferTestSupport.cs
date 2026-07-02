@@ -69,7 +69,7 @@ internal static class RowBufferTestSupport
             }
         }
 
-        return new[] { type };
+        return [type];
     }
 }
 

@@ -61,7 +61,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
         // Base case: no outer references, so the right no longer reaches into the
         // left -- it is already an ordinary join.
         if (apply.OuterReferences.IsEmpty)
-            return ToJoin(apply, apply.Right, ImmutableArray<LogicalExpression>.Empty);
+            return ToJoin(apply, apply.Right, []);
 
         switch (apply.Right)
         {
@@ -161,7 +161,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
             domainKeys[i] = clonedLeft.OutputValueSlots[index];
         }
 
-        var domain = new LogicalAggregate(clonedLeft, BuildGroups(domainKeys, comparers), ImmutableArray<LogicalAggregatedValue>.Empty);
+        var domain = new LogicalAggregate(clonedLeft, BuildGroups(domainKeys, comparers), []);
 
         // The body, with its correlation references remapped onto the domain's keys (the
         // same cloner already mapped them while cloning L). Decorrelating an *inner* apply
@@ -224,7 +224,7 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
             return reference;
 
         var label = new LogicalCaseLabel(new LogicalIsNullExpression(reference), new LogicalLiteralExpression(emptyValue));
-        return new LogicalCaseExpression(ImmutableArray.Create(label), reference);
+        return new LogicalCaseExpression([label], reference);
     }
 
     private static ImmutableArray<LogicalComparedValue> BuildGroups(ValueSlot[] keys, IComparer[] comparers)

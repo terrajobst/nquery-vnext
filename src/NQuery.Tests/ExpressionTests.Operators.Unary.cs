@@ -18,9 +18,9 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {"+"},
-            new object[] {"-"},
-            new object[] {"~"},
-            new object[] {"NOT"}
+            ["-"],
+            ["~"],
+            ["NOT"]
         };
     }
 

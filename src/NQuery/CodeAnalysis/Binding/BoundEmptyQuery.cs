@@ -9,5 +9,5 @@ internal sealed class BoundEmptyQuery : BoundQuery
 {
     public override BoundNodeKind Kind => BoundNodeKind.EmptyQuery;
 
-    public override ImmutableArray<QueryColumnInstanceSymbol> OutputColumns => ImmutableArray<QueryColumnInstanceSymbol>.Empty;
+    public override ImmutableArray<QueryColumnInstanceSymbol> OutputColumns => [];
 }

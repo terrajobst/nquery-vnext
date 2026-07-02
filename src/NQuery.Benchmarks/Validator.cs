@@ -4,8 +4,8 @@ using NQuery.Northwind;
 
 using BaselineNQuery = baseline::NQuery;
 using BaselineSymbols = baseline::NQuery.Symbols;
-using CurrentNQuery = NQuery;
 using CurrentMetadata = NQuery.Metadata;
+using CurrentNQuery = NQuery;
 
 namespace NQuery.Benchmarks;
 
@@ -68,7 +68,7 @@ internal static class Validator
     }
 
     private static readonly string[] NorthwindQueries =
-        Enum.GetValues<NorthwindWorkload.Shape>().Select(NorthwindWorkload.Sql).ToArray();
+        [.. Enum.GetValues<NorthwindWorkload.Shape>().Select(NorthwindWorkload.Sql)];
 
     private static BaselineNQuery.DataContext BuildNorthwindBaseline()
     {

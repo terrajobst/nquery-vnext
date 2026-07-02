@@ -31,7 +31,7 @@ public sealed class RelationshipDefinition
         if (childColumns.Any(c => !childTable.Columns.Contains(c)))
             throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, nameof(childColumns));
 
-        return new RelationshipDefinition(parentTable, parentColumns.ToImmutableArray(), childTable, childColumns.ToImmutableArray());
+        return new RelationshipDefinition(parentTable, [.. parentColumns], childTable, [.. childColumns]);
     }
 
     public int ColumnCount

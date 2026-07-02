@@ -14,11 +14,11 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
 
         // We don't want to show a completion when typing an alias name.
         if (root.PossiblyInUserGivenName(position))
-            return Enumerable.Empty<CompletionItem>();
+            return [];
 
         // Comments and literals don't get completion information
         if (root.InComment(position) || root.InLiteral(position))
-            return Enumerable.Empty<CompletionItem>();
+            return [];
 
         var propertyAccessExpression = GetPropertyAccessExpression(root, position);
         return propertyAccessExpression is null
@@ -60,7 +60,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
         if (targetType is not null && !targetType.IsUnknown() && !targetType.IsError())
             return GetTypeCompletions(semanticModel, targetType);
 
-        return Enumerable.Empty<CompletionItem>();
+        return [];
     }
 
     private static IEnumerable<CompletionItem> GetTableCompletions(TableInstanceSymbol tableInstanceSymbol)

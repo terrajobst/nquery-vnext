@@ -17,7 +17,7 @@ internal sealed class OutliningWorker
         _sourceText = sourceText;
         _outlineRegions = outlineRegions;
         _span = span;
-        _outliners = outliners.ToImmutableArray();
+        _outliners = [.. outliners];
     }
 
     public void Visit(SyntaxNode node)

@@ -18,9 +18,9 @@ public sealed class SyntaxToken
         Span = span;
         _text = text;
         Value = value;
-        LeadingTrivia = leadingTrivia.ToImmutableArray();
-        TrailingTrivia = trailingTrivia.ToImmutableArray();
-        Diagnostics = diagnostics.ToImmutableArray();
+        LeadingTrivia = [.. leadingTrivia];
+        TrailingTrivia = [.. trailingTrivia];
+        Diagnostics = [.. diagnostics];
     }
 
     public SyntaxNode? Parent => _syntaxTree?.GetParentNode(this);

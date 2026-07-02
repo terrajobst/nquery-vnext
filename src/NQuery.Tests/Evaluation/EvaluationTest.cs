@@ -10,7 +10,7 @@ public abstract class EvaluationTest
         var expectedRows = new object?[expected.Length][];
 
         for (var i = 0; i < expected.Length; i++)
-            expectedRows[i] = new object?[] { expected[i] };
+            expectedRows[i] = [expected[i]];
 
         AssertProduces(text, expectedColumns, expectedRows, catalog);
     }
@@ -21,7 +21,7 @@ public abstract class EvaluationTest
         var expectedRows = new object?[expected.Length][];
 
         for (var i = 0; i < expected.Length; i++)
-            expectedRows[i] = new object?[] { expected[i].Item1, expected[i].Item2 };
+            expectedRows[i] = [expected[i].Item1, expected[i].Item2];
 
         AssertProduces(text, expectedColumns, expectedRows, catalog);
     }

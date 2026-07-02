@@ -14,7 +14,7 @@ internal sealed class BindingResult
         BoundRoot = boundRoot;
         _boundNodeFromSyntaxNode = boundNodeFromSyntaxNode;
         _binderFromBoundNode = binderFromBoundNode;
-        Diagnostics = diagnostics.ToImmutableArray();
+        Diagnostics = [.. diagnostics];
     }
 
     public SyntaxNode Root { get; }

@@ -8,7 +8,7 @@ internal sealed class TypeCompletionProvider : CompletionProvider<CastExpression
     protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, CastExpressionSyntax node)
     {
         if (node.AsKeyword.IsMissing || position < node.AsKeyword.Span.End)
-            return Enumerable.Empty<CompletionItem>();
+            return [];
 
         return from typeName in SyntaxFacts.GetTypeNames()
                select GetCompletionItem(typeName);

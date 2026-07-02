@@ -8,7 +8,7 @@ namespace NQuery.CodeAnalysis.Binding;
 internal static class UnaryOperator
 {
     private static readonly UnaryOperatorSignature[] BuiltInIdentitySignatures =
-    {
+    [
         new(UnaryOperatorKind.Identity, typeof(int), typeof(int)),
         new(UnaryOperatorKind.Identity, typeof(uint), typeof(uint)),
         new(UnaryOperatorKind.Identity, typeof(long), typeof(long)),
@@ -16,29 +16,29 @@ internal static class UnaryOperator
         new(UnaryOperatorKind.Identity, typeof(float), typeof(float)),
         new(UnaryOperatorKind.Identity, typeof(double), typeof(double)),
         new(UnaryOperatorKind.Identity, BuiltInOperators.DecimalUnaryIdentityMethod)
-    };
+    ];
 
     private static readonly UnaryOperatorSignature[] BuiltInNegationSignatures =
-    {
+    [
         new(UnaryOperatorKind.Negation, typeof(int), typeof(int)),
         new(UnaryOperatorKind.Negation, typeof(long), typeof(long)),
         new(UnaryOperatorKind.Negation, typeof(float), typeof(float)),
         new(UnaryOperatorKind.Negation, typeof(double), typeof(double)),
         new(UnaryOperatorKind.Negation, BuiltInOperators.DecimalUnaryNegationMethod)
-    };
+    ];
 
     private static readonly UnaryOperatorSignature[] BuiltInComplementSignatures =
-    {
+    [
         new(UnaryOperatorKind.Complement, typeof(int), typeof(int)),
         new(UnaryOperatorKind.Complement, typeof(uint), typeof(uint)),
         new(UnaryOperatorKind.Complement, typeof(long), typeof(long)),
         new(UnaryOperatorKind.Complement, typeof(ulong), typeof(ulong))
-    };
+    ];
 
     private static readonly UnaryOperatorSignature[] BuiltInLogicalNotSignatures =
-    {
+    [
         new(UnaryOperatorKind.LogicalNot, typeof(bool), typeof(bool))
-    };
+    ];
 
     internal static OverloadResolutionResult<UnaryOperatorSignature> Resolve(UnaryOperatorKind kind, Type type)
     {
@@ -99,9 +99,9 @@ internal static class UnaryOperator
     private static ImmutableArray<UnaryOperatorSignature> GetUserDefinedSignatures(UnaryOperatorKind kind, Type type)
     {
         var methodName = GetOperatorMethodName(kind);
-        return (from m in GetOperatorMethods(methodName, type)
+        return [.. (from m in GetOperatorMethods(methodName, type)
                 where HasOperatorSignature(m)
-                select new UnaryOperatorSignature(kind, m)).ToImmutableArray();
+                select new UnaryOperatorSignature(kind, m))];
     }
 
     private static string GetOperatorMethodName(UnaryOperatorKind kind)

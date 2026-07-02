@@ -23,11 +23,11 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
         var syntaxTree = semanticModel.SyntaxTree;
         var expression = syntaxTree.Root.DescendantNodes().OfType<ExpressionSyntax>().FirstOrDefault(e => e.Span == diagnostic.Span);
         if (expression is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         var selectQuery = GetSelectQuery(expression);
         if (selectQuery is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         switch (diagnostic.DiagnosticId)
         {
@@ -61,7 +61,7 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
     {
         var selectColumn = expression.Ancestors().OfType<ExpressionSelectColumnSyntax>().FirstOrDefault();
         if (selectColumn is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return GetExpressionFixes(selectQuery, selectColumn.Expression, expression);
     }
@@ -75,7 +75,7 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
     {
         var orderByColumn = expression.Ancestors().OfType<OrderByColumnSyntax>().FirstOrDefault();
         if (orderByColumn is null)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return GetExpressionFixes(selectQuery, orderByColumn.ColumnSelector, expression);
     }

@@ -7,7 +7,7 @@ public sealed class SignatureItem : IEquatable<SignatureItem>
     public SignatureItem(string content, IEnumerable<ParameterItem> parameters)
     {
         Content = content;
-        Parameters = parameters.ToImmutableArray();
+        Parameters = [.. parameters];
     }
 
     public string Content { get; }

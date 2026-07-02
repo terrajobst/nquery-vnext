@@ -75,7 +75,7 @@ public class ComputeScalarIteratorTests : IteratorTests
             {6, 16},
             {8, 18}
         };
-        var outer = new MockedRowBuffer(new object[] { 10 });
+        var outer = new MockedRowBuffer([10]);
 
         using var input = new MockedIterator(rows);
         var layout = RowBufferLayout.Create(new[] { typeof(int) });

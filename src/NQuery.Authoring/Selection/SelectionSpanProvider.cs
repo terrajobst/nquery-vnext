@@ -9,7 +9,7 @@ public abstract class SelectionSpanProvider<T> : ISelectionSpanProvider
     public IEnumerable<TextSpan> Provide(SyntaxNodeOrToken nodeOrToken)
     {
         if (nodeOrToken.Parent is not T parent)
-            return Enumerable.Empty<TextSpan>();
+            return [];
 
         return Provide(nodeOrToken, parent);
     }

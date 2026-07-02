@@ -9,7 +9,7 @@ internal sealed class BoundMethodInvocationExpression : BoundExpression
     public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
     {
         Target = target;
-        Arguments = arguments.ToImmutableArray();
+        Arguments = [.. arguments];
         Result = result;
     }
 

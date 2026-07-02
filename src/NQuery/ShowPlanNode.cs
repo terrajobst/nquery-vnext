@@ -8,8 +8,8 @@ public sealed class ShowPlanNode
     {
         IsScalar = isScalar;
         OperatorName = operatorName;
-        Properties = properties.ToImmutableArray();
-        Children = children.ToImmutableArray();
+        Properties = [.. properties];
+        Children = [.. children];
     }
 
     public bool IsScalar { get; }

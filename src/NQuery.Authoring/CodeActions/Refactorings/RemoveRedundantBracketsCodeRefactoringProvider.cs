@@ -10,12 +10,12 @@ internal sealed class RemoveRedundantBracketsCodeRefactoringProvider : ICodeRefa
         var syntaxTree = semanticModel.SyntaxTree;
         var token = syntaxTree.Root.FindTokenOnLeft(position);
         if (token.Kind != SyntaxKind.IdentifierToken || !token.IsParenthesizedIdentifier())
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         var identifierText = token.ValueText;
         var isRedundant = SyntaxFacts.IsValidIdentifier(identifierText);
         if (!isRedundant)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new[] { new RemoveRedundantBracketsCodeAction(token) };
     }

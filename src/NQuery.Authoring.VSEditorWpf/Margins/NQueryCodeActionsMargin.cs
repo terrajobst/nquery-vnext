@@ -52,7 +52,7 @@ internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICod
         var fixes = GetCodeFixes(semanticModel, position);
         var issues = GetCodeIssues(semanticModel, position);
         var refactorings = GetRefactorings(semanticModel, position);
-        return fixes.Concat(issues).Concat(refactorings).ToImmutableArray();
+        return [.. fixes, .. issues, .. refactorings];
     }
 
     private IEnumerable<CodeActionModel> GetCodeFixes(SemanticModel semanticModel, int position)

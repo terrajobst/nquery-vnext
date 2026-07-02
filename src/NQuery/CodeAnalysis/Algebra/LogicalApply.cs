@@ -59,7 +59,7 @@ internal sealed class LogicalApply : LogicalOperator
     private ImmutableArray<ValueSlot> ComputeOuterReferences()
     {
         var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(Right);
-        return Left.OutputValueSlots.Where(referenced.Contains).ToImmutableArray();
+        return [.. Left.OutputValueSlots.Where(referenced.Contains)];
     }
 
     protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots()
@@ -79,6 +79,6 @@ internal sealed class LogicalApply : LogicalOperator
             result = result.Concat(Right.OutputValueSlots);
         if (Probe is not null)
             result = result.Append(Probe);
-        return result.ToImmutableArray();
+        return [.. result];
     }
 }

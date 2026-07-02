@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Linq.Expressions;
+
 using NQuery.Metadata;
 
 namespace NQuery.CodeAnalysis.Symbols;
@@ -11,7 +12,7 @@ public sealed class FunctionSymbol : Symbol, IInvocableSymbol
     {
         Definition = definition;
         ReturnType = definition.ReturnType;
-        Parameters = definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type)).ToImmutableArray();
+        Parameters = [.. definition.Parameters.Select(p => new ParameterSymbol(p.Name, p.Type))];
     }
 
     private static string GetName(FunctionDefinition definition)

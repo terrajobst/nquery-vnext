@@ -8,14 +8,14 @@ namespace NQuery.Authoring.VSEditorWpf;
 public abstract class AsyncTagger<TTag, TRawTag> : ITagger<TTag>
     where TTag : ITag
 {
-    private ImmutableArray<TRawTag> _rawTags = ImmutableArray<TRawTag>.Empty;
+    private ImmutableArray<TRawTag> _rawTags = [];
     private ITextSnapshot _rawTagsSnapshot = null!;
 
     protected async void InvalidateTagsAsync()
     {
         var (snapshot, rawTags) = await GetRawTagsAsync();
         _rawTagsSnapshot = snapshot;
-        _rawTags = rawTags.ToImmutableArray();
+        _rawTags = [.. rawTags];
         var snapshotSpan = new SnapshotSpan(_rawTagsSnapshot, 0, _rawTagsSnapshot.Length);
         OnTagsChanged(new SnapshotSpanEventArgs(snapshotSpan));
     }

@@ -20,19 +20,19 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {"*"},
-            new object[] {"/"},
-            new object[] {"%"},
-            new object[] {"+"},
-            new object[] {"-"},
-            new object[] {"="},
-            new object[] {"!="},
-            new object[] {"<"},
-            new object[] {"<="},
-            new object[] {">"},
-            new object[] {">="},
-            new object[] {"^"},
-            new object[] {"&"},
-            new object[] {"|"}
+            ["/"],
+            ["%"],
+            ["+"],
+            ["-"],
+            ["="],
+            ["!="],
+            ["<"],
+            ["<="],
+            [">"],
+            [">="],
+            ["^"],
+            ["&"],
+            ["|"]
         };
     }
 
@@ -41,7 +41,7 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {"<<"},
-            new object[] {">>"}
+            [">>"]
         };
     }
 

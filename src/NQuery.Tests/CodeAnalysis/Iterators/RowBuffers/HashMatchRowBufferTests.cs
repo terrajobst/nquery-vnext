@@ -4,7 +4,7 @@ namespace NQuery.Tests.CodeAnalysis.Iterators.RowBuffers;
 
 public class HashMatchRowBufferTests : RowBufferTests
 {
-    private static readonly Type[] Int2Int = { typeof(int), typeof(int), typeof(int) };
+    private static readonly Type[] Int2Int = [typeof(int), typeof(int), typeof(int)];
 
     [Fact]
     public void RowBuffers_HashMatch_ExposesBuildEntryThenProbe()
@@ -23,7 +23,7 @@ public class HashMatchRowBufferTests : RowBufferTests
         buffer.SetBuild(null);
         buffer.SetProbe(Buffer(9));
 
-        AssertContract(buffer, new object?[] { null, null, 9 }, Int2Int);
+        AssertContract(buffer, [null, null, 9], Int2Int);
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class HashMatchRowBufferTests : RowBufferTests
         buffer.SetBuild(Buffer(1, 2));
         buffer.SetProbe(null);
 
-        AssertContract(buffer, new object?[] { 1, 2, null }, Int2Int);
+        AssertContract(buffer, [1, 2, null], Int2Int);
     }
 
     [Fact]

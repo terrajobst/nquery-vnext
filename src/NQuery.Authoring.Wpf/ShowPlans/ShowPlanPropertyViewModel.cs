@@ -16,7 +16,7 @@ internal sealed class ShowPlanPropertyViewModel : ShowPlanItemViewModel
 
     public override IEnumerable<ShowPlanItemViewModel> Children
     {
-        get { return Enumerable.Empty<ShowPlanItemViewModel>(); }
+        get { return []; }
     }
 
     public override string Kind

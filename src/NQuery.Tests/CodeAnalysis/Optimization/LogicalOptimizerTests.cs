@@ -184,7 +184,7 @@ public class LogicalOptimizerTests
         // side. The algebrizer rarely emits a bare constant join, so build it directly.
         var employees = Algebrizer.Algebrize(Bind("SELECT e.City FROM Employees e")).Root;
         var join = new LogicalJoin(LogicalJoinKind.Inner, new LogicalConstant(), employees,
-                                   ImmutableArray<LogicalExpression>.Empty, probe: null, passthruPredicate: null);
+                                   [], probe: null, passthruPredicate: null);
 
         var result = new OuterJoinRemover().RewriteRelation(join);
 
@@ -261,11 +261,11 @@ public class LogicalOptimizerTests
         // Project(Project(scan)): the inner is an identity layer, the outer narrows to a
         // single slot. The pair collapses to one project reading straight off the scan.
         var inner = new LogicalProject(scan, scan.OutputValueSlots);
-        var outer = new LogicalProject(inner, ImmutableArray.Create(scan.OutputValueSlots[0]));
+        var outer = new LogicalProject(inner, [scan.OutputValueSlots[0]]);
 
         var merged = Assert.IsType<LogicalProject>(ProjectMerger.Instance.RewriteRelation(outer));
         Assert.Same(scan, merged.Input);
-        Assert.Equal(ImmutableArray.Create(scan.OutputValueSlots[0]), merged.Outputs);
+        Assert.Equal([scan.OutputValueSlots[0]], merged.Outputs);
 
         // An identity project disappears entirely.
         var identity = new LogicalProject(scan, scan.OutputValueSlots);
@@ -281,12 +281,12 @@ public class LogicalOptimizerTests
         var root = Algebrizer.Algebrize(Bind("SELECT e.FirstName, e.LastName FROM Employees e")).Root;
         var scan = root.DescendantsAndSelf().OfType<LogicalTableScan>().Single();
 
-        var inner = new LogicalProject(scan, ImmutableArray.Create(scan.OutputValueSlots[0]));
-        var outer = new LogicalProject(inner, ImmutableArray.Create(scan.OutputValueSlots[1]));
+        var inner = new LogicalProject(scan, [scan.OutputValueSlots[0]]);
+        var outer = new LogicalProject(inner, [scan.OutputValueSlots[1]]);
 
         var merged = Assert.IsType<LogicalProject>(ProjectMerger.Instance.RewriteRelation(outer));
         Assert.Same(scan, merged.Input);
-        Assert.Equal(ImmutableArray.Create(scan.OutputValueSlots[1]), merged.Outputs);
+        Assert.Equal([scan.OutputValueSlots[1]], merged.Outputs);
     }
 
     private static LogicalOperator Optimize(string text)

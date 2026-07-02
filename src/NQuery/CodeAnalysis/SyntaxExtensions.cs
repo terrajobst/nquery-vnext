@@ -34,7 +34,7 @@ public static class SyntaxExtensions
             //       order of nodes.
             var seenNodes = new HashSet<SyntaxNode>();
             return root.FindStartTokens(position)
-                       .SelectMany(t => t.Parent?.AncestorsAndSelf() ?? Enumerable.Empty<SyntaxNode>())
+                       .SelectMany(t => t.Parent?.AncestorsAndSelf() ?? [])
                        .Where(seenNodes.Add);
         }
 

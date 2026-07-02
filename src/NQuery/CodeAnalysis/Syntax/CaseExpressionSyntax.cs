@@ -9,7 +9,7 @@ public sealed class CaseExpressionSyntax : ExpressionSyntax
     {
         CaseKeyword = caseKeyword;
         InputExpression = inputExpression;
-        CaseLabels = caseLabels.ToImmutableArray();
+        CaseLabels = [.. caseLabels];
         ElseLabel = elseLabel;
         EndKeyword = endKeyword;
     }

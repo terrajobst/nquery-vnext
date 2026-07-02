@@ -30,7 +30,7 @@ public class StreamAggregateIteratorTests : IteratorTests
         var groupOutput = outputLayout.Columns.Take(groupColumns.Length).ToImmutableArray();
         var comparers = groupColumns.Select(_ => (IComparer)Comparer.Default).ToImmutableArray();
 
-        return new StreamAggregateIterator(input, groupSource, groupOutput, groupTypes.ToImmutableArray(), comparers, aggregates, outputLayout, outer);
+        return new StreamAggregateIterator(input, groupSource, groupOutput, [.. groupTypes], comparers, aggregates, outputLayout, outer);
     }
 
     // MAX and MIN over the int in the given 32-bit column, written to the first two
@@ -62,7 +62,7 @@ public class StreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
 
-        using (var iterator = CreateAggregate(input, new[] { typeof(int) }, Array.Empty<int>(), Array.Empty<Type>(), None()))
+        using (var iterator = CreateAggregate(input, [typeof(int)], [], [], None()))
         {
             for (var i = 0; i < 2; i++)
             {
@@ -82,7 +82,7 @@ public class StreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
 
-        using var iterator = CreateAggregate(input, new[] { typeof(object) }, new[] { 0 }, Array.Empty<Type>(), None());
+        using var iterator = CreateAggregate(input, [typeof(object)], [0], [], None());
         AssertEmpty(iterator);
     }
 
@@ -94,7 +94,7 @@ public class StreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
 
-        using var iterator = CreateAggregate(input, new[] { typeof(object) }, Array.Empty<int>(), Array.Empty<Type>(), None());
+        using var iterator = CreateAggregate(input, [typeof(object)], [], [], None());
         AssertProduces(iterator, expected);
     }
 
@@ -109,7 +109,7 @@ public class StreamAggregateIteratorTests : IteratorTests
 
         using var input = new MockedIterator(rows);
 
-        using var iterator = CreateAggregate(input, new[] { typeof(int) }, Array.Empty<int>(), new[] { typeof(int), typeof(int) }, MaxMin(valueColumn: 0));
+        using var iterator = CreateAggregate(input, [typeof(int)], [], [typeof(int), typeof(int)], MaxMin(valueColumn: 0));
         AssertProduces(iterator, expected);
     }
 
@@ -132,7 +132,7 @@ public class StreamAggregateIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
 
         // Group by the (object) name column; the value int is the input's only 32-bit column.
-        using var iterator = CreateAggregate(input, new[] { typeof(string), typeof(int) }, new[] { 0 }, new[] { typeof(int), typeof(int) }, MaxMin(valueColumn: 0));
+        using var iterator = CreateAggregate(input, [typeof(string), typeof(int)], [0], [typeof(int), typeof(int)], MaxMin(valueColumn: 0));
         AssertProduces(iterator, expected);
     }
 
@@ -146,7 +146,7 @@ public class StreamAggregateIteratorTests : IteratorTests
         {
             {103}
         };
-        var outer = new MockedRowBuffer(new object[] { 100 });
+        var outer = new MockedRowBuffer([100]);
 
         using var input = new MockedIterator(rows);
 
@@ -161,7 +161,7 @@ public class StreamAggregateIteratorTests : IteratorTests
             },
             target => target.Write32Bit<int>(0, max));
 
-        using var iterator = CreateAggregate(input, new[] { typeof(int) }, Array.Empty<int>(), new[] { typeof(int) }, aggregates, outer);
+        using var iterator = CreateAggregate(input, [typeof(int)], [], [typeof(int)], aggregates, outer);
         AssertProduces(iterator, expected);
     }
 }

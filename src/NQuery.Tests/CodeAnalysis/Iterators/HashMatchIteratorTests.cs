@@ -103,7 +103,7 @@ public class HashMatchIteratorTests : IteratorTests
         using var probe = new MockedIterator(probeRows);
 
         using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
-        AssertProduces(iterator, new[] { typeof(int), typeof(int) }, expected);
+        AssertProduces(iterator, [typeof(int), typeof(int)], expected);
     }
 
     [Theory]
@@ -136,7 +136,7 @@ public class HashMatchIteratorTests : IteratorTests
         using var probe = MockedIterator.Empty(typeof(int));
 
         using var iterator = Join(build, probe, _ => true, preserveBuild, preserveProbe);
-        AssertProduces(iterator, new[] { typeof(int), typeof(int) }, expected);
+        AssertProduces(iterator, [typeof(int), typeof(int)], expected);
     }
 
     [Theory]
@@ -325,7 +325,7 @@ public class HashMatchIteratorTests : IteratorTests
 
         var rows = Drain(iterator, buildIntColumns: 1);
         Assert.Equal(1, iterator.RowBuffer.Bits32Count);
-        Assert.Equal(new object?[] { 2, 3 }, SingleColumn(rows));
+        Assert.Equal([2, 3], SingleColumn(rows));
     }
 
     [Fact]
@@ -341,7 +341,7 @@ public class HashMatchIteratorTests : IteratorTests
 
         var rows = Drain(iterator, buildIntColumns: 1);
         Assert.Equal(1, iterator.RowBuffer.Bits32Count);
-        Assert.Equal(new object?[] { 1 }, SingleColumn(rows));
+        Assert.Equal([1], SingleColumn(rows));
     }
 
     // A NULL build key never matches, so semi excludes it and anti keeps it.
@@ -357,7 +357,7 @@ public class HashMatchIteratorTests : IteratorTests
         using var iterator = Join(build, probe, _ => true, preserveBuild: false, preserveProbe: false, semi: false, anti: true);
 
         var rows = Drain(iterator, buildIntColumns: 1);
-        Assert.Equal(new object?[] { null }, SingleColumn(rows));
+        Assert.Equal([null], SingleColumn(rows));
     }
 
     // A probing semi (decorrelated EXISTS) emits every build row with a trailing boolean
@@ -406,6 +406,6 @@ public class HashMatchIteratorTests : IteratorTests
 
     private static object?[] SingleColumn(List<object?[]> rows)
     {
-        return rows.Select(r => r[0]).OrderBy(v => v).ToArray();
+        return [.. rows.Select(r => r[0]).OrderBy(v => v)];
     }
 }

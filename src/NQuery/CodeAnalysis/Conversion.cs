@@ -39,7 +39,7 @@ public sealed class Conversion
         IsImplicit = isImplicit;
         _isBoxingOrUnboxing = isBoxingOrUnboxing;
         IsReference = isReference;
-        ConversionMethods = conversionMethods?.ToImmutableArray() ?? ImmutableArray<MethodInfo>.Empty;
+        ConversionMethods = conversionMethods?.ToImmutableArray() ?? [];
     }
 
     private static readonly Conversion None = new(false, false, false, false, false, null);
@@ -195,10 +195,10 @@ public sealed class Conversion
         var targetMethods = targetType.GetMethods(ConversionMethodBindingFlags);
         var methods = sourceMethods.Concat(targetMethods);
 
-        return (from m in methods
+        return [.. (from m in methods
                 where m.Name.Equals(methodName, StringComparison.Ordinal) &&
                       HasConversionSignature(m, sourceType, targetType)
-                select m).ToImmutableArray();
+                select m)];
     }
 
     private static bool HasConversionSignature(MethodInfo methodInfo, Type sourceType, Type targetType)

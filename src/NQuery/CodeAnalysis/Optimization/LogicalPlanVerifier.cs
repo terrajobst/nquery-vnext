@@ -24,7 +24,7 @@ internal static class LogicalPlanVerifier
     public static void Verify(LogicalOperator root, string source)
     {
         ThrowIfNull(root);
-        VerifyOperator(root, ImmutableArray<ValueSlot>.Empty, source);
+        VerifyOperator(root, [], source);
         PlanVerification.RequireUniqueDefinitions(source, root, Children, n => n.DefinedValueSlots, n => n.Kind.ToString());
     }
 

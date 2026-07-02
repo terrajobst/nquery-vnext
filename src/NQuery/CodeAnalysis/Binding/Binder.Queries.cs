@@ -353,7 +353,7 @@ partial class Binder
         var definedValues = outputValues.Select((value, columnIndex) => new BoundUnifiedValue(value, inputs.Select(input => input.OutputValues[columnIndex]))).ToImmutableArray();
         var outputColumns = BindOutputColumns(queries.First().OutputColumns, outputValues);
         var comparers = (isUnionAll
-            ? Enumerable.Empty<IComparer>()
+            ? []
             : outputColumns.Select(c => BindComparer(diagnosticSpan, c.Type, DiagnosticId.InvalidDataTypeInUnion))).ToImmutableArray();
 
         return new BoundUnionQuery(isUnionAll, inputs, definedValues, comparers, outputColumns);
@@ -364,7 +364,7 @@ partial class Binder
         var queries = new List<QuerySyntax>();
         FlattenUnionQueries(queries, node);
 
-        return queries.Select(BindQuery).ToImmutableArray();
+        return [.. queries.Select(BindQuery)];
     }
 
     private static void FlattenUnionQueries(ICollection<QuerySyntax> receiver, UnionQuerySyntax node)
@@ -466,8 +466,8 @@ partial class Binder
             }
         }
 
-        newLeft = new BoundQueryInput(left, leftComputedValues.ToImmutableArray(), leftOutputs.ToImmutableArray());
-        newRight = new BoundQueryInput(right, rightComputedValues.ToImmutableArray(), rightOutputs.ToImmutableArray());
+        newLeft = new BoundQueryInput(left, [.. leftComputedValues], [.. leftOutputs]);
+        newRight = new BoundQueryInput(right, [.. rightComputedValues], [.. rightOutputs]);
     }
 
     private ImmutableArray<BoundQueryInput> BindToCommonTypes(TextSpan diagnosticSpan, ImmutableArray<BoundQuery> queries)
@@ -516,11 +516,11 @@ partial class Binder
             var computedValues = computations[queryIndex];
             result.Add(new BoundQueryInput(
                 queries[queryIndex],
-                computedValues is null ? ImmutableArray<BoundComputedValue>.Empty : computedValues.ToImmutableArray(),
-                outputs[queryIndex].ToImmutableArray()));
+                computedValues is null ? [] : [.. computedValues],
+                [.. outputs[queryIndex]]));
         }
 
-        return result.ToImmutableArray();
+        return [.. result];
     }
 
     private static ImmutableArray<QueryColumnInstanceSymbol> BindOutputColumns(ImmutableArray<QueryColumnInstanceSymbol> inputColumns, ImmutableArray<IBoundValue> outputValues)
@@ -542,7 +542,7 @@ partial class Binder
             result.Add(resultColumn);
         }
 
-        return result.ToImmutableArray();
+        return [.. result];
     }
 
     private BoundQuery BindOrderedQuery(OrderedQuerySyntax node)
@@ -743,8 +743,7 @@ partial class Binder
 
     private ImmutableArray<BoundQuery> BindCommonTableExpressionRecursiveMembers(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, IEnumerable<QuerySyntax> recursiveMembers)
     {
-        return recursiveMembers.Select(r => BindCommonTableExpressionRecursiveMember(commonTableExpression, symbol, r))
-                               .ToImmutableArray();
+        return [.. recursiveMembers.Select(r => BindCommonTableExpressionRecursiveMember(commonTableExpression, symbol, r))];
     }
 
     private BoundQuery BindCommonTableExpressionRecursiveMember(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, QuerySyntax recursiveMember)
@@ -776,8 +775,8 @@ partial class Binder
     {
         var symbol = new CommonTableExpressionSymbol(
             commonTableExpression.Name.ValueText,
-            _ => (null, ImmutableArray<ColumnSymbol>.Empty),
-            _ => ImmutableArray<BoundQuery>.Empty
+            _ => (null, []),
+            _ => []
         );
 
         return new BoundCommonTableExpression(symbol);
@@ -883,7 +882,7 @@ partial class Binder
                           let expression = (BoundAggregateExpression)t.Expression
                           select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Fold, expression.Argument)).ToImmutableArray();
 
-        var groups = groupByClause?.Groups ?? ImmutableArray<BoundComparedValue>.Empty;
+        var groups = groupByClause?.Groups ?? [];
 
         var projections = (from t in queryBinder.QueryState.ComputedProjections
                            select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
@@ -894,13 +893,13 @@ partial class Binder
 
         var distinctComparer = isDistinct
             ? BindDistinctComparers(node.SelectClause.Columns, outputColumns)
-            : ImmutableArray<IComparer>.Empty;
+            : [];
 
         ImmutableArray<BoundComparedValue> distinctSortValues;
 
         if (!isDistinct || orderByClause is null)
         {
-            distinctSortValues = ImmutableArray<BoundComparedValue>.Empty;
+            distinctSortValues = [];
         }
         else
         {
@@ -917,9 +916,7 @@ partial class Binder
             }
 
             var orderByValueSet = orderByClause.Columns.Select(c => c.ComparedValue.Value).ToFrozenSet();
-            distinctSortValues = outputColumns.Select((c, i) => new BoundComparedValue(c.BoundValue, distinctComparer[i]))
-                                             .Where(s => !orderByValueSet.Contains(s.Value))
-                                             .ToImmutableArray();
+            distinctSortValues = [.. outputColumns.Select((c, i) => new BoundComparedValue(c.BoundValue, distinctComparer[i])).Where(s => !orderByValueSet.Contains(s.Value))];
         }
 
         // NOTE: We rely on the fact that the parser already ensured the argument to TOP is a valid integer
@@ -946,14 +943,13 @@ partial class Binder
 
         var sortedValues = orderByClause is null
             ? ImmutableArray<BoundComparedValue>.Empty
-            : orderByClause.Columns.Select(c => c.ComparedValue).Concat(distinctSortValues).ToImmutableArray();
+            : [.. orderByClause.Columns.Select(c => c.ComparedValue), .. distinctSortValues];
 
         // SELECT DISTINCT with no ORDER BY is implemented as a group-by over the output
         // columns (an ORDER BY instead turns it into a distinct-sort over SortedValues).
         var distinctValues = !isDistinct || orderByClause is not null
             ? ImmutableArray<BoundComparedValue>.Empty
-            : outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword!.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))
-                           .ToImmutableArray();
+            : [.. outputColumns.Select(c => new BoundComparedValue(c.BoundValue, BindComparer(distinctKeyword!.Span, c.Type, DiagnosticId.InvalidDataTypeInSelectDistinct)))];
 
         var boundFrom = fromClause is null ? null : new BoundFromClause(fromClause);
         var boundWhere = whereClause is null ? null : new BoundWhereClause(whereClause);
@@ -1036,7 +1032,7 @@ partial class Binder
         if (symbols.Length == 0)
         {
             Diagnostics.ReportUndeclaredTableInstance(tableName);
-            return new BoundWildcardSelectColumn(null, Array.Empty<TableColumnInstanceSymbol>());
+            return new BoundWildcardSelectColumn(null, []);
         }
 
         if (symbols.Length > 1)
@@ -1096,7 +1092,7 @@ partial class Binder
             comparers.Add(comparer);
         }
 
-        return comparers.ToImmutableArray();
+        return [.. comparers];
     }
 
     private BoundTableReference? BindFromClause(FromClauseSyntax? node)
@@ -1300,7 +1296,7 @@ partial class Binder
             boundColumns.Add(boundColumn);
         }
 
-        return new BoundOrderByClause(boundColumns, boundColumns.Select(c => c.ComparedValue).ToImmutableArray());
+        return new BoundOrderByClause(boundColumns, [.. boundColumns.Select(c => c.ComparedValue)]);
     }
 
     private BoundOrderBySelector BindOrderBySelector(ImmutableArray<QueryColumnInstanceSymbol> queryColumns, ExpressionSyntax selector)

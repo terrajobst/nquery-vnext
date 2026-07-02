@@ -8,9 +8,7 @@ public abstract class ExtensionTests
     private static ImmutableArray<Type> GetAvailableProviderTypes<T>()
     {
         var type = typeof(T);
-        return type.Assembly.GetTypes()
-                   .Where(t => !t.IsAbstract && type.IsAssignableFrom(t))
-                   .ToImmutableArray();
+        return [.. type.Assembly.GetTypes().Where(t => !t.IsAbstract && type.IsAssignableFrom(t))];
     }
 
     protected static void AssertAllProvidersAreExposed<T>(IEnumerable<T> providers, [CallerArgumentExpression(nameof(providers))] string? source = null)

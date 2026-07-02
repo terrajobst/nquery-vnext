@@ -44,7 +44,7 @@ public class ComparerRegistrationTests : EvaluationTest
 
         var text = @"SELECT n.Value FROM Numbers n ORDER BY n.Value";
 
-        AssertProduces(text, new[] { 3, 2, 1 }, catalog);
+        AssertProduces(text, [3, 2, 1], catalog);
     }
 
     [Fact]
@@ -56,6 +56,6 @@ public class ComparerRegistrationTests : EvaluationTest
 
         var text = @"SELECT n.Value FROM Numbers n ORDER BY n.Value";
 
-        AssertProduces(text, new[] { 3, 2, 1 }, catalog);
+        AssertProduces(text, [3, 2, 1], catalog);
     }
 }

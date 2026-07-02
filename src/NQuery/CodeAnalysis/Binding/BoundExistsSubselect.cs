@@ -5,7 +5,7 @@ namespace NQuery.CodeAnalysis.Binding;
 internal sealed class BoundExistsSubselect : BoundExpression
 {
     public BoundExistsSubselect(BoundQuery query)
-        : this(query, ImmutableArray<BoundComputedValue>.Empty, null)
+        : this(query, [], null)
     {
     }
 

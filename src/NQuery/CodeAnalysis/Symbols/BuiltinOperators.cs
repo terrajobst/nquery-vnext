@@ -20,19 +20,19 @@ internal static class BuiltInOperators
     public static MethodInfo StringGreaterMethod { get; } = new Func<string, string, bool>(StringGreater).Method;
     public static MethodInfo StringGreaterOrEqualMethod { get; } = new Func<string, string, bool>(StringGreaterOrEqual).Method;
 
-    public static MethodInfo DecimalAddMethod { get; } = typeof(decimal).GetMethod("op_Addition", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalDivideMethod { get; } = typeof(decimal).GetMethod("op_Division", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalEqualsMethod { get; } = typeof(decimal).GetMethod("op_Equality", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalNotEqualsMethod { get; } = typeof(decimal).GetMethod("op_Inequality", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalGreaterMethod { get; } = typeof(decimal).GetMethod("op_GreaterThan", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalGreaterOrEqualMethod { get; } = typeof(decimal).GetMethod("op_GreaterThanOrEqual", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalLessMethod { get; } = typeof(decimal).GetMethod("op_LessThan", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalLessOrEqualMethod { get; } = typeof(decimal).GetMethod("op_LessThanOrEqual", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalModulusMethod { get; } = typeof(decimal).GetMethod("op_Modulus", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalMultiplyMethod { get; } = typeof(decimal).GetMethod("op_Multiply", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalSubtractMethod { get; } = typeof(decimal).GetMethod("op_Subtraction", new[] { typeof(decimal), typeof(decimal) })!;
-    public static MethodInfo DecimalUnaryNegationMethod { get; } = typeof(decimal).GetMethod("op_UnaryNegation", new[] { typeof(decimal) })!;
-    public static MethodInfo DecimalUnaryIdentityMethod { get; } = typeof(decimal).GetMethod("op_UnaryPlus", new[] { typeof(decimal) })!;
+    public static MethodInfo DecimalAddMethod { get; } = typeof(decimal).GetMethod("op_Addition", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalDivideMethod { get; } = typeof(decimal).GetMethod("op_Division", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalEqualsMethod { get; } = typeof(decimal).GetMethod("op_Equality", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalNotEqualsMethod { get; } = typeof(decimal).GetMethod("op_Inequality", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalGreaterMethod { get; } = typeof(decimal).GetMethod("op_GreaterThan", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalGreaterOrEqualMethod { get; } = typeof(decimal).GetMethod("op_GreaterThanOrEqual", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalLessMethod { get; } = typeof(decimal).GetMethod("op_LessThan", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalLessOrEqualMethod { get; } = typeof(decimal).GetMethod("op_LessThanOrEqual", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalModulusMethod { get; } = typeof(decimal).GetMethod("op_Modulus", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalMultiplyMethod { get; } = typeof(decimal).GetMethod("op_Multiply", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalSubtractMethod { get; } = typeof(decimal).GetMethod("op_Subtraction", [typeof(decimal), typeof(decimal)])!;
+    public static MethodInfo DecimalUnaryNegationMethod { get; } = typeof(decimal).GetMethod("op_UnaryNegation", [typeof(decimal)])!;
+    public static MethodInfo DecimalUnaryIdentityMethod { get; } = typeof(decimal).GetMethod("op_UnaryPlus", [typeof(decimal)])!;
 
     // Relational comparison of strings. NULL operands are filtered out before the operator
     // runs (see ExpressionCompiler.BuildBinaryExpression), so these only see non-null strings.

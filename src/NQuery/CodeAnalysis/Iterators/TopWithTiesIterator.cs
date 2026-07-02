@@ -14,9 +14,7 @@ internal sealed class TopWithTiesIterator : TopIterator
     {
         // One typed column per tie-breaker, so capturing the last emitted row and testing
         // each candidate for a tie compares the ORDER BY values unboxed (see TieColumn).
-        _tieColumns = tieEntries
-                      .Zip(tieComparers, TieColumn.Create)
-                      .ToImmutableArray();
+        _tieColumns = [.. tieEntries.Zip(tieComparers, TieColumn.Create)];
     }
 
     public override void Open()

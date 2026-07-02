@@ -7,7 +7,7 @@ internal sealed class BoundUnifiedValue
     public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
     {
         Value = value;
-        InputValues = inputValues.ToImmutableArray();
+        InputValues = [.. inputValues];
     }
 
     public IBoundValue Value { get; }

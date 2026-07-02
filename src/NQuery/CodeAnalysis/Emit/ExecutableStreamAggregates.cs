@@ -37,10 +37,10 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
         _outputLayout = RowBufferLayout.Create(outputValueSlots);
 
         // Grouping columns come first in the output; each is copied from the input row.
-        _groupSourceColumns = groups.Select(g => slotIndices[g.ValueSlot]).ToImmutableArray();
-        _groupOutputColumns = _outputLayout.Columns.Take(groups.Length).ToImmutableArray();
-        _groupTypes = groups.Select(g => g.ValueSlot.Type).ToImmutableArray();
-        _comparers = groups.Select(g => g.Comparer).ToImmutableArray();
+        _groupSourceColumns = [.. groups.Select(g => slotIndices[g.ValueSlot])];
+        _groupOutputColumns = [.. _outputLayout.Columns.Take(groups.Length)];
+        _groupTypes = [.. groups.Select(g => g.ValueSlot.Type)];
+        _comparers = [.. groups.Select(g => g.Comparer)];
 
         // The aggregate results land in the output columns after the grouping columns.
         var aggregateColumns = _outputLayout.Columns.Skip(groups.Length).ToImmutableArray();

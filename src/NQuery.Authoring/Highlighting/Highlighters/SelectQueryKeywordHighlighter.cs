@@ -13,7 +13,7 @@ internal sealed class SelectQueryKeywordHighlighter : SelectQueryKeywordHighligh
                              .FirstOrDefault() is OrderedQuerySyntax;
 
         return hasOrderBy
-                   ? Enumerable.Empty<TextSpan>()
+                   ? []
                    : GetSelectQueryHighlights(node);
     }
 }

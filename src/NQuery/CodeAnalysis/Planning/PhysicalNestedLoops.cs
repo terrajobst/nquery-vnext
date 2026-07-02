@@ -63,7 +63,7 @@ internal sealed class PhysicalNestedLoops : PhysicalOperator
             result = result.Concat(Right.OutputValueSlots);
         if (Probe is not null)
             result = result.Append(Probe);
-        return result.ToImmutableArray();
+        return [.. result];
     }
 
     private bool IncludeRightValues()

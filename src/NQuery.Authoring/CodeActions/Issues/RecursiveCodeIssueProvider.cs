@@ -31,7 +31,7 @@ internal sealed class RecursiveCodeIssueProvider : CodeIssueProvider<CommonTable
             };
         }
 
-        return Enumerable.Empty<CodeIssue>();
+        return [];
     }
 
     private static bool IsRecursive(SemanticModel semanticModel, CommonTableExpressionSyntax node)

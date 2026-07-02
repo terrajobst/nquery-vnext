@@ -44,10 +44,10 @@ internal sealed class ProjectedRowBuffer : RowBuffer
             }
         }
 
-        _objectEntries = objects.ToArray();
-        _bits32Entries = bits32.ToArray();
-        _bits64Entries = bits64.ToArray();
-        _bits128Entries = bits128.ToArray();
+        _objectEntries = [.. objects];
+        _bits32Entries = [.. bits32];
+        _bits64Entries = [.. bits64];
+        _bits128Entries = [.. bits128];
     }
 
     public override int ObjectCount => _objectEntries.Length;

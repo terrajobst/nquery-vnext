@@ -25,7 +25,7 @@ internal static class Planner
     {
         ThrowIfNull(root);
 
-        return PlanOperator(root, ImmutableArray<ValueSlot>.Empty);
+        return PlanOperator(root, []);
     }
 
     private static PhysicalOperator PlanOperator(LogicalOperator node, ImmutableArray<ValueSlot> outerSlots)
@@ -126,7 +126,7 @@ internal static class Planner
         if (!below.IsEmpty)
             input = new PhysicalFilter(input, below);
         if (key.IndexComputedValue is not null)
-            input = new PhysicalComputeScalar(input, ImmutableArray.Create(key.IndexComputedValue));
+            input = new PhysicalComputeScalar(input, [key.IndexComputedValue]);
 
         result = new PhysicalIndexSpool(input, key.IndexKey, key.ProbeKey);
 
@@ -247,9 +247,9 @@ internal static class Planner
             // that (ProjectMerger removes one that became an identity, e.g. over inlined
             // CTE references), and a leaked slot would widen the query's output row.
             if (key.BuildComputedValue is not null)
-                build = new PhysicalComputeScalar(build, ImmutableArray.Create(key.BuildComputedValue));
+                build = new PhysicalComputeScalar(build, [key.BuildComputedValue]);
             if (key.ProbeComputedValue is not null)
-                probe = new PhysicalComputeScalar(probe, ImmutableArray.Create(key.ProbeComputedValue));
+                probe = new PhysicalComputeScalar(probe, [key.ProbeComputedValue]);
 
             var hashMatch = new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe);
             return key.BuildComputedValue is null && key.ProbeComputedValue is null
@@ -265,7 +265,7 @@ internal static class Planner
 
         var left = PlanOperator(node.Left, outerSlots);
         var right = PlanOperator(node.Right, outerSlots);
-        return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, ImmutableArray<ValueSlot>.Empty);
+        return new PhysicalNestedLoops(MapJoinKind(node.JoinKind), left, right, node.Conditions, node.Probe, node.PassthruPredicate, []);
     }
 
     // A hash match can serve inner / left outer / full outer, and -- by hashing the
@@ -435,7 +435,7 @@ internal static class Planner
             LogicalJoinKind.LeftOuter,
             cloner1.Clone(node.Left),
             cloner1.Clone(node.Right),
-            node.Conditions.Select(cloner1.CloneExpression).ToImmutableArray(),
+            [.. node.Conditions.Select(cloner1.CloneExpression)],
             probe: null,
             passthruPredicate: null);
 
@@ -447,7 +447,7 @@ internal static class Planner
             LogicalJoinKind.LeftAntiSemi,
             right2,
             left2,
-            node.Conditions.Select(cloner2.CloneExpression).ToImmutableArray(),
+            [.. node.Conditions.Select(cloner2.CloneExpression)],
             probe: null,
             passthruPredicate: null);
 
@@ -456,7 +456,7 @@ internal static class Planner
         var compute = new LogicalCompute(antiSemi, nullValues);
 
         // Reorder to (NULL-as-L ++ R), matching branch 1's (L ++ R) column order.
-        var branch2 = new LogicalProject(compute, nullSlots.Concat(right2.OutputValueSlots).ToImmutableArray());
+        var branch2 = new LogicalProject(compute, [.. nullSlots, .. right2.OutputValueSlots]);
 
         var firstOutputs = branch1.OutputValueSlots;
         var secondOutputs = branch2.OutputValueSlots;
@@ -464,7 +464,7 @@ internal static class Planner
                                       .Select(i => new LogicalUnifiedValue(outputs[i], new[] { firstOutputs[i], secondOutputs[i] }))
                                       .ToImmutableArray();
 
-        return new LogicalUnion(isUnionAll: true, ImmutableArray.Create<LogicalOperator>(branch1, branch2), unifiedValues, ImmutableArray<IComparer>.Empty);
+        return new LogicalUnion(isUnionAll: true, [branch1, branch2], unifiedValues, []);
     }
 
     // A full outer join has no PhysicalJoinKind: nested loops can't produce it.
@@ -500,7 +500,7 @@ internal static class Planner
             : outerSlots.AddRange(node.OuterReferences);
         var right = PlanOperator(node.Right, rightOuterSlots);
 
-        return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, ImmutableArray<LogicalExpression>.Empty, node.Probe, node.Passthru, node.OuterReferences);
+        return new PhysicalNestedLoops(MapApplyKind(node.ApplyKind), left, right, [], node.Probe, node.Passthru, node.OuterReferences);
     }
 
     private static PhysicalJoinKind MapApplyKind(LogicalApplyKind kind)
@@ -580,7 +580,7 @@ internal static class Planner
 
         var joinKind = node.IsIntersect ? PhysicalJoinKind.LeftSemi : PhysicalJoinKind.LeftAntiSemi;
 
-        return new PhysicalNestedLoops(joinKind, distinctLeft, right, conditions, probe: null, passthruPredicate: null, ImmutableArray<ValueSlot>.Empty);
+        return new PhysicalNestedLoops(joinKind, distinctLeft, right, conditions, probe: null, passthruPredicate: null, []);
     }
 
     // (l = r) OR (l IS NULL AND r IS NULL). Plain equality yields NULL when either

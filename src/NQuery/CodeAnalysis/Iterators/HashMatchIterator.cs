@@ -133,7 +133,7 @@ internal sealed class HashMatchIterator : Iterator
             _table.Add(row);
         }
 
-        _matched = _buildStore.Count == 0 ? Array.Empty<bool>() : new bool[_buildStore.Count];
+        _matched = _buildStore.Count == 0 ? [] : new bool[_buildStore.Count];
     }
 
     public override bool Read()

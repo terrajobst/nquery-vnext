@@ -74,7 +74,7 @@ public sealed class Compilation
     {
         var syntaxDiagnostics = SyntaxTree.GetDiagnostics();
         var semanticDiagnostics = bindingResult.Diagnostics;
-        return syntaxDiagnostics.Concat(semanticDiagnostics).ToImmutableArray();
+        return [.. syntaxDiagnostics, .. semanticDiagnostics];
     }
 
     public ShowPlan? GetShowPlan()

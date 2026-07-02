@@ -11,5 +11,5 @@ internal sealed class PhysicalConstant : PhysicalOperator
 
     protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
 
-    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => ImmutableArray<ValueSlot>.Empty;
+    protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [];
 }

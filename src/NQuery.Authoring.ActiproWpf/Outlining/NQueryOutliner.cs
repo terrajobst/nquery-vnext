@@ -19,7 +19,7 @@ internal sealed class NQueryOutliner : INQueryOutliner
         if (!document.TryGetSyntaxTree(out var syntaxTree))
             return null;
 
-        return new NQueryOutliningSource(snapshot, syntaxTree, Outliners.ToImmutableArray());
+        return new NQueryOutliningSource(snapshot, syntaxTree, [.. Outliners]);
     }
 
     public AutomaticOutliningUpdateTrigger UpdateTrigger

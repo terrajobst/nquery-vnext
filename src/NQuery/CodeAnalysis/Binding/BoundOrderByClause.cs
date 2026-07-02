@@ -6,7 +6,7 @@ internal sealed class BoundOrderByClause
 {
     public BoundOrderByClause(IEnumerable<BoundOrderByColumn> columns, ImmutableArray<BoundComparedValue> sortedValues)
     {
-        Columns = columns.ToImmutableArray();
+        Columns = [.. columns];
         SortedValues = sortedValues;
     }
 

@@ -11,8 +11,8 @@ internal sealed class BoundWildcardSelectColumn : BoundNode
     public BoundWildcardSelectColumn(TableInstanceSymbol? table, IEnumerable<TableColumnInstanceSymbol> columns)
     {
         Table = table;
-        _tableColumns = columns.ToImmutableArray();
-        QueryColumns = _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.BoundValue)).ToImmutableArray();
+        _tableColumns = [.. columns];
+        QueryColumns = [.. _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.BoundValue))];
     }
 
     public override BoundNodeKind Kind

@@ -13,7 +13,7 @@ public class SortIteratorTests : IteratorTests
         var expected = new object?[] { 1, 2 };
 
         using var input = new MockedIterator(rows);
-        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0) };
+        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0) };
         var comparers = new[] { Comparer.Default };
 
         using (var iterator = new SortIterator(input, sortEntries, comparers))
@@ -35,7 +35,7 @@ public class SortIteratorTests : IteratorTests
         var rows = Array.Empty<object>();
 
         using var input = new MockedIterator(rows);
-        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0) };
+        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0) };
         var comparers = new[] { Comparer.Default };
 
         using var iterator = new SortIterator(input, sortEntries, comparers);
@@ -51,7 +51,7 @@ public class SortIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var sortEntries = new[]
         {
-            RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0)
+            RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0)
         };
 
         var comparers = new[]
@@ -120,13 +120,13 @@ public class SortIteratorTests : IteratorTests
         var rows = new object?[] { null, 1, 2, 1 };
         var expected = new object?[] { null, 1, 1, 2 };
 
-        var outerRowBuffer = new MockedRowBuffer(new object[] { "Outer Reference" });
+        var outerRowBuffer = new MockedRowBuffer(["Outer Reference"]);
 
         using var input = new MockedIterator(rows);
         var sortEntries = new[]
         {
-            RowBufferTestSupport.Entry(outerRowBuffer, new[] { typeof(string) }, 0),
-            RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0)
+            RowBufferTestSupport.Entry(outerRowBuffer, [typeof(string)], 0),
+            RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0)
         };
 
         var comparers = new[]

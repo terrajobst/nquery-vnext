@@ -47,7 +47,7 @@ internal sealed class NQueryEditorViewCodeActionMargin : Canvas, IEditorViewMarg
         var fixes = GetCodeFixes(semanticModel, position, textDocument);
         var issues = GetCodeIssues(semanticModel, position, textDocument);
         var refactorings = GetRefactorings(semanticModel, position, textDocument);
-        return fixes.Concat(issues).Concat(refactorings).ToImmutableArray();
+        return [.. fixes, .. issues, .. refactorings];
     }
 
     private static IEnumerable<CodeActionModel> GetCodeFixes(SemanticModel semanticModel, int position, ITextDocument textDocument)

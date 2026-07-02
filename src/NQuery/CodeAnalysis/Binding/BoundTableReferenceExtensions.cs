@@ -12,7 +12,7 @@ internal static class BoundTableReferenceExtensions
         {
             var result = new List<TableInstanceSymbol>();
             GetDeclaredTableInstances(result, node);
-            return result.ToImmutableArray();
+            return [.. result];
         }
     }
 

@@ -12,7 +12,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
         var function = FunctionDefinition.Create<int, int>("SQUARE", x => x * x);
         var catalog = Catalog.Default.AddFunctions(function);
 
-        AssertProduces("SELECT SQUARE(5)", new[] { 25 }, catalog);
+        AssertProduces("SELECT SQUARE(5)", [25], catalog);
     }
 
     [Fact]
@@ -24,7 +24,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abc"))
                                      .AddPropertyProvider(typeof(string), new FixedPropertyProvider(property));
 
-        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, catalog);
+        AssertProduces("SELECT @s.DoubleLength", [6], catalog);
     }
 
     [Fact]
@@ -35,7 +35,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abc"))
                                      .AddPropertyProvider(typeof(string), new FixedPropertyProvider(property));
 
-        AssertProduces("SELECT @s.DoubleLength", new[] { 6 }, catalog);
+        AssertProduces("SELECT @s.DoubleLength", [6], catalog);
     }
 
     [Fact]
@@ -47,7 +47,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abcdef"))
                                      .AddMethodProvider(typeof(string), new FixedMethodProvider(method));
 
-        AssertProduces("SELECT @s.Head(3)", new[] { "abc" }, catalog);
+        AssertProduces("SELECT @s.Head(3)", ["abc"], catalog);
     }
 
     private sealed class FixedPropertyProvider : IPropertyProvider
@@ -56,7 +56,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
 
         public FixedPropertyProvider(params PropertyDefinition[] properties)
         {
-            _properties = properties.ToImmutableArray();
+            _properties = [.. properties];
         }
 
         public IEnumerable<PropertyDefinition> GetProperties(Type type)
@@ -71,7 +71,7 @@ public sealed class ExpressionMemberTests : EvaluationTest
 
         public FixedMethodProvider(params MethodDefinition[] methods)
         {
-            _methods = methods.ToImmutableArray();
+            _methods = [.. methods];
         }
 
         public IEnumerable<MethodDefinition> GetMethods(Type type)

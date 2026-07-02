@@ -7,7 +7,7 @@ public sealed class SkippedTokensTriviaSyntax : StructuredTriviaSyntax
     internal SkippedTokensTriviaSyntax(SyntaxTree syntaxTree, IEnumerable<SyntaxToken> tokens)
         : base(syntaxTree)
     {
-        Tokens = tokens.ToImmutableArray();
+        Tokens = [.. tokens];
     }
 
     public override SyntaxKind Kind

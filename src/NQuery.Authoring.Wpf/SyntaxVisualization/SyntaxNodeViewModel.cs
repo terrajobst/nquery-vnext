@@ -48,7 +48,7 @@ internal sealed class SyntaxNodeViewModel
 
     private void UpdateChildren(IEnumerable<SyntaxNodeViewModel> children)
     {
-        Children = children.ToImmutableArray();
+        Children = [.. children];
 
         foreach (var nodeViewModel in Children)
             nodeViewModel.Parent = this;

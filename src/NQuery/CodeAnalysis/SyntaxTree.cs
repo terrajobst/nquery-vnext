@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+
 using NQuery.CodeAnalysis.Syntax;
 using NQuery.CodeAnalysis.Text;
 

@@ -7,7 +7,7 @@ internal sealed class DerivedTableSymbol : TableSymbol
     internal DerivedTableSymbol(IEnumerable<ColumnSymbol> columns)
         : base(string.Empty)
     {
-        Columns = columns.ToImmutableArray();
+        Columns = [.. columns];
     }
 
     public override SymbolKind Kind

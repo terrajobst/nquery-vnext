@@ -13,7 +13,7 @@ internal sealed class CommonTableExpressionSymbol : TableSymbol
         string name,
         Func<CommonTableExpressionSymbol, (BoundQuery? Anchor, ImmutableArray<ColumnSymbol> Columns)> anchorBinder
     )
-        : this(name, anchorBinder, _ => ImmutableArray<BoundQuery>.Empty)
+        : this(name, anchorBinder, _ => [])
     {
     }
 

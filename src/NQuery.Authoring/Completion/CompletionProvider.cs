@@ -14,7 +14,7 @@ public abstract class CompletionProvider<T> : ICompletionProvider
                                .FirstOrDefault();
 
         return node is null
-                ? Enumerable.Empty<CompletionItem>()
+                ? []
                 : GetItems(semanticModel, position, node);
     }
 

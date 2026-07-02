@@ -16,7 +16,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
             root.GuaranteedInUserGivenName(position) ||
             IsInPropertyAccess(root, position))
         {
-            return Enumerable.Empty<CompletionItem>();
+            return [];
         }
 
         return from k in GetAvailableKeywords(syntaxTree, position)

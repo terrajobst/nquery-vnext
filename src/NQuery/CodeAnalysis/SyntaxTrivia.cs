@@ -16,7 +16,7 @@ public sealed class SyntaxTrivia
         Text = text;
         Span = span;
         Structure = structure;
-        Diagnostics = diagnostics.ToImmutableArray();
+        Diagnostics = [.. diagnostics];
     }
 
     public SyntaxToken? Parent => _syntaxTree?.GetParentToken(this);

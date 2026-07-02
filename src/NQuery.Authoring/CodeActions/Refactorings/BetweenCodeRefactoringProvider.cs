@@ -10,13 +10,13 @@ internal sealed class BetweenCodeRefactoringProvider : CodeRefactoringProvider<B
     {
         var isLogicalAnd = node.Kind == SyntaxKind.LogicalAndExpression;
         if (!isLogicalAnd)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         if (node.Left is not BinaryExpressionSyntax leftComparison)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         if (node.Right is not BinaryExpressionSyntax rightComparison)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         // Let's bring the expression into the following form:
         //
@@ -25,7 +25,7 @@ internal sealed class BetweenCodeRefactoringProvider : CodeRefactoringProvider<B
         if (!TryGetLessThanBounds(leftComparison, out var lowerBound, out var expression1) ||
             !TryGetLessThanBounds(rightComparison, out var expression2, out var upperBound))
         {
-            return Enumerable.Empty<ICodeAction>();
+            return [];
         }
 
         // If expression1 and expression2 are syntactically equivalent, we can replace them with BETWEEN:
@@ -54,7 +54,7 @@ internal sealed class BetweenCodeRefactoringProvider : CodeRefactoringProvider<B
         }
         else
         {
-            return Enumerable.Empty<ICodeAction>();
+            return [];
         }
 
         return new[] { new BetweenCodeAction(node, expression1, lowerBound!, upperBound!) };

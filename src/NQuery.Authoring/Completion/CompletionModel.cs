@@ -11,7 +11,7 @@ public sealed class CompletionModel
     {
         SemanticModel = semanticModel;
         ApplicableSpan = applicableSpan;
-        Items = items.ToImmutableArray();
+        Items = [.. items];
     }
 
     public SemanticModel SemanticModel { get; }

@@ -13,7 +13,7 @@ public class DistinctSortIteratorTests : IteratorTests
         var expected = rows;
 
         using var input = new MockedIterator(rows);
-        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0) };
+        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0) };
         var comparers = new[] { Comparer.Default };
 
         using (var iterator = new DistinctSortIterator(input, sortEntries, comparers))
@@ -35,7 +35,7 @@ public class DistinctSortIteratorTests : IteratorTests
         var rows = Array.Empty<object>();
 
         using var input = new MockedIterator(rows);
-        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0) };
+        var sortEntries = new[] { RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0) };
         var comparers = new[] { Comparer.Default };
 
         using var iterator = new DistinctSortIterator(input, sortEntries, comparers);
@@ -51,7 +51,7 @@ public class DistinctSortIteratorTests : IteratorTests
         using var input = new MockedIterator(rows);
         var sortEntries = new[]
         {
-            RowBufferTestSupport.Entry(input.RowBuffer, new[] { typeof(int) }, 0)
+            RowBufferTestSupport.Entry(input.RowBuffer, [typeof(int)], 0)
         };
 
         var comparers = new[]

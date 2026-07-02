@@ -7,7 +7,7 @@ internal sealed class BoundCaseExpression : BoundExpression
 {
     public BoundCaseExpression(IEnumerable<BoundCaseLabel> caseLabels, BoundExpression? elseExpression)
     {
-        CaseLabels = caseLabels.ToImmutableArray();
+        CaseLabels = [.. caseLabels];
         ElseExpression = elseExpression;
     }
 

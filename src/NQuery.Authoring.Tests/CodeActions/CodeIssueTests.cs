@@ -13,7 +13,7 @@ public abstract class CodeIssueTests
 
         var provider = CreateProvider();
         var providers = new[] { provider };
-        return semanticModel.GetIssues(providers).ToImmutableArray();
+        return [.. semanticModel.GetIssues(providers)];
     }
 
     protected abstract ICodeIssueProvider CreateProvider();

@@ -22,7 +22,7 @@ public static class Commenter
         private ImmutableArray<SyntaxTrivia> GetConsecutiveSingleLineComments(TextSpan textSpan)
         {
             if (!syntaxTree.TryGetStartAndEndComment(textSpan, out var trivias, out var startIndex, out var endIndex))
-                return ImmutableArray<SyntaxTrivia>.Empty;
+                return [];
 
             var result = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
@@ -43,7 +43,7 @@ public static class Commenter
                         // Ignore
                         break;
                     default:
-                        return ImmutableArray<SyntaxTrivia>.Empty;
+                        return [];
                 }
             }
 
@@ -134,7 +134,7 @@ public static class Commenter
         {
             startIndex = -1;
             endIndex = -1;
-            trivias = ImmutableArray<SyntaxTrivia>.Empty;
+            trivias = [];
 
             // Find the associated token
 

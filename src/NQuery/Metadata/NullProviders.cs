@@ -8,7 +8,7 @@ public static class NullProviders
         {
             ThrowIfNull(type);
 
-            return Enumerable.Empty<PropertyDefinition>();
+            return [];
         }
     }
 
@@ -18,7 +18,7 @@ public static class NullProviders
         {
             ThrowIfNull(type);
 
-            return Enumerable.Empty<MethodDefinition>();
+            return [];
         }
     }
 

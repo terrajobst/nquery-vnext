@@ -68,6 +68,6 @@ internal sealed class PhysicalHashMatch : PhysicalOperator
                 : Build.OutputValueSlots.Add(ProbeColumn);
         }
 
-        return Build.OutputValueSlots.Concat(Probe.OutputValueSlots).ToImmutableArray();
+        return [.. Build.OutputValueSlots, .. Probe.OutputValueSlots];
     }
 }

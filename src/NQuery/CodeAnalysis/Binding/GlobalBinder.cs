@@ -30,11 +30,11 @@ internal sealed class GlobalBinder : Binder
     {
         var propertyProvider = Lookup(_catalog.PropertyProviders, type);
         if (propertyProvider is null)
-            return Enumerable.Empty<PropertySymbol>();
+            return [];
 
         if (!_propertySymbols.TryGetValue(type, out var result))
         {
-            result = propertyProvider.GetProperties(type).Select(p => new PropertySymbol(p)).ToImmutableArray();
+            result = [.. propertyProvider.GetProperties(type).Select(p => new PropertySymbol(p))];
             _propertySymbols.Add(type, result);
         }
 
@@ -45,11 +45,11 @@ internal sealed class GlobalBinder : Binder
     {
         var methodProvider = Lookup(_catalog.MethodProviders, type);
         if (methodProvider is null)
-            return Enumerable.Empty<MethodSymbol>();
+            return [];
 
         if (!_methodSymbols.TryGetValue(type, out var result))
         {
-            result = methodProvider.GetMethods(type).Select(m => new MethodSymbol(m)).ToImmutableArray();
+            result = [.. methodProvider.GetMethods(type).Select(m => new MethodSymbol(m))];
             _methodSymbols.Add(type, result);
         }
 

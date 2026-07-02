@@ -187,13 +187,13 @@ internal sealed class SpooledRowStore
 
         public Chunk(SpooledRowStore store)
         {
-            Objects = store._objectCount == 0 ? Array.Empty<object?>() : new object?[ChunkRows * store._objectCount];
-            Bits32 = store._bits32Count == 0 ? Array.Empty<uint>() : new uint[ChunkRows * store._bits32Count];
-            Bits64 = store._bits64Count == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._bits64Count];
-            Bits128 = store._bits128Count == 0 ? Array.Empty<Int128>() : new Int128[ChunkRows * store._bits128Count];
-            Null32 = store._null32Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null32Words];
-            Null64 = store._null64Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null64Words];
-            Null128 = store._null128Words == 0 ? Array.Empty<ulong>() : new ulong[ChunkRows * store._null128Words];
+            Objects = store._objectCount == 0 ? [] : new object?[ChunkRows * store._objectCount];
+            Bits32 = store._bits32Count == 0 ? [] : new uint[ChunkRows * store._bits32Count];
+            Bits64 = store._bits64Count == 0 ? [] : new ulong[ChunkRows * store._bits64Count];
+            Bits128 = store._bits128Count == 0 ? [] : new Int128[ChunkRows * store._bits128Count];
+            Null32 = store._null32Words == 0 ? [] : new ulong[ChunkRows * store._null32Words];
+            Null64 = store._null64Words == 0 ? [] : new ulong[ChunkRows * store._null64Words];
+            Null128 = store._null128Words == 0 ? [] : new ulong[ChunkRows * store._null128Words];
         }
     }
 

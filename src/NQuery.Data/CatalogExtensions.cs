@@ -70,7 +70,7 @@ public static class CatalogExtensions
         return TableDefinition.Create(dataTable.TableName, dataTable.Rows, typeof(DataRow), columns);
     }
 
-    private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", new[] { typeof(DataColumn) })!;
+    private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", [typeof(DataColumn)])!;
     private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull")!;
 
     private static ColumnDefinition CreateColumn(DataColumn column)
@@ -136,9 +136,9 @@ public static class CatalogExtensions
     private static ImmutableArray<ColumnDefinition> ResolveColumns(IEnumerable<ColumnDefinition> columns, IEnumerable<DataColumn> dataColumns)
     {
         var columnByName = columns.ToLookup(c => c.Name, StringComparer.OrdinalIgnoreCase);
-        return (from dc in dataColumns
+        return [.. (from dc in dataColumns
                 let c = columnByName[dc.ColumnName].FirstOrDefault()
                 where c is not null
-                select c).ToImmutableArray();
+                select c)];
     }
 }

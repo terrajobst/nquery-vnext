@@ -13,7 +13,7 @@ internal sealed class ChangedSourceText : SourceText
 
         OldText = oldText;
         NewText = newText;
-        Changes = changes.ToImmutableArray();
+        Changes = [.. changes];
     }
 
     public SourceText OldText { get; }

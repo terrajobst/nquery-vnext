@@ -11,10 +11,10 @@ internal sealed class RemoveRedundantParenthesisCodeRefactoringProvider : CodeRe
         var inParentheses = !node.LeftParenthesis.IsMissing && node.LeftParenthesis.Span.ContainsOrTouches(position) ||
                             !node.RightParenthesis.IsMissing && node.RightParenthesis.Span.ContainsOrTouches(position);
         if (!inParentheses)
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         if (!SyntaxFacts.ParenthesisIsRedundant(node))
-            return Enumerable.Empty<ICodeAction>();
+            return [];
 
         return new[] { new RemoveRedundantParenthesisCodeAction(node) };
     }

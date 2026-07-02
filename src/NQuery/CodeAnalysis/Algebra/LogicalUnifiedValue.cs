@@ -10,7 +10,7 @@ internal sealed class LogicalUnifiedValue
     public LogicalUnifiedValue(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
     {
         ValueSlot = valueSlot;
-        InputValueSlots = inputValueSlots.ToImmutableArray();
+        InputValueSlots = [.. inputValueSlots];
     }
 
     public ValueSlot ValueSlot { get; }

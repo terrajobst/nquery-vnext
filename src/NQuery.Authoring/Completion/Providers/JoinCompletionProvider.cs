@@ -2,9 +2,9 @@ using System.Collections.Immutable;
 using System.Text;
 
 using NQuery.CodeAnalysis;
-using NQuery.Metadata;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
+using NQuery.Metadata;
 
 namespace NQuery.Authoring.Completion.Providers;
 
@@ -13,7 +13,7 @@ internal sealed class JoinCompletionProvider : CompletionProvider<ConditionedJoi
     protected override IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position, ConditionedJoinedTableReferenceSyntax node)
     {
         if (node.OnKeyword.IsMissing || position < node.OnKeyword.Span.End)
-            return Enumerable.Empty<CompletionItem>();
+            return [];
 
         var leftInstances = semanticModel.GetDeclaredSymbols(node.Left)!.ToImmutableArray();
         var rightInstances = semanticModel.GetDeclaredSymbols(node.Right)!.ToImmutableArray();

@@ -245,13 +245,13 @@ internal sealed class LogicalOperatorCloner
                 return new LogicalCaseExpression(labels, elseExpression);
             case LogicalExpressionKind.FunctionInvocation:
                 var function = (LogicalFunctionInvocationExpression)node;
-                return new LogicalFunctionInvocationExpression(function.Arguments.Select(CloneExpression).ToImmutableArray(), function.Result);
+                return new LogicalFunctionInvocationExpression([.. function.Arguments.Select(CloneExpression)], function.Result);
             case LogicalExpressionKind.PropertyAccess:
                 var property = (LogicalPropertyAccessExpression)node;
                 return new LogicalPropertyAccessExpression(CloneExpression(property.Target), property.Symbol);
             case LogicalExpressionKind.MethodInvocation:
                 var method = (LogicalMethodInvocationExpression)node;
-                return new LogicalMethodInvocationExpression(CloneExpression(method.Target), method.Arguments.Select(CloneExpression).ToImmutableArray(), method.Result);
+                return new LogicalMethodInvocationExpression(CloneExpression(method.Target), [.. method.Arguments.Select(CloneExpression)], method.Result);
             default:
                 throw ExceptionBuilder.UnexpectedValue(node.Kind);
         }

@@ -5,7 +5,7 @@ internal sealed class ShowPlanViewModel
     public ShowPlanViewModel(ShowPlanNode model)
     {
         Model = model;
-        Root = new[] { new ShowPlanNodeViewModel(model) };
+        Root = [new ShowPlanNodeViewModel(model)];
     }
 
     public ShowPlanNode Model { get; }

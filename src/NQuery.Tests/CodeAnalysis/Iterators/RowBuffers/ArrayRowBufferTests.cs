@@ -20,7 +20,7 @@ public class ArrayRowBufferTests : RowBufferTests
         buffer.WriteObject<string?>(0, "Two");
         buffer.WriteObject<string?>(1, null);
 
-        AssertContract(buffer, new object?[] { 1, "Two", null }, new[] { typeof(int), typeof(string), typeof(string) });
+        AssertContract(buffer, [1, "Two", null], [typeof(int), typeof(string), typeof(string)]);
     }
 
     [Fact]

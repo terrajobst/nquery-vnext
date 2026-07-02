@@ -7,12 +7,12 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {typeof (int)},
-            new object[] {typeof (uint)},
-            new object[] {typeof (long)},
-            new object[] {typeof (ulong)},
-            new object[] {typeof (float)},
-            new object[] {typeof (double)},
-            new object[] {typeof (decimal)}
+            [typeof (uint)],
+            [typeof (long)],
+            [typeof (ulong)],
+            [typeof (float)],
+            [typeof (double)],
+            [typeof (decimal)]
         };
     }
 
@@ -21,10 +21,10 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {typeof (int)},
-            new object[] {typeof (long)},
-            new object[] {typeof (float)},
-            new object[] {typeof (double)},
-            new object[] {typeof (decimal)}
+            [typeof (long)],
+            [typeof (float)],
+            [typeof (double)],
+            [typeof (decimal)]
         };
     }
 
@@ -33,9 +33,9 @@ public partial class ExpressionTests
         return new[]
         {
             new object[] {typeof (int)},
-            new object[] {typeof (uint)},
-            new object[] {typeof (long)},
-            new object[] {typeof (ulong)}
+            [typeof (uint)],
+            [typeof (long)],
+            [typeof (ulong)]
         };
     }
 }

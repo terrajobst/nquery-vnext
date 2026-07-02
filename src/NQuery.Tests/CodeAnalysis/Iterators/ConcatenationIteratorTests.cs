@@ -6,16 +6,16 @@ namespace NQuery.Tests.CodeAnalysis.Iterators;
 
 public class ConcatenationIteratorTests : IteratorTests
 {
-    private static readonly Type[] IntColumn = { typeof(int) };
+    private static readonly Type[] IntColumn = [typeof(int)];
 
     [Fact]
     public void Iterators_Concatenation_ForwardsProperly()
     {
         var inputs = new[]
         {
-            new MockedIterator(new object[] {1, 2}),
-            new MockedIterator(new object[] {3, 4}),
-            new MockedIterator(new object[] {5, 6})
+            new MockedIterator([1, 2]),
+            new MockedIterator([3, 4]),
+            new MockedIterator([5, 6])
         };
 
         var entries = new[]
@@ -48,8 +48,8 @@ public class ConcatenationIteratorTests : IteratorTests
     {
         var inputs = new[]
         {
-            new MockedIterator(Array.Empty<object>()),
-            new MockedIterator(Array.Empty<object>())
+            new MockedIterator([]),
+            new MockedIterator([])
         };
 
         var entries = inputs.Select(_ => ImmutableArray<RowBufferEntry>.Empty);
@@ -63,8 +63,8 @@ public class ConcatenationIteratorTests : IteratorTests
     {
         var inputs = new[]
         {
-            new MockedIterator(Array.Empty<object>()),
-            new MockedIterator(new object[] {5, 6})
+            new MockedIterator([]),
+            new MockedIterator([5, 6])
         };
 
         var expected = new object[] { 5, 6 };

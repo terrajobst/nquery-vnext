@@ -32,7 +32,7 @@ internal static class PhysicalPlanVerifier
     public static void Verify(PhysicalQuery query)
     {
         ThrowIfNull(query);
-        VerifyOperator(query.Root, ImmutableArray<ValueSlot>.Empty);
+        VerifyOperator(query.Root, []);
         PlanVerification.RequireUniqueDefinitions(Source, query.Root, Children, n => n.DefinedValueSlots, n => n.Kind.ToString());
     }
 
@@ -136,7 +136,7 @@ internal static class PhysicalPlanVerifier
 
         // A project reorders its input's row buffer; its outputs come from the input
         // alone (the emitter's allocation does not see the outer scope).
-        var scope = Scope(ImmutableArray<ValueSlot>.Empty, node.Input.OutputValueSlots);
+        var scope = Scope([], node.Input.OutputValueSlots);
         RequireAvailable(node, "projected slot", node.Outputs, scope);
     }
 
@@ -144,7 +144,7 @@ internal static class PhysicalPlanVerifier
     {
         VerifyOperator(node.Input, outerSlots);
 
-        var scope = Scope(ImmutableArray<ValueSlot>.Empty, node.Input.OutputValueSlots);
+        var scope = Scope([], node.Input.OutputValueSlots);
         RequireAvailable(node, "sort key", node.SortedValues.Select(v => v.ValueSlot), scope);
     }
 
@@ -152,7 +152,7 @@ internal static class PhysicalPlanVerifier
     {
         VerifyOperator(node.Input, outerSlots);
 
-        var scope = Scope(ImmutableArray<ValueSlot>.Empty, node.Input.OutputValueSlots);
+        var scope = Scope([], node.Input.OutputValueSlots);
         RequireAvailable(node, "tie-break key", node.TieEntries.Select(t => t.ValueSlot), scope);
     }
 
@@ -182,7 +182,7 @@ internal static class PhysicalPlanVerifier
         // Each unified output reads one slot per input, drawn from that input alone.
         for (var i = 0; i < node.Inputs.Length; i++)
         {
-            var scope = Scope(ImmutableArray<ValueSlot>.Empty, node.Inputs[i].OutputValueSlots);
+            var scope = Scope([], node.Inputs[i].OutputValueSlots);
             RequireAvailable(node, "unified input slot", node.DefinedValues.Select(d => d.InputValueSlots[i]), scope);
         }
     }
@@ -196,12 +196,12 @@ internal static class PhysicalPlanVerifier
         // Each unified output reads the anchor's slot and one slot per recursive member,
         // drawn from that input alone (the emitter's per-input allocation, like the
         // concatenation's).
-        var anchorScope = Scope(ImmutableArray<ValueSlot>.Empty, node.Anchor.OutputValueSlots);
+        var anchorScope = Scope([], node.Anchor.OutputValueSlots);
         RequireAvailable(node, "unified anchor slot", node.DefinedValues.Select(d => d.InputValueSlots[0]), anchorScope);
 
         for (var i = 0; i < node.RecursiveMembers.Length; i++)
         {
-            var memberScope = Scope(ImmutableArray<ValueSlot>.Empty, node.RecursiveMembers[i].OutputValueSlots);
+            var memberScope = Scope([], node.RecursiveMembers[i].OutputValueSlots);
             RequireAvailable(node, "unified member slot", node.DefinedValues.Select(d => d.InputValueSlots[i + 1]), memberScope);
         }
     }
@@ -212,7 +212,7 @@ internal static class PhysicalPlanVerifier
 
         // The index key is read from the spooled rows, so it must be an input output;
         // the probe is read from the outer row alone, so it must be an outer slot.
-        RequireAvailable(node, "index key", new[] { node.IndexKey }, Scope(ImmutableArray<ValueSlot>.Empty, node.Input.OutputValueSlots));
+        RequireAvailable(node, "index key", new[] { node.IndexKey }, Scope([], node.Input.OutputValueSlots));
         RequireAvailable(node, "probe key", new[] { node.ProbeKey }, Scope(outerSlots));
     }
 
@@ -230,7 +230,7 @@ internal static class PhysicalPlanVerifier
 
         // The outer references are projected from the left's row, so they must be among
         // the left's outputs.
-        RequireAvailable(node, "outer reference", node.OuterReferences, Scope(ImmutableArray<ValueSlot>.Empty, node.Left.OutputValueSlots));
+        RequireAvailable(node, "outer reference", node.OuterReferences, Scope([], node.Left.OutputValueSlots));
 
         // The join predicate sees both sides plus the ambient outer scope.
         var scope = Scope(outerSlots, node.Left.OutputValueSlots, node.Right.OutputValueSlots);
@@ -245,8 +245,8 @@ internal static class PhysicalPlanVerifier
         VerifyOperator(node.Build, outerSlots);
         VerifyOperator(node.Probe, outerSlots);
 
-        RequireAvailable(node, "build key", new[] { node.BuildKey }, Scope(ImmutableArray<ValueSlot>.Empty, node.Build.OutputValueSlots));
-        RequireAvailable(node, "probe key", new[] { node.ProbeKey }, Scope(ImmutableArray<ValueSlot>.Empty, node.Probe.OutputValueSlots));
+        RequireAvailable(node, "build key", new[] { node.BuildKey }, Scope([], node.Build.OutputValueSlots));
+        RequireAvailable(node, "probe key", new[] { node.ProbeKey }, Scope([], node.Probe.OutputValueSlots));
 
         // The remainder spans both inputs and -- for a correlated hash match inside an
         // apply -- the ambient outer scope.

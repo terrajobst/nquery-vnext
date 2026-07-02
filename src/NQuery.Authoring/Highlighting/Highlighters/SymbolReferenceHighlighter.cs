@@ -12,7 +12,7 @@ internal sealed class SymbolReferenceHighlighter : IHighlighter
 
         var symbolAtPosition = semanticModel.FindSymbol(position);
         if (symbolAtPosition is null)
-            return Enumerable.Empty<TextSpan>();
+            return [];
 
         return semanticModel.FindUsages(symbolAtPosition.Value.Symbol)
                             .Select(s => s.Span);

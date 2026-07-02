@@ -177,7 +177,7 @@ internal static class PhysicalShowPlanBuilder
         return new ShowPlanNode(label, NoProperties, new[] { LogicalShowPlanBuilder.BuildExpression(expression) });
     }
 
-    private static IEnumerable<KeyValuePair<string, string>> NoProperties => Enumerable.Empty<KeyValuePair<string, string>>();
+    private static IEnumerable<KeyValuePair<string, string>> NoProperties => [];
 
-    private static IEnumerable<ShowPlanNode> NoChildren => Enumerable.Empty<ShowPlanNode>();
+    private static IEnumerable<ShowPlanNode> NoChildren => [];
 }

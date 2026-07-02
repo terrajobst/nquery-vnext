@@ -77,7 +77,7 @@ internal static class BuiltInAggregates
         var firstSum = Cast(ConvertValue(value, sumType), nullableSumType);
         var nextSum = Cast(Binary(BinaryOperatorKind.Add, Cast(sum, sumType), value), nullableSumType);
         var accBody = Expression.New(
-            stateType.GetConstructor(new[] { nullableSumType, typeof(int) })!,
+            stateType.GetConstructor([nullableSumType, typeof(int)])!,
             Expression.Condition(IsNull(sum), firstSum, nextSum),
             Expression.Add(cnt, Expression.Constant(1)));
 
@@ -103,10 +103,10 @@ internal static class BuiltInAggregates
         var state = Expression.Parameter(typeof(SortedSet<string>), "values");
         var value = Expression.Parameter(argumentType, "value");
 
-        var toString = typeof(System.Convert).GetMethod(nameof(System.Convert.ToString), new[] { typeof(object), typeof(IFormatProvider) })!;
-        var add = typeof(SortedSet<string>).GetMethod(nameof(SortedSet<string>.Add), new[] { typeof(string) })!;
+        var toString = typeof(System.Convert).GetMethod(nameof(System.Convert.ToString), [typeof(object), typeof(IFormatProvider)])!;
+        var add = typeof(SortedSet<string>).GetMethod(nameof(SortedSet<string>.Add), [typeof(string)])!;
         var trim = typeof(string).GetMethod(nameof(string.Trim), Type.EmptyTypes)!;
-        var join = typeof(string).GetMethod(nameof(string.Join), new[] { typeof(string), typeof(IEnumerable<string>) })!;
+        var join = typeof(string).GetMethod(nameof(string.Join), [typeof(string), typeof(IEnumerable<string>)])!;
 
         // var text = Convert.ToString(value, invariant); if (text is not null) values.Add(text.Trim()); return values
         var text = Expression.Variable(typeof(string), "text");
@@ -150,7 +150,7 @@ internal static class BuiltInAggregates
         var state = Expression.Parameter(stateType, "best");
         var value = Expression.Parameter(argumentType, "value");
 
-        var compareTo = typeof(IComparable).GetMethod(nameof(IComparable.CompareTo), new[] { typeof(object) })!;
+        var compareTo = typeof(IComparable).GetMethod(nameof(IComparable.CompareTo), [typeof(object)])!;
         var comparison = Expression.Call(
             Expression.Convert(value, typeof(IComparable)),
             compareTo,
@@ -183,7 +183,7 @@ internal static class BuiltInAggregates
             new[] { d },
             Expression.Assign(d, ConvertValue(value, typeof(decimal))),
             Expression.New(
-                typeof(VarState).GetConstructor(new[] { typeof(decimal), typeof(decimal), typeof(int) })!,
+                typeof(VarState).GetConstructor([typeof(decimal), typeof(decimal), typeof(int)])!,
                 Binary(BinaryOperatorKind.Add, sum, d),
                 Binary(BinaryOperatorKind.Add, sumOfSquares, Binary(BinaryOperatorKind.Multiply, d, d)),
                 Expression.Add(count, Expression.Constant(1))));
@@ -193,7 +193,7 @@ internal static class BuiltInAggregates
         var e = Expression.Variable(typeof(decimal), "e");
         var assignE = Expression.Assign(e, Binary(BinaryOperatorKind.Divide, sum, count));
         var enoughRows = Expression.GreaterThanOrEqual(count, Expression.Constant(2));
-        var sqrt = typeof(Math).GetMethod(nameof(Math.Sqrt), new[] { typeof(double) })!;
+        var sqrt = typeof(Math).GetMethod(nameof(Math.Sqrt), [typeof(double)])!;
 
         var resultBody = isVar
             ? Expression.Condition(enoughRows,

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+
 using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Wpf;
@@ -8,7 +9,7 @@ internal sealed class SyntaxTreeViewModel
     public SyntaxTreeViewModel(SyntaxTree model, SyntaxNodeViewModel root)
     {
         Model = model;
-        Root = ImmutableArray.Create(root);
+        Root = [root];
     }
 
     public SyntaxTree Model { get; }
