@@ -6,7 +6,7 @@ using NQuery.Symbols;
 
 namespace NQuery.Tests.Iterators
 {
-    public class TableIteratorTests : IteratorTests
+    public sealed class TableIteratorTests : IteratorTests
     {
         private static TableIterator CreateIterator(int rowCount)
         {
@@ -16,7 +16,7 @@ namespace NQuery.Tests.Iterators
 
         private static TableIterator CreateIterator(IEnumerable rows)
         {
-            var table = TableDefinition.Create("Table", rows, typeof(int), NullProviders.PropertyProvider);
+            var table = SchemaTableSymbol.Create("Table", rows, typeof(int), NullProviders.PropertyProvider);
 
             var valueSelectors = new Func<object, object>[]
             {

@@ -73,8 +73,7 @@ namespace NQuery.Data
 
         private static SchemaTableSymbol CreateTable(DataTable dataTable)
         {
-            var tableDefinition = new DataTableDefinition(dataTable);
-            return new SchemaTableSymbol(tableDefinition);
+            return new DataTableSymbol(dataTable);
         }
 
         private static TableRelation CreateRelation(IReadOnlyList<TableSymbol> tables, DataRelation dataRelation)
