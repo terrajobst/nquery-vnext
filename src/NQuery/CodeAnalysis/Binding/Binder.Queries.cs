@@ -36,6 +36,14 @@ partial class Binder
 
     private static bool IsRecursive(CommonTableExpressionSyntax commonTableExpression, QuerySyntax query)
     {
+        // A member is recursive iff it references the CTE being defined. This is a syntactic
+        // name match, but under this dialect it is exact: the CTE name is self-visible
+        // throughout its own body and shadows base tables, and the grammar has no nested WITH
+        // (ParseQuery, used for bodies/derived tables/subqueries, never accepts WITH), so no
+        // inner scope can redeclare the name. A self-name reference therefore always resolves
+        // to the CTE symbol -- matching post-binding resolution. (Resolving the name to a base
+        // table instead would require ANSI/PostgreSQL RECURSIVE-gated visibility, a different
+        // dialect.)
         return query.DescendantNodes().OfType<NamedTableReferenceSyntax>().Any(n => n.TableName.Matches(commonTableExpression.Name.ValueText));
     }
 
@@ -663,13 +671,12 @@ partial class Binder
     private BoundCommonTableExpression BindCommonTableExpressionNonRecursive(CommonTableExpressionSyntax commonTableExpression)
     {
         var name = commonTableExpression.Name.ValueText;
-        var symbol = new CommonTableExpressionSymbol(name, s =>
-        {
-            var binder = CreateLocalBinder(s);
-            var boundQuery = binder.BindQuery(commonTableExpression.Query);
-            var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundQuery);
-            return (boundQuery, columns);
-        });
+        var symbol = new CommonTableExpressionSymbol(name);
+
+        var binder = CreateLocalBinder(symbol);
+        var boundQuery = binder.BindQuery(commonTableExpression.Query);
+        var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundQuery);
+        symbol.BindAnchor(boundQuery, columns);
 
         return new BoundCommonTableExpression(symbol);
     }
@@ -719,17 +726,15 @@ partial class Binder
             return BindErrorCommonTableExpression(commonTableExpression);
         }
 
-        var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText, s =>
-        {
-            var binder = CreateLocalBinder(s);
-            var boundAnchor = binder.BindCommonTableExpressionAnchorMember(commonTableExpression, anchorMembers);
-            var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundAnchor);
-            return (boundAnchor, columns);
-        }, s =>
-        {
-            var binder = CreateLocalBinder(s);
-            return binder.BindCommonTableExpressionRecursiveMembers(commonTableExpression, s, recursiveMembers);
-        });
+        var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText);
+
+        var binder = CreateLocalBinder(symbol);
+        var boundAnchor = binder.BindCommonTableExpressionAnchorMember(commonTableExpression, anchorMembers);
+        var columns = binder.BindCommonTableExpressionColumns(commonTableExpression, boundAnchor);
+        symbol.BindAnchor(boundAnchor, columns);
+
+        var boundRecursiveMembers = binder.BindCommonTableExpressionRecursiveMembers(commonTableExpression, symbol, recursiveMembers);
+        symbol.BindRecursiveMembers(boundRecursiveMembers);
 
         return new BoundCommonTableExpression(symbol);
     }
@@ -773,12 +778,7 @@ partial class Binder
 
     private static BoundCommonTableExpression BindErrorCommonTableExpression(CommonTableExpressionSyntax commonTableExpression)
     {
-        var symbol = new CommonTableExpressionSymbol(
-            commonTableExpression.Name.ValueText,
-            _ => (null, []),
-            _ => []
-        );
-
+        var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText);
         return new BoundCommonTableExpression(symbol);
     }
 

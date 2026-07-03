@@ -207,48 +207,6 @@ Remaining follow-ups:
 
 ## CTE follow-ups
 
-CTE support is implemented end-to-end (the full "CTE Design" that used to live
-here). What shipped, for orientation:
-
-* Non-recursive CTEs are inlined at algebrize time, per reference
-  (`Algebrizer.AlgebrizeCommonTableExpressionReference`): the first reference
-  consumes the instantiated body, each further reference gets a slot-disjoint
-  clone via `LogicalOperatorCloner`. Deliberately not a barrier, so the
-  optimizer specializes each copy.
-* Recursive CTEs are a single opaque `LogicalRecursiveUnion` (+
-  `LogicalRecursiveReference` back-edge leaves tied to it by a
-  `RecursionToken`), lowered one-to-one in the planner and executed
-  breadth-first by `RecursionIterator` / `RecursiveReferenceIterator` /
-  `RecursiveWorkTable` over two ping-ponged `SpooledRowStore`s (the
-  working-table model, so the recursive step's join is planner-chosen -- a hash
-  match when an equi-key exists). The driver and the leaves find their shared
-  work table by resolving the token against a per-execution
-  `RecursiveWorkTableRegistry` minted in `ExecutablePlan.CreateIterator`, so
-  concurrent executions of one plan never share recursion state. `MAXRECURSION`
-  is fixed at 100, matching SQL Server's default and the legacy engine's error
-  message. Cloning the recursion node is identity-based: `CloneRecursiveUnion`
-  pre-seeds a token map before descending so back-edges rewire to the clone.
-* The `nquery-old` CTE definition corpus is no longer skipped by
-  `OldEngineDefinitionTests`, and `CommonTableExpressionTests` adds evaluation
-  coverage (including hand-inlined comparisons and the MAXRECURSION error).
-
-Remaining follow-ups:
-
-* **`CommonTableExpressionSymbol` construction.** The constructor leaks a
-  partially-constructed `this` into binder callbacks and encodes an implicit,
-  load-bearing ordering between two callbacks (anchor must set `Columns` before
-  the recursive members bind). Collapse to a single callback returning
-  `(Anchor, Members, Columns)`, or move orchestration into the binder with an
-  explicit two-phase `Complete`.
-* **Syntactic recursion detection.** `IsRecursive` is a sound over-approximation
-  but decides a *binding* property *syntactically, pre-binding*: a name that
-  merely collides with a base table (or an inner-scope table) is reported as
-  malformed recursion ("no UNION ALL") rather than what it is. This is faithful
-  to the SQL Server dialect (same behavior and message) but diverges from
-  ANSI/PostgreSQL, where `RECURSIVE` gates self-visibility. A more precise design
-  classifies a member as recursive iff a reference actually *resolves to* the
-  CTE symbol (post-binding) - worthwhile only if dialect compatibility or
-  diagnostic quality becomes a goal.
 * **Benchmark** deep vs. wide hierarchies to validate the working-table choice,
   and ensure the recursive join builds its hash on the (small) frontier, not the
   base relation (there is no cost model yet, and the hash match always builds on
