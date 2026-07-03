@@ -52,8 +52,7 @@ internal sealed class Parser
 
             if (badTokens.Count > 0)
             {
-                var trivia = ImmutableArray.Create(CreateSkippedTokensTrivia(badTokens))
-                             .Concat(token.LeadingTrivia).ToImmutableArray();
+                ImmutableArray<SyntaxTrivia> trivia = [CreateSkippedTokensTrivia(badTokens), .. token.LeadingTrivia];
                 token = token.WithLeadingTrivia(trivia);
             }
 
@@ -189,11 +188,7 @@ internal sealed class Parser
         var current = _tokens[_tokenIndex];
         var skippedTokensTrivia = CreateSkippedTokensTrivia(tokens);
 
-        var leadingTrivia = new List<SyntaxTrivia>(current.LeadingTrivia.Length + 1);
-        leadingTrivia.Add(skippedTokensTrivia);
-        leadingTrivia.AddRange(current.LeadingTrivia);
-
-        _tokens[_tokenIndex] = current.WithLeadingTrivia(leadingTrivia);
+        _tokens[_tokenIndex] = current.WithLeadingTrivia([skippedTokensTrivia, .. current.LeadingTrivia]);
     }
 
     private SyntaxToken InsertMissingToken(SyntaxKind kind)
