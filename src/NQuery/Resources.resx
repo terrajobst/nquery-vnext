@@ -471,6 +471,9 @@
   <data name="QueryCompilationFailed" xml:space="preserve">
     <value>Query could not be compiled.{0}</value>
   </data>
+  <data name="QueryTooComplex" xml:space="preserve">
+    <value>The query is too complex or too deeply nested to be parsed.</value>
+  </data>
   <data name="SelectExpressionNotAggregatedAndNoGroupBy" xml:space="preserve">
     <value>Column '{0}' is invalid in the select list because it is not contained in an aggregate function and there is no GROUP BY clause.</value>
   </data>

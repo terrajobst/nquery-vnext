@@ -11,6 +11,9 @@ internal sealed class Parser
     private readonly List<SyntaxToken> _tokens = new();
     private int _tokenIndex;
 
+    private const int MaxRecursionDepth = 200;
+    private int _recursionDepth;
+
     public Parser(SourceText text, SyntaxTree syntaxTree)
     {
         ThrowIfNull(text);
@@ -253,16 +256,47 @@ internal sealed class Parser
 
     public CompilationUnitSyntax ParseRootQuery()
     {
-        var query = ParseOptionalQueryWithOptionalCte();
-        var endOfFileToken = ParseEndOfFileToken();
-        return new CompilationUnitSyntax(_syntaxTree, query, endOfFileToken);
+        try
+        {
+            var query = ParseOptionalQueryWithOptionalCte();
+            var endOfFileToken = ParseEndOfFileToken();
+            return new CompilationUnitSyntax(_syntaxTree, query, endOfFileToken);
+        }
+        catch (RecursionDepthExceededException)
+        {
+            return CreateTooComplexCompilationUnit();
+        }
     }
 
     public CompilationUnitSyntax ParseRootExpression()
     {
-        var expression = ParseExpression();
-        var endOfFileToken = ParseEndOfFileToken();
-        return new CompilationUnitSyntax(_syntaxTree, expression, endOfFileToken);
+        try
+        {
+            var expression = ParseExpression();
+            var endOfFileToken = ParseEndOfFileToken();
+            return new CompilationUnitSyntax(_syntaxTree, expression, endOfFileToken);
+        }
+        catch (RecursionDepthExceededException)
+        {
+            return CreateTooComplexCompilationUnit();
+        }
+    }
+
+    private CompilationUnitSyntax CreateTooComplexCompilationUnit()
+    {
+        // Parsing bailed out because the input nests deeper than we're willing to
+        // recurse. Restart, fold the entire input into skipped-token trivia and
+        // surface a single diagnostic so callers still get a well-formed tree
+        // instead of a StackOverflowException taking down the process.
+        _tokenIndex = 0;
+        SkipTokens(t => t.Kind == SyntaxKind.EndOfFileToken);
+
+        var diagnosticSpan = _tokens[0].Span;
+        var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+
+        var diagnostics = new List<Diagnostic>(1);
+        diagnostics.ReportQueryTooComplex(diagnosticSpan);
+        return new CompilationUnitSyntax(_syntaxTree, null, endOfFileToken.WithDiagnostics(diagnostics));
     }
 
     public CompilationUnitSyntax ParseRootTokens()
@@ -297,6 +331,8 @@ internal sealed class Parser
 
     private ExpressionSyntax ParseSubExpression(ExpressionSyntax? left, int precedence)
     {
+        using var recursionGuard = new RecursionGuard(this);
+
         if (left is null)
         {
             // No left operand, so we parse one and take care of leading unary operators
@@ -829,6 +865,8 @@ internal sealed class Parser
 
     private QuerySyntax ParseQuery()
     {
+        using var recursionGuard = new RecursionGuard(this);
+
         var query = ParseUnifiedOrExceptionalQuery();
 
         // ORDER BY
@@ -1085,6 +1123,8 @@ internal sealed class Parser
 
     private TableReferenceSyntax ParseTableReference()
     {
+        using var recursionGuard = new RecursionGuard(this);
+
         TableReferenceSyntax left;
 
         if (Current.Kind == SyntaxKind.LeftParenthesisToken)
@@ -1255,4 +1295,29 @@ internal sealed class Parser
         var identifier = Match(SyntaxKind.IdentifierToken);
         return new AliasSyntax(_syntaxTree, asKeyword, identifier);
     }
+
+    // Bounds how deeply the recursive-descent parser may nest before it bails out
+    // (see MaxRecursionDepth). A guard is entered at each unbounded recursion hub
+    // (ParseSubExpression, ParseQuery, ParseTableReference); incrementing in the
+    // constructor and decrementing in Dispose means a single `using` per method.
+    private readonly struct RecursionGuard : IDisposable
+    {
+        private readonly Parser _parser;
+
+        public RecursionGuard(Parser parser)
+        {
+            if (parser._recursionDepth >= MaxRecursionDepth)
+                throw new RecursionDepthExceededException();
+
+            _parser = parser;
+            parser._recursionDepth++;
+        }
+
+        public void Dispose()
+        {
+            _parser._recursionDepth--;
+        }
+    }
+
+    private sealed class RecursionDepthExceededException : Exception;
 }

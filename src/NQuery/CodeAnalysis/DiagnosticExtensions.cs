@@ -44,6 +44,8 @@ internal static class DiagnosticExtensions
                     return Resources.TokenExpected;
                 case DiagnosticId.InvalidOperatorForAllAny:
                     return Resources.InvalidOperatorForAllAny;
+                case DiagnosticId.QueryTooComplex:
+                    return Resources.QueryTooComplex;
                 case DiagnosticId.UndeclaredTable:
                     return Resources.UndeclaredTable;
                 case DiagnosticId.UndeclaredTableInstance:
@@ -275,6 +277,11 @@ internal static class DiagnosticExtensions
             var actualText = actual.GetDisplayText();
             var expectedText = expected.GetDisplayText();
             diagnostics.Report(span, DiagnosticId.TokenExpected, actualText, expectedText);
+        }
+
+        public void ReportQueryTooComplex(TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.QueryTooComplex);
         }
 
         public void ReportUndeclaredTable(NamedTableReferenceSyntax namedTableReference)

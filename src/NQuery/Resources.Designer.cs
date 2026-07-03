@@ -1141,7 +1141,16 @@ internal class Resources {
             return ResourceManager.GetString("QueryCompilationFailed", resourceCulture);
         }
     }
-    
+
+    /// <summary>
+    ///   Looks up a localized string similar to The query is too complex or too deeply nested to be parsed..
+    /// </summary>
+    internal static string QueryTooComplex {
+        get {
+            return ResourceManager.GetString("QueryTooComplex", resourceCulture);
+        }
+    }
+
     /// <summary>
     ///   Looks up a localized string similar to Column &apos;{0}&apos; is invalid in the select list because it is not contained in an aggregate function and there is no GROUP BY clause..
     /// </summary>

@@ -17,6 +17,7 @@ public enum DiagnosticId
     NumberTooLarge,
     TokenExpected,
     InvalidOperatorForAllAny,
+    QueryTooComplex,
 
     UndeclaredTable,
     UndeclaredTableInstance,
