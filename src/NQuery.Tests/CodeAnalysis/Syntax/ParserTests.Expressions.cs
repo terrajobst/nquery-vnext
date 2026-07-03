@@ -1280,6 +1280,123 @@ partial class ParserTests
     }
 
     [Fact]
+    public void Parser_Parse_Expression_Between_WithNotKeyword_AfterHigherPrecedenceOperator()
+    {
+        // The NOT must bind to BETWEEN, not be dropped: "(1 + 2) NOT BETWEEN 3 AND 4".
+        const string text = """
+            1 + 2 NOT BETWEEN 3 AND 4
+            """;
+
+        using var enumerator = AssertingEnumerator.ForExpression(text);
+        enumerator.AssertNode(SyntaxKind.BetweenExpression);
+        enumerator.AssertNode(SyntaxKind.AddExpression);
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+        enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
+        enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");
+        enumerator.AssertToken(SyntaxKind.BetweenKeyword, @"BETWEEN");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"3");
+        enumerator.AssertToken(SyntaxKind.AndKeyword, @"AND");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"4");
+    }
+
+    [Fact]
+    public void Parser_Parse_Expression_In_WithNotKeyword_AfterHigherPrecedenceOperator()
+    {
+        const string text = """
+            1 + 2 NOT IN (3, 4)
+            """;
+
+        using var enumerator = AssertingEnumerator.ForExpression(text);
+        enumerator.AssertNode(SyntaxKind.InExpression);
+        enumerator.AssertNode(SyntaxKind.AddExpression);
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+        enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
+        enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");
+        enumerator.AssertToken(SyntaxKind.InKeyword, @"IN");
+        enumerator.AssertNode(SyntaxKind.ArgumentList);
+        enumerator.AssertToken(SyntaxKind.LeftParenthesisToken, @"(");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"3");
+        enumerator.AssertToken(SyntaxKind.CommaToken, @",");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"4");
+        enumerator.AssertToken(SyntaxKind.RightParenthesisToken, @")");
+    }
+
+    [Fact]
+    public void Parser_Parse_Expression_Like_WithNotKeyword_AfterHigherPrecedenceOperator()
+    {
+        const string text = """
+            1 + 2 NOT LIKE 'y'
+            """;
+
+        using var enumerator = AssertingEnumerator.ForExpression(text);
+        enumerator.AssertNode(SyntaxKind.LikeExpression);
+        enumerator.AssertNode(SyntaxKind.AddExpression);
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+        enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
+        enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");
+        enumerator.AssertToken(SyntaxKind.LikeKeyword, @"LIKE");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'y'");
+    }
+
+    [Fact]
+    public void Parser_Parse_Expression_SimilarTo_WithNotKeyword_AfterHigherPrecedenceOperator()
+    {
+        const string text = """
+            1 + 2 NOT SIMILAR TO 'y'
+            """;
+
+        using var enumerator = AssertingEnumerator.ForExpression(text);
+        enumerator.AssertNode(SyntaxKind.SimilarToExpression);
+        enumerator.AssertNode(SyntaxKind.AddExpression);
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+        enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
+        enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");
+        enumerator.AssertToken(SyntaxKind.SimilarKeyword, @"SIMILAR");
+        enumerator.AssertToken(SyntaxKind.ToKeyword, @"TO");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'y'");
+    }
+
+    [Fact]
+    public void Parser_Parse_Expression_SoundsLike_WithNotKeyword_AfterHigherPrecedenceOperator()
+    {
+        const string text = """
+            1 + 2 NOT SOUNDS LIKE 'y'
+            """;
+
+        using var enumerator = AssertingEnumerator.ForExpression(text);
+        enumerator.AssertNode(SyntaxKind.SoundsLikeExpression);
+        enumerator.AssertNode(SyntaxKind.AddExpression);
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"1");
+        enumerator.AssertToken(SyntaxKind.PlusToken, @"+");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.NumericLiteralToken, @"2");
+        enumerator.AssertToken(SyntaxKind.NotKeyword, @"NOT");
+        enumerator.AssertToken(SyntaxKind.SoundsKeyword, @"SOUNDS");
+        enumerator.AssertToken(SyntaxKind.LikeKeyword, @"LIKE");
+        enumerator.AssertNode(SyntaxKind.LiteralExpression);
+        enumerator.AssertToken(SyntaxKind.StringLiteralToken, @"'y'");
+    }
+
+    [Fact]
     public void Parser_Parse_Expression_AllAnySubselect_WithAll()
     {
         const string text = """

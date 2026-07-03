@@ -309,27 +309,32 @@ internal sealed class Parser
 
         while (Current.Kind != SyntaxKind.EndOfFileToken)
         {
-            // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUND SLIKE.
+            // Special handling for NOT BETWEEN, NOT IN, NOT LIKE, NOT SIMILAR TO, and NOT SOUNDS LIKE.
+            //
+            // A leading NOT modifies the operator that follows it, so we peek past it to find the
+            // actual operator. We must not consume the NOT until we've decided that operator's
+            // precedence is high enough to be parsed here: otherwise an early return below would
+            // discard the NOT and silently turn e.g. "a + b NOT LIKE c" into "(a + b) LIKE c".
 
-            var notKeyword = Current.Kind == SyntaxKind.NotKeyword && Lookahead.Kind.CanHaveLeadingNot()
-                                 ? NextToken()
-                                 : null;
+            var hasLeadingNot = Current.Kind == SyntaxKind.NotKeyword && Lookahead.Kind.CanHaveLeadingNot();
+            var operatorKind = hasLeadingNot ? Lookahead.Kind : Current.Kind;
 
             // Special handling for the only ternary operator BETWEEN
 
-            if (Current.Kind == SyntaxKind.BetweenKeyword)
+            if (operatorKind == SyntaxKind.BetweenKeyword)
             {
                 var operatorPrecedence = SyntaxFacts.GetTernaryOperatorPrecedence(SyntaxKind.BetweenExpression);
                 if (operatorPrecedence <= precedence)
                     return left;
 
+                var notKeyword = hasLeadingNot ? NextToken() : null;
                 left = ParseBetweenExpression(left, notKeyword);
             }
             else
             {
                 // If there is no binary operator we are finished
 
-                var binaryExpression = SyntaxFacts.GetBinaryOperatorExpression(Current.Kind);
+                var binaryExpression = SyntaxFacts.GetBinaryOperatorExpression(operatorKind);
                 if (binaryExpression == SyntaxKind.BadToken)
                     return left;
 
@@ -342,6 +347,7 @@ internal sealed class Parser
 
                 // Precedence is higher
 
+                var notKeyword = hasLeadingNot ? NextToken() : null;
                 left = ParseBinaryExpression(left, notKeyword, binaryExpression, operatorPrecedence);
             }
         }
