@@ -1115,9 +1115,6 @@ partial class Binder
         {
             var matches = lookup[name.ValueText];
 
-            if (name.IsQuotedIdentifier())
-                matches = matches.Where(t => string.Equals(t.ValueText, name.ValueText, StringComparison.Ordinal));
-
             var isDuplicate = matches.Skip(1).Any();
             if (isDuplicate)
                 Diagnostics.ReportDuplicateTableRefInFrom(name);

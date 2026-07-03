@@ -14,9 +14,7 @@ partial class Binder
 
     private static Type? LookupType(SyntaxToken name)
     {
-        var normalizedName = name.IsQuotedIdentifier()
-                                 ? name.ValueText
-                                 : name.ValueText.ToUpper();
+        var normalizedName = name.ValueText.ToUpper();
 
         switch (normalizedName)
         {
@@ -66,13 +64,12 @@ partial class Binder
     private IEnumerable<Symbol> LookupSymbols(SyntaxToken name, Func<Symbol, bool> filter)
     {
         var text = name.ValueText;
-        var isCaseSensitive = name.IsQuotedIdentifier();
 
         IEnumerable<Symbol> result;
         var binder = this;
         do
         {
-            result = binder.LocalSymbols.Lookup(text, isCaseSensitive).Where(filter);
+            result = binder.LocalSymbols.Lookup(text).Where(filter);
             binder = binder.Parent;
         } while (!result.Any() && binder is not null);
 

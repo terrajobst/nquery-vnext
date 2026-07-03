@@ -41,7 +41,7 @@ public class IdentifierTests
     }
 
     [Fact]
-    public void Identifiers_MatchingQuotedIdentifiersRespectsCase()
+    public void Identifiers_MatchingQuotedIdentifiersIgnoresCase()
     {
         var token = SyntaxFacts.ParseToken("\"Test 123\"");
 
@@ -49,11 +49,11 @@ public class IdentifierTests
         Assert.True(token.IsQuotedIdentifier());
         Assert.True(token.IsTerminated());
         Assert.True(token.Matches("Test 123"));
-        Assert.False(token.Matches("TEST 123"));
+        Assert.True(token.Matches("TEST 123"));
     }
 
     [Fact]
-    public void Identifiers_MatchingQuotedIdentifiersRespectsCase_EvenIfNotTerminated()
+    public void Identifiers_MatchingQuotedIdentifiersIgnoresCase_EvenIfNotTerminated()
     {
         var token = SyntaxFacts.ParseToken("\"Test 123");
 
@@ -61,6 +61,6 @@ public class IdentifierTests
         Assert.True(token.IsQuotedIdentifier());
         Assert.False(token.IsTerminated());
         Assert.True(token.Matches("Test 123"));
-        Assert.False(token.Matches("TEST 123"));
+        Assert.True(token.Matches("TEST 123"));
     }
 }

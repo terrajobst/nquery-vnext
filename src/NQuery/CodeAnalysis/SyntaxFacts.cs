@@ -445,10 +445,9 @@ public static class SyntaxFacts
             ThrowIfNull(token);
             ThrowIfNull(text);
 
-            var comparison = token.IsQuotedIdentifier()
-                                 ? StringComparison.Ordinal
-                                 : StringComparison.OrdinalIgnoreCase;
-            return string.Equals(token.ValueText, text, comparison);
+            // Identifiers are always compared case-insensitively, regardless of
+            // whether they are plain, quoted ("...") or bracketed ([...]).
+            return string.Equals(token.ValueText, text, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool IsTerminated()

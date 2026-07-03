@@ -23,11 +23,9 @@ internal sealed class SymbolTable : IEnumerable<Symbol>
         return new SymbolTable(symbols);
     }
 
-    public IEnumerable<Symbol> Lookup(string name, bool caseSensitive)
+    public IEnumerable<Symbol> Lookup(string name)
     {
-        return caseSensitive
-                   ? _lookup[name].Where(s => string.Equals(s.Name, name, StringComparison.Ordinal))
-                   : _lookup[name];
+        return _lookup[name];
     }
 
     public IEnumerator<Symbol> GetEnumerator()
