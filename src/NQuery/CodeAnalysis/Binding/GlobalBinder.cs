@@ -65,7 +65,7 @@ internal sealed class GlobalBinder : Binder
         if (registeredComparer is not null)
             return CatalogComparer.EnsureTyped(type, registeredComparer);
 
-        return type.IsComparable() ? Comparer.Default : null;
+        return DefaultComparers.For(type);
     }
 
     private static T? Lookup<T>(IReadOnlyDictionary<Type, T> dictionary, Type? key) where T : class

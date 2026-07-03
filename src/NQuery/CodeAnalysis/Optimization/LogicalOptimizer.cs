@@ -87,8 +87,9 @@ internal static class LogicalOptimizer
     }
 
     // The engine's comparer for a type: a Catalog-registered comparer (walking up the
-    // base-type chain), else Comparer.Default for a comparable type. Mirrors
-    // GlobalBinder.LookupComparer so the domain grouping matches the binder's semantics.
+    // base-type chain), else the intrinsic default (ordinal for string, Comparer.Default for
+    // any other comparable type). Mirrors GlobalBinder.LookupComparer so the domain grouping
+    // matches the binder's semantics.
     private static IComparer? ResolveComparer(Catalog catalog, Type type)
     {
         for (var key = type; key is not null; key = key.BaseType)
@@ -97,7 +98,7 @@ internal static class LogicalOptimizer
                 return comparer;
         }
 
-        return type.IsComparable() ? Comparer.Default : null;
+        return DefaultComparers.For(type);
     }
 
     // The per-pass replay used by ShowPlan: like Optimize, but it yields the tree (and

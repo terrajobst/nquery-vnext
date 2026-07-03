@@ -36,11 +36,12 @@ internal static class BuiltInOperators
 
     // Relational comparison of strings. NULL operands are filtered out before the operator
     // runs (see ExpressionCompiler.BuildBinaryExpression), so these only see non-null strings.
-    // Culture-sensitive ordering, matching the old engine's BuiltinOperators.
-    private static bool StringLess(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) < 0;
-    private static bool StringLessOrEqual(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) <= 0;
-    private static bool StringGreater(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) > 0;
-    private static bool StringGreaterOrEqual(string a, string b) => string.Compare(a, b, StringComparison.CurrentCulture) >= 0;
+    // Ordinal ordering, matching the engine's ordinal =/<> and hash-join equality as well as the
+    // ordinal ORDER BY / GROUP BY / DISTINCT ordering (see DefaultComparers).
+    private static bool StringLess(string a, string b) => string.CompareOrdinal(a, b) < 0;
+    private static bool StringLessOrEqual(string a, string b) => string.CompareOrdinal(a, b) <= 0;
+    private static bool StringGreater(string a, string b) => string.CompareOrdinal(a, b) > 0;
+    private static bool StringGreaterOrEqual(string a, string b) => string.CompareOrdinal(a, b) >= 0;
 
     private static bool SimilarTo(string str, string regex)
     {

@@ -1,12 +1,7 @@
 # NQuery Major Refactoring
 
-* We should use Ordinal for all string comparisons
 * Ask Claude if the old unit tests did test something that we don't (unlikely)
 * Do a manual, full review, of the entire refactoring.
-* Row buffers
-    - Take a look at the row buffers. Can we collapse the arrays?
-    - We should probably collapse 32, 64, and 128 to an array of `uint`.
-    - Take a look at the spools. Can we optimize them more?
 
 ## More features
 

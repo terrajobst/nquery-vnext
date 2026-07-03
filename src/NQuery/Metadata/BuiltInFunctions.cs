@@ -398,7 +398,7 @@ internal static class BuiltInFunctions
         if (chars.Length == 0 || text.Length == 0)
             return 0;
 
-        return text.IndexOf(chars, StringComparison.InvariantCulture) + 1;
+        return text.IndexOf(chars, StringComparison.Ordinal) + 1;
     }
 
     private static string? Substring(string text, int start, int length)
