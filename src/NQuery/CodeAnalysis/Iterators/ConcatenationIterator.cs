@@ -20,6 +20,9 @@ internal sealed class ConcatenationIterator : Iterator
 
     public ConcatenationIterator(IEnumerable<Iterator> inputs, IEnumerable<ImmutableArray<RowBufferEntry>> entries)
     {
+        ThrowIfNull(inputs);
+        ThrowIfNull(entries);
+
         _inputs = [.. inputs];
         _inputRowBuffers = [.. entries.Select(e => new ProjectedRowBuffer(e))];
         _rowBuffer = new IndirectedRowBuffer(_inputRowBuffers[0], _inputRowBuffers[0]);

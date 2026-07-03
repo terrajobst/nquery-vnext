@@ -4,6 +4,8 @@ internal sealed class BoundHavingClause
 {
     public BoundHavingClause(BoundExpression condition)
     {
+        ThrowIfNull(condition);
+
         Condition = condition;
     }
 

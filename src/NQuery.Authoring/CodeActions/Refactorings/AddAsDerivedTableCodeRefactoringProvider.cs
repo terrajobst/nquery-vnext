@@ -20,6 +20,8 @@ internal sealed class AddAsDerivedTableCodeRefactoringProvider : CodeRefactoring
         public AddAsToDerivedTableCodeAction(DerivedTableReferenceSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

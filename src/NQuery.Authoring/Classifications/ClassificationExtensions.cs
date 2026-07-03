@@ -9,11 +9,15 @@ public static class ClassificationExtensions
     {
         public IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax()
         {
+            ThrowIfNull(root);
+
             return root.ClassifySyntax(root.FullSpan);
         }
 
         public IReadOnlyList<SyntaxClassificationSpan> ClassifySyntax(TextSpan span)
         {
+            ThrowIfNull(root);
+
             var result = new List<SyntaxClassificationSpan>();
             var worker = new SyntaxClassificationWorker(result, span);
             worker.ClassifyNode(root);
@@ -22,11 +26,16 @@ public static class ClassificationExtensions
 
         public IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(SemanticModel semanticModel)
         {
+            ThrowIfNull(root);
+
             return root.ClassifySemantics(semanticModel, root.FullSpan);
         }
 
         public IReadOnlyList<SemanticClassificationSpan> ClassifySemantics(SemanticModel semanticModel, TextSpan span)
         {
+            ThrowIfNull(root);
+            ThrowIfNull(semanticModel);
+
             var result = new List<SemanticClassificationSpan>();
             var worker = new SemanticClassificationWorker(result, semanticModel, span);
             worker.ClassifyNode(root);

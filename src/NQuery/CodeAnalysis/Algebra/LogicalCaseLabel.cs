@@ -4,6 +4,9 @@ internal sealed class LogicalCaseLabel
 {
     public LogicalCaseLabel(LogicalExpression condition, LogicalExpression thenExpression)
     {
+        ThrowIfNull(condition);
+        ThrowIfNull(thenExpression);
+
         Condition = condition;
         ThenExpression = thenExpression;
     }

@@ -34,6 +34,8 @@ internal sealed class AddParenthesesCodeFixProvider : CodeFixProvider
         public AddParenthesesCodeAction(SyntaxNode node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

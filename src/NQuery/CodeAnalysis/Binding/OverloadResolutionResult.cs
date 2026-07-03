@@ -7,6 +7,8 @@ internal sealed class OverloadResolutionResult<T>
 {
     public OverloadResolutionResult(OverloadResolutionCandidate<T>? best, OverloadResolutionCandidate<T>? selected, IEnumerable<OverloadResolutionCandidate<T>> candidates)
     {
+        ThrowIfNull(candidates);
+
         Best = best;
         Selected = selected;
         Candidates = [.. candidates];

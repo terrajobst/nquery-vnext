@@ -19,6 +19,10 @@ internal sealed class ExecutableIndexSpool : ExecutableOperator
     public ExecutableIndexSpool(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ValueSlot indexKey, ValueSlot probeKey, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(indexKey);
+        ThrowIfNull(probeKey);
+
         _input = input;
         _indexKey = indexKey;
         _probeKey = probeKey;

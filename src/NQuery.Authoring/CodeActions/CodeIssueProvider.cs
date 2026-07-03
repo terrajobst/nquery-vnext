@@ -7,6 +7,8 @@ public abstract class CodeIssueProvider<T> : ICodeIssueProvider
 {
     public IEnumerable<CodeIssue> GetIssues(SemanticModel semanticModel)
     {
+        ThrowIfNull(semanticModel);
+
         var syntaxTree = semanticModel.SyntaxTree;
         var nodes = syntaxTree.Root.DescendantNodes().OfType<T>();
         return nodes.SelectMany(node => GetIssues(semanticModel, node));

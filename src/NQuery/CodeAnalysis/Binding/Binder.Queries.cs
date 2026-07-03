@@ -11,9 +11,9 @@ namespace NQuery.CodeAnalysis.Binding;
 
 partial class Binder
 {
-    public virtual BoundQueryState QueryState
+    public virtual BoundQueryState? QueryState
     {
-        get { return Parent?.QueryState!; }
+        get { return Parent?.QueryState; }
     }
 
     private static SelectQuerySyntax GetFirstSelectQuery(QuerySyntax node)
@@ -116,8 +116,8 @@ partial class Binder
 
     private void EnsureAllColumnReferencesAreLegal(SelectQuerySyntax node, OrderedQuerySyntax? orderedQueryNode)
     {
-        var isAggregated = QueryState.ComputedAggregates.Count > 0;
-        var isGrouped = QueryState.ComputedGroupings.Count > 0;
+        var isAggregated = QueryState!.ComputedAggregates.Count > 0;
+        var isGrouped = QueryState!.ComputedGroupings.Count > 0;
 
         if (!isAggregated && !isGrouped)
             return;
@@ -223,7 +223,7 @@ partial class Binder
                                    select (Syntax: (SyntaxNode)n, Symbol: c);
 
         var invalidColumnReferences = from t in wildcardReferences.Concat(expressionReferences)
-                                      where QueryState.IntroducedTables.ContainsKey(t.Symbol.TableInstance)
+                                      where QueryState!.IntroducedTables.ContainsKey(t.Symbol.TableInstance)
                                       select t;
 
         foreach (var (syntax, symbol) in invalidColumnReferences)
@@ -243,7 +243,7 @@ partial class Binder
 
     private bool IsGroupedOrAggregated(IBoundValue value)
     {
-        var groupsAndAggregates = QueryState.ComputedGroupings.Concat(QueryState.ComputedAggregates);
+        var groupsAndAggregates = QueryState!.ComputedGroupings.Concat(QueryState!.ComputedAggregates);
         return groupsAndAggregates.Select(c => c.Result).Contains(value);
     }
 
@@ -878,13 +878,13 @@ partial class Binder
 
         queryBinder.EnsureAllColumnReferencesAreLegal(node, orderedQueryNode);
 
-        var aggregates = (from t in queryBinder.QueryState.ComputedAggregates
+        var aggregates = (from t in queryBinder.QueryState!.ComputedAggregates
                           let expression = (BoundAggregateExpression)t.Expression
                           select new BoundAggregatedValue(t.Result, expression.Aggregate, expression.Fold, expression.Argument)).ToImmutableArray();
 
         var groups = groupByClause?.Groups ?? [];
 
-        var projections = (from t in queryBinder.QueryState.ComputedProjections
+        var projections = (from t in queryBinder.QueryState!.ComputedProjections
                            select new BoundComputedValue(t.Expression, t.Result)).ToImmutableArray();
 
         var distinctKeyword = node.SelectClause.DistinctAllKeyword;
@@ -935,7 +935,7 @@ partial class Binder
         // Filter/Compute/GroupBy/Sort/Top/Project relations here -- that is the
         // algebrizer's job. We only carry the resolved ingredients it needs.
 
-        var computedGroups = queryBinder.QueryState
+        var computedGroups = queryBinder.QueryState!
                                         .ComputedGroupings
                                         .Where(g => g.Expression is not BoundValueExpression)
                                         .Select(g => new BoundComputedValue(g.Expression, g.Result))
@@ -984,7 +984,7 @@ partial class Binder
             }
         }
 
-        QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedProjections);
+        QueryState!.AccessibleComputedValues.AddRange(QueryState!.ComputedProjections);
 
         return result;
     }
@@ -1005,7 +1005,7 @@ partial class Binder
         if (!TryGetExistingValue(boundExpression, out var value))
         {
             value = ValueFactory.CreateTemporary(boundExpression.Type);
-            QueryState.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
+            QueryState!.ComputedProjections.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value));
         }
 
         var queryColumn = new QueryColumnInstanceSymbol(name, value!);
@@ -1108,7 +1108,7 @@ partial class Binder
 
         // Ensure that there are no duplicates.
 
-        var introducedTables = QueryState.IntroducedTables;
+        var introducedTables = QueryState!.IntroducedTables;
         var lookup = introducedTables.Values.ToLookup(t => t.ValueText, StringComparer.OrdinalIgnoreCase);
 
         foreach (var name in introducedTables.Values)
@@ -1185,14 +1185,14 @@ partial class Binder
 
             // NOTE: Keep this outside the if check because we assume all groups are recorded
             //       -- independent from whether they are based on existing values or not.
-            QueryState.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value!));
+            QueryState!.ComputedGroupings.Add(new BoundComputedValueWithSyntax(expression, boundExpression, value!));
 
             var group = new BoundComparedValue(value!, comparer);
             groups.Add(group);
         }
 
-        QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedAggregates);
-        QueryState.AccessibleComputedValues.AddRange(QueryState.ComputedGroupings);
+        QueryState!.AccessibleComputedValues.AddRange(QueryState!.ComputedAggregates);
+        QueryState!.AccessibleComputedValues.AddRange(QueryState!.ComputedGroupings);
 
         return new BoundGroupByClause(groups.ToImmutableArray());
     }
@@ -1255,7 +1255,7 @@ partial class Binder
             // present already.
 
             if (boundSelector.ComputedValue is not null && !selectorsMustBeInInput)
-                QueryState.ComputedProjections.Add(boundSelector.ComputedValue.Value);
+                QueryState!.ComputedProjections.Add(boundSelector.ComputedValue.Value);
 
             // We need to find the corresponding result query column for the selector.
             // Please note that it might not exist and this is in fact valid. For example,

@@ -21,6 +21,11 @@ internal sealed class QuickInfoManager : IQuickInfoManager
 
     public QuickInfoManager(Workspace workspace, ITextView textView, IQuickInfoBroker quickInfoBroker, IQuickInfoModelProviderService quickInfoModelProviderService)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(textView);
+        ThrowIfNull(quickInfoBroker);
+        ThrowIfNull(quickInfoModelProviderService);
+
         _workspace = workspace;
         _textView = textView;
         _quickInfoBroker = quickInfoBroker;

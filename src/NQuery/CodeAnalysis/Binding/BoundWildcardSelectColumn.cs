@@ -10,6 +10,8 @@ internal sealed class BoundWildcardSelectColumn : BoundNode
 
     public BoundWildcardSelectColumn(TableInstanceSymbol? table, IEnumerable<TableColumnInstanceSymbol> columns)
     {
+        ThrowIfNull(columns);
+
         Table = table;
         _tableColumns = [.. columns];
         QueryColumns = [.. _tableColumns.Select(c => new QueryColumnInstanceSymbol(c.Name, c.BoundValue))];

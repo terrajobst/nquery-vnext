@@ -11,6 +11,10 @@ internal sealed class CompiledAggregates
 {
     public CompiledAggregates(Action initialize, Action<RowBuffer> accumulate, Action<ArrayRowBuffer> storeResults)
     {
+        ThrowIfNull(initialize);
+        ThrowIfNull(accumulate);
+        ThrowIfNull(storeResults);
+
         Initialize = initialize;
         Accumulate = accumulate;
         StoreResults = storeResults;

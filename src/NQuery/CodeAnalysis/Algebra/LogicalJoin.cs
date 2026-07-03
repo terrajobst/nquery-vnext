@@ -7,6 +7,9 @@ internal sealed class LogicalJoin : LogicalOperator
 {
     public LogicalJoin(LogicalJoinKind joinKind, LogicalOperator left, LogicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         JoinKind = joinKind;
         Left = left;
         Right = right;

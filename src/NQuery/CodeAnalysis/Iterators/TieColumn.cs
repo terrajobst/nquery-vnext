@@ -74,6 +74,8 @@ internal sealed class ObjectTieColumn : TieColumn
 
     public ObjectTieColumn(RowBufferEntry entry, IComparer comparer)
     {
+        ThrowIfNull(comparer);
+
         _entry = entry;
         _comparer = comparer;
     }

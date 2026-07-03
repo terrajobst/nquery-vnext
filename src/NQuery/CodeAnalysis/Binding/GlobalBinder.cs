@@ -15,6 +15,9 @@ internal sealed class GlobalBinder : Binder
     public GlobalBinder(SharedBinderState sharedBinderState, Catalog catalog)
         : base(sharedBinderState, null)
     {
+        ThrowIfNull(sharedBinderState);
+        ThrowIfNull(catalog);
+
         var symbols = catalog.Tables.Select(t => (Symbol)new SchemaTableSymbol(t))
                                  .Concat(catalog.Functions.Select(f => new FunctionSymbol(f)))
                                  .Concat(catalog.Aggregates.Select(a => new AggregateSymbol(a)))

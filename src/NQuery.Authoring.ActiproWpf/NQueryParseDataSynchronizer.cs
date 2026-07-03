@@ -9,6 +9,9 @@ internal sealed class NQueryParseDataSynchronizer
 
     public NQueryParseDataSynchronizer(ICodeDocument codeDocument, Workspace workspace)
     {
+        ThrowIfNull(codeDocument);
+        ThrowIfNull(workspace);
+
         _codeDocument = codeDocument;
         _workspace = workspace;
         _workspace!.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

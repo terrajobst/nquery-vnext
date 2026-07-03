@@ -9,6 +9,10 @@ internal sealed class ExpressionPropertyDefinition : PropertyDefinition
     public ExpressionPropertyDefinition(string name, Type type, LambdaExpression expression)
         : base(name, type)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(type);
+        ThrowIfNull(expression);
+
         _expression = expression;
     }
 

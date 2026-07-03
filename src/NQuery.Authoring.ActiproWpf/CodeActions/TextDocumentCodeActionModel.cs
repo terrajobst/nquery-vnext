@@ -14,6 +14,9 @@ internal sealed class TextDocumentCodeActionModel : CodeActionModel
     public TextDocumentCodeActionModel(CodeActionKind kind, ICodeAction codeAction, ITextDocument document)
         : base(kind, codeAction)
     {
+        ThrowIfNull(codeAction);
+        ThrowIfNull(document);
+
         _document = document;
     }
 

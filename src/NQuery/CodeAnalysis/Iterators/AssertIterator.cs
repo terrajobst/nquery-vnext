@@ -16,6 +16,10 @@ internal sealed class AssertIterator : Iterator
 
     public AssertIterator(Iterator input, CompiledPredicate predicate, string message, RowBuffer? outer)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(predicate);
+        ThrowIfNull(message);
+
         _input = input;
         _predicate = predicate;
         _message = message;

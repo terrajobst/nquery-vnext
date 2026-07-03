@@ -10,6 +10,9 @@ internal sealed class CombinedRowBuffer : RowBuffer
 
     public CombinedRowBuffer(RowBuffer left, RowBuffer right)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         _left = left;
         _right = right;
     }

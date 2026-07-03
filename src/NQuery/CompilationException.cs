@@ -14,6 +14,10 @@ public sealed class CompilationException : Exception
 
     private static string FormatMessage(IEnumerable<Diagnostic> diagnostics)
     {
+        // Runs while evaluating the base constructor argument, i.e. before any field
+        // assignment, so this is where the public constructor's argument is validated.
+        ThrowIfNull(diagnostics);
+
         return string.Join(Environment.NewLine, diagnostics.Select(d => d.Message));
     }
 

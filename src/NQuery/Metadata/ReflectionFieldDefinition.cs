@@ -8,6 +8,9 @@ internal sealed class ReflectionFieldDefinition : PropertyDefinition
     public ReflectionFieldDefinition(FieldInfo fieldInfo, string name)
         : base(name, fieldInfo.FieldType)
     {
+        ThrowIfNull(fieldInfo);
+        ThrowIfNull(name);
+
         FieldInfo = fieldInfo;
     }
 

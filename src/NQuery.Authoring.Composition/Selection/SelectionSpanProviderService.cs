@@ -11,6 +11,8 @@ internal sealed class SelectionSpanProviderService : ISelectionSpanProviderServi
     [ImportingConstructor]
     public SelectionSpanProviderService([ImportMany] IEnumerable<ISelectionSpanProvider> providers)
     {
+        ThrowIfNull(providers);
+
         Providers = SelectionExtensions.StandardSelectionSpanProviders.AddRange(providers);
     }
 

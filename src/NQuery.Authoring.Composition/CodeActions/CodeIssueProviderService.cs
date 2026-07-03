@@ -11,6 +11,8 @@ internal sealed class CodeIssueProviderService : ICodeIssueProviderService
     [ImportingConstructor]
     public CodeIssueProviderService([ImportMany] IEnumerable<ICodeIssueProvider> matchers)
     {
+        ThrowIfNull(matchers);
+
         Providers = CodeActionExtensions.StandardIssueProviders.AddRange(matchers);
     }
 

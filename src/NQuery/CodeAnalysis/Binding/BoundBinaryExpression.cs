@@ -4,6 +4,10 @@ internal sealed class BoundBinaryExpression : BoundExpression
 {
     public BoundBinaryExpression(BoundExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, BoundExpression right)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(result);
+        ThrowIfNull(right);
+
         Left = left;
         OperatorKind = operatorKind;
         Result = result;

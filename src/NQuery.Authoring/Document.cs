@@ -13,6 +13,9 @@ public sealed class Document
 
     public Document(DocumentKind kind, Catalog catalog, SourceText text)
     {
+        ThrowIfNull(catalog);
+        ThrowIfNull(text);
+
         Kind = kind;
         Catalog = catalog;
         Text = text;

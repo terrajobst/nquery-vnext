@@ -26,6 +26,10 @@ internal sealed class NQueryCodeActionsMargin : Canvas, IWpfTextViewMargin, ICod
 
     public NQueryCodeActionsMargin(Workspace workspace, IWpfTextViewHost textViewHost, ITextBufferUndoManager textBufferUndoManager, ImmutableArray<ICodeFixProvider> fixProviders, ImmutableArray<ICodeIssueProvider> issueProviders, ImmutableArray<ICodeRefactoringProvider> refactoringProviders)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(textViewHost);
+        ThrowIfNull(textBufferUndoManager);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         _textViewHost = textViewHost;

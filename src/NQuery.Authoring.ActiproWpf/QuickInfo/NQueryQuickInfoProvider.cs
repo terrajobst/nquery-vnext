@@ -18,6 +18,8 @@ internal sealed class NQueryQuickInfoProvider : QuickInfoProviderBase, INQueryQu
 
     public NQueryQuickInfoProvider(IServiceLocator serviceLocator)
     {
+        ThrowIfNull(serviceLocator);
+
         _serviceLocator = serviceLocator;
     }
 

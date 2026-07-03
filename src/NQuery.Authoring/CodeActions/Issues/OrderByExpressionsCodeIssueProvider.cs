@@ -86,6 +86,9 @@ internal sealed class OrderByExpressionsCodeIssueProvider : CodeIssueProvider<Or
         public ReplaceSelectorCodeAction(ExpressionSyntax selector, string columnReference)
             : base(selector.SyntaxTree)
         {
+            ThrowIfNull(selector);
+            ThrowIfNull(columnReference);
+
             _selector = selector;
             _columnReference = columnReference;
         }

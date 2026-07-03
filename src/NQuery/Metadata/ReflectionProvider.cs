@@ -68,6 +68,9 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
         {
             public Entry(PropertyDefinition property, MemberInfo memberInfo)
             {
+                ThrowIfNull(property);
+                ThrowIfNull(memberInfo);
+
                 PropertyDefinition = property;
                 MemberInfo = memberInfo;
             }
@@ -106,6 +109,10 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
         {
             public Entry(string key, MethodDefinition method, MethodInfo methodInfo)
             {
+                ThrowIfNull(key);
+                ThrowIfNull(method);
+                ThrowIfNull(methodInfo);
+
                 MethodDefinition = method;
                 MethodInfo = methodInfo;
                 Key = key;

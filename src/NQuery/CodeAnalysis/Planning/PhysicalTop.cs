@@ -9,6 +9,8 @@ internal sealed class PhysicalTop : PhysicalOperator
 {
     public PhysicalTop(PhysicalOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Limit = limit;
         TieEntries = tieEntries;

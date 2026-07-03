@@ -12,6 +12,8 @@ internal sealed class NQuerySemanticErrorTagger : NQueryErrorTagger
     public NQuerySemanticErrorTagger(Workspace workspace)
         : base(PredefinedErrorTypeNames.CompilerError)
     {
+        ThrowIfNull(workspace);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         InvalidateTagsAsync();

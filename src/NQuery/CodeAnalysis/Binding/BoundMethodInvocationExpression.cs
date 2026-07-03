@@ -8,6 +8,10 @@ internal sealed class BoundMethodInvocationExpression : BoundExpression
 {
     public BoundMethodInvocationExpression(BoundExpression target, IEnumerable<BoundExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
     {
+        ThrowIfNull(target);
+        ThrowIfNull(arguments);
+        ThrowIfNull(result);
+
         Target = target;
         Arguments = [.. arguments];
         Result = result;

@@ -6,6 +6,10 @@ internal sealed class BoundConversionExpression : BoundExpression
 
     public BoundConversionExpression(BoundExpression expression, Type type, Conversion conversion)
     {
+        ThrowIfNull(expression);
+        ThrowIfNull(type);
+        ThrowIfNull(conversion);
+
         Expression = expression;
         _type = type;
         Conversion = conversion;

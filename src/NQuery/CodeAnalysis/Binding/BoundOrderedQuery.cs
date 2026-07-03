@@ -12,6 +12,8 @@ internal sealed class BoundOrderedQuery : BoundQuery
 {
     public BoundOrderedQuery(BoundQuery query, ImmutableArray<BoundComparedValue> sortedValues, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
+        ThrowIfNull(query);
+
         Query = query;
         SortedValues = sortedValues;
         OutputColumns = outputColumns;

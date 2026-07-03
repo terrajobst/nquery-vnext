@@ -12,6 +12,8 @@ internal sealed class OverloadResolutionCandidate<T>
 
     private OverloadResolutionCandidate(T signature, IEnumerable<Conversion> argumentConversions, bool isApplicable, bool hasBetterAlternative)
     {
+        ThrowIfNull(argumentConversions);
+
         Signature = signature;
         ArgumentConversions = [.. argumentConversions];
         IsApplicable = isApplicable;

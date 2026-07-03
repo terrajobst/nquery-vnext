@@ -8,6 +8,8 @@ internal sealed class NegatedComparer : IComparer
 
     public NegatedComparer(IComparer comparer)
     {
+        ThrowIfNull(comparer);
+
         _comparer = comparer;
     }
 

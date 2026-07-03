@@ -11,6 +11,7 @@ public abstract class SelectionAction : EditActionBase
     protected SelectionAction(string text)
         : base(text)
     {
+        ThrowIfNull(text);
     }
 
     private sealed class SelectionHandler
@@ -20,6 +21,8 @@ public abstract class SelectionAction : EditActionBase
 
         public SelectionHandler(IEditorView editorView)
         {
+            ThrowIfNull(editorView);
+
             _editorView = editorView;
             SubscribeToSelectionChanged();
         }
@@ -92,12 +95,16 @@ public abstract class SelectionAction : EditActionBase
 
     protected static void ExtendSelectionAsync(ITextView textView)
     {
+        ThrowIfNull(textView);
+
         var selectionHandler = GetSelectionHandler(textView);
         selectionHandler?.ExtendSelectionAsync();
     }
 
     protected static void ShrinkSelection(ITextView textView)
     {
+        ThrowIfNull(textView);
+
         var selectionHandler = GetSelectionHandler(textView);
         selectionHandler?.ShrinkSelection();
     }

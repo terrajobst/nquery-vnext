@@ -16,6 +16,7 @@ internal sealed class HtmlContentProviderWithGlyph : HtmlContentProvider
     private HtmlContentProviderWithGlyph(string htmlSnippet)
         : base(htmlSnippet)
     {
+        ThrowIfNull(htmlSnippet);
     }
 
     protected override Image? GetImage(string source)

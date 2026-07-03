@@ -21,6 +21,9 @@ internal sealed class ExecutableRecursiveUnion : ExecutableOperator
     public ExecutableRecursiveUnion(ImmutableArray<ValueSlot> outputValueSlots, RecursionToken token, ExecutableOperator anchor, ImmutableArray<ExecutableOperator> members, ImmutableArray<LogicalUnifiedValue> definedValues)
         : base(outputValueSlots)
     {
+        ThrowIfNull(token);
+        ThrowIfNull(anchor);
+
         _token = token;
         _anchor = anchor;
         _members = members;

@@ -12,6 +12,10 @@ internal sealed class TopWithTiesIterator : TopIterator
     public TopWithTiesIterator(Iterator input, int limit, IEnumerable<RowBufferEntry> tieEntries, IEnumerable<IComparer> tieComparers)
         : base(input, limit)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(tieEntries);
+        ThrowIfNull(tieComparers);
+
         // One typed column per tie-breaker, so capturing the last emitted row and testing
         // each candidate for a tie compares the ORDER BY values unboxed (see TieColumn).
         _tieColumns = [.. tieEntries.Zip(tieComparers, TieColumn.Create)];

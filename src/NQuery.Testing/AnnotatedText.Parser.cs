@@ -20,6 +20,8 @@ public partial class AnnotatedText
 
         public Parser(string text)
         {
+            ThrowIfNull(text);
+
             _text = text;
         }
 

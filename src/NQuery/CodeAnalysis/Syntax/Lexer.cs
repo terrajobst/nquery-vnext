@@ -22,6 +22,9 @@ internal sealed class Lexer
 
     public Lexer(SyntaxTree syntaxTree, SourceText text)
     {
+        ThrowIfNull(syntaxTree);
+        ThrowIfNull(text);
+
         _syntaxTree = syntaxTree;
         _text = text;
         _charReader = new CharReader(text);

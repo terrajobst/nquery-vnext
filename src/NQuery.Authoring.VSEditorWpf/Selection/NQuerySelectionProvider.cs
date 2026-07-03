@@ -16,6 +16,9 @@ internal sealed class NQuerySelectionProvider : INQuerySelectionProvider
 
     public NQuerySelectionProvider(ITextView textView, ISelectionSpanProviderService selectionSpanProviderService)
     {
+        ThrowIfNull(textView);
+        ThrowIfNull(selectionSpanProviderService);
+
         _textView = textView;
         _selectionSpanProviderService = selectionSpanProviderService;
         _workspace = textView.TextBuffer.GetWorkspace();

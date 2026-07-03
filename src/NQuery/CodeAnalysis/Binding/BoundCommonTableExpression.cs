@@ -6,6 +6,8 @@ internal sealed class BoundCommonTableExpression : BoundNode
 {
     public BoundCommonTableExpression(CommonTableExpressionSymbol tableSymbol)
     {
+        ThrowIfNull(tableSymbol);
+
         TableSymbol = tableSymbol;
     }
 

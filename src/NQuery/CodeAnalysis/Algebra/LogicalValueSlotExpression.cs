@@ -7,6 +7,8 @@ internal sealed class LogicalValueSlotExpression : LogicalExpression
 {
     public LogicalValueSlotExpression(ValueSlot valueSlot)
     {
+        ThrowIfNull(valueSlot);
+
         ValueSlot = valueSlot;
     }
 

@@ -17,6 +17,9 @@ internal static class TreeViewExtensions
 
         public Expander(TreeView treeView, IEnumerable<object> items, bool expandLastItem)
         {
+            ThrowIfNull(treeView);
+            ThrowIfNull(items);
+
             _items = [.. items];
             _expandLastItem = expandLastItem;
             _parentGenerator = treeView.ItemContainerGenerator;

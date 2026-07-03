@@ -16,6 +16,9 @@ internal sealed class NQueryOutliningSource : RangeOutliningSourceBase
     public NQueryOutliningSource(ITextSnapshot snapshot, SyntaxTree syntaxTree, ImmutableArray<IOutliner> outliners)
         : base(snapshot)
     {
+        ThrowIfNull(snapshot);
+        ThrowIfNull(syntaxTree);
+
         var text = syntaxTree.Text;
         var result = syntaxTree.Root.FindRegions(outliners);
 

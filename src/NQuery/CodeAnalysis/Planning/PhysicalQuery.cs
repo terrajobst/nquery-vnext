@@ -8,6 +8,8 @@ internal sealed class PhysicalQuery
 {
     public PhysicalQuery(PhysicalOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
+        ThrowIfNull(root);
+
         Root = root;
         OutputColumns = outputColumns;
     }

@@ -73,7 +73,7 @@ partial class Binder
 
         var tableInstance = new TableInstanceSymbol(alias, table);
 
-        QueryState.IntroducedTables.Add(tableInstance, aliasIdentifier);
+        QueryState!.IntroducedTables.Add(tableInstance, aliasIdentifier);
 
         return new BoundNamedTableReference(tableInstance);
     }
@@ -171,7 +171,7 @@ partial class Binder
         var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, aliasFactory);
         var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
-        QueryState.IntroducedTables.Add(derivedTableInstance, node.Name);
+        QueryState!.IntroducedTables.Add(derivedTableInstance, node.Name);
 
         return boundTableReference;
     }

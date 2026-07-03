@@ -19,6 +19,10 @@ internal sealed class RecursiveCommonTableExpressionChecker
 
     public RecursiveCommonTableExpressionChecker(CommonTableExpressionSyntax syntax, List<Diagnostic> diagnostics, CommonTableExpressionSymbol symbol)
     {
+        ThrowIfNull(syntax);
+        ThrowIfNull(diagnostics);
+        ThrowIfNull(symbol);
+
         _syntax = syntax;
         _diagnostics = diagnostics;
         _symbol = symbol;

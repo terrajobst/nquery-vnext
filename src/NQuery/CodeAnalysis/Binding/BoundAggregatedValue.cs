@@ -7,6 +7,10 @@ internal sealed class BoundAggregatedValue
 {
     public BoundAggregatedValue(IBoundValue output, AggregateSymbol aggregate, AggregateFold? fold, BoundExpression argument)
     {
+        ThrowIfNull(output);
+        ThrowIfNull(aggregate);
+        ThrowIfNull(argument);
+
         Output = output;
         Aggregate = aggregate;
         Fold = fold;

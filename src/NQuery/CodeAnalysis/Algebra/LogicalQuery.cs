@@ -10,6 +10,8 @@ internal sealed class LogicalQuery
 {
     public LogicalQuery(LogicalOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
+        ThrowIfNull(root);
+
         Root = root;
         OutputColumns = outputColumns;
     }

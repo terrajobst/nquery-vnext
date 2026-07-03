@@ -6,6 +6,10 @@ internal sealed class LogicalBinaryExpression : LogicalExpression
 {
     public LogicalBinaryExpression(LogicalExpression left, BinaryOperatorKind operatorKind, OverloadResolutionResult<BinaryOperatorSignature> result, LogicalExpression right)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(result);
+        ThrowIfNull(right);
+
         Left = left;
         OperatorKind = operatorKind;
         Result = result;

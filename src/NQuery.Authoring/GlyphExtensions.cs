@@ -8,6 +8,8 @@ public static class GlyphExtensions
     {
         public Glyph GetGlyph()
         {
+            ThrowIfNull(symbol);
+
             switch (symbol.Kind)
             {
                 case SymbolKind.Column:

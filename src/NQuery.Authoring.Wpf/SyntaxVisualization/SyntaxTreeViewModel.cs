@@ -8,6 +8,9 @@ internal sealed class SyntaxTreeViewModel
 {
     public SyntaxTreeViewModel(SyntaxTree model, SyntaxNodeViewModel root)
     {
+        ThrowIfNull(model);
+        ThrowIfNull(root);
+
         Model = model;
         Root = [root];
     }

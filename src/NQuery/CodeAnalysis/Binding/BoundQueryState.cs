@@ -5,12 +5,12 @@ namespace NQuery.CodeAnalysis.Binding;
 
 internal sealed class BoundQueryState
 {
-    public BoundQueryState(BoundQueryState parent)
+    public BoundQueryState(BoundQueryState? parent)
     {
         Parent = parent;
     }
 
-    public BoundQueryState Parent { get; }
+    public BoundQueryState? Parent { get; }
 
     public Dictionary<TableInstanceSymbol, SyntaxToken> IntroducedTables { get; } = new();
 

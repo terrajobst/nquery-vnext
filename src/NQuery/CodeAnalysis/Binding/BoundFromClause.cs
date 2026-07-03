@@ -4,6 +4,8 @@ internal sealed class BoundFromClause
 {
     public BoundFromClause(BoundTableReference root)
     {
+        ThrowIfNull(root);
+
         Root = root;
     }
 

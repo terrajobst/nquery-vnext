@@ -91,6 +91,11 @@ internal sealed class BetweenCodeRefactoringProvider : CodeRefactoringProvider<B
         public BetweenCodeAction(BinaryExpressionSyntax original, ExpressionSyntax expression, ExpressionSyntax lowerBound, ExpressionSyntax upperBound)
             : base(original.SyntaxTree)
         {
+            ThrowIfNull(original);
+            ThrowIfNull(expression);
+            ThrowIfNull(lowerBound);
+            ThrowIfNull(upperBound);
+
             _original = original;
             _expression = expression;
             _lowerBound = lowerBound;

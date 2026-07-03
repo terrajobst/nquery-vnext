@@ -25,6 +25,9 @@ public static class BraceMatchingExtensions
 
         public BraceMatchingResult MatchBraces(int position, IEnumerable<IBraceMatcher> braceMatchers)
         {
+            ThrowIfNull(syntaxTree);
+            ThrowIfNull(braceMatchers);
+
             return (from m in braceMatchers
                     let r = m.MatchBraces(syntaxTree, position)
                     where r.IsValid

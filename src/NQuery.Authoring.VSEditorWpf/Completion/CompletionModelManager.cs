@@ -21,6 +21,11 @@ internal sealed class CompletionModelManager : ICompletionModelManager
 
     public CompletionModelManager(Workspace workspace, ITextView textView, ICompletionBroker completionBroker, ICompletionProviderService completionProviderService)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(textView);
+        ThrowIfNull(completionBroker);
+        ThrowIfNull(completionProviderService);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         _textView = textView;

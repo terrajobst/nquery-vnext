@@ -9,6 +9,9 @@ internal sealed class UnaryOperatorSignature : Signature
 
     private UnaryOperatorSignature(UnaryOperatorKind kind, Type returnType, Type argumentType, MethodInfo? methodInfo)
     {
+        ThrowIfNull(returnType);
+        ThrowIfNull(argumentType);
+
         Kind = kind;
         _returnType = returnType;
         _argumentType = argumentType;

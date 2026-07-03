@@ -15,6 +15,10 @@ internal sealed class NQueryBraceTagger : AsyncTagger<ITextMarkerTag, SnapshotSp
 
     public NQueryBraceTagger(Workspace workspace, ITextView textView, IBraceMatcherService braceMatcherService)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(textView);
+        ThrowIfNull(braceMatcherService);
+
         _workspace = workspace;
         _textView = textView;
         _braceMatcherService = braceMatcherService;

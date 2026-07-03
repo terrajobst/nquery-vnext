@@ -20,6 +20,8 @@ internal sealed class AddAsAliasCodeRefactoringProvider : CodeRefactoringProvide
         public AddAsToAliasCodeAction(AliasSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

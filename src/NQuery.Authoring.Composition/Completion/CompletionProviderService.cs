@@ -11,6 +11,8 @@ internal sealed class CompletionProviderService : ICompletionProviderService
     [ImportingConstructor]
     public CompletionProviderService([ImportMany] IEnumerable<ICompletionProvider> providers)
     {
+        ThrowIfNull(providers);
+
         Providers = CompletionExtensions.StandardCompletionProviders.AddRange(providers);
     }
 

@@ -74,6 +74,8 @@ internal sealed class RecursiveCodeIssueProvider : CodeIssueProvider<CommonTable
         public InsertMissingRecursiveKeywordCodeAction(CommonTableExpressionSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

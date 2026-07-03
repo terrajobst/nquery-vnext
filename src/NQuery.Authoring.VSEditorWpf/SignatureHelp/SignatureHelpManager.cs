@@ -19,6 +19,10 @@ internal sealed class SignatureHelpManager : ISignatureHelpManager
 
     public SignatureHelpManager(ITextView textView, ISignatureHelpBroker signatureHelpBroker, ISignatureHelpModelProviderService signatureHelpModelProviderService)
     {
+        ThrowIfNull(textView);
+        ThrowIfNull(signatureHelpBroker);
+        ThrowIfNull(signatureHelpModelProviderService);
+
         _textView = textView;
         _textView.Caret.PositionChanged += CaretOnPositionChanged;
         _textView.TextBuffer.PostChanged += TextBufferOnPostChanged;

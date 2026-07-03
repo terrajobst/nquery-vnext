@@ -46,6 +46,9 @@ internal sealed class ExpressionCompiler
     // its own locals/assignments, so the per-value blocks stay independent.
     private ExpressionCompiler(FrozenDictionary<ValueSlot, RowBufferColumn> slotIndices, ParameterExpression rowBuffer)
     {
+        ThrowIfNull(slotIndices);
+        ThrowIfNull(rowBuffer);
+
         _slotIndices = slotIndices;
         _rowBuffer = rowBuffer;
     }

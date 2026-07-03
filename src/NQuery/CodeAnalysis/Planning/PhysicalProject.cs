@@ -9,6 +9,8 @@ internal sealed class PhysicalProject : PhysicalOperator
 {
     public PhysicalProject(PhysicalOperator input, ImmutableArray<ValueSlot> outputs)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Outputs = outputs;
     }

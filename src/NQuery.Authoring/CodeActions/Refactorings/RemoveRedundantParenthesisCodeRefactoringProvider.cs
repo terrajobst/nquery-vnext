@@ -26,6 +26,8 @@ internal sealed class RemoveRedundantParenthesisCodeRefactoringProvider : CodeRe
         public RemoveRedundantParenthesisCodeAction(ParenthesizedExpressionSyntax expression)
             : base(expression.SyntaxTree)
         {
+            ThrowIfNull(expression);
+
             _expression = expression;
         }
 

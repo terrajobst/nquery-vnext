@@ -6,6 +6,9 @@ internal sealed class LogicalComputedValue
 {
     public LogicalComputedValue(LogicalExpression expression, ValueSlot valueSlot)
     {
+        ThrowIfNull(expression);
+        ThrowIfNull(valueSlot);
+
         Expression = expression;
         ValueSlot = valueSlot;
     }

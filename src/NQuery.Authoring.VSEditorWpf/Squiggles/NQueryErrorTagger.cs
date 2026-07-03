@@ -11,6 +11,8 @@ internal abstract class NQueryErrorTagger : AsyncTagger<IErrorTag, Diagnostic>
 
     protected NQueryErrorTagger(string errorType)
     {
+        ThrowIfNull(errorType);
+
         _errorType = errorType;
     }
 

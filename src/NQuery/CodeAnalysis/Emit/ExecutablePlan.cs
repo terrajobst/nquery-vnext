@@ -20,6 +20,8 @@ internal sealed class ExecutablePlan
 
     public ExecutablePlan(ExecutableOperator root, ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
+        ThrowIfNull(root);
+
         _root = root;
         OutputColumns = outputColumns;
     }

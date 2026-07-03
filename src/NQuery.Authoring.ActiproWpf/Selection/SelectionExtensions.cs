@@ -10,6 +10,8 @@ public static class SelectionExtensions
     {
         public void RegisterSelectionCommands()
         {
+            ThrowIfNull(syntaxEditor);
+
             syntaxEditor.CommandBindings.Add(new ExtendSelectionAction().CreateCommandBinding(ExtendSelectionAction.Command));
             syntaxEditor.CommandBindings.Add(new ShrinkSelectionAction().CreateCommandBinding(ShrinkSelectionAction.Command));
 

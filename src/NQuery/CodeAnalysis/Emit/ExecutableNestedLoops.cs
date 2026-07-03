@@ -31,6 +31,9 @@ internal sealed class ExecutableNestedLoops : ExecutableOperator
     public ExecutableNestedLoops(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator left, ExecutableOperator right, PhysicalJoinKind joinKind, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         _left = left;
         _right = right;
         _joinKind = joinKind;

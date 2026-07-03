@@ -13,6 +13,10 @@ internal sealed class ProbingLeftSemiNestedLoopsIterator : NestedLoopsIterator
 
     public ProbingLeftSemiNestedLoopsIterator(Iterator left, Iterator right, CompiledPredicate predicate, RowBuffer? outer = null)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+        ThrowIfNull(predicate);
+
         _left = left;
         _right = right;
         _predicate = predicate;

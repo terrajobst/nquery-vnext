@@ -14,6 +14,9 @@ internal class NQuerySignature : ISignature
 
     internal NQuerySignature(ITrackingSpan applicableSpan, SignatureItem signatureItem, int selectedParameter)
     {
+        ThrowIfNull(applicableSpan);
+        ThrowIfNull(signatureItem);
+
         var parameters = signatureItem.Parameters.Select(CreateParameter).OfType<IParameter>().ToImmutableArray();
 
         ApplicableToSpan = applicableSpan;

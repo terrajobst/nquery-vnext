@@ -14,6 +14,8 @@ public static class NQueryExtensions
     {
         public Workspace GetWorkspace()
         {
+            ThrowIfNull(textBuffer);
+
             return textBuffer.Properties.GetOrCreateSingletonProperty(WorkspaceKey, () =>
             {
                 var textContainer = new VisualStudioSourceTextContainer(textBuffer);
@@ -32,6 +34,8 @@ public static class NQueryExtensions
     {
         public ITextSnapshot GetTextSnapshot()
         {
+            ThrowIfNull(document);
+
             return document.Text.ToTextSnapshot();
         }
     }
@@ -40,6 +44,8 @@ public static class NQueryExtensions
     {
         public DocumentView GetDocumentView()
         {
+            ThrowIfNull(syntaxEditor);
+
             var document = syntaxEditor.TextBuffer.GetDocument();
             var snapshot = document.Text.ToTextSnapshot();
             var start = syntaxEditor.Selection.Start.Position.TranslateTo(snapshot, PointTrackingMode.Negative);

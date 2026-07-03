@@ -18,6 +18,9 @@ internal sealed class ExecutableRecursiveReference : ExecutableOperator
     public ExecutableRecursiveReference(ImmutableArray<ValueSlot> outputValueSlots, RecursionToken token, RowBufferLayout layout)
         : base(outputValueSlots)
     {
+        ThrowIfNull(token);
+        ThrowIfNull(layout);
+
         _token = token;
         _layout = layout;
     }

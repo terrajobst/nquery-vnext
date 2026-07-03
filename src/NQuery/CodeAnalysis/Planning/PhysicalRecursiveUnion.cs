@@ -15,6 +15,9 @@ internal sealed class PhysicalRecursiveUnion : PhysicalOperator
 {
     public PhysicalRecursiveUnion(RecursionToken token, PhysicalOperator anchor, ImmutableArray<PhysicalOperator> recursiveMembers, ImmutableArray<LogicalUnifiedValue> definedValues)
     {
+        ThrowIfNull(token);
+        ThrowIfNull(anchor);
+
         Token = token;
         Anchor = anchor;
         RecursiveMembers = recursiveMembers;

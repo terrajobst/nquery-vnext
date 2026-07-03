@@ -8,6 +8,8 @@ public sealed class Workspace
 
     public Workspace(SourceTextContainer textContainer)
     {
+        ThrowIfNull(textContainer);
+
         TextContainer = textContainer;
         TextContainer.CurrentChanged += TextContainerOnCurrentChanged;
         _currentDocument = new Document(DocumentKind.Query, Catalog.Empty, textContainer.Current);

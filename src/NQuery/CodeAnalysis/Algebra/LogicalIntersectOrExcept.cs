@@ -8,6 +8,9 @@ internal sealed class LogicalIntersectOrExcept : LogicalOperator
 {
     public LogicalIntersectOrExcept(bool isIntersect, LogicalOperator left, LogicalOperator right, ImmutableArray<IComparer> comparers)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         IsIntersect = isIntersect;
         Left = left;
         Right = right;

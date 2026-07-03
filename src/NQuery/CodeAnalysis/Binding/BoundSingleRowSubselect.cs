@@ -4,6 +4,11 @@ internal sealed class BoundSingleRowSubselect : BoundExpression
 {
     public BoundSingleRowSubselect(IBoundValue value, BoundQuery query, BoundAggregatedValue valueAggregate, BoundAggregatedValue countAggregate)
     {
+        ThrowIfNull(value);
+        ThrowIfNull(query);
+        ThrowIfNull(valueAggregate);
+        ThrowIfNull(countAggregate);
+
         Value = value;
         Query = query;
         ValueAggregate = valueAggregate;

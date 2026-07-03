@@ -28,6 +28,9 @@ public static class SelectionExtensions
 
         public TextSpan ExtendSelection(TextSpan selectedSpan, IEnumerable<ISelectionSpanProvider> providers)
         {
+            ThrowIfNull(syntaxTree);
+            ThrowIfNull(providers);
+
             var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
             foreach (var span in GetNextSpans(token, providers))
             {

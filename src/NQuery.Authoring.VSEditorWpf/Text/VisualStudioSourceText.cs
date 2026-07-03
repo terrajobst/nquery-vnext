@@ -12,6 +12,9 @@ internal sealed class VisualStudioSourceText : SourceText
     public VisualStudioSourceText(VisualStudioSourceTextContainer container, ITextSnapshot snapshot)
         : base(container)
     {
+        ThrowIfNull(container);
+        ThrowIfNull(snapshot);
+
         Snapshot = snapshot;
         _lines = new VisualStudioTextLineCollection(this, snapshot);
     }

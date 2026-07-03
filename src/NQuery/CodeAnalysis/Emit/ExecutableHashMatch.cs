@@ -36,6 +36,11 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
     public ExecutableHashMatch(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator build, ExecutableOperator probe, PhysicalHashMatchKind kind, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ImmutableArray<ValueSlot> outerSlots, ValueSlot? probeColumn = null)
         : base(outputValueSlots)
     {
+        ThrowIfNull(build);
+        ThrowIfNull(probe);
+        ThrowIfNull(buildKey);
+        ThrowIfNull(probeKey);
+
         _build = build;
         _probe = probe;
         _buildKey = buildKey;

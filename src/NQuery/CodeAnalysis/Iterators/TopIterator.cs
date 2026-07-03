@@ -6,6 +6,8 @@ internal class TopIterator : Iterator
 
     public TopIterator(Iterator input, int limit)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Limit = limit;
     }

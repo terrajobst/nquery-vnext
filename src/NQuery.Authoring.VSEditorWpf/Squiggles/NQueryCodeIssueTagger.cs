@@ -16,6 +16,9 @@ internal sealed class NQueryCodeIssueTagger : AsyncTagger<IErrorTag, CodeIssue>
 
     public NQueryCodeIssueTagger(Workspace workspace, ICodeIssueProviderService codeIssueProviderService)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(codeIssueProviderService);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         _codeIssueProviderService = codeIssueProviderService;

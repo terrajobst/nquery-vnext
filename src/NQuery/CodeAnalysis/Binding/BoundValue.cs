@@ -11,6 +11,9 @@ internal sealed class BoundValue : IBoundValue
 {
     public BoundValue(string name, Type type)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(type);
+
         Name = name;
         Type = type;
     }

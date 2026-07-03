@@ -10,6 +10,8 @@ public static class StringExtensions
     {
         public string Substring(TextSpan span)
         {
+            ThrowIfNull(text);
+
             return text.Substring(span.Start, span.Length);
         }
 

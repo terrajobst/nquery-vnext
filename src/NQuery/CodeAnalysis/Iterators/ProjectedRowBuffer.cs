@@ -18,6 +18,8 @@ internal sealed class ProjectedRowBuffer : RowBuffer
 
     public ProjectedRowBuffer(IEnumerable<RowBufferEntry> projectedEntries)
     {
+        ThrowIfNull(projectedEntries);
+
         var objects = new List<RowBufferEntry>();
         var bits32 = new List<RowBufferEntry>();
         var bits64 = new List<RowBufferEntry>();

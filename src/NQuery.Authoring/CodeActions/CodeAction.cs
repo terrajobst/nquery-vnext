@@ -9,6 +9,8 @@ public abstract class CodeAction : ICodeAction
 
     protected CodeAction(SyntaxTree syntaxTree)
     {
+        ThrowIfNull(syntaxTree);
+
         _syntaxTree = syntaxTree;
     }
 

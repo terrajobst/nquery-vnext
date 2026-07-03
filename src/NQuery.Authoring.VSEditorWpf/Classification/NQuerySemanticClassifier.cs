@@ -14,6 +14,9 @@ internal sealed class NQuerySemanticClassifier : AsyncTagger<IClassificationTag,
 
     public NQuerySemanticClassifier(INQueryClassificationService classificationService, Workspace workspace)
     {
+        ThrowIfNull(classificationService);
+        ThrowIfNull(workspace);
+
         _classificationService = classificationService;
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

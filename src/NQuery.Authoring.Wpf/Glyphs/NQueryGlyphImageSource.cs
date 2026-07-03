@@ -66,6 +66,8 @@ public static class NQueryGlyphImageSource
 
     public static ImageSource? Get(Symbol symbol)
     {
+        ThrowIfNull(symbol);
+
         var glyph = symbol.GetGlyph();
         return Get(glyph);
     }

@@ -14,6 +14,8 @@ internal sealed class ExecutableSort : ExecutableOperator
     public ExecutableSort(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, bool isDistinct, ImmutableArray<LogicalComparedValue> sortedValues)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
         _isDistinct = isDistinct;
         _sortedValues = sortedValues;

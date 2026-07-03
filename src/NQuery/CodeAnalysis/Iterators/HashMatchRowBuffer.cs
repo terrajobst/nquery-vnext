@@ -16,6 +16,9 @@ internal sealed class HashMatchRowBuffer : RowBuffer
 
     public HashMatchRowBuffer(RowBuffer buildTemplate, RowBuffer probeTemplate)
     {
+        ThrowIfNull(buildTemplate);
+        ThrowIfNull(probeTemplate);
+
         _buildNull = new NullRowBuffer(buildTemplate);
         _build = new IndirectedRowBuffer(buildTemplate, _buildNull);
 

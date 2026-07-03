@@ -8,6 +8,9 @@ internal sealed class ReflectionPropertyDefinition : PropertyDefinition
     public ReflectionPropertyDefinition(PropertyInfo propertyInfo, string name)
         : base(name, propertyInfo.PropertyType)
     {
+        ThrowIfNull(propertyInfo);
+        ThrowIfNull(name);
+
         PropertyInfo = propertyInfo;
     }
 

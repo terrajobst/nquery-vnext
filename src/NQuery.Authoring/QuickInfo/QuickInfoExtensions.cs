@@ -35,6 +35,9 @@ public static class QuickInfoExtensions
 
         public QuickInfoModel? GetQuickInfoModel(int position, IEnumerable<IQuickInfoModelProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             return (from p in providers
                     let m = p.GetModel(semanticModel, position)
                     where m is not null

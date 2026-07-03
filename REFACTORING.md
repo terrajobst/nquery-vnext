@@ -120,9 +120,6 @@ model / cardinality estimation" under *More features*.
 
 ## Miscellaneous
 
-* Make sure we have argument validation for all public APIs
-    - For internal/private APIs I want argument validation for public statics and
-      constructors
 * VariableDefinition
     - Should probably have a generic variant
     - Seems a bit odd of have that live on the catalog. Logically that should

@@ -8,6 +8,8 @@ internal sealed class ActiproSourceTextContainer : SourceTextContainer
 {
     public ActiproSourceTextContainer(ITextDocument textDocument)
     {
+        ThrowIfNull(textDocument);
+
         TextDocument = textDocument;
         TextDocument.TextChanged += TextDocumentOnTextChanged;
     }

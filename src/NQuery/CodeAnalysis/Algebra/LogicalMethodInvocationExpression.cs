@@ -9,6 +9,9 @@ internal sealed class LogicalMethodInvocationExpression : LogicalExpression
 {
     public LogicalMethodInvocationExpression(LogicalExpression target, ImmutableArray<LogicalExpression> arguments, OverloadResolutionResult<MethodSymbolSignature> result)
     {
+        ThrowIfNull(target);
+        ThrowIfNull(result);
+
         Target = target;
         Arguments = arguments;
         Result = result;

@@ -6,6 +6,8 @@ internal sealed class BoundSelectColumn : BoundNode
 {
     public BoundSelectColumn(QueryColumnInstanceSymbol column)
     {
+        ThrowIfNull(column);
+
         Column = column;
     }
 

@@ -6,6 +6,8 @@ public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
 {
     public SymbolMarkup(IEnumerable<SymbolMarkupToken> tokens)
     {
+        ThrowIfNull(tokens);
+
         Tokens = [.. tokens];
     }
 
@@ -49,6 +51,8 @@ public sealed class SymbolMarkup : IEquatable<SymbolMarkup>
 
     public static SymbolMarkup ForSymbol(Symbol symbol)
     {
+        ThrowIfNull(symbol);
+
         var nodes = new List<SymbolMarkupToken>();
         nodes.AppendSymbol(symbol);
         return new SymbolMarkup(nodes);

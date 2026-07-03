@@ -7,6 +7,9 @@ internal sealed class BoundJoinTableReference : BoundTableReference
 {
     public BoundJoinTableReference(BoundJoinType joinType, BoundTableReference left, BoundTableReference right, BoundExpression? condition)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         JoinType = joinType;
         Left = left;
         Right = right;

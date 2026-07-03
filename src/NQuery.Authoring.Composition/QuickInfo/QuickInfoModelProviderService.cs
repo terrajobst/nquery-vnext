@@ -11,6 +11,8 @@ internal sealed class QuickInfoModelProviderService : IQuickInfoModelProviderSer
     [ImportingConstructor]
     public QuickInfoModelProviderService([ImportMany] IEnumerable<IQuickInfoModelProvider> providers)
     {
+        ThrowIfNull(providers);
+
         Providers = QuickInfoExtensions.StandardQuickInfoModelProviders.AddRange(providers);
     }
 

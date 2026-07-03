@@ -7,6 +7,10 @@ internal sealed class LogicalAssert : LogicalOperator
 {
     public LogicalAssert(LogicalOperator input, LogicalExpression condition, string message)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(condition);
+        ThrowIfNull(message);
+
         Input = input;
         Condition = condition;
         Message = message;

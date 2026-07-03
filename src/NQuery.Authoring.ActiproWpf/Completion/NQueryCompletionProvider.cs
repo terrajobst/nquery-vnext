@@ -20,6 +20,8 @@ internal sealed class NQueryCompletionProvider : CompletionProviderBase, INQuery
 
     public NQueryCompletionProvider(IServiceLocator serviceLocator)
     {
+        ThrowIfNull(serviceLocator);
+
         _serviceLocator = serviceLocator;
     }
 

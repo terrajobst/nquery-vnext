@@ -28,6 +28,9 @@ public static class HighlightingExtensions
 
         public IEnumerable<TextSpan> GetHighlights(int position, IEnumerable<IHighlighter> highlighters)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(highlighters);
+
             var result = new List<TextSpan>();
 
             foreach (var highlighter in highlighters)

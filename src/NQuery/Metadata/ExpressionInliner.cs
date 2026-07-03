@@ -33,6 +33,8 @@ internal static class ExpressionInliner
 
         public ParameterReplacer(FrozenDictionary<ParameterExpression, Expression> map)
         {
+            ThrowIfNull(map);
+
             _map = map;
         }
 

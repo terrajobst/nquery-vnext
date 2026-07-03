@@ -5,6 +5,8 @@ internal sealed class GroupByClauseBinder : Binder
     public GroupByClauseBinder(SharedBinderState sharedBinderState, Binder parent)
         : base(sharedBinderState, parent)
     {
+        ThrowIfNull(sharedBinderState);
+        ThrowIfNull(parent);
     }
 
     protected override bool InGroupByClause

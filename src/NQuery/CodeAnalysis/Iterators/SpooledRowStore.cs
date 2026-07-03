@@ -187,6 +187,8 @@ internal sealed class SpooledRowStore
 
         public Chunk(SpooledRowStore store)
         {
+            ThrowIfNull(store);
+
             Objects = store._objectCount == 0 ? [] : new object?[ChunkRows * store._objectCount];
             Bits32 = store._bits32Count == 0 ? [] : new uint[ChunkRows * store._bits32Count];
             Bits64 = store._bits64Count == 0 ? [] : new ulong[ChunkRows * store._bits64Count];
@@ -206,6 +208,8 @@ internal sealed class SpooledRowStore
 
         public Cursor(SpooledRowStore store)
         {
+            ThrowIfNull(store);
+
             _store = store;
         }
 

@@ -10,6 +10,12 @@ internal sealed class BindingResult
 
     public BindingResult(SyntaxNode root, BoundNode boundRoot, FrozenDictionary<SyntaxNode, BoundNode> boundNodeFromSyntaxNode, FrozenDictionary<BoundNode, Binder> binderFromBoundNode, IList<Diagnostic> diagnostics)
     {
+        ThrowIfNull(root);
+        ThrowIfNull(boundRoot);
+        ThrowIfNull(boundNodeFromSyntaxNode);
+        ThrowIfNull(binderFromBoundNode);
+        ThrowIfNull(diagnostics);
+
         Root = root;
         BoundRoot = boundRoot;
         _boundNodeFromSyntaxNode = boundNodeFromSyntaxNode;

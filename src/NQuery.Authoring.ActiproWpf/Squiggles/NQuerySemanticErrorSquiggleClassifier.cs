@@ -10,8 +10,10 @@ internal sealed class NQuerySemanticErrorSquiggleClassifier : NQuerySquiggleClas
     private readonly Workspace? _workspace;
 
     public NQuerySemanticErrorSquiggleClassifier(ICodeDocument document)
-        : base(ClassificationTypes.CompilerError, nameof(NQuerySemanticErrorSquiggleClassifier), null!, document, true)
+        : base(ClassificationTypes.CompilerError, nameof(NQuerySemanticErrorSquiggleClassifier), null, document, true)
     {
+        ThrowIfNull(document);
+
         _workspace = document.GetWorkspace();
         if (_workspace is null)
             return;

@@ -10,6 +10,8 @@ public static class CodeActionExtensions
     {
         public void RegisterCodeActionCommands()
         {
+            ThrowIfNull(syntaxEditor);
+
             syntaxEditor.CommandBindings.Add(new ExpandCodeActionListEditAction().CreateCommandBinding(ExpandCodeActionListEditAction.Command));
             syntaxEditor.InputBindings.Add(new InputBinding(ExpandCodeActionListEditAction.Command, new KeyGesture(Key.OemPeriod, ModifierKeys.Control)));
         }

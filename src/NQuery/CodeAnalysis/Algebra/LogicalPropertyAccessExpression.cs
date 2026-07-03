@@ -6,6 +6,9 @@ internal sealed class LogicalPropertyAccessExpression : LogicalExpression
 {
     public LogicalPropertyAccessExpression(LogicalExpression target, PropertySymbol symbol)
     {
+        ThrowIfNull(target);
+        ThrowIfNull(symbol);
+
         Target = target;
         Symbol = symbol;
     }

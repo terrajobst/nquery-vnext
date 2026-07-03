@@ -19,6 +19,11 @@ internal sealed class PhysicalHashMatch : PhysicalOperator
 {
     public PhysicalHashMatch(PhysicalHashMatchKind hashMatchKind, PhysicalOperator build, PhysicalOperator probe, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ValueSlot? probeColumn = null)
     {
+        ThrowIfNull(build);
+        ThrowIfNull(probe);
+        ThrowIfNull(buildKey);
+        ThrowIfNull(probeKey);
+
         HashMatchKind = hashMatchKind;
         Build = build;
         Probe = probe;

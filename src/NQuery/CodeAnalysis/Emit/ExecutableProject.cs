@@ -13,6 +13,8 @@ internal sealed class ExecutableProject : ExecutableOperator
     public ExecutableProject(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<ValueSlot> outputs)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
         _outputs = outputs;
     }

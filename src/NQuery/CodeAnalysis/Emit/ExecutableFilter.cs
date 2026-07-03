@@ -13,6 +13,8 @@ internal sealed class ExecutableFilter : ExecutableOperator
     public ExecutableFilter(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalExpression> conditions, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
 
         // Compile the conjuncts once. When this filter is correlated (inside an

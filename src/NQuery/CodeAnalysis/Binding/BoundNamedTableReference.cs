@@ -13,6 +13,8 @@ internal sealed class BoundNamedTableReference : BoundTableReference
 
     public BoundNamedTableReference(TableInstanceSymbol tableInstance, ImmutableArray<TableColumnInstanceSymbol> definedValues)
     {
+        ThrowIfNull(tableInstance);
+
         TableInstance = tableInstance;
         DefinedValues = definedValues;
     }

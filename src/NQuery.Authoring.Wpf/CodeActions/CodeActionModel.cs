@@ -8,6 +8,8 @@ public abstract class CodeActionModel
 
     protected CodeActionModel(CodeActionKind kind, ICodeAction codeAction)
     {
+        ThrowIfNull(codeAction);
+
         Kind = kind;
         _codeAction = codeAction;
     }

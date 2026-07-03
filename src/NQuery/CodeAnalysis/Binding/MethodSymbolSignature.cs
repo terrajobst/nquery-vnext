@@ -6,6 +6,8 @@ internal sealed class MethodSymbolSignature : Signature
 {
     public MethodSymbolSignature(MethodSymbol symbol)
     {
+        ThrowIfNull(symbol);
+
         Symbol = symbol;
     }
 

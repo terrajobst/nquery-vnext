@@ -69,6 +69,8 @@ internal sealed class ObjectGroupKeyComparer : GroupKeyComparer
 
     public ObjectGroupKeyComparer(IComparer comparer)
     {
+        ThrowIfNull(comparer);
+
         _comparer = comparer;
     }
 

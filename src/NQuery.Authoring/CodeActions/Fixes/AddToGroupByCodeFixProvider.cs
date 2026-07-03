@@ -96,6 +96,9 @@ internal sealed class AddToGroupByCodeFixProvider : CodeFixProvider
         public AddToGroupByCodeAction(SelectQuerySyntax selectQuery, ExpressionSyntax expression)
             : base(selectQuery.SyntaxTree)
         {
+            ThrowIfNull(selectQuery);
+            ThrowIfNull(expression);
+
             _selectQuery = selectQuery;
             _expression = expression;
         }

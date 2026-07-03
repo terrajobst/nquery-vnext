@@ -8,6 +8,8 @@ internal sealed class CharReader
 
     public CharReader(SourceText text)
     {
+        ThrowIfNull(text);
+
         _text = text;
     }
 

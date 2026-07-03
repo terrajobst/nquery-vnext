@@ -8,6 +8,8 @@ internal sealed class VisualStudioSourceTextContainer : SourceTextContainer
 {
     public VisualStudioSourceTextContainer(ITextBuffer textBuffer)
     {
+        ThrowIfNull(textBuffer);
+
         TextBuffer = textBuffer;
         TextBuffer.ChangedHighPriority += TextBufferOnPostChanged;
     }

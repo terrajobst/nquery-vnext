@@ -100,6 +100,8 @@ internal sealed class ObjectSortKey : SortKey
 
     public ObjectSortKey(RowBufferColumn column, bool descending, IComparer comparer)
     {
+        ThrowIfNull(comparer);
+
         _column = column;
         _descending = descending;
         _comparer = comparer;

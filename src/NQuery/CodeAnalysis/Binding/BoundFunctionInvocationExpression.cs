@@ -8,6 +8,9 @@ internal sealed class BoundFunctionInvocationExpression : BoundExpression
 {
     public BoundFunctionInvocationExpression(IEnumerable<BoundExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
     {
+        ThrowIfNull(arguments);
+        ThrowIfNull(result);
+
         Arguments = [.. arguments];
         Result = result;
     }

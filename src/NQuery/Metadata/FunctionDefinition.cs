@@ -80,6 +80,11 @@ public abstract class FunctionDefinition
         public DelegateFunctionDefinition(string name, Type returnType, IEnumerable<ParameterDefinition> parameters, Delegate function)
             : base(name, returnType, parameters)
         {
+            ThrowIfNull(name);
+            ThrowIfNull(returnType);
+            ThrowIfNull(parameters);
+            ThrowIfNull(function);
+
             _function = function;
         }
 
@@ -99,6 +104,9 @@ public abstract class FunctionDefinition
         public ExpressionFunctionDefinition(string name, LambdaExpression expression)
             : base(name, expression.ReturnType, GetParameters(expression))
         {
+            ThrowIfNull(name);
+            ThrowIfNull(expression);
+
             _expression = expression;
         }
 

@@ -11,6 +11,9 @@ internal sealed class VisualStudioTextLineCollection : TextLineCollection
 
     public VisualStudioTextLineCollection(SourceText sourceText, ITextSnapshot snapshot)
     {
+        ThrowIfNull(sourceText);
+        ThrowIfNull(snapshot);
+
         _sourceText = sourceText;
         _snapshot = snapshot;
     }

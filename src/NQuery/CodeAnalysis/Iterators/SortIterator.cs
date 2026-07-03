@@ -16,6 +16,10 @@ internal class SortIterator : Iterator
 
     public SortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<IComparer> comparers)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(sortEntries);
+        ThrowIfNull(comparers);
+
         _input = input;
         var entries = sortEntries.ToImmutableArray();
         var comparerArray = comparers.ToImmutableArray();
@@ -128,6 +132,8 @@ internal class SortIterator : Iterator
 
         public SpooledRowBuffer(RowBuffer template)
         {
+            ThrowIfNull(template);
+
             ObjectCount = template.ObjectCount;
             Bits32Count = template.Bits32Count;
             Bits64Count = template.Bits64Count;

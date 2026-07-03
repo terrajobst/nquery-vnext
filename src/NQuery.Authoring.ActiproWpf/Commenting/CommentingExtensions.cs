@@ -10,6 +10,8 @@ public static class CommentingExtensions
     {
         public void RegisterCommentingCommands()
         {
+            ThrowIfNull(syntaxEditor);
+
             syntaxEditor.CommandBindings.Add(new ToggleSingleLineCommentAction().CreateCommandBinding(ToggleSingleLineCommentAction.Command));
             syntaxEditor.CommandBindings.Add(new ToggleMultiLineCommentAction().CreateCommandBinding(ToggleMultiLineCommentAction.Command));
 

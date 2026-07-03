@@ -18,6 +18,8 @@ public sealed class CodeIssue
 
     public CodeIssue(CodeIssueKind kind, TextSpan span, string? description, IEnumerable<ICodeAction> actions)
     {
+        ThrowIfNull(actions);
+
         Kind = kind;
         Span = span;
         Description = description;

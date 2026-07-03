@@ -7,6 +7,8 @@ public abstract class CodeRefactoringProvider<T> : ICodeRefactoringProvider
 {
     public IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position)
     {
+        ThrowIfNull(semanticModel);
+
         var syntaxTree = semanticModel.SyntaxTree;
         return syntaxTree.Root.FindNodes<T>(position)
                               .SelectMany(n => GetRefactorings(semanticModel, position, n));

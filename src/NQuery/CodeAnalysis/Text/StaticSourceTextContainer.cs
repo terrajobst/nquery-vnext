@@ -5,7 +5,6 @@ internal class StaticSourceTextContainer : SourceTextContainer
     public StaticSourceTextContainer(SourceText current)
     {
         ThrowIfNull(current);
-        ThrowIfNull(current);
 
         Current = current;
     }

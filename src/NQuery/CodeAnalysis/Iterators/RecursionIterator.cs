@@ -41,6 +41,10 @@ internal sealed class RecursionIterator : Iterator
 
     public RecursionIterator(Iterator anchor, RowBuffer anchorInput, ImmutableArray<Iterator> members, ImmutableArray<RowBuffer> memberInputs, RecursiveWorkTable workTable)
     {
+        ThrowIfNull(anchor);
+        ThrowIfNull(anchorInput);
+        ThrowIfNull(workTable);
+
         _anchor = anchor;
         _anchorInput = anchorInput;
         _members = members;

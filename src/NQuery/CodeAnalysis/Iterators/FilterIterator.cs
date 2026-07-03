@@ -16,6 +16,9 @@ internal sealed class FilterIterator : Iterator
 
     public FilterIterator(Iterator input, CompiledPredicate predicate, RowBuffer? outer)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(predicate);
+
         _input = input;
         _predicate = predicate;
         _predicateRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);

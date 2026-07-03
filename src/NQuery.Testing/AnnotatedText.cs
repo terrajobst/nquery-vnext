@@ -8,6 +8,8 @@ public sealed partial class AnnotatedText
 {
     public AnnotatedText(string text, ImmutableArray<TextSpan> spans, ImmutableArray<TextChange> changes)
     {
+        ThrowIfNull(text);
+
         Text = text;
         Spans = spans;
         Changes = changes;

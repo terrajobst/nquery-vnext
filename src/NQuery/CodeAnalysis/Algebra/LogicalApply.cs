@@ -16,6 +16,9 @@ internal sealed class LogicalApply : LogicalOperator
 {
     public LogicalApply(LogicalApplyKind applyKind, LogicalOperator left, LogicalOperator right, ValueSlot? probe, LogicalExpression? passthru = null)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         ApplyKind = applyKind;
         Left = left;
         Right = right;

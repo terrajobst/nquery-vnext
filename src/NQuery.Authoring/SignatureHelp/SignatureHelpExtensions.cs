@@ -30,6 +30,9 @@ public static class SignatureHelpExtensions
 
         public SignatureHelpModel? GetSignatureHelpModel(int position, IEnumerable<ISignatureHelpModelProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             return (from p in providers
                     let m = p.GetModel(semanticModel, position)
                     where m is not null

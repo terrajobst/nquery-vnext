@@ -21,6 +21,9 @@ public sealed class CompletionItem
 
     public CompletionItem(string displayText, string insertionText, string? description, Glyph? glyph, Symbol? symbol, bool isBuilder)
     {
+        ThrowIfNull(displayText);
+        ThrowIfNull(insertionText);
+
         DisplayText = displayText;
         InsertionText = insertionText;
         Description = description;

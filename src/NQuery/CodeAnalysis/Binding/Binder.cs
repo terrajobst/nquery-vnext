@@ -10,6 +10,8 @@ internal abstract partial class Binder
 
     protected Binder(SharedBinderState sharedBinderState, Binder? parent)
     {
+        ThrowIfNull(sharedBinderState);
+
         Parent = parent;
         _sharedBinderState = sharedBinderState;
     }

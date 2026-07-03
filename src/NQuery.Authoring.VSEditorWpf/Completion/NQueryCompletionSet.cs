@@ -16,6 +16,9 @@ internal sealed class NQueryCompletionSet : CompletionSet
 
     public NQueryCompletionSet(ICompletionSession session, ICompletionModelManager completionModelManager)
     {
+        ThrowIfNull(session);
+        ThrowIfNull(completionModelManager);
+
         _session = session;
         _completionModelManager = completionModelManager;
         _completionModelManager.ModelChanged += CompletionModelManagerOnModelChanged;

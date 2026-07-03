@@ -13,6 +13,9 @@ internal sealed class BoundApplyTableReference : BoundTableReference
 {
     public BoundApplyTableReference(BoundJoinType joinType, BoundTableReference left, BoundTableReference right)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         JoinType = joinType;
         Left = left;
         Right = right;

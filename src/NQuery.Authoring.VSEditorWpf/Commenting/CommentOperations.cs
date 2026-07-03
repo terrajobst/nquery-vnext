@@ -15,6 +15,9 @@ internal sealed class CommentOperations : ICommentOperations
 
     public CommentOperations(ITextView textView, ITextBufferUndoManager textBufferUndoManager)
     {
+        ThrowIfNull(textView);
+        ThrowIfNull(textBufferUndoManager);
+
         _textView = textView;
         _textBufferUndoManager = textBufferUndoManager;
     }

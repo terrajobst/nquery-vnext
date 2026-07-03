@@ -9,6 +9,9 @@ public sealed class CompletionModel
 {
     public CompletionModel(SemanticModel semanticModel, TextSpan applicableSpan, IEnumerable<CompletionItem> items)
     {
+        ThrowIfNull(semanticModel);
+        ThrowIfNull(items);
+
         SemanticModel = semanticModel;
         ApplicableSpan = applicableSpan;
         Items = [.. items];

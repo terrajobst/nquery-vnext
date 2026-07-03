@@ -12,6 +12,8 @@ internal class NQuerySignatureHelpSource : ISignatureHelpSource
 
     public NQuerySignatureHelpSource(ITextBuffer textBuffer)
     {
+        ThrowIfNull(textBuffer);
+
         _textBuffer = textBuffer;
     }
 

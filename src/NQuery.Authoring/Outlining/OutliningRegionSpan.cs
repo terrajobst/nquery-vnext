@@ -6,6 +6,8 @@ public readonly struct OutliningRegionSpan
 {
     public OutliningRegionSpan(TextSpan span, string text)
     {
+        ThrowIfNull(text);
+
         Span = span;
         Text = text;
     }

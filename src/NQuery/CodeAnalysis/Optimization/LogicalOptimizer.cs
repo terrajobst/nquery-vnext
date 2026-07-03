@@ -181,6 +181,9 @@ internal static class LogicalOptimizer
     {
         public Batch(string name, BatchStrategy strategy, params LogicalOperatorRewriter[] passes)
         {
+            ThrowIfNull(name);
+            ThrowIfNull(passes);
+
             Name = name;
             Strategy = strategy;
             Passes = [.. passes];

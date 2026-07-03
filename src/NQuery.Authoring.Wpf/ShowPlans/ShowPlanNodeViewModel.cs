@@ -8,6 +8,8 @@ internal sealed class ShowPlanNodeViewModel : ShowPlanItemViewModel
 
     public ShowPlanNodeViewModel(ShowPlanNode model)
     {
+        ThrowIfNull(model);
+
         var propertyChildren = model.Properties.Select(p => new ShowPlanPropertyViewModel(p));
         var nodeChildren = model.Children.Select(c => new ShowPlanNodeViewModel(c));
 

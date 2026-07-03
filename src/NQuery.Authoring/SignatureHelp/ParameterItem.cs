@@ -6,6 +6,8 @@ public sealed class ParameterItem : IEquatable<ParameterItem>
 {
     public ParameterItem(string name, TextSpan span)
     {
+        ThrowIfNull(name);
+
         Name = name;
         Span = span;
     }

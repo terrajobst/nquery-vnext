@@ -13,6 +13,9 @@ internal sealed class NQueryUnnecessaryCodeClassifier : AsyncTagger<IClassificat
 
     public NQueryUnnecessaryCodeClassifier(INQueryClassificationService classificationService, Workspace workspace)
     {
+        ThrowIfNull(classificationService);
+        ThrowIfNull(workspace);
+
         _classificationService = classificationService;
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

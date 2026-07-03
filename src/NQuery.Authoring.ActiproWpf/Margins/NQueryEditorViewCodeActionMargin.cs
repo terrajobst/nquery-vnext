@@ -23,6 +23,8 @@ internal sealed class NQueryEditorViewCodeActionMargin : Canvas, IEditorViewMarg
 
     public NQueryEditorViewCodeActionMargin(IEditorView view)
     {
+        ThrowIfNull(view);
+
         _view = view;
         _view.SelectionChanged += ViewOnSelectionChanged;
         _view.TextAreaLayout += ViewOnTextAreaLayout;

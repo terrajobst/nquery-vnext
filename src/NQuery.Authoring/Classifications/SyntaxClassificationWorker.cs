@@ -10,6 +10,8 @@ internal sealed class SyntaxClassificationWorker
 
     public SyntaxClassificationWorker(List<SyntaxClassificationSpan> classificationSpans, TextSpan span)
     {
+        ThrowIfNull(classificationSpans);
+
         _classificationSpans = classificationSpans;
         _span = span;
     }

@@ -15,6 +15,10 @@ internal sealed class TextBufferCodeActionModel : CodeActionModel
     public TextBufferCodeActionModel(CodeActionKind kind, ICodeAction codeAction, ITextBuffer textBuffer, ITextBufferUndoManager textBufferUndoManager)
         : base(kind, codeAction)
     {
+        ThrowIfNull(codeAction);
+        ThrowIfNull(textBuffer);
+        ThrowIfNull(textBufferUndoManager);
+
         _textBuffer = textBuffer;
         _textBufferUndoManager = textBufferUndoManager;
     }

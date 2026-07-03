@@ -11,6 +11,8 @@ internal sealed class BoundQueryInput
 {
     public BoundQueryInput(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, ImmutableArray<IBoundValue> outputValues)
     {
+        ThrowIfNull(query);
+
         Query = query;
         ComputedValues = computedValues;
         OutputValues = outputValues;

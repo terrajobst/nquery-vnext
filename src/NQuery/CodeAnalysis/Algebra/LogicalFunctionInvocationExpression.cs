@@ -9,6 +9,8 @@ internal sealed class LogicalFunctionInvocationExpression : LogicalExpression
 {
     public LogicalFunctionInvocationExpression(ImmutableArray<LogicalExpression> arguments, OverloadResolutionResult<FunctionSymbolSignature> result)
     {
+        ThrowIfNull(result);
+
         Arguments = arguments;
         Result = result;
     }

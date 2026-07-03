@@ -14,6 +14,8 @@ internal sealed class NQuerySymbolContentProvider : INQuerySymbolContentProvider
 
     public NQuerySymbolContentProvider(IServiceLocator serviceLocator)
     {
+        ThrowIfNull(serviceLocator);
+
         _serviceLocator = serviceLocator;
     }
 

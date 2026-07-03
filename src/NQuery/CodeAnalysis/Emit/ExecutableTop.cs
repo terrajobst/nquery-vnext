@@ -14,6 +14,8 @@ internal sealed class ExecutableTop : ExecutableOperator
     public ExecutableTop(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
         _limit = limit;
         _tieEntries = tieEntries;

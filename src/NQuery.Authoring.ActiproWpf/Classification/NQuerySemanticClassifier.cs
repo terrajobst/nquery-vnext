@@ -15,6 +15,8 @@ internal sealed class NQuerySemanticClassifier : CollectionTagger<IClassificatio
     public NQuerySemanticClassifier(ICodeDocument document)
         : base(nameof(NQuerySemanticClassifier), null, document, true)
     {
+        ThrowIfNull(document);
+
         _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
         _workspace = document.GetWorkspace();

@@ -27,6 +27,9 @@ public static class CompletionExtensions
 
         public CompletionModel GetCompletionModel(int position, IEnumerable<ICompletionProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             var syntaxTree = semanticModel.SyntaxTree;
             var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
             var applicableSpan = token?.Span ?? new TextSpan(position, 0);

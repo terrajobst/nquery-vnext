@@ -7,6 +7,8 @@ internal sealed class LogicalCompute : LogicalOperator
 {
     public LogicalCompute(LogicalOperator input, ImmutableArray<LogicalComputedValue> definedValues)
     {
+        ThrowIfNull(input);
+
         Input = input;
         DefinedValues = definedValues;
     }

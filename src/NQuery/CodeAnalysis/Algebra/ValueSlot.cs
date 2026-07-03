@@ -7,6 +7,10 @@ internal sealed class ValueSlot
 
     public ValueSlot(ValueSlotFactory factory, string formatString, int number, Type type)
     {
+        ThrowIfNull(factory);
+        ThrowIfNull(formatString);
+        ThrowIfNull(type);
+
         Factory = factory;
         _formatString = formatString;
         _number = number;

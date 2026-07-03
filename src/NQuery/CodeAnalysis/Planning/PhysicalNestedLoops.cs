@@ -20,6 +20,9 @@ internal sealed class PhysicalNestedLoops : PhysicalOperator
 {
     public PhysicalNestedLoops(PhysicalJoinKind joinKind, PhysicalOperator left, PhysicalOperator right, ImmutableArray<LogicalExpression> conditions, ValueSlot? probe, LogicalExpression? passthruPredicate, ImmutableArray<ValueSlot> outerReferences)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         JoinKind = joinKind;
         Left = left;
         Right = right;

@@ -6,6 +6,8 @@ internal sealed class BoundOrderByColumn : BoundNode
 {
     public BoundOrderByColumn(QueryColumnInstanceSymbol? queryColumn, BoundComparedValue comparedValue)
     {
+        ThrowIfNull(comparedValue);
+
         QueryColumn = queryColumn;
         ComparedValue = comparedValue;
     }

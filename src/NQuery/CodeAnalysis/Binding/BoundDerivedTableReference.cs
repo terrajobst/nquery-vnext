@@ -6,6 +6,9 @@ internal sealed class BoundDerivedTableReference : BoundTableReference
 {
     public BoundDerivedTableReference(TableInstanceSymbol tableInstance, BoundQuery query)
     {
+        ThrowIfNull(tableInstance);
+        ThrowIfNull(query);
+
         TableInstance = tableInstance;
         Query = query;
     }

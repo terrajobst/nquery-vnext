@@ -8,6 +8,9 @@ internal sealed class DiagnosticViewModel
 {
     public DiagnosticViewModel(Diagnostic diagnostic, SourceText sourceText)
     {
+        ThrowIfNull(diagnostic);
+        ThrowIfNull(sourceText);
+
         var textLocation = sourceText.GetTextLocation(diagnostic.Span.Start);
         Diagnostic = diagnostic;
         Description = diagnostic.Message;

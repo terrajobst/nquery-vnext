@@ -6,6 +6,9 @@ internal sealed class BoundComparedValue
 {
     public BoundComparedValue(IBoundValue value, IComparer comparer)
     {
+        ThrowIfNull(value);
+        ThrowIfNull(comparer);
+
         Value = value;
         Comparer = comparer;
     }

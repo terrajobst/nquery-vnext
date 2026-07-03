@@ -8,6 +8,8 @@ public sealed class NQueryParseData : IParseData
 {
     public NQueryParseData(SyntaxTree syntaxTree)
     {
+        ThrowIfNull(syntaxTree);
+
         SyntaxTree = syntaxTree;
     }
 

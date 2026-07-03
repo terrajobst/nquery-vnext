@@ -20,6 +20,8 @@ internal sealed class RecursiveReferenceIterator : Iterator
 
     public RecursiveReferenceIterator(RecursiveWorkTable workTable, int objectCount, int bits32Count, int bits64Count, int bits128Count)
     {
+        ThrowIfNull(workTable);
+
         _workTable = workTable;
         _rowBuffer = new IndirectedRowBuffer(objectCount, bits32Count, bits64Count, bits128Count, new NullRowBuffer(objectCount, bits32Count, bits64Count, bits128Count));
     }

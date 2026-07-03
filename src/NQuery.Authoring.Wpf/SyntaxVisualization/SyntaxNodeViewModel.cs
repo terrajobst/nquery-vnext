@@ -9,6 +9,9 @@ internal sealed class SyntaxNodeViewModel
 {
     public SyntaxNodeViewModel(SyntaxToken data, IEnumerable<SyntaxNodeViewModel> children)
     {
+        ThrowIfNull(data);
+        ThrowIfNull(children);
+
         Data = data;
         Title = data.Kind.ToString();
         NodeType = SyntaxNodeViewModelKind.Token;
@@ -22,6 +25,9 @@ internal sealed class SyntaxNodeViewModel
 
     public SyntaxNodeViewModel(SyntaxTrivia data, bool isLeading, IEnumerable<SyntaxNodeViewModel> children)
     {
+        ThrowIfNull(data);
+        ThrowIfNull(children);
+
         Data = data;
         Title = $"{(isLeading ? @"L" : @"T")}:{data.Kind}";
         NodeType = SyntaxNodeViewModelKind.Trivia;
@@ -35,6 +41,9 @@ internal sealed class SyntaxNodeViewModel
 
     public SyntaxNodeViewModel(SyntaxNode data, IEnumerable<SyntaxNodeViewModel> children)
     {
+        ThrowIfNull(data);
+        ThrowIfNull(children);
+
         Data = data;
         Title = data.Kind.ToString();
         NodeType = SyntaxNodeViewModelKind.Node;

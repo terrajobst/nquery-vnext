@@ -7,6 +7,10 @@ internal class LocalBinder : Binder
     public LocalBinder(SharedBinderState sharedBinderState, Binder parent, IEnumerable<Symbol> localSymbols)
         : base(sharedBinderState, parent)
     {
+        ThrowIfNull(sharedBinderState);
+        ThrowIfNull(parent);
+        ThrowIfNull(localSymbols);
+
         LocalSymbols = SymbolTable.Create(ExpandTableInstances(localSymbols));
     }
 

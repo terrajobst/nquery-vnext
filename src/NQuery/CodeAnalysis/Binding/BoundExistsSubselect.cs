@@ -15,6 +15,8 @@ internal sealed class BoundExistsSubselect : BoundExpression
     // algebrizer apply them over the lowered query.
     public BoundExistsSubselect(BoundQuery query, ImmutableArray<BoundComputedValue> computedValues, BoundExpression? filter)
     {
+        ThrowIfNull(query);
+
         Query = query;
         ComputedValues = computedValues;
         Filter = filter;

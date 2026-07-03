@@ -44,6 +44,8 @@ internal sealed class ColumnsInExistsCodeIssueProvider : CodeIssueProvider<Exist
         public RemoveUnnecessaryColumnsFromExistsCodeAction(SyntaxTree syntaxTree, TextSpan columnListSpan)
             : base(syntaxTree)
         {
+            ThrowIfNull(syntaxTree);
+
             _columnListSpan = columnListSpan;
         }
 

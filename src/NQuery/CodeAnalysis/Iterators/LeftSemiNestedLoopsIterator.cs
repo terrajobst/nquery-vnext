@@ -13,6 +13,11 @@ internal sealed class LeftSemiNestedLoopsIterator : NestedLoopsIterator
 
     public LeftSemiNestedLoopsIterator(Iterator left, Iterator right, CompiledPredicate predicate, CompiledPredicate passthruPredicate, RowBuffer? outer = null)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+        ThrowIfNull(predicate);
+        ThrowIfNull(passthruPredicate);
+
         _left = left;
         _right = right;
         _predicate = predicate;

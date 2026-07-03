@@ -26,6 +26,9 @@ internal sealed class QualifyColumnCodeRefactoringProvider : CodeRefactoringProv
         public QualifyColumnCodeAction(NameExpressionSyntax node, ColumnInstanceSymbol symbol)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+            ThrowIfNull(symbol);
+
             _node = node;
             _symbol = symbol;
         }

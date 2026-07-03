@@ -6,6 +6,8 @@ internal sealed class FunctionSymbolSignature : Signature
 {
     public FunctionSymbolSignature(FunctionSymbol symbol)
     {
+        ThrowIfNull(symbol);
+
         Symbol = symbol;
     }
 

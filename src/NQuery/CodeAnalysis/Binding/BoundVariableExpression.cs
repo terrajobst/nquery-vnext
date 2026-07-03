@@ -6,6 +6,8 @@ internal sealed class BoundVariableExpression : BoundExpression
 {
     public BoundVariableExpression(VariableSymbol variableSymbol)
     {
+        ThrowIfNull(variableSymbol);
+
         Symbol = variableSymbol;
     }
 

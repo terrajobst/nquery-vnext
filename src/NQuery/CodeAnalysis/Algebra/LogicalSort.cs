@@ -7,6 +7,8 @@ internal sealed class LogicalSort : LogicalOperator
 {
     public LogicalSort(bool isDistinct, LogicalOperator input, ImmutableArray<LogicalComparedValue> sortedValues)
     {
+        ThrowIfNull(input);
+
         IsDistinct = isDistinct;
         Input = input;
         SortedValues = sortedValues;

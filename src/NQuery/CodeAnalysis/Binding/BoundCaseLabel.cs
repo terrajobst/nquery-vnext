@@ -4,6 +4,9 @@ internal sealed class BoundCaseLabel
 {
     public BoundCaseLabel(BoundExpression condition, BoundExpression thenExpression)
     {
+        ThrowIfNull(condition);
+        ThrowIfNull(thenExpression);
+
         Condition = condition;
         ThenExpression = thenExpression;
     }

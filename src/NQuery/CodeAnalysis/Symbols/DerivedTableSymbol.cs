@@ -7,6 +7,8 @@ internal sealed class DerivedTableSymbol : TableSymbol
     internal DerivedTableSymbol(IEnumerable<ColumnSymbol> columns)
         : base(string.Empty)
     {
+        ThrowIfNull(columns);
+
         Columns = [.. columns];
     }
 

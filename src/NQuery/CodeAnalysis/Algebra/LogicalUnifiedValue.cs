@@ -9,6 +9,9 @@ internal sealed class LogicalUnifiedValue
 {
     public LogicalUnifiedValue(ValueSlot valueSlot, IEnumerable<ValueSlot> inputValueSlots)
     {
+        ThrowIfNull(valueSlot);
+        ThrowIfNull(inputValueSlots);
+
         ValueSlot = valueSlot;
         InputValueSlots = [.. inputValueSlots];
     }

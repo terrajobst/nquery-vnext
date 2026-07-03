@@ -24,6 +24,10 @@ internal sealed class CommonTableExpressionSymbol : TableSymbol
     )
         : base(name)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(anchorBinder);
+        ThrowIfNull(recursiveBinder);
+
         (_anchor, Columns) = anchorBinder(this);
         _recursiveMembers = recursiveBinder(this);
     }

@@ -9,6 +9,8 @@ internal sealed class PhysicalComputeScalar : PhysicalOperator
 {
     public PhysicalComputeScalar(PhysicalOperator input, ImmutableArray<LogicalComputedValue> definedValues)
     {
+        ThrowIfNull(input);
+
         Input = input;
         DefinedValues = definedValues;
     }

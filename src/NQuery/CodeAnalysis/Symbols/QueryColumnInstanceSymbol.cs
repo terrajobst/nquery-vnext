@@ -11,6 +11,9 @@ internal sealed class QueryColumnInstanceSymbol : ColumnInstanceSymbol
     internal QueryColumnInstanceSymbol(string name, IBoundValue boundValue)
         : base(name)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(boundValue);
+
         _boundValue = boundValue;
     }
 

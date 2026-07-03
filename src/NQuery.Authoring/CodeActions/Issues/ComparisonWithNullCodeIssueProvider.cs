@@ -42,6 +42,8 @@ internal sealed class ComparisonWithNullCodeIssueProvider : CodeIssueProvider<Bi
         public ConvertToIsNullCodeAction(BinaryExpressionSyntax node, bool isEquals)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
             _isEquals = isEquals;
         }

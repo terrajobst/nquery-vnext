@@ -26,6 +26,8 @@ internal sealed class IndexSpoolIterator : Iterator
 
     public IndexSpoolIterator(Iterator input, RowBufferEntry indexEntry, RowBufferEntry probeEntry)
     {
+        ThrowIfNull(input);
+
         _input = input;
         _indexEntry = indexEntry;
         _probeEntry = probeEntry;

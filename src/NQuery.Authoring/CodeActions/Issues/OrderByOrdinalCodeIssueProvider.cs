@@ -26,6 +26,9 @@ internal sealed class OrderByOrdinalCodeIssueProvider : CodeIssueProvider<Ordere
         public ReplaceOrdinalByNamedReferenceCodeAction(ExpressionSyntax selector, string columnReference)
             : base(selector.SyntaxTree)
         {
+            ThrowIfNull(selector);
+            ThrowIfNull(columnReference);
+
             _selector = selector;
             _columnReference = columnReference;
         }

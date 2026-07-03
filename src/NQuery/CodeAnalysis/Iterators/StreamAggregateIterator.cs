@@ -30,6 +30,10 @@ internal sealed class StreamAggregateIterator : Iterator
 
     public StreamAggregateIterator(Iterator input, ImmutableArray<RowBufferColumn> groupSourceColumns, ImmutableArray<RowBufferColumn> groupOutputColumns, ImmutableArray<Type> groupTypes, ImmutableArray<IComparer> comparers, CompiledAggregates aggregates, RowBufferLayout outputLayout, RowBuffer? outer)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(aggregates);
+        ThrowIfNull(outputLayout);
+
         _input = input;
         _groupSourceColumns = groupSourceColumns;
         _groupOutputColumns = groupOutputColumns;

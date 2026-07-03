@@ -11,6 +11,8 @@ internal sealed class BraceMatcherService : IBraceMatcherService
     [ImportingConstructor]
     public BraceMatcherService([ImportMany] IEnumerable<IBraceMatcher> matchers)
     {
+        ThrowIfNull(matchers);
+
         Matchers = BraceMatchingExtensions.StandardBraceMatchers.AddRange(matchers);
     }
 

@@ -9,6 +9,9 @@ internal sealed class DiagnosticsViewModel
 {
     public DiagnosticsViewModel(IEnumerable<Diagnostic> diagnostics, SourceText sourceText)
     {
+        ThrowIfNull(diagnostics);
+        ThrowIfNull(sourceText);
+
         Diagnostics = [.. (from d in diagnostics
                        orderby d.Span.Start, d.Span.End
                        select new DiagnosticViewModel(d, sourceText))];

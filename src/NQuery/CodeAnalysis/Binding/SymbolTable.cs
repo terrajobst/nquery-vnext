@@ -12,6 +12,8 @@ internal sealed class SymbolTable : IEnumerable<Symbol>
 
     private SymbolTable(IEnumerable<Symbol> symbols)
     {
+        ThrowIfNull(symbols);
+
         _symbols = [.. symbols];
         _lookup = _symbols.ToLookup(s => s.Name, StringComparer.OrdinalIgnoreCase);
     }

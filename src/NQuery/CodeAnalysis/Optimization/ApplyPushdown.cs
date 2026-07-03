@@ -40,6 +40,8 @@ internal sealed class ApplyPushdown : LogicalOperatorRewriter
     // join-back equality does.
     public ApplyPushdown(Func<Type, IComparer?> comparerResolver)
     {
+        ThrowIfNull(comparerResolver);
+
         _comparerResolver = comparerResolver;
     }
 

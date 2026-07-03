@@ -23,6 +23,8 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
         public ToExplicitSortOrderCodeAction(OrderByColumnSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 
@@ -44,6 +46,8 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
         public ToImplicitSortOrderCodeAction(OrderByColumnSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 
@@ -66,6 +70,8 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
         public ToSortOrderCodeAction(OrderByColumnSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

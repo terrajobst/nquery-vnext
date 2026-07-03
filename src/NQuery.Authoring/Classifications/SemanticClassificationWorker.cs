@@ -13,6 +13,9 @@ internal sealed class SemanticClassificationWorker
 
     public SemanticClassificationWorker(List<SemanticClassificationSpan> result, SemanticModel semanticModel, TextSpan span)
     {
+        ThrowIfNull(result);
+        ThrowIfNull(semanticModel);
+
         _result = result;
         _semanticModel = semanticModel;
         _span = span;

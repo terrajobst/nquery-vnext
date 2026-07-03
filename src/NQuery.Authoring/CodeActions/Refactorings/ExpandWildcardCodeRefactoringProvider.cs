@@ -27,6 +27,8 @@ internal sealed class ExpandWildcardCodeRefactoringProvider : CodeRefactoringPro
         public ExpandWildcardCodeAction(WildcardSelectColumnSyntax node, ImmutableArray<ColumnInstanceSymbol> columnInstances)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
             _columnInstances = columnInstances;
         }

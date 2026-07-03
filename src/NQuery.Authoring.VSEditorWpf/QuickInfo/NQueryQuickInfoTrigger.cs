@@ -9,6 +9,9 @@ internal sealed class NQueryQuickInfoTrigger
 
     public NQueryQuickInfoTrigger(IWpfTextView wpfTextView, IQuickInfoManager quickInfoManager)
     {
+        ThrowIfNull(wpfTextView);
+        ThrowIfNull(quickInfoManager);
+
         _wpfTextView = wpfTextView;
         _wpfTextView.MouseHover += WpfTextViewOnMouseHover;
         _quickInfoManager = quickInfoManager;

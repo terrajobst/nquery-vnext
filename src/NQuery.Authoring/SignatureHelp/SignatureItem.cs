@@ -6,6 +6,9 @@ public sealed class SignatureItem : IEquatable<SignatureItem>
 {
     public SignatureItem(string content, IEnumerable<ParameterItem> parameters)
     {
+        ThrowIfNull(content);
+        ThrowIfNull(parameters);
+
         Content = content;
         Parameters = [.. parameters];
     }

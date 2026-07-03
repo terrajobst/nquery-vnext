@@ -13,6 +13,9 @@ internal sealed class Parser
 
     public Parser(SourceText text, SyntaxTree syntaxTree)
     {
+        ThrowIfNull(text);
+        ThrowIfNull(syntaxTree);
+
         _text = text;
         _syntaxTree = syntaxTree;
         LexAllTokens(text);

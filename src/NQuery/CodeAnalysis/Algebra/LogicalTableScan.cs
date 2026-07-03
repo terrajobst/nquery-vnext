@@ -11,6 +11,8 @@ internal sealed class LogicalTableScan : LogicalOperator
 
     public LogicalTableScan(TableInstanceSymbol tableInstance, ImmutableArray<TableColumnInstanceSymbol> definedValues, ImmutableArray<ValueSlot> outputValueSlots)
     {
+        ThrowIfNull(tableInstance);
+
         TableInstance = tableInstance;
         DefinedValues = definedValues;
         _outputValueSlots = outputValueSlots;

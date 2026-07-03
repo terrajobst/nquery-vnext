@@ -22,6 +22,9 @@ internal sealed class ActiproSourceText : SourceText
     public ActiproSourceText(ActiproSourceTextContainer container, ITextSnapshot snapshot)
         : base(container)
     {
+        ThrowIfNull(container);
+        ThrowIfNull(snapshot);
+
         Snapshot = snapshot;
         _sourceText = From(snapshot.Text);
     }

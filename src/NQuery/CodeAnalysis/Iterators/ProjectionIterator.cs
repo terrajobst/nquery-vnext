@@ -7,6 +7,9 @@ internal sealed class ProjectionIterator : Iterator
 
     public ProjectionIterator(Iterator input, IEnumerable<RowBufferEntry> projectedEntries)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(projectedEntries);
+
         _input = input;
         _rowBuffer = new ProjectedRowBuffer(projectedEntries);
     }

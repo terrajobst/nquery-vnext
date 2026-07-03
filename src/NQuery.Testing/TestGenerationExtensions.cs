@@ -13,6 +13,8 @@ public static class TestGenerationExtensions
     {
         public async Task<string> GenerateParserTest()
         {
+            ThrowIfNull(documentView);
+
             var document = documentView.Document;
             var textSpan = documentView.Selection;
 

@@ -14,6 +14,10 @@ internal sealed class PhysicalIndexSpool : PhysicalOperator
 {
     public PhysicalIndexSpool(PhysicalOperator input, ValueSlot indexKey, ValueSlot probeKey)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(indexKey);
+        ThrowIfNull(probeKey);
+
         Input = input;
         IndexKey = indexKey;
         ProbeKey = probeKey;

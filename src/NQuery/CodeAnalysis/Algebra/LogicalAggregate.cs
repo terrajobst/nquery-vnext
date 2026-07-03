@@ -9,6 +9,8 @@ internal sealed class LogicalAggregate : LogicalOperator
 {
     public LogicalAggregate(LogicalOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Groups = groups;
         Aggregates = aggregates;

@@ -18,6 +18,9 @@ internal sealed class LogicalRecursiveUnion : LogicalOperator
 {
     public LogicalRecursiveUnion(RecursionToken token, LogicalOperator anchor, ImmutableArray<LogicalOperator> recursiveMembers, ImmutableArray<LogicalUnifiedValue> definedValues)
     {
+        ThrowIfNull(token);
+        ThrowIfNull(anchor);
+
         Token = token;
         Anchor = anchor;
         RecursiveMembers = recursiveMembers;

@@ -11,6 +11,8 @@ internal sealed class LogicalFilter : LogicalOperator
 {
     public LogicalFilter(LogicalOperator input, ImmutableArray<LogicalExpression> conditions)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Conditions = conditions;
     }

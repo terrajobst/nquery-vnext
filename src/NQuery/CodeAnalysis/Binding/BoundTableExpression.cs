@@ -6,6 +6,8 @@ internal sealed class BoundTableExpression : BoundExpression
 {
     public BoundTableExpression(TableInstanceSymbol symbol)
     {
+        ThrowIfNull(symbol);
+
         Symbol = symbol;
     }
 

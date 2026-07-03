@@ -23,6 +23,14 @@ internal sealed class NQueryKeyProcessor : KeyProcessor
 
     public NQueryKeyProcessor(ITextView textView, IIntellisenseSessionStackMapService intellisenseSessionStackMapService, ICompletionModelManager completionModelManager, ISignatureHelpManager signatureHelpManager, IHighlightingNavigationManager highlightingNavigationManager, ICodeActionGlyphBroker codeActionGlyphBroker, ICommentOperations commentOperations)
     {
+        ThrowIfNull(textView);
+        ThrowIfNull(intellisenseSessionStackMapService);
+        ThrowIfNull(completionModelManager);
+        ThrowIfNull(signatureHelpManager);
+        ThrowIfNull(highlightingNavigationManager);
+        ThrowIfNull(codeActionGlyphBroker);
+        ThrowIfNull(commentOperations);
+
         _textView = textView;
         _intellisenseSessionStackMapService = intellisenseSessionStackMapService;
         _completionModelManager = completionModelManager;

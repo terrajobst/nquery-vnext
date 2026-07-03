@@ -6,6 +6,10 @@ internal sealed class LogicalConversionExpression : LogicalExpression
 
     public LogicalConversionExpression(LogicalExpression expression, Type type, Conversion conversion)
     {
+        ThrowIfNull(expression);
+        ThrowIfNull(type);
+        ThrowIfNull(conversion);
+
         Expression = expression;
         _type = type;
         Conversion = conversion;

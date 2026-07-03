@@ -16,6 +16,8 @@ internal sealed class NQuerySignatureContentProvider : IContentProvider
 
     public NQuerySignatureContentProvider(SignatureItem signatureItem, int parameterIndex)
     {
+        ThrowIfNull(signatureItem);
+
         _signatureItem = signatureItem;
         _parameterIndex = parameterIndex;
         _lazyContentProvider = new Lazy<IContentProvider>(GetHtmlContent);

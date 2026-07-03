@@ -18,6 +18,10 @@ internal sealed class ComputeScalarIterator : Iterator
 
     public ComputeScalarIterator(Iterator input, Action<RowBuffer, ArrayRowBuffer> writer, RowBufferLayout computedLayout, RowBuffer? outer)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(writer);
+        ThrowIfNull(computedLayout);
+
         _input = input;
         _writer = writer;
         _functionRowBuffer = outer is null ? input.RowBuffer : new CombinedRowBuffer(outer, input.RowBuffer);

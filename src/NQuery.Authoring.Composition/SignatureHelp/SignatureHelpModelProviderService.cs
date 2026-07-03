@@ -11,6 +11,8 @@ internal sealed class SignatureHelpModelProviderService : ISignatureHelpModelPro
     [ImportingConstructor]
     public SignatureHelpModelProviderService([ImportMany] IEnumerable<ISignatureHelpModelProvider> providers)
     {
+        ThrowIfNull(providers);
+
         Providers = SignatureHelpExtensions.StandardSignatureHelpModelProviders.AddRange(providers);
     }
 

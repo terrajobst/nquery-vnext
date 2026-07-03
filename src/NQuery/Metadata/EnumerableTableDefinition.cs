@@ -11,6 +11,10 @@ internal sealed class EnumerableTableDefinition : TableDefinition
 
     public EnumerableTableDefinition(string name, IEnumerable source, Type rowType, ImmutableArray<ColumnDefinition> columns)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(source);
+        ThrowIfNull(rowType);
+
         Name = name;
         _source = source;
         _rowType = rowType;

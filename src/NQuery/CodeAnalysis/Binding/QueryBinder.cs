@@ -5,6 +5,9 @@ internal sealed class QueryBinder : Binder
     public QueryBinder(SharedBinderState sharedBinderState, Binder parent)
         : base(sharedBinderState, parent)
     {
+        ThrowIfNull(sharedBinderState);
+        ThrowIfNull(parent);
+
         QueryState = new BoundQueryState(parent.QueryState);
     }
 

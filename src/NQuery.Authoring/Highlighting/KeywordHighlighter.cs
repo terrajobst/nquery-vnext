@@ -10,6 +10,8 @@ public abstract class KeywordHighlighter<T> : IHighlighter
 {
     public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
     {
+        ThrowIfNull(semanticModel);
+
         var syntaxTree = semanticModel.SyntaxTree;
         var token = syntaxTree.Root.FindToken(position);
 

@@ -16,6 +16,9 @@ internal sealed class NQueryHighlightingTagger : AsyncTagger<HighlightTag, Snaps
 
     public NQueryHighlightingTagger(Workspace workspace, ITextView textView, ImmutableArray<IHighlighter> highlighters)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(textView);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         _textView = textView;

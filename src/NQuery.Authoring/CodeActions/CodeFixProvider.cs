@@ -8,6 +8,8 @@ public abstract class CodeFixProvider : ICodeFixProvider
 
     public IEnumerable<ICodeAction> GetFixes(SemanticModel semanticModel, int position)
     {
+        ThrowIfNull(semanticModel);
+
         var syntaxDiagnostics = semanticModel.SyntaxTree.GetDiagnostics();
         var semanticDiagnostics = semanticModel.GetDiagnostics();
         var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics);

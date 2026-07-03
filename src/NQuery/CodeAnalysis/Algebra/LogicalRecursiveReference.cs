@@ -14,6 +14,8 @@ internal sealed class LogicalRecursiveReference : LogicalOperator
 
     public LogicalRecursiveReference(RecursionToken token, ImmutableArray<ValueSlot> outputValueSlots)
     {
+        ThrowIfNull(token);
+
         Token = token;
         _outputValueSlots = outputValueSlots;
     }

@@ -7,6 +7,8 @@ internal sealed class IndirectedRowBuffer : RowBuffer
 {
     public IndirectedRowBuffer(int objectCount, int bits32Count, int bits64Count, int bits128Count, RowBuffer activeRowBuffer)
     {
+        ThrowIfNull(activeRowBuffer);
+
         ObjectCount = objectCount;
         Bits32Count = bits32Count;
         Bits64Count = bits64Count;

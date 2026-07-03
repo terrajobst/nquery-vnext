@@ -9,6 +9,9 @@ internal sealed class LogicalComparedValue
 {
     public LogicalComparedValue(ValueSlot valueSlot, IComparer comparer)
     {
+        ThrowIfNull(valueSlot);
+        ThrowIfNull(comparer);
+
         ValueSlot = valueSlot;
         Comparer = comparer;
     }

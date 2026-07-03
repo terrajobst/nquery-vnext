@@ -11,6 +11,8 @@ internal sealed class OutliningService : IOutliningService
     [ImportingConstructor]
     public OutliningService([ImportMany] IEnumerable<IOutliner> matchers)
     {
+        ThrowIfNull(matchers);
+
         Outliners = OutliningExtensions.StandardOutliners.AddRange(matchers);
     }
 

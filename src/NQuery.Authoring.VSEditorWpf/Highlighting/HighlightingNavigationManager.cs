@@ -13,6 +13,9 @@ internal sealed class HighlightingNavigationManager : IHighlightingNavigationMan
 
     public HighlightingNavigationManager(ITextView textView, ITagAggregator<HighlightTag> tagAggregator)
     {
+        ThrowIfNull(textView);
+        ThrowIfNull(tagAggregator);
+
         _textView = textView;
         _tagAggregator = tagAggregator;
     }

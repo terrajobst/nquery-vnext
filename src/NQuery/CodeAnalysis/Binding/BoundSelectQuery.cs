@@ -19,6 +19,8 @@ internal sealed class BoundSelectQuery : BoundQuery
         BoundOrderByClause? orderBy,
         BoundTopClause? top)
     {
+        ThrowIfNull(select);
+
         From = from;
         Where = where;
         GroupBy = groupBy;

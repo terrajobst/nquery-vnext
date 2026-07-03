@@ -10,6 +10,9 @@ internal sealed class PropertyColumnDefinition : ColumnDefinition
     public PropertyColumnDefinition(Type rowType, PropertyDefinition property)
         : base(property.Name, property.Type)
     {
+        ThrowIfNull(rowType);
+        ThrowIfNull(property);
+
         _rowType = rowType;
         _property = property;
     }

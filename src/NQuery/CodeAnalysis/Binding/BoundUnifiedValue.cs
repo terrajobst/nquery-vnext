@@ -6,6 +6,9 @@ internal sealed class BoundUnifiedValue
 {
     public BoundUnifiedValue(IBoundValue value, IEnumerable<IBoundValue> inputValues)
     {
+        ThrowIfNull(value);
+        ThrowIfNull(inputValues);
+
         Value = value;
         InputValues = [.. inputValues];
     }

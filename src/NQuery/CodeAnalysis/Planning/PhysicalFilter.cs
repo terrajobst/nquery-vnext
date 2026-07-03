@@ -9,6 +9,8 @@ internal sealed class PhysicalFilter : PhysicalOperator
 {
     public PhysicalFilter(PhysicalOperator input, ImmutableArray<LogicalExpression> conditions)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Conditions = conditions;
     }

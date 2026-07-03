@@ -11,6 +11,9 @@ internal sealed class RowBufferAllocation
 
     public RowBufferAllocation(RowBufferAllocation? parent, RowBuffer rowBuffer, IEnumerable<ValueSlot> valueSlots)
     {
+        ThrowIfNull(rowBuffer);
+        ThrowIfNull(valueSlots);
+
         Parent = parent;
         RowBuffer = rowBuffer;
         _mapping = RowBufferLayout.CreateSlotMap([.. valueSlots]);

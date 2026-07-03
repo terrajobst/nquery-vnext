@@ -13,6 +13,8 @@ internal sealed class RecursionToken
 {
     public RecursionToken(string name)
     {
+        ThrowIfNull(name);
+
         Name = name;
     }
 

@@ -7,6 +7,8 @@ internal sealed class BoundValueExpression : BoundExpression
 {
     public BoundValueExpression(IBoundValue value)
     {
+        ThrowIfNull(value);
+
         Value = value;
     }
 

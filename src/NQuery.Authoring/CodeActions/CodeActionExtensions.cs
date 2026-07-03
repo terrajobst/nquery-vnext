@@ -49,6 +49,9 @@ public static class CodeActionExtensions
 
         public IEnumerable<ICodeAction> GetFixes(int position, IEnumerable<ICodeFixProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             return providers.SelectMany(p => p.GetFixes(semanticModel, position));
         }
 
@@ -59,6 +62,9 @@ public static class CodeActionExtensions
 
         public IEnumerable<CodeIssue> GetIssues(IEnumerable<ICodeIssueProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             return providers.SelectMany(p => p.GetIssues(semanticModel));
         }
 
@@ -69,6 +75,9 @@ public static class CodeActionExtensions
 
         public IEnumerable<ICodeAction> GetRefactorings(int position, IEnumerable<ICodeRefactoringProvider> providers)
         {
+            ThrowIfNull(semanticModel);
+            ThrowIfNull(providers);
+
             return providers.SelectMany(p => p.GetRefactorings(semanticModel, position));
         }
     }

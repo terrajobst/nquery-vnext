@@ -20,11 +20,15 @@ public static class OutliningExtensions
     {
         public IReadOnlyList<OutliningRegionSpan> FindRegions()
         {
+            ThrowIfNull(root);
+
             return root.FindRegions(root.FullSpan);
         }
 
         public IReadOnlyList<OutliningRegionSpan> FindRegions(IEnumerable<IOutliner> outliners)
         {
+            ThrowIfNull(root);
+
             return root.FindRegions(root.FullSpan, outliners);
         }
 
@@ -35,6 +39,9 @@ public static class OutliningExtensions
 
         public IReadOnlyList<OutliningRegionSpan> FindRegions(TextSpan span, IEnumerable<IOutliner> outliners)
         {
+            ThrowIfNull(root);
+            ThrowIfNull(outliners);
+
             var result = new List<OutliningRegionSpan>();
             var worker = new OutliningWorker(root.SyntaxTree.Text, result, span, outliners);
             worker.Visit(root);

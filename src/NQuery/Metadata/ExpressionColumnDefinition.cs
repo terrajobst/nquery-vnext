@@ -9,6 +9,10 @@ internal sealed class ExpressionColumnDefinition : ColumnDefinition
     public ExpressionColumnDefinition(string name, Type dataType, LambdaExpression expression)
         : base(name, dataType)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(dataType);
+        ThrowIfNull(expression);
+
         _expression = expression;
     }
 

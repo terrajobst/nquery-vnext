@@ -10,6 +10,10 @@ internal sealed class BinaryOperatorSignature : Signature
 
     public BinaryOperatorSignature(BinaryOperatorKind kind, Type returnType, Type leftParameterType, Type rightParameterType, MethodInfo? methodInfo)
     {
+        ThrowIfNull(returnType);
+        ThrowIfNull(leftParameterType);
+        ThrowIfNull(rightParameterType);
+
         Kind = kind;
         _returnType = returnType;
         _leftParameterType = leftParameterType;

@@ -7,6 +7,10 @@ internal class NQueryParameter : IParameter
 {
     public NQueryParameter(ISignature signature, string name, string documentation, Span locus)
     {
+        ThrowIfNull(signature);
+        ThrowIfNull(name);
+        ThrowIfNull(documentation);
+
         Signature = signature;
         Name = name;
         Documentation = documentation;

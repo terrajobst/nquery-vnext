@@ -9,6 +9,9 @@ internal sealed class DistinctSortIterator : SortIterator
     public DistinctSortIterator(Iterator input, IEnumerable<RowBufferEntry> sortEntries, IEnumerable<System.Collections.IComparer> comparers)
         : base(input, sortEntries, comparers)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(sortEntries);
+        ThrowIfNull(comparers);
     }
 
     public override void Open()

@@ -6,6 +6,9 @@ internal sealed class BoundPropertyAccessExpression : BoundExpression
 {
     public BoundPropertyAccessExpression(BoundExpression target, PropertySymbol propertySymbol)
     {
+        ThrowIfNull(target);
+        ThrowIfNull(propertySymbol);
+
         Target = target;
         Symbol = propertySymbol;
     }

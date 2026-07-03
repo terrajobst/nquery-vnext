@@ -7,6 +7,8 @@ internal sealed class LogicalTop : LogicalOperator
 {
     public LogicalTop(LogicalOperator input, int limit, ImmutableArray<LogicalComparedValue> tieEntries)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Limit = limit;
         TieEntries = tieEntries;

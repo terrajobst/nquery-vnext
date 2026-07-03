@@ -7,6 +7,8 @@ internal sealed class LogicalProject : LogicalOperator
 {
     public LogicalProject(LogicalOperator input, ImmutableArray<ValueSlot> outputs)
     {
+        ThrowIfNull(input);
+
         Input = input;
         Outputs = outputs;
     }

@@ -15,6 +15,8 @@ internal sealed class NQuerySyntacticClassifier : CollectionTagger<IClassificati
     public NQuerySyntacticClassifier(ICodeDocument document)
         : base(nameof(NQuerySyntacticClassifier), null, document, true)
     {
+        ThrowIfNull(document);
+
         _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
         document.ParseDataChanged += DocumentOnParseDataChanged;
         UpdateTagsAsync();

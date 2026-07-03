@@ -11,6 +11,9 @@ internal sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundVa
     internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column)
         : base(column.Name)
     {
+        ThrowIfNull(tableInstance);
+        ThrowIfNull(column);
+
         TableInstance = tableInstance;
         Column = column;
     }
@@ -20,6 +23,10 @@ internal sealed class TableColumnInstanceSymbol : ColumnInstanceSymbol, IBoundVa
     internal TableColumnInstanceSymbol(TableInstanceSymbol tableInstance, ColumnSymbol column, IBoundValue aliased)
         : base(column.Name)
     {
+        ThrowIfNull(tableInstance);
+        ThrowIfNull(column);
+        ThrowIfNull(aliased);
+
         TableInstance = tableInstance;
         Column = column;
         _aliased = aliased;

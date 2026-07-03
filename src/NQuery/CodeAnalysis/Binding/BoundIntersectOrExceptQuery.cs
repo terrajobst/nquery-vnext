@@ -14,6 +14,9 @@ internal sealed class BoundIntersectOrExceptQuery : BoundQuery
         ImmutableArray<IComparer> comparers,
         ImmutableArray<QueryColumnInstanceSymbol> outputColumns)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+
         IsIntersect = isIntersect;
         Left = left;
         Right = right;

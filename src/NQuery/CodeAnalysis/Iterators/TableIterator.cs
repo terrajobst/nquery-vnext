@@ -14,6 +14,10 @@ internal sealed class TableIterator : Iterator
 
     public TableIterator(TableDefinition table, RowBufferLayout layout, Action<object, ArrayRowBuffer> rowWriter)
     {
+        ThrowIfNull(table);
+        ThrowIfNull(layout);
+        ThrowIfNull(rowWriter);
+
         _table = table;
         _rowWriter = rowWriter;
         _rowBuffer = new ArrayRowBuffer(layout);

@@ -18,6 +18,10 @@ internal sealed class ExecutableAssert : ExecutableOperator
     public ExecutableAssert(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, LogicalExpression condition, string message, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(condition);
+        ThrowIfNull(message);
+
         _input = input;
         _message = message;
 

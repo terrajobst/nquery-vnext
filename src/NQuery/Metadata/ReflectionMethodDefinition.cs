@@ -9,6 +9,9 @@ internal sealed class ReflectionMethodDefinition : MethodDefinition
     public ReflectionMethodDefinition(MethodInfo methodInfo, string name)
         : base(name, methodInfo.ReturnType, ConvertParameters(methodInfo))
     {
+        ThrowIfNull(methodInfo);
+        ThrowIfNull(name);
+
         MethodInfo = methodInfo;
     }
 

@@ -27,6 +27,8 @@ internal sealed class ExecutableStreamAggregates : ExecutableOperator
     public ExecutableStreamAggregates(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComparedValue> groups, ImmutableArray<LogicalAggregatedValue> aggregates, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
 
         // Compile against (outer ++ input) when correlated, matching the buffer the

@@ -14,6 +14,8 @@ internal sealed class ExecutableComputeScalar : ExecutableOperator
     public ExecutableComputeScalar(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator input, ImmutableArray<LogicalComputedValue> definedValues, ImmutableArray<ValueSlot> outerSlots)
         : base(outputValueSlots)
     {
+        ThrowIfNull(input);
+
         _input = input;
 
         // Compile the computed expressions once into typed stores. When this compute is

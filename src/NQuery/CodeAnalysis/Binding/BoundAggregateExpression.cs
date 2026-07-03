@@ -7,6 +7,9 @@ internal sealed class BoundAggregateExpression : BoundExpression
 {
     public BoundAggregateExpression(AggregateSymbol aggregate, AggregateFold? fold, BoundExpression argument)
     {
+        ThrowIfNull(aggregate);
+        ThrowIfNull(argument);
+
         Symbol = aggregate;
         Fold = fold;
         Argument = argument;

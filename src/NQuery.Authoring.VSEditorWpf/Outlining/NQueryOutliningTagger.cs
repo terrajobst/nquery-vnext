@@ -14,6 +14,9 @@ internal sealed class NQueryOutliningTagger : AsyncTagger<IOutliningRegionTag, O
 
     public NQueryOutliningTagger(Workspace workspace, IOutliningService outliningService)
     {
+        ThrowIfNull(workspace);
+        ThrowIfNull(outliningService);
+
         _workspace = workspace;
         _outliningService = outliningService;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;

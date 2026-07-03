@@ -42,6 +42,8 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
         public RemoveCommonTableExpressionCodeAction(CommonTableExpressionSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
         }
 

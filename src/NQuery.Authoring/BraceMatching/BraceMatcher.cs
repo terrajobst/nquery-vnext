@@ -6,6 +6,8 @@ public abstract class BraceMatcher : IBraceMatcher
 {
     public BraceMatchingResult MatchBraces(SyntaxTree syntaxTree, int position)
     {
+        ThrowIfNull(syntaxTree);
+
         return syntaxTree.Root.FindStartTokens(position)
                               .Select(t => MatchBraces(t, position))
                               .Where(r => r.IsValid)

@@ -32,6 +32,8 @@ internal sealed class BoxingComparer<T> : IComparer, IComparer<T>
 
     public BoxingComparer(IComparer inner)
     {
+        ThrowIfNull(inner);
+
         _inner = inner;
     }
 
@@ -56,6 +58,8 @@ internal sealed class UnboxingComparer<T> : IComparer, IComparer<T>
 
     public UnboxingComparer(IComparer<T> inner)
     {
+        ThrowIfNull(inner);
+
         _inner = inner;
     }
 

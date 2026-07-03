@@ -7,6 +7,8 @@ public abstract class CompletionProvider<T> : ICompletionProvider
 {
     public IEnumerable<CompletionItem> GetItems(SemanticModel semanticModel, int position)
     {
+        ThrowIfNull(semanticModel);
+
         var syntaxTree = semanticModel.SyntaxTree;
         var token = syntaxTree.Root.FindTokenOnLeft(position);
         var node = token.Parent!.AncestorsAndSelf()

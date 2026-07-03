@@ -10,6 +10,8 @@ internal sealed class ProbedRowBuffer : RowBuffer
 
     public ProbedRowBuffer(RowBuffer rowBuffer)
     {
+        ThrowIfNull(rowBuffer);
+
         _rowBuffer = rowBuffer;
     }
 

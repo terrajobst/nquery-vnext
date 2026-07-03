@@ -14,6 +14,10 @@ internal sealed class OutliningWorker
 
     public OutliningWorker(SourceText sourceText, List<OutliningRegionSpan> outlineRegions, TextSpan span, IEnumerable<IOutliner> outliners)
     {
+        ThrowIfNull(sourceText);
+        ThrowIfNull(outlineRegions);
+        ThrowIfNull(outliners);
+
         _sourceText = sourceText;
         _outlineRegions = outlineRegions;
         _span = span;

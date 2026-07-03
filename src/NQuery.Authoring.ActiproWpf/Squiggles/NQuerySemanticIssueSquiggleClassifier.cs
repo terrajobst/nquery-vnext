@@ -14,6 +14,8 @@ internal sealed class NQuerySemanticIssueSquiggleClassifier : CollectionTagger<I
     public NQuerySemanticIssueSquiggleClassifier(ICodeDocument document)
         : base(nameof(NQuerySemanticIssueSquiggleClassifier), null, document, true)
     {
+        ThrowIfNull(document);
+
         _workspace = document.GetWorkspace();
         if (_workspace is null)
             return;

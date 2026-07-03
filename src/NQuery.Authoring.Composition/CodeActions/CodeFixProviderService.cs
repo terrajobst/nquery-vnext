@@ -11,6 +11,8 @@ internal sealed class CodeFixProviderService : ICodeFixProviderService
     [ImportingConstructor]
     public CodeFixProviderService([ImportMany] IEnumerable<ICodeFixProvider> matchers)
     {
+        ThrowIfNull(matchers);
+
         Providers = CodeActionExtensions.StandardFixProviders.AddRange(matchers);
     }
 

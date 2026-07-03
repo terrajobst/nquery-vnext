@@ -24,6 +24,8 @@ internal sealed class FlipBinaryOperatorSidesCodeRefactoringProvider : CodeRefac
         public FlipBinaryOperatorSidesCodeAction(BinaryExpressionSyntax node)
             : base(node.SyntaxTree)
         {
+            ThrowIfNull(node);
+
             _node = node;
 
             var operatorKind = _node.OperatorToken.Kind;

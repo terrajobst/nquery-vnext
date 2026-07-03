@@ -14,6 +14,8 @@ public static class NQueryExtensions
     {
         public Workspace GetWorkspace()
         {
+            ThrowIfNull(codeDocument);
+
             return codeDocument.Properties.GetOrCreateSingleton(WorkspaceKey, () =>
             {
                 var textContainer = new ActiproSourceTextContainer(codeDocument);
@@ -28,6 +30,8 @@ public static class NQueryExtensions
     {
         public Document? GetDocument()
         {
+            ThrowIfNull(textDocument);
+
             if (textDocument is not ICodeDocument codeDocument)
                 return null;
 
@@ -40,6 +44,8 @@ public static class NQueryExtensions
     {
         public DocumentView GetDocumentView()
         {
+            ThrowIfNull(syntaxEditor);
+
             var document = syntaxEditor.Document.GetDocument()!;
             var snapshot = document.Text.ToTextSnapshot();
             var offset = syntaxEditor.ActiveView.Selection.CaretOffset;
@@ -71,6 +77,8 @@ public static class NQueryExtensions
     {
         public Document ToDocument()
         {
+            ThrowIfNull(snapshot);
+
             var sourceText = snapshot.ToSourceText();
             var document = snapshot.Document.GetDocument()!;
             if (document.Text != snapshot.ToSourceText())
@@ -96,11 +104,15 @@ public static class NQueryExtensions
     {
         public TextSnapshotOffset ToSnapshotOffset(int position)
         {
+            ThrowIfNull(snapshot);
+
             return snapshot.Text.ToSnapshotOffset(position);
         }
 
         public TextSnapshotRange ToSnapshotRange(TextSpan span)
         {
+            ThrowIfNull(snapshot);
+
             return snapshot.Text.ToSnapshotRange(span);
         }
     }
@@ -109,6 +121,8 @@ public static class NQueryExtensions
     {
         public TextSnapshotOffset ToSnapshotOffset(int position)
         {
+            ThrowIfNull(text);
+
             var snapshot = text.ToTextSnapshot();
             var offset = text.ToOffset(position);
             return new TextSnapshotOffset(snapshot, offset);
@@ -116,6 +130,8 @@ public static class NQueryExtensions
 
         public int ToOffset(int position)
         {
+            ThrowIfNull(text);
+
             var textLine = text.GetLineFromPosition(position);
             var line = textLine.LineNumber;
             var delta = Enumerable.Range(0, line).Select(i => text.Lines[i].LineBreakLength - 1).Sum();
@@ -125,6 +141,8 @@ public static class NQueryExtensions
 
         public TextSnapshotRange ToSnapshotRange(TextSpan span)
         {
+            ThrowIfNull(text);
+
             var snapshot = text.ToTextSnapshot();
             var range = text.ToRange(span);
             return new TextSnapshotRange(snapshot, range);
@@ -132,6 +150,8 @@ public static class NQueryExtensions
 
         public TextRange ToRange(TextSpan span)
         {
+            ThrowIfNull(text);
+
             var start = text.ToOffset(span.Start);
             var end = text.ToOffset(span.End);
             return new TextRange(start, end);

@@ -50,6 +50,10 @@ internal sealed class HashMatchIterator : Iterator
 
     public HashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, CompiledPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
     {
+        ThrowIfNull(build);
+        ThrowIfNull(probe);
+        ThrowIfNull(remainder);
+
         _build = build;
         _probe = probe;
         _table = HashJoinProbe.Create(buildKey, probeKey);

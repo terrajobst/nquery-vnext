@@ -9,6 +9,8 @@ internal sealed class PhysicalSort : PhysicalOperator
 {
     public PhysicalSort(bool isDistinct, PhysicalOperator input, ImmutableArray<LogicalComparedValue> sortedValues)
     {
+        ThrowIfNull(input);
+
         IsDistinct = isDistinct;
         Input = input;
         SortedValues = sortedValues;

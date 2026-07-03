@@ -15,6 +15,10 @@ internal sealed class ExecutableTableScan : ExecutableOperator
     public ExecutableTableScan(ImmutableArray<ValueSlot> outputValueSlots, TableDefinition definition, RowBufferLayout layout, Action<object, ArrayRowBuffer> rowWriter)
         : base(outputValueSlots)
     {
+        ThrowIfNull(definition);
+        ThrowIfNull(layout);
+        ThrowIfNull(rowWriter);
+
         _definition = definition;
         _layout = layout;
         _rowWriter = rowWriter;

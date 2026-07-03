@@ -6,6 +6,8 @@ internal sealed class LogicalVariableExpression : LogicalExpression
 {
     public LogicalVariableExpression(VariableSymbol symbol)
     {
+        ThrowIfNull(symbol);
+
         Symbol = symbol;
     }
 

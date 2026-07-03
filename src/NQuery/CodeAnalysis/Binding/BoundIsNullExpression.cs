@@ -4,6 +4,8 @@ internal sealed class BoundIsNullExpression : BoundExpression
 {
     public BoundIsNullExpression(BoundExpression expression)
     {
+        ThrowIfNull(expression);
+
         Expression = expression;
     }
 

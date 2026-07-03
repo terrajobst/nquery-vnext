@@ -4,6 +4,8 @@ internal sealed class LogicalIsNullExpression : LogicalExpression
 {
     public LogicalIsNullExpression(LogicalExpression expression)
     {
+        ThrowIfNull(expression);
+
         Expression = expression;
     }
 

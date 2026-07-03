@@ -16,6 +16,9 @@ public static class NQueryClassificationTypesExtensions
 
         public void RegisterAll(IHighlightingStyleRegistry registry)
         {
+            ThrowIfNull(classificationTypes);
+            ThrowIfNull(registry);
+
             registry.Register(classificationTypes.WhiteSpace, new HighlightingStyle());
             registry.Register(classificationTypes.Comment, new HighlightingStyle(Colors.Green));
             registry.Register(classificationTypes.Keyword, new HighlightingStyle(Colors.Blue));

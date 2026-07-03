@@ -4,6 +4,9 @@ internal sealed class BoundUnaryExpression : BoundExpression
 {
     public BoundUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, BoundExpression expression)
     {
+        ThrowIfNull(result);
+        ThrowIfNull(expression);
+
         OperatorKind = operatorKind;
         Expression = expression;
         Result = result;

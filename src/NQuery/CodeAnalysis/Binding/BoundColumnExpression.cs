@@ -6,6 +6,8 @@ internal sealed class BoundColumnExpression : BoundExpression
 {
     public BoundColumnExpression(ColumnInstanceSymbol symbol)
     {
+        ThrowIfNull(symbol);
+
         Symbol = symbol;
     }
 

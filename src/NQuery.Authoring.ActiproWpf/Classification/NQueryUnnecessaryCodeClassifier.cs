@@ -18,6 +18,8 @@ internal sealed class NQueryUnnecessaryCodeClassifier : CollectionTagger<IClassi
     public NQueryUnnecessaryCodeClassifier(ICodeDocument document)
         : base(nameof(NQueryUnnecessaryCodeClassifier), null, document, true)
     {
+        ThrowIfNull(document);
+
         _classificationTypes = document.Language.GetService<INQueryClassificationTypes>();
 
         _workspace = document.GetWorkspace();

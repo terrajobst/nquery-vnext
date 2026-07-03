@@ -13,9 +13,13 @@ internal abstract class NQuerySquiggleClassifier : CollectionTagger<ISquiggleTag
 {
     private readonly IClassificationType _classificationType;
 
-    protected NQuerySquiggleClassifier(IClassificationType classificationType, string key, IEnumerable<Ordering> orderings, ICodeDocument document, bool isForLanguage)
+    protected NQuerySquiggleClassifier(IClassificationType classificationType, string key, IEnumerable<Ordering>? orderings, ICodeDocument document, bool isForLanguage)
         : base(key, orderings, document, isForLanguage)
     {
+        ThrowIfNull(classificationType);
+        ThrowIfNull(key);
+        ThrowIfNull(document);
+
         _classificationType = classificationType;
     }
 

@@ -9,6 +9,9 @@ internal sealed class FoldAggregateDefinition : AggregateDefinition
 
     public FoldAggregateDefinition(string name, Func<Type, AggregateFold?> binder)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(binder);
+
         Name = name;
         _binder = binder;
     }

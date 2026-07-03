@@ -11,6 +11,8 @@ internal sealed class HighlighterService : IHighlighterService
     [ImportingConstructor]
     public HighlighterService([ImportMany] IEnumerable<IHighlighter> highlighters)
     {
+        ThrowIfNull(highlighters);
+
         Highlighters = HighlightingExtensions.StandardHighlighters.AddRange(highlighters);
     }
 

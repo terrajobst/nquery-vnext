@@ -24,6 +24,10 @@ internal sealed class NQueryQuickInfoSource : IQuickInfoSource
 
     public NQueryQuickInfoSource(IClassificationFormatMap classificationFormatMap, IEditorFormatMap editorFormatMap, INQueryClassificationService classificationService)
     {
+        ThrowIfNull(classificationFormatMap);
+        ThrowIfNull(editorFormatMap);
+        ThrowIfNull(classificationService);
+
         _classificationFormatMap = classificationFormatMap;
         _editorFormatMap = editorFormatMap;
         _classificationService = classificationService;

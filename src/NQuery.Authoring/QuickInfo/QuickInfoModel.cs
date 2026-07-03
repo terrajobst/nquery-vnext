@@ -8,6 +8,9 @@ public sealed class QuickInfoModel
 {
     public QuickInfoModel(SemanticModel semanticModel, TextSpan span, Glyph glyph, SymbolMarkup markup)
     {
+        ThrowIfNull(semanticModel);
+        ThrowIfNull(markup);
+
         SemanticModel = semanticModel;
         Span = span;
         Glyph = glyph;
@@ -16,6 +19,9 @@ public sealed class QuickInfoModel
 
     public static QuickInfoModel? ForSymbol(SemanticModel semanticModel, TextSpan span, Symbol symbol)
     {
+        ThrowIfNull(semanticModel);
+        ThrowIfNull(symbol);
+
         var glyph = symbol.GetGlyph();
         var symbolMarkup = SymbolMarkup.ForSymbol(symbol);
         return new QuickInfoModel(semanticModel, span, glyph, symbolMarkup);

@@ -12,6 +12,7 @@ public abstract class ToggleCommentAction : EditActionBase
     protected ToggleCommentAction(string text)
         : base(text)
     {
+        ThrowIfNull(text);
     }
 
     protected abstract SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan textSpan);

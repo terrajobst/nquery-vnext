@@ -12,6 +12,10 @@ internal sealed class PhysicalAssert : PhysicalOperator
 {
     public PhysicalAssert(PhysicalOperator input, LogicalExpression condition, string message)
     {
+        ThrowIfNull(input);
+        ThrowIfNull(condition);
+        ThrowIfNull(message);
+
         Input = input;
         Condition = condition;
         Message = message;

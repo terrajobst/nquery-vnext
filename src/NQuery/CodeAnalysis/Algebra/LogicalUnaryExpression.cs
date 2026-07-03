@@ -6,6 +6,9 @@ internal sealed class LogicalUnaryExpression : LogicalExpression
 {
     public LogicalUnaryExpression(UnaryOperatorKind operatorKind, OverloadResolutionResult<UnaryOperatorSignature> result, LogicalExpression expression)
     {
+        ThrowIfNull(result);
+        ThrowIfNull(expression);
+
         OperatorKind = operatorKind;
         Result = result;
         Expression = expression;

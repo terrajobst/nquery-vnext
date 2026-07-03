@@ -11,6 +11,8 @@ internal sealed class BoundGroupByClause
 
     public BoundGroupByClause(IEnumerable<BoundComparedValue> groups, ImmutableArray<BoundComputedValue> computedGroups)
     {
+        ThrowIfNull(groups);
+
         Groups = [.. groups];
         ComputedGroups = computedGroups;
     }

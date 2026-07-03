@@ -9,6 +9,11 @@ internal sealed class LogicalAggregatedValue
 {
     public LogicalAggregatedValue(ValueSlot output, AggregateSymbol aggregate, AggregateFold fold, LogicalExpression argument)
     {
+        ThrowIfNull(output);
+        ThrowIfNull(aggregate);
+        ThrowIfNull(fold);
+        ThrowIfNull(argument);
+
         Output = output;
         Aggregate = aggregate;
         Fold = fold;

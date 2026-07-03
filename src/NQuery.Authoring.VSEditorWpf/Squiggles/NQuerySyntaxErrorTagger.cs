@@ -12,6 +12,8 @@ internal sealed class NQuerySyntaxErrorTagger : NQueryErrorTagger
     public NQuerySyntaxErrorTagger(Workspace workspace)
         : base(PredefinedErrorTypeNames.SyntaxError)
     {
+        ThrowIfNull(workspace);
+
         _workspace = workspace;
         _workspace.CurrentDocumentChanged += WorkspaceOnCurrentDocumentChanged;
         InvalidateTagsAsync();

@@ -15,6 +15,11 @@ internal sealed class LeftOuterNestedLoopsIterator : NestedLoopsIterator
 
     public LeftOuterNestedLoopsIterator(Iterator left, Iterator right, CompiledPredicate predicate, CompiledPredicate passthruPredicate, RowBuffer? outer = null)
     {
+        ThrowIfNull(left);
+        ThrowIfNull(right);
+        ThrowIfNull(predicate);
+        ThrowIfNull(passthruPredicate);
+
         _left = left;
         _right = right;
         _predicate = predicate;
@@ -108,6 +113,9 @@ internal sealed class LeftOuterNestedLoopsIterator : NestedLoopsIterator
 
         public LeftOuterNestedLoopsRowBuffer(RowBuffer left, RowBuffer right)
         {
+            ThrowIfNull(left);
+            ThrowIfNull(right);
+
             _right = right;
             _rightNull = new NullRowBuffer(right);
             _indirectedRight = new IndirectedRowBuffer(right, right);

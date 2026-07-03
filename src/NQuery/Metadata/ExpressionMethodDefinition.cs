@@ -9,6 +9,9 @@ internal sealed class ExpressionMethodDefinition : MethodDefinition
     public ExpressionMethodDefinition(string name, LambdaExpression expression)
         : base(name, expression.ReturnType, GetParameters(expression))
     {
+        ThrowIfNull(name);
+        ThrowIfNull(expression);
+
         _expression = expression;
     }
 
