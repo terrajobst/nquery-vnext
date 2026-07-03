@@ -172,23 +172,15 @@ model / cardinality estimation" under *More features*.
 
 ## Index spool follow-ups
 
-The port is done: when a correlated filter survives decorrelation,
-`Planner.TryPlanIndexSpool` recognizes an equality conjunct between a plain
-outer slot (the probe) and a value computable from the input (the index key; a
-computed key gets a compute below the spool, like the hash match's), requires
-the input to reference no outer slot and no recursive CTE working table -- the
-old engine's lazy-vs-eager caveat, resolved by simply declining the eager case
--- and emits `PhysicalIndexSpool` / `IndexSpoolIterator`: one scan indexed by key
-(through the hash match's `HashJoinProbe`) over a `SpooledRowStore`, probed on
-every re-open.
-NULL keys are not indexed and a NULL probe matches nothing, preserving the
-filter's equality semantics.
-
 Remaining follow-ups:
 
-* The probe must be a *plain* outer slot: a computed outer side (e.g.
-  `o.CustomerID = c.CustomerID + '!'`) has no input to attach a compute to, so
-  such conjuncts are skipped. Supporting it needs a scalar expression compiled
-  against the outer row and evaluated per open.
 * An eager spool (rebuild on outer change) would extend coverage to correlated
-  inputs; nothing selects it today.
+  inputs; nothing selects it today. **Blocked on the cost model, not a structural
+  gap.** Unlike the probe hoist (a strict win, hence a logical rewrite), an eager
+  spool can *regress*: its payoff is the rewind/rebind ratio -- how often the
+  correlation value repeats between consecutive outer rows -- which depends on the
+  value's distinct-count and the outer's ordering, neither visible from plan shape.
+  Worst case (value changes every row, one probe per row) is all rebinds, no reuse:
+  plain re-execution plus index-build overhead, strictly worse. Deciding it needs
+  cardinality (compare `outer_rows x input_cost` vs `n_distinct x input_cost +
+  probe`, plus a clustering sort). Declining it never regresses.

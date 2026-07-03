@@ -115,6 +115,36 @@ public class IndexSpoolTests : EvaluationTest
         AssertProducesSameAs(text, equivalent);
     }
 
+    [Fact]
+    public void Evaluation_IndexSpool_ComputedProbe_MatchesPlainEquivalent()
+    {
+        // The probe is a computed outer expression (e.EmployeeID + 1): for each employee,
+        // the first order of the *next* employee. SpoolProbeHoist materializes the probe
+        // onto the outer side so the spool can key on it. The equivalent computes the same
+        // "first order per employee" through a group-by and a computed-key hash join (a
+        // completely different plan). Employee 9 has no successor, so it yields NULL both
+        // ways.
+        var text = """
+            SELECT  e.EmployeeID,
+                    (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID + 1 ORDER BY o.OrderID)
+            FROM    Employees e
+            ORDER   BY 1
+            """;
+
+        var equivalent = """
+            SELECT  e.EmployeeID,
+                    d.FirstOrder
+            FROM    Employees e
+                        LEFT JOIN (SELECT e2.EmployeeID AS Emp, MIN(o.OrderID) AS FirstOrder
+                                   FROM Employees e2
+                                            INNER JOIN Orders o ON o.EmployeeID = e2.EmployeeID
+                                   GROUP BY e2.EmployeeID) d ON d.Emp = e.EmployeeID + 1
+            ORDER   BY 1
+            """;
+
+        AssertProducesSameAs(text, equivalent);
+    }
+
     // Runs both queries and asserts they produce the same rows in the same order.
     private static void AssertProducesSameAs(string text, string equivalentText)
     {

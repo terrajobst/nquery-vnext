@@ -137,6 +137,29 @@ public class PlannerTests
     }
 
     [Fact]
+    public void Planner_BuildsIndexSpool_ForComputedProbe()
+    {
+        // Mirror of the computed-index-key case, but the expression is on the *outer*
+        // side (e.EmployeeID + 1). The planner can't spool a computed probe, so
+        // SpoolProbeHoist materializes it onto the apply's left before planning; the
+        // compute therefore lands on the nested-loops *left* (once per outer row), not
+        // below the spool, and the spool keys on the plain hoisted slot.
+        var text = """
+            SELECT  e.EmployeeID,
+                    (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID + 1 ORDER BY o.OrderDate)
+            FROM    Employees e
+            """;
+        var plan = Plan(text);
+        var spool = plan.DescendantsAndSelf().OfType<PhysicalIndexSpool>().Single();
+        var loops = plan.DescendantsAndSelf().OfType<PhysicalNestedLoops>().Single(l => l.Right.DescendantsAndSelf().Contains(spool));
+
+        var probeCompute = loops.Left.DescendantsAndSelf().OfType<PhysicalComputeScalar>().Single();
+        Assert.Contains(spool.ProbeKey, probeCompute.DefinedValues.Select(v => v.ValueSlot));
+        Assert.DoesNotContain(spool.Input.DescendantsAndSelf().OfType<PhysicalComputeScalar>(),
+                              c => c.DefinedValues.Any(v => v.ValueSlot == spool.ProbeKey));
+    }
+
+    [Fact]
     public void Planner_KeepsCorrelatedResidual_AboveIndexSpool()
     {
         // Only the equality is consumed by the spool; the other correlated conjunct

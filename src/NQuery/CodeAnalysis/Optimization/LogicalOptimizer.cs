@@ -41,6 +41,12 @@ internal static class LogicalOptimizer
             // behind; it only ever removes projects, so it keeps the batch convergent.
             new("Decorrelation", BatchStrategy.FixedPoint, applyPushdown, SelectionPushdown.Instance, ProjectMerger.Instance),
 
+            // For the correlated applies decorrelation couldn't remove, hoist a computed
+            // equality probe (o.CustomerID = c.CustomerID + '!') onto the left, so the
+            // planner sees a plain outer slot and can build an index spool. Runs after
+            // decorrelation settles, so it only sees genuine survivors.
+            new("Spool probe hoisting", BatchStrategy.Once, SpoolProbeHoist.Instance),
+
             // Tighten outer joins into inner ones where a predicate above rejects the
             // null-supplied side. Runs before join ordering so a freed inner join can
             // join its region and accept pushed-down selections.
