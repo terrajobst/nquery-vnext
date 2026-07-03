@@ -59,50 +59,80 @@
       default.
 * Should we support table definitions backed by `IQueryable<T>`? What would it
   look like to support forwarding joins?
+* It seems some function do work that would be worthwhile pre-computing, such as
+  SOUNDS LIKE, LIKE, SIMILAR TO.
 
 ## Missing optimizations from the old engine
 
 A pass-by-pass comparison of the old `Compilation` pipeline against the new
-`LogicalOptimizer` / `Planner` turned up seven optimizations we don't have. They
-are listed roughly in priority order; the first three are the highest value.
-Some overlap existing entries above and below — cross-referenced where they do.
+`LogicalOptimizer` / `Planner` turned up the optimizations below, segregated by
+what they need. The **logical** group is doable now — each is a strict,
+semantics-preserving win decidable from *provable* static facts (provably-empty,
+provably-<=1-row, unique keys, constants), so none can regress. The **cost-based**
+group needs cardinality *estimation* and is blocked on the cost model, which
+neither engine has. Some overlap existing entries above and below — cross-referenced
+where they do.
 
-1. **Constant folding.** The old engine ran `ConstantFolder` both before and
-   after algebrization; the new engine folds nothing (the only `Fold` code is
-   aggregate folds). So `1+1`, `WHERE 1=0`, `@p IS NULL` for a known parameter,
-   etc. are never simplified. Beyond the direct win, this is a prerequisite for
-   (2): without folding, a contradiction predicate never becomes an empty input.
-2. **Null/empty-scan propagation** (old `NullScanOptimizer`). Collapse provably
-   empty inputs up the tree: a contradiction predicate or empty leaf becomes an
-   empty scan, then filters/joins/unions above it fold away. We have
-   `LogicalEmpty`/`LogicalConstant` nodes but nothing *produces* `Empty` from a
-   `WHERE 1=0` or propagates it. Pairs with (1) — neither fires without the
-   other. Subsumes the "Detect Filters/Join condition that are always false"
-   bullet under *More features*.
-3. **Compute pushdown** (old `ComputationPusher`). Push `ComputeScalar` *down*
-   past joins/filters so expressions evaluate on the smallest row set, closest to
-   the leaves. Our `ProjectMerger` only collapses/removes projects — it never
-   relocates a compute to reduce how many rows it runs over. Clearest pure-runtime
-   win; complements the "Merge ComputeScalar() nodes" bullet under *More features*.
-4. **Semi-join simplification** (old `SemiJoinSimplifier`). Inside a semi-join's
-   right side only existence matters, so result/sort/distinct nodes there are
-   redundant and can be stripped. No equivalent today.
-5. **Outer-join reordering** (old `OuterJoinReorderer`). Pull a LOJ out of an
-   enclosing IJ (`(A LOJ B) IJ C -> (A IJ C) LOJ B` when the IJ does not depend
-   on B), exposing more inner-join orderings to `JoinOrderer`. Our join orderer
-   only reorders contiguous inner-join regions, so an interposed outer join blocks
-   reorderings the old engine could unblock.
-6. **At-most-one-row reordering** (old `AtMostOneRowReorderer`). Drop `Top`/`Sort`
-   when the input provably yields <=1 row, and reorder semi-joins over an
-   at-most-one-row LOJ. Needs a max-cardinality query property — see the "Unique
-   state" bullet under *Miscellaneous*, which already wants the same property for
-   the scalar-subquery guard.
+### Logical (no cost model needed)
+
+* **Constant folding.** The old engine ran `ConstantFolder` before and after
+  algebrization; the new engine folds nothing (the only `Fold` code is aggregate
+  folds). So `1+1`, `WHERE 1=0`, `@p IS NULL` for a known parameter, etc. are never
+  simplified. Highest value — and the prerequisite for empty-scan propagation:
+  without folding, a contradiction predicate never becomes an empty input.
+* **Null/empty-scan propagation** (old `NullScanOptimizer`). Collapse *provably*
+  empty inputs up the tree: a contradiction predicate or empty leaf becomes an empty
+  scan, then filters/joins/unions above it fold away. We have
+  `LogicalEmpty`/`LogicalConstant` nodes but nothing *produces* `Empty` from a
+  `WHERE 1=0` or propagates it. Pairs with constant folding — neither fires without
+  the other. Subsumes the "Detect Filters/Join condition that are always false"
+  bullet under *More features*.
+* **Semi-join simplification** (old `SemiJoinSimplifier`). Inside a semi-join's right
+  side only existence matters, so result/sort/distinct nodes there are redundant and
+  can be stripped. No equivalent today.
+* **Compute deferral** (the structural half of old `ComputationPusher`). Lift a
+  `ComputeScalar` *up* past provably-restrictive operators (filters, semi/anti-joins)
+  so it runs on the already-narrowed row set — unconditional, since those operators
+  only shrink their input. (Pushing *down* to the leaves is the cost-based half; see
+  below.) Complements the "Merge ComputeScalar() nodes" bullet under *More features*.
+* **Outer-join reordering** (old `OuterJoinReorderer`) — *gated on unique-state.*
+  Pull a LOJ out of an enclosing IJ (`(A LOJ B) IJ C -> (A IJ C) LOJ B` when the IJ
+  does not depend on B); our join orderer only reorders contiguous inner-join regions,
+  so an interposed outer join blocks reorderings the old engine could unblock. The two
+  cost terms move oppositely: the C-probe is *unconditionally* cheaper reordered
+  (original probes C over `A LOJ B`, `>= |A|` since a LOJ never drops an A row;
+  reordered probes over just `A`), but the B-outer-join runs over `A IJ C`, so it
+  blows up when C fans out. Net: a strict win iff the inner join is non-expansive —
+  `C`'s join key unique, at most one match per A row. Absent unique-state a blind
+  reorder can regress (C ×5, B 1:1 => 5x the outer-join work), so there it's only a
+  cost-based orderer enabler.
+* **At-most-one-row reordering** (old `AtMostOneRowReorderer`) — *gated on
+  unique-state.* Drop `Top`/`Sort` when the input provably yields <=1 row, and reorder
+  semi-joins over an at-most-one-row LOJ. "Provably <=1 row" is exact (from
+  keys/uniqueness), not an estimate — hence logical. Needs the max-cardinality
+  property; see the "Unique state" bullet under *Miscellaneous*, which already wants it
+  for the scalar-subquery guard.
+
+The last two both hinge on the same *provable* uniqueness / max-cardinality property.
+Building it (the "Unique state" bullet) is itself logical work and unblocks both.
+
+### Cost-based (blocked on cardinality estimation)
+
+* **Compute placement to minimum cardinality** (the push-*down* half of old
+  `ComputationPusher`). Pushing a `ComputeScalar` *below* a join pays only when the
+  join fans out; below a filter or selective join it computes on discarded rows — a
+  regression. The cheapest placement depends on the row count at each level, so it
+  needs the cost model. The always-safe subset is the deferral direction listed under
+  *Logical*.
+
+See the broader "Cost model / cardinality estimation" item under *More features* and
+the eager-spool follow-up under *Index spool follow-ups* — both blocked on the same
+statistics.
 
 Not worth copying: `OutputListGenerator`, `RowBufferEntryNamer`,
 `FullOuterJoinExpander`, and `OuterReferenceLabeler` are bookkeeping for the old
 row-buffer execution model that the value-slot / `Planner` design handles
-structurally. The one thing *neither* engine does is a cost model — see "Cost
-model / cardinality estimation" under *More features*.
+structurally.
 
 ## More test coverage
 
