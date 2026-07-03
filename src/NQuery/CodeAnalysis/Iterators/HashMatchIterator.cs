@@ -29,6 +29,11 @@ internal sealed class HashMatchIterator : Iterator
     private readonly bool _preserveProbe;
     private readonly bool _semi;
     private readonly bool _anti;
+    // When the build side is invariant across re-opens (the planner verified it references no
+    // outer row and no recursion frontier -- the recursive step), reuse the hash table instead
+    // of rebuilding it every Open. Mirrors Postgres ExecReScanHashJoin's single-batch reuse.
+    private readonly bool _buildOnce;
+    private bool _built;
     private readonly HashMatchRowBuffer _rowBuffer;
     private readonly RowBuffer _remainderRowBuffer;
     private readonly RowBuffer _outputRowBuffer;
@@ -48,7 +53,7 @@ internal sealed class HashMatchIterator : Iterator
     private Phase _currentPhase;
     private bool _probeMatched;
 
-    public HashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, CompiledPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null)
+    public HashMatchIterator(Iterator build, Iterator probe, RowBufferEntry buildKey, RowBufferEntry probeKey, CompiledPredicate remainder, bool preserveBuild, bool preserveProbe, bool semi = false, bool anti = false, bool probing = false, RowBuffer? outer = null, bool buildOnce = false)
     {
         ThrowIfNull(build);
         ThrowIfNull(probe);
@@ -56,6 +61,7 @@ internal sealed class HashMatchIterator : Iterator
 
         _build = build;
         _probe = probe;
+        _buildOnce = buildOnce;
         _table = HashJoinProbe.Create(buildKey, probeKey);
         _remainder = remainder;
         _preserveBuild = preserveBuild;
@@ -105,9 +111,22 @@ internal sealed class HashMatchIterator : Iterator
 
     public override void Open()
     {
-        _build.Open();
+        if (!_buildOnce || !_built)
+        {
+            _build.Open();
+            BuildHashtable();
+            _built = true;
+        }
+        else if (FlushBuild && _matched.Length > 0)
+        {
+            // The build table is reused as-is; only the per-probe-pass match flags need
+            // resetting, and only when a flush pass reads them (left/full outer, semi/anti).
+            // An inner join never reads them, so a reused inner build pays nothing per Open --
+            // which is what keeps a build-once recursive step off the O(build * rounds) cost.
+            Array.Clear(_matched, 0, _matched.Length);
+        }
+
         _probe.Open();
-        BuildHashtable();
 
         _entry = NoEntry;
         _flushIndex = 0;

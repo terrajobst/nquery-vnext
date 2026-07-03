@@ -17,7 +17,7 @@ namespace NQuery.CodeAnalysis.Planning;
 // test it for EXISTS / NOT EXISTS.
 internal sealed class PhysicalHashMatch : PhysicalOperator
 {
-    public PhysicalHashMatch(PhysicalHashMatchKind hashMatchKind, PhysicalOperator build, PhysicalOperator probe, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ValueSlot? probeColumn = null)
+    public PhysicalHashMatch(PhysicalHashMatchKind hashMatchKind, PhysicalOperator build, PhysicalOperator probe, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ValueSlot? probeColumn = null, bool buildInvariant = false)
     {
         ThrowIfNull(build);
         ThrowIfNull(probe);
@@ -31,6 +31,7 @@ internal sealed class PhysicalHashMatch : PhysicalOperator
         ProbeKey = probeKey;
         Remainder = remainder;
         ProbeColumn = probeColumn;
+        BuildInvariant = buildInvariant;
     }
 
     public override PhysicalOperatorKind Kind => PhysicalOperatorKind.HashMatch;
@@ -51,6 +52,11 @@ internal sealed class PhysicalHashMatch : PhysicalOperator
     // The boolean match-marker slot of a probing semi join (null otherwise). A probing
     // semi join emits every build row, this slot carrying whether it had a match.
     public ValueSlot? ProbeColumn { get; }
+
+    // The build input references no outer row and no recursion frontier, so it produces the
+    // same rows on every re-open -- making it safe to build the hash once and reuse it. Set
+    // for the recursive step (see PlanJoin). The executable decides whether to exploit it.
+    public bool BuildInvariant { get; }
 
     private bool IsSemiOrAnti => HashMatchKind is PhysicalHashMatchKind.LeftSemi or PhysicalHashMatchKind.LeftAntiSemi;
 

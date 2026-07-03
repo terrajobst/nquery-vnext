@@ -185,8 +185,9 @@ outer slot (the probe) and a value computable from the input (the index key; a
 computed key gets a compute below the spool, like the hash match's), requires
 the input to reference no outer slot and no recursive CTE working table -- the
 old engine's lazy-vs-eager caveat, resolved by simply declining the eager case
--- and emits `PhysicalIndexSpool` / `IndexSpoolIterator`: one scan indexed into
-`Dictionary<key, List<row>>` over a `SpooledRowStore`, probed on every re-open.
+-- and emits `PhysicalIndexSpool` / `IndexSpoolIterator`: one scan indexed by key
+(through the hash match's `HashJoinProbe`) over a `SpooledRowStore`, probed on
+every re-open.
 NULL keys are not indexed and a NULL probe matches nothing, preserving the
 filter's equality semantics.
 
@@ -196,18 +197,5 @@ Remaining follow-ups:
   `o.CustomerID = c.CustomerID + '!'`) has no input to attach a compute to, so
   such conjuncts are skipped. Supporting it needs a scalar expression compiled
   against the outer row and evaluated per open.
-* Key comparison is the boxed object.Equals/GetHashCode -- the same contract
-  (and the same TODO) as the hash match's build table; fixing one should fix
-  the other.
-* The index key and probe are read boxed (`RowBufferEntry.GetValue`), one
-  boxing per spooled row plus one per outer row. A typed key path (as the hash
-  match's `HashJoinProbe` has) would remove it if it ever shows up in profiles.
 * An eager spool (rebuild on outer change) would extend coverage to correlated
   inputs; nothing selects it today.
-
-## CTE follow-ups
-
-* **Benchmark** deep vs. wide hierarchies to validate the working-table choice,
-  and ensure the recursive join builds its hash on the (small) frontier, not the
-  base relation (there is no cost model yet, and the hash match always builds on
-  the join's left).

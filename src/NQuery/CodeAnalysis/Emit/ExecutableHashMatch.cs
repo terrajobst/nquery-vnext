@@ -32,8 +32,9 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
     private readonly bool _probing;
     private readonly CompiledPredicate _remainder;
     private readonly bool _correlated;
+    private readonly bool _buildInvariant;
 
-    public ExecutableHashMatch(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator build, ExecutableOperator probe, PhysicalHashMatchKind kind, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ImmutableArray<ValueSlot> outerSlots, ValueSlot? probeColumn = null)
+    public ExecutableHashMatch(ImmutableArray<ValueSlot> outputValueSlots, ExecutableOperator build, ExecutableOperator probe, PhysicalHashMatchKind kind, ValueSlot buildKey, ValueSlot probeKey, ImmutableArray<LogicalExpression> remainder, ImmutableArray<ValueSlot> outerSlots, ValueSlot? probeColumn = null, bool buildInvariant = false)
         : base(outputValueSlots)
     {
         ThrowIfNull(build);
@@ -43,6 +44,7 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
 
         _build = build;
         _probe = probe;
+        _buildInvariant = buildInvariant;
         _buildKey = buildKey;
         _probeKey = probeKey;
         _preserveBuild = kind is PhysicalHashMatchKind.LeftOuter or PhysicalHashMatchKind.FullOuter;
@@ -79,7 +81,12 @@ internal sealed class ExecutableHashMatch : ExecutableOperator
         // A correlated remainder reads the outer row; hand the outer buffer to the iterator
         // so it can prepend it (outer ++ build ++ probe) when evaluating the remainder.
         var remainderOuter = _correlated ? outer : null;
-        return new HashMatchIterator(build, probe, buildKey, probeKey, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter);
+
+        // When the planner proved the build is invariant across re-opens (the recursive step,
+        // where the build is the base and the probe is the frontier), build the hash once and
+        // reuse it instead of rebuilding every round -- turning the recursive step from
+        // O(base * depth) into O(base + output). Mirrors Postgres ExecReScanHashJoin.
+        return new HashMatchIterator(build, probe, buildKey, probeKey, _remainder, _preserveBuild, _preserveProbe, _semi, _anti, _probing, remainderOuter, _buildInvariant);
     }
 
     // Each conjunct already yields false on NULL; an empty remainder means the hash

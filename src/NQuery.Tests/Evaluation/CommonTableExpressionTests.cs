@@ -355,6 +355,40 @@ public class CommonTableExpressionTests : EvaluationTest
         Assert.Equal("The maximum recursion 100 has been exhausted before statement completion.", exception.Message);
     }
 
+    [Fact]
+    public void Evaluation_Cte_Recursive_ReusesInvariantBaseHash()
+    {
+        // The recursive step's hash match builds on the invariant base (Employees) and probes
+        // the frontier, so the planner marks it BuildInvariant and the hash is built once and
+        // reused across rounds instead of rebuilt (HashMatchIterator's build-once path). A
+        // multi-level hierarchy re-opens the step several times; check every employee is reached
+        // at the right depth.
+        var text = """
+            WITH EmployeeHierarchy AS (
+                SELECT  e.EmployeeID, 0 AS Level
+                FROM    Employees e
+                WHERE   e.ReportsTo IS NULL
+
+                UNION ALL
+
+                SELECT  e.EmployeeID, eh.Level + 1
+                FROM    Employees e
+                            INNER JOIN EmployeeHierarchy eh ON e.ReportsTo = eh.EmployeeID
+            )
+            SELECT  eh.EmployeeID, eh.Level
+            FROM    EmployeeHierarchy eh
+            """;
+
+        var rows = ReadRows(text)
+                   .Select(r => ((int)r[0]!, (int)r[1]!))
+                   .OrderBy(r => r.Item1)
+                   .ToArray();
+
+        // Root 2 at level 0; 1,3,4,5,8 report to 2 (level 1); 6,7,9 report to 5 (level 2).
+        (int, int)[] expected = [(1, 1), (2, 0), (3, 1), (4, 1), (5, 1), (6, 2), (7, 2), (8, 1), (9, 2)];
+        Assert.Equal(expected, rows);
+    }
+
     // Runs both queries and asserts they produce the same rows in the same order --
     // used to compare a CTE against its hand-inlined equivalent.
     private static void AssertProducesSameAs(string text, string equivalentText)

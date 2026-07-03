@@ -251,7 +251,15 @@ internal static class Planner
             if (key.ProbeComputedValue is not null)
                 probe = new PhysicalComputeScalar(probe, [key.ProbeComputedValue]);
 
-            var hashMatch = new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe);
+            // The recursive step: the probe side is the frontier (a recursive reference) while
+            // the build side is not, and the build references no outer row -- so the build is
+            // the same on every round's re-open and may be built once. (Only the recursive step
+            // is checked, so non-recursion planning skips the slot walks.)
+            var buildInvariant = ReferencesRecursiveReference(node.Right)
+                                 && !ReferencesRecursiveReference(node.Left)
+                                 && !ReferencesAny(node.Left, outerSlots);
+
+            var hashMatch = new PhysicalHashMatch(MapHashMatchKind(node.JoinKind), build, probe, key.BuildKey, key.ProbeKey, key.Remainder, node.Probe, buildInvariant);
             return key.BuildComputedValue is null && key.ProbeComputedValue is null
                 ? hashMatch
                 : new PhysicalProject(hashMatch, node.OutputValueSlots);
@@ -369,6 +377,20 @@ internal static class Planner
     {
         var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(expression);
         return referenced.Count > 0 && referenced.All(slots.Contains);
+    }
+
+    private static bool ReferencesRecursiveReference(LogicalOperator node)
+    {
+        return node.DescendantsAndSelf().Any(d => d.Kind == LogicalOperatorKind.RecursiveReference);
+    }
+
+    private static bool ReferencesAny(LogicalOperator node, ImmutableArray<ValueSlot> slots)
+    {
+        if (slots.IsEmpty)
+            return false;
+
+        var referenced = LogicalSlotReferenceFinder.FindReferencedSlots(node);
+        return slots.Any(referenced.Contains);
     }
 
     // A plain slot reference is the key directly; any other expression is materialized

@@ -2,35 +2,34 @@ namespace NQuery.CodeAnalysis.Iterators;
 
 // A lazy index spool: the runtime of a correlated equality filter over an
 // outer-independent input. The first Open drains the input once into a columnar
-// store and builds a hash index over the key column; every Open then looks up the
-// current outer probe value and Read walks just the matching rows. The input is
-// never re-opened -- its content cannot change within one execution, which is
-// exactly the independence condition the planner verified before choosing this
-// operator.
+// store and indexes it by the key column; every Open then looks up the current
+// outer probe value and Read walks just the matching rows. The input is never
+// re-opened -- its content cannot change within one execution, which is exactly
+// the independence condition the planner verified before choosing this operator.
 //
-// Equality semantics match the filter it replaces: a NULL key never equals
-// anything, so NULL-keyed rows are not indexed at all and a NULL probe matches no
-// rows. Key comparison is the boxed object.Equals/GetHashCode, the same contract
-// the hash match's build table relies on.
+// The index is a HashJoinProbe, shared with the hash match: keys are read unboxed
+// for the value-typed kinds (a Dictionary<T, int> rather than Dictionary<object, ...>)
+// and the matching rows are threaded through an intrusive chain instead of a per-key
+// list. Equality semantics match the filter it replaces: a NULL key never equals
+// anything, so NULL-keyed rows are not indexed (they sit in the store, off every
+// chain) and a NULL probe matches nothing. Chain order is newest-first, which the
+// enclosing correlated join does not depend on.
 internal sealed class IndexSpoolIterator : Iterator
 {
     private readonly Iterator _input;
-    private readonly RowBufferEntry _indexEntry;
-    private readonly RowBufferEntry _probeEntry;
+    private readonly HashJoinProbe _index;
     private readonly SpooledRowStore _store;
     private readonly SpooledRowStore.Cursor _cursor;
 
-    private Dictionary<object, List<int>>? _index;
-    private List<int>? _matches;
-    private int _position;
+    private bool _built;
+    private int _entry;
 
     public IndexSpoolIterator(Iterator input, RowBufferEntry indexEntry, RowBufferEntry probeEntry)
     {
         ThrowIfNull(input);
 
         _input = input;
-        _indexEntry = indexEntry;
-        _probeEntry = probeEntry;
+        _index = HashJoinProbe.Create(indexEntry, probeEntry);
         _store = new SpooledRowStore(input.RowBuffer);
         _cursor = _store.CreateCursor();
     }
@@ -39,38 +38,26 @@ internal sealed class IndexSpoolIterator : Iterator
 
     public override void Open()
     {
-        _index ??= BuildIndex();
+        if (!_built)
+        {
+            BuildIndex();
+            _built = true;
+        }
 
-        _matches = null;
-        _position = 0;
-
-        var probeValue = _probeEntry.GetValue();
-        if (probeValue is not null)
-            _index.TryGetValue(probeValue, out _matches);
+        _entry = _index.GetHead();
     }
 
-    private Dictionary<object, List<int>> BuildIndex()
+    private void BuildIndex()
     {
-        var index = new Dictionary<object, List<int>>();
-
+        // Every row is stored so the chain (which carries a Next entry per row) stays
+        // index-aligned with the store; a NULL-keyed row is stored but left off its chain.
         _input.Open();
         while (_input.Read())
         {
-            var key = _indexEntry.GetValue();
-            if (key is null)
-                continue;
-
-            if (!index.TryGetValue(key, out var rows))
-            {
-                rows = new List<int>();
-                index.Add(key, rows);
-            }
-
+            var row = _store.Count;
             _store.Append(_input.RowBuffer);
-            rows.Add(_store.Count - 1);
+            _index.Add(row);
         }
-
-        return index;
     }
 
     public override void Dispose()
@@ -80,11 +67,11 @@ internal sealed class IndexSpoolIterator : Iterator
 
     public override bool Read()
     {
-        if (_matches is null || _position == _matches.Count)
+        if (_entry == HashJoinProbe.NoEntry)
             return false;
 
-        _cursor.Row = _matches[_position];
-        _position++;
+        _cursor.Row = _entry;
+        _entry = _index.GetNext(_entry);
         return true;
     }
 }
