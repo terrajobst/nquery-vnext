@@ -26,6 +26,10 @@ internal static class DiagnosticExtensions
                     return Resources.UnterminatedQuotedIdentifier;
                 case DiagnosticId.UnterminatedParenthesizedIdentifier:
                     return Resources.UnterminatedParenthesizedIdentifier;
+                case DiagnosticId.EmptyQuotedIdentifier:
+                    return Resources.EmptyQuotedIdentifier;
+                case DiagnosticId.EmptyParenthesizedIdentifier:
+                    return Resources.EmptyParenthesizedIdentifier;
                 case DiagnosticId.UnterminatedDate:
                     return Resources.UnterminatedDate;
                 case DiagnosticId.InvalidDate:
@@ -34,12 +38,6 @@ internal static class DiagnosticExtensions
                     return Resources.InvalidInteger;
                 case DiagnosticId.InvalidReal:
                     return Resources.InvalidReal;
-                case DiagnosticId.InvalidBinary:
-                    return Resources.InvalidBinary;
-                case DiagnosticId.InvalidOctal:
-                    return Resources.InvalidOctal;
-                case DiagnosticId.InvalidHex:
-                    return Resources.InvalidHex;
                 case DiagnosticId.NumberTooLarge:
                     return Resources.NumberTooLarge;
                 case DiagnosticId.TokenExpected:
@@ -237,6 +235,16 @@ internal static class DiagnosticExtensions
             diagnostics.Report(textSpan, DiagnosticId.UnterminatedParenthesizedIdentifier);
         }
 
+        public void ReportEmptyQuotedIdentifier(TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.EmptyQuotedIdentifier);
+        }
+
+        public void ReportEmptyParenthesizedIdentifier(TextSpan textSpan)
+        {
+            diagnostics.Report(textSpan, DiagnosticId.EmptyParenthesizedIdentifier);
+        }
+
         public void ReportUnterminatedDate(TextSpan textSpan)
         {
             diagnostics.Report(textSpan, DiagnosticId.UnterminatedDate);
@@ -255,21 +263,6 @@ internal static class DiagnosticExtensions
         public void ReportInvalidReal(TextSpan textSpan, string tokenText)
         {
             diagnostics.Report(textSpan, DiagnosticId.InvalidReal, tokenText);
-        }
-
-        public void ReportInvalidBinary(TextSpan textSpan, string tokenText)
-        {
-            diagnostics.Report(textSpan, DiagnosticId.InvalidBinary, tokenText);
-        }
-
-        public void ReportInvalidOctal(TextSpan textSpan, string tokenText)
-        {
-            diagnostics.Report(textSpan, DiagnosticId.InvalidOctal, tokenText);
-        }
-
-        public void ReportInvalidHex(TextSpan textSpan, string tokenText)
-        {
-            diagnostics.Report(textSpan, DiagnosticId.InvalidHex, tokenText);
         }
 
         public void ReportNumberTooLarge(TextSpan textSpan, string tokenText)

@@ -263,8 +263,7 @@ not allowed in an identifier; the closing delimiter is escaped by doubling it.
 
 ```antlr
 NUMERIC_LITERAL
-    : DIGIT+ [hHbBoO]                  // hex / binary / octal
-    | DIGIT* '.' DIGIT+ EXPONENT?
+    : DIGIT* '.' DIGIT+ EXPONENT?
     | DIGIT+ EXPONENT
     | DIGIT+
     ;
@@ -285,11 +284,10 @@ fragment LETTER : [a-zA-Z] ;
 fragment DIGIT  : [0-9] ;
 ```
 
-A numeric literal may carry an optional radix suffix: `h`/`H` (hexadecimal),
-`b`/`B` (binary), or `o`/`O` (octal). A literal with a decimal point or
-exponent is a floating-point number; otherwise it is an integer. A string
-literal escapes a single quote by doubling it (`''`). A date literal is
-delimited by `#` and must be a valid date.
+A numeric literal with a decimal point or exponent is a floating-point
+number; otherwise it is an integer. A string literal escapes a single quote
+by doubling it (`''`). A date literal is delimited by `#` and must be a
+valid date.
 
 ### Operators and punctuation
 

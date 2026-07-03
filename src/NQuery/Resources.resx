@@ -300,6 +300,12 @@
   <data name="DuplicateTableRefInFrom" xml:space="preserve">
     <value>The correlation name '{0}' is specified multiple times in a FROM clause.</value>
   </data>
+  <data name="EmptyParenthesizedIdentifier" xml:space="preserve">
+    <value>Parenthesized identifier must contain at least one character.</value>
+  </data>
+  <data name="EmptyQuotedIdentifier" xml:space="preserve">
+    <value>Quoted identifier must contain at least one character.</value>
+  </data>
   <data name="ExpressionCompilationFailed" xml:space="preserve">
     <value>Expression could not be compiled.{0}</value>
   </data>
@@ -342,9 +348,6 @@
   <data name="InvalidAttemptToRead" xml:space="preserve">
     <value>Invalid attempt to read when no data is present.</value>
   </data>
-  <data name="InvalidBinary" xml:space="preserve">
-    <value>'{0}' is not a valid binary number.</value>
-  </data>
   <data name="InvalidBinaryOperator" xml:space="preserve">
     <value>Invalid binary operator: '{0}'.</value>
   </data>
@@ -372,17 +375,11 @@
   <data name="InvalidReal" xml:space="preserve">
     <value>'{0}' is not a valid decimal number.</value>
   </data>
-  <data name="InvalidHex" xml:space="preserve">
-    <value>'{0}' is not a valid hex number.</value>
-  </data>
   <data name="InvalidIdentifier" xml:space="preserve">
     <value>The text '{0}' is not a valid identifier.</value>
   </data>
   <data name="InvalidInteger" xml:space="preserve">
     <value>'{0}' is not a valid integer.</value>
-  </data>
-  <data name="InvalidOctal" xml:space="preserve">
-    <value>'{0}' is not a valid octal number.</value>
   </data>
   <data name="InvalidOperatorForAllAny" xml:space="preserve">
     <value>SOME, ANY and ALL can only be applied on =, &lt;&gt;, &lt;, &lt;=, &gt;, or &gt;=.</value>

@@ -637,7 +637,25 @@ internal class Resources {
             return ResourceManager.GetString("DuplicateTableRefInFrom", resourceCulture);
         }
     }
-    
+
+    /// <summary>
+    ///   Looks up a localized string similar to Parenthesized identifier must contain at least one character..
+    /// </summary>
+    internal static string EmptyParenthesizedIdentifier {
+        get {
+            return ResourceManager.GetString("EmptyParenthesizedIdentifier", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    ///   Looks up a localized string similar to Quoted identifier must contain at least one character..
+    /// </summary>
+    internal static string EmptyQuotedIdentifier {
+        get {
+            return ResourceManager.GetString("EmptyQuotedIdentifier", resourceCulture);
+        }
+    }
+
     /// <summary>
     ///   Looks up a localized string similar to Expression could not be compiled.{0}.
     /// </summary>
@@ -774,15 +792,6 @@ internal class Resources {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid binary number..
-    /// </summary>
-    internal static string InvalidBinary {
-        get {
-            return ResourceManager.GetString("InvalidBinary", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to Invalid binary operator: &apos;{0}&apos;..
     /// </summary>
     internal static string InvalidBinaryOperator {
@@ -855,15 +864,6 @@ internal class Resources {
     }
     
     /// <summary>
-    ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid hex number..
-    /// </summary>
-    internal static string InvalidHex {
-        get {
-            return ResourceManager.GetString("InvalidHex", resourceCulture);
-        }
-    }
-    
-    /// <summary>
     ///   Looks up a localized string similar to The text &apos;{0}&apos; is not a valid identifier..
     /// </summary>
     internal static string InvalidIdentifier {
@@ -878,15 +878,6 @@ internal class Resources {
     internal static string InvalidInteger {
         get {
             return ResourceManager.GetString("InvalidInteger", resourceCulture);
-        }
-    }
-    
-    /// <summary>
-    ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid octal number..
-    /// </summary>
-    internal static string InvalidOctal {
-        get {
-            return ResourceManager.GetString("InvalidOctal", resourceCulture);
         }
     }
     

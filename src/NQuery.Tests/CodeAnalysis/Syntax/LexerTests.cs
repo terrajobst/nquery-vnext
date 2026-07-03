@@ -313,6 +313,23 @@ public class LexerTests
     }
 
     [Fact]
+    public void Lexer_Lex_Identifier_Bracketed_IfEmpty()
+    {
+        const string text = "[]";
+        var token = SyntaxFacts.ParseToken(text);
+
+        Assert.Equal(text, token.Text);
+        Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+        Assert.Equal(string.Empty, token.Value);
+        Assert.False(token.IsMissing);
+        Assert.True(token.IsTerminated());
+
+        var diagnostic = Assert.Single(token.Diagnostics);
+        Assert.Equal(DiagnosticId.EmptyParenthesizedIdentifier, diagnostic.DiagnosticId);
+        Assert.Equal("Parenthesized identifier must contain at least one character.", diagnostic.Message);
+    }
+
+    [Fact]
     public void Lexer_Lex_Identifier_Bracketed_IfUnterminatedAndClosingBracketIsEscaped()
     {
         const string text = "[aaa[[";
@@ -431,6 +448,23 @@ public class LexerTests
         var diagnostic = Assert.Single(token.Diagnostics);
         Assert.Equal(DiagnosticId.UnterminatedQuotedIdentifier, diagnostic.DiagnosticId);
         Assert.Equal("Quoted identifier is not properly terminated.", diagnostic.Message);
+    }
+
+    [Fact]
+    public void Lexer_Lex_Identifier_Quoted_IfEmpty()
+    {
+        const string text = "\"\"";
+        var token = SyntaxFacts.ParseToken(text);
+
+        Assert.Equal(text, token.Text);
+        Assert.Equal(SyntaxKind.IdentifierToken, token.Kind);
+        Assert.Equal(string.Empty, token.Value);
+        Assert.False(token.IsMissing);
+        Assert.True(token.IsTerminated());
+
+        var diagnostic = Assert.Single(token.Diagnostics);
+        Assert.Equal(DiagnosticId.EmptyQuotedIdentifier, diagnostic.DiagnosticId);
+        Assert.Equal("Quoted identifier must contain at least one character.", diagnostic.Message);
     }
 
     [Fact]
@@ -649,105 +683,6 @@ public class LexerTests
     }
 
     [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInBinary()
-    {
-        const string text = "1010b";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(10, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInBinaryAndInvalid()
-    {
-        const string text = "1234b";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(0, token.Value);
-
-        var diagnostic = Assert.Single(token.Diagnostics);
-        Assert.Equal(DiagnosticId.InvalidBinary, diagnostic.DiagnosticId);
-        Assert.Equal("'1234' is not a valid binary number.", diagnostic.Message);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInOctal()
-    {
-        const string text = "12345o";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(5349, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInOctalAndInvalid()
-    {
-        const string text = "78o";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(0, token.Value);
-
-        var diagnostic = Assert.Single(token.Diagnostics);
-        Assert.Equal(DiagnosticId.InvalidOctal, diagnostic.DiagnosticId);
-        Assert.Equal("'78' is not a valid octal number.", diagnostic.Message);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInHex()
-    {
-        const string text = "0ABCh";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(2748, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int32_WhenInHexAndInvalid()
-    {
-        const string text = "0FGh";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<int>(token.Value);
-        Assert.Equal(0, token.Value);
-
-        var diagnostic = Assert.Single(token.Diagnostics);
-        Assert.Equal(DiagnosticId.InvalidHex, diagnostic.DiagnosticId);
-        Assert.Equal("'0FG' is not a valid hex number.", diagnostic.Message);
-    }
-
-    [Fact]
     public void Lexer_Lex_Literal_Int32_WhenNumberTooLargeForInt64()
     {
         const ulong value = ulong.MaxValue;
@@ -778,51 +713,6 @@ public class LexerTests
         Assert.True(token.IsTerminated());
         Assert.IsType<long>(token.Value);
         Assert.Equal(value, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int64_WhenInBinary()
-    {
-        const string text = "10101010101010101010101010101010b";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<long>(token.Value);
-        Assert.Equal(2863311530L, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int64_WhenInOctal()
-    {
-        const string text = "12345671234567o";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<long>(token.Value);
-        Assert.Equal(718046312823L, token.Value);
-        Assert.Empty(token.Diagnostics);
-    }
-
-    [Fact]
-    public void Lexer_Lex_Literal_Int64_WhenInHex()
-    {
-        const string text = "0FFFFFFFFFh";
-        var token = SyntaxFacts.ParseToken(text);
-
-        Assert.Equal(text, token.Text);
-        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
-        Assert.False(token.IsMissing);
-        Assert.True(token.IsTerminated());
-        Assert.IsType<long>(token.Value);
-        Assert.Equal(68719476735L, token.Value);
         Assert.Empty(token.Diagnostics);
     }
 

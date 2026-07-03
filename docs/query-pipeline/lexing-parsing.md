@@ -8,7 +8,7 @@ The **Lexer** (`NQuery.Syntax.Lexer`) tokenizes `SourceText` into a sequence of 
 
 - **Keywords**: `SELECT`, `FROM`, `WHERE`, `JOIN`, `GROUP BY`, `HAVING`, `ORDER BY`, `UNION`, `INTERSECT`, `EXCEPT`, `DISTINCT`, `TOP`, `AS`, `ON`, `AND`, `OR`, `NOT`, `IN`, `BETWEEN`, `LIKE`, `IS NULL`, `EXISTS`, `ALL`, `ANY`, `CAST`, `CASE`, `WHEN`, `THEN`, `ELSE`, `END`, `NULL`, `TRUE`, `FALSE`, `SOME`, and others.
 - **Identifiers**: Regular and delimited (`[bracketed]`).
-- **Literals**: Integer, floating-point, string (single-quoted), binary, date/time.
+- **Literals**: Integer, floating-point, string (single-quoted), date/time.
 - **Operators**: Arithmetic (`+`, `-`, `*`, `/`, `%`), comparison (`=`, `<>`, `<`, `>`, `<=`, `>=`), logical (`AND`, `OR`, `NOT`), and others (`()`, `,`, `.`, `*`).
 - **Comments**: Single-line (`--`) and multi-line (`/* */`).
 - **Whitespace**: Spaces, tabs, newlines.

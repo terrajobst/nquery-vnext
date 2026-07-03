@@ -79,7 +79,7 @@ internal sealed class Lexer
                 case '\r':
                 {
                     ReadEndOfLine();
-                    AddTrivia(target, SyntaxKind.EndOfLineTrivia);
+                    AddTrivia(target);
                     if (isTrailing)
                         return;
                 }
@@ -88,7 +88,7 @@ internal sealed class Lexer
                     if (_charReader.Peek() == '-')
                     {
                         ReadSinglelineComment();
-                        AddTrivia(target, SyntaxKind.SingleLineCommentTrivia);
+                        AddTrivia(target);
                     }
                     else
                     {
@@ -99,12 +99,12 @@ internal sealed class Lexer
                     if (_charReader.Peek() == '/')
                     {
                         ReadSinglelineComment();
-                        AddTrivia(target, SyntaxKind.SingleLineCommentTrivia);
+                        AddTrivia(target);
                     }
                     else if (_charReader.Peek() == '*')
                     {
                         ReadMultilineComment();
-                        AddTrivia(target, SyntaxKind.MultiLineCommentTrivia);
+                        AddTrivia(target);
                     }
                     else
                     {
@@ -115,7 +115,7 @@ internal sealed class Lexer
                     if (char.IsWhiteSpace(_charReader.Current))
                     {
                         ReadWhitespace();
-                        AddTrivia(target, SyntaxKind.WhitespaceTrivia);
+                        AddTrivia(target);
                     }
                     else
                     {
@@ -128,6 +128,8 @@ internal sealed class Lexer
 
     private void ReadEndOfLine()
     {
+        _kind = SyntaxKind.EndOfLineTrivia;
+
         if (_charReader.Current == '\r')
         {
             _charReader.NextChar();
@@ -195,6 +197,8 @@ internal sealed class Lexer
 
     private void ReadWhitespace()
     {
+        _kind = SyntaxKind.WhitespaceTrivia;
+
         while (char.IsWhiteSpace(_charReader.Current) &&
                _charReader.Current != '\r' &&
                _charReader.Current != '\n')
@@ -203,14 +207,14 @@ internal sealed class Lexer
         }
     }
 
-    private void AddTrivia(List<SyntaxTrivia> target, SyntaxKind kind)
+    private void AddTrivia(List<SyntaxTrivia> target)
     {
         var start = _start;
         var end = _charReader.Position;
         var span = TextSpan.FromBounds(start, end);
         var text = _text.GetText(span);
         var diagnostics = _diagnostics.ToImmutableArray();
-        var trivia = new SyntaxTrivia(_syntaxTree, kind, text, span, null, diagnostics);
+        var trivia = new SyntaxTrivia(_syntaxTree, _kind, text, span, null, diagnostics);
         target.Add(trivia);
 
         _diagnostics.Clear();
@@ -256,7 +260,7 @@ internal sealed class Lexer
                 break;
 
             case '.':
-                if (char.IsDigit(_charReader.Peek()))
+                if (char.IsAsciiDigit(_charReader.Peek()))
                     ReadNumber();
                 else
                 {
@@ -398,7 +402,7 @@ internal sealed class Lexer
                 {
                     ReadIdentifierOrKeyword();
                 }
-                else if (char.IsDigit(_charReader.Current))
+                else if (char.IsAsciiDigit(_charReader.Current))
                 {
                     ReadNumber();
                 }
@@ -519,8 +523,8 @@ internal sealed class Lexer
 
                     var peek1 = _charReader.Peek(1);
                     var peek2 = _charReader.Peek(2);
-                    var startsFloatingPoint = char.IsDigit(peek1) ||
-                                              ((peek1 == 'e' || peek1 == 'E') && (peek2 == '+' || peek2 == '-' || char.IsDigit(peek2)));
+                    var startsFloatingPoint = char.IsAsciiDigit(peek1) ||
+                                              ((peek1 == 'e' || peek1 == 'E') && (peek2 == '+' || peek2 == '-' || char.IsAsciiDigit(peek2)));
                     if (!startsFloatingPoint)
                         goto ExitLoop;
 
@@ -545,7 +549,7 @@ internal sealed class Lexer
                     break;
 
                 default:
-                    if (!char.IsLetterOrDigit(_charReader.Current))
+                    if (!char.IsAsciiDigit(_charReader.Current))
                         goto ExitLoop;
                     sb.Append(_charReader.Current);
                     _charReader.NextChar();
@@ -563,174 +567,46 @@ internal sealed class Lexer
 
     private double ReadDouble(string text)
     {
-        try
-        {
-            return double.Parse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture);
-        }
-        catch (OverflowException)
-        {
-            _diagnostics.ReportNumberTooLarge(CurrentSpan, text);
-        }
-        catch (FormatException)
+        // .NET Core parses out-of-range magnitudes to +/-Infinity rather than
+        // failing the parse (unlike .NET Framework). Treat both a parse failure
+        // and an overflow as an invalid floating-point literal.
+        if (!double.TryParse(text, NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent, CultureInfo.InvariantCulture, out var result) ||
+            double.IsInfinity(result))
         {
             _diagnostics.ReportInvalidReal(CurrentSpan, text);
+            return 0.0;
         }
-        return 0.0;
+
+        return result;
     }
 
     private object ReadInt32OrInt64(string text)
     {
         var int64 = ReadInt64(text);
 
-        // If the integer can be represented as Int32 we return
-        // an Int32 literal. Otherwise we return an Int64.
+        // If the integer can be represented as Int32 we return an Int32
+        // literal. Otherwise we return an Int64. Note the separate return
+        // statements matter: a ternary would unify both branches to Int64
+        // and box the value as Int64 even when it fits in an Int32.
 
-        try
-        {
-            checked
-            {
-                return (int)int64;
-            }
-        }
-        catch (OverflowException)
-        {
-            return int64;
-        }
+        if (int64 is >= int.MinValue and <= int.MaxValue)
+            return (int)int64;
+
+        return int64;
     }
 
     private long ReadInt64(string text)
     {
-        // Get indicator
+        if (long.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+            return result;
 
-        var indicator = text[text.Length - 1];
-
-        // Remove trailing indicator (h, b, or o)
-
-        var textWithoutIndicator = text.Substring(0, text.Length - 1);
-
-        switch (indicator)
-        {
-            case 'H':
-            case 'h':
-                try
-                {
-                    return long.Parse(textWithoutIndicator, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
-                }
-                catch (OverflowException)
-                {
-                    _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
-                }
-                catch (FormatException)
-                {
-                    _diagnostics.ReportInvalidHex(CurrentSpan, textWithoutIndicator);
-                }
-
-                return 0;
-
-            case 'B':
-            case 'b':
-                try
-                {
-                    return ReadBinaryValue(textWithoutIndicator);
-                }
-                catch (OverflowException)
-                {
-                    _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
-                }
-
-                return 0;
-
-            case 'O':
-            case 'o':
-                try
-                {
-                    return ReadOctalValue(textWithoutIndicator);
-                }
-                catch (OverflowException)
-                {
-                    _diagnostics.ReportNumberTooLarge(CurrentSpan, textWithoutIndicator);
-                }
-
-                return 0;
-
-            default:
-                try
-                {
-                    return long.Parse(text, CultureInfo.InvariantCulture);
-                }
-                catch (OverflowException)
-                {
-                    _diagnostics.ReportNumberTooLarge(CurrentSpan, text);
-                }
-                catch (FormatException)
-                {
-                    _diagnostics.ReportInvalidInteger(CurrentSpan, text);
-                }
-
-                return 0;
-        }
-    }
-
-    private long ReadBinaryValue(string binary)
-    {
-        long val = 0;
-
-        for (int i = binary.Length - 1, j = 0; i >= 0; i--, j++)
-        {
-            if (binary[i] == '0')
-            {
-                // Nothing to add
-            }
-            else if (binary[i] == '1')
-            {
-                checked
-                {
-                    // Don't use >> because this implicitly casts the operator to Int32.
-                    // Also this operation will never detect an overflow.
-                    val += (long)Math.Pow(2, j);
-                }
-            }
-            else
-            {
-                _diagnostics.ReportInvalidBinary(CurrentSpan, binary);
-                return 0;
-            }
-        }
-
-        return val;
-    }
-
-    private long ReadOctalValue(string octal)
-    {
-        long val = 0;
-
-        for (int i = octal.Length - 1, j = 0; i >= 0; i--, j++)
-        {
-            int c;
-
-            try
-            {
-                c = int.Parse(new string(octal[i], 1), CultureInfo.InvariantCulture);
-
-                if (c > 7)
-                {
-                    _diagnostics.ReportInvalidOctal(CurrentSpan, octal);
-                    return 0;
-                }
-            }
-            catch (FormatException)
-            {
-                _diagnostics.ReportInvalidOctal(CurrentSpan, octal);
-                return 0;
-            }
-
-            checked
-            {
-                val += (long)(c * Math.Pow(8, j));
-            }
-        }
-
-        return val;
+        // ReadNumber only routes ASCII-digit text here (char.IsAsciiDigit), so a
+        // parse failure can only mean the value doesn't fit in an Int64. Using
+        // char.IsAsciiDigit rather than char.IsDigit matters: the latter also
+        // accepts Unicode decimal digits (e.g. Arabic-Indic) that InvariantCulture
+        // parsing rejects, which would surface here as a misleading overflow.
+        _diagnostics.ReportNumberTooLarge(CurrentSpan, text);
+        return 0;
     }
 
     private void ReadIdentifierOrKeyword()
@@ -781,6 +657,8 @@ internal sealed class Lexer
                     if (_charReader.Peek() != '"')
                     {
                         _charReader.NextChar();
+                        if (sb.Length == 0)
+                            _diagnostics.ReportEmptyQuotedIdentifier(CurrentSpan);
                         goto ExitLoop;
                     }
                     sb.Append(_charReader.Current);
@@ -823,6 +701,8 @@ internal sealed class Lexer
                     if (_charReader.Peek() != ']')
                     {
                         _charReader.NextChar();
+                        if (sb.Length == 0)
+                            _diagnostics.ReportEmptyParenthesizedIdentifier(CurrentSpan);
                         goto ExitLoop;
                     }
                     sb.Append(_charReader.Current);
