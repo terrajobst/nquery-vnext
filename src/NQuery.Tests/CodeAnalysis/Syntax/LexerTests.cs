@@ -998,38 +998,20 @@ public class LexerTests
         return token.LeadingTrivia.Single();
     }
 
-    public static IEnumerable<object[]> GetPunctuationTokenKinds()
-    {
-        yield return new object[] { SyntaxKind.CommaToken };
-        yield return new object[] { SyntaxKind.AtToken };
-        yield return new object[] { SyntaxKind.DotToken };
-        yield return new object[] { SyntaxKind.LeftParenthesisToken };
-        yield return new object[] { SyntaxKind.RightParenthesisToken };
-    }
+    public static TheoryData<SyntaxKind> GetPunctuationTokenKinds() =>
+        [SyntaxKind.CommaToken, SyntaxKind.AtToken, SyntaxKind.DotToken, SyntaxKind.LeftParenthesisToken, SyntaxKind.RightParenthesisToken];
 
-    public static IEnumerable<object[]> GetUnaryOperatorTokenKinds()
-    {
-        return SyntaxFacts.GetUnaryExpressionTokenKinds()
-                          .Select(t => new object[] { t });
-    }
+    public static TheoryData<SyntaxKind> GetUnaryOperatorTokenKinds() =>
+        [.. SyntaxFacts.GetUnaryExpressionTokenKinds()];
 
-    public static IEnumerable<object[]> GetBinaryOperatorTokenKinds()
-    {
-        return SyntaxFacts.GetBinaryExpressionTokenKinds()
-                          .Select(t => new object[] { t });
-    }
+    public static TheoryData<SyntaxKind> GetBinaryOperatorTokenKinds() =>
+        [.. SyntaxFacts.GetBinaryExpressionTokenKinds()];
 
-    public static IEnumerable<object[]> GetReservedKeywordKinds()
-    {
-        return SyntaxFacts.GetReservedKeywordKinds()
-                          .Select(t => new object[] { t });
-    }
+    public static TheoryData<SyntaxKind> GetReservedKeywordKinds() =>
+        [.. SyntaxFacts.GetReservedKeywordKinds()];
 
-    public static IEnumerable<object[]> GetContextualKeywordKinds()
-    {
-        return SyntaxFacts.GetContextualKeywordKinds()
-                          .Select(t => new object[] { t });
-    }
+    public static TheoryData<SyntaxKind> GetContextualKeywordKinds() =>
+        [.. SyntaxFacts.GetContextualKeywordKinds()];
 
     // Independence of current culture
 }

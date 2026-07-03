@@ -4,10 +4,8 @@ namespace NQuery.Tests.CodeAnalysis.Syntax;
 
 partial class ParserTests
 {
-    public static IEnumerable<object[]> GetContextualKeywords()
-    {
-        return SyntaxFacts.GetContextualKeywordKinds().Select(k => new object[] { k });
-    }
+    public static TheoryData<SyntaxKind> GetContextualKeywords() =>
+        [.. SyntaxFacts.GetContextualKeywordKinds()];
 
     [Fact]
     public void Parser_Parse_Expression_ArgumentList_WithNoArguments()

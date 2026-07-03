@@ -73,20 +73,14 @@ public class FlipBinaryOperatorSidesTests : CodeRefactoringTests
         AssertDoesNotTrigger(query);
     }
 
-    public static IEnumerable<object[]> GetBinaryOperatorTokensThatCanBeSwapped(bool self)
-    {
-        return SyntaxFacts.GetBinaryExpressionTokenKinds()
-                          .Where(k => k != SyntaxKind.BarToken) // Causes issues with AnnotatedText
-                          .Where(SyntaxFacts.CanSwapBinaryExpressionTokenKind)
-                          .Where(k => self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) == k ||
-                                      !self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) != k)
-                          .Select(k => new object[] { k });
-    }
+    public static TheoryData<SyntaxKind> GetBinaryOperatorTokensThatCanBeSwapped(bool self) =>
+        [.. SyntaxFacts.GetBinaryExpressionTokenKinds()
+                       .Where(k => k != SyntaxKind.BarToken)
+                       .Where(SyntaxFacts.CanSwapBinaryExpressionTokenKind)
+                       .Where(k => self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) == k ||
+                                   !self && SyntaxFacts.SwapBinaryExpressionTokenKind(k) != k)];
 
-    public static IEnumerable<object[]> GetBinaryOperatorTokensThatCannotBeSwapped()
-    {
-        return SyntaxFacts.GetBinaryExpressionTokenKinds()
-                          .Where(k => !SyntaxFacts.CanSwapBinaryExpressionTokenKind(k))
-                          .Select(k => new object[] { k });
-    }
+    public static TheoryData<SyntaxKind> GetBinaryOperatorTokensThatCannotBeSwapped() =>
+        [.. SyntaxFacts.GetBinaryExpressionTokenKinds()
+                       .Where(k => !SyntaxFacts.CanSwapBinaryExpressionTokenKind(k))];
 }

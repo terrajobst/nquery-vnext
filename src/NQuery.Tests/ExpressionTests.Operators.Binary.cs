@@ -15,35 +15,11 @@ public partial class ExpressionTests
         return expression.Evaluate();
     }
 
-    public static IEnumerable<object[]> GetOverloadableBinaryOperators()
-    {
-        return new[]
-        {
-            new object[] {"*"},
-            ["/"],
-            ["%"],
-            ["+"],
-            ["-"],
-            ["="],
-            ["!="],
-            ["<"],
-            ["<="],
-            [">"],
-            [">="],
-            ["^"],
-            ["&"],
-            ["|"]
-        };
-    }
+    public static TheoryData<string> GetOverloadableBinaryOperators() =>
+        ["*", "/", "%", "+", "-", "=", "!=", "<", "<=", ">", ">=", "^", "&", "|"];
 
-    public static IEnumerable<object[]> GetOverloadableShiftingOperators()
-    {
-        return new[]
-        {
-            new object[] {"<<"},
-            [">>"]
-        };
-    }
+    public static TheoryData<string> GetOverloadableShiftingOperators() =>
+        ["<<", ">>"];
 
     // All overloadable operators with custom structs and classes
 

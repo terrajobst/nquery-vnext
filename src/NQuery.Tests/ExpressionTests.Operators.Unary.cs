@@ -13,16 +13,8 @@ public partial class ExpressionTests
         return expression.Evaluate();
     }
 
-    public static IEnumerable<object[]> GetOverloadableUnaryOperators()
-    {
-        return new[]
-        {
-            new object[] {"+"},
-            ["-"],
-            ["~"],
-            ["NOT"]
-        };
-    }
+    public static TheoryData<string> GetOverloadableUnaryOperators() =>
+        ["+", "-", "~", "NOT"];
 
     // All overloadable operators with custom structs and classes
 

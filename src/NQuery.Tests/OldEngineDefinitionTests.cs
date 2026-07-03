@@ -108,10 +108,12 @@ public class OldEngineDefinitionTests
         return dataSet;
     }
 
-    public static IEnumerable<object[]> TestCases()
+    public static TheoryData<string, string> TestCases()
     {
+        var testCases = new TheoryData<string, string>();
+
         if (!Directory.Exists(DefinitionsDir))
-            yield break;
+            return testCases;
 
         foreach (var file in Directory.EnumerateFiles(DefinitionsDir, "*.xml", SearchOption.AllDirectories).OrderBy(f => f))
         {
@@ -139,8 +141,10 @@ public class OldEngineDefinitionTests
             if (IntentionalEngineDifferences.ContainsKey(name))
                 continue;
 
-            yield return new object[] { name, file };
+            testCases.Add(name, file);
         }
+
+        return testCases;
     }
 
     // Old definition tests whose queries rely on behavior the refactored engine deliberately
