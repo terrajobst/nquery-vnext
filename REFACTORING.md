@@ -107,8 +107,6 @@ model / cardinality estimation" under *More features*.
 ## More test coverage
 
 * Make sure that all plans are executable
-* Add more correlation tests exploiting the new `CROSS APPLY` and `OUTER APPLY`
-  to reach more cases
 * Per pass behavioral tests
 * A small set (~a dozen) of curated snapshots for interesting queries which
   assert the full plan in approval testing style

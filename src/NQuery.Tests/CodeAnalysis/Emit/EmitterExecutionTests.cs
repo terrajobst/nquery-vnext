@@ -137,6 +137,43 @@ public class EmitterExecutionTests
     // join. The subquery is selective (only employees with a high-freight order satisfy it), so
     // both the null-padded-right and null-padded-left sides are exercised with the correlation.
     [InlineData("SELECT e.EmployeeID, o.OrderID FROM Employees e FULL JOIN Orders o ON e.EmployeeID = o.EmployeeID AND EXISTS (SELECT * FROM Orders o2 WHERE o2.EmployeeID = e.EmployeeID AND o2.Freight > 500) ORDER BY e.EmployeeID, o.OrderID")]
+    // --- CROSS APPLY / OUTER APPLY surface syntax. The explicit apply becomes a LogicalApply that
+    // the optimized pipeline hands to ApplyPushdown, while the unoptimized pipeline runs the very
+    // same apply as nested loops -- so these exercise the decorrelation rules against their own
+    // dependent-join reference. Northwind OrderIDs are globally unique, so the ORDER BYs are total.
+    //
+    // Correlated CROSS APPLY -> the correlated filter becomes an INNER join condition.
+    [InlineData("SELECT e.EmployeeID, oa.OrderID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID) oa WHERE oa.OrderID < 10260 ORDER BY e.EmployeeID, oa.OrderID")]
+    // Correlated OUTER APPLY -> a LEFT OUTER join. Customers with no order < 10260 survive
+    // null-padded (oa.OrderID NULL), so the preserved rows must match too.
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c OUTER APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID AND o.OrderID < 10260) oa ORDER BY c.CustomerID, oa.OrderID")]
+    // CROSS APPLY on a non-equi correlation -> the predicate can't be a hash key, so it stays a
+    // nested-loops join condition rather than a hash match.
+    [InlineData("SELECT e.EmployeeID, x.OrderID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID < e.EmployeeID AND o.OrderID < 10250) x ORDER BY e.EmployeeID, x.OrderID")]
+    // CROSS APPLY whose body computes over BOTH inputs -> the compute must lift above the (now
+    // uncorrelated) inner join unchanged (Apply(L, X(R)) == X(Apply(L, R)) for an inner apply).
+    [InlineData("SELECT e.EmployeeID, x.Combined FROM Employees e CROSS APPLY (SELECT o.OrderID + e.EmployeeID AS Combined FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) x ORDER BY e.EmployeeID, x.Combined")]
+    // OUTER APPLY over a correlated scalar aggregate -> DecorrelateAggregate, the count-bug path:
+    // an employee with no order < 10260 must come out COUNT 0, not NULL and not 1.
+    [InlineData("SELECT e.EmployeeID, s.Cnt FROM Employees e OUTER APPLY (SELECT COUNT(*) AS Cnt FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) s ORDER BY e.EmployeeID")]
+    // OUTER APPLY over a correlated aggregate with mixed empty-group values -> the restore applies
+    // 0 to COUNT and NULL to MAX for the same empty group.
+    [InlineData("SELECT e.EmployeeID, s.Cnt, s.MaxOrder FROM Employees e OUTER APPLY (SELECT COUNT(*) AS Cnt, MAX(o.OrderID) AS MaxOrder FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) s ORDER BY e.EmployeeID")]
+    // OUTER APPLY over a correlated scalar aggregate on a NULL-bearing correlation key (e.ReportsTo):
+    // the boss's NULL key must group with the NULL domain key (null-safe join-back), not vanish.
+    [InlineData("SELECT e.EmployeeID, s.Cnt FROM Employees e OUTER APPLY (SELECT COUNT(*) AS Cnt FROM Orders o WHERE o.EmployeeID = e.ReportsTo) s ORDER BY e.EmployeeID")]
+    // CROSS APPLY whose body has its own GROUP BY -> no pattern ApplyPushdown decorrelates, so it
+    // stays a dependent join (nested loops) in both pipelines; the grouped rows must still agree.
+    [InlineData("SELECT e.EmployeeID, x.ShipCity, x.Cnt FROM Employees e CROSS APPLY (SELECT o.ShipCity, COUNT(*) AS Cnt FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10300 GROUP BY o.ShipCity) x ORDER BY e.EmployeeID, x.ShipCity, x.Cnt")]
+    // CROSS APPLY with TOP inside the body -> the canonical top-N-per-group; TOP blocks
+    // decorrelation, so it runs as nested loops.
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c CROSS APPLY (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID ORDER BY o.OrderID) oa ORDER BY c.CustomerID, oa.OrderID")]
+    // Nested APPLY: the second apply correlates to the first apply's output, so decorrelation must
+    // run bottom-up (RewriteApply rewrites children first).
+    [InlineData("SELECT e.EmployeeID, oa.OrderID, od.ProductID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10250) oa CROSS APPLY (SELECT d.ProductID FROM [Order Details] d WHERE d.OrderID = oa.OrderID) od ORDER BY e.EmployeeID, oa.OrderID, od.ProductID")]
+    // OUTER APPLY used as an anti-join: keep only the left rows whose correlated body is empty (the
+    // WHERE keeps the null-padded rows, so the outer join is not tightened to an inner one).
+    [InlineData("SELECT c.CustomerID FROM Customers c OUTER APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID) oa WHERE oa.OrderID IS NULL ORDER BY c.CustomerID")]
     public void NewPipeline_ProducesSameRows_AsUnoptimized(string text)
     {
         var expected = RunUnoptimized(text);

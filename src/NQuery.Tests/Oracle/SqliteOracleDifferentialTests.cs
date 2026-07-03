@@ -82,6 +82,38 @@ public class SqliteOracleDifferentialTests
     // and here indistinguishable from the CROSS APPLY equivalent.
     [InlineData("SELECT e.EmployeeID, s.OrderCount FROM Employees e OUTER APPLY (SELECT COUNT(*) AS OrderCount FROM Orders o WHERE o.EmployeeID = e.EmployeeID) s",
                 "SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID) AS OrderCount FROM Employees e")]
+    // CROSS APPLY on a non-equi correlation: no equi key, so it is an INNER JOIN on the same
+    // non-equi predicate rather than a hash match.
+    [InlineData("SELECT e.EmployeeID, x.OrderID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID < e.EmployeeID AND o.OrderID < 10250) x",
+                "SELECT e.EmployeeID, o.OrderID FROM Employees e INNER JOIN Orders o ON o.EmployeeID < e.EmployeeID WHERE o.OrderID < 10250")]
+    // OUTER APPLY over a correlated scalar aggregate whose empty-group value is NULL, not 0 (MAX,
+    // not COUNT): an employee with no order < 10260 yields NULL. Same as the scalar subquery form.
+    [InlineData("SELECT e.EmployeeID, s.MaxOrder FROM Employees e OUTER APPLY (SELECT MAX(o.OrderID) AS MaxOrder FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) s",
+                "SELECT e.EmployeeID, (SELECT MAX(o.OrderID) FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) AS MaxOrder FROM Employees e")]
+    // OUTER APPLY over a correlated aggregate with mixed empty-group values: for an empty group
+    // COUNT restores to 0 while MAX restores to NULL. Same as the two scalar subqueries.
+    [InlineData("SELECT e.EmployeeID, s.Cnt, s.MaxOrder FROM Employees e OUTER APPLY (SELECT COUNT(*) AS Cnt, MAX(o.OrderID) AS MaxOrder FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) s",
+                "SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) AS Cnt, (SELECT MAX(o.OrderID) FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10260) AS MaxOrder FROM Employees e")]
+    // OUTER APPLY over a correlated scalar aggregate on a NULL-bearing correlation key (e.ReportsTo):
+    // the boss's NULL key counts no orders (0) and must not drop out. Same as the scalar form.
+    [InlineData("SELECT e.EmployeeID, s.Cnt FROM Employees e OUTER APPLY (SELECT COUNT(*) AS Cnt FROM Orders o WHERE o.EmployeeID = e.ReportsTo) s",
+                "SELECT e.EmployeeID, (SELECT COUNT(*) FROM Orders o WHERE o.EmployeeID = e.ReportsTo) AS Cnt FROM Employees e")]
+    // OUTER APPLY as an anti-join: keep the left rows whose correlated body is empty -- the
+    // customers with no orders. Equivalent to a LEFT JOIN filtered to the null-padded rows.
+    [InlineData("SELECT c.CustomerID FROM Customers c OUTER APPLY (SELECT o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID) oa WHERE oa.OrderID IS NULL",
+                "SELECT c.CustomerID FROM Customers c LEFT JOIN Orders o ON o.CustomerID = c.CustomerID WHERE o.OrderID IS NULL")]
+    // Nested APPLY: the second apply correlates to the first apply's output. A chain of correlated
+    // applies flattens to a chain of INNER JOINs.
+    [InlineData("SELECT e.EmployeeID, oa.OrderID, od.ProductID FROM Employees e CROSS APPLY (SELECT o.OrderID FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10250) oa CROSS APPLY (SELECT d.ProductID FROM [Order Details] d WHERE d.OrderID = oa.OrderID) od",
+                "SELECT e.EmployeeID, o.OrderID, d.ProductID FROM Employees e INNER JOIN Orders o ON o.EmployeeID = e.EmployeeID INNER JOIN [Order Details] d ON d.OrderID = o.OrderID WHERE o.OrderID < 10250")]
+    // CROSS APPLY with TOP inside the body -- top-1-per-group, the canonical APPLY-only shape.
+    // SQLite has no APPLY, so the oracle picks each customer's minimum OrderID via a correlated MIN.
+    [InlineData("SELECT c.CustomerID, oa.OrderID FROM Customers c CROSS APPLY (SELECT TOP 1 o.OrderID FROM Orders o WHERE o.CustomerID = c.CustomerID ORDER BY o.OrderID) oa",
+                "SELECT c.CustomerID, o.OrderID FROM Customers c INNER JOIN Orders o ON o.CustomerID = c.CustomerID WHERE o.OrderID = (SELECT MIN(o2.OrderID) FROM Orders o2 WHERE o2.CustomerID = c.CustomerID)")]
+    // CROSS APPLY whose body has its own GROUP BY: per-employee ship-city counts. The join oracle
+    // groups by the outer key plus the inner grouping column.
+    [InlineData("SELECT e.EmployeeID, x.ShipCity, x.Cnt FROM Employees e CROSS APPLY (SELECT o.ShipCity, COUNT(*) AS Cnt FROM Orders o WHERE o.EmployeeID = e.EmployeeID AND o.OrderID < 10300 GROUP BY o.ShipCity) x",
+                "SELECT e.EmployeeID, o.ShipCity, COUNT(*) AS Cnt FROM Employees e INNER JOIN Orders o ON o.EmployeeID = e.EmployeeID AND o.OrderID < 10300 GROUP BY e.EmployeeID, o.ShipCity")]
     // Set operators.
     [InlineData("SELECT e.City FROM Employees e UNION ALL SELECT c.City FROM Customers c")]
     [InlineData("SELECT e.City FROM Employees e UNION SELECT c.City FROM Customers c")]
