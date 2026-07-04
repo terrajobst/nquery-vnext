@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class PropertyAccessExpressionSyntax : ExpressionSyntax
 {
-    internal PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name)
+    internal PropertyAccessExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dotToken, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
         Target = target;
-        Dot = dot;
-        Name = name;
+        DotToken = dotToken;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -18,13 +18,13 @@ public sealed class PropertyAccessExpressionSyntax : ExpressionSyntax
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return Target;
-        yield return Dot;
-        yield return Name;
+        yield return DotToken;
+        yield return IdentifierToken;
     }
 
     public ExpressionSyntax Target { get; }
 
-    public SyntaxToken Dot { get; }
+    public SyntaxToken DotToken { get; }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

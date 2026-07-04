@@ -17,7 +17,7 @@ The **CharReader** (`NQuery.Syntax.CharReader`) is a character-by-character read
 
 ## Parser
 
-The **Parser** (`NQuery.Syntax.Parser`) is a hand-written recursive-descent parser that consumes tokens from the `Lexer` and produces a `SyntaxTree`. The full grammar it accepts is documented in [Grammar](../grammar.md). It parses the following grammar structure:
+The **Parser** (`NQuery.Syntax.Parser`) is a hand-written recursive-descent parser that consumes tokens from the `Lexer` and produces a `SyntaxTree`. The full grammar it accepts is documented in [Grammar](../grammar.ebnf). It parses the following grammar structure:
 
 - **Query**: `SELECT` (optional `DISTINCT`/`TOP`) select-list `FROM` table-sources `WHERE` condition `GROUP BY` columns `HAVING` condition `ORDER BY` columns
 - **Set operations**: `UNION`, `INTERSECT`, `EXCEPT` (with `ALL` variant)

@@ -10,6 +10,12 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
+    <Compile Remove="CodeAnalysis\Syntax\Grammar.cs" />
+    <Compile Remove="CodeAnalysis\Syntax\GrammarEbnfWriter.cs" />
+    <Compile Remove="CodeAnalysis\Syntax\GrammarTests.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
     <Compile Remove="OldEngine.cs" />
     <Compile Remove="OldEngineDifferentialTests.cs" />
     <!-- Reuses RowSet (under Oracle\, removed below), so it is net8.0-only like the rest of the

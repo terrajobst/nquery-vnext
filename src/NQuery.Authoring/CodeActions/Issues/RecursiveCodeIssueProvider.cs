@@ -13,7 +13,7 @@ internal sealed class RecursiveCodeIssueProvider : CodeIssueProvider<CommonTable
         {
             return new[]
             {
-                new CodeIssue(CodeIssueKind.Warning, node.Name.Span, Resources.CodeIssueShouldSpecifyRecursive, new[]
+                new CodeIssue(CodeIssueKind.Warning, node.IdentifierToken.Span, Resources.CodeIssueShouldSpecifyRecursive, new[]
                 {
                     new InsertMissingRecursiveKeywordCodeAction(node)
                 })
@@ -86,7 +86,7 @@ internal sealed class RecursiveCodeIssueProvider : CodeIssueProvider<CommonTable
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            changeSet.InsertText(_node.Name.Span.Start, @"RECURSIVE ");
+            changeSet.InsertText(_node.IdentifierToken.Span.Start, @"RECURSIVE ");
         }
     }
 }

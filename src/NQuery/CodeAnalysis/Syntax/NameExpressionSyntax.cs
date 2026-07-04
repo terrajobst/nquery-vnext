@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class NameExpressionSyntax : ExpressionSyntax
 {
-    internal NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name)
+    internal NameExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
-        Name = name;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -15,8 +15,8 @@ public sealed class NameExpressionSyntax : ExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return Name;
+        yield return IdentifierToken;
     }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

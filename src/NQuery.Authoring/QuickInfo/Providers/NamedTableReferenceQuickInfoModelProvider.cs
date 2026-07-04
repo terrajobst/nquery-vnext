@@ -11,15 +11,15 @@ internal sealed class NamedTableReferenceQuickInfoModelProvider : QuickInfoModel
         if (symbol is null)
             return null;
 
-        if (node.TableName.Span.ContainsOrTouches(position))
+        if (node.IdentifierToken.Span.ContainsOrTouches(position))
         {
-            var span = node.TableName.Span;
+            var span = node.IdentifierToken.Span;
             return QuickInfoModel.ForSymbol(semanticModel, span, symbol.Table);
         }
 
-        if (node.Alias is not null && node.Alias.Identifier.Span.ContainsOrTouches(position))
+        if (node.Alias is not null && node.Alias.IdentifierToken.Span.ContainsOrTouches(position))
         {
-            var span = node.Alias.Identifier.Span;
+            var span = node.Alias.IdentifierToken.Span;
             return QuickInfoModel.ForSymbol(semanticModel, span, symbol);
         }
 

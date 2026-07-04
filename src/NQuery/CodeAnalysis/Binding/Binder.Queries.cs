@@ -44,7 +44,7 @@ partial class Binder
         // to the CTE symbol -- matching post-binding resolution. (Resolving the name to a base
         // table instead would require ANSI/PostgreSQL RECURSIVE-gated visibility, a different
         // dialect.)
-        return query.DescendantNodes().OfType<NamedTableReferenceSyntax>().Any(n => n.TableName.Matches(commonTableExpression.Name.ValueText));
+        return query.DescendantNodes().OfType<NamedTableReferenceSyntax>().Any(n => n.IdentifierToken.Matches(commonTableExpression.IdentifierToken.ValueText));
     }
 
     private string InferColumnName(ExpressionSyntax expressionSyntax)
@@ -647,7 +647,7 @@ partial class Binder
             var tableSymbol = boundCommonTableExpression.TableSymbol;
 
             if (!uniqueTableNames.Add(tableSymbol.Name))
-                Diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.Name);
+                Diagnostics.ReportCteHasDuplicateTableName(commonTableExpression.IdentifierToken);
 
             currentBinder = currentBinder.CreateLocalBinder(tableSymbol);
         }
@@ -670,7 +670,7 @@ partial class Binder
 
     private BoundCommonTableExpression BindCommonTableExpressionNonRecursive(CommonTableExpressionSyntax commonTableExpression)
     {
-        var name = commonTableExpression.Name.ValueText;
+        var name = commonTableExpression.IdentifierToken.ValueText;
         var symbol = new CommonTableExpressionSymbol(name);
 
         var binder = CreateLocalBinder(symbol);
@@ -692,7 +692,7 @@ partial class Binder
         var rootQuery = commonTableExpression.Query as UnionQuerySyntax;
         if (rootQuery?.AllKeyword is null)
         {
-            Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.Name);
+            Diagnostics.ReportCteDoesNotHaveUnionAll(commonTableExpression.IdentifierToken);
 
             if (rootQuery is null)
                 return BindErrorCommonTableExpression(commonTableExpression);
@@ -713,7 +713,7 @@ partial class Binder
             else
             {
                 if (recursiveMembers.Any())
-                    Diagnostics.ReportCteContainsUnexpectedAnchorMember(commonTableExpression.Name);
+                    Diagnostics.ReportCteContainsUnexpectedAnchorMember(commonTableExpression.IdentifierToken);
                 anchorMembers.Add(member);
             }
         }
@@ -722,11 +722,11 @@ partial class Binder
 
         if (anchorMembers.Count == 0)
         {
-            Diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.Name);
+            Diagnostics.ReportCteDoesNotHaveAnchorMember(commonTableExpression.IdentifierToken);
             return BindErrorCommonTableExpression(commonTableExpression);
         }
 
-        var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText);
+        var symbol = new CommonTableExpressionSymbol(commonTableExpression.IdentifierToken.ValueText);
 
         var binder = CreateLocalBinder(symbol);
         var boundAnchor = binder.BindCommonTableExpressionAnchorMember(commonTableExpression, anchorMembers);
@@ -741,7 +741,7 @@ partial class Binder
 
     private BoundQuery BindCommonTableExpressionAnchorMember(CommonTableExpressionSyntax commonTableExpression, IEnumerable<QuerySyntax> anchorMembers)
     {
-        var diagnosticSpan = commonTableExpression.Name.Span;
+        var diagnosticSpan = commonTableExpression.IdentifierToken.Span;
         var boundAnchorMembers = anchorMembers.Select(BindQuery).ToImmutableArray();
         return BindUnionOrUnionAllQuery(diagnosticSpan, true, boundAnchorMembers);
     }
@@ -754,7 +754,7 @@ partial class Binder
     private BoundQuery BindCommonTableExpressionRecursiveMember(CommonTableExpressionSyntax commonTableExpression, CommonTableExpressionSymbol symbol, QuerySyntax recursiveMember)
     {
         var boundAnchorQuery = symbol.Anchor;
-        var name = commonTableExpression.Name;
+        var name = commonTableExpression.IdentifierToken;
         var diagnosticSpan = name.Span;
         var boundRecursiveMember = BindQuery(recursiveMember);
 
@@ -778,7 +778,7 @@ partial class Binder
 
     private static BoundCommonTableExpression BindErrorCommonTableExpression(CommonTableExpressionSyntax commonTableExpression)
     {
-        var symbol = new CommonTableExpressionSymbol(commonTableExpression.Name.ValueText);
+        var symbol = new CommonTableExpressionSymbol(commonTableExpression.IdentifierToken.ValueText);
         return new BoundCommonTableExpression(symbol);
     }
 
@@ -796,7 +796,7 @@ partial class Binder
             for (var i = 0; i < queryColumns.Length; i++)
             {
                 if (string.IsNullOrEmpty(queryColumns[i].Name))
-                    Diagnostics.ReportNoColumnAliasSpecified(commonTableExpression.Name, i);
+                    Diagnostics.ReportNoColumnAliasSpecified(commonTableExpression.IdentifierToken, i);
             }
         }
         else
@@ -809,11 +809,11 @@ partial class Binder
 
             if (actualCount > specifiedCount)
             {
-                Diagnostics.ReportCteHasMoreColumnsThanSpecified(commonTableExpression.Name);
+                Diagnostics.ReportCteHasMoreColumnsThanSpecified(commonTableExpression.IdentifierToken);
             }
             else if (actualCount < specifiedCount)
             {
-                Diagnostics.ReportCteHasFewerColumnsThanSpecified(commonTableExpression.Name);
+                Diagnostics.ReportCteHasFewerColumnsThanSpecified(commonTableExpression.IdentifierToken);
             }
         }
 
@@ -835,7 +835,7 @@ partial class Binder
 
         var columnNames = specifiedColumnNames is null
             ? queryColumns.Select(c => c.Name)
-            : specifiedColumnNames.Select(t => t.Identifier.ValueText);
+            : specifiedColumnNames.Select(t => t.IdentifierToken.ValueText);
 
         var columns = queryColumns.Take(columnCount)
                                   .Zip(columnNames, (c, n) => new ColumnSymbol(n, c.Type))
@@ -844,7 +844,7 @@ partial class Binder
 
         var uniqueColumnNames = new HashSet<string>();
         foreach (var column in columns.Where(c => !uniqueColumnNames.Add(c.Name)))
-            Diagnostics.ReportCteHasDuplicateColumnName(commonTableExpression.Name, column.Name);
+            Diagnostics.ReportCteHasDuplicateColumnName(commonTableExpression.IdentifierToken, column.Name);
 
         return columns;
     }
@@ -925,7 +925,7 @@ partial class Binder
         //       cast because we also bind input the parser reported errors for.
 
         var topClause = node.SelectClause.TopClause;
-        var top = topClause?.Value.Value as int?;
+        var top = topClause?.NumericLiteralToken.Value as int?;
         var withTies = topClause?.WithKeyword is not null;
 
         if (withTies && orderedQueryNode is null)
@@ -999,7 +999,7 @@ partial class Binder
         var expression = node.Expression;
         var boundExpression = BindExpression(expression);
         var name = node.Alias is not null
-                       ? node.Alias.Identifier.ValueText
+                       ? node.Alias.IdentifierToken.ValueText
                        : InferColumnName(expression);
 
         if (!TryGetExistingValue(boundExpression, out var value))
@@ -1020,8 +1020,8 @@ partial class Binder
 
     private BoundWildcardSelectColumn BindWildcardSelectColumnInternal(WildcardSelectColumnSyntax node)
     {
-        return node.TableName is not null
-                   ? BindWildcardSelectColumnForTable(node.TableName)
+        return node.IdentifierToken is not null
+                   ? BindWildcardSelectColumnForTable(node.IdentifierToken)
                    : BindWildcardSelectColumnForAllTables(node.AsteriskToken);
     }
 
@@ -1239,8 +1239,8 @@ partial class Binder
         foreach (var column in node.Columns)
         {
             var selector = column.ColumnSelector;
-            var isAscending = column.Modifier is null ||
-                              column.Modifier.Kind == SyntaxKind.AscKeyword;
+            var isAscending = column.SortDirectionKeyword is null ||
+                              column.SortDirectionKeyword.Kind == SyntaxKind.AscKeyword;
 
             // Let's bind the selector against the query columns of the first SELECT query
             // we are applied to.
@@ -1336,11 +1336,11 @@ partial class Binder
 
         if (selector is NameExpressionSyntax selectorAsName)
         {
-            var columnSymbols = LookupQueryColumn(selectorAsName.Name).ToImmutableArray();
+            var columnSymbols = LookupQueryColumn(selectorAsName.IdentifierToken).ToImmutableArray();
             if (columnSymbols.Length > 0)
             {
                 if (columnSymbols.Length > 1)
-                    Diagnostics.ReportAmbiguousColumnInstance(selectorAsName.Name, columnSymbols);
+                    Diagnostics.ReportAmbiguousColumnInstance(selectorAsName.IdentifierToken, columnSymbols);
 
                 var queryColumn = columnSymbols[0];
 

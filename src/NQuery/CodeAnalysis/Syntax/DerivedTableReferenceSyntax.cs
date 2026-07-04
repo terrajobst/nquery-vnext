@@ -2,14 +2,14 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class DerivedTableReferenceSyntax : TableReferenceSyntax
 {
-    internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis, SyntaxToken? asKeyword, SyntaxToken name)
+    internal DerivedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken, SyntaxToken? asKeyword, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
         AsKeyword = asKeyword;
-        Name = name;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -19,21 +19,21 @@ public sealed class DerivedTableReferenceSyntax : TableReferenceSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
         if (AsKeyword is not null)
             yield return AsKeyword;
-        yield return Name;
+        yield return IdentifierToken;
     }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 
     public SyntaxToken? AsKeyword { get; }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

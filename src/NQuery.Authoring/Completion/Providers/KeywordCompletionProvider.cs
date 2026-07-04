@@ -319,7 +319,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
 
         var propertyAccess = token.Parent!.AncestorsAndSelf().OfType<PropertyAccessExpressionSyntax>().FirstOrDefault();
         return propertyAccess is not null &&
-               (propertyAccess.Dot == token || propertyAccess.Name == token);
+               (propertyAccess.DotToken == token || propertyAccess.IdentifierToken == token);
     }
 
     private static bool IsAfterNode<T>(SyntaxTree syntaxTree, int position)
@@ -381,8 +381,8 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var parenthesizedExpression = token.Parent!.AncestorsAndSelf().OfType<ParenthesizedExpressionSyntax>().FirstOrDefault();
         if (parenthesizedExpression is not null)
         {
-            if (token == parenthesizedExpression.LeftParenthesis ||
-                token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == parenthesizedExpression.LeftParenthesis)
+            if (token == parenthesizedExpression.LeftParenthesisToken ||
+                token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == parenthesizedExpression.LeftParenthesisToken)
                 return true;
         }
 
@@ -392,8 +392,8 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         var inExpression = token.Parent!.AncestorsAndSelf().OfType<InExpressionSyntax>().FirstOrDefault();
         if (inExpression is not null)
         {
-            if (token == inExpression.ArgumentList.LeftParenthesis ||
-                token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == inExpression.ArgumentList.LeftParenthesis)
+            if (token == inExpression.ArgumentList.LeftParenthesisToken ||
+                token.Kind.IsIdentifierOrKeyword() && token.GetPreviousToken() == inExpression.ArgumentList.LeftParenthesisToken)
                 return true;
         }
 
@@ -487,7 +487,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
             return false;
 
         return token.Parent is TopClauseSyntax topClause &&
-               topClause.Value == token;
+               topClause.NumericLiteralToken == token;
     }
 
     private static bool IsBeforeQuery(SyntaxTree syntaxTree, int position)
@@ -577,7 +577,7 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
         if (expression is null)
             return false;
 
-        return expression.ColumnNameList is null && expression.Name.Span.End <= position ||
+        return expression.ColumnNameList is null && expression.IdentifierToken.Span.End <= position ||
                expression.ColumnNameList is not null && expression.ColumnNameList.Span.End <= position;
     }
 
@@ -589,13 +589,13 @@ internal sealed class KeywordCompletionProvider : ICompletionProvider
             return false;
 
         var allAny = token.Parent!.AncestorsAndSelf().OfType<AllAnySubselectSyntax>().FirstOrDefault();
-        if (allAny is not null && allAny.Keyword == tokenAtCaret)
+        if (allAny is not null && allAny.QuantifierKeyword == tokenAtCaret)
             return true;
 
         var binaryExpression = token.Parent!.AncestorsAndSelf().OfType<BinaryExpressionSyntax>().FirstOrDefault();
         return binaryExpression is not null &&
                binaryExpression.Kind.IsValidAllAnyOperator() &&
-               token == binaryExpression.OperatorToken;
+               token == binaryExpression.BinaryOperatorToken;
     }
 
     private static bool IsAfterTableReference(SyntaxTree syntaxTree, int position)

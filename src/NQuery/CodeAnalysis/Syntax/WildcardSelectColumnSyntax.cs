@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class WildcardSelectColumnSyntax : SelectColumnSyntax
 {
-    internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? tableName, SyntaxToken? dotToken, SyntaxToken asteriskToken)
+    internal WildcardSelectColumnSyntax(SyntaxTree syntaxTree, SyntaxToken? identifierToken, SyntaxToken? dotToken, SyntaxToken asteriskToken)
         : base(syntaxTree)
     {
-        TableName = tableName;
+        IdentifierToken = identifierToken;
         DotToken = dotToken;
         AsteriskToken = asteriskToken;
     }
@@ -17,14 +17,14 @@ public sealed class WildcardSelectColumnSyntax : SelectColumnSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        if (TableName is not null)
-            yield return TableName;
+        if (IdentifierToken is not null)
+            yield return IdentifierToken;
         if (DotToken is not null)
             yield return DotToken;
         yield return AsteriskToken;
     }
 
-    public SyntaxToken? TableName { get; }
+    public SyntaxToken? IdentifierToken { get; }
 
     public SyntaxToken? DotToken { get; }
 

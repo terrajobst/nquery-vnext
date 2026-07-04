@@ -2,15 +2,15 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class InQueryExpressionSyntax : ExpressionSyntax
 {
-    internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal InQueryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax expression, SyntaxToken? notKeyword, SyntaxToken inKeyword, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
         Expression = expression;
         NotKeyword = notKeyword;
         InKeyword = inKeyword;
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -24,9 +24,9 @@ public sealed class InQueryExpressionSyntax : ExpressionSyntax
         if (NotKeyword is not null)
             yield return NotKeyword;
         yield return InKeyword;
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
     public ExpressionSyntax Expression { get; }
@@ -35,9 +35,9 @@ public sealed class InQueryExpressionSyntax : ExpressionSyntax
 
     public SyntaxToken InKeyword { get; }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

@@ -8,7 +8,7 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
 {
     protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, OrderByColumnSyntax node)
     {
-        if (node.Modifier is null)
+        if (node.SortDirectionKeyword is null)
             yield return new ToExplicitSortOrderCodeAction(node);
         else
             yield return new ToImplicitSortOrderCodeAction(node);
@@ -58,7 +58,7 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var span = TextSpan.FromBounds(_node.ColumnSelector.Span.End, _node.Modifier!.Span.End);
+            var span = TextSpan.FromBounds(_node.ColumnSelector.Span.End, _node.SortDirectionKeyword!.Span.End);
             changeSet.DeleteText(span);
         }
     }
@@ -79,7 +79,7 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
         {
             get
             {
-                return _node.Modifier is null || _node.Modifier.Kind == SyntaxKind.AscKeyword
+                return _node.SortDirectionKeyword is null || _node.SortDirectionKeyword.Kind == SyntaxKind.AscKeyword
                             ? Resources.CodeActionToDescending
                             : Resources.CodeActionToAscending;
             }
@@ -87,7 +87,7 @@ internal sealed class SortOrderCodeRefactoringProvider : CodeRefactoringProvider
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var modifier = _node.Modifier;
+            var modifier = _node.SortDirectionKeyword;
 
             if (modifier is null)
             {

@@ -15,7 +15,7 @@ internal sealed class MethodSignatureHelpModelProvider : SignatureHelpModelProvi
         if (targetType is null)
             return null;
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var signatures = semanticModel.LookupMethods(targetType)
                                       .Where(m => name.Matches(m.Name))
                                       .OrderBy(f => f.Parameters.Length)

@@ -32,7 +32,7 @@ internal sealed class AddAsDerivedTableCodeRefactoringProvider : CodeRefactoring
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            changeSet.InsertText(_node.Name.Span.Start, @"AS ");
+            changeSet.InsertText(_node.IdentifierToken.Span.Start, @"AS ");
         }
     }
 }

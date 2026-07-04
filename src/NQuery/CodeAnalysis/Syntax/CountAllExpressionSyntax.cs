@@ -2,13 +2,13 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class CountAllExpressionSyntax : ExpressionSyntax
 {
-    internal CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifier, SyntaxToken leftParenthesis, SyntaxToken asteriskToken, SyntaxToken rightParenthesis)
+    internal CountAllExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, SyntaxToken leftParenthesisToken, SyntaxToken asteriskToken, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
-        Name = identifier;
-        LeftParenthesis = leftParenthesis;
+        IdentifierToken = identifierToken;
+        LeftParenthesisToken = leftParenthesisToken;
         AsteriskToken = asteriskToken;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -18,17 +18,17 @@ public sealed class CountAllExpressionSyntax : ExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return Name;
-        yield return LeftParenthesis;
+        yield return IdentifierToken;
+        yield return LeftParenthesisToken;
         yield return AsteriskToken;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public SyntaxToken AsteriskToken { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

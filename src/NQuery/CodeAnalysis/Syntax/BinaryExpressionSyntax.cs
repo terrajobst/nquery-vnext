@@ -2,29 +2,29 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class BinaryExpressionSyntax : ExpressionSyntax
 {
-    internal BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
+    internal BinaryExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken binaryOperatorToken, ExpressionSyntax right)
         : base(syntaxTree)
     {
         Left = left;
-        OperatorToken = operatorToken;
+        BinaryOperatorToken = binaryOperatorToken;
         Right = right;
     }
 
     public override SyntaxKind Kind
     {
-        get { return SyntaxFacts.GetBinaryOperatorExpression(OperatorToken.Kind); }
+        get { return SyntaxFacts.GetBinaryOperatorExpression(BinaryOperatorToken.Kind); }
     }
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return Left;
-        yield return OperatorToken;
+        yield return BinaryOperatorToken;
         yield return Right;
     }
 
     public ExpressionSyntax Left { get; }
 
-    public SyntaxToken OperatorToken { get; }
+    public SyntaxToken BinaryOperatorToken { get; }
 
     public ExpressionSyntax Right { get; }
 }

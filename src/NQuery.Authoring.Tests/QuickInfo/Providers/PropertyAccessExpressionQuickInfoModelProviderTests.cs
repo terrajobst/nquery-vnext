@@ -17,7 +17,7 @@ public class PropertyAccessExpressionQuickInfoModelProviderTests : QuickInfoMode
     {
         var syntaxTree = semanticModel.SyntaxTree;
         var syntax = syntaxTree.Root.DescendantNodes().OfType<PropertyAccessExpressionSyntax>().Single();
-        var span = syntax.Name.Span;
+        var span = syntax.IdentifierToken.Span;
         var symbol = semanticModel.GetSymbol(syntax);
         var markup = SymbolMarkup.ForSymbol(symbol!);
         return new QuickInfoModel(semanticModel, span, Glyph.Property, markup);

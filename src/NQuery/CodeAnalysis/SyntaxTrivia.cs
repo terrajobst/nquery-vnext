@@ -35,7 +35,13 @@ public sealed class SyntaxTrivia
     {
         ThrowIfNull(writer);
 
-        writer.Write(Text);
+        // Structured trivia (skipped tokens from error recovery) carries its text
+        // in the child tokens, not in Text (which is empty). Descend into the
+        // structure so WriteTo/ToString faithfully reproduces the original source.
+        if (Structure is not null)
+            Structure.WriteTo(writer);
+        else
+            writer.Write(Text);
     }
 
     public override string ToString()

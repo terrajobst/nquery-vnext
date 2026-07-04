@@ -2,11 +2,11 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class TopClauseSyntax : SyntaxNode
 {
-    internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken value, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
+    internal TopClauseSyntax(SyntaxTree syntaxTree, SyntaxToken topKeyword, SyntaxToken numericLiteralToken, SyntaxToken? withKeyword, SyntaxToken? tiesKeyword)
         : base(syntaxTree)
     {
         TopKeyword = topKeyword;
-        Value = value;
+        NumericLiteralToken = numericLiteralToken;
         WithKeyword = withKeyword;
         TiesKeyword = tiesKeyword;
     }
@@ -19,7 +19,7 @@ public sealed class TopClauseSyntax : SyntaxNode
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return TopKeyword;
-        yield return Value;
+        yield return NumericLiteralToken;
         if (WithKeyword is not null)
             yield return WithKeyword;
         if (TiesKeyword is not null)
@@ -28,7 +28,7 @@ public sealed class TopClauseSyntax : SyntaxNode
 
     public SyntaxToken TopKeyword { get; }
 
-    public SyntaxToken Value { get; }
+    public SyntaxToken NumericLiteralToken { get; }
 
     public SyntaxToken? WithKeyword { get; }
 

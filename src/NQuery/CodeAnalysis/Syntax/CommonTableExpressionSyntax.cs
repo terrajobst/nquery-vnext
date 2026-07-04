@@ -2,16 +2,16 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class CommonTableExpressionSyntax : SyntaxNode
 {
-    internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken? recursiveKeyword, SyntaxToken name, CommonTableExpressionColumnNameListSyntax? columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal CommonTableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken? recursiveKeyword, SyntaxToken identifierToken, CommonTableExpressionColumnNameListSyntax? columnNameList, SyntaxToken asKeyword, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
         RecursiveKeyword = recursiveKeyword;
-        Name = name;
+        IdentifierToken = identifierToken;
         ColumnNameList = columnNameList;
         AsKeyword = asKeyword;
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -23,26 +23,26 @@ public sealed class CommonTableExpressionSyntax : SyntaxNode
     {
         if (RecursiveKeyword is not null)
             yield return RecursiveKeyword;
-        yield return Name;
+        yield return IdentifierToken;
         if (ColumnNameList is not null)
             yield return ColumnNameList;
         yield return AsKeyword;
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
     public SyntaxToken? RecursiveKeyword { get; }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public CommonTableExpressionColumnNameListSyntax? ColumnNameList { get; }
 
     public SyntaxToken AsKeyword { get; }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

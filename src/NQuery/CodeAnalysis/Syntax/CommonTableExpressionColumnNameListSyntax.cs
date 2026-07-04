@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class CommonTableExpressionColumnNameListSyntax : SyntaxNode
 {
-    internal CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesis)
+    internal CommonTableExpressionColumnNameListSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesisToken, SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> columnNames, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         ColumnNames = columnNames;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -17,15 +17,15 @@ public sealed class CommonTableExpressionColumnNameListSyntax : SyntaxNode
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         foreach (var nodeOrToken in ColumnNames.GetWithSeparators())
             yield return nodeOrToken;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public SeparatedSyntaxList<CommonTableExpressionColumnNameSyntax> ColumnNames { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

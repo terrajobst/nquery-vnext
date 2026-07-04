@@ -286,7 +286,7 @@ internal static class DiagnosticExtensions
 
         public void ReportUndeclaredTable(NamedTableReferenceSyntax namedTableReference)
         {
-            var tableName = namedTableReference.TableName;
+            var tableName = namedTableReference.IdentifierToken;
             diagnostics.Report(tableName.Span, DiagnosticId.UndeclaredTable, tableName.ValueText);
         }
 
@@ -297,13 +297,13 @@ internal static class DiagnosticExtensions
 
         public void ReportUndeclaredVariable(VariableExpressionSyntax node)
         {
-            var variableName = node.Name;
+            var variableName = node.IdentifierToken;
             diagnostics.Report(variableName.Span, DiagnosticId.UndeclaredVariable, variableName.ValueText);
         }
 
         public void ReportUndeclaredFunction(FunctionInvocationExpressionSyntax node, IEnumerable<Type> argumentTypes)
         {
-            var name = node.Name.ValueText;
+            var name = node.IdentifierToken.ValueText;
             var argumentTypeList = string.Join(@", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredFunction, name, argumentTypeList);
         }
@@ -316,7 +316,7 @@ internal static class DiagnosticExtensions
 
         public void ReportUndeclaredMethod(MethodInvocationExpressionSyntax node, Type declaringType, IEnumerable<Type> argumentTypes)
         {
-            var name = node.Name.ValueText;
+            var name = node.IdentifierToken.ValueText;
             var declaringTypeName = declaringType.ToDisplayName();
             var argumentTypeNames = string.Join(@", ", argumentTypes.Select(t => t.ToDisplayName()));
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredMethod, declaringTypeName, name, argumentTypeNames);
@@ -325,14 +325,14 @@ internal static class DiagnosticExtensions
         public void ReportUndeclaredColumn(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
         {
             var tableName = tableInstance.Name;
-            var columnName = node.Name.ValueText;
+            var columnName = node.IdentifierToken.ValueText;
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredColumn, tableName, columnName);
         }
 
         public void ReportUndeclaredProperty(PropertyAccessExpressionSyntax node, Type type)
         {
             var typeName = type.ToDisplayName();
-            var propertyName = node.Name.ValueText;
+            var propertyName = node.IdentifierToken.ValueText;
             diagnostics.Report(node.Span, DiagnosticId.UndeclaredProperty, typeName, propertyName);
         }
 

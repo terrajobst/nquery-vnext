@@ -2,25 +2,25 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class UnaryExpressionSyntax : ExpressionSyntax
 {
-    internal UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken operatorToken, ExpressionSyntax expression)
+    internal UnaryExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken unaryOperatorToken, ExpressionSyntax expression)
         : base(syntaxTree)
     {
-        OperatorToken = operatorToken;
+        UnaryOperatorToken = unaryOperatorToken;
         Expression = expression;
     }
 
     public override SyntaxKind Kind
     {
-        get { return SyntaxFacts.GetUnaryOperatorExpression(OperatorToken.Kind); }
+        get { return SyntaxFacts.GetUnaryOperatorExpression(UnaryOperatorToken.Kind); }
     }
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return OperatorToken;
+        yield return UnaryOperatorToken;
         yield return Expression;
     }
 
-    public SyntaxToken OperatorToken { get; }
+    public SyntaxToken UnaryOperatorToken { get; }
 
     public ExpressionSyntax Expression { get; }
 }

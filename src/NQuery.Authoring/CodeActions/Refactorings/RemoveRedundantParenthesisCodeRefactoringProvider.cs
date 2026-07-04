@@ -8,8 +8,8 @@ internal sealed class RemoveRedundantParenthesisCodeRefactoringProvider : CodeRe
 {
     protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, ParenthesizedExpressionSyntax node)
     {
-        var inParentheses = !node.LeftParenthesis.IsMissing && node.LeftParenthesis.Span.ContainsOrTouches(position) ||
-                            !node.RightParenthesis.IsMissing && node.RightParenthesis.Span.ContainsOrTouches(position);
+        var inParentheses = !node.LeftParenthesisToken.IsMissing && node.LeftParenthesisToken.Span.ContainsOrTouches(position) ||
+                            !node.RightParenthesisToken.IsMissing && node.RightParenthesisToken.Span.ContainsOrTouches(position);
         if (!inParentheses)
             return [];
 
@@ -35,8 +35,8 @@ internal sealed class RemoveRedundantParenthesisCodeRefactoringProvider : CodeRe
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            changeSet.DeleteText(_expression.LeftParenthesis.Span);
-            changeSet.DeleteText(_expression.RightParenthesis.Span);
+            changeSet.DeleteText(_expression.LeftParenthesisToken.Span);
+            changeSet.DeleteText(_expression.RightParenthesisToken.Span);
         }
     }
 }

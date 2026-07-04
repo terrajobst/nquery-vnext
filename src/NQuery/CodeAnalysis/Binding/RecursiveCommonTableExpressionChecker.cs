@@ -41,7 +41,7 @@ internal sealed class RecursiveCommonTableExpressionChecker
                 WalkSelectQuery(select);
                 break;
             case BoundUnionQuery union:
-                _diagnostics.ReportCteContainsUnion(_syntax.Name);
+                _diagnostics.ReportCteContainsUnion(_syntax.IdentifierToken);
                 foreach (var input in union.Inputs)
                     WalkQuery(input.Query);
                 break;
@@ -60,13 +60,13 @@ internal sealed class RecursiveCommonTableExpressionChecker
     private void WalkSelectQuery(BoundSelectQuery node)
     {
         if (node.Top is not null)
-            _diagnostics.ReportCteContainsTop(_syntax.Name);
+            _diagnostics.ReportCteContainsTop(_syntax.IdentifierToken);
 
         if (node.Select.IsDistinct)
-            _diagnostics.ReportCteContainsDistinct(_syntax.Name);
+            _diagnostics.ReportCteContainsDistinct(_syntax.IdentifierToken);
 
         if (node.GroupBy is not null || !node.Select.Aggregates.IsEmpty)
-            _diagnostics.ReportCteContainsGroupByHavingOrAggregate(_syntax.Name);
+            _diagnostics.ReportCteContainsGroupByHavingOrAggregate(_syntax.IdentifierToken);
 
         if (node.From is not null)
             WalkTableReference(node.From.Root);
@@ -97,9 +97,9 @@ internal sealed class RecursiveCommonTableExpressionChecker
             case BoundNamedTableReference named:
                 var hasRecursiveReference = named.TableInstance.Table == _symbol;
                 if (_subqueryCounter > 0 && hasRecursiveReference)
-                    _diagnostics.ReportCteContainsRecursiveReferenceInSubquery(_syntax.Name);
+                    _diagnostics.ReportCteContainsRecursiveReferenceInSubquery(_syntax.IdentifierToken);
                 if (_hasSeenRecursiveReference && hasRecursiveReference)
-                    _diagnostics.ReportCteContainsMultipleRecursiveReferences(_syntax.Name);
+                    _diagnostics.ReportCteContainsMultipleRecursiveReferences(_syntax.IdentifierToken);
                 if (hasRecursiveReference)
                     _hasSeenRecursiveReference = true;
                 break;
@@ -108,7 +108,7 @@ internal sealed class RecursiveCommonTableExpressionChecker
                 break;
             case BoundJoinTableReference join:
                 if (join.JoinType is BoundJoinType.FullOuter or BoundJoinType.LeftOuter or BoundJoinType.RightOuter)
-                    _diagnostics.ReportCteContainsOuterJoin(_syntax.Name);
+                    _diagnostics.ReportCteContainsOuterJoin(_syntax.IdentifierToken);
                 WalkTableReference(join.Left);
                 WalkTableReference(join.Right);
                 if (join.Condition is not null)
@@ -116,7 +116,7 @@ internal sealed class RecursiveCommonTableExpressionChecker
                 break;
             case BoundApplyTableReference apply:
                 if (apply.JoinType is BoundJoinType.FullOuter or BoundJoinType.LeftOuter or BoundJoinType.RightOuter)
-                    _diagnostics.ReportCteContainsOuterJoin(_syntax.Name);
+                    _diagnostics.ReportCteContainsOuterJoin(_syntax.IdentifierToken);
                 WalkTableReference(apply.Left);
                 WalkTableReference(apply.Right);
                 break;

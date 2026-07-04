@@ -484,7 +484,7 @@ partial class Binder
     private BoundExpression BindCastExpression(CastExpressionSyntax node)
     {
         var expression = BindExpression(node.Expression);
-        var targetType = BindType(node.TypeName);
+        var targetType = BindType(node.IdentifierToken);
         return BindConversion(node.Span, expression, targetType);
     }
 
@@ -671,7 +671,7 @@ partial class Binder
 
     private BoundExpression BindVariableExpression(VariableExpressionSyntax node)
     {
-        var symbols = LookupVariable(node.Name).ToImmutableArray();
+        var symbols = LookupVariable(node.IdentifierToken).ToImmutableArray();
 
         if (symbols.Length == 0)
         {
@@ -681,7 +681,7 @@ partial class Binder
         }
 
         if (symbols.Length > 1)
-            Diagnostics.ReportAmbiguousVariable(node.Name);
+            Diagnostics.ReportAmbiguousVariable(node.IdentifierToken);
 
         var variableSymbol = symbols[0];
         return new BoundVariableExpression(variableSymbol);
@@ -689,14 +689,14 @@ partial class Binder
 
     private BoundExpression BindNameExpression(NameExpressionSyntax node)
     {
-        if (node.Name.IsMissing)
+        if (node.IdentifierToken.IsMissing)
         {
             // If this token was inserted by the parser, there is no point in
             // trying to resolve this guy.
             return new BoundErrorExpression();
         }
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var symbols = LookupColumnTableOrVariable(name).ToImmutableArray();
 
         if (symbols.Length == 0)
@@ -778,7 +778,7 @@ partial class Binder
         // node.Target either wasn't a name expression or didn't resolve to a
         // table instance. Resolve node.Name as a property.
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         if (target.Type.IsError())
         {
             // To avoid cascading errors, we'll give up early.
@@ -807,7 +807,7 @@ partial class Binder
 
     private BoundExpression BindColumnInstance(PropertyAccessExpressionSyntax node, TableInstanceSymbol tableInstance)
     {
-        var columnName = node.Name;
+        var columnName = node.IdentifierToken;
         var columnInstances = tableInstance.ColumnInstances.Where(c => columnName.Matches(c.Name)).ToImmutableArray();
         if (columnInstances.Length == 0)
         {
@@ -824,15 +824,15 @@ partial class Binder
 
     private BoundExpression BindCountAllExpression(CountAllExpressionSyntax node)
     {
-        var aggregates = LookupAggregate(node.Name).ToImmutableArray();
+        var aggregates = LookupAggregate(node.IdentifierToken).ToImmutableArray();
         if (aggregates.Length == 0)
         {
-            Diagnostics.ReportUndeclaredAggregate(node.Name);
+            Diagnostics.ReportUndeclaredAggregate(node.IdentifierToken);
             return new BoundErrorExpression();
         }
 
         if (aggregates.Length > 1)
-            Diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+            Diagnostics.ReportAmbiguousAggregate(node.IdentifierToken, aggregates);
 
         var aggregate = aggregates[0];
         var boundArgument = new BoundLiteralExpression(0);
@@ -847,20 +847,20 @@ partial class Binder
         {
             // Could be an aggregate or a function.
 
-            var aggregates = LookupAggregate(node.Name).ToImmutableArray();
-            var functionCandidate = LookupFunctionWithSingleParameter(node.Name).FirstOrDefault();
+            var aggregates = LookupAggregate(node.IdentifierToken).ToImmutableArray();
+            var functionCandidate = LookupFunctionWithSingleParameter(node.IdentifierToken).FirstOrDefault();
 
             if (aggregates.Length > 0)
             {
                 if (functionCandidate is not null)
                 {
                     var symbols = new Symbol[] { aggregates[0], functionCandidate };
-                    Diagnostics.ReportAmbiguousName(node.Name, symbols);
+                    Diagnostics.ReportAmbiguousName(node.IdentifierToken, symbols);
                 }
                 else
                 {
                     if (aggregates.Length > 1)
-                        Diagnostics.ReportAmbiguousAggregate(node.Name, aggregates);
+                        Diagnostics.ReportAmbiguousAggregate(node.IdentifierToken, aggregates);
 
                     var aggregate = aggregates[0];
                     return BindAggregateInvocationExpression(node, aggregate);
@@ -868,7 +868,7 @@ partial class Binder
             }
         }
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToImmutableArray();
         var argumentTypes = arguments.Select(a => a.Type).ToImmutableArray();
 
@@ -980,7 +980,7 @@ partial class Binder
     private BoundExpression BindMethodInvocationExpression(MethodInvocationExpressionSyntax node)
     {
         var target = BindExpression(node.Target);
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var arguments = node.ArgumentList.Arguments.Select(BindExpression).ToImmutableArray();
         var argumentTypes = arguments.Select(a => a.Type).ToImmutableArray();
 
@@ -1076,9 +1076,9 @@ partial class Binder
 
     private BoundExpression BindAllAnySubselect(AllAnySubselectSyntax node)
     {
-        var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.OperatorToken.Kind);
+        var expressionKind = SyntaxFacts.GetBinaryOperatorExpression(node.ComparisonOperatorToken.Kind);
         var operatorKind = expressionKind.ToBinaryOperatorKind();
-        var isAll = node.Keyword.Kind == SyntaxKind.AllKeyword;
+        var isAll = node.QuantifierKeyword.Kind == SyntaxKind.AllKeyword;
         return BindAllAnySubselect(node.Span, node.Left, isAll, node.Query, operatorKind);
     }
 

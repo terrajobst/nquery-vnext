@@ -12,7 +12,7 @@ internal sealed class FunctionSignatureHelpModelProvider : SignatureHelpModelPro
     {
         // TODO: We need to use the resolved symbol as the currently selected one.
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var functionSignatures = semanticModel.LookupSymbols(name.Span.Start)
                                               .OfType<FunctionSymbol>()
                                               .Where(f => name.Matches(f.Name))

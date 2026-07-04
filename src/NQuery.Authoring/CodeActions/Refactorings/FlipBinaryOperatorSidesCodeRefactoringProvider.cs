@@ -8,7 +8,7 @@ internal sealed class FlipBinaryOperatorSidesCodeRefactoringProvider : CodeRefac
 {
     protected override IEnumerable<ICodeAction> GetRefactorings(SemanticModel semanticModel, int position, BinaryExpressionSyntax node)
     {
-        var operatorToken = node.OperatorToken;
+        var operatorToken = node.BinaryOperatorToken;
         var canSwap = operatorToken.Span.ContainsOrTouches(position) &&
                       SyntaxFacts.CanSwapBinaryExpressionTokenKind(operatorToken.Kind);
         return canSwap
@@ -28,7 +28,7 @@ internal sealed class FlipBinaryOperatorSidesCodeRefactoringProvider : CodeRefac
 
             _node = node;
 
-            var operatorKind = _node.OperatorToken.Kind;
+            var operatorKind = _node.BinaryOperatorToken.Kind;
             var swappedOperatorKind = SyntaxFacts.SwapBinaryExpressionTokenKind(operatorKind);
             var operatorText = operatorKind.GetText();
             _swappedOperatorText = swappedOperatorKind.GetText();
@@ -42,7 +42,7 @@ internal sealed class FlipBinaryOperatorSidesCodeRefactoringProvider : CodeRefac
 
         protected override void GetChanges(TextChangeSet changeSet)
         {
-            var operatorSpan = _node.OperatorToken.Span;
+            var operatorSpan = _node.BinaryOperatorToken.Span;
             var leftSpan = _node.Left.Span;
             var rightSpan = _node.Right.Span;
 

@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
 {
-    internal ParenthesizedExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, ExpressionSyntax expression, SyntaxToken rightParenthesis)
+    internal ParenthesizedExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Expression = expression;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -17,14 +17,14 @@ public sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Expression;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public ExpressionSyntax Expression { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

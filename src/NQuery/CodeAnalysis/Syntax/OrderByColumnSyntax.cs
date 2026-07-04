@@ -2,11 +2,11 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class OrderByColumnSyntax : SyntaxNode
 {
-    internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? modifier)
+    internal OrderByColumnSyntax(SyntaxTree syntaxTree, ExpressionSyntax columnSelector, SyntaxToken? sortDirectionKeyword)
         : base(syntaxTree)
     {
         ColumnSelector = columnSelector;
-        Modifier = modifier;
+        SortDirectionKeyword = sortDirectionKeyword;
     }
 
     public override SyntaxKind Kind
@@ -17,11 +17,11 @@ public sealed class OrderByColumnSyntax : SyntaxNode
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return ColumnSelector;
-        if (Modifier is not null)
-            yield return Modifier;
+        if (SortDirectionKeyword is not null)
+            yield return SortDirectionKeyword;
     }
 
     public ExpressionSyntax ColumnSelector { get; }
 
-    public SyntaxToken? Modifier { get; }
+    public SyntaxToken? SortDirectionKeyword { get; }
 }

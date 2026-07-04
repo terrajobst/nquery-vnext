@@ -2,13 +2,13 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class ExistsSubselectSyntax : SubselectExpressionSyntax
 {
-    internal ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal ExistsSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken existsKeyword, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
         ExistsKeyword = existsKeyword;
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -19,16 +19,16 @@ public sealed class ExistsSubselectSyntax : SubselectExpressionSyntax
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return ExistsKeyword;
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
     public SyntaxToken ExistsKeyword { get; }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

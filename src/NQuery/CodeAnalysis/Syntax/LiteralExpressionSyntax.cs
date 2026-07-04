@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class LiteralExpressionSyntax : ExpressionSyntax
 {
-    internal LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken token, object? value)
+    internal LiteralExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken literalToken, object? value)
         : base(syntaxTree)
     {
-        Token = token;
+        LiteralToken = literalToken;
         Value = value;
     }
 
@@ -16,10 +16,10 @@ public sealed class LiteralExpressionSyntax : ExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return Token;
+        yield return LiteralToken;
     }
 
-    public SyntaxToken Token { get; }
+    public SyntaxToken LiteralToken { get; }
 
     public object? Value { get; }
 }

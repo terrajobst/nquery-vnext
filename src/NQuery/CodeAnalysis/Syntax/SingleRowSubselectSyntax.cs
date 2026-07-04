@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class SingleRowSubselectSyntax : SubselectExpressionSyntax
 {
-    internal SingleRowSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal SingleRowSubselectSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -17,14 +17,14 @@ public sealed class SingleRowSubselectSyntax : SubselectExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

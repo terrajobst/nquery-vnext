@@ -1,0 +1,422 @@
+// NQuery grammar (EBNF), generated from the syntax-tree classes.
+//   snake_case   production          'SELECT' '('     literal terminal (keyword / punctuation)
+//   a = b c ;     sequence            IDENTIFIER       lexical terminal (defined at end)
+//   a = b | c ;   choice              [ x ] optional   { x } zero or more
+
+query
+    = common_table_expression_query
+    | except_query
+    | intersect_query
+    | ordered_query
+    | parenthesized_query
+    | select_query
+    | union_query
+    ;
+
+expression
+    = all_any_subselect
+    | between_expression
+    | binary_expression
+    | case_expression
+    | cast_expression
+    | coalesce_expression
+    | count_all_expression
+    | exists_subselect
+    | function_invocation_expression
+    | in_expression
+    | in_query_expression
+    | is_null_expression
+    | like_expression
+    | literal_expression
+    | method_invocation_expression
+    | name_expression
+    | null_if_expression
+    | parenthesized_expression
+    | property_access_expression
+    | similar_to_expression
+    | single_row_subselect
+    | sounds_like_expression
+    | unary_expression
+    | variable_expression
+    ;
+
+conditioned_joined_table_reference
+    = inner_joined_table_reference
+    | outer_joined_table_reference
+    ;
+
+joined_table_reference
+    = cross_applied_table_reference
+    | cross_joined_table_reference
+    | inner_joined_table_reference
+    | outer_applied_table_reference
+    | outer_joined_table_reference
+    ;
+
+select_column
+    = expression_select_column
+    | wildcard_select_column
+    ;
+
+structured_trivia
+    = skipped_tokens_trivia
+    ;
+
+subselect_expression
+    = all_any_subselect
+    | exists_subselect
+    | single_row_subselect
+    ;
+
+table_reference
+    = cross_applied_table_reference
+    | cross_joined_table_reference
+    | derived_table_reference
+    | inner_joined_table_reference
+    | named_table_reference
+    | outer_applied_table_reference
+    | outer_joined_table_reference
+    | parenthesized_table_reference
+    ;
+
+alias
+    = [ 'AS' ] IDENTIFIER
+    ;
+
+all_any_subselect
+    = expression comparison_operator_token quantifier_keyword '(' query ')'
+    ;
+
+argument_list
+    = '(' { expression } ')'
+    ;
+
+between_expression
+    = expression [ 'NOT' ] 'BETWEEN' expression 'AND' expression
+    ;
+
+binary_expression
+    = expression binary_operator_token expression
+    ;
+
+case_else_label
+    = 'ELSE' expression
+    ;
+
+case_expression
+    = 'CASE' [ expression ] { case_label } [ case_else_label ] 'END'
+    ;
+
+case_label
+    = 'WHEN' expression 'THEN' expression
+    ;
+
+cast_expression
+    = 'CAST' '(' expression 'AS' IDENTIFIER ')'
+    ;
+
+coalesce_expression
+    = 'COALESCE' argument_list
+    ;
+
+common_table_expression
+    = [ 'RECURSIVE' ] IDENTIFIER [ common_table_expression_column_name_list ] 'AS' '(' query ')'
+    ;
+
+common_table_expression_column_name
+    = IDENTIFIER
+    ;
+
+common_table_expression_column_name_list
+    = '(' { common_table_expression_column_name } ')'
+    ;
+
+common_table_expression_query
+    = 'WITH' { common_table_expression } query
+    ;
+
+compilation_unit
+    = [ syntax_node ] ''
+    ;
+
+count_all_expression
+    = IDENTIFIER '(' '*' ')'
+    ;
+
+cross_applied_table_reference
+    = table_reference 'CROSS' 'APPLY' table_reference
+    ;
+
+cross_joined_table_reference
+    = table_reference 'CROSS' 'JOIN' table_reference
+    ;
+
+derived_table_reference
+    = '(' query ')' [ 'AS' ] IDENTIFIER
+    ;
+
+except_query
+    = query 'EXCEPT' query
+    ;
+
+exists_subselect
+    = 'EXISTS' '(' query ')'
+    ;
+
+expression_select_column
+    = expression [ alias ]
+    ;
+
+from_clause
+    = 'FROM' { table_reference }
+    ;
+
+function_invocation_expression
+    = IDENTIFIER argument_list
+    ;
+
+group_by_clause
+    = 'GROUP' 'BY' { group_by_column }
+    ;
+
+group_by_column
+    = expression
+    ;
+
+having_clause
+    = 'HAVING' expression
+    ;
+
+in_expression
+    = expression [ 'NOT' ] 'IN' argument_list
+    ;
+
+in_query_expression
+    = expression [ 'NOT' ] 'IN' '(' query ')'
+    ;
+
+inner_joined_table_reference
+    = table_reference [ 'INNER' ] 'JOIN' table_reference 'ON' expression
+    ;
+
+intersect_query
+    = query 'INTERSECT' query
+    ;
+
+is_null_expression
+    = expression 'IS' [ 'NOT' ] 'NULL'
+    ;
+
+like_expression
+    = expression [ 'NOT' ] 'LIKE' expression
+    ;
+
+literal_expression
+    = literal_token
+    ;
+
+method_invocation_expression
+    = expression '.' IDENTIFIER argument_list
+    ;
+
+name_expression
+    = IDENTIFIER
+    ;
+
+named_table_reference
+    = IDENTIFIER [ alias ]
+    ;
+
+null_if_expression
+    = 'NULLIF' '(' expression ',' expression ')'
+    ;
+
+order_by_column
+    = expression [ sort_direction_keyword ]
+    ;
+
+ordered_query
+    = query 'ORDER' 'BY' { order_by_column }
+    ;
+
+outer_applied_table_reference
+    = table_reference 'OUTER' 'APPLY' table_reference
+    ;
+
+outer_joined_table_reference
+    = table_reference join_type_keyword [ 'OUTER' ] 'JOIN' table_reference 'ON' expression
+    ;
+
+parenthesized_expression
+    = '(' expression ')'
+    ;
+
+parenthesized_query
+    = '(' query ')'
+    ;
+
+parenthesized_table_reference
+    = '(' table_reference ')'
+    ;
+
+property_access_expression
+    = expression '.' IDENTIFIER
+    ;
+
+select_clause
+    = 'SELECT' [ distinct_all_keyword ] [ top_clause ] { select_column }
+    ;
+
+select_query
+    = select_clause [ from_clause ] [ where_clause ] [ group_by_clause ] [ having_clause ]
+    ;
+
+similar_to_expression
+    = expression [ 'NOT' ] 'SIMILAR' 'TO' expression
+    ;
+
+single_row_subselect
+    = '(' query ')'
+    ;
+
+skipped_tokens_trivia
+    = (empty)
+    ;
+
+sounds_like_expression
+    = expression [ 'NOT' ] 'SOUNDS' 'LIKE' expression
+    ;
+
+top_clause
+    = 'TOP' NUMBER [ 'WITH' ] [ 'TIES' ]
+    ;
+
+unary_expression
+    = unary_operator_token expression
+    ;
+
+union_query
+    = query 'UNION' [ 'ALL' ] query
+    ;
+
+variable_expression
+    = '@' IDENTIFIER
+    ;
+
+where_clause
+    = 'WHERE' expression
+    ;
+
+wildcard_select_column
+    = [ IDENTIFIER ] [ '.' ] '*'
+    ;
+
+binary_operator_token
+    = '&'
+    | '|'
+    | '^'
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '**'
+    | '='
+    | '<>'
+    | '!='
+    | '<'
+    | '<='
+    | '>'
+    | '>='
+    | '!<'
+    | '!>'
+    | '<<'
+    | '>>'
+    | 'AND'
+    | 'OR'
+    ;
+
+comparison_operator_token
+    = '='
+    | '<>'
+    | '!='
+    | '<'
+    | '<='
+    | '>'
+    | '>='
+    | '!<'
+    | '!>'
+    ;
+
+distinct_all_keyword
+    = 'DISTINCT'
+    | 'ALL'
+    ;
+
+join_type_keyword
+    = 'LEFT'
+    | 'RIGHT'
+    | 'FULL'
+    ;
+
+literal_token
+    = NUMBER
+    | STRING
+    | DATE
+    | 'NULL'
+    | 'TRUE'
+    | 'FALSE'
+    ;
+
+quantifier_keyword
+    = 'ALL'
+    | 'ANY'
+    | 'SOME'
+    ;
+
+sort_direction_keyword
+    = 'ASC'
+    | 'DESC'
+    ;
+
+unary_operator_token
+    = '~'
+    | '+'
+    | '-'
+    | 'NOT'
+    ;
+
+// Lexical terminals -- produced by the lexer.
+//   ? x ?   a character class described in prose
+
+IDENTIFIER
+    = ( LETTER | '_' ) { LETTER | DIGIT | '_' | '$' }
+    | '"' { ? any char except '"' ? | '""' } '"'
+    | '[' { ? any char except ']' ? | ']]' } ']'
+    ;
+
+NUMBER
+    = DIGIT { DIGIT } [ '.' DIGIT { DIGIT } ] [ EXPONENT ]
+    | '.' DIGIT { DIGIT } [ EXPONENT ]
+    ;
+
+EXPONENT
+    = ( 'e' | 'E' ) [ '+' | '-' ] DIGIT { DIGIT }
+    ;
+
+STRING
+    = "'" { ? any char except "'" ? | "''" } "'"
+    ;
+
+DATE
+    = '#' { ? any char except '#' or newline ? } '#'
+    ;
+
+LETTER
+    = ? any Unicode letter ?
+    ;
+
+DIGIT
+    = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+    ;
+

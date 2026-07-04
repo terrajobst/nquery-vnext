@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class CommonTableExpressionColumnNameSyntax : SyntaxNode
 {
-    internal CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifier)
+    internal CommonTableExpressionColumnNameSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
-        Identifier = identifier;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -15,8 +15,8 @@ public sealed class CommonTableExpressionColumnNameSyntax : SyntaxNode
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return Identifier;
+        yield return IdentifierToken;
     }
 
-    public SyntaxToken Identifier { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

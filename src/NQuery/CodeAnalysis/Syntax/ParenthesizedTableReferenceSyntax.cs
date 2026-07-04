@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class ParenthesizedTableReferenceSyntax : TableReferenceSyntax
 {
-    internal ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesis, TableReferenceSyntax tableReference, SyntaxToken rightParenthesis)
+    internal ParenthesizedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken leftParenthesisToken, TableReferenceSyntax tableReference, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
-        LeftParenthesis = leftParenthesis;
+        LeftParenthesisToken = leftParenthesisToken;
         TableReference = tableReference;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -17,14 +17,14 @@ public sealed class ParenthesizedTableReferenceSyntax : TableReferenceSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return LeftParenthesis;
+        yield return LeftParenthesisToken;
         yield return TableReference;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public TableReferenceSyntax TableReference { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

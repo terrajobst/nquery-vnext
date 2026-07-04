@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableReferenceSyntax
 {
-    internal OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken typeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
+    internal OuterJoinedTableReferenceSyntax(SyntaxTree syntaxTree, TableReferenceSyntax left, SyntaxToken joinTypeKeyword, SyntaxToken? outerKeyword, SyntaxToken joinKeyword, TableReferenceSyntax right, SyntaxToken onKeyword, ExpressionSyntax condition)
         : base(syntaxTree, left, right, onKeyword, condition)
     {
-        TypeKeyword = typeKeyword;
+        JoinTypeKeyword = joinTypeKeyword;
         OuterKeyword = outerKeyword;
         JoinKeyword = joinKeyword;
     }
@@ -18,7 +18,7 @@ public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableRefe
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return Left;
-        yield return TypeKeyword;
+        yield return JoinTypeKeyword;
         if (OuterKeyword is not null)
             yield return OuterKeyword;
         yield return JoinKeyword;
@@ -27,7 +27,7 @@ public sealed class OuterJoinedTableReferenceSyntax : ConditionedJoinedTableRefe
         yield return Condition;
     }
 
-    public SyntaxToken TypeKeyword { get; }
+    public SyntaxToken JoinTypeKeyword { get; }
 
     public SyntaxToken? OuterKeyword { get; }
 

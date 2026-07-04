@@ -88,7 +88,7 @@ internal sealed class SymbolCompletionProvider : ICompletionProvider
 
         if (p is not null)
         {
-            var afterDot = p.Dot.Span.End <= position && position <= p.Name.Span.End;
+            var afterDot = p.DotToken.Span.End <= position && position <= p.IdentifierToken.Span.End;
             if (afterDot)
                 return p;
         }

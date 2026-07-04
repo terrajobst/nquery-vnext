@@ -13,9 +13,9 @@ internal sealed class ComparisonWithNullCodeIssueProvider : CodeIssueProvider<Bi
         if (!leftIsNull && !rightIsNull)
             yield break;
 
-        var isEquals = node.OperatorToken.Kind == SyntaxKind.EqualsToken;
-        var isNotEquals = node.OperatorToken.Kind == SyntaxKind.ExclamationEqualsToken ||
-                          node.OperatorToken.Kind == SyntaxKind.LessGreaterToken;
+        var isEquals = node.BinaryOperatorToken.Kind == SyntaxKind.EqualsToken;
+        var isNotEquals = node.BinaryOperatorToken.Kind == SyntaxKind.ExclamationEqualsToken ||
+                          node.BinaryOperatorToken.Kind == SyntaxKind.LessGreaterToken;
         var isComparison = isEquals || isNotEquals;
 
         if (!isComparison)
@@ -31,7 +31,7 @@ internal sealed class ComparisonWithNullCodeIssueProvider : CodeIssueProvider<Bi
 
     private static bool IsNullLiteral(ExpressionSyntax node)
     {
-        return node is LiteralExpressionSyntax literal && literal.Token.Kind == SyntaxKind.NullKeyword;
+        return node is LiteralExpressionSyntax literal && literal.LiteralToken.Kind == SyntaxKind.NullKeyword;
     }
 
     private sealed class ConvertToIsNullCodeAction : CodeAction

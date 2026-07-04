@@ -2,11 +2,11 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class AliasSyntax : SyntaxNode
 {
-    internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifier)
+    internal AliasSyntax(SyntaxTree syntaxTree, SyntaxToken? asKeyword, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
         AsKeyword = asKeyword;
-        Identifier = identifier;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -18,10 +18,10 @@ public sealed class AliasSyntax : SyntaxNode
     {
         if (AsKeyword is not null)
             yield return AsKeyword;
-        yield return Identifier;
+        yield return IdentifierToken;
     }
 
     public SyntaxToken? AsKeyword { get; }
 
-    public SyntaxToken Identifier { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

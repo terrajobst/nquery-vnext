@@ -22,7 +22,7 @@ internal sealed class UnusedCommonTableExpressionCodeIssueProvider : CodeIssuePr
                let declaredTable = semanticModel.GetDeclaredSymbol(tableExpression)
                where declaredTable is not null && !referencedTableSet.Contains(declaredTable)
                let actions = new[] { new RemoveCommonTableExpressionCodeAction(tableExpression) }
-               select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.Name.Span, actions);
+               select new CodeIssue(CodeIssueKind.Unnecessary, tableExpression.IdentifierToken.Span, actions);
     }
 
     private static bool IsRecursiveUsage(SemanticModel semanticModel, NamedTableReferenceSyntax tableReference)

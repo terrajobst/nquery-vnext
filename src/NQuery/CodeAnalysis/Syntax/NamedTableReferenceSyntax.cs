@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class NamedTableReferenceSyntax : TableReferenceSyntax
 {
-    internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken tableName, AliasSyntax? alias)
+    internal NamedTableReferenceSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, AliasSyntax? alias)
         : base(syntaxTree)
     {
-        TableName = tableName;
+        IdentifierToken = identifierToken;
         Alias = alias;
     }
 
@@ -16,12 +16,12 @@ public sealed class NamedTableReferenceSyntax : TableReferenceSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return TableName;
+        yield return IdentifierToken;
         if (Alias is not null)
             yield return Alias;
     }
 
-    public SyntaxToken TableName { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public AliasSyntax? Alias { get; }
 }

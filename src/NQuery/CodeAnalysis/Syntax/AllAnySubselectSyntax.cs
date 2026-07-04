@@ -2,15 +2,15 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class AllAnySubselectSyntax : SubselectExpressionSyntax
 {
-    internal AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken operatorToken, SyntaxToken keyword, SyntaxToken leftParenthesis, QuerySyntax query, SyntaxToken rightParenthesis)
+    internal AllAnySubselectSyntax(SyntaxTree syntaxTree, ExpressionSyntax left, SyntaxToken comparisonOperatorToken, SyntaxToken quantifierKeyword, SyntaxToken leftParenthesisToken, QuerySyntax query, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
         Left = left;
-        OperatorToken = operatorToken;
-        Keyword = keyword;
-        LeftParenthesis = leftParenthesis;
+        ComparisonOperatorToken = comparisonOperatorToken;
+        QuantifierKeyword = quantifierKeyword;
+        LeftParenthesisToken = leftParenthesisToken;
         Query = query;
-        RightParenthesis = rightParenthesis;
+        RightParenthesisToken = rightParenthesisToken;
     }
 
     public override SyntaxKind Kind
@@ -22,22 +22,22 @@ public sealed class AllAnySubselectSyntax : SubselectExpressionSyntax
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return Left;
-        yield return OperatorToken;
-        yield return Keyword;
-        yield return LeftParenthesis;
+        yield return ComparisonOperatorToken;
+        yield return QuantifierKeyword;
+        yield return LeftParenthesisToken;
         yield return Query;
-        yield return RightParenthesis;
+        yield return RightParenthesisToken;
     }
 
     public ExpressionSyntax Left { get; }
 
-    public SyntaxToken OperatorToken { get; }
+    public SyntaxToken ComparisonOperatorToken { get; }
 
-    public SyntaxToken Keyword { get; }
+    public SyntaxToken QuantifierKeyword { get; }
 
-    public SyntaxToken LeftParenthesis { get; }
+    public SyntaxToken LeftParenthesisToken { get; }
 
     public QuerySyntax Query { get; }
 
-    public SyntaxToken RightParenthesis { get; }
+    public SyntaxToken RightParenthesisToken { get; }
 }

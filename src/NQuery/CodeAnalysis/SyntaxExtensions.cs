@@ -134,7 +134,7 @@ public static class SyntaxExtensions
 
             var token = root.FindTokenOnLeft(position);
             var cte = token.Parent as CommonTableExpressionSyntax;
-            return cte?.RecursiveKeyword is not null && cte.Name.Span.ContainsOrTouches(position);
+            return cte?.RecursiveKeyword is not null && cte.IdentifierToken.Span.ContainsOrTouches(position);
         }
 
         private bool PossiblyInCteName(int position)
@@ -142,7 +142,7 @@ public static class SyntaxExtensions
             ThrowIfNull(root);
 
             var token = root.FindTokenOnLeft(position);
-            return token.Parent is CommonTableExpressionSyntax cte && cte.Name.Span.ContainsOrTouches(position);
+            return token.Parent is CommonTableExpressionSyntax cte && cte.IdentifierToken.Span.ContainsOrTouches(position);
         }
 
         private bool InCteColumnList(int position)
@@ -161,7 +161,7 @@ public static class SyntaxExtensions
             ThrowIfNull(root);
 
             var syntaxToken = root.FindTokenOnLeft(position);
-            return syntaxToken.Parent is DerivedTableReferenceSyntax derivedTable && derivedTable.Name.FullSpan.ContainsOrTouches(position);
+            return syntaxToken.Parent is DerivedTableReferenceSyntax derivedTable && derivedTable.IdentifierToken.FullSpan.ContainsOrTouches(position);
         }
     }
 

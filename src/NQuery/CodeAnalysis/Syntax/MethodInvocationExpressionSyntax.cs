@@ -2,12 +2,12 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class MethodInvocationExpressionSyntax : ExpressionSyntax
 {
-    internal MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dot, SyntaxToken name, ArgumentListSyntax argumentList)
+    internal MethodInvocationExpressionSyntax(SyntaxTree syntaxTree, ExpressionSyntax target, SyntaxToken dotToken, SyntaxToken identifierToken, ArgumentListSyntax argumentList)
         : base(syntaxTree)
     {
         Target = target;
-        Dot = dot;
-        Name = name;
+        DotToken = dotToken;
+        IdentifierToken = identifierToken;
         ArgumentList = argumentList;
     }
 
@@ -19,16 +19,16 @@ public sealed class MethodInvocationExpressionSyntax : ExpressionSyntax
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return Target;
-        yield return Dot;
-        yield return Name;
+        yield return DotToken;
+        yield return IdentifierToken;
         yield return ArgumentList;
     }
 
     public ExpressionSyntax Target { get; }
 
-    public SyntaxToken Dot { get; }
+    public SyntaxToken DotToken { get; }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public ArgumentListSyntax ArgumentList { get; }
 }

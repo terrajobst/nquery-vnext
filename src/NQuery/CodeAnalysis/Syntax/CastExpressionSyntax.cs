@@ -2,14 +2,14 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class CastExpressionSyntax : ExpressionSyntax
 {
-    internal CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken typeName, SyntaxToken rightParenthesisToken)
+    internal CastExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken castKeyword, SyntaxToken leftParenthesisToken, ExpressionSyntax expression, SyntaxToken asKeyword, SyntaxToken identifierToken, SyntaxToken rightParenthesisToken)
         : base(syntaxTree)
     {
         CastKeyword = castKeyword;
         LeftParenthesisToken = leftParenthesisToken;
         Expression = expression;
         AsKeyword = asKeyword;
-        TypeName = typeName;
+        IdentifierToken = identifierToken;
         RightParenthesisToken = rightParenthesisToken;
     }
 
@@ -24,7 +24,7 @@ public sealed class CastExpressionSyntax : ExpressionSyntax
         yield return LeftParenthesisToken;
         yield return Expression;
         yield return AsKeyword;
-        yield return TypeName;
+        yield return IdentifierToken;
         yield return RightParenthesisToken;
     }
 
@@ -36,7 +36,7 @@ public sealed class CastExpressionSyntax : ExpressionSyntax
 
     public SyntaxToken AsKeyword { get; }
 
-    public SyntaxToken TypeName { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public SyntaxToken RightParenthesisToken { get; }
 }

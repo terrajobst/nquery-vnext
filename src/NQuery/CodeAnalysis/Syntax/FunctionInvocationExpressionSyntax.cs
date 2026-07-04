@@ -2,10 +2,10 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class FunctionInvocationExpressionSyntax : ExpressionSyntax
 {
-    internal FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken name, ArgumentListSyntax argumentList)
+    internal FunctionInvocationExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, ArgumentListSyntax argumentList)
         : base(syntaxTree)
     {
-        Name = name;
+        IdentifierToken = identifierToken;
         ArgumentList = argumentList;
     }
 
@@ -16,11 +16,11 @@ public sealed class FunctionInvocationExpressionSyntax : ExpressionSyntax
 
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
-        yield return Name;
+        yield return IdentifierToken;
         yield return ArgumentList;
     }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 
     public ArgumentListSyntax ArgumentList { get; }
 }

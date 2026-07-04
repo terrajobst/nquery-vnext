@@ -8,7 +8,7 @@ internal sealed class OuterJoinKeywordHighlighter : KeywordHighlighter<OuterJoin
 {
     protected override IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, OuterJoinedTableReferenceSyntax node, int position)
     {
-        yield return node.TypeKeyword.Span;
+        yield return node.JoinTypeKeyword.Span;
         if (node.OuterKeyword is not null)
             yield return node.OuterKeyword.Span;
         yield return node.JoinKeyword.Span;

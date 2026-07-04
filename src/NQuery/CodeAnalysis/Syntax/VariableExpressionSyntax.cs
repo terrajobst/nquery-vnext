@@ -2,11 +2,11 @@ namespace NQuery.CodeAnalysis.Syntax;
 
 public sealed class VariableExpressionSyntax : ExpressionSyntax
 {
-    internal VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken name)
+    internal VariableExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken atToken, SyntaxToken identifierToken)
         : base(syntaxTree)
     {
         AtToken = atToken;
-        Name = name;
+        IdentifierToken = identifierToken;
     }
 
     public override SyntaxKind Kind
@@ -17,10 +17,10 @@ public sealed class VariableExpressionSyntax : ExpressionSyntax
     public override IEnumerable<SyntaxNodeOrToken> ChildNodesAndTokens()
     {
         yield return AtToken;
-        yield return Name;
+        yield return IdentifierToken;
     }
 
     public SyntaxToken AtToken { get; }
 
-    public SyntaxToken Name { get; }
+    public SyntaxToken IdentifierToken { get; }
 }

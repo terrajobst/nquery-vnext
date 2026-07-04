@@ -7,7 +7,7 @@ internal sealed class WildcardSelectColumnQuickInfoModelProvider : QuickInfoMode
 {
     protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, WildcardSelectColumnSyntax node)
     {
-        var tableName = node.TableName;
+        var tableName = node.IdentifierToken;
         if (tableName is null || !tableName.Span.ContainsOrTouches(position))
             return null;
 

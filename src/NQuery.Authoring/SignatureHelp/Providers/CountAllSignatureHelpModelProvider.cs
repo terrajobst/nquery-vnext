@@ -12,7 +12,7 @@ internal sealed class CountAllSignatureHelpModelProvider : SignatureHelpModelPro
     {
         // TODO: We need to use the resolved symbol as the currently selected one.
 
-        var name = node.Name;
+        var name = node.IdentifierToken;
         var signatures = semanticModel.LookupSymbols(name.Span.Start)
                                       .OfType<AggregateSymbol>()
                                       .Where(f => name.Matches(f.Name))

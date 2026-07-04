@@ -143,7 +143,7 @@ internal sealed class SemanticClassificationWorker
     {
         var symbol = _semanticModel.GetDeclaredSymbol(node);
         if (symbol is not null)
-            AddClassification(node.Name, symbol);
+            AddClassification(node.IdentifierToken, symbol);
 
         VisitChildren(node);
     }
@@ -168,7 +168,7 @@ internal sealed class SemanticClassificationWorker
 
     private void ClassifyNameExpression(NameExpressionSyntax node)
     {
-        ClassifyExpression(node, node.Name);
+        ClassifyExpression(node, node.IdentifierToken);
     }
 
     private void ClassifyVariableExpression(VariableExpressionSyntax node)
@@ -178,25 +178,25 @@ internal sealed class SemanticClassificationWorker
 
     private void ClassifyFunctionInvocationExpression(FunctionInvocationExpressionSyntax node)
     {
-        ClassifyExpression(node, node.Name);
+        ClassifyExpression(node, node.IdentifierToken);
         ClassifyNode(node.ArgumentList);
     }
 
     private void ClassifyCountAllExpression(CountAllExpressionSyntax node)
     {
-        ClassifyExpression(node, node.Name);
+        ClassifyExpression(node, node.IdentifierToken);
     }
 
     private void ClassifyPropertyAccess(PropertyAccessExpressionSyntax node)
     {
         ClassifyNode(node.Target);
-        ClassifyExpression(node, node.Name);
+        ClassifyExpression(node, node.IdentifierToken);
     }
 
     private void ClassifyMethodInvocationExpression(MethodInvocationExpressionSyntax node)
     {
         ClassifyNode(node.Target);
-        ClassifyExpression(node, node.Name);
+        ClassifyExpression(node, node.IdentifierToken);
         ClassifyNode(node.ArgumentList);
     }
 
@@ -206,7 +206,7 @@ internal sealed class SemanticClassificationWorker
         if (tableInstanceSymbol is null)
             return;
 
-        AddClassification(node.TableName!, tableInstanceSymbol);
+        AddClassification(node.IdentifierToken!, tableInstanceSymbol);
     }
 
     private void ClassifyExpressionSelectColumn(ExpressionSelectColumnSyntax node)
@@ -217,7 +217,7 @@ internal sealed class SemanticClassificationWorker
             return;
 
         var queryColumnInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
-        AddClassification(node.Alias.Identifier, queryColumnInstanceSymbol!);
+        AddClassification(node.Alias.IdentifierToken, queryColumnInstanceSymbol!);
     }
 
     private void ClassifyNamedTableReference(NamedTableReferenceSyntax node)
@@ -226,10 +226,10 @@ internal sealed class SemanticClassificationWorker
         if (tableInstanceSymbol is null)
             return;
 
-        AddClassification(node.TableName, tableInstanceSymbol.Table);
+        AddClassification(node.IdentifierToken, tableInstanceSymbol.Table);
 
         if (node.Alias is not null)
-            AddClassification(node.Alias.Identifier, tableInstanceSymbol);
+            AddClassification(node.Alias.IdentifierToken, tableInstanceSymbol);
     }
 
     private void ClassifyDerivedTableReference(DerivedTableReferenceSyntax node)
@@ -238,6 +238,6 @@ internal sealed class SemanticClassificationWorker
 
         var tableInstanceSymbol = _semanticModel.GetDeclaredSymbol(node);
         if (tableInstanceSymbol is not null)
-            AddClassification(node.Name, tableInstanceSymbol);
+            AddClassification(node.IdentifierToken, tableInstanceSymbol);
     }
 }

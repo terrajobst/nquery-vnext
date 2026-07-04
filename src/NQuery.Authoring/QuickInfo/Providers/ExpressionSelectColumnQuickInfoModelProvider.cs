@@ -7,12 +7,12 @@ internal sealed class ExpressionSelectColumnQuickInfoModelProvider : QuickInfoMo
 {
     protected override QuickInfoModel? CreateModel(SemanticModel semanticModel, int position, ExpressionSelectColumnSyntax node)
     {
-        if (node.Alias is null || !node.Alias.Identifier.Span.ContainsOrTouches(position))
+        if (node.Alias is null || !node.Alias.IdentifierToken.Span.ContainsOrTouches(position))
             return null;
 
         var symbol = semanticModel.GetDeclaredSymbol(node);
         return symbol is null
                    ? null
-                   : QuickInfoModel.ForSymbol(semanticModel, node.Alias.Identifier.Span, symbol);
+                   : QuickInfoModel.ForSymbol(semanticModel, node.Alias.IdentifierToken.Span, symbol);
     }
 }

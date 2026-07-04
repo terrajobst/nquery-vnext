@@ -53,7 +53,7 @@ partial class Binder
 
     private BoundTableReference BindNamedTableReference(NamedTableReferenceSyntax node)
     {
-        var symbols = LookupTable(node.TableName).ToImmutableArray();
+        var symbols = LookupTable(node.IdentifierToken).ToImmutableArray();
 
         if (symbols.Length == 0)
         {
@@ -62,12 +62,12 @@ partial class Binder
         }
 
         if (symbols.Length > 1)
-            Diagnostics.ReportAmbiguousTable(node.TableName, symbols);
+            Diagnostics.ReportAmbiguousTable(node.IdentifierToken, symbols);
 
         var table = symbols[0];
         var aliasIdentifier = node.Alias is not null
-            ? node.Alias.Identifier
-            : node.TableName;
+            ? node.Alias.IdentifierToken
+            : node.IdentifierToken;
 
         var alias = aliasIdentifier.ValueText;
 
@@ -130,9 +130,9 @@ partial class Binder
 
     private BoundTableReference BindOuterJoinedTableReference(OuterJoinedTableReferenceSyntax node)
     {
-        var joinType = node.TypeKeyword.Kind == SyntaxKind.LeftKeyword
+        var joinType = node.JoinTypeKeyword.Kind == SyntaxKind.LeftKeyword
                            ? BoundJoinType.LeftOuter
-                           : node.TypeKeyword.Kind == SyntaxKind.RightKeyword
+                           : node.JoinTypeKeyword.Kind == SyntaxKind.RightKeyword
                                  ? BoundJoinType.RightOuter
                                  : BoundJoinType.FullOuter;
 
@@ -168,10 +168,10 @@ partial class Binder
         var frozenValueFromColumn = valueFromColumn.ToFrozenDictionary();
         var derivedTable = new DerivedTableSymbol(columns);
         var aliasFactory = new Func<TableInstanceSymbol, ColumnSymbol, IBoundValue>((_, c) => frozenValueFromColumn[c]);
-        var derivedTableInstance = new TableInstanceSymbol(node.Name.ValueText, derivedTable, aliasFactory);
+        var derivedTableInstance = new TableInstanceSymbol(node.IdentifierToken.ValueText, derivedTable, aliasFactory);
         var boundTableReference = new BoundDerivedTableReference(derivedTableInstance, query);
 
-        QueryState!.IntroducedTables.Add(derivedTableInstance, node.Name);
+        QueryState!.IntroducedTables.Add(derivedTableInstance, node.IdentifierToken);
 
         return boundTableReference;
     }
