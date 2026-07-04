@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Tests.CodeAnalysis.Text;

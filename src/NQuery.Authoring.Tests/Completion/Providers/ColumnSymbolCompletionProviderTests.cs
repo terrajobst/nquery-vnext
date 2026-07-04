@@ -1,5 +1,4 @@
 using NQuery.Authoring.Completion;
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
 

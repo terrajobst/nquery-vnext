@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace NQuery.CodeAnalysis.Iterators;
 
 // Re-presents an arbitrary selection of columns (drawn from one or more underlying

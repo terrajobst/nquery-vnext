@@ -8,7 +8,6 @@ using ActiproSoftware.Windows.Controls.SyntaxEditor.IntelliPrompt.Implementation
 using NQuery.Authoring.ActiproWpf.SymbolContent;
 using NQuery.Authoring.ActiproWpf.Text;
 using NQuery.Authoring.QuickInfo;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.ActiproWpf.QuickInfo;
 

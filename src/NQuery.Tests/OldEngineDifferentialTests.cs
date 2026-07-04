@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using NQuery.Northwind;
 using NQuery.Tests.Oracle;
 

@@ -1,5 +1,4 @@
 using NQuery.CodeAnalysis.Iterators;
-using NQuery.Tests.CodeAnalysis.Iterators;
 
 namespace NQuery.Tests.CodeAnalysis.Iterators.RowBuffers;
 

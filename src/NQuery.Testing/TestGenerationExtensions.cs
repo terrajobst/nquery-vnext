@@ -1,7 +1,6 @@
 using System.CodeDom.Compiler;
 
 using NQuery.Authoring;
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Syntax;
 using NQuery.CodeAnalysis.Text;
 

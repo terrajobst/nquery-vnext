@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.CodeActions;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Tests.CodeActions;
 

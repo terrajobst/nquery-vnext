@@ -2,7 +2,6 @@ using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Binding;
 using NQuery.CodeAnalysis.Emit;
-using NQuery.CodeAnalysis.Iterators;
 using NQuery.CodeAnalysis.Optimization;
 using NQuery.CodeAnalysis.Planning;
 using NQuery.Metadata;

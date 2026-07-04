@@ -3,7 +3,6 @@ using Microsoft.VisualStudio.Text.Tagging;
 
 using NQuery.Authoring.Composition.Outlining;
 using NQuery.Authoring.Outlining;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.VSEditorWpf.Outlining;
 

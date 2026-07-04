@@ -1,5 +1,4 @@
 using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Symbols;
 using NQuery.Metadata;
 
 namespace NQuery.Tests;

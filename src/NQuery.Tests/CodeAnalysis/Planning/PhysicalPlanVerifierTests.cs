@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Planning;
-using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Tests.CodeAnalysis.Planning;
 

@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Algebra;
 using NQuery.CodeAnalysis.Binding;

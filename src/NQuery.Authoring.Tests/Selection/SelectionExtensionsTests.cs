@@ -1,5 +1,4 @@
 using NQuery.Authoring.Selection;
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Tests.Selection;

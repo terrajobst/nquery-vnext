@@ -1,4 +1,3 @@
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Symbols;
 
 namespace NQuery.Authoring.Tests.Completion.Providers;

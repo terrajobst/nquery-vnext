@@ -1,6 +1,5 @@
 using System.Globalization;
 
-using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Binding;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;

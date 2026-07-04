@@ -1,5 +1,3 @@
-using NQuery.CodeAnalysis.Symbols;
-
 namespace NQuery.CodeAnalysis.Symbols;
 
 internal static class SymbolMarkupBuilder
