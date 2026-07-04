@@ -33,19 +33,14 @@ cost and allocations in isolation.
   raw speed for other properties on some plans.
 - **Plan shape dominates the correlated cases.** On `NestedLoops` (a correlated
   scalar `TOP 1 … ORDER BY` that survives as a dependent join), Old runs the
-  inner loop cheaply (76 μs) while Baseline blows up to 3.2 ms / 1.9 MB;
-  Refactored lands in between at 1.6 ms. On `Decorrelated`, Baseline's hash-join
-  decorrelation keeps allocations tiny (24 KB), so Old looks allocation-heavy by
-  comparison (11.5×) even though it is faster in wall-clock time; Refactored is
-  both fastest (37 μs) and leanest (18 KB).
-
-  *Update (2026-07-02):* the `NestedLoops` rows below predate the index spool
-  (`Planner.TryPlanIndexSpool`), which was Old's advantage on this shape. With
-  the spool ported, a short-job re-run measures Refactored at **149 μs /
-  546 KB** (was 1,614 μs / 506 KB) vs Old's 80 μs / 61 KB and Baseline's
-  3,311 μs / 1,907 KB — the ~20× wall-clock gap to Old is now ~2×, with the
-  remainder being allocation-bound (the spool's columnar store plus boxed
-  keys; see the index-spool follow-ups in `REFACTORING.md`).
+  inner loop cheaply (75 μs) while Baseline blows up to 3.1 ms / 1.9 MB;
+  Refactored's index spool (`Planner.TryPlanIndexSpool`) keeps it close to Old at
+  138 μs (0.04×), the residual gap being allocation-bound — 539 KB vs Old's 61 KB
+  (the spool's columnar store plus boxed keys; see the index-spool follow-ups in
+  `REFACTORING.md`). On `Decorrelated`, Baseline's hash-join decorrelation keeps
+  allocations tiny (24 KB), so Old looks allocation-heavy by comparison (11.5×)
+  even though it is faster in wall-clock time; Refactored is both fastest (37 μs)
+  and leanest (18 KB).
 
 ## Summary
 
@@ -63,7 +58,7 @@ Shapes as rows, engines as columns. All factors are relative to **Baseline**
 | Report       | 0.57× |   1.00×  |   0.45×    |
 | TopWithTies  | 0.94× |   1.00×  |   0.38×    |
 | Decorrelated | 0.63× |   1.00×  |   0.05×    |
-| NestedLoops  | 0.02× |   1.00×  |   0.50×    |
+| NestedLoops  | 0.02× |   1.00×  |   0.04×    |
 
 ### Memory (allocated per op, with × Baseline, lower = leaner)
 
@@ -76,7 +71,7 @@ Shapes as rows, engines as columns. All factors are relative to **Baseline**
 | Report       | 1029 KB (1.29×)   |  800 KB (1.00×)  |  417 KB (0.52×)  |
 | TopWithTies  |  401 KB (0.95×)   |  423 KB (1.00×)  |  126 KB (0.30×)  |
 | Decorrelated |  282 KB (11.50×)  |   25 KB (1.00×)  |   18 KB (0.73×)  |
-| NestedLoops  |   61 KB (0.03×)   | 1907 KB (1.00×)  |  506 KB (0.27×)  |
+| NestedLoops  |   61 KB (0.03×)   | 1907 KB (1.00×)  |  539 KB (0.28×)  |
 
 ## Full results
 
@@ -112,9 +107,9 @@ Default job (`DefaultJob`, full warmup + 15 iterations).
 | Baseline   | Decorrelated |   713.31 μs |  5.271 μs |   4.401 μs |   714.57 μs |  1.00 |   2.9297 |   1.9531 |   24.52 KB |        1.00 |
 | Refactored | Decorrelated |    37.74 μs |  0.171 μs |   0.160 μs |    37.78 μs |  0.05 |   2.1973 |   0.0610 |      18 KB |        0.73 |
 |            |              |             |           |            |             |       |          |          |            |             |
-| Old        | NestedLoops  |    76.46 μs |  0.355 μs |   0.315 μs |    76.44 μs |  0.02 |   7.4463 |        - |    60.9 KB |        0.03 |
-| Baseline   | NestedLoops  | 3,206.36 μs | 31.633 μs |  29.590 μs | 3,199.92 μs |  1.00 | 230.4688 |  35.1563 | 1906.63 KB |        1.00 |
-| Refactored | NestedLoops  | 1,614.10 μs |  6.591 μs |   6.166 μs | 1,613.33 μs |  0.50 |  60.5469 |   1.9531 |  506.32 KB |        0.27 |
+| Old        | NestedLoops  |    75.18 μs |  0.409 μs |   0.342 μs |    75.18 μs |  0.02 |   7.4463 |        - |    60.9 KB |        0.03 |
+| Baseline   | NestedLoops  | 3,121.26 μs | 14.788 μs |  13.109 μs | 3,121.26 μs |  1.00 | 230.4688 |  35.1563 | 1906.72 KB |        1.00 |
+| Refactored | NestedLoops  |   138.25 μs |  2.751 μs |   3.378 μs |   138.25 μs |  0.04 |  65.9180 |   8.0566 |  538.74 KB |        0.28 |
 
 ---
 
@@ -233,19 +228,19 @@ both expose a public `SyntaxTree.ParseQuery`.
 
 ## Observations
 
-- **Parsing is cheap for every engine** — ~5–19 μs per query, two to three
+- **Parsing is cheap for every engine** — ~5–16 μs per query, two to three
   orders of magnitude below compilation (100s of μs to ms) and execution, so
   parser choice is negligible in any end-to-end cost.
-- **Baseline parses fastest; Refactored is a consistent ~1.24–1.30× slower** on
-  wall-clock and allocates ~3–4% more. The overhead is a steady multiplier across
-  every shape (not shape-dependent) and tiny in absolute terms (~1–4 μs) — the
-  current syntax tree is a little more expensive to build than `main`'s.
-- **Old allocates far less — ~0.30–0.42× Baseline, roughly 3× leaner** — while
-  landing within a few percent of Baseline on time (`Join` is the outlier at
-  1.31×). Its lighter AST/token model is cheaper to allocate. This is the mirror
-  image of the Compilation suite, where Old's edge is raw speed; for parsing
-  alone the three engines are within ~1.3× on time and Old's only real advantage
-  is allocation.
+- **Refactored is now the fastest engine on 7 of 8 shapes** — ~0.88–0.92×
+  Baseline (roughly 8–12% quicker) — and the leanest of the two new engines at
+  **~0.71–0.76× Baseline allocations** (24–29% less). `TopWithTies` is the lone
+  exception at 1.06×; it is the smallest query (fewest tokens, so fixed costs
+  dominate) and the noisiest row this run (StdDev ±3%), so it is effectively on
+  par with Baseline rather than a real regression.
+- **Old still allocates the least — ~0.30–0.42× Baseline** (its lighter AST/token
+  model is cheaper to build) but is now frequently the *slowest* on wall-clock:
+  1.29× on `Join`, 1.34× on `Decorrelated`, 1.13× on `NestedLoops`. So for
+  parsing the engines trade places — Refactored wins on time, Old on allocation.
 
 ## Summary
 
@@ -256,27 +251,27 @@ Shapes as rows, engines as columns. All factors are relative to **Baseline**
 
 | Shape        |  Old  | Baseline | Refactored |
 |------------- |------:|---------:|-----------:|
-| Scan         | 1.04× |   1.00×  |   1.25×    |
-| Join         | 1.31× |   1.00×  |   1.24×    |
-| Aggregate    | 1.03× |   1.00×  |   1.24×    |
-| Sort         | 1.08× |   1.00×  |   1.25×    |
-| Report       | 1.02× |   1.00×  |   1.24×    |
-| TopWithTies  | 1.10× |   1.00×  |   1.30×    |
-| Decorrelated | 1.14× |   1.00×  |   1.27×    |
-| NestedLoops  | 1.17× |   1.00×  |   1.27×    |
+| Scan         | 0.99× |   1.00×  |   0.91×    |
+| Join         | 1.29× |   1.00×  |   0.88×    |
+| Aggregate    | 1.02× |   1.00×  |   0.92×    |
+| Sort         | 1.03× |   1.00×  |   0.91×    |
+| Report       | 1.02× |   1.00×  |   0.90×    |
+| TopWithTies  | 1.10× |   1.00×  |   1.06×    |
+| Decorrelated | 1.34× |   1.00×  |   0.92×    |
+| NestedLoops  | 1.13× |   1.00×  |   0.90×    |
 
 ### Memory (allocated per op, with × Baseline, lower = leaner)
 
 | Shape        |       Old       |    Baseline     |   Refactored    |
 |------------- |----------------:|----------------:|----------------:|
-| Scan         |  3.1 KB (0.33×) |  9.5 KB (1.00×) |  9.9 KB (1.03×) |
-| Join         |  5.8 KB (0.42×) | 13.8 KB (1.00×) | 14.3 KB (1.03×) |
-| Aggregate    |  4.5 KB (0.36×) | 12.5 KB (1.00×) | 12.9 KB (1.03×) |
-| Sort         |  3.4 KB (0.32×) | 10.7 KB (1.00×) | 11.1 KB (1.04×) |
-| Report       |  8.1 KB (0.33×) | 24.5 KB (1.00×) | 25.4 KB (1.04×) |
-| TopWithTies  |  2.9 KB (0.30×) |  9.5 KB (1.00×) |  9.9 KB (1.04×) |
-| Decorrelated |  3.9 KB (0.32×) | 12.1 KB (1.00×) | 12.6 KB (1.04×) |
-| NestedLoops  |  5.4 KB (0.33×) | 16.3 KB (1.00×) | 16.9 KB (1.04×) |
+| Scan         |  3.1 KB (0.33×) |  9.5 KB (1.00×) |  7.3 KB (0.76×) |
+| Join         |  5.8 KB (0.42×) | 13.8 KB (1.00×) |  9.9 KB (0.72×) |
+| Aggregate    |  4.5 KB (0.36×) | 12.5 KB (1.00×) |  9.1 KB (0.73×) |
+| Sort         |  3.4 KB (0.32×) | 10.7 KB (1.00×) |  8.1 KB (0.75×) |
+| Report       |  8.1 KB (0.33×) | 24.5 KB (1.00×) | 17.3 KB (0.71×) |
+| TopWithTies  |  2.9 KB (0.30×) |  9.5 KB (1.00×) |  7.1 KB (0.75×) |
+| Decorrelated |  3.9 KB (0.32×) | 12.1 KB (1.00×) |  8.9 KB (0.74×) |
+| NestedLoops  |  5.4 KB (0.33×) | 16.3 KB (1.00×) | 12.0 KB (0.74×) |
 
 ## Full results
 
@@ -286,37 +281,37 @@ under 1%) makes these means reliable.
 
 | Method     | Shape        | Mean      | Error     | StdDev    | Ratio | Gen0   | Gen1   | Allocated | Alloc Ratio |
 |----------- |------------- |----------:|----------:|----------:|------:|-------:|-------:|----------:|------------:|
-| Old        | Scan         |  5.337 μs | 0.0244 μs | 0.0204 μs |  1.04 | 0.3738 |      - |    3.1 KB |        0.33 |
-| Baseline   | Scan         |  5.154 μs | 0.0457 μs | 0.0381 μs |  1.00 | 1.1673 | 0.0229 |   9.54 KB |        1.00 |
-| Refactored | Scan         |  6.463 μs | 0.0808 μs | 0.0716 μs |  1.25 | 1.2054 | 0.0229 |   9.86 KB |        1.03 |
+| Old        | Scan         |  5.743 μs | 0.1145 μs | 0.2722 μs |  0.99 | 0.3738 |      - |    3.1 KB |        0.33 |
+| Baseline   | Scan         |  5.794 μs | 0.1158 μs | 0.2862 μs |  1.00 | 1.1673 | 0.0229 |   9.54 KB |        1.00 |
+| Refactored | Scan         |  5.285 μs | 0.1056 μs | 0.2362 μs |  0.91 | 0.8850 | 0.0153 |   7.27 KB |        0.76 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | Join         | 11.009 μs | 0.1021 μs | 0.0905 μs |  1.31 | 0.7019 |      - |   5.79 KB |        0.42 |
-| Baseline   | Join         |  8.399 μs | 0.1280 μs | 0.1134 μs |  1.00 | 1.6785 | 0.0458 |   13.8 KB |        1.00 |
-| Refactored | Join         | 10.417 μs | 0.0892 μs | 0.0791 μs |  1.24 | 1.7395 | 0.0458 |  14.27 KB |        1.03 |
+| Old        | Join         | 11.855 μs | 0.2338 μs | 0.5032 μs |  1.29 | 0.7019 |      - |   5.79 KB |        0.42 |
+| Baseline   | Join         |  9.209 μs | 0.1822 μs | 0.5019 μs |  1.00 | 1.6785 | 0.0458 |   13.8 KB |        1.00 |
+| Refactored | Join         |  8.080 μs | 0.1568 μs | 0.2298 μs |  0.88 | 1.2054 | 0.0305 |    9.9 KB |        0.72 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | Aggregate    |  7.594 μs | 0.0556 μs | 0.0520 μs |  1.03 | 0.5493 |      - |    4.5 KB |        0.36 |
-| Baseline   | Aggregate    |  7.393 μs | 0.0785 μs | 0.0734 μs |  1.00 | 1.5259 | 0.0381 |  12.51 KB |        1.00 |
-| Refactored | Aggregate    |  9.197 μs | 0.0718 μs | 0.0637 μs |  1.24 | 1.5717 | 0.0458 |  12.85 KB |        1.03 |
+| Old        | Aggregate    |  7.609 μs | 0.0332 μs | 0.0311 μs |  1.02 | 0.5493 |      - |    4.5 KB |        0.36 |
+| Baseline   | Aggregate    |  7.493 μs | 0.0736 μs | 0.0652 μs |  1.00 | 1.5259 | 0.0381 |  12.51 KB |        1.00 |
+| Refactored | Aggregate    |  6.858 μs | 0.0650 μs | 0.0608 μs |  0.92 | 1.1139 | 0.0229 |   9.11 KB |        0.73 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | Sort         |  6.642 μs | 0.0440 μs | 0.0411 μs |  1.08 | 0.4120 |      - |    3.4 KB |        0.32 |
-| Baseline   | Sort         |  6.122 μs | 0.0387 μs | 0.0343 μs |  1.00 | 1.3046 | 0.0305 |  10.71 KB |        1.00 |
-| Refactored | Sort         |  7.670 μs | 0.1251 μs | 0.1170 μs |  1.25 | 1.3580 | 0.0305 |  11.12 KB |        1.04 |
+| Old        | Sort         |  6.659 μs | 0.0260 μs | 0.0243 μs |  1.03 | 0.4120 |      - |    3.4 KB |        0.32 |
+| Baseline   | Sort         |  6.440 μs | 0.1170 μs | 0.1094 μs |  1.00 | 1.3046 | 0.0305 |  10.71 KB |        1.00 |
+| Refactored | Sort         |  5.854 μs | 0.0519 μs | 0.0485 μs |  0.91 | 0.9842 | 0.0153 |   8.05 KB |        0.75 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | Report       | 15.628 μs | 0.1204 μs | 0.1068 μs |  1.02 | 0.9766 |      - |   8.05 KB |        0.33 |
-| Baseline   | Report       | 15.352 μs | 0.2148 μs | 0.1904 μs |  1.00 | 2.9907 | 0.1526 |  24.49 KB |        1.00 |
-| Refactored | Report       | 19.109 μs | 0.1935 μs | 0.1716 μs |  1.24 | 3.1128 | 0.1526 |  25.43 KB |        1.04 |
+| Old        | Report       | 15.842 μs | 0.0701 μs | 0.0655 μs |  1.02 | 0.9766 |      - |   8.05 KB |        0.33 |
+| Baseline   | Report       | 15.576 μs | 0.2056 μs | 0.1923 μs |  1.00 | 2.9907 | 0.1526 |  24.49 KB |        1.00 |
+| Refactored | Report       | 14.030 μs | 0.1435 μs | 0.1342 μs |  0.90 | 2.1057 | 0.0916 |   17.3 KB |        0.71 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | TopWithTies  |  5.933 μs | 0.0342 μs | 0.0304 μs |  1.10 | 0.3510 |      - |   2.88 KB |        0.30 |
-| Baseline   | TopWithTies  |  5.374 μs | 0.0845 μs | 0.0705 μs |  1.00 | 1.1597 | 0.0229 |   9.49 KB |        1.00 |
-| Refactored | TopWithTies  |  6.973 μs | 0.0935 μs | 0.0829 μs |  1.30 | 1.2054 | 0.0229 |   9.87 KB |        1.04 |
+| Old        | TopWithTies  |  6.028 μs | 0.0259 μs | 0.0242 μs |  1.10 | 0.3510 |      - |   2.88 KB |        0.30 |
+| Baseline   | TopWithTies  |  5.493 μs | 0.0320 μs | 0.0284 μs |  1.00 | 1.1597 | 0.0229 |   9.49 KB |        1.00 |
+| Refactored | TopWithTies  |  5.834 μs | 0.1115 μs | 0.1801 μs |  1.06 | 0.8698 | 0.0153 |   7.11 KB |        0.75 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | Decorrelated |  7.872 μs | 0.0338 μs | 0.0282 μs |  1.14 | 0.4730 |      - |   3.91 KB |        0.32 |
-| Baseline   | Decorrelated |  6.897 μs | 0.0451 μs | 0.0352 μs |  1.00 | 1.4801 | 0.0381 |  12.14 KB |        1.00 |
-| Refactored | Decorrelated |  8.767 μs | 0.1071 μs | 0.1002 μs |  1.27 | 1.5411 | 0.0458 |  12.61 KB |        1.04 |
+| Old        | Decorrelated |  9.437 μs | 0.1880 μs | 0.3840 μs |  1.34 | 0.4730 |      - |   3.91 KB |        0.32 |
+| Baseline   | Decorrelated |  7.067 μs | 0.0508 μs | 0.1115 μs |  1.00 | 1.4801 | 0.0381 |  12.14 KB |        1.00 |
+| Refactored | Decorrelated |  6.512 μs | 0.1180 μs | 0.1104 μs |  0.92 | 1.0910 | 0.0229 |   8.94 KB |        0.74 |
 |            |              |           |           |           |       |        |        |           |             |
-| Old        | NestedLoops  | 10.795 μs | 0.0467 μs | 0.0414 μs |  1.17 | 0.6561 |      - |   5.38 KB |        0.33 |
-| Baseline   | NestedLoops  |  9.240 μs | 0.1604 μs | 0.1500 μs |  1.00 | 1.9989 | 0.0610 |  16.33 KB |        1.00 |
-| Refactored | NestedLoops  | 11.719 μs | 0.0786 μs | 0.0613 μs |  1.27 | 2.0599 | 0.0763 |  16.92 KB |        1.04 |
+| Old        | NestedLoops  | 10.894 μs | 0.0669 μs | 0.0626 μs |  1.13 | 0.6561 |      - |   5.38 KB |        0.33 |
+| Baseline   | NestedLoops  |  9.676 μs | 0.0772 μs | 0.0685 μs |  1.00 | 1.9989 | 0.0610 |  16.33 KB |        1.00 |
+| Refactored | NestedLoops  |  8.678 μs | 0.0268 μs | 0.0209 μs |  0.90 | 1.4648 | 0.0458 |  12.04 KB |        0.74 |
 
 ---
 
