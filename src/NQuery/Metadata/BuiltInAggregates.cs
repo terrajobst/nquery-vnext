@@ -124,7 +124,7 @@ internal static class BuiltInAggregates
             Expression.Lambda(Expression.Call(join, Expression.Constant(", "), state), state));
     });
 
-    public static ImmutableList<AggregateDefinition> Aggregates { get; } =
+    public static ImmutableArray<AggregateDefinition> Aggregates { get; } =
     [
         Count,
         Avg,

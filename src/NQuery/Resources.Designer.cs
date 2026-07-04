@@ -1980,6 +1980,15 @@ internal class Resources {
     }
 
     /// <summary>
+    ///   Looks up a localized string similar to The catalog already contains a different entry for the type &apos;{0}&apos;..
+    /// </summary>
+    internal static string DuplicateCatalogKey {
+        get {
+            return ResourceManager.GetString("DuplicateCatalogKey", resourceCulture);
+        }
+    }
+
+    /// <summary>
     ///   Looks up a localized string similar to WHEN expression must evaluate to &apos;{0}&apos;..
     /// </summary>
     internal static string WhenMustEvaluateToBool {

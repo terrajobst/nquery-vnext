@@ -9,7 +9,7 @@ namespace NQuery.Metadata;
 
 internal static class BuiltInFunctions
 {
-    public static ImmutableList<FunctionDefinition> Functions { get; } =
+    public static ImmutableArray<FunctionDefinition> Functions { get; } =
     [
         FunctionDefinition.Create<object, bool>(@"TO_BOOLEAN", value => ToBoolean(value)),
         FunctionDefinition.Create<object, string, bool>(@"TO_BOOLEAN", (value, culture) => ToBoolean(value, culture)),

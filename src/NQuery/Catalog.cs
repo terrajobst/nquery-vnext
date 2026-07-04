@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Frozen;
 using System.Collections.Immutable;
 
 using NQuery.Metadata;
@@ -7,14 +8,14 @@ namespace NQuery;
 
 public sealed class Catalog
 {
-    private Catalog(IImmutableList<TableDefinition> tables,
-                    IImmutableList<RelationshipDefinition> relationships,
-                    IImmutableList<FunctionDefinition> functions,
-                    IImmutableList<AggregateDefinition> aggregates,
-                    IImmutableList<VariableDefinition> variables,
-                    IImmutableDictionary<Type, IPropertyProvider> propertyProviders,
-                    IImmutableDictionary<Type, IMethodProvider> methodProviders,
-                    IImmutableDictionary<Type, IComparer> comparers)
+    private Catalog(ImmutableArray<TableDefinition> tables,
+                    ImmutableArray<RelationshipDefinition> relationships,
+                    ImmutableArray<FunctionDefinition> functions,
+                    ImmutableArray<AggregateDefinition> aggregates,
+                    ImmutableArray<VariableDefinition> variables,
+                    FrozenDictionary<Type, IPropertyProvider> propertyProviders,
+                    FrozenDictionary<Type, IMethodProvider> methodProviders,
+                    FrozenDictionary<Type, IComparer> comparers)
     {
         Tables = tables;
         Relationships = relationships;
@@ -29,50 +30,43 @@ public sealed class Catalog
     public static Catalog Empty { get; } = CreateEmpty();
     public static Catalog Default { get; } = CreateDefault();
 
-    public IImmutableList<TableDefinition> Tables { get; }
+    public ImmutableArray<TableDefinition> Tables { get; }
 
-    public IImmutableList<RelationshipDefinition> Relationships { get; }
+    public ImmutableArray<RelationshipDefinition> Relationships { get; }
 
-    public IImmutableList<FunctionDefinition> Functions { get; }
+    public ImmutableArray<FunctionDefinition> Functions { get; }
 
-    public IImmutableList<AggregateDefinition> Aggregates { get; }
+    public ImmutableArray<AggregateDefinition> Aggregates { get; }
 
-    public IImmutableList<VariableDefinition> Variables { get; }
+    public ImmutableArray<VariableDefinition> Variables { get; }
 
-    public IImmutableDictionary<Type, IPropertyProvider> PropertyProviders { get; }
+    public FrozenDictionary<Type, IPropertyProvider> PropertyProviders { get; }
 
-    public IImmutableDictionary<Type, IMethodProvider> MethodProviders { get; }
+    public FrozenDictionary<Type, IMethodProvider> MethodProviders { get; }
 
-    public IImmutableDictionary<Type, IComparer> Comparers { get; }
+    public FrozenDictionary<Type, IComparer> Comparers { get; }
 
     private static Catalog CreateEmpty()
     {
-        return new Catalog(ImmutableList.Create<TableDefinition>(),
-                           ImmutableList.Create<RelationshipDefinition>(),
-                           ImmutableList.Create<FunctionDefinition>(),
-                           ImmutableList.Create<AggregateDefinition>(),
-                           ImmutableList.Create<VariableDefinition>(),
-                           ImmutableDictionary.Create<Type, IPropertyProvider>(),
-                           ImmutableDictionary.Create<Type, IMethodProvider>(),
-                           ImmutableDictionary.Create<Type, IComparer>());
+        return new Catalog([], [], [], [], [],
+                           FrozenDictionary<Type, IPropertyProvider>.Empty,
+                           FrozenDictionary<Type, IMethodProvider>.Empty,
+                           FrozenDictionary<Type, IComparer>.Empty);
     }
 
     private static Catalog CreateDefault()
     {
         var reflectionProvider = new ReflectionProvider();
-        var propertyProviders = ImmutableDictionary.Create<Type, IPropertyProvider>()
-                                                   .Add(typeof(object), reflectionProvider);
-        var methodProviders = ImmutableDictionary.Create<Type, IMethodProvider>()
-                                                 .Add(typeof(object), reflectionProvider);
-        var comparers = ImmutableDictionary.Create<Type, IComparer>();
-        return new Catalog(ImmutableList.Create<TableDefinition>(),
-                           ImmutableList.Create<RelationshipDefinition>(),
+        var propertyProviders = new Dictionary<Type, IPropertyProvider> { [typeof(object)] = reflectionProvider }.ToFrozenDictionary();
+        var methodProviders = new Dictionary<Type, IMethodProvider> { [typeof(object)] = reflectionProvider }.ToFrozenDictionary();
+        return new Catalog([],
+                           [],
                            BuiltInFunctions.Functions,
                            BuiltInAggregates.Aggregates,
-                           ImmutableList.Create<VariableDefinition>(),
+                           [],
                            propertyProviders,
                            methodProviders,
-                           comparers);
+                           FrozenDictionary<Type, IComparer>.Empty);
     }
 
     // Tables
@@ -97,18 +91,17 @@ public sealed class Catalog
 
     public Catalog RemoveAllTables()
     {
-        var newTables = Tables.Clear();
-        return WithTables(newTables);
+        return WithTables(Tables.Clear());
     }
 
     public Catalog WithTables(IEnumerable<TableDefinition> tables)
     {
         ThrowIfNull(tables);
 
-        if (ReferenceEquals(tables, Tables))
+        var newTables = tables.ToImmutableArray();
+        if (newTables == Tables)
             return this;
 
-        var newTables = tables.ToImmutableList();
         return new Catalog(newTables, Relationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
@@ -134,18 +127,17 @@ public sealed class Catalog
 
     public Catalog RemoveAllRelationships()
     {
-        var newRelationships = Relationships.Clear();
-        return WithRelationships(newRelationships);
+        return WithRelationships(Relationships.Clear());
     }
 
     public Catalog WithRelationships(IEnumerable<RelationshipDefinition> relationships)
     {
         ThrowIfNull(relationships);
 
-        if (ReferenceEquals(relationships, Relationships))
+        var newRelationships = relationships.ToImmutableArray();
+        if (newRelationships == Relationships)
             return this;
 
-        var newRelationships = relationships.ToImmutableList();
         return new Catalog(Tables, newRelationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
@@ -171,18 +163,17 @@ public sealed class Catalog
 
     public Catalog RemoveAllFunctions()
     {
-        var newFunctions = Functions.Clear();
-        return WithFunctions(newFunctions);
+        return WithFunctions(Functions.Clear());
     }
 
     public Catalog WithFunctions(IEnumerable<FunctionDefinition> functions)
     {
         ThrowIfNull(functions);
 
-        if (ReferenceEquals(functions, Functions))
+        var newFunctions = functions.ToImmutableArray();
+        if (newFunctions == Functions)
             return this;
 
-        var newFunctions = functions.ToImmutableList();
         EnsureNoCollidingFunctions(newFunctions);
         return new Catalog(Tables, Relationships, newFunctions, Aggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
@@ -227,18 +218,17 @@ public sealed class Catalog
 
     public Catalog RemoveAllAggregates()
     {
-        var newAggregates = Aggregates.Clear();
-        return WithAggregates(newAggregates);
+        return WithAggregates(Aggregates.Clear());
     }
 
     public Catalog WithAggregates(IEnumerable<AggregateDefinition> aggregates)
     {
         ThrowIfNull(aggregates);
 
-        if (ReferenceEquals(aggregates, Aggregates))
+        var newAggregates = aggregates.ToImmutableArray();
+        if (newAggregates == Aggregates)
             return this;
 
-        var newAggregates = aggregates.ToImmutableList();
         return new Catalog(Tables, Relationships, Functions, newAggregates, Variables, PropertyProviders, MethodProviders, Comparers);
     }
 
@@ -264,18 +254,17 @@ public sealed class Catalog
 
     public Catalog RemoveAllVariables()
     {
-        var newVariables = Variables.Clear();
-        return WithVariables(newVariables);
+        return WithVariables(Variables.Clear());
     }
 
     public Catalog WithVariables(IEnumerable<VariableDefinition> variables)
     {
         ThrowIfNull(variables);
 
-        if (ReferenceEquals(variables, Variables))
+        var newVariables = variables.ToImmutableArray();
+        if (newVariables == Variables)
             return this;
 
-        var newVariables = variables.ToImmutableList();
         return new Catalog(Tables, Relationships, Functions, Aggregates, newVariables, PropertyProviders, MethodProviders, Comparers);
     }
 
@@ -286,7 +275,7 @@ public sealed class Catalog
         ThrowIfNull(type);
         ThrowIfNull(provider);
 
-        var newProviders = PropertyProviders.Add(type, provider);
+        var newProviders = AddEntry(PropertyProviders, type, provider);
         return WithPropertyProviders(newProviders);
     }
 
@@ -294,7 +283,7 @@ public sealed class Catalog
     {
         ThrowIfNull(providers);
 
-        var newProviders = PropertyProviders.AddRange(providers);
+        var newProviders = AddEntries(PropertyProviders, providers);
         return WithPropertyProviders(newProviders);
     }
 
@@ -303,17 +292,16 @@ public sealed class Catalog
         if (types is null)
             return this;
 
-        var newProviders = PropertyProviders.RemoveRange(types);
+        var newProviders = RemoveEntries(PropertyProviders, types);
         return WithPropertyProviders(newProviders);
     }
 
     public Catalog RemoveAllPropertyProviders()
     {
-        var newProviders = PropertyProviders.Clear();
-        return WithPropertyProviders(newProviders);
+        return WithPropertyProviders(FrozenDictionary<Type, IPropertyProvider>.Empty);
     }
 
-    public Catalog WithPropertyProviders(IImmutableDictionary<Type, IPropertyProvider> providers)
+    public Catalog WithPropertyProviders(FrozenDictionary<Type, IPropertyProvider> providers)
     {
         ThrowIfNull(providers);
 
@@ -330,7 +318,7 @@ public sealed class Catalog
         ThrowIfNull(type);
         ThrowIfNull(provider);
 
-        var newProviders = MethodProviders.Add(type, provider);
+        var newProviders = AddEntry(MethodProviders, type, provider);
         return WithMethodProviders(newProviders);
     }
 
@@ -338,7 +326,7 @@ public sealed class Catalog
     {
         ThrowIfNull(providers);
 
-        var newProviders = MethodProviders.AddRange(providers);
+        var newProviders = AddEntries(MethodProviders, providers);
         return WithMethodProviders(newProviders);
     }
 
@@ -347,17 +335,16 @@ public sealed class Catalog
         if (types is null)
             return this;
 
-        var newProviders = MethodProviders.RemoveRange(types);
+        var newProviders = RemoveEntries(MethodProviders, types);
         return WithMethodProviders(newProviders);
     }
 
     public Catalog RemoveAllMethodProviders()
     {
-        var newProviders = MethodProviders.Clear();
-        return WithMethodProviders(newProviders);
+        return WithMethodProviders(FrozenDictionary<Type, IMethodProvider>.Empty);
     }
 
-    public Catalog WithMethodProviders(IImmutableDictionary<Type, IMethodProvider> providers)
+    public Catalog WithMethodProviders(FrozenDictionary<Type, IMethodProvider> providers)
     {
         ThrowIfNull(providers);
 
@@ -374,7 +361,7 @@ public sealed class Catalog
         ThrowIfNull(type);
         ThrowIfNull(comparer);
 
-        var newProviders = Comparers.Add(type, comparer);
+        var newProviders = AddEntry(Comparers, type, comparer);
         return WithComparers(newProviders);
     }
 
@@ -386,7 +373,7 @@ public sealed class Catalog
         // IComparer<T> is wrapped to expose the non-generic side the rest of the pipeline still uses.
         // The typed side is recovered without boxing when the comparer reaches a typed sort key.
         var stored = comparer as IComparer ?? new UnboxingComparer<T>(comparer);
-        var newProviders = Comparers.Add(typeof(T), stored);
+        var newProviders = AddEntry(Comparers, typeof(T), stored);
         return WithComparers(newProviders);
     }
 
@@ -394,7 +381,7 @@ public sealed class Catalog
     {
         ThrowIfNull(comparer);
 
-        var newProviders = Comparers.AddRange(comparer);
+        var newProviders = AddEntries(Comparers, comparer);
         return WithComparers(newProviders);
     }
 
@@ -403,17 +390,16 @@ public sealed class Catalog
         if (types is null)
             return this;
 
-        var newProviders = Comparers.RemoveRange(types);
+        var newProviders = RemoveEntries(Comparers, types);
         return WithComparers(newProviders);
     }
 
     public Catalog RemoveAllComparers()
     {
-        var newProviders = Comparers.Clear();
-        return WithComparers(newProviders);
+        return WithComparers(FrozenDictionary<Type, IComparer>.Empty);
     }
 
-    public Catalog WithComparers(IImmutableDictionary<Type, IComparer> comparers)
+    public Catalog WithComparers(FrozenDictionary<Type, IComparer> comparers)
     {
         ThrowIfNull(comparers);
 
@@ -421,5 +407,75 @@ public sealed class Catalog
             return this;
 
         return new Catalog(Tables, Relationships, Functions, Aggregates, Variables, PropertyProviders, MethodProviders, comparers);
+    }
+
+    // FrozenDictionary is optimized for fast lookups but cannot be mutated in place, so every add
+    // or remove rebuilds the dictionary. That is acceptable because the catalog is built rarely and
+    // read often. These helpers preserve the semantics the catalog previously inherited from
+    // IImmutableDictionary: adding an entry that already maps the key to an equal value is a no-op,
+    // while re-mapping a key to a different value is rejected.
+
+    private static FrozenDictionary<TKey, TValue> AddEntry<TKey, TValue>(FrozenDictionary<TKey, TValue> source, TKey key, TValue value)
+        where TKey : Type
+    {
+        if (source.TryGetValue(key, out var existing))
+        {
+            if (EqualityComparer<TValue>.Default.Equals(existing, value))
+                return source;
+
+            throw new ArgumentException(string.Format(Resources.DuplicateCatalogKey, key));
+        }
+
+        var builder = ToBuilder(source);
+        builder.Add(key, value);
+        return builder.ToFrozenDictionary();
+    }
+
+    private static FrozenDictionary<TKey, TValue> AddEntries<TKey, TValue>(FrozenDictionary<TKey, TValue> source, IEnumerable<KeyValuePair<TKey, TValue>> items)
+        where TKey : Type
+    {
+        Dictionary<TKey, TValue>? builder = null;
+        foreach (var item in items)
+        {
+            IReadOnlyDictionary<TKey, TValue> current = builder ?? (IReadOnlyDictionary<TKey, TValue>)source;
+            if (current.TryGetValue(item.Key, out var existing))
+            {
+                if (EqualityComparer<TValue>.Default.Equals(existing, item.Value))
+                    continue;
+
+                throw new ArgumentException(string.Format(Resources.DuplicateCatalogKey, item.Key));
+            }
+
+            builder ??= ToBuilder(source);
+            builder.Add(item.Key, item.Value);
+        }
+
+        return builder is null ? source : builder.ToFrozenDictionary();
+    }
+
+    private static FrozenDictionary<TKey, TValue> RemoveEntries<TKey, TValue>(FrozenDictionary<TKey, TValue> source, IEnumerable<TKey> keys)
+        where TKey : Type
+    {
+        Dictionary<TKey, TValue>? builder = null;
+        foreach (var key in keys)
+        {
+            IReadOnlyDictionary<TKey, TValue> current = builder ?? (IReadOnlyDictionary<TKey, TValue>)source;
+            if (!current.ContainsKey(key))
+                continue;
+
+            builder ??= ToBuilder(source);
+            builder.Remove(key);
+        }
+
+        return builder is null ? source : builder.ToFrozenDictionary();
+    }
+
+    private static Dictionary<TKey, TValue> ToBuilder<TKey, TValue>(FrozenDictionary<TKey, TValue> source)
+        where TKey : Type
+    {
+        var builder = new Dictionary<TKey, TValue>(source.Count);
+        foreach (var item in source)
+            builder.Add(item.Key, item.Value);
+        return builder;
     }
 }

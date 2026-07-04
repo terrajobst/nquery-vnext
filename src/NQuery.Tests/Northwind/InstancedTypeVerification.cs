@@ -31,7 +31,7 @@ public class InstancedTypeVerification
             instance.Tables.Select(t => t.Name).OrderBy(n => n),
             typed.Tables.Select(t => t.Name).OrderBy(n => n));
 
-        Assert.Equal(instance.Relationships.Count, typed.Relationships.Count);
+        Assert.Equal(instance.Relationships.Length, typed.Relationships.Length);
 
         // Every typed table is backed by a real CLR record, not DataRow.
         Assert.All(typed.Tables, t => Assert.NotEqual(typeof(System.Data.DataRow), t.RowType));
