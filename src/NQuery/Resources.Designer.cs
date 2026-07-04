@@ -675,6 +675,33 @@ internal class Resources {
     }
     
     /// <summary>
+    ///   Looks up a localized string similar to An instance of type '{0}' cannot be used to invoke a method declared on type '{1}'..
+    /// </summary>
+    internal static string FunctionInstanceTypeMismatch {
+        get {
+            return ResourceManager.GetString("FunctionInstanceTypeMismatch", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    ///   Looks up a localized string similar to A function with an instance must be created from an instance method..
+    /// </summary>
+    internal static string FunctionMethodMustBeInstance {
+        get {
+            return ResourceManager.GetString("FunctionMethodMustBeInstance", resourceCulture);
+        }
+    }
+
+    /// <summary>
+    ///   Looks up a localized string similar to A function without an instance must be created from a static method..
+    /// </summary>
+    internal static string FunctionMethodMustBeStatic {
+        get {
+            return ResourceManager.GetString("FunctionMethodMustBeStatic", resourceCulture);
+        }
+    }
+
+    /// <summary>
     ///   Looks up a localized string similar to Function must return a value..
     /// </summary>
     internal static string FunctionMustNotBeVoid {

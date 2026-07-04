@@ -447,6 +447,15 @@
   <data name="DuplicateFunctionSignature" xml:space="preserve">
     <value>The catalog already contains a function with the signature '{0}'. Functions whose parameters differ only by nullability are considered identical.</value>
   </data>
+  <data name="FunctionMethodMustBeStatic" xml:space="preserve">
+    <value>A function without an instance must be created from a static method.</value>
+  </data>
+  <data name="FunctionMethodMustBeInstance" xml:space="preserve">
+    <value>A function with an instance must be created from an instance method.</value>
+  </data>
+  <data name="FunctionInstanceTypeMismatch" xml:space="preserve">
+    <value>An instance of type '{0}' cannot be used to invoke a method declared on type '{1}'.</value>
+  </data>
   <data name="DuplicateCatalogKey" xml:space="preserve">
     <value>The catalog already contains a different entry for the type '{0}'.</value>
   </data>

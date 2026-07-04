@@ -7,7 +7,7 @@ internal sealed class ExpressionPropertyDefinition : PropertyDefinition
     private readonly LambdaExpression _expression;
 
     public ExpressionPropertyDefinition(string name, Type type, LambdaExpression expression)
-        : base(name, type)
+        : base(expression.Parameters[0].Type, name, type)
     {
         ThrowIfNull(name);
         ThrowIfNull(type);

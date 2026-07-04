@@ -6,7 +6,7 @@ namespace NQuery.Metadata;
 internal sealed class ReflectionFieldDefinition : PropertyDefinition
 {
     public ReflectionFieldDefinition(FieldInfo fieldInfo, string name)
-        : base(name, fieldInfo.FieldType)
+        : base(fieldInfo.DeclaringType!, name, fieldInfo.FieldType)
     {
         ThrowIfNull(fieldInfo);
         ThrowIfNull(name);

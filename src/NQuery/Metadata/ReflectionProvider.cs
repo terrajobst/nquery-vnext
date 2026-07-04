@@ -149,7 +149,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
 
         public void Add(MethodDefinition method, MethodInfo methodInfo)
         {
-            var key = GenerateKey(method.Name, method.GetParameterTypes());
+            var key = GenerateKey(method.Name, method.Parameters.Select(p => p.Type));
             var entry = new Entry(key, method, methodInfo);
             _table.Add(entry.Key, entry);
         }
@@ -198,7 +198,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     private static void AddMethod(MethodTable methodTable, ICollection<MethodDefinition> methodList, Type declaringType, MethodDefinition method, MethodInfo methodInfo)
     {
         // Check if we already have a method with the same name and parameters declared.
-        var existingMethodEntry = methodTable[method.Name, method.GetParameterTypes()];
+        var existingMethodEntry = methodTable[method.Name, method.Parameters.Select(p => p.Type)];
 
         if (existingMethodEntry is not null)
         {
@@ -327,7 +327,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     {
         ThrowIfNull(methodInfo);
 
-        return MethodDefinition.Create(methodInfo, methodInfo.Name);
+        return MethodDefinition.Create(methodInfo.Name, methodInfo);
     }
 
     /// <summary>

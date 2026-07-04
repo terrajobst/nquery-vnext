@@ -7,16 +7,21 @@ namespace NQuery.Metadata;
 
 public abstract class PropertyDefinition
 {
-    private protected PropertyDefinition(string name, Type type)
+    private protected PropertyDefinition(Type instanceType, string name, Type type)
     {
+        ThrowIfNull(instanceType);
         ThrowIfNull(name);
         ThrowIfNull(type);
 
         // Nullable<T> is erased to T at the metadata boundary; nullability is tracked separately
         // by the engine (see ColumnDefinition for the rationale).
+        InstanceType = instanceType.GetNonNullableType();
         Name = name;
         Type = type.GetNonNullableType();
     }
+
+    // The type of the receiver the property is accessed on.
+    public Type InstanceType { get; }
 
     public string Name { get; }
 

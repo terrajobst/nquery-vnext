@@ -24,7 +24,8 @@ public sealed class NullableParameterTests : EvaluationTest
     [Fact]
     public void ReflectionMethod_WithNullableParameter_IsInvoked()
     {
-        var method = MethodDefinition.Create(typeof(Box).GetMethod(nameof(Box.AddOne))!);
+        var methodInfo = typeof(Box).GetMethod(nameof(Box.AddOne))!;
+        var method = MethodDefinition.Create(methodInfo.Name, methodInfo);
         var catalog = Catalog.Default
                              .AddVariables(VariableDefinition.Create("b", typeof(Box), new Box()))
                              .AddMethodProvider(typeof(Box), new FixedMethodProvider(method));

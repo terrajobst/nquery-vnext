@@ -187,7 +187,7 @@ public sealed class Catalog
         {
             if (!seen.Add(function))
             {
-                var parameters = string.Join(", ", function.GetParameterTypes().Select(t => t.FullName ?? t.Name));
+                var parameters = string.Join(", ", function.Parameters.Select(p => p.Type.FullName ?? p.Type.Name));
                 throw new ArgumentException(string.Format(Resources.DuplicateFunctionSignature, $"{function.Name}({parameters})"), nameof(functions));
             }
         }

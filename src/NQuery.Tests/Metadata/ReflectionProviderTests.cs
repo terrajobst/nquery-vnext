@@ -24,7 +24,7 @@ public sealed class ReflectionProviderTests
         Assert.Equal(typeof(int), Assert.Single(method.Parameters).Type);
 
         // The surviving definition is backed by the non-nullable CLR overload.
-        var reflection = Assert.IsType<ReflectionMethodDefinition>(method);
+        var reflection = Assert.IsType<MethodDefinition.ReflectionMethodDefinition>(method);
         Assert.Equal(typeof(int), reflection.MethodInfo.GetParameters().Single().ParameterType);
     }
 }

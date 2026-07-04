@@ -6,7 +6,7 @@ namespace NQuery.Metadata;
 internal sealed class ReflectionPropertyDefinition : PropertyDefinition
 {
     public ReflectionPropertyDefinition(PropertyInfo propertyInfo, string name)
-        : base(name, propertyInfo.PropertyType)
+        : base(propertyInfo.DeclaringType!, name, propertyInfo.PropertyType)
     {
         ThrowIfNull(propertyInfo);
         ThrowIfNull(name);
