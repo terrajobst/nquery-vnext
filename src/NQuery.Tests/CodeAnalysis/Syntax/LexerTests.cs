@@ -791,6 +791,45 @@ public class LexerTests
         Assert.Empty(token.Diagnostics);
     }
 
+    [Theory]
+    [InlineData("1.e5", 1e5)]
+    [InlineData("1.E5", 1e5)]
+    [InlineData("1.e+5", 1e5)]
+    [InlineData("1.e-5", 1e-5)]
+    public void Lexer_Lex_Literal_Double_WithExponentImmediatelyAfterPeriod(string text, double value)
+    {
+        // The lexer only treats a period as part of the number when what follows can
+        // start a floating-point tail. That tail includes an exponent that comes
+        // straight after the period (e.g. "1.e5"), so the whole thing must lex as a
+        // single numeric literal -- not "1", ".", "e5".
+        var token = SyntaxFacts.ParseToken(text);
+
+        Assert.Equal(text, token.Text);
+        Assert.Equal(SyntaxKind.NumericLiteralToken, token.Kind);
+        Assert.False(token.IsMissing);
+        Assert.True(token.IsTerminated());
+        Assert.IsType<double>(token.Value);
+        Assert.Equal(value, token.Value);
+        Assert.Empty(token.Diagnostics);
+    }
+
+    [Fact]
+    public void Lexer_Lex_Trivia_Comment_MultiLine_SlashStarSlash_IsUnterminated()
+    {
+        // "/*/" is an *unterminated* comment: the '/' right after "/*" is the comment
+        // body, not a closing "*/". This only holds if the lexer skips the '*' of the
+        // "/*" opener before scanning for the terminator.
+        const string text = "/*/";
+        var trivia = LexSingleTrivia(text);
+
+        Assert.Equal(text, trivia.Text);
+        Assert.Equal(SyntaxKind.MultiLineCommentTrivia, trivia.Kind);
+        Assert.False(trivia.IsTerminated());
+
+        var diagnostic = Assert.Single(trivia.Diagnostics);
+        Assert.Equal(DiagnosticId.UnterminatedComment, diagnostic.DiagnosticId);
+    }
+
     [Fact]
     public void Lexer_Lex_Literal_Double_WhenInvalid()
     {

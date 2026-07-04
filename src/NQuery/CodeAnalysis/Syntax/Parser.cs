@@ -200,7 +200,7 @@ internal sealed class Parser
         var diagnosticSpan = GetDiagnosticSpanForMissingToken();
         var diagnostics = new List<Diagnostic>(1);
         diagnostics.ReportTokenExpected(diagnosticSpan, Current, kind);
-        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, [], [], diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, [], [], [.. diagnostics]);
     }
 
     private SyntaxToken SkipAndInsertMissingToken(SyntaxKind kind)
@@ -213,7 +213,7 @@ internal sealed class Parser
         var diagnosticSpan = GetDiagnosticSpanForMissingToken();
         var diagnostics = new List<Diagnostic>(1);
         diagnostics.ReportTokenExpected(diagnosticSpan, skippedToken, kind);
-        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, skippedTokensTrivia, [], diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, [.. skippedTokensTrivia], [], [.. diagnostics]);
     }
 
     private TextSpan GetDiagnosticSpanForMissingToken()

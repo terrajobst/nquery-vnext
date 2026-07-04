@@ -9,7 +9,7 @@ public sealed class SyntaxToken
     private readonly SyntaxTree _syntaxTree;
     private string? _text;
 
-    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, object? value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
+    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, object? value, ImmutableArray<SyntaxTrivia> leadingTrivia, ImmutableArray<SyntaxTrivia> trailingTrivia, ImmutableArray<Diagnostic> diagnostics)
     {
         _syntaxTree = syntaxTree;
         Kind = kind;
@@ -17,9 +17,9 @@ public sealed class SyntaxToken
         IsMissing = isMissing;
         Span = span;
         Value = value;
-        LeadingTrivia = [.. leadingTrivia];
-        TrailingTrivia = [.. trailingTrivia];
-        Diagnostics = [.. diagnostics];
+        LeadingTrivia = leadingTrivia;
+        TrailingTrivia = trailingTrivia;
+        Diagnostics = diagnostics;
     }
 
     public SyntaxNode? Parent => _syntaxTree?.GetParentNode(this);
@@ -104,7 +104,7 @@ public sealed class SyntaxToken
     {
         ThrowIfNull(diagnostics);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, TrailingTrivia, diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, TrailingTrivia, [.. diagnostics]);
     }
 
     public SyntaxToken WithKind(SyntaxKind kind)
@@ -116,14 +116,14 @@ public sealed class SyntaxToken
     {
         ThrowIfNull(trivia);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, trivia, TrailingTrivia, Diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, [.. trivia], TrailingTrivia, Diagnostics);
     }
 
     public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
     {
         ThrowIfNull(trivia);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, trivia, Diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, [.. trivia], Diagnostics);
     }
 
     public override string ToString()

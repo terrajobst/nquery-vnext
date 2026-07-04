@@ -10,13 +10,13 @@ public sealed class SyntaxTrivia
     private readonly SyntaxTree _syntaxTree;
     private string? _text;
 
-    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, TextSpan span, StructuredTriviaSyntax? structure, IEnumerable<Diagnostic> diagnostics)
+    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, TextSpan span, StructuredTriviaSyntax? structure, ImmutableArray<Diagnostic> diagnostics)
     {
         _syntaxTree = syntaxTree;
         Kind = kind;
         Span = span;
         Structure = structure;
-        Diagnostics = [.. diagnostics];
+        Diagnostics = diagnostics;
     }
 
     public SyntaxToken? Parent => _syntaxTree?.GetParentToken(this);
