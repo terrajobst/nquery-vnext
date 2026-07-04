@@ -9,7 +9,7 @@ internal sealed class PhysicalEmpty : PhysicalOperator
 {
     public override PhysicalOperatorKind Kind => PhysicalOperatorKind.Empty;
 
-    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
+    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => [];
 
     protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [];
 }

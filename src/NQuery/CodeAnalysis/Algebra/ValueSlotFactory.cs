@@ -5,7 +5,7 @@ namespace NQuery.CodeAnalysis.Algebra;
 internal sealed class ValueSlotFactory
 {
     private const string TemporaryFormatString = @"Expr{0}";
-    private ImmutableDictionary<string, int> _usedNames = ImmutableDictionary<string, int>.Empty;
+    private ImmutableDictionary<string, int> _usedNames = [];
 
     public ValueSlotFactory()
     {

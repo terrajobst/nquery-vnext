@@ -48,10 +48,7 @@ public sealed class Catalog
 
     private static Catalog CreateEmpty()
     {
-        return new Catalog([], [], [], [], [],
-                           FrozenDictionary<Type, IPropertyProvider>.Empty,
-                           FrozenDictionary<Type, IMethodProvider>.Empty,
-                           FrozenDictionary<Type, IComparer>.Empty);
+        return new Catalog([], [], [], [], [], [], [], []);
     }
 
     private static Catalog CreateDefault()
@@ -66,7 +63,7 @@ public sealed class Catalog
                            [],
                            propertyProviders,
                            methodProviders,
-                           FrozenDictionary<Type, IComparer>.Empty);
+                           []);
     }
 
     // Tables
@@ -298,7 +295,7 @@ public sealed class Catalog
 
     public Catalog RemoveAllPropertyProviders()
     {
-        return WithPropertyProviders(FrozenDictionary<Type, IPropertyProvider>.Empty);
+        return WithPropertyProviders([]);
     }
 
     public Catalog WithPropertyProviders(FrozenDictionary<Type, IPropertyProvider> providers)
@@ -341,7 +338,7 @@ public sealed class Catalog
 
     public Catalog RemoveAllMethodProviders()
     {
-        return WithMethodProviders(FrozenDictionary<Type, IMethodProvider>.Empty);
+        return WithMethodProviders([]);
     }
 
     public Catalog WithMethodProviders(FrozenDictionary<Type, IMethodProvider> providers)
@@ -396,7 +393,7 @@ public sealed class Catalog
 
     public Catalog RemoveAllComparers()
     {
-        return WithComparers(FrozenDictionary<Type, IComparer>.Empty);
+        return WithComparers([]);
     }
 
     public Catalog WithComparers(FrozenDictionary<Type, IComparer> comparers)

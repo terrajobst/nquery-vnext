@@ -7,7 +7,7 @@ internal sealed class LogicalEmpty : LogicalOperator
 {
     public override LogicalOperatorKind Kind => LogicalOperatorKind.Empty;
 
-    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
+    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => [];
 
     protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [];
 }

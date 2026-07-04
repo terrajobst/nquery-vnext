@@ -8,7 +8,7 @@ namespace NQuery.CodeAnalysis.Binding;
 internal sealed class BoundValueFactory
 {
     private const string TemporaryFormatString = @"Expr{0}";
-    private ImmutableDictionary<string, int> _usedNames = ImmutableDictionary<string, int>.Empty;
+    private ImmutableDictionary<string, int> _usedNames = [];
 
     public BoundValue Create(string formatString, Type type)
     {

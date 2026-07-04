@@ -7,7 +7,7 @@ internal sealed class LogicalConstant : LogicalOperator
 {
     public override LogicalOperatorKind Kind => LogicalOperatorKind.Constant;
 
-    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => FrozenSet<ValueSlot>.Empty;
+    protected override FrozenSet<ValueSlot> ComputeDefinedValueSlots() => [];
 
     protected override ImmutableArray<ValueSlot> ComputeOutputValueSlots() => [];
 }
