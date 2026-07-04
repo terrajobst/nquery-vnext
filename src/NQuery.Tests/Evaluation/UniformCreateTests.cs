@@ -102,7 +102,11 @@ public sealed class UniformCreateTests : EvaluationTest
         var expression = PropertyDefinition.Create<string, int>("Len", s => s.Length);
         Assert.Equal(typeof(string), expression.InstanceType);
 
-        var reflection = PropertyDefinition.Create(typeof(string).GetProperty(nameof(string.Length))!);
+        var @delegate = PropertyDefinition.Create("Len", typeof(int), (Func<string, int>)(s => s.Length));
+        Assert.Equal(typeof(string), @delegate.InstanceType);
+
+        var length = typeof(string).GetProperty(nameof(string.Length))!;
+        var reflection = PropertyDefinition.Create(length.Name, length);
         Assert.Equal(typeof(string), reflection.InstanceType);
     }
 

@@ -29,54 +29,110 @@ public abstract class PropertyDefinition
 
     internal abstract Expression CreateInvocation(Expression instance);
 
-    public static PropertyDefinition Create(PropertyInfo propertyInfo)
-    {
-        ThrowIfNull(propertyInfo);
-
-        return Create(propertyInfo, propertyInfo.Name);
-    }
-
-    public static PropertyDefinition Create(PropertyInfo propertyInfo, string name)
-    {
-        ThrowIfNull(propertyInfo);
-        ThrowIfNull(name);
-
-        return new ReflectionPropertyDefinition(propertyInfo, name);
-    }
-
-    public static PropertyDefinition Create(FieldInfo fieldInfo)
-    {
-        ThrowIfNull(fieldInfo);
-
-        return Create(fieldInfo, fieldInfo.Name);
-    }
-
-    public static PropertyDefinition Create(FieldInfo fieldInfo, string name)
-    {
-        ThrowIfNull(fieldInfo);
-        ThrowIfNull(name);
-
-        return new ReflectionFieldDefinition(fieldInfo, name);
-    }
-
     // The single lambda parameter is the instance the property is accessed on.
-
     public static PropertyDefinition Create<TInstance, TResult>(string name, System.Linq.Expressions.Expression<Func<TInstance, TResult>> expression)
     {
-        ThrowIfNull(name);
         ThrowIfNull(expression);
 
         return new ExpressionPropertyDefinition(name, expression.ReturnType, expression);
     }
 
-    // Same, but with the property's type supplied explicitly (e.g. when it is only known at
-    // run time); the accessor produces the boxed value.
-    public static PropertyDefinition Create<TInstance>(string name, Type type, System.Linq.Expressions.Expression<Func<TInstance, object>> expression)
+    // The delegate's single parameter is the instance the property is accessed on; the property's
+    // type is supplied explicitly (e.g. when it is only known at run time) and the accessor's
+    // return value is converted to it.
+    public static PropertyDefinition Create(string name, Type type, Delegate accessor)
     {
         ThrowIfNull(name);
         ThrowIfNull(type);
-        ThrowIfNull(expression);
+        ThrowIfNull(accessor);
 
-        return new ExpressionPropertyDefinition(name, type, expression);
+        return new DelegatePropertyDefinition(name, type, accessor);
+    }
+
+    public static PropertyDefinition Create(string name, PropertyInfo property)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(property);
+
+        return new ReflectionPropertyDefinition(name, property);
+    }
+
+    public static PropertyDefinition Create(string name, FieldInfo field)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(field);
+
+        return new ReflectionFieldDefinition(name, field);
+    }
+
+    private sealed class ExpressionPropertyDefinition : PropertyDefinition
+    {
+        private readonly LambdaExpression _expression;
+
+        public ExpressionPropertyDefinition(string name, Type type, LambdaExpression expression)
+            : base(expression.Parameters[0].Type, name, type)
+        {
+            _expression = expression;
+        }
+
+        internal override Expression CreateInvocation(Expression instance)
+        {
+            var value = ExpressionInliner.Inline(_expression, new[] { instance });
+            return value.Type == Type ? value : Expression.Convert(value, Type);
+        }
+    }
+
+    private sealed class DelegatePropertyDefinition : PropertyDefinition
+    {
+        private readonly Delegate _accessor;
+
+        public DelegatePropertyDefinition(string name, Type type, Delegate accessor)
+            : base(accessor.Method.GetParameters()[0].ParameterType, name, type)
+        {
+            _accessor = accessor;
+        }
+
+        internal override Expression CreateInvocation(Expression instance)
+        {
+            var target = _accessor.Target is null ? null : Expression.Constant(_accessor.Target);
+
+            // The delegate's single parameter is the instance; coerce it back to the delegate's
+            // actual parameter type (see ReflectionMethodDefinition), then convert the result to the
+            // declared property type.
+            var value = Expression.Call(target, _accessor.Method, CoerceArguments.ToParameters(_accessor.Method, new[] { instance }));
+            return value.Type == Type ? value : Expression.Convert(value, Type);
+        }
+    }
+
+    private sealed class ReflectionPropertyDefinition : PropertyDefinition
+    {
+        public ReflectionPropertyDefinition(string name, PropertyInfo propertyInfo)
+            : base(propertyInfo.DeclaringType!, name, propertyInfo.PropertyType)
+        {
+            PropertyInfo = propertyInfo;
+        }
+
+        public PropertyInfo PropertyInfo { get; }
+
+        internal override Expression CreateInvocation(Expression instance)
+        {
+            return Expression.MakeMemberAccess(instance, PropertyInfo);
+        }
+    }
+
+    private sealed class ReflectionFieldDefinition : PropertyDefinition
+    {
+        public ReflectionFieldDefinition(string name, FieldInfo fieldInfo)
+            : base(fieldInfo.DeclaringType!, name, fieldInfo.FieldType)
+        {
+            FieldInfo = fieldInfo;
+        }
+
+        public FieldInfo FieldInfo { get; }
+
+        internal override Expression CreateInvocation(Expression instance)
+        {
+            return Expression.MakeMemberAccess(instance, FieldInfo);
+        }
     }
 }

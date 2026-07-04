@@ -339,7 +339,7 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     {
         ThrowIfNull(propertyInfo);
 
-        return PropertyDefinition.Create(propertyInfo, propertyInfo.Name);
+        return PropertyDefinition.Create(propertyInfo.Name, propertyInfo);
     }
 
     /// <summary>
@@ -351,6 +351,6 @@ public class ReflectionProvider : IPropertyProvider, IMethodProvider
     {
         ThrowIfNull(fieldInfo);
 
-        return PropertyDefinition.Create(fieldInfo, fieldInfo.Name);
+        return PropertyDefinition.Create(fieldInfo.Name, fieldInfo);
     }
 }

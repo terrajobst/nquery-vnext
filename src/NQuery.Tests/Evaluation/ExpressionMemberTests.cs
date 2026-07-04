@@ -28,9 +28,9 @@ public sealed class ExpressionMemberTests : EvaluationTest
     }
 
     [Fact]
-    public void ExpressionProperty_WithExplicitType_IsEvaluated()
+    public void DelegateProperty_WithExplicitType_IsEvaluated()
     {
-        var property = PropertyDefinition.Create<string>("DoubleLength", typeof(int), s => (object)(s.Length * 2));
+        var property = PropertyDefinition.Create("DoubleLength", typeof(int), (Func<string, int>)(s => s.Length * 2));
         var catalog = Catalog.Default
                                      .AddVariables(VariableDefinition.Create("s", typeof(string), "abc"))
                                      .AddPropertyProvider(typeof(string), new FixedPropertyProvider(property));
