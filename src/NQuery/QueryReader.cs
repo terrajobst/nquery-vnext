@@ -19,6 +19,10 @@ public sealed class QueryReader : IDisposable
 
     internal QueryReader(Iterator iterator, ImmutableArray<(string ColumnName, Type ColumnType)> columnNamesAndTypes, ImmutableArray<ValueSlot> outputValueSlots, bool schemaOnly)
     {
+        ThrowIfNull(iterator);
+        ThrowIfNull(columnNamesAndTypes);
+        ThrowIfNull(outputValueSlots);
+
         _iterator = iterator;
         _schemaOnly = schemaOnly;
         _columnNames = [.. columnNamesAndTypes.Select(t => t.ColumnName)];

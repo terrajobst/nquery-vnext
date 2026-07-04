@@ -15,7 +15,9 @@ public sealed class RelationshipDefinition
     public static RelationshipDefinition Create(TableDefinition parentTable, ImmutableArray<ColumnDefinition> parentColumns, TableDefinition childTable, ImmutableArray<ColumnDefinition> childColumns)
     {
         ThrowIfNull(parentTable);
+        ThrowIfNull(parentColumns);
         ThrowIfNull(childTable);
+        ThrowIfNull(childColumns);
 
         if (parentColumns.Length == 0)
             throw new ArgumentException(Resources.ParentColumnsMustContainAtLeastOneColumn, nameof(parentColumns));

@@ -9,6 +9,7 @@ public abstract class TableDefinition
     {
         ThrowIfNull(name);
         ThrowIfNull(rowType);
+        ThrowIfNull(columns);
 
         Name = name;
         RowType = rowType;

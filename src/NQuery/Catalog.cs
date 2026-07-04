@@ -17,6 +17,12 @@ public sealed class Catalog
                     FrozenDictionary<Type, IMethodProvider> methodProviders,
                     FrozenDictionary<Type, IComparer> comparers)
     {
+        ThrowIfNull(tables);
+        ThrowIfNull(relationships);
+        ThrowIfNull(functions);
+        ThrowIfNull(aggregates);
+        ThrowIfNull(variables);
+
         Tables = tables;
         Relationships = relationships;
         Functions = functions;
