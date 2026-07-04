@@ -1998,6 +1998,15 @@ internal class Resources {
     }
 
     /// <summary>
+    ///   Looks up a localized string similar to A null value cannot be assigned to variable of type {0}..
+    /// </summary>
+    internal static string VariableValueCannotBeNull {
+        get {
+            return ResourceManager.GetString("VariableValueCannotBeNull", resourceCulture);
+        }
+    }
+
+    /// <summary>
     ///   Looks up a localized string similar to The catalog already contains a function with the signature &apos;{0}&apos;. Functions whose parameters differ only by nullability are considered identical..
     /// </summary>
     internal static string DuplicateFunctionSignature {

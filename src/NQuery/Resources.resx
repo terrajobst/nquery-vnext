@@ -444,6 +444,9 @@
   <data name="VariableValueTypeMismatch" xml:space="preserve">
     <value>The value '{0}' cannot be assigned to variable of type {1}.</value>
   </data>
+  <data name="VariableValueCannotBeNull" xml:space="preserve">
+    <value>A null value cannot be assigned to variable of type {0}.</value>
+  </data>
   <data name="DuplicateFunctionSignature" xml:space="preserve">
     <value>The catalog already contains a function with the signature '{0}'. Functions whose parameters differ only by nullability are considered identical.</value>
   </data>

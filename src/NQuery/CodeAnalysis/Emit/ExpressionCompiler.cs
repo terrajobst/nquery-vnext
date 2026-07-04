@@ -19,8 +19,6 @@ namespace NQuery.CodeAnalysis.Emit;
 // whole result NULL, except where AND/OR can short-circuit to FALSE/TRUE.
 internal sealed class ExpressionCompiler
 {
-    private static readonly PropertyInfo VariableSymbolValueProperty = typeof(VariableSymbol).GetProperty("Value", typeof(object))!;
-
     private static readonly MethodInfo ReadObjectMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.ReadObject))!;
     private static readonly MethodInfo Read32BitMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.Read32Bit))!;
     private static readonly MethodInfo Read64BitMethod = typeof(RowBuffer).GetMethod(nameof(RowBuffer.Read64Bit))!;
@@ -388,9 +386,11 @@ internal sealed class ExpressionCompiler
 
     private static Expression BuildVariableExpression(LogicalVariableExpression expression)
     {
+        // The definition reads its value in its own CLR type (VariableDefinition<T> stays unboxed);
+        // convert it to the variable's nullable shape, matching the rest of the builder.
         return
             Expression.Convert(
-                Expression.MakeMemberAccess(Expression.Constant(expression.Symbol), VariableSymbolValueProperty),
+                expression.Symbol.Definition.CreateInvocation(),
                 expression.Type.GetNullableType()
             );
     }

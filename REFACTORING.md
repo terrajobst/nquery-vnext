@@ -144,7 +144,6 @@ structurally.
 ## Miscellaneous
 
 * VariableDefinition
-    - Should probably have a generic variant
     - Seems a bit odd of have that live on the catalog. Logically that should
       probably be query owned.
 * Representing AND and OR
