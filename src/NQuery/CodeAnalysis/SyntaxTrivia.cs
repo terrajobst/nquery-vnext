@@ -8,12 +8,12 @@ namespace NQuery.CodeAnalysis;
 public sealed class SyntaxTrivia
 {
     private readonly SyntaxTree _syntaxTree;
+    private string? _text;
 
-    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, string text, TextSpan span, StructuredTriviaSyntax? structure, IEnumerable<Diagnostic> diagnostics)
+    internal SyntaxTrivia(SyntaxTree syntaxTree, SyntaxKind kind, TextSpan span, StructuredTriviaSyntax? structure, IEnumerable<Diagnostic> diagnostics)
     {
         _syntaxTree = syntaxTree;
         Kind = kind;
-        Text = text;
         Span = span;
         Structure = structure;
         Diagnostics = [.. diagnostics];
@@ -23,7 +23,19 @@ public sealed class SyntaxTrivia
 
     public SyntaxKind Kind { get; }
 
-    public string Text { get; }
+    public string Text
+    {
+        get
+        {
+            if (_text is null)
+            {
+                var text = _syntaxTree.Text.GetText(Span);
+                Interlocked.CompareExchange(ref _text, text, null);
+            }
+
+            return _text;
+        }
+    }
 
     public TextSpan Span { get; }
 

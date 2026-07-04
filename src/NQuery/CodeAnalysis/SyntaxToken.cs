@@ -7,16 +7,15 @@ namespace NQuery.CodeAnalysis;
 public sealed class SyntaxToken
 {
     private readonly SyntaxTree _syntaxTree;
-    private readonly string _text;
+    private string? _text;
 
-    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, string text, object? value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
+    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind, SyntaxKind contextualKind, bool isMissing, TextSpan span, object? value, IEnumerable<SyntaxTrivia> leadingTrivia, IEnumerable<SyntaxTrivia> trailingTrivia, IEnumerable<Diagnostic> diagnostics)
     {
         _syntaxTree = syntaxTree;
         Kind = kind;
         ContextualKind = contextualKind;
         IsMissing = isMissing;
         Span = span;
-        _text = text;
         Value = value;
         LeadingTrivia = [.. leadingTrivia];
         TrailingTrivia = [.. trailingTrivia];
@@ -31,7 +30,19 @@ public sealed class SyntaxToken
 
     public bool IsMissing { get; }
 
-    public string Text => _text ?? Kind.GetText();
+    public string Text
+    {
+        get
+        {
+            if (_text is null)
+            {
+                var text = _syntaxTree.Text.GetText(Span);
+                Interlocked.CompareExchange(ref _text, text, null);
+            }
+
+            return _text;
+        }
+    }
 
     public object? Value { get; }
 
@@ -76,7 +87,7 @@ public sealed class SyntaxToken
         foreach (var syntaxTrivia in LeadingTrivia)
             syntaxTrivia.WriteTo(writer);
 
-        writer.Write(_text);
+        writer.Write(_syntaxTree.Text.GetText(Span));
 
         foreach (var syntaxTrivia in TrailingTrivia)
             syntaxTrivia.WriteTo(writer);
@@ -93,26 +104,26 @@ public sealed class SyntaxToken
     {
         ThrowIfNull(diagnostics);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, TrailingTrivia, diagnostics);
     }
 
     public SyntaxToken WithKind(SyntaxKind kind)
     {
-        return new SyntaxToken(_syntaxTree, kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, TrailingTrivia, Diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, TrailingTrivia, Diagnostics);
     }
 
     public SyntaxToken WithLeadingTrivia(IEnumerable<SyntaxTrivia> trivia)
     {
         ThrowIfNull(trivia);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, trivia, TrailingTrivia, Diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, trivia, TrailingTrivia, Diagnostics);
     }
 
     public SyntaxToken WithTrailingTrivia(IEnumerable<SyntaxTrivia> trivia)
     {
         ThrowIfNull(trivia);
 
-        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, _text, Value, LeadingTrivia, trivia, Diagnostics);
+        return new SyntaxToken(_syntaxTree, Kind, ContextualKind, IsMissing, Span, Value, LeadingTrivia, trivia, Diagnostics);
     }
 
     public override string ToString()

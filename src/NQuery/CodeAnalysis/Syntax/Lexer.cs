@@ -47,7 +47,6 @@ internal sealed class Lexer
         var end = _charReader.Position;
         var kind = _kind;
         var span = TextSpan.FromBounds(_start, end);
-        var text = _text.GetText(span);
         var diagnostics = _diagnostics.ToImmutableArray();
 
         _trailingTrivia.Clear();
@@ -56,7 +55,7 @@ internal sealed class Lexer
         ReadTrivia(_trailingTrivia, isTrailing: true);
         var trailingTrivia = _trailingTrivia.ToImmutableArray();
 
-        return new SyntaxToken(_syntaxTree, kind, _contextualKind, false, span, text, _value, leadingTrivia, trailingTrivia, diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, _contextualKind, false, span, _value, leadingTrivia, trailingTrivia, diagnostics);
     }
 
     private TextSpan CurrentSpan
@@ -212,9 +211,8 @@ internal sealed class Lexer
         var start = _start;
         var end = _charReader.Position;
         var span = TextSpan.FromBounds(start, end);
-        var text = _text.GetText(span);
         var diagnostics = _diagnostics.ToImmutableArray();
-        var trivia = new SyntaxTrivia(_syntaxTree, _kind, text, span, null, diagnostics);
+        var trivia = new SyntaxTrivia(_syntaxTree, _kind, span, null, diagnostics);
         target.Add(trivia);
 
         _diagnostics.Clear();

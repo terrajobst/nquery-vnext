@@ -200,7 +200,7 @@ internal sealed class Parser
         var diagnosticSpan = GetDiagnosticSpanForMissingToken();
         var diagnostics = new List<Diagnostic>(1);
         diagnostics.ReportTokenExpected(diagnosticSpan, Current, kind);
-        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, [], [], diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, [], [], diagnostics);
     }
 
     private SyntaxToken SkipAndInsertMissingToken(SyntaxKind kind)
@@ -213,7 +213,7 @@ internal sealed class Parser
         var diagnosticSpan = GetDiagnosticSpanForMissingToken();
         var diagnostics = new List<Diagnostic>(1);
         diagnostics.ReportTokenExpected(diagnosticSpan, skippedToken, kind);
-        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, string.Empty, null, skippedTokensTrivia, [], diagnostics);
+        return new SyntaxToken(_syntaxTree, kind, SyntaxKind.BadToken, true, missingTokenSpan, null, skippedTokensTrivia, [], diagnostics);
     }
 
     private TextSpan GetDiagnosticSpanForMissingToken()
@@ -236,7 +236,7 @@ internal sealed class Parser
         var end = tokens.Last().FullSpan.End;
         var span = TextSpan.FromBounds(start, end);
         var structure = new SkippedTokensTriviaSyntax(_syntaxTree, tokens);
-        return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, string.Empty, span, structure, []);
+        return new SyntaxTrivia(_syntaxTree, SyntaxKind.SkippedTokensTrivia, span, structure, []);
     }
 
     private bool CurrentIsStartingQuery()
