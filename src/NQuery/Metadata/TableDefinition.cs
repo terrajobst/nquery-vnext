@@ -5,27 +5,21 @@ namespace NQuery.Metadata;
 
 public abstract class TableDefinition
 {
-    private protected TableDefinition()
+    private protected TableDefinition(string name, Type rowType, ImmutableArray<ColumnDefinition> columns)
     {
+        ThrowIfNull(name);
+        ThrowIfNull(rowType);
+
+        Name = name;
+        RowType = rowType;
+        Columns = columns;
     }
 
-    private ImmutableArray<ColumnDefinition> _columns;
+    public string Name { get; }
 
-    public ImmutableArray<ColumnDefinition> Columns
-    {
-        get
-        {
-            if (_columns.IsDefault)
-                ImmutableInterlocked.InterlockedInitialize(ref _columns, [.. GetColumns()]);
+    public Type RowType { get; }
 
-            return _columns;
-        }
-    }
-
-    public abstract string Name { get; }
-    public abstract Type RowType { get; }
-
-    protected abstract IEnumerable<ColumnDefinition> GetColumns();
+    public ImmutableArray<ColumnDefinition> Columns { get; }
 
     public abstract IEnumerable GetRows();
 
@@ -76,5 +70,21 @@ public abstract class TableDefinition
         ThrowIfNull(columns);
 
         return new EnumerableTableDefinition(name, source, rowType, [.. columns]);
+    }
+
+    private sealed class EnumerableTableDefinition : TableDefinition
+    {
+        private readonly IEnumerable _source;
+
+        public EnumerableTableDefinition(string name, IEnumerable source, Type rowType, ImmutableArray<ColumnDefinition> columns)
+            : base(name, rowType, columns)
+        {
+            _source = source;
+        }
+
+        public override IEnumerable GetRows()
+        {
+            return _source;
+        }
     }
 }
