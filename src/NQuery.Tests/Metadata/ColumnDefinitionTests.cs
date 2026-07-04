@@ -64,11 +64,33 @@ public sealed class ColumnDefinitionTests
     }
 
     [Fact]
-    public void ColumnDefinition_ExpressionWithExplicitType_IsQueryable()
+    public void ColumnDefinition_DelegateWithExplicitType_IsQueryable()
     {
         var rows = new[] { new Row(21) };
         var table = TableDefinition.Create("T", rows,
-            ColumnDefinition.Create<Row>("Doubled", typeof(int), r => (object)(r.Value * 2)));
+            ColumnDefinition.Create("Doubled", typeof(int), (Func<Row, int>)(r => r.Value * 2)));
+        var catalog = Catalog.Empty.AddTables(table);
+
+        var query = Query.Create(catalog, "SELECT Doubled FROM T");
+        using var reader = query.ExecuteReader();
+
+        Assert.Equal(typeof(int), reader.GetColumnType(0));
+        Assert.True(reader.Read());
+        Assert.Equal(42, reader[0]);
+    }
+
+    [Fact]
+    public void ColumnDefinition_LambdaExpression_WithExplicitType_IsQueryable()
+    {
+        // A programmatic builder can supply an expression tree without generic type parameters; the
+        // body is inlined into the row writer (no per-row delegate call).
+        var row = Expression.Parameter(typeof(Row), "row");
+        var body = Expression.Multiply(Expression.Property(row, nameof(Row.Value)), Expression.Constant(2));
+        var accessor = Expression.Lambda(body, row);
+
+        var rows = new[] { new Row(21) };
+        var table = TableDefinition.Create("T", rows,
+            ColumnDefinition.Create("Doubled", typeof(int), accessor));
         var catalog = Catalog.Empty.AddTables(table);
 
         var query = Query.Create(catalog, "SELECT Doubled FROM T");

@@ -36,7 +36,7 @@ public static class CatalogExtensions
             if (dataTables is null)
                 return catalog;
 
-            var tableDefinitions = dataTables.Select(CreateTable);
+            var tableDefinitions = dataTables.Select(dataTable => TableDefinition.Create(dataTable));
             return catalog.AddTables(tableDefinitions);
         }
 
@@ -61,54 +61,65 @@ public static class CatalogExtensions
         }
     }
 
-    private static TableDefinition CreateTable(DataTable dataTable)
+    extension(TableDefinition)
     {
-        var columns = dataTable.Columns
-                               .Cast<DataColumn>()
-                               .Select(CreateColumn);
+        public static TableDefinition Create(DataTable dataTable)
+        {
+            ThrowIfNull(dataTable);
 
-        return TableDefinition.Create(dataTable.TableName, dataTable.Rows, typeof(DataRow), columns);
+            var columns = dataTable.Columns
+                                   .Cast<DataColumn>()
+                                   .Select(column => ColumnDefinition.Create(column));
+
+            return TableDefinition.Create(dataTable.TableName, dataTable.Rows, typeof(DataRow), columns);
+        }
+    }
+
+    extension(ColumnDefinition)
+    {
+        public static ColumnDefinition Create(DataColumn dataColumn)
+        {
+            ThrowIfNull(dataColumn);
+
+            // DataRow exposes nulls as DBNull and typed nulls as INullable; the query engine works in
+            // terms of CLR null, so unwrap both. Built as an expression tree so it inlines into the
+            // row writer (no per-row delegate call), reading the cell once via a local:
+            //
+            //   var v = row[column];
+            //   INullable n;
+            //   return v is DBNull                              ? null
+            //        : (n = v as INullable) is not null && n.IsNull ? null
+            //        : v;
+            var row = Expression.Parameter(typeof(DataRow), "row");
+            var v = Expression.Variable(typeof(object), "v");
+            var n = Expression.Variable(typeof(INullable), "n");
+            var objectNull = Expression.Constant(null, typeof(object));
+
+            var body = Expression.Block(
+                typeof(object),
+                new[] { v, n },
+                Expression.Assign(
+                    v,
+                    Expression.MakeIndex(row, DataRowIndexer, new[] { Expression.Constant(dataColumn) })),
+                Expression.Condition(
+                    Expression.TypeIs(v, typeof(DBNull)),
+                    objectNull,
+                    Expression.Condition(
+                        Expression.AndAlso(
+                            Expression.NotEqual(
+                                Expression.Assign(n, Expression.TypeAs(v, typeof(INullable))),
+                                objectNull),
+                            Expression.Property(n, NullableIsNull)),
+                        objectNull,
+                        v)));
+
+            var accessor = Expression.Lambda(body, row);
+            return ColumnDefinition.Create(dataColumn.ColumnName, dataColumn.DataType, accessor);
+        }
     }
 
     private static readonly PropertyInfo DataRowIndexer = typeof(DataRow).GetProperty("Item", [typeof(DataColumn)])!;
     private static readonly PropertyInfo NullableIsNull = typeof(INullable).GetProperty("IsNull")!;
-
-    private static ColumnDefinition CreateColumn(DataColumn column)
-    {
-        // DataRow exposes nulls as DBNull and typed nulls as INullable; the query engine works
-        // in terms of CLR null, so unwrap both -- reading the cell once via a local:
-        //
-        //   var v = row[column];
-        //   INullable n;
-        //   return v is DBNull                              ? null
-        //        : (n = v as INullable) is not null && n.IsNull ? null
-        //        : v;
-        var row = Expression.Parameter(typeof(DataRow), "row");
-        var v = Expression.Variable(typeof(object), "v");
-        var n = Expression.Variable(typeof(INullable), "n");
-        var objectNull = Expression.Constant(null, typeof(object));
-
-        var body = Expression.Block(
-            typeof(object),
-            new[] { v, n },
-            Expression.Assign(
-                v,
-                Expression.MakeIndex(row, DataRowIndexer, new[] { Expression.Constant(column) })),
-            Expression.Condition(
-                Expression.TypeIs(v, typeof(DBNull)),
-                objectNull,
-                Expression.Condition(
-                    Expression.AndAlso(
-                        Expression.NotEqual(
-                            Expression.Assign(n, Expression.TypeAs(v, typeof(INullable))),
-                            objectNull),
-                        Expression.Property(n, NullableIsNull)),
-                    objectNull,
-                    v)));
-
-        var accessor = Expression.Lambda<Func<DataRow, object>>(body, row);
-        return ColumnDefinition.Create<DataRow>(column.ColumnName, column.DataType, accessor);
-    }
 
     private static RelationshipDefinition? CreateRelationship(IReadOnlyList<TableDefinition> tables, DataRelation dataRelation)
     {
@@ -136,9 +147,9 @@ public static class CatalogExtensions
     private static ImmutableArray<ColumnDefinition> ResolveColumns(IEnumerable<ColumnDefinition> columns, IEnumerable<DataColumn> dataColumns)
     {
         var columnByName = columns.ToLookup(c => c.Name, StringComparer.OrdinalIgnoreCase);
-        return [.. (from dc in dataColumns
-                let c = columnByName[dc.ColumnName].FirstOrDefault()
-                where c is not null
-                select c)];
+        return [.. from dc in dataColumns
+                   let c = columnByName[dc.ColumnName].FirstOrDefault()
+                   where c is not null
+                   select c];
     }
 }

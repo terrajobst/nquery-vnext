@@ -48,7 +48,7 @@ public abstract class TableDefinition
         ThrowIfNull(propertyProvider);
 
         var columns = propertyProvider.GetProperties(rowType)
-                                      .Select(p => (ColumnDefinition)new PropertyColumnDefinition(rowType, p))
+                                      .Select(p => ColumnDefinition.Create(rowType, p))
                                       .ToImmutableArray();
         return new EnumerableTableDefinition(name, source, rowType, columns);
     }

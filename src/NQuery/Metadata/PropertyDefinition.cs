@@ -37,6 +37,18 @@ public abstract class PropertyDefinition
         return new ExpressionPropertyDefinition(name, expression.ReturnType, expression);
     }
 
+    // Non-generic counterpart of the strongly-typed overload, for callers that build the accessor
+    // as an expression tree (no generic type parameters). The single lambda parameter is the
+    // instance; the value is inlined and the property's type is supplied explicitly.
+    public static PropertyDefinition Create(string name, Type type, LambdaExpression expression)
+    {
+        ThrowIfNull(name);
+        ThrowIfNull(type);
+        ThrowIfNull(expression);
+
+        return new ExpressionPropertyDefinition(name, type, expression);
+    }
+
     // The delegate's single parameter is the instance the property is accessed on; the property's
     // type is supplied explicitly (e.g. when it is only known at run time) and the accessor's
     // return value is converted to it.

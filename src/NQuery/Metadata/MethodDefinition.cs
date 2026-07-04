@@ -64,6 +64,16 @@ public abstract class MethodDefinition
         return new ExpressionMethodDefinition(name, expression);
     }
 
+    // Non-generic counterpart of the strongly-typed expression overloads, for callers that build the
+    // lambda programmatically (any arity, no generic parameters). The first lambda parameter is the
+    // instance; the parameters and return type are taken from the expression and the body is inlined.
+    public static MethodDefinition Create(string name, LambdaExpression expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionMethodDefinition(name, expression);
+    }
+
     // The delegate's first parameter is the instance the method is invoked on; the remaining
     // parameters correspond to `parameters` (the method's arguments).
     public static MethodDefinition Create(string name, Type returnType, IEnumerable<ParameterDefinition> parameters, Delegate method)

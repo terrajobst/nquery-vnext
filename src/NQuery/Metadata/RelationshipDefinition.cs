@@ -12,17 +12,15 @@ public sealed class RelationshipDefinition
         ChildColumns = childColumns;
     }
 
-    public static RelationshipDefinition Create(TableDefinition parentTable, IReadOnlyCollection<ColumnDefinition> parentColumns, TableDefinition childTable, IReadOnlyCollection<ColumnDefinition> childColumns)
+    public static RelationshipDefinition Create(TableDefinition parentTable, ImmutableArray<ColumnDefinition> parentColumns, TableDefinition childTable, ImmutableArray<ColumnDefinition> childColumns)
     {
         ThrowIfNull(parentTable);
-        ThrowIfNull(parentColumns);
         ThrowIfNull(childTable);
-        ThrowIfNull(childColumns);
 
-        if (parentColumns.Count == 0)
+        if (parentColumns.Length == 0)
             throw new ArgumentException(Resources.ParentColumnsMustContainAtLeastOneColumn, nameof(parentColumns));
 
-        if (childColumns.Count != parentColumns.Count)
+        if (childColumns.Length != parentColumns.Length)
             throw new ArgumentException(Resources.ChildColumnsMustHaveSameSizeAsParentColumns, nameof(childColumns));
 
         if (parentColumns.Any(c => !parentTable.Columns.Contains(c)))
@@ -31,7 +29,7 @@ public sealed class RelationshipDefinition
         if (childColumns.Any(c => !childTable.Columns.Contains(c)))
             throw new ArgumentException(Resources.AllChildColumnsMustBelongToSameTable, nameof(childColumns));
 
-        return new RelationshipDefinition(parentTable, [.. parentColumns], childTable, [.. childColumns]);
+        return new RelationshipDefinition(parentTable, parentColumns, childTable, childColumns);
     }
 
     public int ColumnCount

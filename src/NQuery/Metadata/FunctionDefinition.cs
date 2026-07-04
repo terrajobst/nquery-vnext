@@ -61,6 +61,16 @@ public abstract class FunctionDefinition
         return new ExpressionFunctionDefinition(name, expression);
     }
 
+    // Non-generic counterpart of the strongly-typed expression overloads, for callers that build the
+    // lambda programmatically (any arity, no generic parameters). The parameters and return type are
+    // taken from the expression; the body is inlined at the call site.
+    public static FunctionDefinition Create(string name, LambdaExpression expression)
+    {
+        ThrowIfNull(expression);
+
+        return new ExpressionFunctionDefinition(name, expression);
+    }
+
     public static FunctionDefinition Create(string name, Type returnType, IEnumerable<ParameterDefinition> parameters, Delegate function)
     {
         ThrowIfNull(function);
