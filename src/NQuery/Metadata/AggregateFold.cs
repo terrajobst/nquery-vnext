@@ -38,3 +38,10 @@ public sealed class AggregateFold
     // empty group), but NQuery types are non-nullable, so the underlying type is the value type.
     public Type ReturnType => Result.ReturnType.GetNonNullableType();
 }
+
+// A binder (see AggregateDefinition.Create) signals that it doesn't support an argument type
+// either by returning null or by throwing this exception; the built-in aggregates throw it from
+// their operator/conversion helpers so a deep failure unwinds without threading null back out.
+internal sealed class AggregateNotApplicableException : Exception
+{
+}

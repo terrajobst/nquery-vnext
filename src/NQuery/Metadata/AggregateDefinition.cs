@@ -64,4 +64,32 @@ public abstract class AggregateDefinition
         var body = Expression.Invoke(accumulate, state, Expression.Convert(value, typeof(TValue), method));
         return Expression.Lambda(body, state, value);
     }
+
+    // The AggregateDefinition produced by AggregateDefinition.Create. Resolving an argument type
+    // runs the author's binder to get the fold (or null / AggregateNotApplicableException when the
+    // type isn't supported). The fold's lambdas are left uncompiled; the emitter compiles them.
+    private sealed class FoldAggregateDefinition : AggregateDefinition
+    {
+        private readonly Func<Type, AggregateFold?> _binder;
+
+        public FoldAggregateDefinition(string name, Func<Type, AggregateFold?> binder)
+        {
+            Name = name;
+            _binder = binder;
+        }
+
+        public override string Name { get; }
+
+        internal override AggregateFold? CreateFold(Type argumentType)
+        {
+            try
+            {
+                return _binder(argumentType);
+            }
+            catch (AggregateNotApplicableException)
+            {
+                return null;
+            }
+        }
+    }
 }
