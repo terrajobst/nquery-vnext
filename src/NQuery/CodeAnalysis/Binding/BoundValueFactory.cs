@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace NQuery.CodeAnalysis.Binding;
 
 // Mints BoundValue identities for anonymous values during binding. Unlike the algebra's
@@ -8,11 +6,11 @@ namespace NQuery.CodeAnalysis.Binding;
 internal sealed class BoundValueFactory
 {
     private const string TemporaryFormatString = @"Expr{0}";
-    private ImmutableDictionary<string, int> _usedNames = [];
+    private readonly Dictionary<string, int> _usedNames = new();
 
     public BoundValue Create(string formatString, Type type)
     {
-        var number = ImmutableInterlocked.AddOrUpdate(ref _usedNames, formatString, 1, (_, v) => v + 1);
+        var number = _usedNames.AddOrUpdate(formatString, 1, (_, v) => v + 1);
         return new BoundValue(string.Format(formatString, number), type);
     }
 

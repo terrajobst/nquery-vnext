@@ -1,20 +1,13 @@
-using System.Collections.Immutable;
-
 namespace NQuery.CodeAnalysis.Algebra;
 
 internal sealed class ValueSlotFactory
 {
     private const string TemporaryFormatString = @"Expr{0}";
-    private ImmutableDictionary<string, int> _usedNames = [];
-
-    public ValueSlotFactory()
-    {
-        _usedNames.Add(TemporaryFormatString, 1000);
-    }
+    private readonly Dictionary<string, int> _usedNames = new();
 
     public ValueSlot Create(string formatString, Type type)
     {
-        var number = ImmutableInterlocked.AddOrUpdate(ref _usedNames, formatString, 1, (_, v) => v + 1);
+        var number = _usedNames.AddOrUpdate(formatString, 1, (_, v) => v + 1);
         return new ValueSlot(this, formatString, number, type);
     }
 
