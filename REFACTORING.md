@@ -61,6 +61,32 @@
   look like to support forwarding joins?
 * It seems some function do work that would be worthwhile pre-computing, such as
   SOUNDS LIKE, LIKE, SIMILAR TO.
+* Functional dependency recognition. When a column set (e.g. a primary key)
+  uniquely determines other columns, the optimizer can derive many things:
+    - **`GROUP BY` omission**: you can `GROUP BY pk` and reference any column
+      of that table in `SELECT` without listing it — PostgreSQL, MySQL (strict
+      mode), and SQLite all support this; SQL Server and Oracle do not.
+    - **`DISTINCT` elimination**: `SELECT DISTINCT pk, col FROM t` is redundant
+      because pk is already unique; the `DISTINCT` can be dropped.
+    - **Join elimination**: if a foreign-key references a unique key and no
+      columns of the referenced table are needed, the join is removable.
+    - **Cardinality estimation**: a unique join key guarantees no fan-out,
+      affecting join order and algorithm selection.
+    - **Scalar subquery guard**: when a subquery provably returns ≤1 row,
+      the artificial `COUNT`/`ANY` safety guard can be omitted.
+    Of these, SQLite only implements the `GROUP BY` omission — the rest are
+    general optimizer capabilities that PostgreSQL supports more fully.
+* Support `SELECT e FROM Employees e` — treating a table alias as a whole-row
+  composite/entity reference rather than requiring explicit columns. This is
+  valid in JPQL/HQL (`SELECT e FROM Employee e` returns `Employee` entity
+  objects) and PostgreSQL (the alias refers to the row's composite type, usable
+  in `ORDER BY`, function arguments, etc.). In NQuery this would mean the table
+  alias is a valid expression in the SELECT list, yielding a runtime row value.
+    - Once row-valued expressions exist, methods on rows follow naturally:
+      `SELECT e.GetAge() FROM Employees e`. PostgreSQL supports this via
+      composite-type function notation (`SELECT age(e) FROM Employees e` or
+      `SELECT e.age FROM Employees e` when a matching function exists), and
+      JPQL/HQL allows navigation to computed/derived properties on entities.
 
 ## Missing optimizations from the old engine
 
@@ -213,3 +239,138 @@ Remaining follow-ups:
   plain re-execution plus index-build overhead, strictly worse. Deciding it needs
   cardinality (compare `outer_rows x input_cost` vs `n_distinct x input_cost +
   probe`, plus a clustering sort). Declining it never regresses.
+
+## Shapes, attributes, and the metadata model
+
+A design sketch for unifying the metadata model and reworking member discovery.
+**Not yet implemented.** Supersedes `IPropertyProvider`/`IMethodProvider` and
+folds in the TVF work (*Support table-valued functions*) and whole-row values
+(*Support `SELECT e FROM Employees e`*).
+
+The divide between tables/columns and values/properties is redundant, and
+cross-cutting concerns (table-valued results, schema) end up modeled separately
+in each place. `IPropertyProvider`/`IMethodProvider` are also all-or-nothing:
+registering one seizes 100% of discovery for a type, with no seam for filtering,
+renaming, adding synthetic members, or attaching schema.
+
+### Core types
+
+A **`Shape`** is the structure of a value — its access surface (what you dot
+into) and, for a rowset, its columns. It holds *both* attributes and methods,
+because a table row is just a value: `SELECT e.GetAge(), e FROM Employees e` dots
+into and projects a row the same way as any value.
+
+```csharp
+// The structure of a value. Type + members.
+sealed class Shape
+{
+    Type Type { get; }
+    ImmutableArray<Attribute> Attributes { get; }   // 0-arg projections: property AND column, unified
+    ImmutableArray<Method> Methods { get; }          // parameterized, overloadable
+}
+
+// A named projection from an instance to a value (property/column unified).
+sealed class Attribute
+{
+    string Name { get; }
+    Type Type { get; }            // result type; its Shape is resolved on demand, not held
+    MemberInfo? Member { get; }   // provenance; null for synthetic (used by shaping conventions)
+    Expression Access(Expression instance);
+}
+
+// A parameterized member of a shape (a Function with a receiver).
+sealed class Method
+{
+    string Name { get; }
+    Type ReturnType { get; }
+    ImmutableArray<ParameterDefinition> Parameters { get; }
+    Expression Invoke(Expression instance, IEnumerable<Expression> arguments);
+}
+```
+
+`Table` / `Function` / `Variable` stay as the familiar top-level catalog
+citizens — *not* collapsed into a single `Member` node (tried and rejected: too
+abstract). Consumption modes: `SELECT e` projects the whole value; `SELECT *`
+expands **attributes only**; `e.GetAge()` invokes a **method**. Table-valued
+results need no flag — any attribute/method/function typed `IEnumerable<T>` is
+usable in `FROM`/`APPLY`, row shape = the element type's shape.
+
+### `TypeShaper` — the `Type → Shape` resolver
+
+The bridge from CLR types into shape-space, consulted only at *leaves*. Injected
+as a dependency (not owned by a mutable catalog); the `Catalog` composes one and
+exposes it as `Shaper`. Definitions stay inert — `Create` resolves eagerly and
+keeps only the resulting `Shape`.
+
+```csharp
+sealed class TypeShaper
+{
+    Shape Shape(Type type);                              // memoizing; explicit shape wins, else type-driven
+    static TypeShaper Create(Action<ShapeConventionBuilder> configure);
+}
+
+abstract class TableDefinition
+{
+    Shape RowShape { get; }                              // resolved at Create time; RowType == RowShape.Type
+    static TableDefinition Create<T>(string name, IEnumerable<T> src, TypeShaper shaper); // shaper.Shape(typeof(T))
+    static TableDefinition Create(string name, IEnumerable src, Shape shape);             // explicit: DataRow, object[]
+}
+```
+
+### Conventions replace the providers
+
+One mechanism. A convention is a named delegate over a mutable builder — not an
+interface, not a bare `Action`. Two kinds: **seeding** (produce elements — the
+reflection walk is just the default first convention) and **shaping**
+(filter/rename/annotate; uses `Attribute.Member` provenance, as the built-in
+`[NQueryName]`/`[NQueryIgnore]`/`[NQuerySchema]` reader does).
+
+```csharp
+delegate void ShapeConvention(ShapeBuilder shape);
+
+sealed class ShapeConventionBuilder            // starts empty; Build() -> TypeShaper
+{
+    ShapeConventionBuilder AddDefaultConventions();            // reflection(Public|Instance) + attribute reader
+    ShapeConventionBuilder AddFields(BindingFlags f, Func<FieldInfo, bool>? where = null);
+    ShapeConventionBuilder AddProperties(BindingFlags f, Func<PropertyInfo, bool>? where = null);
+    ShapeConventionBuilder AddMethods(BindingFlags f, Func<MethodInfo, bool>? where = null);
+    ShapeConventionBuilder Add(ShapeConvention convention);
+    ShapeConventionBuilder Clear();
+}
+
+// "public fields, skip readonly, no properties" — no reflection defaults, so no properties surface:
+TypeShaper.Create(b => b.AddFields(BindingFlags.Public | BindingFlags.Instance, f => !f.IsInitOnly));
+```
+
+### The hard part: shape must propagate, not be re-derived
+
+"Shape is driven by the type" holds only at the *leaf*. Once a whole row is
+projected (`SELECT e`) and its schema isn't recoverable from its CLR type — two
+`DataTable`s share row type `DataRow` but have different columns — the type stops
+carrying the schema:
+
+```SQL
+WITH LondonEmployees AS (SELECT e FROM SomeDataTable e WHERE e.City = 'London')
+SELECT e.X FROM LondonEmployees      -- resolving X against typeof(DataRow) fails
+```
+
+So **`Shape` is the value's static query-type**, established at the leaf and
+*propagated* by the query, never recomputed from the CLR type downstream. The
+binder tracks a `Shape` (not just a `Type`) for anything dottable/projectable,
+and member access resolves against `target.Shape` instead of today's
+`LookupProperties(target.Type)`. For POCOs this is a no-op; for `DataRow` it is
+what distinguishes two same-typed tables (one propagates `{X, Y}`, the other
+`{A, B}`). Rule of thumb: **type-driven at the leaf, shape-propagated
+thereafter.**
+
+### Scope and touch points
+
+Unifies the metadata model and member *visibility*, but does **not** merge the
+binder's symbol roles (`FunctionSymbol`/`PropertySymbol`/`TableSymbol` still
+differ — shape decides *what names are visible*, position decides *what a
+reference compiles to*). In today's code: `Catalog` drops
+`PropertyProviders`/`MethodProviders` for an injected `TypeShaper`;
+`ColumnSymbol`/bound values gain a `Shape`; member-access binding reads the
+carried shape; `SchemaTableSymbol` builds columns from a resolved/explicit
+`Shape` rather than `TableDefinition.Columns`. Related: *VariableDefinition*
+ownership and *TypeSymbol* hosting members lazily.
