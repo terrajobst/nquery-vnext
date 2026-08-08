@@ -101,11 +101,75 @@ where they do.
 
 ### Logical (no cost model needed)
 
-* **Constant folding.** The old engine ran `ConstantFolder` before and after
-  algebrization; the new engine folds nothing (the only `Fold` code is aggregate
-  folds). So `1+1`, `WHERE 1=0`, `@p IS NULL` for a known parameter, etc. are never
-  simplified. Highest value — and the prerequisite for empty-scan propagation:
-  without folding, a contradiction predicate never becomes an empty input.
+* **Constant folding and propagation.** The old engine ran `ConstantFolder`
+  before and after algebrization; the new engine folds nothing (the only `Fold`
+  code is aggregate folds). So `1+1`, `WHERE 1=0`, `NULL IS NULL`, etc. are never
+  simplified. Highest value — but the value is entirely in what it *enables*, not
+  in the folding itself: rewriting `1+1` to `2` saves one addition per row, while
+  a predicate known to be FALSE lets us drop a conjunct, remove a filter, replace
+  a subtree with an empty scan, and collapse the joins and unions above it (the
+  next bullet). Reaching those rewrites takes both halves below; either one alone
+  stops short.
+
+  **Folding within an expression.** Evaluate what the query already spells out:
+  operators, conversions, `IS NULL`, and CASE labels with a constant condition.
+
+    - Not everything is foldable. `@p` isn't: a variable is read on every
+      execution while `Query` compiles once and caches the plan, so folding it
+      would freeze the first execution's parameters into every later one. (Which
+      is why the old engine's `@p IS NULL` fold doesn't carry over; see
+      *VariableDefinition* under *Miscellaneous*.) Nor are functions, methods, and
+      properties — user-supplied members with no purity contract, where `RANDOM()`
+      must not become a constant and an expensive or side-effecting member must
+      not run at compile time.
+    - Evaluation has to be failure-tolerant. A constant `1/0` folds to *nothing*,
+      not to a compile-time error: the expression may never be reached at run time
+      (an empty input, a CASE branch not taken), and folding must not turn a query
+      that runs into one that fails to compile. Note this is the opposite of C#,
+      where constant overflow and constant division by zero are errors.
+    - Where to fold is a real choice. Roslyn's model is worth copying: rather than
+      replacing the node, give each bound expression an optional constant value,
+      computed during binding. That is non-destructive, so `SemanticModel` — which
+      *is* the bound tree — keeps showing the user what they wrote, while the
+      authoring layer gets trivial access to the value, to dead CASE branches, to
+      always-false predicates. Only a small subset of expressions folds, so the
+      rules stay small; here they can be smaller still, because the
+      signature -> `System.Linq.Expressions` mapping in `ExpressionCompiler`
+      (`BuildBinaryExpression`/`BuildUnaryExpression`) is pure signature lowering
+      with nothing emit-specific in it. Moved next to the signature tables in
+      `Binding`, the binder's folder and the emitter would share one definition of
+      what each operator means, leaving only the three-valued NULL glue
+      hand-written — and a differential test (folded value == executed value over
+      a corpus) pins even that.
+    - A logical-layer fold is still needed either way, for the constants that
+      don't exist at bind time: the NULL padding an empty-scan collapse leaves
+      behind, a probe slot forced to a constant, whatever propagation substitutes
+      below. With the binder annotating and the algebrizer materializing, that
+      pass keeps only the structural rules (conjunct dropping, CASE pruning,
+      AND/OR identities).
+
+  **Propagating across value slots.** Folding alone never reaches the interesting
+  rewrites, because a constant does not cross a value slot: `Compute(Expr1 :=
+  FALSE)` followed by `Filter(Expr1)` stays a per-row filter, since the filter
+  sees a slot reference and not the literal. That is exactly the shape `WHERE
+  EXISTS (SELECT ... WHERE 1=0)` lowers to, so without propagation the headline
+  case never becomes an empty scan. Substituting a slot whose definition is a
+  literal — and then re-folding — is what closes the loop.
+
+    - It cannot be an annotation on `ValueSlot`. A slot is position-free identity:
+      minted once, referenced from many places, so it can only carry what is true
+      *everywhere*. "Is 1" isn't — under a LEFT JOIN the unmatched rows read that
+      slot through a `NullRowBuffer` and see NULL, so a slot-level annotation would
+      be believed in the one place it is false. Rule of thumb: annotate what has
+      one position (an expression node), derive what has many (a slot, a relation).
+    - So it is a derived property of an operator's output, in the same family as
+      uniqueness, null state, and cardinality — computed from the children plus
+      the operator's own semantics, with the constants of an outer join's
+      null-supplied side dropped on the way *out* (its own `ON` condition may
+      still use them, since that runs before any padding). See *What properties do
+      we need to track?* under *Miscellaneous*: this wants the same lazily
+      computed, per-operator plumbing, so building it alongside unique state is
+      cheaper than building it twice.
 * **Null/empty-scan propagation** (old `NullScanOptimizer`). Collapse *provably*
   empty inputs up the tree: a contradiction predicate or empty leaf becomes an empty
   scan, then filters/joins/unions above it fold away. We have
