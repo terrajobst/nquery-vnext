@@ -1,0 +1,2 @@
+-- An expression document (.nqe) holds a single expression rather than a whole query.
+COALESCE(NULL, 40) + 2

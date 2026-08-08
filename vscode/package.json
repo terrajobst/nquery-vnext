@@ -1,0 +1,254 @@
+{
+  "name": "vscode-nquery",
+  "displayName": "NQuery",
+  "description": "Language support for NQuery (.nql / .nqe) backed by an application-specific language server.",
+  "version": "0.1.0",
+  "publisher": "nquery",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terrajobst/nquery-vnext"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "main": "./out/src/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/*.nqproj"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "An NQuery project file names an executable to launch as its language server, so servers are only started in trusted workspaces."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "An NQuery project names a language server executable to launch, which needs a real filesystem and the ability to start a process."
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "nquery",
+        "aliases": [
+          "NQuery"
+        ],
+        "extensions": [
+          ".nql",
+          ".nqe"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "jsonc",
+        "filenamePatterns": [
+          "*.nqproj"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nquery",
+        "scopeName": "source.nquery",
+        "path": "./syntaxes/nquery.tmLanguage.json"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "*.nqproj",
+        "url": "./schemas/nqproj-1.json"
+      }
+    ],
+    "configuration": {
+      "title": "NQuery",
+      "properties": {
+        "nquery.defaultHost.command": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "scope": "machine-overridable",
+          "markdownDescription": "Executable to serve `.nql`/`.nqe` files that are not covered by any `.nqproj` project. When unset, such files get no language server."
+        },
+        "nquery.defaultHost.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "scope": "machine-overridable",
+          "description": "Arguments passed to the default host."
+        },
+        "nquery.results.maxRows": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 1,
+          "markdownDescription": "Maximum rows to fetch when running a query. The server enforces its own cap, so this can only lower it, never raise it."
+        },
+        "nquery.export.nullText": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "What an SQL NULL becomes when results are copied or exported. Empty by default, which is what Excel expects — but it then reads the same as an empty string."
+        },
+        "nquery.export.csvDelimiter": {
+          "type": "string",
+          "default": ",",
+          "markdownDescription": "Field separator for CSV export. Excel in some locales (German, French) expects `;` instead of `,`."
+        },
+        "nquery.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the NQuery language server."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "nquery.execute",
+        "title": "Run Query",
+        "category": "NQuery",
+        "icon": "$(play)"
+      },
+      {
+        "command": "nquery.showPlan",
+        "title": "Show Execution Plan",
+        "category": "NQuery",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "nquery.restartServer",
+        "title": "Restart Server",
+        "category": "NQuery"
+      },
+      {
+        "command": "nquery.showOutput",
+        "title": "Show Output",
+        "category": "NQuery"
+      },
+      {
+        "command": "nquery.reloadCatalog",
+        "title": "Reload Catalog",
+        "category": "NQuery"
+      },
+      {
+        "command": "nquery.copyResults",
+        "title": "Copy Results",
+        "category": "NQuery",
+        "icon": "$(copy)"
+      },
+      {
+        "command": "nquery.copyResultsAsMarkdown",
+        "title": "Copy Results as Markdown",
+        "category": "NQuery",
+        "icon": "$(markdown)"
+      },
+      {
+        "command": "nquery.exportResults",
+        "title": "Export Results...",
+        "category": "NQuery",
+        "icon": "$(save-as)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "nquery.execute",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorTextFocus && editorLangId == nquery && nquery.canExecute"
+      },
+      {
+        "command": "nquery.showPlan",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p",
+        "when": "editorTextFocus && editorLangId == nquery && nquery.canShowPlan"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "nquery.execute",
+          "when": "editorLangId == nquery && nquery.canExecute",
+          "group": "navigation@1"
+        },
+        {
+          "command": "nquery.showPlan",
+          "when": "editorLangId == nquery && nquery.canShowPlan",
+          "group": "navigation@2"
+        },
+        {
+          "command": "nquery.exportResults",
+          "when": "activeWebviewPanelId == 'nquery.results'",
+          "group": "navigation@1"
+        },
+        {
+          "command": "nquery.copyResults",
+          "when": "activeWebviewPanelId == 'nquery.results'",
+          "group": "navigation@2"
+        },
+        {
+          "command": "nquery.copyResultsAsMarkdown",
+          "when": "activeWebviewPanelId == 'nquery.results'"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "nquery.execute",
+          "when": "editorLangId == nquery && nquery.canExecute"
+        },
+        {
+          "command": "nquery.showPlan",
+          "when": "editorLangId == nquery && nquery.canShowPlan"
+        },
+        {
+          "command": "nquery.copyResults",
+          "when": "nquery.hasResults"
+        },
+        {
+          "command": "nquery.copyResultsAsMarkdown",
+          "when": "nquery.hasResults"
+        },
+        {
+          "command": "nquery.exportResults",
+          "when": "nquery.hasResults"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "npm run compile && node --test \"out/tests/unit/**/*.test.js\"",
+    "test:integration": "npm run compile && vscode-test"
+  },
+  "dependencies": {
+    "jsonc-parser": "^3.2.1",
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "mocha": "^11.8.0",
+    "typescript": "^5.4.0"
+  },
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.1.0"
+  }
+}

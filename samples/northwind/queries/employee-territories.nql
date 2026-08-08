@@ -1,0 +1,13 @@
+SELECT  TOP 5
+        e. LastName + ', ' + e. FirstName Employee,
+        COUNT (*) [Territory Count],
+        CONCAT (r.RegionDescription) Regions,
+        CONCAT (t.TerritoryDescription) Territories
+FROM    EmployeeTerritories et
+            INNER JOIN Employees e ON e.EmployeeID = et.EmployeeID
+        RIGHT JOIN (
+            Territories t
+                INNER JOIN Region r ON r.RegionID = t.RegionID
+        ) ON t.TerritoryID = et.TerritoryID
+GROUP   BY e. LastName + ', ' + e. FirstName
+ORDER   BY [Territory Count] DESC

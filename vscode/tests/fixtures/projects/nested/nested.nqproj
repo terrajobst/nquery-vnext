@@ -1,0 +1,11 @@
+{
+  "$schema": "../../../../schemas/nqproj-1.json",
+  "version": 1,
+  "host": {
+    // Never launched: this project sits inside a.nqproj's folder, which is an error.
+    "command": "dotnet",
+    "args": [
+      "${projectDir}/../../../../../artifacts/bin/NQuery.LanguageServer.Northwind/debug/NQuery.LanguageServer.Northwind.dll"
+    ]
+  }
+}

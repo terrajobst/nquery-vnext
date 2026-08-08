@@ -1,0 +1,24 @@
+{
+  "$schema": "../../vscode/schemas/nqproj-1.json",
+  "version": 1,
+  "host": {
+    // `dotnet <dll>` rather than the .exe so the sample works on macOS and Linux too.
+    // Run `dotnet build src/NQuery.LanguageServer.Northwind` first; the path
+    // follows the repo's artifacts layout.
+    //
+    // Resolved against ${projectDir} rather than ${workspaceFolder} so this sample works whether
+    // it is opened on its own or as part of the repository.
+    "command": "dotnet",
+    "args": [
+      "${projectDir}/../../artifacts/bin/NQuery.LanguageServer.Northwind/debug/NQuery.LanguageServer.Northwind.dll"
+    ]
+  },
+  "settings": {
+    // Opaque to the extension; NorthwindSettings in the host reads these.
+    // Try "delayMs": 3000 to see how the editor behaves while a catalog is still loading,
+    // or "failWith": "no connection" to see it degrade to syntax-only.
+    // "failWith": "This is a test error",
+    "typed": true,
+    "delayMs": 0
+  }
+}

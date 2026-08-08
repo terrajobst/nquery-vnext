@@ -5,8 +5,8 @@ not classic `dotnet test`/VSTest. This changes how filtering and flags work — 
 gotchas below are the ones worth remembering.
 
 Test projects:
-- `src/NQuery.Tests`
-- `src/NQuery.Authoring.Tests`
+- `tests/NQuery.Tests`
+- `tests/NQuery.Authoring.Tests`
 
 Each multi-targets `net8.0` and `net481`, built to:
 `artifacts/bin/<Project>/debug_<tfm>/<Project>.exe`
@@ -14,7 +14,7 @@ Each multi-targets `net8.0` and `net481`, built to:
 ### Run the whole suite
 
 ```
-dotnet test --project src/NQuery.Tests/NQuery.Tests.csproj
+dotnet test --project tests/NQuery.Tests/NQuery.Tests.csproj
 ```
 
 - Use `--project`; a positional project path errors ("Specifying a project ...
@@ -27,7 +27,7 @@ dotnet test --project src/NQuery.Tests/NQuery.Tests.csproj
 ### Filter tests (the reliable way)
 
 Run the built test **exe directly** and use xUnit's native single-dash filters.
-Build first (`dotnet build src/NQuery.Tests/NQuery.Tests.csproj`), then:
+Build first (`dotnet build tests/NQuery.Tests/NQuery.Tests.csproj`), then:
 
 ```
 artifacts/bin/NQuery.Tests/debug_net8.0/NQuery.Tests.exe -method "*Subquery*"

@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NQuery project file",
+  "description": "Declares the language server host for every .nql/.nqe file in this folder and its subfolders.",
+  "type": "object",
+  "required": [
+    "version",
+    "host"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "integer",
+      "enum": [
+        1
+      ],
+      "description": "Project file format version."
+    },
+    "host": {
+      "type": "object",
+      "description": "How to launch this project's language server.",
+      "required": [
+        "command"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "type": "string",
+          "markdownDescription": "Executable to launch. Supports `${projectDir}`, `${workspaceFolder}`, `${userHome}` and `${env:NAME}`."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Arguments passed to the executable. Supports the same variables as `command`."
+        },
+        "cwd": {
+          "type": "string",
+          "description": "Working directory. Defaults to the project file's folder."
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Extra environment variables for the server process."
+        },
+        "transport": {
+          "type": "string",
+          "enum": [
+            "stdio"
+          ],
+          "default": "stdio",
+          "description": "How the client talks to the server."
+        }
+      }
+    },
+    "settings": {
+      "description": "Opaque, application-specific configuration. The extension never inspects this; it is forwarded verbatim to the server as initializationOptions."
+    }
+  }
+}

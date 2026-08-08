@@ -280,8 +280,30 @@ structurally.
     - Should probably handle keyword casing
     - Should probably offer identifier normalization (brackets, quotes, always)
 * Are properties on the show plan used at all?
-* Add an LSP and add a VS Code plugin that replaces the VS based editor
-  experience (we should keep the Actipro one though)
+* Drop the VS based editor and composition
+    - The LSP and the VS Code extension cover what `NQuery.Authoring.VSEditorWpf`
+      was for. The Actipro editor stays.
+    - `NQuery.Authoring.Composition` is referenced only by `VSEditorWpf`, so it
+      goes with it. Its job was aggregating `I*Provider` implementations via MEF;
+      the LSP server does the same thing through
+      `NQueryLanguageServerOptions.Additional*Providers`, without a MEF
+      container.
+    - `NQueryViewer` references `VSEditorWpf` and hosts it alongside the Actipro
+      view, so its `VSEditor` folder and the corresponding `MainWindow` wiring
+      come out too.
+* Make the obvious way to ask for diagnostics the correct one
+    - `SemanticModel.GetDiagnostics()` returns binding diagnostics only. A caller
+      that wants everything also has to call `SyntaxTree.GetDiagnostics()`, and
+      nothing in the API hints at that.
+    - `Compilation` already combines both, but `GetDiagnostics(BindingResult)` is
+      private, so the combined set isn't reachable from outside.
+    - This is a pit of failure, not just an inconvenience: the LSP server
+      reported no errors at all for an unterminated string literal, because that
+      document has a lexer diagnostic and no binding diagnostics. It went
+      unnoticed until a test happened to use a syntax-only invalid query.
+    - Either expose a public combined `Compilation.GetDiagnostics()`, or have
+      `SemanticModel.GetDiagnostics()` include the syntax diagnostics. The latter
+      matches what Roslyn does and is what callers evidently expect.
 * InstantiatedAggregateSymbol. Today it's conceptually an open generic. We don't
   have a symbol that captures the instantiated aggregate. We should consider
   adding one (and have it implement IInvocableSymbol) and have quick info show

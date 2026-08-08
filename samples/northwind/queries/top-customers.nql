@@ -1,0 +1,10 @@
+-- Customers in Germany, by how many orders they have placed.
+SELECT      c.CompanyName,
+            c.City,
+            COUNT(o.OrderID) AS OrderCount
+FROM        Customers c
+INNER JOIN  Orders o ON o.CustomerID = c.CustomerID
+WHERE       c.Country = 'Germany'
+GROUP BY    c.CompanyName,
+            c.City
+ORDER BY    OrderCount DESC

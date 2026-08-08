@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NQuery.LanguageServer.Northwind</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring.LanguageServer\NQuery.Authoring.LanguageServer.csproj" />
+    <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
+  </ItemGroup>
+
+</Project>

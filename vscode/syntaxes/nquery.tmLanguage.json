@@ -1,0 +1,102 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NQuery",
+  "scopeName": "source.nquery",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#quotedIdentifiers"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-dash.nquery",
+          "begin": "--",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.nquery",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.single.nquery",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "name": "constant.character.escape.nquery",
+          "match": "''"
+        }
+      ]
+    },
+    "quotedIdentifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.nquery",
+          "begin": "\\[",
+          "end": "\\]"
+        },
+        {
+          "name": "variable.other.nquery",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.nquery",
+          "match": "\\b\\d+(\\.\\d+)?([eE][+-]?\\d+)?\\b"
+        },
+        {
+          "name": "constant.numeric.nquery",
+          "match": "\\.\\d+([eE][+-]?\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.nquery",
+          "match": "(?i)\\b(SELECT|FROM|WHERE|GROUP|BY|HAVING|ORDER|ASC|DESC|TOP|DISTINCT|WITH|TIES|RECURSIVE|UNION|ALL|INTERSECT|EXCEPT|JOIN|INNER|CROSS|APPLY|LEFT|RIGHT|OUTER|FULL|ON|CASE|WHEN|THEN|ELSE|END|AS|TO)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.nquery",
+          "match": "(?i)\\b(AND|OR|NOT|IS|LIKE|SOUNDS|SIMILAR|BETWEEN|IN|EXISTS|ANY|SOME)\\b"
+        },
+        {
+          "name": "support.function.nquery",
+          "match": "(?i)\\b(CAST|COALESCE|NULLIF)\\b"
+        },
+        {
+          "name": "constant.language.nquery",
+          "match": "(?i)\\b(NULL|TRUE|FALSE)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "name": "keyword.operator.nquery",
+      "match": "(\\*|/|%|\\+|-|~|&|\\^|\\||=|!=|<>|<=|>=|<<|>>|<|>)"
+    }
+  }
+}

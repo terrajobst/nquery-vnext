@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../schemas/nqproj-1.json",
+  "version": 1,
+  "host": {
+    // Points at the built Northwind host so the winning project starts cleanly and the test is
+    // not polluted by a failed-to-launch error. The path climbs out of
+    // vscode/tests/fixtures/projects to the repository root.
+    "command": "dotnet",
+    "args": [
+      "${projectDir}/../../../../artifacts/bin/NQuery.LanguageServer.Northwind/debug/NQuery.LanguageServer.Northwind.dll"
+    ]
+  }
+}

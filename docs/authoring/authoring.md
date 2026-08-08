@@ -21,6 +21,7 @@ Editor-specific integrations are in separate projects
 | `NQuery.Authoring.Wpf`         | Shared WPF UI components (glyphs, code action popup, diagnostic grid, show plan view, syntax tree visualizer) |
 | `NQuery.Authoring.VSEditorWpf` | Visual Studio Editor integration                                                                              |
 | `NQuery.Authoring.ActiproWpf`  | Actipro SyntaxEditor integration                                                                              |
+| `NQuery.Authoring.LanguageServer` | Language Server Protocol integration (see [authoring-lsp.md](authoring-lsp.md))                            |
 | `NQuery.Authoring.Tests`       | Tests for all authoring services                                                                              |
 
 ---

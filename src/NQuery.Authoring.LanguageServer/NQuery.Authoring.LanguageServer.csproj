@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Description>Language Server Protocol implementation for NQuery.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
+    <PackageReference Include="StreamJsonRpc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NQuery.Authoring\NQuery.Authoring.csproj" />
+    <ProjectReference Include="..\NQuery\NQuery.csproj" />
+  </ItemGroup>
+
+</Project>

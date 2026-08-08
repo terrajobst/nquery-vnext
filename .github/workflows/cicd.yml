@@ -7,7 +7,7 @@ on:
 
 env:
   DOTNET_NOLOGO: true
-  SLN: ${{ github.workspace }}/src/NQuery.slnx
+  SLN: ${{ github.workspace }}/NQuery.slnx
 
 jobs:
   build:
@@ -33,6 +33,48 @@ jobs:
         with:
           path: artifacts
           name: artifacts
+  vscode:
+    # Windows rather than Ubuntu: the integration tests launch a real VS Code, which would
+    # otherwise need xvfb, and they drive the .NET language server host.
+    runs-on: windows-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v6
+      - name: Get Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+          cache-dependency-path: vscode/package-lock.json
+      - name: Get .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.*'
+      - name: Build the language server host
+        # The integration tests launch this the same way a user's project file would, so it has
+        # to exist before they run.
+        run: dotnet build src/NQuery.LanguageServer.Northwind/NQuery.LanguageServer.Northwind.csproj --nologo
+      - name: npm ci
+        run: npm ci
+        working-directory: vscode
+      - name: Build extension
+        run: npm run compile
+        working-directory: vscode
+      - name: Unit tests
+        run: npm run test:unit
+        working-directory: vscode
+      - name: Integration tests
+        run: npm run test:integration
+        working-directory: vscode
+      - name: Package extension
+        run: npx --yes @vscode/vsce package --out nquery.vsix
+        working-directory: vscode
+      - name: Upload extension
+        uses: actions/upload-artifact@v7
+        with:
+          path: vscode/nquery.vsix
+          name: vsix
+
   push-to-github:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
     needs: build

@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-extension",
+      "detail": "Compiles the VS Code extension and builds the Northwind language server host.",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build-northwind-host",
+        "compile-extension"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "compile-extension",
+      "type": "npm",
+      "script": "compile",
+      "path": "vscode",
+      "problemMatcher": "$tsc",
+      "presentation": {
+        "reveal": "silent"
+      }
+    },
+    {
+      "label": "build-northwind-host",
+      "type": "shell",
+      "command": "dotnet build src/NQuery.LanguageServer.Northwind/NQuery.LanguageServer.Northwind.csproj",
+      "problemMatcher": "$msCompile",
+      "presentation": {
+        "reveal": "silent"
+      }
+    }
+  ]
+}

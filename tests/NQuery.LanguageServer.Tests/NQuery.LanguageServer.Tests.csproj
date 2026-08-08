@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- net8.0 only: the server targets net8.0, unlike the other test projects which also
+         cover net481 for the compiler and authoring layers. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>NQuery.LanguageServer</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\NQuery.Authoring.LanguageServer\NQuery.Authoring.LanguageServer.csproj" />
+    <ProjectReference Include="..\..\src\NQuery.Testing\NQuery.Testing.csproj" />
+
+    <!-- Built so the out-of-process tests have a host to launch, but deliberately not referenced:
+         those tests talk to it over stdio like any other client would. -->
+    <ProjectReference Include="..\..\src\NQuery.LanguageServer.Northwind\NQuery.LanguageServer.Northwind.csproj"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>

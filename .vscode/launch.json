@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Opens samples/northwind, not the repository root: VS Code refuses to open a folder that
+      // is already open in another window, so pointing this at ${workspaceFolder} would launch
+      // the development host with no folder at all.
+      "name": "Run NQuery Extension (Northwind sample)",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/vscode",
+        "${workspaceFolder}/samples/northwind"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/vscode/out/**/*.js"
+      ],
+      "preLaunchTask": "build-extension",
+      // Sorts ahead of the configurations the C# extension contributes dynamically, which
+      // otherwise win when no configuration has been selected explicitly.
+      "presentation": {
+        "group": "0_nquery",
+        "order": 1
+      }
+    }
+  ]
+}

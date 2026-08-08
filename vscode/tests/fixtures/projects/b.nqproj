@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../schemas/nqproj-1.json",
+  "version": 1,
+  "host": {
+    // Never launched: a.nqproj wins this folder alphabetically, so this one is only expected to
+    // produce a warning.
+    "command": "dotnet",
+    "args": [
+      "${projectDir}/../../../../artifacts/bin/NQuery.LanguageServer.Northwind/debug/NQuery.LanguageServer.Northwind.dll"
+    ]
+  }
+}
