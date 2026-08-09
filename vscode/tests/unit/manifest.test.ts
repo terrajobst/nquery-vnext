@@ -16,6 +16,7 @@ const manifest = JSON.parse(
         };
         contributes?: {
             commands?: { command: string; icon?: string }[];
+            languages?: { id: string; icon?: { light?: string; dark?: string } }[];
             menus?: { 'editor/title'?: { command: string; when?: string; group?: string }[] };
         };
     };
@@ -52,6 +53,29 @@ describe('manifest', () => {
 
         const entry = path.join(__dirname, '..', '..', '..', 'out', 'src', 'extension.js');
         assert.ok(fs.existsSync(entry), `${entry} does not exist; the manifest points at nothing`);
+    });
+
+    it('points the language icon at files that exist', () => {
+        // This icon only shows under icon themes that have never heard of .nql -- which is every
+        // theme until one adds a mapping -- so a broken path degrades to the blank default file
+        // icon rather than to an error. Nobody would notice for a long time.
+        const nquery = (manifest.contributes?.languages ?? []).find(l => l.id === 'nquery');
+        const root = path.join(__dirname, '..', '..', '..');
+
+        for (const kind of ['light', 'dark'] as const) {
+            const declared = nquery?.icon?.[kind];
+            assert.ok(declared, `the ${kind} language icon is not declared`);
+
+            const file = path.join(root, declared);
+            assert.ok(fs.existsSync(file), `${declared} does not exist`);
+
+            // Both are the same codicon recolored to Seti's SQL colors, so a copy-paste that
+            // leaves one holding the other's fill is the likely mistake -- and it is invisible
+            // until you switch themes and find the icon no longer matches its neighbours.
+            const fill = kind === 'light' ? '#dd4b78' : '#f55385';
+            assert.match(fs.readFileSync(file, 'utf8'), new RegExp(`fill="${fill}"`, 'i'),
+                `${declared} is the icon for ${kind} themes, so it must be filled ${fill}`);
+        }
     });
 
     it('surfaces the result commands on the results panel itself', () => {

@@ -1,0 +1,23 @@
+{
+  // NQuery files are SQL-shaped, so where a theme lets a workspace add an association, borrow
+  // whatever that theme already shows for .sql -- its glyph then matches the rest of its set,
+  // and nothing is vendored here. A theme association outranks the extension's own fallback
+  // icon (VS Code gives file-extension rules an extra class over the language icon), so these
+  // win wherever they apply.
+
+  // Material Icon Theme calls its SQL icon "database": .sql is one of that icon's extensions.
+  "material-icon-theme.files.associations": {
+    "*.nql": "database",
+    "*.nqe": "database"
+  },
+  // vscode-icons associates .sql by language rather than extension, so its icon is reached by
+  // name -- "sql" is file_type_sql.svg. It only picks up changes after running
+  // "Icons: Apply Icons Customization" from the palette.
+  "vsicons.associations.files": [
+    {
+      "icon": "sql",
+      "extensions": ["nql", "nqe"],
+      "format": "svg"
+    }
+  ]
+}

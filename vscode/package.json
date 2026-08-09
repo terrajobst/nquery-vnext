@@ -43,7 +43,11 @@
           ".nql",
           ".nqe"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/nquery-light.svg",
+          "dark": "./icons/nquery-dark.svg"
+        }
       },
       {
         "id": "jsonc",

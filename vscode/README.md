@@ -13,6 +13,47 @@ To use `.sql` files as well, map them with VS Code's built-in setting:
 "files.associations": { "queries/**/*.sql": "nquery" }
 ```
 
+## File icons
+
+The extension contributes a database glyph for `.nql` and `.nqe`, so they get a real icon in the
+explorer instead of the blank default page. It is [VS Code's own `database` codicon](https://github.com/microsoft/vscode-codicons)
+rather than custom artwork, painted in Seti's SQL colors so it sits with its neighbours under the
+default theme — see `icons/README.md`.
+
+It is a **fallback**, and deliberately the lowest-priority one. VS Code gives a theme's
+file-extension rules an extra CSS class over a language icon, so any icon theme that has an icon
+for `.nql` wins and this one never appears.
+
+Where a theme *can* be taught, teach it rather than relying on the fallback: NQuery files are
+SQL-shaped, so pointing a theme at its own `.sql` icon gets a glyph drawn in that theme's style
+instead of an outsider. This needs no files from you — both common configurable themes are set up
+in this repository's `.vscode/settings.json` already:
+
+```jsonc
+// Material Icon Theme -- "database" is the icon it gives .sql
+"material-icon-theme.files.associations": { "*.nql": "database", "*.nqe": "database" },
+
+// vscode-icons -- "sql" is file_type_sql.svg; then run "Icons: Apply Icons Customization"
+"vsicons.associations.files": [{ "icon": "sql", "extensions": ["nql", "nqe"], "format": "svg" }]
+```
+
+The same trick does **not** work for Seti, the default theme, which is why the fallback exists at
+all. Seti has no setting to configure, and an extension cannot add associations to a theme it does
+not own. Nor can the extension quietly borrow Seti's SQL glyph: `getIconClasses` derives exactly
+one language class per file, from the language VS Code detects for that path, so Seti's
+`sql-lang-file-icon` rule is reachable only by making VS Code believe `.nql` *is* SQL — which
+costs the NQuery grammar and the language server. (Seti's SQL icon is also a character in a font
+rather than an image, so there is nothing to point at even in principle.)
+
+`.nql` and `.nqe` necessarily share the icon: an icon is contributed per *language*, and both are
+the one `nquery` language. Distinguishing them would mean splitting the language in two, which
+would cost them a shared grammar and break every `editorLangId == nquery` condition — far more
+than an icon is worth. An icon theme configured as above can tell them apart, since it matches on
+the extension.
+
+`.nqproj` files already show the JSON icon under most themes, because the extension maps them to
+the `jsonc` language and themes map that.
+
 ## Project files
 
 NQuery's catalog is defined in code, so there is no single language server this extension can
