@@ -78,12 +78,14 @@ jobs:
         run: npm run test:integration
         working-directory: vscode
       - name: Package extension
-        run: npx --yes @vscode/vsce package --out nquery.vsix
+        # Through the script, not npx: vsce is a devDependency, so npm ci pins the version that
+        # produces the .vsix instead of picking up whatever is newest at run time.
+        run: npm run package
         working-directory: vscode
       - name: Upload extension
         uses: actions/upload-artifact@v7
         with:
-          path: vscode/nquery.vsix
+          path: artifacts/vscode/*.vsix
           name: vsix
 
   push-to-github:

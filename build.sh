@@ -43,4 +43,7 @@ if [[ ! -d node_modules ]]; then
     npm ci
 fi
 
-npm run compile
+# Packaging rather than compiling, so that every build produces the artifact the extension
+# actually ships as -- the same reason the solution build above always passes -t pack. This is not
+# the compile plus a package step: vsce runs the vscode:prepublish hook, which compiles.
+npm run package

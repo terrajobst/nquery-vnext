@@ -243,6 +243,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "package": "node -e \"require('fs').mkdirSync('../artifacts/vscode',{recursive:true})\" && vsce package --out ../artifacts/vscode/",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit": "npm run compile && node --test \"out/tests/unit/**/*.test.js\"",
     "test:integration": "npm run compile && vscode-test"
@@ -257,6 +258,7 @@
     "@types/vscode": "^1.85.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^3.9.2",
     "mocha": "^11.8.0",
     "typescript": "^5.4.0"
   },

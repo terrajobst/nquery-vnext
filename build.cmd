@@ -45,7 +45,10 @@ rem Only on a cold clone: restoring on every build would dominate an otherwise i
 if not exist node_modules call npm ci
 if errorlevel 1 goto :failed
 
-call npm run compile
+rem Packaging rather than compiling, so that every build produces the artifact the extension
+rem actually ships as -- the same reason the solution build above always passes -t pack. This is
+rem not the compile plus a package step: vsce runs the vscode:prepublish hook, which compiles.
+call npm run package
 if errorlevel 1 goto :failed
 
 popd
