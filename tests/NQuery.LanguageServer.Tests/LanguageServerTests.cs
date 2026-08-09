@@ -262,7 +262,10 @@ public sealed class LanguageServerTests
         Assert.NotNull(hover);
         Assert.Equal(MarkupKind.Markdown, hover.Contents.Kind);
         Assert.Contains(@"CompanyName", hover.Contents.Value);
-        Assert.Contains(@"```nquery", hover.Contents.Value);
+
+        // The fence names its own language, not "nquery": see SymbolMarkupMapping. Asserting the
+        // newline keeps this from passing on a bare "```nquery" fence, which is a prefix of it.
+        Assert.Contains("```nquery-quickinfo\n", hover.Contents.Value.ReplaceLineEndings("\n"));
     }
 
     [Fact]

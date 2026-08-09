@@ -1,0 +1,150 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NQuery Quick Info",
+  "scopeName": "source.nquery.quickinfo",
+  "_comment": [
+    "Not a language anyone writes. This colorizes the declaration lines the language server puts",
+    "in hovers, which NQuery.CodeAnalysis.Symbols.SymbolMarkupBuilder generates in a fixed,",
+    "keyword-led shape:",
+    "",
+    "  COLUMN CompanyName AS STRING",
+    "  COLUMN c.CompanyName AS STRING OF TABLE Customers",
+    "  TABLE Customers",
+    "  COMMON TABLE EXPRESSION Recent",
+    "  ALIAS c FOR TABLE Customers",
+    "  FUNCTION SUBSTRING(text AS STRING, start AS INT32) AS STRING",
+    "  VARIABLE @x AS INT32",
+    "",
+    "That leading keyword is what makes this possible: source.nquery cannot tell a table name from",
+    "a column name, because in a real query both are bare identifiers. Here the preceding keyword",
+    "says which is which, so the rules below anchor on it.",
+    "",
+    "The server classified all of this already and Hover flattens it to text (MarkupContent carries",
+    "markdown, not classified runs), so these patterns re-derive what was thrown away. If",
+    "SymbolMarkupBuilder's wording changes, the affected rule stops matching and its text renders",
+    "unstyled -- no error. NQuery.LanguageServer.Tests pins the shapes that matter.",
+    "",
+    "The language is declared in package.json with an empty 'aliases', which keeps it out of the",
+    "Change Language Mode picker -- it is not a language anyone opens a file in. That also stops a",
+    "```nquery-quickinfo fence in an ordinary Markdown file from picking these rules up, while",
+    "hovers still get them. Both are wanted: give this language an alias and it starts colorizing",
+    "other people's Markdown and shows up in the picker."
+  ],
+  "patterns": [
+    { "include": "#commonTableExpression" },
+    { "include": "#column" },
+    { "include": "#table" },
+    { "include": "#alias" },
+    { "include": "#variable" },
+    { "include": "#parameter" },
+    { "include": "#invocable" },
+    { "include": "#property" },
+    { "include": "#type" },
+    { "include": "#parameterInSignature" },
+    { "include": "#parameterWithoutType" },
+    { "include": "#keywords" },
+    { "include": "#punctuation" }
+  ],
+  "repository": {
+    "commonTableExpression": {
+      "comment": "Before #table, or the TABLE in 'COMMON TABLE EXPRESSION' would claim EXPRESSION as a name.",
+      "match": "\\b(COMMON\\s+TABLE\\s+EXPRESSION)\\s+([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\]|\"[^\"]*\")",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.type.cte.nquery" }
+      }
+    },
+    "column": {
+      "comment": "Both 'COLUMN Name' and the qualified 'COLUMN Table.Name' that column instances produce.",
+      "match": "\\b(COLUMN)\\s+(?:([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\]|\"[^\"]*\")\\s*(\\.)\\s*)?([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\]|\"[^\"]*\")",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.type.table.nquery" },
+        "3": { "name": "punctuation.accessor.nquery" },
+        "4": { "name": "variable.other.property.nquery" }
+      }
+    },
+    "table": {
+      "comment": "'DERIVED TABLE' has no name after it, so the required identifier keeps this from matching.",
+      "match": "\\b(TABLE)\\s+([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\]|\"[^\"]*\")",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.type.table.nquery" }
+      }
+    },
+    "alias": {
+      "match": "\\b(ALIAS)\\s+([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\]|\"[^\"]*\")",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.type.table.nquery" }
+      }
+    },
+    "variable": {
+      "match": "\\b(VARIABLE)\\s+(@)([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "punctuation.definition.variable.nquery" },
+        "3": { "name": "variable.other.nquery" }
+      }
+    },
+    "parameter": {
+      "match": "\\b(PARAMETER)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "variable.parameter.nquery" }
+      }
+    },
+    "invocable": {
+      "match": "\\b(FUNCTION|AGGREGATE|METHOD)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.function.nquery" }
+      }
+    },
+    "property": {
+      "match": "\\b(PROPERTY)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "variable.other.property.nquery" }
+      }
+    },
+    "type": {
+      "comment": "AppendAsType always writes 'AS <TYPE>', for column, parameter and return types alike.",
+      "match": "\\b(AS)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.other.nquery" },
+        "2": { "name": "entity.name.type.nquery" }
+      }
+    },
+    "parameterInSignature": {
+      "comment": "Inside a signature every parameter is '<name> AS <type>'; the type half is taken by #type.",
+      "match": "([A-Za-z_][A-Za-z0-9_]*)(?=\\s+AS\\b)",
+      "captures": {
+        "1": { "name": "variable.parameter.nquery" }
+      }
+    },
+    "parameterWithoutType": {
+      "comment": [
+        "AGGREGATE and the CAST/COALESCE/NULLIF pseudo-signatures name a placeholder with no type",
+        "after it -- 'AGGREGATE COUNT(value)' -- so #parameterInSignature, which needs a following",
+        "AS, does not reach them. Anchoring on the surrounding '(' or ',' keeps this to positions",
+        "that really are arguments. The bracket alternative is COALESCE's '[, ...]'.",
+        "Written without look-behind on purpose: Oniguruma rejects the unbounded \\s* inside one."
+      ],
+      "match": "([(,])\\s*([A-Za-z_][A-Za-z0-9_]*|\\[[^\\]]*\\])(?=\\s*[,)])",
+      "captures": {
+        "1": { "name": "punctuation.separator.nquery" },
+        "2": { "name": "variable.parameter.nquery" }
+      }
+    },
+    "keywords": {
+      "comment": "Whatever the contextual rules above left: DERIVED TABLE, OF, FOR, and the pseudo-signatures for CAST/COALESCE/NULLIF.",
+      "match": "\\b(AGGREGATE|ALIAS|AS|CAST|COALESCE|COLUMN|COMMON|DERIVED|EXPRESSION|FOR|FUNCTION|METHOD|NULLIF|OF|PARAMETER|PROPERTY|TABLE|VARIABLE)\\b",
+      "name": "keyword.other.nquery"
+    },
+    "punctuation": {
+      "match": "[(),.]",
+      "name": "punctuation.separator.nquery"
+    }
+  }
+}

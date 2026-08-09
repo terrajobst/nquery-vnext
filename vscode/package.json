@@ -50,6 +50,10 @@
         "filenamePatterns": [
           "*.nqproj"
         ]
+      },
+      {
+        "id": "nquery-quickinfo",
+        "aliases": []
       }
     ],
     "grammars": [
@@ -57,6 +61,11 @@
         "language": "nquery",
         "scopeName": "source.nquery",
         "path": "./syntaxes/nquery.tmLanguage.json"
+      },
+      {
+        "language": "nquery-quickinfo",
+        "scopeName": "source.nquery.quickinfo",
+        "path": "./syntaxes/nquery-quickinfo.tmLanguage.json"
       }
     ],
     "jsonValidation": [
