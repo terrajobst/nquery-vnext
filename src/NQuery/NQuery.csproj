@@ -3,6 +3,13 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net481</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!--
+      This worktree is the "baseline" (old) engine consumed by NQuery.Tests and NQuery.Benchmarks
+      in the main worktree. They load it side-by-side with the live NQuery, so it must emit a
+      distinctly-named assembly. RootNamespace stays "NQuery", so the NQuery.* types and the
+      "NQuery.Resources" manifest name are unaffected.
+    -->
+    <AssemblyName>NQuery.Baseline</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

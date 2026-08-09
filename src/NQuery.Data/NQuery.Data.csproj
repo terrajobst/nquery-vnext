@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFrameworks>net8.0;net481</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!--
+      Baseline (old) engine consumed side-by-side with the live build by NQuery.Tests in the
+      main worktree; emit a distinctly-named assembly. RootNamespace stays "NQuery", so the
+      NQuery.Data.* types are unaffected. (Pairs with NQuery -> NQuery.Baseline.)
+    -->
+    <AssemblyName>NQuery.Data.Baseline</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
