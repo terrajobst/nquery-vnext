@@ -7,22 +7,18 @@ multiple `I*Provider` implementations that are aggregated together.
 
 The library is editor-agnostic — it operates on `SyntaxTree`, `SemanticModel`,
 and `SourceText` without any dependency on a specific editor framework.
-Editor-specific integrations are in separate projects
-(`NQuery.Authoring.VSEditorWpf`, `NQuery.Authoring.ActiproWpf`).
+Editor-specific integration lives in a separate project, and today the Language
+Server Protocol is the only one.
 
 ---
 
 ## Projects
 
-| Project                        | Purpose                                                                                                       |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `NQuery.Authoring`             | Core editor-agnostic services (models, providers, workspace, document)                                        |
-| `NQuery.Authoring.Composition` | MEF-based composition that aggregates providers                                                               |
-| `NQuery.Authoring.Wpf`         | Shared WPF UI components (glyphs, code action popup, diagnostic grid, show plan view, syntax tree visualizer) |
-| `NQuery.Authoring.VSEditorWpf` | Visual Studio Editor integration                                                                              |
-| `NQuery.Authoring.ActiproWpf`  | Actipro SyntaxEditor integration                                                                              |
-| `NQuery.Authoring.LanguageServer` | Language Server Protocol integration (see [authoring-lsp.md](authoring-lsp.md))                            |
-| `NQuery.Authoring.Tests`       | Tests for all authoring services                                                                              |
+| Project                           | Purpose                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| `NQuery.Authoring`                | Core editor-agnostic services (models, providers, workspace, document)          |
+| `NQuery.Authoring.LanguageServer` | Language Server Protocol integration (see [authoring-lsp.md](authoring-lsp.md)) |
+| `NQuery.Authoring.Tests`          | Tests for all authoring services                                                |
 
 ---
 
@@ -126,8 +122,8 @@ public abstract class BraceMatcher
 }
 ```
 
-The `BraceMatcherService` (in `NQuery.Authoring.Composition`) aggregates all
-MEF-imported matchers with the built-in ones.
+The built-in matchers are exposed as a standard set; see
+[Aggregating providers](#aggregating-providers) for how a host adds its own.
 
 ### Completion
 
@@ -280,45 +276,33 @@ type information, enabling rich rendering in the editor.
 ### Glyphs
 
 The `Glyph` enum provides icon identifiers for symbol types (Table, Column,
-Function, Aggregate, Method, Property, Variable, Keyword, etc.).
-`NQueryGlyphImageSource` in the Wpf project maps these to `ImageSource` objects.
+Function, Aggregate, Method, Property, Variable, Keyword, etc.). Turning a glyph
+into an actual icon is the host's job; the LSP server maps them onto
+`CompletionItemKind` (see `Mapping/GlyphMapping.cs`).
 
 ---
 
-## Composition
+## Aggregating providers
 
-The `NQuery.Authoring.Composition` project provides MEF-based service
-aggregation. For each feature, it defines a service interface and an
-implementation that collects all MEF-imported providers:
+Every feature above ships a standard set, exposed as a `Standard*` property on
+the feature's extensions class — `StandardCompletionProviders`,
+`StandardBraceMatchers`, `StandardOutliners`, `StandardIssueProviders`, and so
+on. A host that only wants the built-in behavior uses those directly.
 
-| Interface                            | Aggregates                              |
-| ------------------------------------ | --------------------------------------- |
-| `IBraceMatcherService`               | `IBraceMatcher` instances               |
-| `ICompletionProviderService`         | `ICompletionProvider` instances         |
-| `ICodeFixProviderService`            | `ICodeFixProvider` instances            |
-| `ICodeIssueProviderService`          | `ICodeIssueProvider` instances          |
-| `ICodeRefactoringProviderService`    | `ICodeRefactoringProvider` instances    |
-| `IHighlighterService`                | `IHighlighter` instances                |
-| `IQuickInfoModelProviderService`     | `IQuickInfoModelProvider` instances     |
-| `ISignatureHelpModelProviderService` | `ISignatureHelpModelProvider` instances |
-| `ISelectionSpanProviderService`      | `ISelectionSpanProvider` instances      |
-| `IOutliningService`                  | `IOutliner` instances                   |
+A host that wants to contribute its own providers appends them. The LSP server
+does this through `NQueryLanguageServerOptions`:
 
-Each service concatenates MEF-imported providers with the standard built-in ones
-and exposes them as an `ImmutableArray`.
+```csharp
+var server = NQueryLanguageServer.Create(options =>
+{
+    options.AdditionalCompletionProviders.Add(new MyCompletionProvider());
+});
+```
 
----
+Each `Additional*Providers` list is concatenated onto the corresponding standard
+set when the server starts.
 
-## Shared WPF Components
-
-The `NQuery.Authoring.Wpf` project provides editor-agnostic UI widgets:
-
-- **`CodeActionModel`** / `CodeActionGlyphPopup` — Lightbulb glyph UI with
-  context menu. States: Icon, Hovering, Expanded. Used by both VS and Actipro
-  integrations.
-- **`DiagnosticGrid`** / `DiagnosticsViewModel` — WPF grid for listing
-  diagnostics.
-  embedded PNG resources.
-- **`NQueryGlyphImageSource`** — Maps `Glyph` enum values to `ImageSource` from
-- **ShowPlanView** — WPF visualization of query execution plans.
-- **SyntaxTreeVisualizer** — WPF `TreeView`-based syntax tree explorer.
+> This replaced `NQuery.Authoring.Composition`, which did the same aggregation
+> through a MEF container and one service interface per feature
+> (`ICompletionProviderService`, `IBraceMatcherService`, …). The MEF container
+> only ever existed to serve the WPF editor integrations, so it went with them.

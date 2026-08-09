@@ -9,13 +9,9 @@
     <ArtifactsPath>$(MSBuildThisFileDirectory)artifacts</ArtifactsPath>
     <LangVersion>14.0</LangVersion>
     <Nullable>enable</Nullable>
-    <!-- The WPF projects target Windows, which otherwise cannot even be restored on Linux or
-         macOS. Compiling them there is enough to keep the solution buildable everywhere; they
-         still only run on Windows. -->
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(MSBuildProjectName) == 'NQueryViewer' OR $(MSBuildProjectName.EndsWith('.Testing'))">
+  <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Testing'))">
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 

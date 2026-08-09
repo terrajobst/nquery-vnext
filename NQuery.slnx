@@ -14,19 +14,10 @@
   </Folder>
   <Folder Name="/Services Common/">
     <Project Path="src/NQuery.Authoring/NQuery.Authoring.csproj" />
-    <Project Path="src/NQuery.Authoring.Composition/NQuery.Authoring.Composition.csproj" />
-    <Project Path="src/NQuery.Authoring.Wpf/NQuery.Authoring.Wpf.csproj" />
-  </Folder>
-  <Folder Name="/Services Editors/">
-    <Project Path="src/NQuery.Authoring.ActiproWpf/NQuery.Authoring.ActiproWpf.csproj" />
-    <Project Path="src/NQuery.Authoring.VSEditorWpf/NQuery.Authoring.VSEditorWpf.csproj" />
   </Folder>
   <Folder Name="/Language Server/">
     <Project Path="src/NQuery.Authoring.LanguageServer/NQuery.Authoring.LanguageServer.csproj" />
     <Project Path="src/NQuery.LanguageServer.Northwind/NQuery.LanguageServer.Northwind.csproj" />
-  </Folder>
-  <Folder Name="/Viewers/">
-    <Project Path="src/NQueryViewer/NQueryViewer.csproj" />
   </Folder>
   <Folder Name="/Benchmarks/">
     <Project Path="src/NQuery.Benchmarks/NQuery.Benchmarks.csproj" />

@@ -1,9 +1,9 @@
 # Language Server Protocol
 
 `NQuery.Authoring.LanguageServer` exposes the authoring services over the Language Server
-Protocol. It is an editor adapter in the same sense as `NQuery.Authoring.ActiproWpf` and
-`NQuery.Authoring.VSEditorWpf` — it maps the models in `NQuery.Authoring` onto a specific
-editor surface, and contains no language logic of its own.
+Protocol. It is an editor adapter: it maps the models in `NQuery.Authoring` onto a specific
+editor surface, and contains no language logic of its own. It is the only such adapter — the
+WPF ones it used to sit alongside are gone.
 
 The difference is that LSP is a process boundary rather than an in-process API, and NQuery's
 catalog is defined in code. So there is no single NQuery language server that could be shipped:
