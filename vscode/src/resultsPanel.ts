@@ -1,9 +1,10 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import { ExecuteResult, renderResults } from './render';
+import { ExecuteResult, defaultPageSize, renderResults, resultPage } from './render';
 
 export type { ExecuteResult, ResultColumn } from './render';
+export { defaultPageSize } from './render';
 
 export interface DisplayedResults {
     documentUri: vscode.Uri;
@@ -17,6 +18,7 @@ export class ResultsPanel {
     private readonly panel: vscode.WebviewPanel;
     private disposed = false;
     private displayed: DisplayedResults | undefined;
+    private pageSize = defaultPageSize;
 
     private constructor(panel: vscode.WebviewPanel) {
         this.panel = panel;
@@ -26,6 +28,18 @@ export class ResultsPanel {
                 ResultsPanel.current = undefined;
                 ResultsPanel.onDidChange?.();
             }
+        });
+
+        // The whole result stays here and pages are handed over one at a time. Keeping it on this
+        // side is what makes export whole-table: the commands see every row, not the page on
+        // screen, and the webview never has to hold more than it is showing.
+        this.panel.webview.onDidReceiveMessage((message: { type?: string; index?: number }) => {
+            if (message?.type !== 'page' || typeof message.index !== 'number' || !this.displayed) {
+                return;
+            }
+
+            const page = resultPage(this.displayed.result, message.index, this.pageSize);
+            void this.panel.webview.postMessage({ type: 'page', index: page.index, rows: page.rows });
         });
     }
 
@@ -43,7 +57,7 @@ export class ResultsPanel {
         return current.displayed;
     }
 
-    static show(documentUri: vscode.Uri, result: ExecuteResult): void {
+    static show(documentUri: vscode.Uri, result: ExecuteResult, pageSize: number = defaultPageSize): void {
         const existing = ResultsPanel.current;
         const panel = existing && !existing.disposed
             ? existing.panel
@@ -51,18 +65,24 @@ export class ResultsPanel {
                 'nquery.results',
                 'NQuery Results',
                 { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
-                { enableScripts: false, retainContextWhenHidden: true });
+                // Scripts only drive paging; nothing is loaded from outside.
+                { enableScripts: true, retainContextWhenHidden: true });
 
         if (!existing || existing.disposed) {
             ResultsPanel.current = new ResultsPanel(panel);
         }
 
+        const current = ResultsPanel.current!;
+
+        // Set before the HTML, because the webview asks for its second page as soon as it loads.
+        current.displayed = { documentUri, result };
+        current.pageSize = pageSize;
+
         const name = path.basename(documentUri.fsPath);
         panel.title = `NQuery Results — ${name}`;
-        panel.webview.html = renderResults(panel.webview, name, result);
+        panel.webview.html = renderResults(panel.webview, name, result, pageSize);
         panel.reveal(panel.viewColumn, true);
 
-        ResultsPanel.current!.displayed = { documentUri, result };
         ResultsPanel.onDidChange?.();
     }
 }

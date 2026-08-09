@@ -144,7 +144,7 @@ wrapping it in a one-row projection, so there is a single execution path.
 
 ```csharp
 public bool AllowExecution { get; set; } = true;      // hosts over production data should clear this
-public int MaxRows { get; set; } = 1000;              // a client may request fewer, never more
+public int MaxRows { get; set; } = int.MaxValue;      // a client may request fewer, never more
 public TimeSpan ExecutionTimeout { get; set; } = TimeSpan.FromSeconds(30);
 ```
 
@@ -156,6 +156,11 @@ Notes:
 - **Execution runs on the thread pool.** Iterators are synchronous and blocking, so the rest of
   the server keeps answering requests. Cancellation is checked once per row; a single row that
   blocks forever cannot be interrupted.
+- **`MaxRows` is unlimited by default.** The whole result crosses in one response and the client
+  pages through it, rather than the server holding a cursor: paging over the wire would mean
+  session state, a lifetime for it, and an export that has to be reassembled from pages. A host
+  whose tables do not fit in memory, or one that wants to bound response size, sets a cap —
+  `Truncated` then says so, and the client warns before writing a partial file.
 - **Compilation failure is a result, not a fault.** `Compile()` throws `CompilationException`
   when the query has diagnostics; that becomes `ErrorMessage` so the panel stays
   self-explanatory.

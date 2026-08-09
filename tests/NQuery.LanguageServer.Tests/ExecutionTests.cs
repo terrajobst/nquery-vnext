@@ -78,6 +78,19 @@ public sealed class ExecutionTests
     }
 
     [Fact]
+    public async Task Execute_IsUncappedByDefault()
+    {
+        // The client pages through the result rather than rendering all of it, so the default is
+        // to hand over every row. [Order Details] has more rows than the old 1000-row cap.
+        await using var harness = await OpenAsync(QueryUri, @"SELECT d.OrderID FROM [Order Details] d");
+
+        var result = await ExecuteAsync(harness, QueryUri);
+
+        Assert.True(result.Rows.Count > 1000, $"Rows: {result.Rows.Count}");
+        Assert.False(result.Truncated);
+    }
+
+    [Fact]
     public async Task Execute_CapsRowsAndReportsTruncation()
     {
         await using var harness = await OpenAsync(QueryUri, @"SELECT o.OrderID FROM Orders o");

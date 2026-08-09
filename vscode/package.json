@@ -100,10 +100,19 @@
           "description": "Arguments passed to the default host."
         },
         "nquery.results.maxRows": {
-          "type": "number",
-          "default": 1000,
+          "type": [
+            "number",
+            "null"
+          ],
+          "default": null,
           "minimum": 1,
-          "markdownDescription": "Maximum rows to fetch when running a query. The server enforces its own cap, so this can only lower it, never raise it."
+          "markdownDescription": "Maximum rows to fetch when running a query. Unset means no limit — the whole result comes back and the panel pages through it. The server enforces its own cap, so this can only lower it, never raise it."
+        },
+        "nquery.results.pageSize": {
+          "type": "number",
+          "default": 500,
+          "minimum": 1,
+          "markdownDescription": "Rows shown per page in the results panel. The whole result is kept in memory either way; this only controls how much of it is rendered at once. Copying and exporting always cover every row, not just the page on screen."
         },
         "nquery.export.nullText": {
           "type": "string",

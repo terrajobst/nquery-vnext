@@ -5,7 +5,7 @@ import { ProjectClient, fingerprintOf } from './client';
 import { ExportFormat, byteOrderMark, fileExtension, formatResults } from './export';
 import { PlanPanel, ShowPlanResult } from './planPanel';
 import { Project, diagnosticSource, discoverProjects, findOwningProject, projectGlob } from './projects';
-import { ExecuteResult, ResultsPanel } from './resultsPanel';
+import { ExecuteResult, ResultsPanel, defaultPageSize } from './resultsPanel';
 
 let projectDiagnostics: vscode.DiagnosticCollection;
 let statusBar: vscode.StatusBarItem;
@@ -316,6 +316,13 @@ async function executeCommand(): Promise<void> {
         return;
     }
 
+    const configuration = vscode.workspace.getConfiguration('nquery');
+
+    // Unset means no limit: the whole result comes back and the panel pages through it. Left off
+    // the request entirely in that case, so the server applies its own cap and nothing else.
+    const maxRows = configuration.get<number | null>('results.maxRows') ?? undefined;
+    const pageSize = configuration.get<number>('results.pageSize') ?? defaultPageSize;
+
     // Text is already in sync: the client sends didChange on every edit, and LSP preserves
     // message order, so the server sees the current buffer even when it is unsaved.
     await vscode.window.withProgress(
@@ -324,10 +331,10 @@ async function executeCommand(): Promise<void> {
             try {
                 const result = await target.client.client.sendRequest<ExecuteResult>('nquery/execute', {
                     textDocument: { uri: target.document.uri.toString() },
-                    maxRows: vscode.workspace.getConfiguration('nquery').get<number>('results.maxRows')
+                    maxRows
                 });
 
-                ResultsPanel.show(target.document.uri, result);
+                ResultsPanel.show(target.document.uri, result, pageSize);
             } catch (error) {
                 void vscode.window.showErrorMessage(`NQuery: the query could not be run: ${error}`);
             }

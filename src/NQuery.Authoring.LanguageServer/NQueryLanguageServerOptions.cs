@@ -30,8 +30,11 @@ public sealed class NQueryLanguageServerOptions
     // the client hides the Run Query command when it is disabled.
     public bool AllowExecution { get; set; } = true;
 
-    // Hard cap on rows returned to the client. A client may request fewer, never more.
-    public int MaxRows { get; set; } = 1000;
+    // Hard cap on rows returned to the client. A client may request fewer, never more. Unlimited
+    // by default: the client pages through the result rather than rendering all of it, so a cap
+    // would only cost rows the user asked for. A host whose tables do not fit in memory, or one
+    // that wants to bound response size, should set this.
+    public int MaxRows { get; set; } = int.MaxValue;
 
     public TimeSpan ExecutionTimeout { get; set; } = TimeSpan.FromSeconds(30);
 

@@ -147,8 +147,13 @@ The plan panel has a step selector covering the whole pipeline: the unoptimized 
 entry per optimization pass that changed it, the optimized tree, and the physical plan that
 actually runs. It opens on the physical plan.
 
-Results are capped by `nquery.results.maxRows` (default 1000); the server enforces its own cap as
-well, so this can only lower it. Binary columns render as `byte[1234]` rather than being
+The whole result comes back — there is no row cap by default. The grid shows `nquery.results.pageSize`
+rows at a time (500) with a pager in the toolbar: first, previous, a page box you can type into,
+next, last, and the range of rows you are looking at. Only the visible page is rendered, so a
+result with a hundred thousand rows opens as fast as one with five hundred.
+
+Set `nquery.results.maxRows` if you do want a limit; the server enforces its own cap as well, so
+this can only lower it, never raise it. Binary columns render as `byte[1234]` rather than being
 transferred.
 
 ### Copying and exporting results
@@ -161,6 +166,9 @@ transferred.
 
 They live in the results panel's title bar — save and copy as icons, "Copy Results as Markdown"
 in the `...` overflow — and in the Command Palette once a query has produced results.
+
+All three cover the **whole result**, not the page you are looking at: paging is only how the grid
+renders, and every row is held on the extension side regardless.
 
 CSV is written as UTF-8 **with** a byte order mark and CRLF line endings, because Excel on Windows
 mis-decodes UTF-8 without one. Values containing the delimiter, a quote or a line break are quoted

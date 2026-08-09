@@ -77,7 +77,44 @@ ${script ? `<script nonce="${nonce}">${script}</script>` : ''}
 </html>`;
 }
 
-export function renderResults(webview: WebviewLike, name: string, result: ExecuteResult): string {
+/** Rows shown at once. The whole result is held by the extension host regardless. */
+export const defaultPageSize = 500;
+
+export interface ResultPage {
+    /** Clamped into range, so a stale or hand-typed page number cannot land outside the result. */
+    index: number;
+    rows: (string | null)[][];
+}
+
+/** Always at least one, so an empty result still has a page zero to show. */
+export function pageCount(rowCount: number, pageSize: number): number {
+    return Math.max(1, Math.ceil(rowCount / normalizePageSize(pageSize)));
+}
+
+export function resultPage(result: ExecuteResult, index: number, pageSize: number): ResultPage {
+    const size = normalizePageSize(pageSize);
+    const clamped = Math.min(Math.max(Math.trunc(index) || 0, 0), pageCount(result.rows.length, size) - 1);
+    const start = clamped * size;
+
+    return { index: clamped, rows: result.rows.slice(start, start + size) };
+}
+
+// Settings are not validated for us: a `minimum` in package.json is advice to the settings editor,
+// not a guarantee, and zero or a negative would divide the result into infinitely many pages.
+function normalizePageSize(pageSize: number): number {
+    return Number.isFinite(pageSize) && pageSize >= 1 ? Math.trunc(pageSize) : defaultPageSize;
+}
+
+/**
+ * Renders the chrome and the first page. Every later page is asked for over `postMessage` and
+ * built in the webview, because a result large enough to need paging is also large enough that
+ * turning all of it into HTML is the thing that hurts.
+ */
+export function renderResults(
+    webview: WebviewLike,
+    name: string,
+    result: ExecuteResult,
+    pageSize: number = defaultPageSize): string {
     if (result.errorMessage) {
         const body = `
             <div class="toolbar"><span>${escapeHtml(name)}</span></div>
@@ -85,10 +122,28 @@ export function renderResults(webview: WebviewLike, name: string, result: Execut
         return renderDocument(webview, 'NQuery Results', body);
     }
 
-    const rowLabel = result.rows.length === 1 ? '1 row' : `${result.rows.length} rows`;
+    const size = normalizePageSize(pageSize);
+    const total = result.rows.length;
+    const pages = pageCount(total, size);
+
+    const rowLabel = total === 1 ? '1 row' : `${group(total)} rows`;
     const truncated = result.truncated
-        ? `<span class="warning">truncated at ${result.rows.length}</span>`
+        ? `<span class="warning">truncated at ${group(total)}</span>`
         : '';
+
+    // Omitted for a single page: the buttons would all be disabled and the range would repeat the
+    // row count that is already in the toolbar.
+    const pager = pages === 1 ? '' : `
+            <span class="muted" id="range"></span>
+            <span class="pager">
+                <button type="button" id="first" title="First page" aria-label="First page">&#171;</button>
+                <button type="button" id="prev" title="Previous page" aria-label="Previous page">&#8249;</button>
+                <label for="page">Page</label>
+                <input type="number" id="page" min="1" max="${pages}" value="1" aria-label="Page number">
+                <span class="muted">of ${group(pages)}</span>
+                <button type="button" id="next" title="Next page" aria-label="Next page">&#8250;</button>
+                <button type="button" id="last" title="Last page" aria-label="Last page">&#187;</button>
+            </span>`;
 
     const toolbar = `
         <div class="toolbar">
@@ -96,6 +151,7 @@ export function renderResults(webview: WebviewLike, name: string, result: Execut
             <span class="muted">${rowLabel}</span>
             <span class="muted">${result.elapsedMilliseconds} ms</span>
             ${truncated}
+            ${pager}
         </div>`;
 
     if (result.columns.length === 0) {
@@ -106,30 +162,141 @@ export function renderResults(webview: WebviewLike, name: string, result: Execut
         .map(c => `<th>${escapeHtml(c.name)}<span class="type">${escapeHtml(c.type)}</span></th>`)
         .join('');
 
-    const body = result.rows
-        .map((row, index) => {
-            const cells = row
-                .map(cell => cell === null
-                    ? '<td class="null">NULL</td>'
-                    : `<td>${escapeHtml(cell)}</td>`)
-                .join('');
-            return `<tr><td class="ordinal">${index + 1}</td>${cells}</tr>`;
-        })
-        .join('');
-
-    const empty = result.rows.length === 0
+    const empty = total === 0
         ? '<div class="empty">The query returned no rows.</div>'
         : '';
 
-    return renderDocument(webview, 'NQuery Results', `
+    const body = `
         ${toolbar}
         <div class="grid-wrapper">
             <table>
                 <thead><tr><th class="ordinal"></th>${header}</tr></thead>
-                <tbody>${body}</tbody>
+                <tbody></tbody>
             </table>
         </div>
-        ${empty}`);
+        ${empty}`;
+
+    return renderDocument(webview, 'NQuery Results', body, resultsScript(result, size, pages, total));
+}
+
+function resultsScript(result: ExecuteResult, pageSize: number, pages: number, total: number): string {
+    // The first page is inlined so the grid is never briefly blank; the rest arrive by message.
+    const initial = resultPage(result, 0, pageSize);
+
+    // Cells are built with textContent rather than markup, so nothing in the data can be parsed as
+    // HTML -- the escaping problem simply does not arise on this path.
+    return `
+        const api = acquireVsCodeApi();
+        const pageSize = ${pageSize};
+        const pageCount = ${pages};
+        const totalRows = ${total};
+
+        const tbody = document.querySelector('tbody');
+        const wrapper = document.querySelector('.grid-wrapper');
+        const pager = document.querySelector('.pager');
+        const range = document.getElementById('range');
+        const input = document.getElementById('page');
+
+        // The page on screen, and the one last asked for -- they differ while a request is in
+        // flight, and navigation steps from the latter so a fast double-click advances twice.
+        let index = 0;
+        let requested = 0;
+
+        // Backslashes are doubled because this source is embedded in a template literal.
+        function group(value) {
+            return String(value).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',');
+        }
+
+        function render(rows) {
+            const fragment = document.createDocumentFragment();
+            const first = index * pageSize;
+
+            rows.forEach((row, offset) => {
+                const tr = document.createElement('tr');
+                const ordinal = document.createElement('td');
+                ordinal.className = 'ordinal';
+                ordinal.textContent = group(first + offset + 1);
+                tr.appendChild(ordinal);
+
+                for (const cell of row) {
+                    const td = document.createElement('td');
+                    if (cell === null) {
+                        td.className = 'null';
+                        td.textContent = 'NULL';
+                    } else {
+                        td.textContent = cell;
+                    }
+                    tr.appendChild(td);
+                }
+
+                fragment.appendChild(tr);
+            });
+
+            tbody.replaceChildren(fragment);
+            wrapper.scrollTop = 0;
+        }
+
+        function update() {
+            if (!pager) {
+                return;
+            }
+
+            const from = index * pageSize + 1;
+            const to = Math.min(totalRows, (index + 1) * pageSize);
+            range.textContent = 'rows ' + group(from) + '–' + group(to) + ' of ' + group(totalRows);
+            input.value = String(index + 1);
+
+            document.getElementById('first').disabled = index === 0;
+            document.getElementById('prev').disabled = index === 0;
+            document.getElementById('next').disabled = index >= pageCount - 1;
+            document.getElementById('last').disabled = index >= pageCount - 1;
+        }
+
+        function go(target) {
+            if (!Number.isFinite(target)) {
+                update();
+                return;
+            }
+
+            const clamped = Math.max(0, Math.min(pageCount - 1, Math.trunc(target)));
+            if (clamped === requested) {
+                update();
+                return;
+            }
+
+            requested = clamped;
+            api.postMessage({ type: 'page', index: clamped });
+        }
+
+        window.addEventListener('message', event => {
+            if (event.data && event.data.type === 'page') {
+                index = event.data.index;
+                requested = index;
+                render(event.data.rows);
+                update();
+            }
+        });
+
+        if (pager) {
+            document.getElementById('first').addEventListener('click', () => go(0));
+            document.getElementById('prev').addEventListener('click', () => go(requested - 1));
+            document.getElementById('next').addEventListener('click', () => go(requested + 1));
+            document.getElementById('last').addEventListener('click', () => go(pageCount - 1));
+            input.addEventListener('change', () => go(Number(input.value) - 1));
+        }
+
+        render(${toScriptJson(initial.rows)});
+        update();`;
+}
+
+/** `</script>` inside a string literal would end the block, so every `<` is emitted escaped. */
+function toScriptJson(value: unknown): string {
+    return JSON.stringify(value).replace(/</g, '\\u003c');
+}
+
+/** Thousands separators, done here rather than through toLocaleString so output is deterministic. */
+function group(value: number): string {
+    return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 export function renderPlan(webview: WebviewLike, name: string, result: ShowPlanResult): string {
@@ -242,6 +409,36 @@ const baseStyles = `
     }
 
     .toolbar .muted { color: var(--vscode-descriptionForeground); }
+
+    /* Pushes the range and the pager to the far end of the toolbar, away from the counts. */
+    #range { margin-left: auto; }
+
+    .pager { display: flex; gap: 4px; align-items: center; }
+
+    .pager label { color: var(--vscode-descriptionForeground); }
+
+    .pager button {
+        min-width: 24px;
+        padding: 1px 6px;
+        color: var(--vscode-button-secondaryForeground, var(--vscode-foreground));
+        background-color: var(--vscode-button-secondaryBackground, transparent);
+        border: 1px solid var(--vscode-contrastBorder, transparent);
+        border-radius: 2px;
+        cursor: pointer;
+    }
+
+    .pager button:hover:enabled { background-color: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground)); }
+
+    .pager button:disabled { opacity: 0.4; cursor: default; }
+
+    .pager input {
+        width: 5em;
+        color: var(--vscode-input-foreground);
+        background-color: var(--vscode-input-background);
+        border: 1px solid var(--vscode-input-border, transparent);
+        padding: 1px 4px;
+        border-radius: 2px;
+    }
 
     .warning {
         color: var(--vscode-editorWarning-foreground, #cca700);

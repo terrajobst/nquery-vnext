@@ -6,8 +6,10 @@ import {
     ShowPlanNodeInfo,
     ShowPlanResult,
     escapeHtml,
+    pageCount,
     renderPlan,
-    renderResults
+    renderResults,
+    resultPage
 } from '../../src/render';
 
 const webview = { cspSource: 'vscode-webview://test' };
@@ -40,25 +42,92 @@ describe('escapeHtml', () => {
     });
 });
 
+/** `count` single-column rows, each carrying its own one-based number. */
+function manyRows(count: number): (string | null)[][] {
+    return Array.from({ length: count }, (_, index) => [`row ${index + 1}`]);
+}
+
+describe('pageCount', () => {
+    it('divides rows into whole pages, rounding up', () => {
+        assert.equal(pageCount(1000, 500), 2);
+        assert.equal(pageCount(1001, 500), 3);
+    });
+
+    it('is one for an empty result, so there is always a page to show', () => {
+        assert.equal(pageCount(0, 500), 1);
+    });
+
+    it('falls back to the default when the configured size is unusable', () => {
+        // A `minimum` in package.json is advice to the settings editor, not a guarantee; zero
+        // would otherwise divide the result into infinitely many pages.
+        assert.equal(pageCount(1000, 0), 2);
+        assert.equal(pageCount(1000, -5), 2);
+        assert.equal(pageCount(1000, Number.NaN), 2);
+    });
+});
+
+describe('resultPage', () => {
+    it('slices the requested page', () => {
+        const page = resultPage(results({ rows: manyRows(1200) }), 1, 500);
+
+        assert.equal(page.index, 1);
+        assert.equal(page.rows.length, 500);
+        assert.deepEqual(page.rows[0], ['row 501']);
+    });
+
+    it('returns a short final page', () => {
+        const page = resultPage(results({ rows: manyRows(1200) }), 2, 500);
+
+        assert.equal(page.rows.length, 200);
+        assert.deepEqual(page.rows[199], ['row 1200']);
+    });
+
+    it('clamps an out-of-range index rather than returning nothing', () => {
+        // The index arrives from the webview, where it can be typed into the page box, and a
+        // re-run can shrink the result under a page number the webview still believes in.
+        const result = results({ rows: manyRows(1200) });
+
+        assert.equal(resultPage(result, 99, 500).index, 2);
+        assert.equal(resultPage(result, -1, 500).index, 0);
+        assert.equal(resultPage(result, Number.NaN, 500).index, 0);
+    });
+});
+
 describe('renderResults', () => {
-    it('produces a document with a locked-down CSP and no script', () => {
+    it('produces a document with a locked-down CSP and a nonced script', () => {
         const html = renderResults(webview, 'q.nql', results());
 
         assert.ok(html.startsWith('<!DOCTYPE html>'));
         assert.ok(html.includes(`default-src 'none'`));
-        assert.ok(html.includes(`script-src 'none'`));
         assert.ok(html.includes(webview.cspSource));
+
+        const match = html.match(/script-src 'nonce-([A-Za-z0-9]+)'/);
+        assert.ok(match, 'expected a nonce-based script CSP');
+        assert.ok(html.includes(`<script nonce="${match[1]}">`));
     });
 
-    it('escapes cell content', () => {
+    it('carries only the first page in the document', () => {
+        // The whole point of paging: a result large enough to need it is also large enough that
+        // turning all of it into markup is what hurts.
+        const html = renderResults(webview, 'q.nql', results({ rows: manyRows(1200) }), 500);
+
+        assert.ok(html.includes('"row 1"'));
+        assert.ok(html.includes('"row 500"'));
+        assert.ok(!html.includes('"row 501"'));
+        assert.ok(!html.includes('"row 1200"'));
+    });
+
+    it('escapes cell content out of markup', () => {
         // A result cell is attacker-controlled as far as the panel is concerned: it comes from
-        // whatever rows the catalog's data contains.
+        // whatever rows the catalog's data contains. Cells reach the page as JSON and are set
+        // with textContent, so nothing in them is ever parsed as HTML -- but the JSON itself
+        // still sits inside a <script> block, which a raw `<` could end.
         const html = renderResults(webview, 'q.nql', results({
-            rows: [['<img src=x onerror=alert(1)>']]
+            rows: [['</script><img src=x onerror=alert(1)>']]
         }));
 
-        assert.ok(!html.includes('<img src=x'));
-        assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt;'));
+        assert.ok(!html.includes('</script><img'));
+        assert.ok(html.includes('\\u003c/script>\\u003cimg src=x onerror=alert(1)>'));
     });
 
     it('escapes column names and the document name', () => {
@@ -66,14 +135,15 @@ describe('renderResults', () => {
             columns: [{ name: '<script>', type: 'string' }]
         }));
 
-        assert.ok(!html.includes('<script>'));
+        // The one script in the document is the paging script, opened by the renderer itself.
+        assert.equal(html.match(/<script/g)?.length, 1);
+        assert.ok(html.includes('&lt;script&gt;'));
     });
 
-    it('renders SQL NULL distinctly from the text NULL', () => {
+    it('sends SQL NULL as JSON null, distinctly from the text NULL', () => {
         const html = renderResults(webview, 'q.nql', results({ rows: [[null], ['NULL']] }));
 
-        assert.ok(html.includes('<td class="null">NULL</td>'));
-        assert.ok(html.includes('<td>NULL</td>'));
+        assert.ok(html.includes('render([[null],["NULL"]]);'));
     });
 
     it('reports row count, elapsed time and truncation', () => {
@@ -88,6 +158,13 @@ describe('renderResults', () => {
         assert.ok(html.includes('truncated at 2'));
     });
 
+    it('groups thousands in the counts', () => {
+        const html = renderResults(webview, 'q.nql', results({ rows: manyRows(12431) }), 500);
+
+        assert.ok(html.includes('12,431 rows'));
+        assert.ok(html.includes('of 25'));
+    });
+
     it('uses the singular for one row and omits truncation when not truncated', () => {
         const html = renderResults(webview, 'q.nql', results());
 
@@ -95,11 +172,19 @@ describe('renderResults', () => {
         assert.ok(!html.includes('truncated'));
     });
 
-    it('numbers rows from one', () => {
-        const html = renderResults(webview, 'q.nql', results({ rows: [['a'], ['b']] }));
+    it('omits the pager when everything fits on one page', () => {
+        const html = renderResults(webview, 'q.nql', results({ rows: manyRows(500) }), 500);
 
-        assert.ok(html.includes('<td class="ordinal">1</td>'));
-        assert.ok(html.includes('<td class="ordinal">2</td>'));
+        assert.ok(!html.includes('class="pager"'));
+    });
+
+    it('renders a pager bounded by the page count', () => {
+        const html = renderResults(webview, 'q.nql', results({ rows: manyRows(1200) }), 500);
+
+        assert.ok(html.includes('class="pager"'));
+        assert.ok(html.includes('max="3"'));
+        assert.ok(html.includes('const pageCount = 3;'));
+        assert.ok(html.includes('const totalRows = 1200;'));
     });
 
     it('says so when there are no rows', () => {
