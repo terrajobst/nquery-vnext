@@ -8,8 +8,8 @@ using BaselineQuery = baseline::NQuery.Query;
 
 namespace NQuery.Tests;
 
-// Test harness for running queries through the OLD engine (the nquery-baseline worktree,
-// aliased "baseline"). It builds its Catalog from the same engine-neutral Northwind
+// Test harness for running queries through the OLD engine (the external/nquery-baseline
+// submodule, aliased "baseline"). It builds its Catalog from the same engine-neutral Northwind
 // DataSet the new-engine tests use (NorthwindCatalog), so results are directly
 // comparable. The extern alias is confined to this file: callers pass a query string and
 // get back a List<object[]>, all standard types, so they never touch baseline:: at all.

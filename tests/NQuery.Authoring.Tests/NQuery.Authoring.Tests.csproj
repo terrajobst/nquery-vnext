@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net481</TargetFrameworks>
+    <!-- "dotnet test" runs a .NET Framework test module through mono, which is not part of the
+         toolchain on Linux or macOS. The libraries still build net481 everywhere, so the
+         cross-targeting is validated; only running the tests is Windows-only. -->
+    <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 

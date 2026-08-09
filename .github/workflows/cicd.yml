@@ -17,10 +17,21 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0 # We need the full history in order to use Git versioning
+          # The comparison engines under external/, which the differential tests replay queries
+          # against.
+          submodules: true
       - name: Get .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.*'
+      - name: Build the baseline engine
+        # OldEngineDifferentialTests binds to this assembly through the "baseline" extern alias
+        # and compiles out when it is absent, so it has to exist before the solution builds.
+        # Debug regardless of the solution's configuration below: the test project references
+        # artifacts/bin/NQuery/debug_net8.0. Building NQuery.Data builds NQuery with it, which is
+        # the other half of the alias. The old engine needs no build -- OldEngineDefinitionTests
+        # reads its test definitions as files.
+        run: dotnet build external/nquery-baseline/src/NQuery.Data -c Debug --nologo
       - name: dotnet build
         run: |
           dotnet build ${env:SLN} -t build -t pack -c Release --nologo

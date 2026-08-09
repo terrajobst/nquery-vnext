@@ -2,7 +2,32 @@
 
   <PropertyGroup>
     <TargetFrameworks>net8.0;net481</TargetFrameworks>
+    <!-- "dotnet test" runs a .NET Framework test module through mono, which is not part of the
+         toolchain on Linux or macOS. The libraries still build net481 everywhere, so the
+         cross-targeting is validated; only running the tests is Windows-only. -->
+    <TargetFrameworks Condition="!$([MSBuild]::IsOSPlatform('Windows'))">net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!--
+    The old engine, for differential tests (see OldEngine.cs). These are the NQuery and
+    NQuery.Data projects from the external/nquery-baseline submodule, pinned at the comparison
+    point; they set AssemblyName=NQuery.Baseline / NQuery.Data.Baseline so they load side-by-side
+    with the live build, which otherwise has the same NQuery.* types.
+
+    Checking out the submodule is not enough: the references below are to build output, so it has
+    to be built first.
+
+      dotnet build external/nquery-baseline/src/NQuery.Data -c Debug
+
+    (that also builds NQuery). Until then HasBaseline is empty and the differential tests compile
+    out, so a plain clone still builds and runs green.
+  -->
+  <PropertyGroup>
+    <BaselineBinDir>$(MSBuildThisFileDirectory)..\..\external\nquery-baseline\artifacts\bin</BaselineBinDir>
+    <BaselineAssembly>$(BaselineBinDir)\NQuery\debug_net8.0\NQuery.Baseline.dll</BaselineAssembly>
+    <BaselineDataAssembly>$(BaselineBinDir)\NQuery.Data\debug_net8.0\NQuery.Data.Baseline.dll</BaselineDataAssembly>
+    <HasBaseline Condition="Exists('$(BaselineAssembly)') And Exists('$(BaselineDataAssembly)')">true</HasBaseline>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,12 +41,17 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net481'">
-    <Compile Remove="OldEngine.cs" />
-    <Compile Remove="OldEngineDifferentialTests.cs" />
     <!-- Reuses RowSet (under Oracle\, removed below), so it is net8.0-only like the rest of the
          temporary differential harness. -->
     <Compile Remove="OldEngineDefinitionTests.cs" />
     <Compile Remove="Oracle\*.cs" />
+  </ItemGroup>
+
+  <!-- The only sources that address the baseline through the extern alias, so they are also the
+       only ones that need it present. -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net8.0' Or '$(HasBaseline)' != 'true'">
+    <Compile Remove="OldEngine.cs" />
+    <Compile Remove="OldEngineDifferentialTests.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,25 +59,16 @@
     <ProjectReference Include="..\..\src\NQuery.Testing\NQuery.Testing.csproj" />
     <ProjectReference Include="..\..\src\NQuery\NQuery.csproj" />
     <!--
-      The old engine, for differential tests (see OldEngine.cs). These are the NQuery
-      and NQuery.Data projects from the sibling "nquery-baseline" worktree (checked out at the
-      comparison point, e.g. main), which must be built separately beforehand:
-
-        dotnet build ..\..\..\nquery-baseline\src\NQuery.Data -c Debug
-
-      (that also builds NQuery). Those projects set AssemblyName=NQuery.Baseline /
-      NQuery.Data.Baseline so they load side-by-side with the live build (same NQuery.* types
-      otherwise); we consume them as plain References under the "baseline" alias, addressed as
-      baseline::NQuery.* in OldEngine.cs. A ProjectReference is deliberately not used: the
-      worktree project file names are also "NQuery.csproj" / "NQuery.Data.csproj", so they would
-      collide with the live ones in deps.json (both keyed by project name) and an engine would
-      fail to load at run time.
+      Consumed as plain References under the "baseline" alias, addressed as baseline::NQuery.* in
+      OldEngine.cs. A ProjectReference is deliberately not used: the submodule's project file
+      names are also "NQuery.csproj" / "NQuery.Data.csproj", so they would collide with the live
+      ones in deps.json (both keyed by project name) and an engine would fail to load at run time.
     -->
-    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true" Condition="'$(TargetFramework)' == 'net8.0'">
-      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\debug_net8.0\NQuery.Baseline.dll</HintPath>
+    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true" Condition="'$(HasBaseline)' == 'true' And '$(TargetFramework)' == 'net8.0'">
+      <HintPath>$(BaselineAssembly)</HintPath>
     </Reference>
-    <Reference Include="NQuery.Data.Baseline" Aliases="baseline" Private="true" Condition="'$(TargetFramework)' == 'net8.0'">
-      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery.Data\debug_net8.0\NQuery.Data.Baseline.dll</HintPath>
+    <Reference Include="NQuery.Data.Baseline" Aliases="baseline" Private="true" Condition="'$(HasBaseline)' == 'true' And '$(TargetFramework)' == 'net8.0'">
+      <HintPath>$(BaselineDataAssembly)</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -1,0 +1,12 @@
+<!--
+  Deliberately empty. MSBuild walks up from a project directory and imports the first
+  Directory.Build.props it finds, so without this the submodules under external/ would pick up the
+  repository root's props and targets. They would inherit this repo's artifacts layout, LangVersion
+  and Nullable settings, and (via Directory.Build.targets) would compile this repo's
+  src/Common/*.cs into themselves, which does not build.
+
+  The submodules are separate repositories built with their own settings; this file, and the
+  matching .targets, is the boundary that keeps them that way.
+-->
+<Project>
+</Project>

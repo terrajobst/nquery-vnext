@@ -1,0 +1,8 @@
+[submodule "external/nquery-baseline"]
+	path = external/nquery-baseline
+	url = https://github.com/terrajobst/nquery-vnext
+	branch = refactoring-baseline
+[submodule "external/nquery-old"]
+	path = external/nquery-old
+	url = https://github.com/terrajobst/nquery
+	branch = nquery-vnext-benchmarking

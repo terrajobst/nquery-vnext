@@ -4,7 +4,7 @@ using NQuery.Tests.Oracle;
 namespace NQuery.Tests;
 
 // Differential correctness gate: each query runs through both the current engine and the
-// baseline NQuery from the "nquery-baseline" worktree (via the OldEngine helper) over the
+// baseline NQuery from the external/nquery-baseline submodule (via the OldEngine helper) over the
 // same Northwind data, and the result rows must match. Every query carries an ORDER BY
 // (or is a single-row aggregate) so the row order is deterministic and the comparison is
 // positional.

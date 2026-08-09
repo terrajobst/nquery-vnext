@@ -14,43 +14,62 @@
     <PackageReference Include="BenchmarkDotNet" />
   </ItemGroup>
 
+  <!--
+    Both comparison engines come from submodules under external/ and have to be built before the
+    benchmarks that use them will compile (benchmarks run in Release, so build them Release):
+
+      dotnet build external/nquery-baseline/src/NQuery -c Release
+      dotnet build external/nquery-old/Src/NQuery/NQuery.csproj -c Release
+
+    Until then HasOldEngines is empty, the comparing benchmarks compile out, and the project still
+    builds: the workloads that only exercise the live engine remain.
+  -->
+  <PropertyGroup>
+    <BaselineAssembly>$(MSBuildThisFileDirectory)..\..\external\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</BaselineAssembly>
+    <OldAssembly>$(MSBuildThisFileDirectory)..\..\external\nquery-old\Src\NQuery\bin\Release\net8.0\NQuery.Old.dll</OldAssembly>
+    <HasOldEngines Condition="Exists('$(BaselineAssembly)') And Exists('$(OldAssembly)')">true</HasOldEngines>
+    <DefineConstants Condition="'$(HasOldEngines)' == 'true'">$(DefineConstants);HAS_OLD_ENGINES</DefineConstants>
+  </PropertyGroup>
+
+  <!-- Every source that addresses an engine through an extern alias. -->
+  <ItemGroup Condition="'$(HasOldEngines)' != 'true'">
+    <Compile Remove="CompilationBenchmarks.cs" />
+    <Compile Remove="ExecutionBenchmarks.cs" />
+    <Compile Remove="NorthwindCompilationBenchmarks.cs" />
+    <Compile Remove="NorthwindExecutionBenchmarks.cs" />
+    <Compile Remove="ParsingBenchmarks.cs" />
+    <Compile Remove="ReaderPreparationBenchmarks.cs" />
+    <Compile Remove="Validator.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <!--
-      The live engine (assembly "NQuery") is the new version from this worktree and is
-      referenced normally, so its types are just NQuery.*. The baseline is the NQuery project
-      from the sibling "nquery-baseline" worktree (checked out at the comparison point, e.g.
-      main), which must be built separately beforehand (benchmarks run in Release, so build it
-      Release):
-
-        dotnet build ..\..\..\nquery-baseline\src\NQuery -c Release
-
-      That project sets AssemblyName=NQuery.Baseline so it loads side-by-side with the live
-      NQuery (same NQuery.* types otherwise); we consume it as a plain aliased Reference,
-      addressed as baseline::NQuery.* via the extern
-      alias lines in the benchmark sources. A ProjectReference is deliberately not used: the
-      worktree project's file name is also "NQuery.csproj", so it would collide with the live
-      NQuery in deps.json (both keyed by project name) and one engine would fail to load at run
-      time.
+      The live engine (assembly "NQuery") is the new version from this repo and is referenced
+      normally, so its types are just NQuery.*. The baseline is the NQuery project from the
+      external/nquery-baseline submodule, pinned at the comparison point; it sets
+      AssemblyName=NQuery.Baseline so it loads side-by-side with the live NQuery, which otherwise
+      has the same NQuery.* types. We consume it as a plain aliased Reference, addressed as
+      baseline::NQuery.* via the extern alias lines in the benchmark sources. A ProjectReference
+      is deliberately not used: the submodule project's file name is also "NQuery.csproj", so it
+      would collide with the live NQuery in deps.json (both keyed by project name) and one engine
+      would fail to load at run time.
     -->
     <ProjectReference Include="..\NQuery\NQuery.csproj" />
     <!-- The typed Northwind data (NQuery.Northwind.NorthwindData) lives here and is shared by
          both engines via the live NQuery assembly. -->
     <ProjectReference Include="..\NQuery.Testing\NQuery.Testing.csproj" />
-    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true">
-      <HintPath>..\..\..\nquery-baseline\artifacts\bin\NQuery\release_net8.0\NQuery.Baseline.dll</HintPath>
+    <Reference Include="NQuery.Baseline" Aliases="baseline" Private="true" Condition="'$(HasOldEngines)' == 'true'">
+      <HintPath>$(BaselineAssembly)</HintPath>
     </Reference>
-    <!-- The original NQuery engine from the sibling "nquery-old" repo, whose NQuery.csproj was
-         converted in-place to an SDK-style net8.0 library with AssemblyName=NQuery.Old. Build it
-         separately beforehand (Release):
-
-           dotnet build ..\..\..\nquery-old\Src\NQuery\NQuery.csproj -c Release
-
-         Like the baseline, it is consumed as an aliased Reference (addressed as old::NQuery.*)
-         rather than a ProjectReference, so the original engine loads side-by-side with the live
-         and baseline NQuery.* types. Its output is plain bin\Release (not artifacts), as the old
-         repo has no Directory.Build.props. -->
-    <Reference Include="NQuery.Old" Aliases="old" Private="true">
-      <HintPath>..\..\..\nquery-old\Src\NQuery\bin\Release\net8.0\NQuery.Old.dll</HintPath>
+    <!-- The original NQuery engine from the external/nquery-old submodule, whose NQuery.csproj was
+         converted in-place to an SDK-style net8.0 library with AssemblyName=NQuery.Old. Like the
+         baseline it is consumed as an aliased Reference (addressed as old::NQuery.*) rather than a
+         ProjectReference, so the original engine loads side-by-side with the live and baseline
+         NQuery.* types. Its output is plain bin\Release (not artifacts), as the old repo has no
+         Directory.Build.props, and external/Directory.Build.props stops it inheriting this
+         repo's. -->
+    <Reference Include="NQuery.Old" Aliases="old" Private="true" Condition="'$(HasOldEngines)' == 'true'">
+      <HintPath>$(OldAssembly)</HintPath>
     </Reference>
   </ItemGroup>
 

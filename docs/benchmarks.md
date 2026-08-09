@@ -5,7 +5,7 @@ differences come from the engine, not the data.
 
 The three engines compared:
 
-- **Old** — the original NQuery engine (`nquery-old`), a .NET Framework 2.0-era
+- **Old** — the original NQuery engine (`external/nquery-old`), a .NET Framework 2.0-era
   code base recompiled as .NET Core 8.0 (`NQuery.Old`).
 - **Baseline** — `main` of this repo (`NQuery.Baseline`); the ratio reference
   (`Ratio = 1.00`).
@@ -326,11 +326,14 @@ BenchmarkDotNet v0.14.0, Windows 11 (10.0.26200.8655)
 # How to run
 
 ```
-# Build the original engine (separate repo, plain bin\Release output):
-dotnet build ..\nquery-old\Src\NQuery\NQuery.csproj -c Release
+# Both comparison engines are submodules under external\; check them out once:
+git submodule update --init
 
-# Build the baseline engine (sibling worktree at the comparison point, e.g. main):
-dotnet build ..\nquery-baseline\src\NQuery -c Release
+# Build the original engine (plain bin\Release output, as that repo has no artifacts layout):
+dotnet build external\nquery-old\Src\NQuery\NQuery.csproj -c Release
+
+# Build the baseline engine (pinned at the comparison point):
+dotnet build external\nquery-baseline\src\NQuery -c Release
 
 cd src\NQuery.Benchmarks
 

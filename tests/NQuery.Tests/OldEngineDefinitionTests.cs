@@ -16,15 +16,46 @@ namespace NQuery.Tests;
 // the same SQL through the current engine over the same three sample databases and compare
 // the result set positionally.
 //
-// This is a TEMPORARY differential check: it reads the definitions and sample data straight
-// from P:\nquery-old via absolute paths (nothing is copied into this repo). Tests that assert
+// This is a TEMPORARY differential check: it reads the definitions and sample data straight out
+// of the external/nquery-old submodule (nothing is copied into this repo). Tests that assert
 // errors (<expectedErrors> / <expectedRuntimeError>) are skipped at enumeration time -- only
-// queries with an <expectedResults> payload are replayed.
+// queries with an <expectedResults> payload are replayed. A clone without the submodule checked
+// out skips the whole class rather than failing it.
 public class OldEngineDefinitionTests
 {
-    private const string OldRepoRoot = @"P:\nquery-old";
-    private static readonly string DefinitionsDir = Path.Combine(OldRepoRoot, @"Src\NQuery.Tests\Definitions");
-    private static readonly string SampleDataDir = Path.Combine(OldRepoRoot, @"Etc\Sample Data");
+    private static readonly string OldRepoRoot = FindSubmodule();
+
+    // Path.Combine one segment at a time: the old repo's layout is written with the separators of
+    // the platform running the tests, not with the backslashes it uses on Windows.
+    private static readonly string DefinitionsDir = Path.Combine(OldRepoRoot, @"Src", @"NQuery.Tests", @"Definitions");
+    private static readonly string SampleDataDir = Path.Combine(OldRepoRoot, @"Etc", @"Sample Data");
+
+    // Walks up from the test binary to the repository root, the same way the sample workspace
+    // tests find samples\northwind: the submodule lives outside the artifacts tree, so there is
+    // nothing to copy to the output directory.
+    private static string FindSubmodule()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null)
+        {
+            var candidate = Path.Combine(directory.FullName, @"external", @"nquery-old");
+            if (Directory.Exists(candidate))
+                return candidate;
+
+            directory = directory.Parent;
+        }
+
+        // Nothing found: the tests skip on a missing directory, so an unusable path is fine here
+        // and keeps the field non-null.
+        return @"external/nquery-old";
+    }
+
+    // Referenced by the theory's SkipUnless, so an absent checkout reports as skipped.
+    public static bool OldRepoIsAvailable
+    {
+        get { return Directory.Exists(DefinitionsDir) && Directory.Exists(SampleDataDir); }
+    }
 
     // The old engine had FIRST/LAST built-in aggregates the new engine intentionally does not;
     // we register them here (test-only) so those definition queries still bind. The aggregate
@@ -32,8 +63,8 @@ public class OldEngineDefinitionTests
     // first non-null value and LAST the last -- matching the old FirstAggregator/LastAggregator
     // for the non-null columns these tests aggregate.
     //
-    // Declared before Catalog: static field initializers run in textual order, and CreateCatalog
-    // reads these, so they must already be assigned when Catalog initializes.
+    // Read by CreateCatalog, which the Lazy below only invokes once a test actually runs, so
+    // these are always assigned by then.
     private static readonly AggregateDefinition FirstAggregate = AggregateDefinition.Create("FIRST", argumentType =>
     {
         var stateType = MakeNullable(argumentType);
@@ -64,7 +95,10 @@ public class OldEngineDefinitionTests
     // The current-engine catalog over the same three databases the old test fixture loaded
     // (see QueryFactory.CreateQuery in nquery-old): Northwind, the tiny JoinTables set, and
     // AdventureWorks Cinema. All three share one catalog so any query can bind its tables.
-    private static readonly Catalog Catalog = CreateCatalog();
+    // Lazy, not eager: loading the sample data in a static field initializer turns a missing
+    // checkout into a TypeInitializationException raised from the MemberData enumeration, which
+    // xUnit reports as a failure long before SkipUnless gets a chance to skip the test.
+    private static readonly Lazy<Catalog> LazyCatalog = new(CreateCatalog);
 
     private static Catalog CreateCatalog()
     {
@@ -109,8 +143,14 @@ public class OldEngineDefinitionTests
     {
         var testCases = new TheoryData<string, string>();
 
-        if (!Directory.Exists(DefinitionsDir))
+        // SkipUnless can only skip test cases that exist, and a theory with no data at all is
+        // reported as a failure ("No data found"). One placeholder row gives it something to
+        // skip, so a machine without the old repo shows a skip rather than a red test.
+        if (!OldRepoIsAvailable)
+        {
+            testCases.Add(@"(no old engine repo)", string.Empty);
             return testCases;
+        }
 
         foreach (var file in Directory.EnumerateFiles(DefinitionsDir, "*.xml", SearchOption.AllDirectories).OrderBy(f => f))
         {
@@ -166,7 +206,8 @@ public class OldEngineDefinitionTests
             "FORMAT uses the invariant culture instead of the current culture",
     };
 
-    [Theory]
+    [Theory(Skip = @"The external/nquery-old submodule is not checked out.",
+            SkipUnless = nameof(OldRepoIsAvailable))]
     [MemberData(nameof(TestCases))]
     public void CurrentEngine_MatchesOldEngineResults(string name, string file)
     {
@@ -197,7 +238,7 @@ public class OldEngineDefinitionTests
 
     private static List<object[]> RunQuery(string sql)
     {
-        using var reader = Query.Create(Catalog, sql).ExecuteReader();
+        using var reader = Query.Create(LazyCatalog.Value, sql).ExecuteReader();
 
         var rows = new List<object[]>();
         while (reader.Read())

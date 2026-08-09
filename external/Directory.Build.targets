@@ -1,0 +1,6 @@
+<!--
+  Deliberately empty; see the note in Directory.Build.props. The props and targets walks are
+  independent, so stopping one does not stop the other: both files have to be here.
+-->
+<Project>
+</Project>

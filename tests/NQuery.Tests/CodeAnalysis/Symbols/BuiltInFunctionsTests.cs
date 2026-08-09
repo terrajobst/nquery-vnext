@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace NQuery.Tests.CodeAnalysis.Symbols;
 
 public sealed class BuiltInFunctionsTests : BuiltInSymbolsTests
@@ -122,11 +124,18 @@ public sealed class BuiltInFunctionsTests : BuiltInSymbolsTests
     public void BuiltInFunctions_Format()
     {
         AssertEvaluatesTo("FORMAT(.123, 'P2')", "12.30 %");
-#if NETFRAMEWORK
-        AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", "12.30 %");
-#else
-        AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", "12\u066b30\u066a\u061c");
-#endif
+
+        // The glyphs 'ar' renders a percentage with come from whichever ICU/CLDR the machine
+        // ships -- Windows and Linux disagree today, .NET Framework's NLS disagreed with both,
+        // and a CLDR update can move any of them. Hardcoding them tests the platform rather
+        // than the engine, so the expectation is computed the same way FORMAT computes it.
+        var arabic = string.Format(CultureInfo.GetCultureInfo("ar"), "{0:P2}", 0.123);
+        var invariant = string.Format(CultureInfo.InvariantCulture, "{0:P2}", 0.123);
+
+        // Guards the part that is actually the engine's job: without this, a FORMAT that ignored
+        // the culture argument entirely would still satisfy the assertion below.
+        Assert.NotEqual(invariant, arabic);
+        AssertEvaluatesTo("FORMAT(.123, 'P2', 'ar')", arabic);
     }
 
     [Fact]

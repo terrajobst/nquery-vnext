@@ -1,0 +1,4 @@
+# The submodules carry their own conventions and are not edited here, so the repository root's
+# .editorconfig -- and the analyzer severities it sets -- stops at this boundary, the same way
+# Directory.Build.props/.targets do.
+root = true
