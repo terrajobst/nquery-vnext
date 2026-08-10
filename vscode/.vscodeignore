@@ -3,8 +3,17 @@
 .vscode-test.mjs
 src/**
 tests/**
-out/tests/**
-out/**/*.map
-node_modules/.bin/**
+
+# `main` points at the bundle, so the tsc output ships nothing -- it exists to type check and to
+# give the tests something to run.
+out/**
+
+dist/**/*.map
+
+# Everything the extension imports is inlined into the bundle, so none of this is needed at
+# runtime. This is most of what a non-bundled VSIX carries.
+node_modules/**
+
+esbuild.js
 tsconfig.json
 .gitignore

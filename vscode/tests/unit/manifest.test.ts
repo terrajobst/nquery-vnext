@@ -46,12 +46,13 @@ describe('manifest', () => {
         assert.ok(untrusted?.description);
     });
 
-    it('points main at the compiled entry point', () => {
-        // tests/ compiles alongside src/, so main carries the extra src segment. Getting this
-        // wrong breaks activation only once packaged.
-        assert.equal(manifest.main, './out/src/extension.js');
+    it('points main at the bundle rather than the tsc output', () => {
+        // The VSIX ships dist/ and ignores out/ and node_modules/ entirely, so pointing main at
+        // the tsc output would package an extension whose entry point is not in it. That breaks
+        // activation only once packaged, which is far too late to notice.
+        assert.equal(manifest.main, './dist/extension.js');
 
-        const entry = path.join(__dirname, '..', '..', '..', 'out', 'src', 'extension.js');
+        const entry = path.join(__dirname, '..', '..', '..', 'dist', 'extension.js');
         assert.ok(fs.existsSync(entry), `${entry} does not exist; the manifest points at nothing`);
     });
 

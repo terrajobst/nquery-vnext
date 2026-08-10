@@ -58,8 +58,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 }
 
 export async function deactivate(): Promise<void> {
-    await Promise.all([...clients.values()].map(c => c.stop()));
-    clients.clear();
+    // stopAll rather than just the project clients: the default host is a server process too, and
+    // leaving it behind survives the window that started it.
+    await stopAll();
 }
 
 /** Serializes refreshes so a burst of file events cannot interleave two reconciliations. */
@@ -199,6 +200,17 @@ function updateStatusBar(): void {
 
     statusBar.backgroundColor = undefined;
 
+    // Checked before the catalog, because a server that is not running has no catalog either and
+    // the dead process is the more actionable of the two. Without this the status bar keeps
+    // claiming the project is served while completions and diagnostics have silently stopped.
+    if (client?.serverError) {
+        statusBar.text = '$(error) NQuery: server not running';
+        statusBar.tooltip = `${client.serverError}\n\nRun "NQuery: Restart Server" to try again, or "NQuery: Show Output" for details.`;
+        statusBar.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
+        statusBar.show();
+        return;
+    }
+
     // A failed catalog is the one state the user most needs to see: everything still "works",
     // but nothing resolves. A transient notification is too easy to miss, so it also lands here.
     if (client?.catalogError) {
@@ -228,7 +240,8 @@ function updateStatusBar(): void {
 
 async function pickProject(): Promise<Project | undefined> {
     if (projects.length === 0) {
-        void vscode.window.showInformationMessage('NQuery: no project files were found in this workspace.');
+        void vscode.window.showInformationMessage(
+            'NQuery: no project files were found in this workspace. Add a .nqproj file, or set nquery.defaultHost.command.');
         return undefined;
     }
 
@@ -248,32 +261,68 @@ async function pickProject(): Promise<Project | undefined> {
     return picked?.project;
 }
 
-async function restartServerCommand(): Promise<void> {
+/**
+ * The server a server-scoped command should act on. It cannot simply go through pickProject():
+ * the default host is a legitimate target for all of them, and it is the only server running
+ * precisely when there are no projects for pickProject() to offer.
+ */
+async function pickClient(): Promise<ProjectClient | undefined> {
+    if (projects.length === 0 && defaultClient) {
+        return defaultClient;
+    }
+
     const project = await pickProject();
     if (!project) {
+        return undefined;
+    }
+
+    const client = clients.get(project.uri.fsPath);
+
+    // The project exists but has no server. Silence here reads as the command being broken, and
+    // an untrusted workspace is the one case where that is deliberate rather than a failure.
+    if (!client) {
+        void vscode.window.showWarningMessage(vscode.workspace.isTrusted
+            ? `NQuery: no language server is running for '${project.name}'.`
+            : 'NQuery: the workspace is not trusted, so no language server was started.');
+    }
+
+    return client;
+}
+
+async function restartServerCommand(): Promise<void> {
+    const existing = await pickClient();
+    if (!existing) {
         return;
     }
 
-    const existing = clients.get(project.uri.fsPath);
-    if (existing) {
-        await existing.stop();
-        clients.delete(project.uri.fsPath);
+    await existing.stop();
+
+    // The default host is configured by settings rather than by a project file, so it is rebuilt
+    // through the same reconciliation that watches those settings -- which also means a restart
+    // picks up a nquery.defaultHost.command that has since been corrected.
+    if (existing.isDefault) {
+        defaultClient = undefined;
+        await reconcileDefaultHost();
+        updateStatusBar();
+        return;
     }
 
-    const client = ProjectClient.create(project);
-    clients.set(project.uri.fsPath, client);
+    const fsPath = existing.project.uri.fsPath;
+    clients.delete(fsPath);
+
+    const client = ProjectClient.create(existing.project);
+    clients.set(fsPath, client);
     await client.start(updateStatusBar);
+    updateStatusBar();
 }
 
 async function showOutputCommand(): Promise<void> {
-    const project = await pickProject();
-    const client = project ? clients.get(project.uri.fsPath) : undefined;
+    const client = await pickClient();
     client?.client.outputChannel.show();
 }
 
 async function reloadCatalogCommand(): Promise<void> {
-    const project = await pickProject();
-    const client = project ? clients.get(project.uri.fsPath) : undefined;
+    const client = await pickClient();
 
     if (!client) {
         return;

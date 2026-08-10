@@ -15,7 +15,7 @@
   "categories": [
     "Programming Languages"
   ],
-  "main": "./out/src/extension.js",
+  "main": "./dist/extension.js",
   "extensionKind": [
     "workspace"
   ],
@@ -249,13 +249,14 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "npm run compile && npm run bundle -- --production",
     "compile": "tsc -p ./",
+    "bundle": "node esbuild.js",
     "watch": "tsc -watch -p ./",
     "package": "node -e \"require('fs').mkdirSync('../artifacts/vscode',{recursive:true})\" && vsce package --out ../artifacts/vscode/",
     "test": "npm run test:unit && npm run test:integration",
-    "test:unit": "npm run compile && node --test \"out/tests/unit/**/*.test.js\"",
-    "test:integration": "npm run compile && vscode-test"
+    "test:unit": "npm run compile && npm run bundle && node --test \"out/tests/unit/**/*.test.js\"",
+    "test:integration": "npm run compile && npm run bundle && vscode-test"
   },
   "dependencies": {
     "jsonc-parser": "^3.2.1",
@@ -268,6 +269,7 @@
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
     "mocha": "^11.8.0",
     "typescript": "^5.4.0"
   },

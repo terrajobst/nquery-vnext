@@ -10,8 +10,11 @@ env:
   SLN: ${{ github.workspace }}/NQuery.slnx
 
 jobs:
+  # Linux, because everything here is .NET 8: the test projects drop their net481 target off
+  # Windows (see the TargetFrameworks condition in NQuery.Tests.csproj), so this covers the whole
+  # suite except .NET Framework, which build-framework picks up.
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/checkout@v6
@@ -33,21 +36,42 @@ jobs:
         # reads its test definitions as files.
         run: dotnet build external/nquery-baseline/src/NQuery.Data -c Debug --nologo
       - name: dotnet build
-        run: |
-          dotnet build ${env:SLN} -t build -t pack -c Release --nologo
+        run: dotnet build "$SLN" -t build -t pack -c Release --nologo
       - name: dotnet test
-        run: |
-          dotnet test --solution ${env:SLN}
+        run: dotnet test --solution "$SLN"
       - name: Upload binaries
         if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
         uses: actions/upload-artifact@v7
         with:
           path: artifacts
           name: artifacts
-  vscode:
-    # Windows rather than Ubuntu: the integration tests launch a real VS Code, which would
-    # otherwise need xvfb, and they drive the .NET language server host.
+
+  # The only job that needs Windows: net481 cannot be executed anywhere else. Scoped to the two
+  # multi-targeted test projects and to that framework alone, so the .NET 8 suite is not run twice
+  # -- the Linux job above already covered it.
+  build-framework:
     runs-on: windows-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # We need the full history in order to use Git versioning
+      - name: Get .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.*'
+      - name: dotnet test (net481)
+        # No baseline engine here: NQuery.Tests only references it from its net8.0 target, and
+        # compiles the differential tests out when it is absent.
+        run: |
+          dotnet test --project tests/NQuery.Tests/NQuery.Tests.csproj -f net481
+          dotnet test --project tests/NQuery.Authoring.Tests/NQuery.Authoring.Tests.csproj -f net481
+
+  vscode:
+    # Linux: npm installs and packaging move thousands of small files, which Windows runners are
+    # markedly slower at. The integration tests launch a real VS Code, so they need a display --
+    # hence xvfb-run on the one step that starts it.
+    runs-on: ubuntu-latest
     steps:
       - name: Get code
         uses: actions/checkout@v6
@@ -75,7 +99,8 @@ jobs:
         run: npm run test:unit
         working-directory: vscode
       - name: Integration tests
-        run: npm run test:integration
+        # -a picks a free display number rather than failing if :99 is taken.
+        run: xvfb-run -a npm run test:integration
         working-directory: vscode
       - name: Package extension
         # Through the script, not npx: vsce is a devDependency, so npm ci pins the version that
@@ -90,7 +115,9 @@ jobs:
 
   push-to-github:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository_owner == 'terrajobst'
-    needs: build
+    # build-framework as well as build: the two together are what the single Windows job used to
+    # cover, and a net481 failure has to keep packages from being pushed.
+    needs: [build, build-framework]
     runs-on: ubuntu-latest
     permissions:
       packages: write

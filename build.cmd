@@ -47,7 +47,8 @@ if errorlevel 1 goto :failed
 
 rem Packaging rather than compiling, so that every build produces the artifact the extension
 rem actually ships as -- the same reason the solution build above always passes -t pack. This is
-rem not the compile plus a package step: vsce runs the vscode:prepublish hook, which compiles.
+rem not the compile plus a package step: vsce runs the vscode:prepublish hook, which type checks
+rem with tsc and then bundles with esbuild.
 call npm run package
 if errorlevel 1 goto :failed
 
