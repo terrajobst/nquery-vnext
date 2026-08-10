@@ -1,14 +1,12 @@
 using NQuery.Authoring.Commenting;
-using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Tests.Commenting;
 
 public class ToggleSingleLineCommentCommenterTest : CommenterTests
 {
-    protected override SyntaxTree ToggleComment(SyntaxTree syntaxTree, TextSpan span)
+    protected override Document ToggleComment(CommentingService service, DocumentView view)
     {
-        return syntaxTree.ToggleSingleLineComment(span);
+        return service.ToggleSingleLineComment(view);
     }
 
     [Fact]

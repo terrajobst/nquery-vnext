@@ -8,13 +8,10 @@ public class TypeCompletionProviderTests
 {
     private static CompletionModel GetCompletionModel(string queryWithJoinMarker)
     {
-        var compilation = CompilationFactory.CreateQuery(queryWithJoinMarker, out int position);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new TypeCompletionProvider());
+        var document = DocumentFactory.CreateQuery(queryWithJoinMarker, out int position, services);
 
-        var provider = new TypeCompletionProvider();
-        var providers = new[] { provider };
-
-        return semanticModel.GetCompletionModel(position, providers);
+        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
     }
 
     private static void AssertIsMatch(string query)

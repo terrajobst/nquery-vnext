@@ -1,13 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.QuickInfo.Providers;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.QuickInfo;
 
 public static class QuickInfoExtensions
 {
-    public static ImmutableArray<IQuickInfoModelProvider> StandardQuickInfoModelProviders { get; } =
+    private static ImmutableArray<IQuickInfoModelProvider> StandardQuickInfoModelProviders { get; } =
     [
         new CastExpressionQuickInfoModelProvider(),
         new CoalesceExpressionQuickInfoModelProvider(),
@@ -26,22 +25,27 @@ public static class QuickInfoExtensions
         new WildcardSelectColumnQuickInfoModelProvider()
     ];
 
-    extension(SemanticModel semanticModel)
+    extension(AuthoringServicesBuilder builder)
     {
-        public QuickInfoModel? GetQuickInfoModel(int position)
+        public AuthoringServicesBuilder AddQuickInfoService()
         {
-            return semanticModel.GetQuickInfoModel(position, StandardQuickInfoModelProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new QuickInfoService(s.GetProviders<IQuickInfoModelProvider>()));
         }
 
-        public QuickInfoModel? GetQuickInfoModel(int position, IEnumerable<IQuickInfoModelProvider> providers)
+        public AuthoringServicesBuilder AddQuickInfoModelProvider(IQuickInfoModelProvider provider)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            return (from p in providers
-                    let m = p.GetModel(semanticModel, position)
-                    where m is not null
-                    select m).FirstOrDefault();
+            return builder.AddProvider<IQuickInfoModelProvider>(provider);
+        }
+
+        public AuthoringServicesBuilder AddStandardQuickInfoModelProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardQuickInfoModelProviders);
         }
     }
 }

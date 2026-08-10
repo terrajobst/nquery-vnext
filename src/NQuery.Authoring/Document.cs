@@ -5,95 +5,98 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring;
 
+// An immutable snapshot of a query, plus everything needed to analyze it: the catalog it binds
+// against and the language services it is analyzed with.
+//
+// This is the only asynchronous boundary in the authoring layer. Nothing below a document does I/O
+// -- parsing and binding are CPU-bound throughout -- so whether that work is offloaded to another
+// thread is the host's policy, not the library's. Every artifact is therefore available three ways:
+// Get computes in place, GetAsync offloads, TryGet answers only if the value is already cached.
+// All three yield the same instance; see AsyncLazy for why that matters.
+//
+// There is deliberately no Workspace back-reference. A document is a snapshot and a workspace
+// mutates, so reaching from one to the other would observe state that has already moved on -- and
+// documents exist without a workspace at all.
 public sealed class Document
 {
-    private Task<SyntaxTree>? _syntaxTreeTask;
-    private Task<Compilation>? _compilationTask;
-    private Task<SemanticModel>? _semanticModelTask;
+    private readonly AsyncLazy<SyntaxTree> _syntaxTree;
+    private readonly AsyncLazy<Compilation> _compilation;
+    private readonly AsyncLazy<SemanticModel> _semanticModel;
 
-    public Document(DocumentKind kind, Catalog catalog, SourceText text)
+    private Document(DocumentKind kind, SourceText text, Catalog catalog, AuthoringServices services)
     {
-        ThrowIfNull(catalog);
-        ThrowIfNull(text);
-
         Kind = kind;
-        Catalog = catalog;
         Text = text;
+        Catalog = catalog;
+        Services = services;
+
+        _syntaxTree = new AsyncLazy<SyntaxTree>(_ => ComputeSyntaxTree());
+        _compilation = new AsyncLazy<Compilation>(c => Compilation.Create(Catalog, GetSyntaxTree(c)));
+        _semanticModel = new AsyncLazy<SemanticModel>(c => GetCompilation(c).GetSemanticModel());
+    }
+
+    // services is required rather than defaulted: a document that silently fell back to a standard
+    // set would drop whatever the host configured, which is the failure this layer exists to remove.
+    public static Document Create(DocumentKind kind, SourceText text, Catalog catalog, AuthoringServices services)
+    {
+        ThrowIfNull(text);
+        ThrowIfNull(catalog);
+        ThrowIfNull(services);
+
+        return new Document(kind, text, catalog, services);
     }
 
     public DocumentKind Kind { get; }
 
+    public SourceText Text { get; }
+
     public Catalog Catalog { get; }
 
-    public SourceText Text { get; }
+    public AuthoringServices Services { get; }
 
     public bool TryGetSyntaxTree([NotNullWhen(true)] out SyntaxTree? syntaxTree)
     {
-        if (_syntaxTreeTask is not null && _syntaxTreeTask.IsCompleted)
-        {
-            syntaxTree = _syntaxTreeTask.Result;
-            return true;
-        }
-
-        syntaxTree = null;
-        return false;
+        return _syntaxTree.TryGetValue(out syntaxTree);
     }
 
     public bool TryGetCompilation([NotNullWhen(true)] out Compilation? compilation)
     {
-        if (_compilationTask is not null && _compilationTask.IsCompleted)
-        {
-            compilation = _compilationTask.Result;
-            return true;
-        }
-
-        compilation = null;
-        return false;
+        return _compilation.TryGetValue(out compilation);
     }
 
     public bool TryGetSemanticModel([NotNullWhen(true)] out SemanticModel? semanticModel)
     {
-        if (_semanticModelTask is not null && _semanticModelTask.IsCompleted)
-        {
-            semanticModel = _semanticModelTask.Result;
-            return true;
-        }
-
-        semanticModel = null;
-        return false;
+        return _semanticModel.TryGetValue(out semanticModel);
     }
 
-    public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default(CancellationToken))
+    public SyntaxTree GetSyntaxTree(CancellationToken cancellationToken = default)
     {
-        if (_syntaxTreeTask is null)
-        {
-            var task = Task.Run(() => ComputeSyntaxTree(), cancellationToken);
-            Interlocked.CompareExchange(ref _syntaxTreeTask, task, null);
-        }
-
-        return _syntaxTreeTask;
+        return _syntaxTree.GetValue(cancellationToken);
     }
 
-    public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default(CancellationToken))
+    public Compilation GetCompilation(CancellationToken cancellationToken = default)
     {
-        if (_compilationTask is null)
-        {
-            var task = ComputeCompilationAsync(cancellationToken);
-            Interlocked.CompareExchange(ref _compilationTask, task, null);
-        }
-
-        return _compilationTask;
+        return _compilation.GetValue(cancellationToken);
     }
 
-    public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default(CancellationToken))
+    public SemanticModel GetSemanticModel(CancellationToken cancellationToken = default)
     {
-        if (_semanticModelTask is null)
-        {
-            var task = ComputeSemanticModelAsync(cancellationToken);
-            Interlocked.CompareExchange(ref _semanticModelTask, task, null);
-        }
+        return _semanticModel.GetValue(cancellationToken);
+    }
 
-        return _semanticModelTask;
+    public Task<SyntaxTree> GetSyntaxTreeAsync(CancellationToken cancellationToken = default)
+    {
+        return _syntaxTree.GetValueAsync(cancellationToken);
+    }
+
+    public Task<Compilation> GetCompilationAsync(CancellationToken cancellationToken = default)
+    {
+        return _compilation.GetValueAsync(cancellationToken);
+    }
+
+    public Task<SemanticModel> GetSemanticModelAsync(CancellationToken cancellationToken = default)
+    {
+        return _semanticModel.GetValueAsync(cancellationToken);
     }
 
     private SyntaxTree ComputeSyntaxTree()
@@ -105,34 +108,33 @@ public sealed class Document
             case DocumentKind.Expression:
                 return SyntaxTree.ParseExpression(Text);
             default:
-                throw new ArgumentOutOfRangeException();
+                throw ExceptionBuilder.UnexpectedValue(Kind);
         }
-    }
-
-    private async Task<Compilation> ComputeCompilationAsync(CancellationToken cancellationToken)
-    {
-        var syntaxTree = await GetSyntaxTreeAsync(cancellationToken);
-        return Compilation.Create(Catalog, syntaxTree);
-    }
-
-    private async Task<SemanticModel> ComputeSemanticModelAsync(CancellationToken cancellationToken)
-    {
-        var compilation = await GetCompilationAsync(cancellationToken);
-        return await Task.Run(() => compilation.GetSemanticModel(), cancellationToken);
     }
 
     public Document WithKind(DocumentKind kind)
     {
-        return kind == Kind ? this : new Document(kind, Catalog, Text);
-    }
-
-    public Document WithCatalog(Catalog catalog)
-    {
-        return catalog == Catalog ? this : new Document(Kind, catalog, Text);
+        return kind == Kind ? this : new Document(kind, Text, Catalog, Services);
     }
 
     public Document WithText(SourceText text)
     {
-        return text == Text ? this : new Document(Kind, Catalog, text);
+        ThrowIfNull(text);
+
+        return text == Text ? this : new Document(Kind, text, Catalog, Services);
+    }
+
+    public Document WithCatalog(Catalog catalog)
+    {
+        ThrowIfNull(catalog);
+
+        return catalog == Catalog ? this : new Document(Kind, Text, catalog, Services);
+    }
+
+    public Document WithServices(AuthoringServices services)
+    {
+        ThrowIfNull(services);
+
+        return services == Services ? this : new Document(Kind, Text, Catalog, services);
     }
 }

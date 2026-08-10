@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Completion.Providers;
-using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Completion;
 
 public static class CompletionExtensions
 {
-    public static ImmutableArray<ICompletionProvider> StandardCompletionProviders { get; } =
+    private static ImmutableArray<ICompletionProvider> StandardCompletionProviders { get; } =
     [
         new AliasCompletionProvider(),
         new JoinCompletionProvider(),
@@ -18,34 +16,27 @@ public static class CompletionExtensions
         new CommonTableExpressionCompletionProvider()
     ];
 
-    extension(SemanticModel semanticModel)
+    extension(AuthoringServicesBuilder builder)
     {
-        public CompletionModel GetCompletionModel(int position)
+        public AuthoringServicesBuilder AddCompletionService()
         {
-            return semanticModel.GetCompletionModel(position, StandardCompletionProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new CompletionService(s.GetProviders<ICompletionProvider>()));
         }
 
-        public CompletionModel GetCompletionModel(int position, IEnumerable<ICompletionProvider> providers)
+        public AuthoringServicesBuilder AddCompletionProvider(ICompletionProvider provider)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            var syntaxTree = semanticModel.SyntaxTree;
-            var token = GetIdentifierOrKeywordAtPosition(syntaxTree.Root, position);
-            var applicableSpan = token?.Span ?? new TextSpan(position, 0);
-
-            var items = providers.SelectMany(p => p.GetItems(semanticModel, position));
-            var sortedItems = items.OrderBy(c => c.DisplayText).ToImmutableArray();
-
-            return new CompletionModel(semanticModel, applicableSpan, sortedItems);
+            return builder.AddProvider<ICompletionProvider>(provider);
         }
-    }
 
-    private static SyntaxToken? GetIdentifierOrKeywordAtPosition(SyntaxNode root, int position)
-    {
-        var syntaxToken = root.FindTokenOnLeft(position);
-        return syntaxToken.Kind.IsIdentifierOrKeyword() && syntaxToken.Span.ContainsOrTouches(position)
-                   ? syntaxToken
-                   : null;
+        public AuthoringServicesBuilder AddStandardCompletionProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardCompletionProviders);
+        }
     }
 }

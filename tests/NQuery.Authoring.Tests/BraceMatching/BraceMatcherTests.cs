@@ -69,10 +69,10 @@ public abstract class BraceMatcherTests
 
     private BraceMatchingResult Match(string query, int position)
     {
-        var compilation = CompilationFactory.CreateQuery(query);
-        var syntaxTree = compilation.SyntaxTree;
+        var services = DocumentFactory.ServicesWithOnly(CreateMatcher());
+        var document = DocumentFactory.CreateQuery(query, services);
+        var view = DocumentView.Create(document, position);
 
-        var matcher = CreateMatcher();
-        return syntaxTree.MatchBraces(position, new[] { matcher });
+        return document.Services.GetService<BraceMatchingService>().MatchBraces(view);
     }
 }

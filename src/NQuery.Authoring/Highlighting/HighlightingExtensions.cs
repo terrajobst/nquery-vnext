@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Highlighting.Highlighters;
-using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Highlighting;
 
 public static class HighlightingExtensions
 {
-    public static ImmutableArray<IHighlighter> StandardHighlighters { get; } =
+    private static ImmutableArray<IHighlighter> StandardHighlighters { get; } =
     [
         new CaseKeywordHighlighter(),
         new CastKeywordHighlighter(),
@@ -19,27 +17,27 @@ public static class HighlightingExtensions
         new SymbolReferenceHighlighter()
     ];
 
-    extension(SemanticModel semanticModel)
+    extension(AuthoringServicesBuilder builder)
     {
-        public IEnumerable<TextSpan> GetHighlights(int position)
+        public AuthoringServicesBuilder AddHighlightingService()
         {
-            return semanticModel.GetHighlights(position, StandardHighlighters);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new HighlightingService(s.GetProviders<IHighlighter>()));
         }
 
-        public IEnumerable<TextSpan> GetHighlights(int position, IEnumerable<IHighlighter> highlighters)
+        public AuthoringServicesBuilder AddHighlighter(IHighlighter highlighter)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(highlighters);
+            ThrowIfNull(builder);
 
-            var result = new List<TextSpan>();
+            return builder.AddProvider<IHighlighter>(highlighter);
+        }
 
-            foreach (var highlighter in highlighters)
-            {
-                var highlights = highlighter.GetHighlights(semanticModel, position);
-                result.AddRange(highlights);
-            }
+        public AuthoringServicesBuilder AddStandardHighlighters()
+        {
+            ThrowIfNull(builder);
 
-            return result;
+            return builder.AddProviders(StandardHighlighters);
         }
     }
 }

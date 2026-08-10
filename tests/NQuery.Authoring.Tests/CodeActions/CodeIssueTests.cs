@@ -8,12 +8,10 @@ public abstract class CodeIssueTests
 {
     protected ImmutableArray<CodeIssue> GetIssues(string query)
     {
-        var compilation = CompilationFactory.CreateQuery(query);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly(CreateProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
 
-        var provider = CreateProvider();
-        var providers = new[] { provider };
-        return [.. semanticModel.GetIssues(providers)];
+        return document.Services.GetService<CodeIssueService>().GetIssues(document);
     }
 
     protected abstract ICodeIssueProvider CreateProvider();

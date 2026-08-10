@@ -3,20 +3,19 @@ using System.Collections.Immutable;
 using NQuery.Authoring.CodeActions.Fixes;
 using NQuery.Authoring.CodeActions.Issues;
 using NQuery.Authoring.CodeActions.Refactorings;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.CodeActions;
 
 public static class CodeActionExtensions
 {
-    public static ImmutableArray<ICodeFixProvider> StandardFixProviders { get; } =
+    private static ImmutableArray<ICodeFixProvider> StandardCodeFixProviders { get; } =
     [
         new AddOrderByToSelectDistinctCodeFixProvider(),
         new AddParenthesesCodeFixProvider(),
         new AddToGroupByCodeFixProvider()
     ];
 
-    public static ImmutableArray<ICodeIssueProvider> StandardIssueProviders { get; } =
+    private static ImmutableArray<ICodeIssueProvider> StandardCodeIssueProviders { get; } =
     [
         new ColumnsInExistsCodeIssueProvider(),
         new ComparisonWithNullCodeIssueProvider(),
@@ -26,7 +25,7 @@ public static class CodeActionExtensions
         new RecursiveCodeIssueProvider()
     ];
 
-    public static ImmutableArray<ICodeRefactoringProvider> StandardRefactoringProviders { get; } =
+    private static ImmutableArray<ICodeRefactoringProvider> StandardCodeRefactoringProviders { get; } =
     [
         new FlipBinaryOperatorSidesCodeRefactoringProvider(),
         new SortOrderCodeRefactoringProvider(),
@@ -40,45 +39,69 @@ public static class CodeActionExtensions
         new RemoveRedundantParenthesisCodeRefactoringProvider()
     ];
 
-    extension(SemanticModel semanticModel)
+    extension(AuthoringServicesBuilder builder)
     {
-        public IEnumerable<ICodeAction> GetFixes(int position)
+        public AuthoringServicesBuilder AddCodeFixService()
         {
-            return semanticModel.GetFixes(position, StandardFixProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new CodeFixService(s.GetProviders<ICodeFixProvider>()));
         }
 
-        public IEnumerable<ICodeAction> GetFixes(int position, IEnumerable<ICodeFixProvider> providers)
+        public AuthoringServicesBuilder AddCodeIssueService()
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            return providers.SelectMany(p => p.GetFixes(semanticModel, position));
+            return builder.AddService(s => new CodeIssueService(s.GetProviders<ICodeIssueProvider>()));
         }
 
-        public IEnumerable<CodeIssue> GetIssues()
+        public AuthoringServicesBuilder AddCodeRefactoringService()
         {
-            return semanticModel.GetIssues(StandardIssueProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new CodeRefactoringService(s.GetProviders<ICodeRefactoringProvider>()));
         }
 
-        public IEnumerable<CodeIssue> GetIssues(IEnumerable<ICodeIssueProvider> providers)
+        public AuthoringServicesBuilder AddCodeFixProvider(ICodeFixProvider provider)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            return providers.SelectMany(p => p.GetIssues(semanticModel));
+            return builder.AddProvider<ICodeFixProvider>(provider);
         }
 
-        public IEnumerable<ICodeAction> GetRefactorings(int position)
+        public AuthoringServicesBuilder AddCodeIssueProvider(ICodeIssueProvider provider)
         {
-            return semanticModel.GetRefactorings(position, StandardRefactoringProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddProvider<ICodeIssueProvider>(provider);
         }
 
-        public IEnumerable<ICodeAction> GetRefactorings(int position, IEnumerable<ICodeRefactoringProvider> providers)
+        public AuthoringServicesBuilder AddCodeRefactoringProvider(ICodeRefactoringProvider provider)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            return providers.SelectMany(p => p.GetRefactorings(semanticModel, position));
+            return builder.AddProvider<ICodeRefactoringProvider>(provider);
+        }
+
+        public AuthoringServicesBuilder AddStandardCodeFixProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardCodeFixProviders);
+        }
+
+        public AuthoringServicesBuilder AddStandardCodeIssueProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardCodeIssueProviders);
+        }
+
+        public AuthoringServicesBuilder AddStandardCodeRefactoringProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardCodeRefactoringProviders);
         }
     }
 }

@@ -6,21 +6,19 @@ namespace NQuery.Authoring.Tests.Completion.Providers;
 
 public class KeywordCompletionProviderTests
 {
-    private static CompletionModel CreateCompletionModel(SemanticModel semanticModel, int position)
+    private static CompletionModel CreateCompletionModel(string query, int position)
     {
-        var provider = new KeywordCompletionProvider();
-        var providers = new[] { provider };
-        return semanticModel.GetCompletionModel(position, providers);
+        var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new KeywordCompletionProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
+
+        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
     }
 
     private static CompletionModel GetCompletionModel(string query)
     {
         var actualQuery = query.ParseSinglePosition(out var position);
 
-        var compilation = CompilationFactory.CreateQuery(actualQuery);
-        var semanticModel = compilation.GetSemanticModel();
-
-        return CreateCompletionModel(semanticModel, position);
+        return CreateCompletionModel(actualQuery, position);
     }
 
     private static CompletionModel GetCompletionModelWithFirstChar(string query, string keyword)
@@ -30,10 +28,7 @@ public class KeywordCompletionProviderTests
         var modifiedQuery = actualQuery.Insert(position, keyword.Substring(0, 1));
         position++;
 
-        var compilation = CompilationFactory.CreateQuery(modifiedQuery);
-        var semanticModel = compilation.GetSemanticModel();
-
-        return CreateCompletionModel(semanticModel, position);
+        return CreateCompletionModel(modifiedQuery, position);
     }
 
     private static void AssertIsMatch(string query, string keyword)

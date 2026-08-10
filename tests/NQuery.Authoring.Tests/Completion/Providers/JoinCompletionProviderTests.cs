@@ -12,13 +12,11 @@ public class JoinCompletionProviderTests
         var query = queryWithJoin.Remove(span.Start, span.Length);
         var position = span.Start;
 
-        var compilation = CompilationFactory.CreateQuery(query);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new JoinCompletionProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
 
-        var provider = new JoinCompletionProvider();
-        var providers = new[] { provider };
-
-        var completionModel = semanticModel.GetCompletionModel(position, providers);
+        var completionModel = document.Services.GetService<CompletionService>()
+                                      .GetModel(DocumentView.Create(document, position));
         var item = completionModel.Items.Single(i => i.InsertionText == condition);
 
         Assert.Equal(Glyph.Relation, item.Glyph);

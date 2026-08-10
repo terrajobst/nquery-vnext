@@ -7,6 +7,6 @@ public class QuickInfoExtensionsTests : ExtensionTests
     [Fact]
     public void QuickInfoExtensions_ReturnsAllProviders()
     {
-        AssertAllProvidersAreExposed(QuickInfoExtensions.StandardQuickInfoModelProviders);
+        AssertAllProvidersAreExposed<IQuickInfoModelProvider>();
     }
 }

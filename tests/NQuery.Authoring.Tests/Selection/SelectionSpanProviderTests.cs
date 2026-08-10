@@ -1,7 +1,4 @@
-using System.Collections.Immutable;
-
 using NQuery.Authoring.Selection;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.Tests.Selection;
 
@@ -13,10 +10,9 @@ public abstract class SelectionSpanProviderTests
     {
         var query = queryWithMarkers.ParseSpans(out var spans);
 
-        var syntaxTree = SyntaxTree.ParseQuery(query);
-
-        var provider = CreateProvider();
-        var providers = ImmutableArray.Create(provider);
+        var services = DocumentFactory.ServicesWithOnly(CreateProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
+        var selection = document.Services.GetService<SelectionService>();
 
         var childParent = spans.Zip(spans.Skip(1), (c, p) => new { Child = c, Parent = p });
 
@@ -25,7 +21,8 @@ public abstract class SelectionSpanProviderTests
             var child = cp.Child;
             var parent = cp.Parent;
 
-            var actual = syntaxTree.ExtendSelection(child, providers);
+            var view = DocumentView.Create(document, child.Start, child);
+            var actual = selection.ExtendSelection(view);
             Assert.Equal(parent, actual);
         }
     }

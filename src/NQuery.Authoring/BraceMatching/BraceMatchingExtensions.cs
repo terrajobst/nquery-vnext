@@ -1,13 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.BraceMatching.Matchers;
-using NQuery.CodeAnalysis;
 
 namespace NQuery.Authoring.BraceMatching;
 
 public static class BraceMatchingExtensions
 {
-    public static ImmutableArray<IBraceMatcher> StandardBraceMatchers { get; } =
+    private static ImmutableArray<IBraceMatcher> StandardBraceMatchers { get; } =
     [
         new StringQuoteBraceMatcher(),
         new CaseBraceMatcher(),
@@ -16,22 +15,27 @@ public static class BraceMatchingExtensions
         new ParenthesisBraceMatcher(),
     ];
 
-    extension(SyntaxTree syntaxTree)
+    extension(AuthoringServicesBuilder builder)
     {
-        public BraceMatchingResult MatchBraces(int position)
+        public AuthoringServicesBuilder AddBraceMatchingService()
         {
-            return syntaxTree.MatchBraces(position, StandardBraceMatchers);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new BraceMatchingService(s.GetProviders<IBraceMatcher>()));
         }
 
-        public BraceMatchingResult MatchBraces(int position, IEnumerable<IBraceMatcher> braceMatchers)
+        public AuthoringServicesBuilder AddBraceMatcher(IBraceMatcher braceMatcher)
         {
-            ThrowIfNull(syntaxTree);
-            ThrowIfNull(braceMatchers);
+            ThrowIfNull(builder);
 
-            return (from m in braceMatchers
-                    let r = m.MatchBraces(syntaxTree, position)
-                    where r.IsValid
-                    select r).DefaultIfEmpty(BraceMatchingResult.None).First();
+            return builder.AddProvider<IBraceMatcher>(braceMatcher);
+        }
+
+        public AuthoringServicesBuilder AddStandardBraceMatchers()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardBraceMatchers);
         }
     }
 }

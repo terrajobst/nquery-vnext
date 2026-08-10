@@ -10,11 +10,11 @@ internal sealed class SymbolReferenceHighlighter : IHighlighter
     {
         ThrowIfNull(semanticModel);
 
-        var symbolAtPosition = semanticModel.FindSymbol(position);
+        var symbolAtPosition = SymbolSearchService.FindSymbol(semanticModel, position);
         if (symbolAtPosition is null)
             return [];
 
-        return semanticModel.FindUsages(symbolAtPosition.Value.Symbol)
-                            .Select(s => s.Span);
+        return SymbolSearchService.FindUsages(semanticModel, symbolAtPosition.Value.Symbol)
+                                  .Select(s => s.Span);
     }
 }

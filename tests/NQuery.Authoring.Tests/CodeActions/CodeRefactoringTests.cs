@@ -8,12 +8,11 @@ public abstract class CodeRefactoringTests : CodeActionTest
 {
     protected override ImmutableArray<ICodeAction> GetActions(string query)
     {
-        var compilation = CompilationFactory.CreateQuery(query, out int position);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly(CreateProvider());
+        var document = DocumentFactory.CreateQuery(query, out int position, services);
+        var view = DocumentView.Create(document, position);
 
-        var provider = CreateProvider();
-        var providers = new[] { provider };
-        return [.. semanticModel.GetRefactorings(position, providers)];
+        return document.Services.GetService<CodeRefactoringService>().GetRefactorings(view);
     }
 
     protected abstract ICodeRefactoringProvider CreateProvider();

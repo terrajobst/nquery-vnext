@@ -11,7 +11,7 @@ namespace NQuery.Authoring.SignatureHelp;
 
 public static class SignatureHelpExtensions
 {
-    public static ImmutableArray<ISignatureHelpModelProvider> StandardSignatureHelpModelProviders { get; } =
+    private static ImmutableArray<ISignatureHelpModelProvider> StandardSignatureHelpModelProviders { get; } =
     [
         new CastSignatureHelpModelProvider(),
         new CoalesceSignatureHelpModelProvider(),
@@ -21,23 +21,27 @@ public static class SignatureHelpExtensions
         new NullIfSignatureHelpModelProvider()
     ];
 
-    extension(SemanticModel semanticModel)
+    extension(AuthoringServicesBuilder builder)
     {
-        public SignatureHelpModel? GetSignatureHelpModel(int position)
+        public AuthoringServicesBuilder AddSignatureHelpService()
         {
-            return semanticModel.GetSignatureHelpModel(position, StandardSignatureHelpModelProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new SignatureHelpService(s.GetProviders<ISignatureHelpModelProvider>()));
         }
 
-        public SignatureHelpModel? GetSignatureHelpModel(int position, IEnumerable<ISignatureHelpModelProvider> providers)
+        public AuthoringServicesBuilder AddSignatureHelpModelProvider(ISignatureHelpModelProvider provider)
         {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            return (from p in providers
-                    let m = p.GetModel(semanticModel, position)
-                    where m is not null
-                    orderby m.ApplicableSpan.Start descending
-                    select m).FirstOrDefault();
+            return builder.AddProvider<ISignatureHelpModelProvider>(provider);
+        }
+
+        public AuthoringServicesBuilder AddStandardSignatureHelpModelProviders()
+        {
+            ThrowIfNull(builder);
+
+            return builder.AddProviders(StandardSignatureHelpModelProviders);
         }
     }
 

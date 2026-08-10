@@ -7,6 +7,6 @@ public class OutliningExtensionsTests : ExtensionTests
     [Fact]
     public void OutliningExtensions_ReturnsAllOutliners()
     {
-        AssertAllProvidersAreExposed(OutliningExtensions.StandardOutliners);
+        AssertAllProvidersAreExposed<IOutliner>();
     }
 }

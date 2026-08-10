@@ -41,10 +41,11 @@ public class SyntaxClassificationTests
         };
 
         var text = string.Concat(pieces.Select(t => t.Text));
-        var syntaxTree = SyntaxTree.ParseQuery(text);
-        var classificationSpans = syntaxTree.Root.ClassifySyntax();
+        var document = DocumentFactory.CreateQuery(text);
+        var classificationSpans = document.Services.GetService<ClassificationService>()
+                                          .ClassifySyntax(document, TestContext.Current.CancellationToken);
 
-        Assert.Equal(pieces.Length, classificationSpans.Count);
+        Assert.Equal(pieces.Length, classificationSpans.Length);
 
         var position = 0;
 

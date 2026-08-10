@@ -19,11 +19,8 @@ public abstract class SignatureHelpModelProviderTests
         var applicableSpan = spans[0];
         var parameterSpans = spans.Skip(1).ToImmutableArray();
 
-        var compilation = CompilationFactory.CreateQuery(query);
-        var semanticModel = compilation.GetSemanticModel();
-
-        var provider = CreateProvider();
-        var providers = new[] { provider };
+        var services = DocumentFactory.ServicesWithOnly(CreateProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
 
         for (var i = 0; i < parameterSpans.Length; i++)
         {
@@ -32,16 +29,17 @@ public abstract class SignatureHelpModelProviderTests
             var middle = parameterSpan.Start + parameterSpan.Length / 2;
             var end = parameterSpan.Start;
 
-            AssertIsMatch(semanticModel, start, providers, applicableSpan, i);
-            AssertIsMatch(semanticModel, middle, providers, applicableSpan, i);
-            AssertIsMatch(semanticModel, end, providers, applicableSpan, i);
+            AssertIsMatch(document, start, applicableSpan, i);
+            AssertIsMatch(document, middle, applicableSpan, i);
+            AssertIsMatch(document, end, applicableSpan, i);
         }
     }
 
-    private void AssertIsMatch(SemanticModel semanticModel, int position, IEnumerable<ISignatureHelpModelProvider> providers, TextSpan expectedApplicableSpan, int expectedSelectedParameter)
+    private void AssertIsMatch(Document document, int position, TextSpan expectedApplicableSpan, int expectedSelectedParameter)
     {
-        var actualModel = semanticModel.GetSignatureHelpModel(position, providers)!;
-        var expectedSignatures = GetExpectedSignatures(semanticModel).ToImmutableArray();
+        var view = DocumentView.Create(document, position);
+        var actualModel = document.Services.GetService<SignatureHelpService>().GetModel(view)!;
+        var expectedSignatures = GetExpectedSignatures(document.GetSemanticModel()).ToImmutableArray();
 
         Assert.Equal(expectedApplicableSpan, actualModel.ApplicableSpan);
         Assert.Equal(expectedSelectedParameter, actualModel.SelectedParameter);

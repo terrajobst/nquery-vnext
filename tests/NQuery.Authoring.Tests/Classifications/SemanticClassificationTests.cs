@@ -54,13 +54,12 @@ public class SemanticClassificationTests
                          ("ReportsTo", SemanticClassification.Column),
                      };
 
-        var compilation = CompilationFactory.CreateQuery(query);
-        var catalog = compilation.Catalog.AddVariables(VariableDefinition.Create("Manager", typeof(int)));
-        compilation = compilation.WithCatalog(catalog);
+        var document = DocumentFactory.CreateQuery(query);
+        var catalog = document.Catalog.AddVariables(VariableDefinition.Create("Manager", typeof(int)));
+        document = document.WithCatalog(catalog);
 
-        var syntaxTree = compilation.SyntaxTree;
-        var semanticModel = compilation.GetSemanticModel();
-        var classificationSpans = syntaxTree.Root.ClassifySemantics(semanticModel).ToImmutableArray();
+        var classificationSpans = document.Services.GetService<ClassificationService>()
+                                          .ClassifySemantics(document, TestContext.Current.CancellationToken);
 
         Assert.Equal(pieces.Length, classificationSpans.Length);
 

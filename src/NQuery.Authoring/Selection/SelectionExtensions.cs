@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Selection.Providers;
-using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Selection;
 
 public static class SelectionExtensions
 {
-    public static ImmutableArray<ISelectionSpanProvider> StandardSelectionSpanProviders { get; } =
+    private static ImmutableArray<ISelectionSpanProvider> StandardSelectionSpanProviders { get; } =
     [
         new ArgumentListSelectionSpanProvider(),
         new CommonTableExpressionColumnNameListSelectionSpanProvider(),
@@ -19,47 +17,27 @@ public static class SelectionExtensions
         new SelectClauseSelectionSpanProvider()
     ];
 
-    extension(SyntaxTree syntaxTree)
+    extension(AuthoringServicesBuilder builder)
     {
-        public TextSpan ExtendSelection(TextSpan selectedSpan)
+        public AuthoringServicesBuilder AddSelectionService()
         {
-            return syntaxTree.ExtendSelection(selectedSpan, StandardSelectionSpanProviders);
+            ThrowIfNull(builder);
+
+            return builder.AddService(s => new SelectionService(s.GetProviders<ISelectionSpanProvider>()));
         }
 
-        public TextSpan ExtendSelection(TextSpan selectedSpan, IEnumerable<ISelectionSpanProvider> providers)
+        public AuthoringServicesBuilder AddSelectionSpanProvider(ISelectionSpanProvider provider)
         {
-            ThrowIfNull(syntaxTree);
-            ThrowIfNull(providers);
+            ThrowIfNull(builder);
 
-            var token = syntaxTree.Root.FindToken(selectedSpan.Start).GetPreviousTokenIfEndOfFile();
-            foreach (var span in GetNextSpans(token, providers))
-            {
-                if (!selectedSpan.Contains(span))
-                    return span;
-            }
-
-            var node = token.Parent;
-            while (node is not null)
-            {
-                foreach (var span in GetNextSpans(node, providers))
-                {
-                    if (!selectedSpan.Contains(span))
-                        return span;
-                }
-
-                node = node.Parent;
-            }
-
-            return syntaxTree.Root.Span;
+            return builder.AddProvider<ISelectionSpanProvider>(provider);
         }
-    }
 
-    private static IEnumerable<TextSpan> GetNextSpans(SyntaxNodeOrToken nodeOrToken, IEnumerable<ISelectionSpanProvider> providers)
-    {
-        yield return nodeOrToken.Span;
+        public AuthoringServicesBuilder AddStandardSelectionSpanProviders()
+        {
+            ThrowIfNull(builder);
 
-        var spans = providers.SelectMany(p => p.Provide(nodeOrToken));
-        foreach (var span in spans)
-            yield return span;
+            return builder.AddProviders(StandardSelectionSpanProviders);
+        }
     }
 }

@@ -1,14 +1,4 @@
-using System.Collections.Immutable;
-
-using NQuery.Authoring.Classifications;
-using NQuery.Authoring.CodeActions;
-using NQuery.Authoring.Completion;
-using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.LanguageServer.Hosting;
-using NQuery.Authoring.Outlining;
-using NQuery.Authoring.QuickInfo;
-using NQuery.Authoring.Selection;
-using NQuery.Authoring.SignatureHelp;
 
 namespace NQuery.Authoring.LanguageServer;
 
@@ -17,6 +7,11 @@ public sealed class NQueryLanguageServerOptions
     // Called once at initialize, after the project's settings blob has arrived -- which is why
     // this is a factory rather than an instance. Required.
     public Func<ProjectContext, ICatalogProvider>? CatalogProviderFactory { get; set; }
+
+    // The language services every document in this server is analyzed with. A host that ships its
+    // own providers builds its own composition; everything else here is server policy, which is
+    // deliberately not part of the service set.
+    public AuthoringServices Services { get; set; } = AuthoringServices.Create(b => b.AddDefaultServices());
 
     public string ServerName { get; set; } = @"NQuery Language Server";
 
@@ -37,51 +32,4 @@ public sealed class NQueryLanguageServerOptions
     public int MaxRows { get; set; } = int.MaxValue;
 
     public TimeSpan ExecutionTimeout { get; set; } = TimeSpan.FromSeconds(30);
-
-    // Appended to the Standard* provider sets, mirroring how NQuery.Authoring.Composition
-    // aggregates MEF-exported providers on top of the built-in ones.
-    public IList<ICompletionProvider> AdditionalCompletionProviders { get; } = [];
-
-    public IList<IQuickInfoModelProvider> AdditionalQuickInfoModelProviders { get; } = [];
-
-    public IList<ISignatureHelpModelProvider> AdditionalSignatureHelpModelProviders { get; } = [];
-
-    public IList<IOutliner> AdditionalOutliners { get; } = [];
-
-    public IList<IHighlighter> AdditionalHighlighters { get; } = [];
-
-    public IList<ISelectionSpanProvider> AdditionalSelectionSpanProviders { get; } = [];
-
-    public IList<ICodeFixProvider> AdditionalCodeFixProviders { get; } = [];
-
-    public IList<ICodeIssueProvider> AdditionalCodeIssueProviders { get; } = [];
-
-    public IList<ICodeRefactoringProvider> AdditionalCodeRefactoringProviders { get; } = [];
-
-    internal ImmutableArray<ICompletionProvider> CompletionProviders
-        => CompletionExtensions.StandardCompletionProviders.AddRange(AdditionalCompletionProviders);
-
-    internal ImmutableArray<IQuickInfoModelProvider> QuickInfoModelProviders
-        => QuickInfoExtensions.StandardQuickInfoModelProviders.AddRange(AdditionalQuickInfoModelProviders);
-
-    internal ImmutableArray<ISignatureHelpModelProvider> SignatureHelpModelProviders
-        => SignatureHelpExtensions.StandardSignatureHelpModelProviders.AddRange(AdditionalSignatureHelpModelProviders);
-
-    internal ImmutableArray<IOutliner> Outliners
-        => OutliningExtensions.StandardOutliners.AddRange(AdditionalOutliners);
-
-    internal ImmutableArray<IHighlighter> Highlighters
-        => HighlightingExtensions.StandardHighlighters.AddRange(AdditionalHighlighters);
-
-    internal ImmutableArray<ISelectionSpanProvider> SelectionSpanProviders
-        => SelectionExtensions.StandardSelectionSpanProviders.AddRange(AdditionalSelectionSpanProviders);
-
-    internal ImmutableArray<ICodeFixProvider> CodeFixProviders
-        => CodeActionExtensions.StandardFixProviders.AddRange(AdditionalCodeFixProviders);
-
-    internal ImmutableArray<ICodeIssueProvider> CodeIssueProviders
-        => CodeActionExtensions.StandardIssueProviders.AddRange(AdditionalCodeIssueProviders);
-
-    internal ImmutableArray<ICodeRefactoringProvider> CodeRefactoringProviders
-        => CodeActionExtensions.StandardRefactoringProviders.AddRange(AdditionalCodeRefactoringProviders);
 }

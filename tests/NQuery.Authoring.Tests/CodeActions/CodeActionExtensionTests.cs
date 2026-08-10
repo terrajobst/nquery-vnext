@@ -7,18 +7,18 @@ public class CodeActionExtensionTests : ExtensionTests
     [Fact]
     public void CodeActionExtension_ReturnsAllFixProviders()
     {
-        AssertAllProvidersAreExposed(CodeActionExtensions.StandardFixProviders);
+        AssertAllProvidersAreExposed<ICodeFixProvider>();
     }
 
     [Fact]
     public void CodeActionExtension_ReturnsAllIssueProviders()
     {
-        AssertAllProvidersAreExposed(CodeActionExtensions.StandardIssueProviders);
+        AssertAllProvidersAreExposed<ICodeIssueProvider>();
     }
 
     [Fact]
     public void CodeActionExtension_ReturnsAllRefactoringProviders()
     {
-        AssertAllProvidersAreExposed(CodeActionExtensions.StandardRefactoringProviders);
+        AssertAllProvidersAreExposed<ICodeRefactoringProvider>();
     }
 }

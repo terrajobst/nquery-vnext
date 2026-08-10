@@ -52,21 +52,21 @@ public abstract class QuickInfoModelProviderTests
 
     private void GetModels(string query, Func<Catalog, Catalog>? catalogModifer, out SemanticModel semanticModel, out QuickInfoModel? startModel, out QuickInfoModel? middleModel, out QuickInfoModel? endModel)
     {
-        var compilation = CompilationFactory.CreateQuery(query, out TextSpan span);
+        var services = DocumentFactory.ServicesWithOnly(CreateProvider());
+        var document = DocumentFactory.CreateQuery(query, out TextSpan span, services);
 
         if (catalogModifer is not null)
-            compilation = compilation.WithCatalog(catalogModifer(compilation.Catalog));
+            document = document.WithCatalog(catalogModifer(document.Catalog));
 
-        semanticModel = compilation.GetSemanticModel();
+        semanticModel = document.GetSemanticModel();
         var start = span.Start;
         var middle = span.Start + span.Length / 2;
         var end = span.End;
 
-        var provider = CreateProvider();
-        var providers = new[] { provider };
+        var quickInfo = document.Services.GetService<QuickInfoService>();
 
-        startModel = semanticModel.GetQuickInfoModel(start, providers);
-        middleModel = semanticModel.GetQuickInfoModel(middle, providers);
-        endModel = semanticModel.GetQuickInfoModel(end, providers);
+        startModel = quickInfo.GetModel(DocumentView.Create(document, start));
+        middleModel = quickInfo.GetModel(DocumentView.Create(document, middle));
+        endModel = quickInfo.GetModel(DocumentView.Create(document, end));
     }
 }

@@ -29,14 +29,10 @@ public class CommonTableExpressionCompletionProviderTests
     {
         var query = queryWithPosition.ParseSinglePosition(out var position);
 
-        var compilation = CompilationFactory.CreateQuery(query);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new CommonTableExpressionCompletionProvider());
+        var document = DocumentFactory.CreateQuery(query, services);
 
-        var provider = new CommonTableExpressionCompletionProvider();
-        var providers = new[] { provider };
-
-        var completionModel = semanticModel.GetCompletionModel(position, providers);
-        return completionModel;
+        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
     }
 
     [Fact]

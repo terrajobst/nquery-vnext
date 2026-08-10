@@ -14,7 +14,7 @@ namespace NQuery.Authoring.LanguageServer.Server;
 internal sealed partial class LanguageServerTarget : ILanguageServerHost
 {
     private readonly NQueryLanguageServerOptions _options;
-    private readonly DocumentStore _documents = new();
+    private readonly DocumentStore _documents;
     private readonly TaskCompletionSource _exited = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly object _catalogGate = new();
 
@@ -31,6 +31,7 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
         ThrowIfNull(options);
 
         _options = options;
+        _documents = new DocumentStore(options.Services);
     }
 
     public Task Exited
@@ -280,12 +281,17 @@ internal sealed partial class LanguageServerTarget : ILanguageServerHost
             : null;
     }
 
-    private static async Task<SemanticModel?> TryGetSemanticModelAsync(DocumentSnapshot? snapshot, CancellationToken cancellationToken)
+    // Takes a snapshot and warms its semantic model, so that the language services -- which are
+    // synchronous -- run against an already-computed binding instead of parsing on this thread.
+    private async Task<Document?> TryGetBoundDocumentAsync(Uri uri, CancellationToken cancellationToken)
     {
+        var snapshot = await TryGetSnapshotAsync(uri, cancellationToken);
         if (snapshot is null)
             return null;
 
-        return await snapshot.Value.Document.GetSemanticModelAsync(cancellationToken);
+        var document = snapshot.Value.Document;
+        await document.GetSemanticModelAsync(cancellationToken);
+        return document;
     }
 
     // ILanguageServerHost

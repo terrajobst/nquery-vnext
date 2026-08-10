@@ -1,25 +1,27 @@
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 
 namespace NQuery.Authoring.Tests;
 
 public abstract class ExtensionTests
 {
-    private static ImmutableArray<Type> GetAvailableProviderTypes<T>()
+    private static ImmutableArray<Type> GetAvailableProviderTypes<TProvider>()
     {
-        var type = typeof(T);
+        var type = typeof(TProvider);
         return [.. type.Assembly.GetTypes().Where(t => !t.IsAbstract && type.IsAssignableFrom(t))];
     }
 
-    protected static void AssertAllProvidersAreExposed<T>(IEnumerable<T> providers, [CallerArgumentExpression(nameof(providers))] string? source = null)
+    // Asserts against what the default composition actually exposes rather than against the
+    // standard array itself, so a provider that exists but is never registered still fails.
+    protected static void AssertAllProvidersAreExposed<TProvider>()
+        where TProvider : class
     {
-        var availableTypes = GetAvailableProviderTypes<T>();
-        var standardTypes = new HashSet<Type>(providers.Select(t => t!.GetType()));
-        var message = $"{{0}} isn't exposed from {source}";
+        var availableTypes = GetAvailableProviderTypes<TProvider>();
+        var exposed = DocumentFactory.DefaultServices.GetProviders<TProvider>();
+        var exposedTypes = new HashSet<Type>(exposed.Select(p => p.GetType()));
 
         foreach (var type in availableTypes)
-            Assert.True(standardTypes.Contains(type), string.Format(message, type.Name));
+            Assert.True(exposedTypes.Contains(type), $"{type.Name} isn't exposed from the default AuthoringServices");
 
-        Assert.Equal(standardTypes.Count, availableTypes.Length);
+        Assert.Equal(exposedTypes.Count, availableTypes.Length);
     }
 }

@@ -1,14 +1,12 @@
 using System.Collections.Immutable;
 
 using NQuery.Authoring.Outlining.Outliners;
-using NQuery.CodeAnalysis;
-using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Outlining;
 
 public static class OutliningExtensions
 {
-    public static ImmutableArray<IOutliner> StandardOutliners { get; } =
+    private static ImmutableArray<IOutliner> StandardOutliners { get; } =
     [
         new SelectQueryOutliner(),
         new OrderedQueryOutliner(),
@@ -16,36 +14,27 @@ public static class OutliningExtensions
         new SingleLineCommentOutliner()
     ];
 
-    extension(SyntaxNode root)
+    extension(AuthoringServicesBuilder builder)
     {
-        public IReadOnlyList<OutliningRegionSpan> FindRegions()
+        public AuthoringServicesBuilder AddOutliningService()
         {
-            ThrowIfNull(root);
+            ThrowIfNull(builder);
 
-            return root.FindRegions(root.FullSpan);
+            return builder.AddService(s => new OutliningService(s.GetProviders<IOutliner>()));
         }
 
-        public IReadOnlyList<OutliningRegionSpan> FindRegions(IEnumerable<IOutliner> outliners)
+        public AuthoringServicesBuilder AddOutliner(IOutliner outliner)
         {
-            ThrowIfNull(root);
+            ThrowIfNull(builder);
 
-            return root.FindRegions(root.FullSpan, outliners);
+            return builder.AddProvider<IOutliner>(outliner);
         }
 
-        public IReadOnlyList<OutliningRegionSpan> FindRegions(TextSpan span)
+        public AuthoringServicesBuilder AddStandardOutliners()
         {
-            return root.FindRegions(span, StandardOutliners);
-        }
+            ThrowIfNull(builder);
 
-        public IReadOnlyList<OutliningRegionSpan> FindRegions(TextSpan span, IEnumerable<IOutliner> outliners)
-        {
-            ThrowIfNull(root);
-            ThrowIfNull(outliners);
-
-            var result = new List<OutliningRegionSpan>();
-            var worker = new OutliningWorker(root.SyntaxTree.Text, result, span, outliners);
-            worker.Visit(root);
-            return result;
+            return builder.AddProviders(StandardOutliners);
         }
     }
 }

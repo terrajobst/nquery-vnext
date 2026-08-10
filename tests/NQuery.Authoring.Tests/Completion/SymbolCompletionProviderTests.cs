@@ -7,12 +7,9 @@ public abstract class SymbolCompletionProviderTests
 {
     protected static CompletionModel GetCompletionModel(string query)
     {
-        var compilation = CompilationFactory.CreateQuery(query, out int position);
-        var semanticModel = compilation.GetSemanticModel();
+        var services = DocumentFactory.ServicesWithOnly<ICompletionProvider>(new SymbolCompletionProvider());
+        var document = DocumentFactory.CreateQuery(query, out int position, services);
 
-        var provider = new SymbolCompletionProvider();
-        var providers = new[] { provider };
-
-        return semanticModel.GetCompletionModel(position, providers);
+        return document.Services.GetService<CompletionService>().GetModel(DocumentView.Create(document, position));
     }
 }

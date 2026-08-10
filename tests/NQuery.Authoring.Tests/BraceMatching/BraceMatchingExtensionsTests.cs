@@ -7,6 +7,6 @@ public class BraceMatchingExtensionsTests : ExtensionTests
     [Fact]
     public void BraceMatchingExtensions_ReturnsAllBraceMatchers()
     {
-        AssertAllProvidersAreExposed(BraceMatchingExtensions.StandardBraceMatchers);
+        AssertAllProvidersAreExposed<IBraceMatcher>();
     }
 }

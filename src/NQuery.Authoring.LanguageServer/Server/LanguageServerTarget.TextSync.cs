@@ -114,7 +114,7 @@ internal sealed partial class LanguageServerTarget
 
             var diagnostics = CatalogError is { } catalogError
                 ? await GetSyntaxOnlyDiagnosticsAsync(document, catalogError, cancellationToken)
-                : await GetFullDiagnosticsAsync(document, _options.CodeIssueProviders, cancellationToken);
+                : await GetFullDiagnosticsAsync(document, cancellationToken);
 
             await SendDiagnosticsAsync(uri, snapshot.Value.Version, diagnostics);
         }
@@ -132,7 +132,6 @@ internal sealed partial class LanguageServerTarget
     private const string CatalogUnavailableCode = @"CatalogUnavailable";
 
     private static async Task<List<LspDiagnostic>> GetFullDiagnosticsAsync(Document document,
-                                                                          ImmutableArray<ICodeIssueProvider> issueProviders,
                                                                           CancellationToken cancellationToken)
     {
         var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
@@ -169,7 +168,7 @@ internal sealed partial class LanguageServerTarget
             });
         }
 
-        foreach (var issue in semanticModel.GetIssues(issueProviders))
+        foreach (var issue in document.Services.GetService<CodeIssueService>().GetIssues(document, cancellationToken))
         {
             diagnostics.Add(new LspDiagnostic
             {

@@ -10,17 +10,17 @@ public class SymbolSearcherTests
     {
         var query = sql.ParseSpans(out var textSpans);
 
-        var compilation = CompilationFactory.CreateQuery(query);
-        var semanticModel = compilation.GetSemanticModel();
+        var document = DocumentFactory.CreateQuery(query);
+        var symbolSearch = document.Services.GetService<SymbolSearchService>();
 
         foreach (var span in textSpans)
         {
-            var symbolSpan = semanticModel.FindSymbol(span.End)!.Value;
+            var symbolSpan = symbolSearch.FindSymbol(DocumentView.Create(document, span.End))!.Value;
 
             Assert.NotNull(symbolSpan.Symbol);
             Assert.Equal(span, symbolSpan.Span);
 
-            var usageSymbolSpans = semanticModel.FindUsages(symbolSpan.Symbol).ToImmutableArray();
+            var usageSymbolSpans = symbolSearch.FindUsages(document, symbolSpan.Symbol);
             var usageSpans = usageSymbolSpans.Select(s => s.Span).ToImmutableArray();
 
             foreach (var usageSymbolSpan in usageSymbolSpans)

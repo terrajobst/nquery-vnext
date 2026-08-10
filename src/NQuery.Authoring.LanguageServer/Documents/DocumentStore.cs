@@ -15,7 +15,18 @@ internal sealed class DocumentStore
     private readonly Dictionary<Uri, OpenDocument> _documents = new();
     private readonly object _gate = new();
 
+    // Built once per server and shared by every open document: a workspace is per file, while the
+    // service composition is per process.
+    private readonly AuthoringServices _services;
+
     private Catalog _catalog = Catalog.Empty;
+
+    public DocumentStore(AuthoringServices services)
+    {
+        ThrowIfNull(services);
+
+        _services = services;
+    }
 
     public Catalog Catalog
     {
@@ -35,7 +46,7 @@ internal sealed class DocumentStore
         lock (_gate)
         {
             var kind = DocumentKindMapping.FromUri(uri);
-            _documents[uri] = new OpenDocument(uri, languageId, version, text, kind, _catalog);
+            _documents[uri] = new OpenDocument(uri, languageId, version, text, kind, _catalog, _services);
         }
     }
 

@@ -7,6 +7,6 @@ public class HighlightingExtensionsTests : ExtensionTests
     [Fact]
     public void HighlightingExtensions_ReturnsAllHighlighters()
     {
-        AssertAllProvidersAreExposed(HighlightingExtensions.StandardHighlighters);
+        AssertAllProvidersAreExposed<IHighlighter>();
     }
 }

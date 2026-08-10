@@ -8,7 +8,7 @@ public class SelectionExtensionsTests : ExtensionTests
     [Fact]
     public void SelectionExtensions_ReturnsAllProviders()
     {
-        AssertAllProvidersAreExposed(SelectionExtensions.StandardSelectionSpanProviders);
+        AssertAllProvidersAreExposed<ISelectionSpanProvider>();
     }
 
     [Fact]
@@ -19,27 +19,33 @@ public class SelectionExtensionsTests : ExtensionTests
             FROM    Employees e
             """;
 
-        var compilation = CompilationFactory.CreateQuery(query, out int position);
-        var syntaxTree = compilation.SyntaxTree;
-        var text = syntaxTree.Text;
+        var document = DocumentFactory.CreateQuery(query, out int position);
+        var text = document.Text;
+        var selection = document.Services.GetService<SelectionService>();
+
+        TextSpan Extend(TextSpan span)
+        {
+            return selection.ExtendSelection(DocumentView.Create(document, position, span));
+        }
+
         var start = new TextSpan(position, 0);
 
-        var firstTime = syntaxTree.ExtendSelection(start);
+        var firstTime = Extend(start);
         Assert.Equal("FirstName", text.GetText(firstTime));
 
-        var secondTime = syntaxTree.ExtendSelection(firstTime);
+        var secondTime = Extend(firstTime);
         Assert.Equal("e.FirstName", text.GetText(secondTime));
 
-        var thirdTime = syntaxTree.ExtendSelection(secondTime);
+        var thirdTime = Extend(secondTime);
         Assert.Equal("SELECT  e.FirstName", text.GetText(thirdTime));
 
-        var fourthTime = syntaxTree.ExtendSelection(thirdTime);
+        var fourthTime = Extend(thirdTime);
         Assert.Equal(text.GetText().Trim(), text.GetText(fourthTime));
 
-        var fifthTime = syntaxTree.ExtendSelection(fourthTime);
+        var fifthTime = Extend(fourthTime);
         Assert.Equal(text.GetText().TrimStart(), text.GetText(fifthTime));
 
-        var sixthTime = syntaxTree.ExtendSelection(fifthTime);
+        var sixthTime = Extend(fifthTime);
         Assert.Equal(fifthTime, sixthTime);
     }
 }

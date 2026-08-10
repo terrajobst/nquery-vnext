@@ -18,9 +18,8 @@ internal sealed partial class LanguageServerTarget
     {
         ThrowIfNull(parameters);
 
-        var snapshot = await TryGetSnapshotAsync(parameters.TextDocument.Uri, cancellationToken);
-        var semanticModel = await TryGetSemanticModelAsync(snapshot, cancellationToken);
-        if (snapshot is null || semanticModel is null)
+        var document = await TryGetBoundDocumentAsync(parameters.TextDocument.Uri, cancellationToken);
+        if (document is null)
             return null;
 
         // Without a catalog nothing binds, so every provider would either find nothing or reason
@@ -28,7 +27,6 @@ internal sealed partial class LanguageServerTarget
         if (CatalogError is not null)
             return [];
 
-        var document = snapshot.Value.Document;
         var text = document.Text;
         var span = text.ToTextSpan(parameters.Range);
         var only = parameters.Context?.Only;
@@ -36,16 +34,17 @@ internal sealed partial class LanguageServerTarget
         // The client spells the URI; echo it back exactly so it can match the edit to the document.
         var uri = parameters.TextDocument.Uri.OriginalString;
 
+        var view = DocumentView.Create(document, span.Start, span);
         var result = new List<LspCodeAction>();
 
         if (Includes(only, LspCodeActionKind.QuickFix))
         {
-            foreach (var action in semanticModel.GetFixes(span.Start, _options.CodeFixProviders))
+            foreach (var action in document.Services.GetService<CodeFixService>().GetFixes(view, cancellationToken))
                 AddAction(result, action, LspCodeActionKind.QuickFix, document, uri);
 
             // A CodeIssue carries its own fixes, and they are separate from the fix providers:
             // issues are found by scanning the document, fixes by reacting to a diagnostic.
-            foreach (var issue in semanticModel.GetIssues(_options.CodeIssueProviders))
+            foreach (var issue in document.Services.GetService<CodeIssueService>().GetIssues(document, cancellationToken))
             {
                 if (!issue.Span.IntersectsWith(span))
                     continue;
@@ -57,7 +56,7 @@ internal sealed partial class LanguageServerTarget
 
         if (Includes(only, LspCodeActionKind.Refactor))
         {
-            foreach (var action in semanticModel.GetRefactorings(span.Start, _options.CodeRefactoringProviders))
+            foreach (var action in document.Services.GetService<CodeRefactoringService>().GetRefactorings(view, cancellationToken))
                 AddAction(result, action, LspCodeActionKind.Refactor, document, uri);
         }
 

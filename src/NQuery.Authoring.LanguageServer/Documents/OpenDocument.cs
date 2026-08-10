@@ -4,22 +4,20 @@ namespace NQuery.Authoring.LanguageServer.Documents;
 
 internal sealed class OpenDocument
 {
-    public OpenDocument(Uri uri, string languageId, int version, string text, DocumentKind kind, Catalog catalog)
+    public OpenDocument(Uri uri, string languageId, int version, string text, DocumentKind kind, Catalog catalog, AuthoringServices services)
     {
         ThrowIfNull(uri);
         ThrowIfNull(languageId);
         ThrowIfNull(text);
         ThrowIfNull(catalog);
+        ThrowIfNull(services);
 
         Uri = uri;
         LanguageId = languageId;
         Version = version;
         Container = new LspSourceTextContainer(text);
-        Workspace = new Workspace(Container)
-        {
-            DocumentKind = kind,
-            Catalog = catalog
-        };
+        Workspace = Workspace.Create(Container, kind, services);
+        Workspace.Catalog = catalog;
     }
 
     public Uri Uri { get; }

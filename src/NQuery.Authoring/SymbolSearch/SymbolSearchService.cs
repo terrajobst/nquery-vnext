@@ -1,35 +1,48 @@
+using System.Collections.Immutable;
+
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Syntax;
 
 namespace NQuery.Authoring.SymbolSearch;
 
-public static class SymbolSearcher
+public sealed class SymbolSearchService
 {
-    extension(SemanticModel semanticModel)
+    internal SymbolSearchService()
     {
-        public SymbolSpan? FindSymbol(int position)
-        {
-            ThrowIfNull(semanticModel);
+    }
 
-            var syntaxTree = semanticModel.SyntaxTree;
-            return syntaxTree.Root.FindNodes(position)
-                                  .SelectMany(n => GetSymbolSpans(semanticModel, n))
-                                  .Where(s => s.Span.ContainsOrTouches(position))
-                                  .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
-        }
+    public SymbolSpan? FindSymbol(DocumentView view, CancellationToken cancellationToken = default)
+    {
+        ThrowIfNull(view);
 
-        public IEnumerable<SymbolSpan> FindUsages(Symbol symbol)
-        {
-            ThrowIfNull(semanticModel);
-            ThrowIfNull(symbol);
+        return FindSymbol(view.Document.GetSemanticModel(cancellationToken), view.Position);
+    }
 
-            var syntaxTree = semanticModel.SyntaxTree;
+    public ImmutableArray<SymbolSpan> FindUsages(Document document, Symbol symbol, CancellationToken cancellationToken = default)
+    {
+        ThrowIfNull(document);
+        ThrowIfNull(symbol);
 
-            return from n in syntaxTree.Root.DescendantNodes()
-                   from s in GetSymbolSpans(semanticModel, n)
-                   where s.Symbol == symbol
-                   select s;
-        }
+        return [.. FindUsages(document.GetSemanticModel(cancellationToken), symbol)];
+    }
+
+    // SymbolReferenceHighlighter is a provider, so it only ever has a semantic model -- it cannot
+    // reach a service. These overloads are what it shares with the public entry points above, so
+    // that "what counts as a reference to this symbol" is defined exactly once.
+    internal static SymbolSpan? FindSymbol(SemanticModel semanticModel, int position)
+    {
+        return semanticModel.SyntaxTree.Root.FindNodes(position)
+                            .SelectMany(n => GetSymbolSpans(semanticModel, n))
+                            .Where(s => s.Span.ContainsOrTouches(position))
+                            .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
+    }
+
+    internal static IEnumerable<SymbolSpan> FindUsages(SemanticModel semanticModel, Symbol symbol)
+    {
+        return from n in semanticModel.SyntaxTree.Root.DescendantNodes()
+               from s in GetSymbolSpans(semanticModel, n)
+               where s.Symbol == symbol
+               select s;
     }
 
     private static IEnumerable<SymbolSpan> GetSymbolSpans(SemanticModel semanticModel, SyntaxNode node)
