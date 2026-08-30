@@ -138,24 +138,10 @@ internal sealed partial class LanguageServerTarget
         var text = document.Text;
         var diagnostics = new List<LspDiagnostic>();
 
-        // SemanticModel.GetDiagnostics() is binding diagnostics only -- Compilation combines it
-        // with the syntax tree's privately -- so the two sets are gathered here. They are
-        // disjoint, so concatenating cannot duplicate. Without this an unterminated string or
-        // stray parenthesis produces no squiggle at all.
-        foreach (var diagnostic in semanticModel.SyntaxTree.GetDiagnostics())
-        {
-            diagnostics.Add(new LspDiagnostic
-            {
-                Range = text.ToRange(diagnostic.Span),
-                Severity = DiagnosticSeverity.Error,
-                Code = diagnostic.DiagnosticId.ToString(),
-                Source = DiagnosticSource,
-                Message = diagnostic.Message
-            });
-        }
-
-        // NQuery's Diagnostic carries no severity, so everything the compiler reports is an
-        // error; CodeIssue is the only source that distinguishes levels today.
+        // GetDiagnostics covers parse errors too, so an unterminated string squiggles the same
+        // way an unresolved column does. NQuery's Diagnostic carries no severity, so everything
+        // the compiler reports is an error; CodeIssue is the only source that distinguishes
+        // levels today.
         foreach (var diagnostic in semanticModel.GetDiagnostics())
         {
             diagnostics.Add(new LspDiagnostic

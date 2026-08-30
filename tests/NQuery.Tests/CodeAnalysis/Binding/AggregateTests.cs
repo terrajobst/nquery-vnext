@@ -40,7 +40,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
@@ -56,7 +56,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AmbiguousReference, diagnostics[0].DiagnosticId);
@@ -74,7 +74,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT AGG('test')");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         var invocation = syntaxTree.Root.DescendantNodes().OfType<FunctionInvocationExpressionSyntax>().Single();
         var symbol = semanticModel.GetSymbol(invocation);
@@ -92,7 +92,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         var invocation = syntaxTree.Root.DescendantNodes().OfType<CountAllExpressionSyntax>().Single();
         var symbol = semanticModel.GetSymbol(invocation);
@@ -110,7 +110,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.UndeclaredAggregate, diagnostics[0].DiagnosticId);
@@ -124,7 +124,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseQuery("SELECT COUNT(*)");
         var compilation = Compilation.Empty.WithCatalog(catalog).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AmbiguousAggregate, diagnostics[0].DiagnosticId);
@@ -136,7 +136,7 @@ public class AggregateTests
         var syntaxTree = SyntaxTree.ParseExpression("COUNT(4)");
         var compilation = Compilation.Empty.WithCatalog(Catalog.Default).WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AggregateInvalidInCurrentContext, diagnostics[0].DiagnosticId);

@@ -28,7 +28,7 @@ public sealed partial class IntrinsicOperatorTests
             if (testCase.Argument != argumentType)
                 Assert.Fail($"Left should be of type '{testCase.Argument}' but has type '{argumentType}");
 
-            var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
+            var diagnostic = semanticModel.GetDiagnostics().SingleOrDefault();
             var expressionType = semanticModel.GetExpressionType(expression);
             var result = diagnostic is null
                              ? GetExpressionTypeString(expressionType)
@@ -77,7 +77,7 @@ public sealed partial class IntrinsicOperatorTests
             if (testCase.Right != rightType)
                 Assert.Fail($"Right should be of type '{testCase.Right}' but has type '{rightType}");
 
-            var diagnostic = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).SingleOrDefault();
+            var diagnostic = semanticModel.GetDiagnostics().SingleOrDefault();
             var expressionType = semanticModel.GetExpressionType(expression);
             var result = diagnostic is null
                              ? GetExpressionTypeString(expressionType)

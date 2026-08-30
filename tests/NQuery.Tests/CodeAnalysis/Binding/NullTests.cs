@@ -43,7 +43,7 @@ public class NullTests
         var compilation = CompilationFactory.CreateQuery("SELECT ROUND(NULL)");
         var syntaxTree = compilation.SyntaxTree;
         var semanticModel = compilation.GetSemanticModel();
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.AmbiguousInvocation, diagnostics[0].DiagnosticId);

@@ -13,7 +13,7 @@ public class TableRelationTests
 
         var semanticModel = compilation.GetSemanticModel();
         var syntaxTree = semanticModel.SyntaxTree;
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Equal(spans.Length, diagnostics.Length);
 

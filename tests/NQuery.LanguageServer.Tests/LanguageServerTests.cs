@@ -81,10 +81,9 @@ public sealed class LanguageServerTests
 
         var expectation = harness.ExpectDiagnostics(DocumentUri);
 
-        // An unterminated string literal binds fine -- it is still a string column -- so the
-        // only thing wrong with this document is lexical. SemanticModel.GetDiagnostics() returns
-        // binding diagnostics only, so the syntax tree has to be consulted separately or this
-        // produces no squiggle at all.
+        // An unterminated string literal binds fine -- it is still a string column -- so the only
+        // thing wrong with this document is lexical. This is what pins GetDiagnostics reporting
+        // parse errors as well as binding ones; without that there would be no squiggle at all.
         await harness.OpenAsync(DocumentUri, @"SELECT 'unterminated");
         var diagnostics = await expectation;
 

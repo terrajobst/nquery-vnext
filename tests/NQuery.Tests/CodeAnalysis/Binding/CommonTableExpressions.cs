@@ -205,7 +205,9 @@ public class CommonTableExpressions
         Assert.Single(cteSymbol.Columns);
         Assert.Equal("C2", cteSymbol.Columns[0].Name);
 
-        Assert.Single(diagnostics);
+        // The query is deliberately malformed -- a column can only lack a name if its alias is
+        // missing -- so GetDiagnostics reports that parse error alongside the binding error.
+        Assert.Equal(2, diagnostics.Length);
         Assert.Equal("No column name was specified for column 1 of 'MyCte'.", error.Message);
     }
 
@@ -237,7 +239,8 @@ public class CommonTableExpressions
         Assert.Equal("A", cteSymbol.Columns[1].Name);
         Assert.Equal(typeof(string), cteSymbol.Columns[1].Type);
 
-        Assert.Single(diagnostics);
+        // Same here: the missing alias after AS is a parse error GetDiagnostics now reports too.
+        Assert.Equal(2, diagnostics.Length);
         Assert.Equal("The column 'A' was specified multiple times for 'MyCte'.", error.Message);
     }
 

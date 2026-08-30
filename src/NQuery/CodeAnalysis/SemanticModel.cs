@@ -219,9 +219,12 @@ public sealed class SemanticModel
         return boundExpression?.QueryColumns ?? Enumerable.Empty<ColumnInstanceSymbol>();
     }
 
+    // Both syntactic and semantic, matching Roslyn: whoever holds a semantic model wants
+    // everything wrong with the query, and a caller after parse errors alone already has
+    // SyntaxTree.GetDiagnostics().
     public IEnumerable<Diagnostic> GetDiagnostics()
     {
-        return _bindingResult.Diagnostics;
+        return SyntaxTree.GetDiagnostics().Concat(_bindingResult.Diagnostics);
     }
 
     public IEnumerable<Symbol> LookupSymbols(int position)

@@ -13,11 +13,9 @@ public abstract class CodeFixProvider : ICodeFixProvider
         var semanticModel = view.Document.GetSemanticModel(cancellationToken);
         var position = view.Position;
 
-        var syntaxDiagnostics = semanticModel.SyntaxTree.GetDiagnostics();
-        var semanticDiagnostics = semanticModel.GetDiagnostics();
-        var diagnostics = syntaxDiagnostics.Concat(semanticDiagnostics);
-        var applicableDiagnostics = diagnostics.Where(d => d.Span.ContainsOrTouches(position))
-                                               .Where(d => GetFixableDiagnosticIds().Contains(d.DiagnosticId));
+        var applicableDiagnostics = semanticModel.GetDiagnostics()
+                                                 .Where(d => d.Span.ContainsOrTouches(position))
+                                                 .Where(d => GetFixableDiagnosticIds().Contains(d.DiagnosticId));
 
         return applicableDiagnostics.SelectMany(d => GetFixes(semanticModel, position, d));
     }

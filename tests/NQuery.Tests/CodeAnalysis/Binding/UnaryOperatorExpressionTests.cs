@@ -13,7 +13,7 @@ public sealed class UnaryOperatorExpressionTests
         var compilation = Compilation.Empty.WithSyntaxTree(syntaxTree);
         var semanticModel = compilation.GetSemanticModel();
 
-        var diagnostics = syntaxTree.GetDiagnostics().Concat(semanticModel.GetDiagnostics()).ToImmutableArray();
+        var diagnostics = semanticModel.GetDiagnostics().ToImmutableArray();
 
         Assert.Single(diagnostics);
         Assert.Equal(DiagnosticId.ColumnTableOrVariableNotDeclared, diagnostics[0].DiagnosticId);
