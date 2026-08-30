@@ -304,6 +304,41 @@ structurally.
     - Should probably handle long lines
     - Should probably handle keyword casing
     - Should probably offer identifier normalization (brackets, quotes, always)
+* Add a `RenameService`. `SymbolSearchService.FindUsages` already produces the
+  definition and reference spans, so the mechanical edit is nearly free; what
+  makes rename a real feature rather than a search-and-replace is everything
+  below.
+    - **Only query-local declarations can be renamed**, which is exactly the set
+      `SymbolSearchService` emits `SymbolSpan.CreateDefinition` for: table
+      aliases, derived table names, CTE names, CTE column names, and select
+      column aliases. Everything else resolves to a catalog symbol whose name
+      doesn't live in the document, so those should be rejected up front rather
+      than half-applied — the LSP has `textDocument/prepareRename` for exactly
+      this answer.
+    - **Renaming can silently change what other references bind to.** NQuery
+      resolves an unqualified column against every table instance in scope, so
+      introducing a name that already exists elsewhere in scope turns a
+      previously fine reference ambiguous, or worse, captures it. `WITH C (a) AS
+      (...) SELECT a FROM C, Employees e` renaming `a` to `City` breaks the
+      unrelated `City` resolution, not the renamed symbol's own references.
+    - **Automatic qualification is the repair.** A reference that would change
+      meaning gets rewritten as `C.City` instead of `City`, which is why the
+      service has to own the edit set rather than hand back a flat list of
+      spans. Where qualification can't fix it — the conflict is on the
+      declaration itself, or the target has no qualifier available — the service
+      should report the conflict instead of producing a document that no longer
+      compiles.
+    - **Bracketing is the same kind of fixup.** Renaming to something that isn't
+      a valid identifier (a keyword, or a name with spaces) has to emit `[New
+      Name]`; `SyntaxFacts.IsValidIdentifier` already draws that line, and
+      `RemoveRedundantBracketsCodeRefactoringProvider` is the existing consumer.
+    - Detection is worth doing the way Roslyn does it rather than by rules:
+      apply the rename, re-bind, and compare what each reference resolved to
+      before and after. Anything whose target changed, or that became an error,
+      is a conflict — which catches the cases nobody enumerated.
+    - Shape-wise it belongs beside `CommentingService` (`Document` in, `Document`
+      out) and needs `textDocument/rename` plus `textDocument/prepareRename`
+      wired in the server; neither is implemented today.
 * Are properties on the show plan used at all?
 * InstantiatedAggregateSymbol. Today it's conceptually an open generic. We don't
   have a symbol that captures the instantiated aggregate. We should consider
