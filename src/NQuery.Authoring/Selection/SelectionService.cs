@@ -9,7 +9,7 @@ public sealed class SelectionService
 {
     private readonly ImmutableArray<ISelectionSpanProvider> _providers;
 
-    internal SelectionService(ImmutableArray<ISelectionSpanProvider> providers)
+    public SelectionService(ImmutableArray<ISelectionSpanProvider> providers)
     {
         _providers = providers;
     }

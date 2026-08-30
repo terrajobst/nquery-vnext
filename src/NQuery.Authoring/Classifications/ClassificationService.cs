@@ -8,10 +8,6 @@ namespace NQuery.Authoring.Classifications;
 // service for classifications exactly the way it asks CompletionService for a model.
 public sealed class ClassificationService
 {
-    internal ClassificationService()
-    {
-    }
-
     public ImmutableArray<SyntaxClassificationSpan> ClassifySyntax(Document document, CancellationToken cancellationToken = default)
     {
         ThrowIfNull(document);

@@ -1,5 +1,6 @@
 using NQuery.Authoring.Highlighting;
 using NQuery.Authoring.Highlighting.Highlighters;
+using NQuery.Authoring.SymbolSearch;
 
 namespace NQuery.Authoring.Tests.Highlighting.Highlighters;
 
@@ -7,7 +8,7 @@ public class ColumnInstanceReferenceHighlighterTests : HighlighterTests
 {
     protected override IHighlighter CreateHighlighter()
     {
-        return new SymbolReferenceHighlighter();
+        return new SymbolReferenceHighlighter(new SymbolSearchService());
     }
 
     [Fact]

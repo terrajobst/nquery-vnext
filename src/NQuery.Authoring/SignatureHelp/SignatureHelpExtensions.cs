@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using System.Text;
 
-using NQuery.Authoring.SignatureHelp.Providers;
 using NQuery.CodeAnalysis;
 using NQuery.CodeAnalysis.Symbols;
 using NQuery.CodeAnalysis.Syntax;
@@ -11,40 +10,6 @@ namespace NQuery.Authoring.SignatureHelp;
 
 public static class SignatureHelpExtensions
 {
-    private static ImmutableArray<ISignatureHelpModelProvider> StandardSignatureHelpModelProviders { get; } =
-    [
-        new CastSignatureHelpModelProvider(),
-        new CoalesceSignatureHelpModelProvider(),
-        new CountAllSignatureHelpModelProvider(),
-        new FunctionSignatureHelpModelProvider(),
-        new MethodSignatureHelpModelProvider(),
-        new NullIfSignatureHelpModelProvider()
-    ];
-
-    extension(AuthoringServicesBuilder builder)
-    {
-        public AuthoringServicesBuilder AddSignatureHelpService()
-        {
-            ThrowIfNull(builder);
-
-            return builder.AddService(s => new SignatureHelpService(s.GetProviders<ISignatureHelpModelProvider>()));
-        }
-
-        public AuthoringServicesBuilder AddSignatureHelpModelProvider(ISignatureHelpModelProvider provider)
-        {
-            ThrowIfNull(builder);
-
-            return builder.AddProvider<ISignatureHelpModelProvider>(provider);
-        }
-
-        public AuthoringServicesBuilder AddStandardSignatureHelpModelProviders()
-        {
-            ThrowIfNull(builder);
-
-            return builder.AddProviders(StandardSignatureHelpModelProviders);
-        }
-    }
-
     extension(ArgumentListSyntax argumentList)
     {
         internal int GetParameterIndex(int position)

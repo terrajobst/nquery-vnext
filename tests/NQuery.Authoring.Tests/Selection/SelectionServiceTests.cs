@@ -3,16 +3,10 @@ using NQuery.CodeAnalysis.Text;
 
 namespace NQuery.Authoring.Tests.Selection;
 
-public class SelectionExtensionsTests : ExtensionTests
+public class SelectionServiceTests
 {
     [Fact]
-    public void SelectionExtensions_ReturnsAllProviders()
-    {
-        AssertAllProvidersAreExposed<ISelectionSpanProvider>();
-    }
-
-    [Fact]
-    public void SelectionExtensions_Grows()
+    public void SelectionService_Grows()
     {
         var query = """
             SELECT  e.First|Name

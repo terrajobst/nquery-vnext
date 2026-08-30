@@ -6,7 +6,7 @@ public sealed class QuickInfoService
 {
     private readonly ImmutableArray<IQuickInfoModelProvider> _providers;
 
-    internal QuickInfoService(ImmutableArray<IQuickInfoModelProvider> providers)
+    public QuickInfoService(ImmutableArray<IQuickInfoModelProvider> providers)
     {
         _providers = providers;
     }

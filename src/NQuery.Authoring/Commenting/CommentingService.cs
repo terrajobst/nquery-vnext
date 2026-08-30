@@ -9,10 +9,6 @@ namespace NQuery.Authoring.Commenting;
 // apply the result needs text, and every host that applies edits works in documents.
 public sealed class CommentingService
 {
-    internal CommentingService()
-    {
-    }
-
     public Document ToggleSingleLineComment(DocumentView view, CancellationToken cancellationToken = default)
     {
         ThrowIfNull(view);

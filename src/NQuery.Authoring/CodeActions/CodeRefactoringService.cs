@@ -6,7 +6,7 @@ public sealed class CodeRefactoringService
 {
     private readonly ImmutableArray<ICodeRefactoringProvider> _providers;
 
-    internal CodeRefactoringService(ImmutableArray<ICodeRefactoringProvider> providers)
+    public CodeRefactoringService(ImmutableArray<ICodeRefactoringProvider> providers)
     {
         _providers = providers;
     }

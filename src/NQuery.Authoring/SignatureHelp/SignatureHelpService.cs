@@ -6,7 +6,7 @@ public sealed class SignatureHelpService
 {
     private readonly ImmutableArray<ISignatureHelpModelProvider> _providers;
 
-    internal SignatureHelpService(ImmutableArray<ISignatureHelpModelProvider> providers)
+    public SignatureHelpService(ImmutableArray<ISignatureHelpModelProvider> providers)
     {
         _providers = providers;
     }

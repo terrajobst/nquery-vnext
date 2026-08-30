@@ -8,7 +8,7 @@ public sealed class OutliningService
 {
     private readonly ImmutableArray<IOutliner> _outliners;
 
-    internal OutliningService(ImmutableArray<IOutliner> outliners)
+    public OutliningService(ImmutableArray<IOutliner> outliners)
     {
         _outliners = outliners;
     }

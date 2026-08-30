@@ -1,16 +1,26 @@
-using System.Collections.Frozen;
 using System.Collections.Immutable;
+using System.Reflection;
 
 using NQuery.Authoring.BraceMatching;
+using NQuery.Authoring.BraceMatching.Matchers;
 using NQuery.Authoring.Classifications;
 using NQuery.Authoring.CodeActions;
+using NQuery.Authoring.CodeActions.Fixes;
+using NQuery.Authoring.CodeActions.Issues;
+using NQuery.Authoring.CodeActions.Refactorings;
 using NQuery.Authoring.Commenting;
 using NQuery.Authoring.Completion;
+using NQuery.Authoring.Completion.Providers;
 using NQuery.Authoring.Highlighting;
+using NQuery.Authoring.Highlighting.Highlighters;
 using NQuery.Authoring.Outlining;
+using NQuery.Authoring.Outlining.Outliners;
 using NQuery.Authoring.QuickInfo;
+using NQuery.Authoring.QuickInfo.Providers;
 using NQuery.Authoring.Selection;
+using NQuery.Authoring.Selection.Providers;
 using NQuery.Authoring.SignatureHelp;
+using NQuery.Authoring.SignatureHelp.Providers;
 using NQuery.Authoring.SymbolSearch;
 
 namespace NQuery.Authoring;
@@ -18,14 +28,14 @@ namespace NQuery.Authoring;
 // Configures an AuthoringServices. Obtained from AuthoringServices.Create, never constructed
 // directly, so there is no half-built instance to hand around.
 //
-// Providers keep insertion order per type, which first-wins features such as brace matching depend
-// on; AddDefaultServices seeds the standard sets first so host providers append after the built-ins.
-// Services are registered as factories and instantiated lazily against the completed bag, so the
-// order of AddService and AddProvider calls doesn't matter.
+// The builder starts empty and is a flat, ordered list of registrations. Registration order is
+// observable in two ways: GetServices hands a feature its extension points in this order, and
+// AddDefaultServices seeds the built-ins first so that host registrations append after them.
+// Nothing is constructed until Build, so a service may be registered before the things it depends
+// on.
 public sealed class AuthoringServicesBuilder
 {
-    private readonly Dictionary<Type, ImmutableArray<object>.Builder> _providers = new();
-    private readonly Dictionary<Type, Func<AuthoringServices, object>> _serviceFactories = new();
+    private readonly List<ServiceRegistration> _registrations = [];
 
     internal AuthoringServicesBuilder()
     {
@@ -35,67 +45,115 @@ public sealed class AuthoringServicesBuilder
     // so a service living in another assembly is registered exactly the way these are.
     public AuthoringServicesBuilder AddDefaultServices()
     {
-        this.AddBraceMatchingService();
-        this.AddClassificationService();
-        this.AddCodeFixService();
-        this.AddCodeIssueService();
-        this.AddCodeRefactoringService();
-        this.AddCommentingService();
-        this.AddCompletionService();
-        this.AddHighlightingService();
-        this.AddOutliningService();
-        this.AddQuickInfoService();
-        this.AddSelectionService();
-        this.AddSignatureHelpService();
-        this.AddSymbolSearchService();
+        AddService<BraceMatchingService>();
+        AddService<ClassificationService>();
+        AddService<CodeFixService>();
+        AddService<CodeIssueService>();
+        AddService<CodeRefactoringService>();
+        AddService<CommentingService>();
+        AddService<CompletionService>();
+        AddService<HighlightingService>();
+        AddService<OutliningService>();
+        AddService<QuickInfoService>();
+        AddService<SelectionService>();
+        AddService<SignatureHelpService>();
+        AddService<SymbolSearchService>();
 
-        this.AddStandardBraceMatchers();
-        this.AddStandardCodeFixProviders();
-        this.AddStandardCodeIssueProviders();
-        this.AddStandardCodeRefactoringProviders();
-        this.AddStandardCompletionProviders();
-        this.AddStandardHighlighters();
-        this.AddStandardOutliners();
-        this.AddStandardQuickInfoModelProviders();
-        this.AddStandardSelectionSpanProviders();
-        this.AddStandardSignatureHelpModelProviders();
+        // BraceMatchingService takes the first match, so order is behavior here.
+        AddService<IBraceMatcher, StringQuoteBraceMatcher>();
+        AddService<IBraceMatcher, CaseBraceMatcher>();
+        AddService<IBraceMatcher, DateBraceMatcher>();
+        AddService<IBraceMatcher, IdentifierBraceMatcher>();
+        AddService<IBraceMatcher, ParenthesisBraceMatcher>();
+
+        AddService<ICodeFixProvider, AddOrderByToSelectDistinctCodeFixProvider>();
+        AddService<ICodeFixProvider, AddParenthesesCodeFixProvider>();
+        AddService<ICodeFixProvider, AddToGroupByCodeFixProvider>();
+
+        AddService<ICodeIssueProvider, ColumnsInExistsCodeIssueProvider>();
+        AddService<ICodeIssueProvider, ComparisonWithNullCodeIssueProvider>();
+        AddService<ICodeIssueProvider, OrderByExpressionsCodeIssueProvider>();
+        AddService<ICodeIssueProvider, OrderByOrdinalCodeIssueProvider>();
+        AddService<ICodeIssueProvider, UnusedCommonTableExpressionCodeIssueProvider>();
+        AddService<ICodeIssueProvider, RecursiveCodeIssueProvider>();
+
+        AddService<ICodeRefactoringProvider, FlipBinaryOperatorSidesCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, SortOrderCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, AddAsAliasCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, AddAsDerivedTableCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, AddMissingKeywordCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, ExpandWildcardCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, QualifyColumnCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, BetweenCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, RemoveRedundantBracketsCodeRefactoringProvider>();
+        AddService<ICodeRefactoringProvider, RemoveRedundantParenthesisCodeRefactoringProvider>();
+
+        AddService<ICompletionProvider, AliasCompletionProvider>();
+        AddService<ICompletionProvider, JoinCompletionProvider>();
+        AddService<ICompletionProvider, KeywordCompletionProvider>();
+        AddService<ICompletionProvider, SymbolCompletionProvider>();
+        AddService<ICompletionProvider, TypeCompletionProvider>();
+        AddService<ICompletionProvider, CommonTableExpressionCompletionProvider>();
+
+        AddService<IHighlighter, CaseKeywordHighlighter>();
+        AddService<IHighlighter, CastKeywordHighlighter>();
+        AddService<IHighlighter, SelectQueryKeywordHighlighter>();
+        AddService<IHighlighter, OrderedQueryKeywordHighlighter>();
+        AddService<IHighlighter, InnerJoinKeywordHighlighter>();
+        AddService<IHighlighter, OuterJoinKeywordHighlighter>();
+        AddService<IHighlighter, SymbolReferenceHighlighter>();
+
+        AddService<IOutliner, SelectQueryOutliner>();
+        AddService<IOutliner, OrderedQueryOutliner>();
+        AddService<IOutliner, MultiLineCommentOutliner>();
+        AddService<IOutliner, SingleLineCommentOutliner>();
+
+        AddService<IQuickInfoModelProvider, CastExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, CoalesceExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, CommonTableExpressionColumnNameQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, CommonTableExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, CountAllExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, DerivedTableReferenceQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, ExpressionSelectColumnQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, FunctionInvocationExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, MethodInvocationExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, NamedTableReferenceQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, NameExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, NullIfQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, PropertyAccessExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, VariableExpressionQuickInfoModelProvider>();
+        AddService<IQuickInfoModelProvider, WildcardSelectColumnQuickInfoModelProvider>();
+
+        AddService<ISelectionSpanProvider, ArgumentListSelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, CommonTableExpressionColumnNameListSelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, CommonTableExpressionQuerySelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, FromClauseSelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, GroupByClauseSelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, OrderedQuerySelectionSpanProvider>();
+        AddService<ISelectionSpanProvider, SelectClauseSelectionSpanProvider>();
+
+        AddService<ISignatureHelpModelProvider, CastSignatureHelpModelProvider>();
+        AddService<ISignatureHelpModelProvider, CoalesceSignatureHelpModelProvider>();
+        AddService<ISignatureHelpModelProvider, CountAllSignatureHelpModelProvider>();
+        AddService<ISignatureHelpModelProvider, FunctionSignatureHelpModelProvider>();
+        AddService<ISignatureHelpModelProvider, MethodSignatureHelpModelProvider>();
+        AddService<ISignatureHelpModelProvider, NullIfSignatureHelpModelProvider>();
 
         return this;
     }
 
-    // Prefer the per-feature members (AddCompletionProvider and friends) over calling this with an
-    // inferred type argument: builder.AddProvider(new MyCompletionProvider()) infers TProvider as
-    // the concrete type and files the provider where no service will look for it.
-    public AuthoringServicesBuilder AddProvider<TProvider>(TProvider provider)
-        where TProvider : class
+    // Registers a type as itself, which is what a feature service such as CompletionService is.
+    public AuthoringServicesBuilder AddService<TService>()
+        where TService : class
     {
-        ThrowIfNull(provider);
-
-        GetProviderBuilder<TProvider>().Add(provider);
-        return this;
+        return AddActivated(typeof(TService), typeof(TService));
     }
 
-    public AuthoringServicesBuilder AddProviders<TProvider>(IEnumerable<TProvider> providers)
-        where TProvider : class
+    public AuthoringServicesBuilder AddService<TService, TImplementation>()
+        where TService : class
+        where TImplementation : class, TService
     {
-        ThrowIfNull(providers);
-
-        var builder = GetProviderBuilder<TProvider>();
-
-        foreach (var provider in providers)
-        {
-            ThrowIfNull(provider);
-            builder.Add(provider);
-        }
-
-        return this;
-    }
-
-    public AuthoringServicesBuilder RemoveProviders<TProvider>()
-        where TProvider : class
-    {
-        _providers.Remove(typeof(TProvider));
-        return this;
+        return AddActivated(typeof(TService), typeof(TImplementation));
     }
 
     public AuthoringServicesBuilder AddService<TService>(Func<AuthoringServices, TService> factory)
@@ -103,32 +161,60 @@ public sealed class AuthoringServicesBuilder
     {
         ThrowIfNull(factory);
 
-        _serviceFactories[typeof(TService)] = services => factory(services);
+        _registrations.Add(new ServiceRegistration(typeof(TService), typeof(TService), s => factory(s)));
         return this;
     }
 
-    public AuthoringServicesBuilder RemoveService<TService>()
+    public AuthoringServicesBuilder AddService<TService>(TService instance)
         where TService : class
     {
-        _serviceFactories.Remove(typeof(TService));
+        ThrowIfNull(instance);
+
+        _registrations.Add(new ServiceRegistration(typeof(TService), instance.GetType(), _ => instance));
+        return this;
+    }
+
+    // Drops every registration for the service type, which is how a host replaces a built-in
+    // extension point set rather than appending to it.
+    public AuthoringServicesBuilder RemoveServices<TService>()
+        where TService : class
+    {
+        _registrations.RemoveAll(r => r.ServiceType == typeof(TService));
         return this;
     }
 
     internal AuthoringServices Build()
     {
-        var providers = _providers.ToFrozenDictionary(kv => kv.Key, kv => kv.Value.ToImmutable());
-        var serviceFactories = _serviceFactories.ToFrozenDictionary();
-        return new AuthoringServices(providers, serviceFactories);
+        var registrations = _registrations.ToImmutableArray();
+        var services = new AuthoringServices(registrations);
+        services.ResolveAll(registrations);
+        return services;
     }
 
-    private ImmutableArray<object>.Builder GetProviderBuilder<TProvider>()
+    private AuthoringServicesBuilder AddActivated(Type serviceType, Type implementationType)
     {
-        if (!_providers.TryGetValue(typeof(TProvider), out var builder))
+        var constructor = GetConstructor(implementationType);
+        _registrations.Add(new ServiceRegistration(serviceType, implementationType, s => s.Activate(constructor)));
+        return this;
+    }
+
+    // Deliberately public-only and exactly one: an activator that reaches for a constructor the type
+    // didn't offer is doing something its author never sanctioned, and picking between overloads by
+    // what happens to be registered makes the choice depend on composition order. A type that needs
+    // either is registered with a factory instead.
+    private static ConstructorInfo GetConstructor(Type implementationType)
+    {
+        if (implementationType.IsAbstract)
+            throw new InvalidOperationException($"{implementationType.Name} is abstract and cannot be registered by type.");
+
+        var constructors = implementationType.GetConstructors();
+        if (constructors.Length != 1)
         {
-            builder = ImmutableArray.CreateBuilder<object>();
-            _providers.Add(typeof(TProvider), builder);
+            var message = $"{implementationType.Name} has {constructors.Length} public constructors, " +
+                          $"but registering by type requires exactly one. Register it with a factory instead.";
+            throw new InvalidOperationException(message);
         }
 
-        return builder;
+        return constructors[0];
     }
 }

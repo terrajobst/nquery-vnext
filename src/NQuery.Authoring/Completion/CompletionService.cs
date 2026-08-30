@@ -9,7 +9,7 @@ public sealed class CompletionService
 {
     private readonly ImmutableArray<ICompletionProvider> _providers;
 
-    internal CompletionService(ImmutableArray<ICompletionProvider> providers)
+    public CompletionService(ImmutableArray<ICompletionProvider> providers)
     {
         _providers = providers;
     }

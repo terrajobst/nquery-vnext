@@ -6,7 +6,7 @@ public sealed class CodeFixService
 {
     private readonly ImmutableArray<ICodeFixProvider> _providers;
 
-    internal CodeFixService(ImmutableArray<ICodeFixProvider> providers)
+    public CodeFixService(ImmutableArray<ICodeFixProvider> providers)
     {
         _providers = providers;
     }

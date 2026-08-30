@@ -7,10 +7,6 @@ namespace NQuery.Authoring.SymbolSearch;
 
 public sealed class SymbolSearchService
 {
-    internal SymbolSearchService()
-    {
-    }
-
     public SymbolSpan? FindSymbol(DocumentView view, CancellationToken cancellationToken = default)
     {
         ThrowIfNull(view);
@@ -26,10 +22,10 @@ public sealed class SymbolSearchService
         return [.. FindUsages(document.GetSemanticModel(cancellationToken), symbol)];
     }
 
-    // SymbolReferenceHighlighter is a provider, so it only ever has a semantic model -- it cannot
-    // reach a service. These overloads are what it shares with the public entry points above, so
-    // that "what counts as a reference to this symbol" is defined exactly once.
-    internal static SymbolSpan? FindSymbol(SemanticModel semanticModel, int position)
+    // What the document-shaped entry points above are defined in terms of, and what a caller that
+    // already holds a semantic model -- SymbolReferenceHighlighter -- uses directly, so that "what
+    // counts as a reference to this symbol" is defined exactly once.
+    internal SymbolSpan? FindSymbol(SemanticModel semanticModel, int position)
     {
         return semanticModel.SyntaxTree.Root.FindNodes(position)
                             .SelectMany(n => GetSymbolSpans(semanticModel, n))
@@ -37,7 +33,7 @@ public sealed class SymbolSearchService
                             .Select(s => s).Cast<SymbolSpan?>().FirstOrDefault();
     }
 
-    internal static IEnumerable<SymbolSpan> FindUsages(SemanticModel semanticModel, Symbol symbol)
+    internal IEnumerable<SymbolSpan> FindUsages(SemanticModel semanticModel, Symbol symbol)
     {
         return from n in semanticModel.SyntaxTree.Root.DescendantNodes()
                from s in GetSymbolSpans(semanticModel, n)

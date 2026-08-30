@@ -12,22 +12,14 @@ public static class DocumentFactory
 
     public static AuthoringServices DefaultServices { get; } = AuthoringServices.Create(b => b.AddDefaultServices());
 
-    // The default composition with one extension point narrowed to the provider under test, which
-    // is how a per-provider test isolates its subject now that services own their providers.
-    public static AuthoringServices ServicesWithOnly<TProvider>(TProvider provider)
-        where TProvider : class
+    // The default composition with one extension point narrowed to the implementation under test,
+    // which is how a per-provider test isolates its subject now that services own their providers.
+    public static AuthoringServices ServicesWithOnly<TService>(TService service)
+        where TService : class
     {
         return AuthoringServices.Create(b => b.AddDefaultServices()
-                                              .RemoveProviders<TProvider>()
-                                              .AddProvider(provider));
-    }
-
-    public static AuthoringServices ServicesWithOnly<TProvider>(IEnumerable<TProvider> providers)
-        where TProvider : class
-    {
-        return AuthoringServices.Create(b => b.AddDefaultServices()
-                                              .RemoveProviders<TProvider>()
-                                              .AddProviders(providers));
+                                              .RemoveServices<TService>()
+                                              .AddService(service));
     }
 
     public static Document CreateQuery(string query, AuthoringServices? services = null)

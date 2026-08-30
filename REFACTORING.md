@@ -266,56 +266,15 @@ structurally.
 * Use benchmarks to compare old vs new engine
 * Use benchmarks to optimize the engine further (e.g. row buffer copies, boxing,
   slot representation)
-* How should authoring services and providers call each other? The composition
-  root (`AuthoringServices`) is done, but nothing says how a feature reuses
-  another feature.
-    - **A provider cannot reach a service.** `IHighlighter.GetHighlights` and its
-      peers receive a `SemanticModel` or `SyntaxTree` and nothing else, so a
-      provider has no route to `AuthoringServices`. This is not hypothetical:
-      `SymbolReferenceHighlighter` needs the symbol search, which is why
-      `SymbolSearcher` used to exist as a shared static class. Today
-      `SymbolSearchService` keeps `internal static` overloads over
-      `SemanticModel` beside its public `Document`/`DocumentView` entry points,
-      so the definition of "a reference to this symbol" lives in one place. That
-      seam only works inside the assembly — a third-party provider cannot reuse
-      a built-in service's logic at all.
-    - The alternative is passing the services (or the document) into providers,
-      which widens every provider interface and lets a provider re-enter the
-      composition it is part of. Worth deciding deliberately rather than by
-      accretion, especially before more cross-feature reuse appears.
-    - **Service to service already works**, since `AddService` hands the factory
-      the completed `AuthoringServices` — but a cycle between two services
-      surfaces as a `Lazy<T>` recursion failure rather than a diagnosable
-      message. Either detect it during composition or document that services
-      must not resolve each other during construction.
-* Should the provider layer be internal? Every concrete provider already is
-  (`internal sealed`); what is public is the ten provider interfaces, the
-  builder's `AddXxxProvider`/`AddStandardXxxProviders` members, and
-  `AuthoringServices.GetProviders<T>()`. Nothing outside the assembly implements
-  one today — the server's `AdditionalXxx` lists are gone and no host supplies
-  providers.
-    - Making them internal would collapse the public authoring surface to
-      services plus composition: the primary API and nothing else. It would also
-      take the `AddProvider<TProvider>` inference hazard (inferring the concrete
-      type and filing a provider where no service looks for it) off the public
-      surface.
-    - Against: it forecloses third-party extension, which is the reason the bag
-      is keyed by type in the first place.
-    - This is coupled to the previous bullet. If providers are internal, a
-      provider needing another feature's logic is always an in-assembly problem,
-      which makes `SymbolSearchService`'s `internal static` overloads the right
-      answer rather than a workaround. If providers stay public, that seam is a
-      gap.
-* Should `AddDefaultServices()` be implicit, with a `Clear()` instead? Today the
-  builder starts empty and the defaults are opt-in; "empty" is simply not calling
-  it. Starting pre-populated would shorten the common case to
-  `AuthoringServices.Create(b => b.AddCompletionProvider(mine))` and would remove
-  the orphaned-provider pit, where registering a provider whose service was never
-  added leaves it silently unread. Against: implicit state means `Create(_ => {})`
-  hands back everything, and a host wanting a minimal set has to know to call
-  `Clear()` first. Note `ShapeConventionBuilder` (under *Shapes, attributes, and
-  the metadata model*) starts empty with an explicit `AddDefaultConventions()`
-  plus `Clear()` — whichever way this goes, the two builders should agree.
+* Providers still speak the wrong currency. `IHighlighter.GetHighlights` and its
+  nine peers take a `SemanticModel` or a `SyntaxTree`, so a provider still cannot
+  see the `Document` — and the `CancellationToken` a service is handed dies at
+  the provider boundary instead of being passed on, which is a plain bug. Roslyn
+  draws this line by whether the extension point is host-aware: `CodeFixContext`
+  carries a document, `DiagnosticAnalyzer` deliberately gets none because it has
+  to run inside `csc.exe`. That maps onto `ICodeFixProvider` (should take a
+  document) and `ICodeIssueProvider` (analyzer-shaped, fine as it is).
+  Independent of the composition work below.
 * TypeSymbol
     - Support type aliases
     - Host methods and properties on TypeSymbol, lazily loaded.

@@ -6,15 +6,22 @@ namespace NQuery.Authoring.Highlighting.Highlighters;
 
 internal sealed class SymbolReferenceHighlighter : IHighlighter
 {
+    private readonly SymbolSearchService _symbolSearch;
+
+    public SymbolReferenceHighlighter(SymbolSearchService symbolSearch)
+    {
+        _symbolSearch = symbolSearch;
+    }
+
     public IEnumerable<TextSpan> GetHighlights(SemanticModel semanticModel, int position)
     {
         ThrowIfNull(semanticModel);
 
-        var symbolAtPosition = SymbolSearchService.FindSymbol(semanticModel, position);
+        var symbolAtPosition = _symbolSearch.FindSymbol(semanticModel, position);
         if (symbolAtPosition is null)
             return [];
 
-        return SymbolSearchService.FindUsages(semanticModel, symbolAtPosition.Value.Symbol)
-                                  .Select(s => s.Span);
+        return _symbolSearch.FindUsages(semanticModel, symbolAtPosition.Value.Symbol)
+                            .Select(s => s.Span);
     }
 }

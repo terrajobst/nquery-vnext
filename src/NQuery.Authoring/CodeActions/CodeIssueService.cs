@@ -6,7 +6,7 @@ public sealed class CodeIssueService
 {
     private readonly ImmutableArray<ICodeIssueProvider> _providers;
 
-    internal CodeIssueService(ImmutableArray<ICodeIssueProvider> providers)
+    public CodeIssueService(ImmutableArray<ICodeIssueProvider> providers)
     {
         _providers = providers;
     }

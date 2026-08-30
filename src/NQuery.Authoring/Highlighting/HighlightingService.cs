@@ -8,7 +8,7 @@ public sealed class HighlightingService
 {
     private readonly ImmutableArray<IHighlighter> _highlighters;
 
-    internal HighlightingService(ImmutableArray<IHighlighter> highlighters)
+    public HighlightingService(ImmutableArray<IHighlighter> highlighters)
     {
         _highlighters = highlighters;
     }

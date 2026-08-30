@@ -6,7 +6,7 @@ public sealed class BraceMatchingService
 {
     private readonly ImmutableArray<IBraceMatcher> _braceMatchers;
 
-    internal BraceMatchingService(ImmutableArray<IBraceMatcher> braceMatchers)
+    public BraceMatchingService(ImmutableArray<IBraceMatcher> braceMatchers)
     {
         _braceMatchers = braceMatchers;
     }
